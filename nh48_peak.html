@@ -226,26 +226,17 @@
       }
 
       /*
-        Clean up the raw JSON by removing citation markers and fixing common
-        formatting problems (missing commas and extraneous braces) before
-        parsing.  Without this, JSON.parse() would throw on the provided
-        dataset.  The patterns here mirror those used in the catalog page.
+        Clean up the raw JSON by removing citation markers and omitted line comments.
+        The aggressive regex replacements in the previous version were corrupting
+        valid JSON structure and preventing proper parsing. Now we only remove
+        the actual problematic content.
       */
       function cleanJSON(raw){
-        let out = raw;
         // Remove citation markers like :contentReference[...]{index=...}
-        out = out.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
-        // Insert missing comma when a closing bracket of an array is followed by a new quoted key
-        out = out.replace(/\]\s*\n\s*"/g, '],\n  "');
-        // Insert missing comma and remove extra brace when a closing brace of an object
-        // is followed by a standalone brace then a quoted key (e.g. }\n  {\n  "slug":)
-        out = out.replace(/}\s*\n\s*{\s*"/g, '},\n  "');
-        // Insert missing comma when a closing brace is followed directly by a quoted key
-        out = out.replace(/}\s*\n\s*"/g, '},\n  "');
-        // Remove trailing commas before } or ]
-        out = out.replace(/,\s*}/g, '}');
-        out = out.replace(/,\s*]/g, ']');
-        return out;
+        let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
+        // Remove comments that look like: /* ... omitted */
+        cleaned = cleaned.replace(/\/\*\s*Lines?\s+\d+[\d\-,\s]*omitted\s*\*\//g, '');
+        return cleaned;
       }
 
       /*
