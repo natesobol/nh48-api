@@ -3,14 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NH48 Peak Details</title>
+    <title>NH48 Peak Details (Debug/Resilient)</title>
     <!--
-      Standalone details view for a single NH48 peak.  The slug of the
-      desired peak is provided in the query string (e.g. peak.html?slug=bondcliff).
-      This page fetches the same JSON used by the catalog and displays
-      descriptive fields along with a simple image carousel.  It also
-      resizes its iframe when embedded in Wix by posting its height to
-      the parent frame.
+      Standalone details view for a single NH48 peak with robust error handling.
+      This version mirrors the styling of the original peak page but adds
+      diagnostic output and multiple API fallbacks to cope with CORS and
+      formatting issues in the JSON.  Use this page in Wix or directly via
+      GitHub Pages when you need to troubleshoot why a particular peak
+      failed to load.  The slug of the desired peak is provided as
+      ?slug=xyz in the query string.
     -->
     <style>
       :root{
@@ -155,11 +156,26 @@
         color:var(--muted);
         font-style:italic;
       }
+      /* Debug panel styles */
+      .debug{
+        margin-top:20px;
+        padding:12px;
+        background:#1f2937;
+        border:1px solid #374151;
+        border-radius:8px;
+        color:#9ca3af;
+        font-family:monospace;
+        font-size:0.85rem;
+        white-space:pre-wrap;
+        overflow:auto;
+        max-height:300px;
+      }
     </style>
   </head>
   <body>
     <div class="wrap">
-      <a href="catalog.html" class="back">← Back to catalog</a>
+      <!-- Use the correct relative link back to the catalog.  Update if you rename the catalog file. -->
+      <a href="nh48_catalog.html" class="back">← Back to catalog</a>
       <h1 id="peakTitle">Loading…</h1>
       <div class="media" id="media" hidden>
         <div class="carousel" id="carousel"></div>
@@ -185,36 +201,98 @@
         <h2>Notes</h2>
         <p id="notesText" class="placeholder">—</p>
       </section>
+      <div id="debug" class="debug" hidden></div>
     </div>
     <script>
-      // API URL and placeholder definitions.  See catalog.html for details.
-      const API_URL = 'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json';
+      /*
+        List of API endpoints to try in order.  We start with jsDelivr for CORS,
+        then fall back to raw GitHub.  You can add more mirrors if needed.
+      */
+      const API_URLS = [
+        'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
+        'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
+      ];
+      // Placeholder image used when no photos are available
       const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
         `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">no image</text></svg>`
       );
 
-      let carouselImgs = [];
-      let carouselIdx = 0;
-      let carouselTimer = null;
+      // Debug helper: show messages in the debug panel
+      function showDebug(msg){
+        const dbg = document.getElementById('debug');
+        const time = new Date().toLocaleTimeString();
+        dbg.hidden = false;
+        dbg.textContent += (dbg.textContent ? '\n\n' : '') + '[' + time + '] ' + msg;
+      }
 
+      /*
+        Clean up the raw JSON by removing citation markers and fixing common
+        formatting problems (missing commas and extraneous braces) before
+        parsing.  Without this, JSON.parse() would throw on the provided
+        dataset.  The patterns here mirror those used in the catalog page.
+      */
       function cleanJSON(raw){
-        let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
-        cleaned = cleaned.replace(/\]\s*\n\s*"/g, '],\n  "');
-        return cleaned;
+        let out = raw;
+        // Remove citation markers like :contentReference[...]{index=...}
+        out = out.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
+        // Insert missing comma when a closing bracket of an array is followed by a new quoted key
+        out = out.replace(/\]\s*\n\s*"/g, '],\n  "');
+        // Insert missing comma and remove extra brace when a closing brace of an object
+        // is followed by a standalone brace then a quoted key (e.g. }\n  {\n  "slug":)
+        out = out.replace(/}\s*\n\s*{\s*"/g, '},\n  "');
+        // Insert missing comma when a closing brace is followed directly by a quoted key
+        out = out.replace(/}\s*\n\s*"/g, '},\n  "');
+        // Remove trailing commas before } or ]
+        out = out.replace(/,\s*}/g, '}');
+        out = out.replace(/,\s*]/g, ']');
+        return out;
       }
 
+      /*
+        Fetch and parse the peaks object from one of the API endpoints.  Try
+        each URL in order until one succeeds.  Any network or parse errors
+        will result in trying the next URL.  If all attempts fail, reject
+        with an error.
+      */
       async function fetchPeaks(){
-        const res = await fetch(API_URL);
-        if(!res.ok){ throw new Error('Failed to fetch data: ' + res.status); }
-        let text = await res.text();
-        text = cleanJSON(text);
-        return JSON.parse(text);
+        for(let i=0; i<API_URLS.length; i++){
+          const url = API_URLS[i];
+          try{
+            showDebug(`Attempt ${i+1}/${API_URLS.length}: fetching ${url}`);
+            const res = await fetch(url, { mode:'cors' });
+            if(!res.ok){
+              showDebug(`  Status ${res.status} ${res.statusText}`);
+              continue;
+            }
+            const text = await res.text();
+            showDebug(`  Received ${text.length} characters`);
+            const cleaned = cleanJSON(text);
+            let data;
+            try{
+              data = JSON.parse(cleaned);
+            }catch(parseErr){
+              showDebug(`  JSON parse error: ${parseErr.message}`);
+              continue;
+            }
+            showDebug('  Parsed JSON successfully');
+            return data;
+          }catch(err){
+            showDebug(`  Fetch error: ${err.message || err}`);
+          }
+        }
+        throw new Error('All API endpoints failed');
       }
 
+      // Helper to extract slug parameter
       function getSlug(){
         const params = new URLSearchParams(window.location.search);
         return params.get('slug');
       }
+
+      // Carousel state
+      let carouselImgs = [];
+      let carouselIdx = 0;
+      let carouselTimer = null;
 
       function buildCarousel(images, altBase){
         const carouselEl = document.getElementById('carousel');
@@ -229,9 +307,8 @@
           slide.className = 'slide' + (i === 0 ? ' active' : '');
           const img = document.createElement('img');
           img.alt = `${altBase} image ${i+1} of ${images.length}`;
-          if(i === 0){
-            img.src = src;
-          } else {
+          if(i === 0){ img.src = src; }
+          else {
             img.loading = 'lazy';
             img.decoding = 'async';
             img.setAttribute('data-src', src);
@@ -304,7 +381,7 @@
         }
         try{
           const data = await fetchPeaks();
-          const p = data[slug];
+          const p = data && data[slug];
           if(!p){
             document.getElementById('peakTitle').textContent = 'Peak not found';
             scheduleResize();
@@ -335,7 +412,7 @@
             });
             document.getElementById('routesSection').hidden = false;
           }
-          // Notes: build from summary fields if present
+          // Notes
           const notes = [];
           if(p['View Type']) notes.push(`View: ${p['View Type']}`);
           if(p['Best Seasons to Hike']) notes.push(`Seasons: ${p['Best Seasons to Hike']}`);
@@ -357,6 +434,7 @@
           buildCarousel(imgs, name);
         }catch(err){
           console.error(err);
+          showDebug('Error: ' + (err && err.message ? err.message : err));
           document.getElementById('peakTitle').textContent = 'Error loading peak';
         }
         scheduleResize();
