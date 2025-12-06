@@ -214,12 +214,10 @@
       }
 
       function cleanJSON(raw){
+        // Remove contentReference annotations
         let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
-        cleaned = cleaned.replace(/\]\s*\n\s*"/g, '],\n  "');
-        cleaned = cleaned.replace(/}\s*\n\s*{\s*"/g, '},\n  "');
-        cleaned = cleaned.replace(/}\s*\n\s*"/g, '},\n  "');
-        cleaned = cleaned.replace(/,\s*}/g, '}');
-        cleaned = cleaned.replace(/,\s*]/g, ']');
+        // Remove comments that look like: /* ... omitted */
+        cleaned = cleaned.replace(/\/\*\s*Lines?\s+\d+[\d\-,\s]*omitted\s*\*\//g, '');
         return cleaned;
       }
 
