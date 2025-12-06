@@ -429,8 +429,21 @@
             document.getElementById('notesSection').hidden = false;
           }
           // Images
-          let imgs = p.photos || [];
-          if(!Array.isArray(imgs) || imgs.length === 0){ imgs = [PLACEHOLDER]; }
+          // Collect photo URLs.  Entries in `p.photos` may be strings or
+          // objects with a `url` property.  Convert any objects into
+          // their URL; skip entries without a valid URL.  Fallback to
+          // a placeholder if no usable photos exist.
+          let imgs = [];
+          if (Array.isArray(p.photos) && p.photos.length > 0) {
+            imgs = p.photos
+              .map(item => {
+                if (typeof item === 'string') return item;
+                if (item && item.url) return item.url;
+                return null;
+              })
+              .filter(Boolean);
+          }
+          if (imgs.length === 0) imgs = [PLACEHOLDER];
           buildCarousel(imgs, name);
         }catch(err){
           console.error(err);
