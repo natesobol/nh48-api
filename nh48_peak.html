@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NH48 Peak Details</title>
+    <!--
+      Standalone details view for a single NH48 peak.  The slug of the
+      desired peak is provided in the query string (e.g. peak.html?slug=bondcliff).
+      This page fetches the same JSON used by the catalog and displays
+      descriptive fields along with a simple image carousel.  It also
+      resizes its iframe when embedded in Wix by posting its height to
+      the parent frame.
+    -->
+    <style>
+      :root{
+        --bg:#0a0a0a;
+        --panel:#12121a;
+        --card:#171a22;
+        --ink:#ffffff;
+        --muted:#a5b4c3;
+        --stroke:#ffffff33;
+        --accent:#22c55e;
+      }
+      body{
+        margin:0;
+        background:var(--bg);
+        color:var(--ink);
+        font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        -webkit-font-smoothing:antialiased;
+        text-rendering:optimizeLegibility;
+      }
+      .wrap{
+        max-width:900px;
+        margin:0 auto;
+        padding:16px;
+      }
+      a.back{
+        color:var(--accent);
+        text-decoration:none;
+        display:inline-block;
+        margin-bottom:12px;
+        font-size:0.95rem;
+      }
+      h1{
+        margin:0 0 16px;
+        font-size:clamp(22px,4vw,30px);
+        line-height:1.2;
+      }
+      .media{
+        background:var(--card);
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        overflow:hidden;
+        margin-bottom:16px;
+        position:relative;
+        aspect-ratio:5/3;
+      }
+      .carousel{
+        position:relative;
+        width:100%;
+        height:100%;
+        overflow:hidden;
+      }
+      .slide{
+        position:absolute;
+        inset:0;
+        opacity:0;
+        transition:opacity .35s ease;
+      }
+      .slide.active{ opacity:1; }
+      .slide img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        display:block;
+      }
+      .dots{
+        position:absolute;
+        bottom:8px;
+        left:50%;
+        transform:translateX(-50%);
+        display:flex;
+        gap:6px;
+        z-index:2;
+      }
+      .dot{
+        width:8px;
+        height:8px;
+        border-radius:50%;
+        border:1px solid #ffffff;
+        background:#ffffff22;
+        cursor:pointer;
+      }
+      .dot.active{
+        background:#ffffff;
+      }
+      .ctrls{
+        position:absolute;
+        inset:0;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        pointer-events:none;
+      }
+      .ctrls button{
+        background:#00000055;
+        border:1px solid #ffffff;
+        color:#ffffff;
+        border-radius:8px;
+        padding:6px 10px;
+        margin:0 8px;
+        cursor:pointer;
+        pointer-events:auto;
+      }
+      .facts{
+        display:grid;
+        gap:10px;
+        grid-template-columns:1fr 1fr;
+        margin-bottom:16px;
+      }
+      @media(max-width:560px){
+        .facts{ grid-template-columns:1fr; }
+      }
+      .facts div{
+        background:var(--panel);
+        border:1px solid var(--stroke);
+        border-radius:10px;
+        padding:8px 12px;
+        font-size:0.9rem;
+      }
+      .facts span.value{
+        float:right;
+        color:var(--muted);
+      }
+      section{
+        margin-bottom:20px;
+      }
+      section h2{
+        margin:0 0 8px;
+        font-size:1.1rem;
+        color:var(--accent);
+      }
+      ul.routes{
+        list-style:none;
+        padding-left:16px;
+        margin:0;
+      }
+      ul.routes li{
+        margin-bottom:6px;
+        color:var(--muted);
+        font-size:0.9rem;
+      }
+      .placeholder{
+        color:var(--muted);
+        font-style:italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <a href="catalog.html" class="back">← Back to catalog</a>
+      <h1 id="peakTitle">Loading…</h1>
+      <div class="media" id="media" hidden>
+        <div class="carousel" id="carousel"></div>
+        <div class="dots" id="dots"></div>
+        <div class="ctrls">
+          <button id="prevBtn" aria-label="Previous image">‹</button>
+          <button id="nextBtn" aria-label="Next image">›</button>
+        </div>
+      </div>
+      <div class="facts" id="facts" hidden>
+        <div>Elevation <span class="value" id="factElev">—</span></div>
+        <div>Prominence <span class="value" id="factProm">—</span></div>
+        <div>Range <span class="value" id="factRange">—</span></div>
+        <div>Trail Type <span class="value" id="factTrail">—</span></div>
+        <div>Difficulty <span class="value" id="factDifficulty">—</span></div>
+        <div>Exposure <span class="value" id="factExposure">—</span></div>
+      </div>
+      <section id="routesSection" hidden>
+        <h2>Standard Routes</h2>
+        <ul class="routes" id="routesList"></ul>
+      </section>
+      <section id="notesSection" hidden>
+        <h2>Notes</h2>
+        <p id="notesText" class="placeholder">—</p>
+      </section>
+    </div>
+    <script>
+      // API URL and placeholder definitions.  See catalog.html for details.
+      const API_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json';
+      const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">no image</text></svg>`
+      );
+
+      let carouselImgs = [];
+      let carouselIdx = 0;
+      let carouselTimer = null;
+
+      function cleanJSON(raw){
+        let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
+        cleaned = cleaned.replace(/\]\s*\n\s*"/g, '],\n  "');
+        return cleaned;
+      }
+
+      async function fetchPeaks(){
+        const res = await fetch(API_URL);
+        if(!res.ok){ throw new Error('Failed to fetch data: ' + res.status); }
+        let text = await res.text();
+        text = cleanJSON(text);
+        return JSON.parse(text);
+      }
+
+      function getSlug(){
+        const params = new URLSearchParams(window.location.search);
+        return params.get('slug');
+      }
+
+      function buildCarousel(images, altBase){
+        const carouselEl = document.getElementById('carousel');
+        const dotsEl = document.getElementById('dots');
+        carouselEl.innerHTML = '';
+        dotsEl.innerHTML = '';
+        carouselImgs = [];
+        carouselIdx = 0;
+        if(!images || !images.length){ images = [PLACEHOLDER]; }
+        images.forEach((src, i) => {
+          const slide = document.createElement('div');
+          slide.className = 'slide' + (i === 0 ? ' active' : '');
+          const img = document.createElement('img');
+          img.alt = `${altBase} image ${i+1} of ${images.length}`;
+          if(i === 0){
+            img.src = src;
+          } else {
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            img.setAttribute('data-src', src);
+            img.src = PLACEHOLDER;
+          }
+          img.onerror = () => { img.onerror = null; img.src = PLACEHOLDER; };
+          slide.appendChild(img);
+          carouselEl.appendChild(slide);
+          carouselImgs.push(img);
+          const dot = document.createElement('div');
+          dot.className = 'dot' + (i === 0 ? ' active' : '');
+          dot.addEventListener('click', () => goTo(i));
+          dotsEl.appendChild(dot);
+        });
+        document.getElementById('media').hidden = false;
+        // Controls
+        document.getElementById('prevBtn').onclick = prev;
+        document.getElementById('nextBtn').onclick = next;
+        // Start automatic cycling
+        startCarousel();
+      }
+
+      function updateSlides(){
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const dots = Array.from(document.querySelectorAll('.dot'));
+        slides.forEach((s, i) => s.classList.toggle('active', i === carouselIdx));
+        dots.forEach((d, i) => d.classList.toggle('active', i === carouselIdx));
+      }
+      function ensureImgLoaded(i){
+        const img = carouselImgs[i]; if(!img) return;
+        const real = img.getAttribute('data-src');
+        if(real){ img.src = real; img.removeAttribute('data-src'); }
+      }
+      function next(){
+        carouselIdx = (carouselIdx + 1) % carouselImgs.length;
+        ensureImgLoaded(carouselIdx);
+        updateSlides();
+      }
+      function prev(){
+        carouselIdx = (carouselIdx - 1 + carouselImgs.length) % carouselImgs.length;
+        ensureImgLoaded(carouselIdx);
+        updateSlides();
+      }
+      function goTo(i){
+        carouselIdx = i % carouselImgs.length;
+        ensureImgLoaded(carouselIdx);
+        updateSlides();
+      }
+      function startCarousel(){
+        stopCarousel();
+        carouselTimer = setInterval(next, 4000 + Math.floor(Math.random()*1000));
+      }
+      function stopCarousel(){
+        if(carouselTimer){ clearInterval(carouselTimer); carouselTimer = null; }
+      }
+
+      function scheduleResize(){
+        setTimeout(() => {
+          const h = document.documentElement.scrollHeight;
+          if(window.parent){ window.parent.postMessage({ type:'resize', height:h }, '*'); }
+        }, 150);
+      }
+
+      async function init(){
+        const slug = getSlug();
+        if(!slug){
+          document.getElementById('peakTitle').textContent = 'Peak not specified';
+          scheduleResize();
+          return;
+        }
+        try{
+          const data = await fetchPeaks();
+          const p = data[slug];
+          if(!p){
+            document.getElementById('peakTitle').textContent = 'Peak not found';
+            scheduleResize();
+            return;
+          }
+          // Title
+          const name = p.peakName || p['Peak Name'] || slug;
+          document.getElementById('peakTitle').textContent = name;
+          // Facts
+          document.getElementById('factElev').textContent = p['Elevation (ft)'] || '—';
+          document.getElementById('factProm').textContent = p['Prominence (ft)'] || '—';
+          document.getElementById('factRange').textContent = p['Range / Subrange'] || '—';
+          document.getElementById('factTrail').textContent = p['Trail Type'] || '—';
+          document.getElementById('factDifficulty').textContent = p['Difficulty'] || '—';
+          document.getElementById('factExposure').textContent = p['Exposure Level'] || '—';
+          document.getElementById('facts').hidden = false;
+          // Routes
+          const routes = p['Standard Routes'] || [];
+          if(routes.length > 0){
+            const list = document.getElementById('routesList');
+            routes.forEach(r => {
+              const li = document.createElement('li');
+              const dist  = r['Distance (mi)'] || '';
+              const gain  = r['Elevation Gain (ft)'] || '';
+              const diff  = r['Difficulty'] || '';
+              li.textContent = `${r['Route Name']} (${dist}, ${gain} gain, ${diff})`;
+              list.appendChild(li);
+            });
+            document.getElementById('routesSection').hidden = false;
+          }
+          // Notes: build from summary fields if present
+          const notes = [];
+          if(p['View Type']) notes.push(`View: ${p['View Type']}`);
+          if(p['Best Seasons to Hike']) notes.push(`Seasons: ${p['Best Seasons to Hike']}`);
+          if(p['Terrain Character']) notes.push(`Terrain: ${p['Terrain Character']}`);
+          if(p['Scramble Sections']) notes.push(`Scramble: ${p['Scramble Sections']}`);
+          if(p['Water Availability']) notes.push(`Water: ${p['Water Availability']}`);
+          if(p['Cell Reception Quality']) notes.push(`Reception: ${p['Cell Reception Quality']}`);
+          if(p['Nearby Notable Features']) notes.push(`Nearby: ${p['Nearby Notable Features']}`);
+          if(p['Weather Exposure Rating']) notes.push(`Weather Exposure: ${p['Weather Exposure Rating']}`);
+          if(p['Emergency Bailout Options']) notes.push(`Bailout: ${p['Emergency Bailout Options']}`);
+          if(p['Dog Friendly']) notes.push(`Dog Friendly: ${p['Dog Friendly']}`);
+          if(notes.length > 0){
+            document.getElementById('notesText').innerHTML = notes.map(n => `<div style="margin-bottom:4px">${n}</div>`).join('');
+            document.getElementById('notesSection').hidden = false;
+          }
+          // Images
+          let imgs = p.photos || [];
+          if(!Array.isArray(imgs) || imgs.length === 0){ imgs = [PLACEHOLDER]; }
+          buildCarousel(imgs, name);
+        }catch(err){
+          console.error(err);
+          document.getElementById('peakTitle').textContent = 'Error loading peak';
+        }
+        scheduleResize();
+      }
+      window.addEventListener('load', () => {
+        init();
+        window.addEventListener('resize', scheduleResize);
+      });
+    </script>
+  </body>
+</html>

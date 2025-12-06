@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NH48 Peak Catalog</title>
+    <!--
+      This page displays a grid of the 48 New Hampshire 4000‑footers.  Data is
+      loaded live from the nh48 API on GitHub.  When a visitor clicks on a
+      peak card they are taken to the details page.  The layout and
+      interactivity are intentionally lightweight so it can run inside a Wix
+      HTML embed without any dependencies other than modern browser APIs.
+
+      To host this yourself, upload catalog.html and peak.html to a public
+      location (e.g. GitHub Pages) and update the API_URL constant below if
+      needed.  Copy the contents of this file into a Wix Embed HTML element
+      and it will automatically resize itself to fit the list.  For best
+      performance ensure that the nh48 API JSON is accessible via HTTPS and
+      supports CORS (GitHub raw files do by default as of 2025).
+    -->
+    <style>
+      :root{
+        --bg:#0a0a0a;
+        --panel:#12121a;
+        --card:#171a22;
+        --ink:#ffffff;
+        --muted:#a5b4c3;
+        --stroke:#ffffff33;
+        --accent:#22c55e;
+        --gap:10px;
+      }
+      body{
+        margin:0;
+        background:var(--bg);
+        color:var(--ink);
+        font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        -webkit-font-smoothing:antialiased;
+        text-rendering:optimizeLegibility;
+      }
+      .wrap{
+        max-width:1000px;
+        margin:0 auto;
+        padding:16px;
+      }
+      header h1{
+        margin:0;
+        font-size:clamp(24px,4vw,32px);
+        line-height:1.2;
+      }
+      header p{
+        margin:4px 0 20px;
+        color:var(--muted);
+      }
+      .search{
+        margin-bottom:14px;
+      }
+      .search input{
+        width:100%;
+        height:42px;
+        padding:0 14px;
+        font-size:16px;
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        background:var(--card);
+        color:var(--ink);
+        outline:none;
+      }
+      .grid{
+        display:grid;
+        gap:12px;
+        grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));
+      }
+      .card{
+        background:var(--card);
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        overflow:hidden;
+        cursor:pointer;
+        display:flex;
+        flex-direction:column;
+        transition:transform .12s ease, box-shadow .12s ease;
+      }
+      .card:hover{
+        transform:translateY(-2px);
+        box-shadow:0 8px 20px #0005;
+      }
+      .thumb{
+        aspect-ratio:5/3;
+        background:var(--panel);
+        position:relative;
+        overflow:hidden;
+      }
+      .thumb img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        display:block;
+      }
+      .body{
+        padding:12px;
+        flex:1 1 auto;
+      }
+      .body h3{
+        margin:0 0 4px;
+        font-size:1.1rem;
+      }
+      .body p{
+        margin:2px 0;
+        font-size:0.9rem;
+        color:var(--muted);
+      }
+      .empty{
+        padding:40px;
+        text-align:center;
+        color:var(--muted);
+        font-size:1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>NH48 Peak Catalog</h1>
+        <p>Browse New Hampshire's forty‑eight 4000‑footers. Click a peak to view more details.</p>
+      </header>
+      <div class="search">
+        <input type="text" id="searchInput" placeholder="Search peaks by name…" />
+      </div>
+      <div id="grid" class="grid"></div>
+      <div id="emptyMessage" class="empty" hidden>No peaks found.</div>
+    </div>
+    <script>
+      // URL to fetch the NH48 API JSON.  You can point this to a fork or
+      // another branch if you maintain your own copy.  This file must be
+      // accessible over HTTPS and allow cross‑origin requests.
+      const API_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json';
+      // Placeholder image used when no photos are available.  This is an
+      // inline SVG encoded as a data URL so it requires no network fetch.
+      const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">no image</text></svg>`
+      );
+
+      let peaks = [];
+
+      // Clean the raw JSON text by stripping citation markers that break
+      // parsing and mending missing commas between objects.  Citation
+      // markers follow the pattern :contentReference[…]{index=…} and are
+      // appended to some numeric/string fields in the API.  We remove
+      // them entirely here.  We also insert missing commas when a
+      // closing bracket is followed by a newline and then a quote.
+      function cleanJSON(raw){
+        let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
+        cleaned = cleaned.replace(/\]\s*\n\s*"/g, '],\n  "');
+        return cleaned;
+      }
+
+      async function fetchPeaks(){
+        const res = await fetch(API_URL);
+        if(!res.ok){ throw new Error('Failed to fetch data: ' + res.status); }
+        let text = await res.text();
+        text = cleanJSON(text);
+        const obj = JSON.parse(text);
+        // Convert dictionary keyed by slug into array of objects with slug
+        return Object.keys(obj).map(slug => {
+          const p = obj[slug] || {};
+          p.slug = slug;
+          // unify name fields
+          p.peakName = p.peakName || p['Peak Name'] || slug;
+          return p;
+        });
+      }
+
+      function createCard(p){
+        const card = document.createElement('article');
+        card.className = 'card';
+        // Determine thumbnail source: use first photo if available, else placeholder.
+        const thumbSrc = (Array.isArray(p.photos) && p.photos.length > 0) ? p.photos[0] : PLACEHOLDER;
+        card.innerHTML = `
+          <div class="thumb">
+            <img src="${PLACEHOLDER}" data-src="${thumbSrc}" alt="${p.peakName} thumbnail" loading="lazy" decoding="async">
+          </div>
+          <div class="body">
+            <h3>${p.peakName}</h3>
+            <p>Elevation: ${p['Elevation (ft)'] || '—'} ft</p>
+            <p>Range: ${p['Range / Subrange'] || '—'}</p>
+          </div>`;
+        card.addEventListener('click', () => {
+          const url = new URL('peak.html', window.location.origin);
+          url.searchParams.set('slug', p.slug);
+          // When embedded in Wix, navigate the top frame to ensure full page
+          // navigation instead of staying inside the iframe.
+          window.open(url.toString(), '_top');
+        });
+        return card;
+      }
+
+      function renderGrid(list){
+        const grid = document.getElementById('grid');
+        const empty = document.getElementById('emptyMessage');
+        grid.innerHTML = '';
+        if (!list || list.length === 0){
+          empty.hidden = false;
+          scheduleResize();
+          return;
+        }
+        empty.hidden = true;
+        list.forEach(p => grid.appendChild(createCard(p)));
+        setupLazyLoading();
+        scheduleResize();
+      }
+
+      function setupLazyLoading(){
+        if (!('IntersectionObserver' in window)) return;
+        const observer = new IntersectionObserver((entries, obs) => {
+          entries.forEach(entry => {
+            if(entry.isIntersecting){
+              const img = entry.target;
+              const real = img.getAttribute('data-src');
+              if(real){ img.src = real; img.removeAttribute('data-src'); }
+              obs.unobserve(img);
+            }
+          });
+        }, { rootMargin: '200px' });
+        document.querySelectorAll('img[data-src]').forEach(img => observer.observe(img));
+      }
+
+      function scheduleResize(){
+        // Post the height to the parent frame (Wix) after a slight delay to
+        // ensure images have loaded and layout has settled.
+        setTimeout(() => {
+          const h = document.documentElement.scrollHeight;
+          if(window.parent){
+            window.parent.postMessage({ type:'resize', height:h }, '*');
+          }
+        }, 100);
+      }
+
+      async function init(){
+        try{
+          peaks = await fetchPeaks();
+          renderGrid(peaks);
+        }catch(err){
+          console.error(err);
+          document.getElementById('emptyMessage').textContent = 'Error loading peaks';
+          document.getElementById('emptyMessage').hidden = false;
+        }
+        const search = document.getElementById('searchInput');
+        search.addEventListener('input', (e) => {
+          const q = e.target.value.trim().toLowerCase();
+          const filtered = peaks.filter(p => p.peakName.toLowerCase().includes(q));
+          renderGrid(filtered);
+        });
+      }
+      window.addEventListener('load', () => {
+        init();
+        // Also adjust height on resize events from the browser.
+        window.addEventListener('resize', scheduleResize);
+      });
+    </script>
+  </body>
+</html>
