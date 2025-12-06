@@ -261,16 +261,24 @@
       function createCard(p){
         const card = document.createElement('article');
         card.className = 'card';
-        // Determine thumbnail: use first photo url if available
+        // Determine thumbnail: use the first photo's URL if available.  The
+        // API stores each photo as either a string or an object with a
+        // `url` property.  Fallback to a placeholder when no photos exist.
         let thumbSrc = PLACEHOLDER;
         if (Array.isArray(p.photos) && p.photos.length > 0) {
           const first = p.photos[0];
-          if (typeof first === 'string') thumbSrc = first;
-          else if (first && first.url) thumbSrc = first.url;
+          if (typeof first === 'string') {
+            thumbSrc = first;
+          } else if (first && first.url) {
+            thumbSrc = first.url;
+          }
         }
+        // We assign src directly to ensure images load even if the
+        // IntersectionObserver fails.  `loading="lazy"` still hints to
+        // the browser to defer off‑screen images.
         card.innerHTML = `
           <div class="thumb">
-            <img src="${PLACEHOLDER}" data-src="${thumbSrc}" alt="${p.peakName} thumbnail" loading="lazy" decoding="async">
+            <img src="${thumbSrc}" alt="${p.peakName} thumbnail" loading="lazy" decoding="async">
           </div>
           <div class="body">
             <h3>${p.peakName}</h3>
