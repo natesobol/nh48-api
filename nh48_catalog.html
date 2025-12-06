@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NH48 Peak Catalog (Debug/Resilient)</title>
+    <title>NH48 Peak Catalog (Enhanced)</title>
     <!--
-      This page lists New Hampshire's forty‑eight 4000‑footer peaks in a search‑able
-      grid. It includes extensive debugging and fallback logic to help diagnose
-      issues when the JSON fails to load.  Unlike the simple catalog, this
-      version tries multiple API endpoints and reports detailed status and
-      errors to a debug panel.  If the data can't be loaded, you will see
-      diagnostic messages explaining what went wrong.  Use this file in Wix
-      embeds or directly via GitHub Pages to troubleshoot loading problems.
+      Enhanced catalog page for the NH48 peak list.  This version builds on
+      the resilient catalog by adding autocomplete search, sorting and
+      filtering controls while retaining robust error handling and debug
+      logging.  Autocomplete suggestions strip common words (Mount,
+      Mountain, Peak) to improve relevance.  A controls panel provides
+      sorting by name or elevation and filtering by range/difficulty.  The
+      UI remains self-contained for easy embedding in Wix or GitHub Pages.
     -->
     <style>
       :root{
@@ -33,7 +33,7 @@
         text-rendering:optimizeLegibility;
       }
       .wrap{
-        max-width:1000px;
+        max-width:1100px;
         margin:0 auto;
         padding:16px;
       }
@@ -43,22 +43,42 @@
         line-height:1.2;
       }
       header p{
-        margin:4px 0 20px;
+        margin:4px 0 16px;
         color:var(--muted);
       }
       .search{
-        margin-bottom:14px;
+        margin-bottom:12px;
       }
       .search input{
         width:100%;
-        height:42px;
+        height:40px;
         padding:0 14px;
         font-size:16px;
         border:1px solid var(--stroke);
-        border-radius:12px;
+        border-radius:10px;
         background:var(--card);
         color:var(--ink);
         outline:none;
+      }
+      .controls{
+        display:flex;
+        flex-wrap:wrap;
+        gap:12px;
+        margin-bottom:14px;
+        align-items:center;
+      }
+      .controls label{
+        font-size:0.85rem;
+        color:var(--muted);
+        margin-right:4px;
+      }
+      .controls select{
+        background:var(--card);
+        color:var(--ink);
+        border:1px solid var(--stroke);
+        border-radius:10px;
+        padding:6px 10px;
+        font-size:0.9rem;
       }
       .grid{
         display:grid;
@@ -101,7 +121,7 @@
       }
       .body p{
         margin:2px 0;
-        font-size:0.9rem;
+        font-size:0.85rem;
         color:var(--muted);
       }
       .empty{
@@ -132,67 +152,79 @@
         <h1>NH48 Peak Catalog</h1>
         <p>Browse New Hampshire's forty‑eight 4000‑footers. Click a peak to view more details. If errors occur, details will appear below.</p>
       </header>
+      <!-- search with datalist for suggestions -->
       <div class="search">
-        <input type="text" id="searchInput" placeholder="Search peaks by name…" />
+        <input type="text" id="searchInput" list="nameSuggestions" placeholder="Search peaks by name…" />
+        <datalist id="nameSuggestions"></datalist>
+      </div>
+      <!-- controls for sorting and filtering -->
+      <div class="controls">
+        <div class="control">
+          <label for="sortSelect">Sort by:</label>
+          <select id="sortSelect">
+            <option value="name">Name (A–Z)</option>
+            <option value="elev-asc">Elevation ↑</option>
+            <option value="elev-desc">Elevation ↓</option>
+            <option value="prom-asc">Prominence ↑</option>
+            <option value="prom-desc">Prominence ↓</option>
+          </select>
+        </div>
+        <div class="control" id="rangeFilterContainer">
+          <label for="rangeFilter">Range:</label>
+          <select id="rangeFilter">
+            <option value="">All</option>
+          </select>
+        </div>
+        <div class="control" id="difficultyFilterContainer">
+          <label for="difficultyFilter">Difficulty:</label>
+          <select id="difficultyFilter">
+            <option value="">All</option>
+          </select>
+        </div>
       </div>
       <div id="grid" class="grid"></div>
       <div id="emptyMessage" class="empty" hidden>No peaks found.</div>
       <div id="debug" class="debug" hidden></div>
     </div>
     <script>
-      /*
-        We attempt to load the NH48 API from multiple locations in order to
-        maximise the chance of success and provide clear diagnostics when
-        failures occur.  These URLs are tried in order until a successful
-        response is parsed.  You can add your own mirror endpoints here.
-      */
+      // API endpoints to attempt in order.  We start with jsDelivr for CORS
+      // compatibility then fall back to raw GitHub.  Extend this array as
+      // needed to include mirrors.
       const API_URLS = [
-        // jsDelivr (GH CDN) - typically CORS-friendly
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
-        // Raw GitHub - some browsers restrict this due to missing CORS
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
-      // Placeholder image used when no photos are available.  This is an
-      // inline SVG encoded as a data URL so it requires no network fetch.
+      // Placeholder image when no photo is available
       const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
         `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">no image</text></svg>`
       );
 
       let peaks = [];
+      let activeSort = 'name';
+      const filters = {
+        range: '',
+        difficulty: ''
+      };
 
-      // Debug helper: append messages to the debug panel.  Each call
-      // displays the panel (if hidden) and appends the message.  The
-      // message can include newlines.  We prefix messages with a time
-      // stamp for easier reading.
-      function showDebug(message){
+      function showDebug(msg){
         const dbg = document.getElementById('debug');
-        const now = new Date().toLocaleTimeString();
+        const time = new Date().toLocaleTimeString();
         dbg.hidden = false;
-        dbg.textContent += (dbg.textContent ? '\n\n' : '') + '[' + now + '] ' + message;
+        dbg.textContent += (dbg.textContent ? '\n\n' : '') + '[' + time + '] ' + msg;
       }
 
-      /*
-        Clean the raw JSON by removing embedded citation markers and
-        repairing missing commas or trailing commas.  Without this, the
-        presence of citation markers in the API will break JSON.parse().
-      */
       function cleanJSON(raw){
         let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
         cleaned = cleaned.replace(/\]\s*\n\s*"/g, '],\n  "');
-        // Remove trailing commas before closing braces or brackets
+        cleaned = cleaned.replace(/}\s*\n\s*{\s*"/g, '},\n  "');
+        cleaned = cleaned.replace(/}\s*\n\s*"/g, '},\n  "');
         cleaned = cleaned.replace(/,\s*}/g, '}');
         cleaned = cleaned.replace(/,\s*]/g, ']');
         return cleaned;
       }
 
-      /*
-        Try to fetch the API JSON from each URL in API_URLS until one
-        succeeds.  For each attempt, we log detailed diagnostic info
-        including HTTP status, content length and JSON parse errors.  If
-        all attempts fail, we throw an error to be handled by init().
-      */
       async function fetchPeaks(){
-        for(let i=0; i<API_URLS.length; i++){
+        for(let i=0;i<API_URLS.length;i++){
           const url = API_URLS[i];
           try{
             showDebug(`Attempt ${i+1}/${API_URLS.length}: fetching ${url}`);
@@ -207,11 +239,10 @@
             let obj;
             try{
               obj = JSON.parse(cleaned);
-            }catch(parseErr){
-              showDebug(`  JSON parse error: ${parseErr.message}`);
+            }catch(err){
+              showDebug(`  JSON parse error: ${err.message}`);
               continue;
             }
-            // Convert dictionary keyed by slug into array of objects with slug
             const arr = Object.keys(obj).map(slug => {
               const p = obj[slug] || {};
               p.slug = slug;
@@ -220,9 +251,8 @@
             });
             showDebug(`  Parsed ${arr.length} peaks successfully`);
             return arr;
-          }catch(fetchErr){
-            showDebug(`  Fetch error: ${fetchErr.message || fetchErr}`);
-            // continue to next URL
+          }catch(err){
+            showDebug(`  Fetch error: ${err.message || err}`);
           }
         }
         throw new Error('All API endpoints failed');
@@ -231,8 +261,13 @@
       function createCard(p){
         const card = document.createElement('article');
         card.className = 'card';
-        // Determine thumbnail source: use first photo if available, else placeholder.
-        const thumbSrc = (Array.isArray(p.photos) && p.photos.length > 0) ? p.photos[0] : PLACEHOLDER;
+        // Determine thumbnail: use first photo url if available
+        let thumbSrc = PLACEHOLDER;
+        if (Array.isArray(p.photos) && p.photos.length > 0) {
+          const first = p.photos[0];
+          if (typeof first === 'string') thumbSrc = first;
+          else if (first && first.url) thumbSrc = first.url;
+        }
         card.innerHTML = `
           <div class="thumb">
             <img src="${PLACEHOLDER}" data-src="${thumbSrc}" alt="${p.peakName} thumbnail" loading="lazy" decoding="async">
@@ -243,31 +278,12 @@
             <p>Range: ${p['Range / Subrange'] || '—'}</p>
           </div>`;
         card.addEventListener('click', () => {
-          // Build a URL to the details page relative to this file.  We use
-          // nh48_peak.html specifically (mirroring our GitHub file name)
-          // and preserve query parameters for the slug.  Opening in the
-          // _top frame ensures full page navigation in Wix if embedded.
           const base = window.location.href.replace(/[^\/]*$/, '');
           const url = new URL('nh48_peak.html', base);
           url.searchParams.set('slug', p.slug);
           window.open(url.toString(), '_top');
         });
         return card;
-      }
-
-      function renderGrid(list){
-        const grid = document.getElementById('grid');
-        const empty = document.getElementById('emptyMessage');
-        grid.innerHTML = '';
-        if (!list || list.length === 0){
-          empty.hidden = false;
-          scheduleResize();
-          return;
-        }
-        empty.hidden = true;
-        list.forEach(p => grid.appendChild(createCard(p)));
-        setupLazyLoading();
-        scheduleResize();
       }
 
       function setupLazyLoading(){
@@ -286,36 +302,131 @@
       }
 
       function scheduleResize(){
-        // Post the height to the parent frame (Wix) after a slight delay to
-        // ensure images have loaded and layout has settled.
         setTimeout(() => {
           const h = document.documentElement.scrollHeight;
-          if(window.parent){
-            window.parent.postMessage({ type:'resize', height:h }, '*');
-          }
+          if(window.parent){ window.parent.postMessage({ type:'resize', height:h }, '*'); }
         }, 100);
+      }
+
+      function renderGrid(list){
+        const grid = document.getElementById('grid');
+        const empty = document.getElementById('emptyMessage');
+        grid.innerHTML = '';
+        if(!list || list.length === 0){
+          empty.hidden = false;
+          scheduleResize();
+          return;
+        }
+        empty.hidden = true;
+        list.forEach(p => grid.appendChild(createCard(p)));
+        setupLazyLoading();
+        scheduleResize();
+      }
+
+      // Build suggestions list, stripping common words
+      function updateSuggestions(){
+        const list = peaks.map(p => p.peakName.replace(/\b(Mount|Mountain|Peak)\b/gi, '').trim()).filter(Boolean);
+        const seen = new Set();
+        const unique = [];
+        list.forEach(name => { const key = name.toLowerCase(); if(!seen.has(key)){ seen.add(key); unique.push(name); } });
+        const dl = document.getElementById('nameSuggestions');
+        dl.innerHTML = unique.sort().map(name => `<option value="${name}"></option>`).join('');
+      }
+
+      // Populate filter selects with unique values from dataset
+      function populateFilters(){
+        const rangeSel = document.getElementById('rangeFilter');
+        const difficultySel = document.getElementById('difficultyFilter');
+        const ranges = new Set();
+        const diffs = new Set();
+        peaks.forEach(p => {
+          const r = p['Range / Subrange'];
+          if(r) ranges.add(r);
+          const d = p['Difficulty'] || p.Difficulty;
+          if(d) diffs.add(d);
+        });
+        [...ranges].sort().forEach(r => {
+          const opt = document.createElement('option');
+          opt.value = r;
+          opt.textContent = r;
+          rangeSel.appendChild(opt);
+        });
+        [...diffs].sort().forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d;
+          opt.textContent = d;
+          difficultySel.appendChild(opt);
+        });
+      }
+
+      function applyFilters(list){
+        let filtered = list;
+        if(filters.range){ filtered = filtered.filter(p => p['Range / Subrange'] === filters.range); }
+        if(filters.difficulty){ filtered = filtered.filter(p => (p['Difficulty'] || p.Difficulty) === filters.difficulty); }
+        return filtered;
+      }
+
+      function sortPeaks(list){
+        const arr = list.slice();
+        arr.sort((a, b) => {
+          switch(activeSort){
+            case 'name':
+              return (a.peakName || '').localeCompare(b.peakName || '');
+            case 'elev-asc':
+              return (a['Elevation (ft)'] || 0) - (b['Elevation (ft)'] || 0);
+            case 'elev-desc':
+              return (b['Elevation (ft)'] || 0) - (a['Elevation (ft)'] || 0);
+            case 'prom-asc':
+              return (a['Prominence (ft)'] || 0) - (b['Prominence (ft)'] || 0);
+            case 'prom-desc':
+              return (b['Prominence (ft)'] || 0) - (a['Prominence (ft)'] || 0);
+          }
+          return 0;
+        });
+        return arr;
+      }
+
+      function updateDisplay(){
+        let list = peaks;
+        // Apply search filter from input
+        const searchVal = document.getElementById('searchInput').value.trim().toLowerCase();
+        if(searchVal){
+          list = list.filter(p => p.peakName && p.peakName.toLowerCase().includes(searchVal));
+        }
+        list = applyFilters(list);
+        list = sortPeaks(list);
+        renderGrid(list);
       }
 
       async function init(){
         try{
           peaks = await fetchPeaks();
           showDebug('Loaded ' + peaks.length + ' peaks');
-          renderGrid(peaks);
+          populateFilters();
+          updateSuggestions();
+          updateDisplay();
         }catch(err){
           console.error(err);
           document.getElementById('emptyMessage').textContent = 'Error loading peaks';
           document.getElementById('emptyMessage').hidden = false;
         }
-        const search = document.getElementById('searchInput');
-        search.addEventListener('input', (e) => {
-          const q = e.target.value.trim().toLowerCase();
-          const filtered = peaks.filter(p => p.peakName && p.peakName.toLowerCase().includes(q));
-          renderGrid(filtered);
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', updateDisplay);
+        document.getElementById('sortSelect').addEventListener('change', (e) => {
+          activeSort = e.target.value;
+          updateDisplay();
+        });
+        document.getElementById('rangeFilter').addEventListener('change', (e) => {
+          filters.range = e.target.value;
+          updateDisplay();
+        });
+        document.getElementById('difficultyFilter').addEventListener('change', (e) => {
+          filters.difficulty = e.target.value;
+          updateDisplay();
         });
       }
       window.addEventListener('load', () => {
         init();
-        // Also adjust height on resize events from the browser.
         window.addEventListener('resize', scheduleResize);
       });
     </script>
