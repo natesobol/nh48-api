@@ -36,6 +36,9 @@
         margin:0 auto;
         padding:16px;
       }
+      @media(max-width:640px){
+        .wrap{ padding:12px; }
+      }
       a.back{
         color:var(--accent);
         text-decoration:none;
@@ -47,6 +50,9 @@
         margin:0 0 16px;
         font-size:clamp(22px,4vw,30px);
         line-height:1.2;
+      }
+      @media(max-width:640px){
+        h1{ margin:0 0 12px; font-size:clamp(18px,5vw,24px); }
       }
       .media{
         background:var(--card);
@@ -121,7 +127,7 @@
         margin-bottom:16px;
       }
       @media(max-width:560px){
-        .facts{ grid-template-columns:1fr; }
+        .facts{ grid-template-columns:1fr; gap:8px; margin-bottom:12px; }
       }
       .facts div{
         background:var(--panel);
@@ -129,6 +135,9 @@
         border-radius:10px;
         padding:8px 12px;
         font-size:0.9rem;
+      }
+      @media(max-width:640px){
+        .facts div{ padding:10px; font-size:0.85rem; }
       }
       .facts span.value{
         float:right;
@@ -141,6 +150,9 @@
         color:var(--accent);
         text-transform:uppercase;
         letter-spacing:0.5px;
+      }
+      @media(max-width:640px){
+        .section-title{ margin:16px 0 10px 0; font-size:0.85rem; }
       }
       .info-grid{
         display:grid;
@@ -155,6 +167,9 @@
         padding:12px;
         font-size:0.9rem;
       }
+      @media(max-width:640px){
+        .info-panel{ padding:10px; font-size:0.85rem; }
+      }
       .info-label{
         font-weight:600;
         color:var(--accent);
@@ -162,6 +177,9 @@
         margin-bottom:6px;
         text-transform:uppercase;
         letter-spacing:0.5px;
+      }
+      @media(max-width:640px){
+        .info-label{ font-size:0.8rem; margin-bottom:4px; }
       }
       .info-value{
         color:var(--ink);
@@ -313,8 +331,9 @@
           slide.className = 'slide' + (i === 0 ? ' active' : '');
           const img = document.createElement('img');
           img.alt = `${altBase} image ${i+1} of ${images.length}`;
-          if(i === 0){ img.src = src; }
-          else {
+          if(i === 0){ 
+            img.src = src; 
+          } else {
             img.loading = 'lazy';
             img.decoding = 'async';
             img.setAttribute('data-src', src);
@@ -335,6 +354,8 @@
         document.getElementById('nextBtn').onclick = next;
         // Start automatic cycling
         startCarousel();
+        // Setup lazy loading for carousel images
+        setupCarouselLazyLoading();
       }
 
       function updateSlides(){
@@ -369,6 +390,30 @@
       }
       function stopCarousel(){
         if(carouselTimer){ clearInterval(carouselTimer); carouselTimer = null; }
+      }
+
+      function setupCarouselLazyLoading(){
+        if (!('IntersectionObserver' in window)) {
+          // Fallback: load all images immediately
+          carouselImgs.forEach(img => {
+            const src = img.getAttribute('data-src');
+            if(src){ img.src = src; img.removeAttribute('data-src'); }
+          });
+          return;
+        }
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if(entry.isIntersecting){
+              const img = entry.target;
+              const src = img.getAttribute('data-src');
+              if(src){ img.src = src; img.removeAttribute('data-src'); }
+              observer.unobserve(img);
+            }
+          });
+        }, { rootMargin: '100px' });
+        carouselImgs.forEach(img => {
+          if(img.getAttribute('data-src')){ observer.observe(img); }
+        });
       }
 
       function scheduleResize(){
