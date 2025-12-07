@@ -1,23 +1,13 @@
 # 🏔️ **NH48 API — A Structured, Open Data & Media System for New Hampshire’s 4000-Footers**
 
-The **NH48 API** is a comprehensive, self-contained dataset and media delivery system centered on the **48 four-thousand-foot peaks of the White Mountain National Forest**. It provides:
+The **NH48 API** is a comprehensive, self-contained dataset and media delivery system centered on the **48 four-thousand-foot peaks of the White Mountain National Forest**. It provides information soley intended :
 
 * A structured peak database
 * Trail, terrain, and route metadata
 * Photo manifests with EXIF-driven metadata
 * A public JSON interface for web apps
 * A scalable static CDN-based distribution model
-
-This project powers multiple front-end applications, including:
-
-* **NH48 Peak Catalog**
-* **NH48 Peak Details Viewer**
-* **WMNF Trails API Browser**
-* **HRT Plant Catalog**
-
 …and can also be consumed by any external application, script, or map tool.
-
----
 
 # 🌲 **Project Overview**
 
