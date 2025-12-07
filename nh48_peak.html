@@ -6,13 +6,11 @@
     <title>NH48 Peak Details (Enhanced with Metadata)</title>
     <!--
       Standalone details view for a single NH48 peak with robust error handling.
-      This version mirrors the styling of the original peak page but adds
-      diagnostic output, multiple API fallbacks and a dynamic metadata panel
-      beneath the photo carousel.  Each photo’s EXIF-derived metadata from
-      `nh48.json` is displayed in a dark panel with dotted separators when
-      the corresponding slide is active.  A circular countdown timer
-      indicates time remaining until the next automatic slide change.  The
-      carousel duration has been doubled for a more relaxed viewing pace.
+      This version adds:
+        • A photo carousel with a circular countdown timer.
+        • A “Current Photo Metadata” panel that updates per slide.
+        • A “General Peak Info” panel with dotted-line rows.
+        • Side-by-side layout of metadata + general info on larger screens.
     -->
     <style>
       :root{
@@ -55,6 +53,8 @@
       @media(max-width:640px){
         h1{ margin:0 0 12px; font-size:clamp(18px,5vw,24px); }
       }
+
+      /* MEDIA / CAROUSEL ---------------------------------------------------- */
       .media{
         background:var(--card);
         border:1px solid var(--stroke);
@@ -121,13 +121,14 @@
         cursor:pointer;
         pointer-events:auto;
       }
-      /* Countdown timer styles */
+
+      /* Countdown timer styles ---------------------------------------------- */
       .timer{
         position:absolute;
         top:8px;
         right:8px;
-        width:50px;
-        height:50px;
+        width:56px;
+        height:56px;
         display:flex;
         align-items:center;
         justify-content:center;
@@ -148,33 +149,92 @@
       .timer-text{
         position:absolute;
         color:var(--accent);
-        font-size:0.75rem;
+        font-size:0.8rem;
         font-weight:600;
         pointer-events:none;
       }
-      .facts{
+
+      /* SHARED PANEL + ROW STYLE -------------------------------------------- */
+      .meta-info-row{
         display:grid;
-        gap:10px;
         grid-template-columns:1fr 1fr;
+        gap:12px;
         margin-bottom:16px;
       }
-      @media(max-width:560px){
-        .facts{ grid-template-columns:1fr; gap:8px; margin-bottom:12px; }
+      @media(max-width:800px){
+        .meta-info-row{
+          grid-template-columns:1fr;
+        }
       }
-      .facts div{
+      .metadata-panel{
         background:var(--panel);
         border:1px solid var(--stroke);
         border-radius:10px;
-        padding:8px 12px;
+        padding:12px;
         font-size:0.9rem;
+        word-wrap:break-word;
+        white-space:normal;
       }
-      @media(max-width:640px){
-        .facts div{ padding:10px; font-size:0.85rem; }
+      .metadata-header{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:6px;
+        gap:8px;
       }
-      .facts span.value{
-        float:right;
+      .metadata-title{
+        font-weight:600;
+        color:var(--accent);
+        font-size:0.85rem;
+        text-transform:uppercase;
+        letter-spacing:0.5px;
+      }
+      .meta-toggle{
+        background:transparent;
+        border:none;
+        color:var(--muted);
+        font-size:0.8rem;
+        cursor:pointer;
+        padding:0;
+      }
+      .metadata-primary,
+      .metadata-extra{
+        width:100%;
+      }
+      .metadata-extra{
+        display:none;
+        margin-top:4px;
+      }
+      .metadata-extra.open{
+        display:block;
+      }
+      .metadata-row{
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:12px;
+        padding:6px 0;
+        border-bottom:1px dotted var(--stroke);
+      }
+      .metadata-row:last-child{
+        border-bottom:none;
+      }
+      .metadata-label{
+        font-weight:600;
+        color:var(--muted);
+        font-size:0.8rem;
+        text-transform:uppercase;
+        letter-spacing:0.3px;
+        max-width:45%;
+      }
+      .metadata-value{
         color:var(--ink);
+        font-size:0.9rem;
+        text-align:right;
+        flex:1 1 auto;
+        word-break:break-word;
       }
+
       .section-title{
         margin:20px 0 12px 0;
         font-size:0.95rem;
@@ -219,45 +279,8 @@
         word-wrap:break-word;
         white-space:normal;
       }
-      .placeholder{
-        color:var(--muted);
-        font-style:italic;
-      }
-      /* Metadata panel styles */
-      .metadata-panel{
-        background:var(--panel);
-        border:1px solid var(--stroke);
-        border-radius:10px;
-        padding:12px;
-        margin-bottom:16px;
-        font-size:0.9rem;
-      }
-      .metadata-row{
-        display:flex;
-        justify-content:space-between;
-        align-items:flex-start;
-        gap:12px;
-        padding:6px 0;
-        border-bottom:1px dotted var(--stroke);
-      }
-      .metadata-row:last-child{
-        border-bottom:none;
-      }
-      .metadata-label{
-        font-weight:600;
-        color:var(--muted);
-        font-size:0.8rem;
-        text-transform:uppercase;
-        letter-spacing:0.3px;
-      }
-      .metadata-value{
-        color:var(--ink);
-        font-size:0.9rem;
-        text-align:right;
-        flex:1 1 auto;
-        word-break:break-word;
-      }
-      /* Debug panel styles */
+
+      /* Debug panel --------------------------------------------------------- */
       .debug{
         margin-top:20px;
         padding:12px;
@@ -277,6 +300,8 @@
     <div class="wrap">
       <a href="nh48_catalog.html" class="back">← Back to catalog</a>
       <h1 id="peakTitle">Loading…</h1>
+
+      <!-- MEDIA / CAROUSEL ---------------------------------------------------->
       <div class="media" id="media" hidden>
         <div class="carousel" id="carousel"></div>
         <div class="dots" id="dots"></div>
@@ -286,49 +311,57 @@
         </div>
         <!-- Countdown timer overlay -->
         <div class="timer" id="carouselTimer" hidden>
-          <svg width="50" height="50" viewBox="0 0 40 40">
+          <svg viewBox="0 0 40 40">
             <circle id="timerRing" class="timer-ring" cx="20" cy="20" r="18"></circle>
           </svg>
           <span id="timerText" class="timer-text"></span>
         </div>
       </div>
-      <div id="photoMetadataPanel" class="metadata-panel" hidden></div>
-      <div class="facts" id="facts" hidden>
-        <div>Elevation <span class="value" id="factElev">—</span></div>
-        <div>Prominence <span class="value" id="factProm">—</span></div>
-        <div>Range <span class="value" id="factRange">—</span></div>
-        <div>Trail Type <span class="value" id="factTrail">—</span></div>
-        <div>Difficulty <span class="value" id="factDifficulty">—</span></div>
-        <div>Exposure <span class="value" id="factExposure">—</span></div>
+
+      <!-- METADATA + GENERAL INFO SIDE BY SIDE -------------------------------->
+      <div class="meta-info-row">
+        <div id="photoMetadataPanel" class="metadata-panel" hidden></div>
+        <div id="generalInfoPanel" class="metadata-panel" hidden></div>
       </div>
+
+      <!-- OTHER SECTIONS ------------------------------------------------------>
       <div class="section-title">Hiking Routes</div>
       <div class="info-grid" id="routesGrid" hidden></div>
-      <div class="section-title">Trail & Terrain</div>
+
+      <div class="section-title">Trail &amp; Terrain</div>
       <div class="info-grid" id="terrainGrid" hidden></div>
-      <div class="section-title">Conditions & Access</div>
+
+      <div class="section-title">Conditions &amp; Access</div>
       <div class="info-grid" id="conditionsGrid" hidden></div>
+
       <div id="debug" class="debug" hidden></div>
     </div>
+
     <script>
-      /* API endpoints list remains unchanged */
+      /* API endpoints */
       const API_URLS = [
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
+
+      /* Fallback image */
       const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
         `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">no image</text></svg>`
       );
+
       function showDebug(msg){
         const dbg = document.getElementById('debug');
         const time = new Date().toLocaleTimeString();
         dbg.hidden = false;
         dbg.textContent += (dbg.textContent ? '\n\n' : '') + '[' + time + '] ' + msg;
       }
+
       function cleanJSON(raw){
         let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
         cleaned = cleaned.replace(/\/\*\s*Lines?\s+\d+[\d\-,\s]*omitted\s*\*\//g, '');
         return cleaned;
       }
+
       async function fetchPeaks(){
         for(let i=0; i<API_URLS.length; i++){
           const url = API_URLS[i];
@@ -345,8 +378,8 @@
             let data;
             try{
               data = JSON.parse(cleaned);
-            }catch(parseErr){
-              showDebug(`  JSON parse error: ${parseErr.message}`);
+            }catch(err){
+              showDebug(`  JSON parse error: ${err.message}`);
               continue;
             }
             showDebug('  Parsed JSON successfully');
@@ -357,91 +390,244 @@
         }
         throw new Error('All API endpoints failed');
       }
+
       function getSlug(){
         const params = new URLSearchParams(window.location.search);
         return params.get('slug');
       }
-      // Carousel state
+
+      /* CAROUSEL + TIMER STATE ----------------------------------------------- */
       let carouselImgs = [];
       let carouselIdx = 0;
       let carouselTimer = null;
       let timerInterval = null;
       let photoMetaData = [];
       let currentDelay = 8000;
-      const BASE_DELAY = 8000;
-      // Update metadata panel for current slide
+      const BASE_DELAY = 8000; // doubled from 4s
+
+      /* METADATA PANEL -------------------------------------------------------- */
+      function makeRow(label, value){
+        const row = document.createElement('div');
+        row.className = 'metadata-row';
+
+        const lab = document.createElement('div');
+        lab.className = 'metadata-label';
+        lab.textContent = label;
+
+        const val = document.createElement('div');
+        val.className = 'metadata-value';
+        val.textContent = value;
+
+        row.appendChild(lab);
+        row.appendChild(val);
+        return row;
+      }
+
+      function humanLabelFromKey(key){
+        const map = {
+          season: 'Season',
+          timeOfDay: 'Time of Day',
+          orientation: 'Orientation',
+          captureDate: 'Capture Date',
+          cameraMaker: 'Camera Maker',
+          cameraModel: 'Camera Model',
+          camera: 'Camera',
+          lens: 'Lens',
+          fStop: 'F Stop',
+          shutterSpeed: 'Shutter Speed',
+          iso: 'ISO',
+          exposureBias: 'Exposure Bias',
+          focalLength: 'Focal Length',
+          flashMode: 'Flash Mode',
+          meteringMode: 'Metering Mode',
+          maxAperture: 'Max Aperture',
+          author: 'Author',
+          dimensions: 'Dimensions',
+          fileSize: 'File Size',
+          fileCreateDate: 'File Create Date',
+          fileModifiedDate: 'File Modified Date',
+          rating: 'Rating'
+        };
+        if(map[key]) return map[key];
+        return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+      }
+
+      // Always-visible keys
+      const PRIMARY_META_KEYS = [
+        'season',
+        'timeOfDay',
+        'orientation',
+        'captureDate',
+        'focalLength',
+        'author'
+      ];
+      const SKIP_META_KEYS = new Set(['photoId','filename','url','isPrimary','tags']);
+
       function updateMetadata(i){
         const panel = document.getElementById('photoMetadataPanel');
-        if(!photoMetaData || !photoMetaData[i]){
-          panel.innerHTML = '';
-          panel.hidden = true;
-          return;
-        }
-        const meta = photoMetaData[i];
         panel.innerHTML = '';
-        let entries = Object.entries(meta).filter(([k,v]) => v !== null && v !== '' && !['photoId','filename','url','isPrimary','tags'].includes(k));
-        if(entries.length === 0){
-          panel.innerHTML = '<div class="metadata-row"><div class="metadata-label">No metadata</div><div class="metadata-value"></div></div>';
+
+        const header = document.createElement('div');
+        header.className = 'metadata-header';
+
+        const title = document.createElement('div');
+        title.className = 'metadata-title';
+        title.textContent = 'Current Photo Metadata';
+
+        header.appendChild(title);
+        panel.appendChild(header);
+
+        const primaryWrap = document.createElement('div');
+        primaryWrap.className = 'metadata-primary';
+        panel.appendChild(primaryWrap);
+
+        const extraWrap = document.createElement('div');
+        extraWrap.className = 'metadata-extra';
+        panel.appendChild(extraWrap);
+
+        const meta = (photoMetaData && photoMetaData[i]) || null;
+
+        if(!meta || typeof meta !== 'object'){
+          primaryWrap.appendChild(makeRow('Metadata', 'Not available'));
           panel.hidden = false;
           return;
         }
-        entries.forEach(([key, value], idx) => {
-          const row = document.createElement('div');
-          row.className = 'metadata-row';
-          const label = document.createElement('div');
-          label.className = 'metadata-label';
-          // Convert camelCase / pascalCase keys into spaced labels
-          label.textContent = key.replace(/([A-Z])/g, ' $1').replace(/^./, s=>s.toUpperCase());
-          const val = document.createElement('div');
-          val.className = 'metadata-value';
-          val.textContent = value;
-          row.appendChild(label);
-          row.appendChild(val);
-          panel.appendChild(row);
+
+        // Fill primary entries in specified order
+        let hasPrimary = false;
+        PRIMARY_META_KEYS.forEach(key => {
+          const val = meta[key];
+          if(val !== undefined && val !== null && String(val).trim() !== ''){
+            primaryWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
+            hasPrimary = true;
+          }
         });
+
+        // Collect all other entries
+        const extras = [];
+        for(const [key, value] of Object.entries(meta)){
+          if(SKIP_META_KEYS.has(key)) continue;
+          if(PRIMARY_META_KEYS.includes(key)) continue;
+          if(value === undefined || value === null || String(value).trim() === '') continue;
+          extras.push([key, value]);
+        }
+        extras.sort((a,b) => a[0].localeCompare(b[0]));
+
+        let hasExtra = false;
+        extras.forEach(([key,val]) => {
+          extraWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
+          hasExtra = true;
+        });
+
+        if(!hasPrimary && !hasExtra){
+          primaryWrap.appendChild(makeRow('Metadata', 'Not available'));
+        }
+
+        if(hasExtra){
+          const toggleBtn = document.createElement('button');
+          toggleBtn.type = 'button';
+          toggleBtn.className = 'meta-toggle';
+          toggleBtn.textContent = 'More details ▾';
+          header.appendChild(toggleBtn);
+
+          toggleBtn.addEventListener('click', () => {
+            const open = extraWrap.classList.toggle('open');
+            toggleBtn.textContent = open ? 'Less details ▴' : 'More details ▾';
+          });
+        }
+
         panel.hidden = false;
       }
+
+      /* GENERAL PEAK INFO PANEL ---------------------------------------------- */
+      function buildGeneralInfo(p){
+        const panel = document.getElementById('generalInfoPanel');
+        panel.innerHTML = '';
+
+        const header = document.createElement('div');
+        header.className = 'metadata-header';
+
+        const title = document.createElement('div');
+        title.className = 'metadata-title';
+        title.textContent = 'General Peak Info';
+
+        header.appendChild(title);
+        panel.appendChild(header);
+
+        const body = document.createElement('div');
+        body.className = 'metadata-primary';
+        panel.appendChild(body);
+
+        const elev = p['Elevation (ft)'];
+        const prom = p['Prominence (ft)'];
+
+        body.appendChild(makeRow('Elevation', elev ? `${elev}'` : '—'));
+        body.appendChild(makeRow('Prominence', prom ? `${prom}'` : '—'));
+        body.appendChild(makeRow('Range', p['Range / Subrange'] || '—'));
+        body.appendChild(makeRow('Trail Type', p['Trail Type'] || '—'));
+        body.appendChild(makeRow('Difficulty', p['Difficulty'] || '—'));
+        body.appendChild(makeRow('Exposure', p['Exposure Level'] || p['Weather Exposure Rating'] || '—'));
+
+        panel.hidden = false;
+      }
+
+      /* CAROUSEL ------------------------------------------------------------- */
       function buildCarousel(images, meta, altBase){
         const carouselEl = document.getElementById('carousel');
         const dotsEl = document.getElementById('dots');
         carouselEl.innerHTML = '';
         dotsEl.innerHTML = '';
+
         carouselImgs = [];
         carouselIdx = 0;
         photoMetaData = meta || [];
-        if(!images || images.length === 0){ images = [PLACEHOLDER]; }
+
+        if(!images || images.length === 0){
+          images = [PLACEHOLDER];
+          photoMetaData = [{}];
+        }
+
         images.forEach((src, i) => {
           const slide = document.createElement('div');
           slide.className = 'slide' + (i === 0 ? ' active' : '');
+
           const img = document.createElement('img');
           img.alt = `${altBase} image ${i+1} of ${images.length}`;
+
           if(i === 0){
             img.src = src;
-          } else {
+          }else{
             img.loading = 'lazy';
             img.decoding = 'async';
             img.setAttribute('data-src', src);
             img.src = PLACEHOLDER;
           }
+
           img.onerror = () => { img.onerror = null; img.src = PLACEHOLDER; };
+
           slide.appendChild(img);
           carouselEl.appendChild(slide);
           carouselImgs.push(img);
+
           const dot = document.createElement('div');
           dot.className = 'dot' + (i === 0 ? ' active' : '');
           dot.addEventListener('click', () => goTo(i, true));
           dotsEl.appendChild(dot);
         });
+
         document.getElementById('media').hidden = false;
         document.getElementById('carouselTimer').hidden = false;
+
         // Controls
         document.getElementById('prevBtn').onclick = () => prev(true);
         document.getElementById('nextBtn').onclick = () => next(true);
-        // Start
-        startCarousel();
-        setupCarouselLazyLoading();
+
+        // Initialise
         updateMetadata(0);
+        setupCarouselLazyLoading();
+        startCarousel();
       }
+
       function updateSlides(){
         const slides = Array.from(document.querySelectorAll('.slide'));
         const dots = Array.from(document.querySelectorAll('.dot'));
@@ -449,42 +635,63 @@
         dots.forEach((d,i) => d.classList.toggle('active', i === carouselIdx));
         updateMetadata(carouselIdx);
       }
+
       function ensureImgLoaded(i){
-        const img = carouselImgs[i]; if(!img) return;
+        const img = carouselImgs[i];
+        if(!img) return;
         const real = img.getAttribute('data-src');
-        if(real){ img.src = real; img.removeAttribute('data-src'); }
+        if(real){
+          img.src = real;
+          img.removeAttribute('data-src');
+        }
       }
+
       function next(manual=false){
         carouselIdx = (carouselIdx + 1) % carouselImgs.length;
         ensureImgLoaded(carouselIdx);
         updateSlides();
         if(manual){ startCarousel(); }
       }
+
       function prev(manual=false){
         carouselIdx = (carouselIdx - 1 + carouselImgs.length) % carouselImgs.length;
         ensureImgLoaded(carouselIdx);
         updateSlides();
         if(manual){ startCarousel(); }
       }
+
       function goTo(i, manual=false){
         carouselIdx = i % carouselImgs.length;
         ensureImgLoaded(carouselIdx);
         updateSlides();
         if(manual){ startCarousel(); }
       }
+
       function startCarousel(){
         stopCarousel();
-        // Randomise interval slightly for variety
         currentDelay = BASE_DELAY + Math.floor(Math.random()*2000);
-        carouselTimer = setInterval(() => next(false), currentDelay);
+        // start the visual timer immediately
         startTimer(currentDelay);
+        // and reset both slide + timer on each automatic flip
+        carouselTimer = setInterval(() => {
+          next(false);
+          startTimer(currentDelay);
+        }, currentDelay);
       }
+
       function stopCarousel(){
-        if(carouselTimer){ clearInterval(carouselTimer); carouselTimer = null; }
-        if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+        if(carouselTimer){
+          clearInterval(carouselTimer);
+          carouselTimer = null;
+        }
+        if(timerInterval){
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
       }
+
       function setupCarouselLazyLoading(){
-        if (!('IntersectionObserver' in window)) {
+        if (!('IntersectionObserver' in window)){
           carouselImgs.forEach(img => {
             const src = img.getAttribute('data-src');
             if(src){ img.src = src; img.removeAttribute('data-src'); }
@@ -502,26 +709,35 @@
           });
         }, { rootMargin:'100px' });
         carouselImgs.forEach(img => {
-          if(img.getAttribute('data-src')){ observer.observe(img); }
+          if(img.getAttribute('data-src')) observer.observe(img);
         });
       }
+
       function scheduleResize(){
         setTimeout(() => {
           const h = document.documentElement.scrollHeight;
-          if(window.parent){ window.parent.postMessage({ type:'resize', height:h }, '*'); }
+          if(window.parent){
+            window.parent.postMessage({ type:'resize', height:h }, '*');
+          }
         }, 150);
       }
-      // Countdown timer logic: animate ring and update text
+
+      /* COUNTDOWN TIMER ------------------------------------------------------ */
       function startTimer(duration){
         const ring = document.getElementById('timerRing');
         const textEl = document.getElementById('timerText');
+        if(!ring || !textEl) return;
+
         const radius = 18;
         const circumference = 2 * Math.PI * radius;
         ring.style.strokeDasharray = circumference;
         ring.style.strokeDashoffset = 0;
-        let start = Date.now();
-        let end = start + duration;
-        clearInterval(timerInterval);
+
+        const start = Date.now();
+        const end = start + duration;
+
+        if(timerInterval) clearInterval(timerInterval);
+
         timerInterval = setInterval(() => {
           const now = Date.now();
           const remaining = Math.max(end - now, 0);
@@ -530,11 +746,16 @@
           ring.style.strokeDashoffset = offset;
           const secs = Math.ceil(remaining / 1000);
           textEl.textContent = secs;
-          if(remaining <= 0){ clearInterval(timerInterval); }
+          if(remaining <= 0){
+            clearInterval(timerInterval);
+            timerInterval = null;
+          }
         }, 100);
-        // Set initial text and offset
+
         textEl.textContent = Math.ceil(duration / 1000);
       }
+
+      /* INIT ----------------------------------------------------------------- */
       async function init(){
         const slug = getSlug();
         if(!slug){
@@ -542,25 +763,24 @@
           scheduleResize();
           return;
         }
+
         try{
           const data = await fetchPeaks();
           const p = data && data[slug];
+
           if(!p){
             document.getElementById('peakTitle').textContent = 'Peak not found';
             scheduleResize();
             return;
           }
+
           const name = p.peakName || p['Peak Name'] || slug;
           document.getElementById('peakTitle').textContent = name;
-          const elev = p['Elevation (ft)'];
-          const prom = p['Prominence (ft)'];
-          document.getElementById('factElev').textContent = (elev ? elev + "'" : '—');
-          document.getElementById('factProm').textContent = (prom ? prom + "'" : '—');
-          document.getElementById('factRange').textContent = p['Range / Subrange'] || '—';
-          document.getElementById('factTrail').textContent = p['Trail Type'] || '—';
-          document.getElementById('factDifficulty').textContent = p['Difficulty'] || '—';
-          document.getElementById('factExposure').textContent = p['Exposure Level'] || '—';
-          document.getElementById('facts').hidden = false;
+
+          // Build general info panel
+          buildGeneralInfo(p);
+
+          // Routes
           const routes = p['Standard Routes'] || [];
           if(routes.length > 0){
             const routesGrid = document.getElementById('routesGrid');
@@ -570,16 +790,39 @@
               const dist  = r['Distance (mi)'] || '—';
               const gain  = r['Elevation Gain (ft)'] || '—';
               const diff  = r['Difficulty'] || '—';
-              div.innerHTML = `<div class="info-label">${r['Route Name']}</div><div class="info-value"><strong>Distance:</strong> ${dist} mi  •  <strong>Gain:</strong> ${gain}'  •  <strong>Difficulty:</strong> ${diff}</div>`;
+              div.innerHTML = `
+                <div class="info-label">${r['Route Name']}</div>
+                <div class="info-value">
+                  <strong>Distance:</strong> ${dist} mi • 
+                  <strong>Gain:</strong> ${gain}' • 
+                  <strong>Difficulty:</strong> ${diff}
+                </div>`;
               routesGrid.appendChild(div);
             });
             routesGrid.hidden = false;
           }
+
+          // Terrain & view
           const terrainItems = [
             { label:'Terrain', value:p['Terrain Character'] },
             { label:'Scramble', value:p['Scramble Sections'] },
             { label:'View', value:p['View Type'] }
-          ].filter(item => item.value);
+          ].filter(x => x.value);
+
+          if(terrainItems.length > 0){
+            const terrainGrid = document.getElementById('terrainGrid');
+            terrainItems.forEach(item => {
+              const div = document.createElement('div');
+              div.className = 'info-panel';
+              div.innerHTML = `
+                <div class="info-label">${item.label}</div>
+                <div class="info-value">${item.value}</div>`;
+              terrainGrid.appendChild(div);
+            });
+            terrainGrid.hidden = false;
+          }
+
+          // Conditions & access
           const conditionItems = [
             { label:'Best Seasons', value:p['Best Seasons to Hike'] },
             { label:'Water Availability', value:p['Water Availability'] },
@@ -588,45 +831,51 @@
             { label:'Emergency Bailout', value:p['Emergency Bailout Options'] },
             { label:'Dog Friendly', value:p['Dog Friendly'] },
             { label:'Nearby Features', value:p['Nearby Notable Features'] }
-          ].filter(item => item.value);
-          if(terrainItems.length > 0){
-            const terrainGrid = document.getElementById('terrainGrid');
-            terrainItems.forEach(item => {
-              const div = document.createElement('div');
-              div.className = 'info-panel';
-              div.innerHTML = `<div class="info-label">${item.label}</div><div class="info-value">${item.value}</div>`;
-              terrainGrid.appendChild(div);
-            });
-            terrainGrid.hidden = false;
-          }
+          ].filter(x => x.value);
+
           if(conditionItems.length > 0){
             const conditionsGrid = document.getElementById('conditionsGrid');
             conditionItems.forEach(item => {
               const div = document.createElement('div');
               div.className = 'info-panel';
-              div.innerHTML = `<div class="info-label">${item.label}</div><div class="info-value">${item.value}</div>`;
+              div.innerHTML = `
+                <div class="info-label">${item.label}</div>
+                <div class="info-value">${item.value}</div>`;
               conditionsGrid.appendChild(div);
             });
             conditionsGrid.hidden = false;
           }
-          // Images and metadata arrays
+
+          // Photos + per-photo metadata
           let imgs = [];
-          let photoMeta = [];
+          let meta = [];
           if(Array.isArray(p.photos) && p.photos.length > 0){
             p.photos.forEach(item => {
-              if(typeof item === 'string'){ imgs.push(item); photoMeta.push({}); }
-              else if(item && item.url){ imgs.push(item.url); photoMeta.push(item); }
+              if(typeof item === 'string'){
+                imgs.push(item);
+                meta.push({});
+              }else if(item && item.url){
+                imgs.push(item.url);
+                meta.push(item);
+              }
             });
           }
-          if(imgs.length === 0){ imgs = [PLACEHOLDER]; photoMeta = [{}]; }
-          buildCarousel(imgs, photoMeta, name);
+          if(imgs.length === 0){
+            imgs = [PLACEHOLDER];
+            meta = [{}];
+          }
+
+          buildCarousel(imgs, meta, name);
+
         }catch(err){
           console.error(err);
           showDebug('Error: ' + (err && err.message ? err.message : err));
           document.getElementById('peakTitle').textContent = 'Error loading peak';
         }
+
         scheduleResize();
       }
+
       window.addEventListener('load', () => {
         init();
         window.addEventListener('resize', scheduleResize);
