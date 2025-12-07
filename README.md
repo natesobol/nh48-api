@@ -26,7 +26,7 @@ This repository contains the authoritative machine-readable definitions for each
 
 ### **Photo Metadata System**
 
-Each peak may contain one or more photos. The photo entries include:
+Each peak should contain one or more photos. The photo entries include:
 
 * Photo URL
 * Orientation
