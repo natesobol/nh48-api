@@ -134,23 +134,39 @@
         float:right;
         color:var(--muted);
       }
+      .grid{
+        display:grid;
+        gap:10px;
+        grid-template-columns:1fr;
+        margin-bottom:16px;
+      }
+      @media(max-width:560px){
+        .grid{ grid-template-columns:1fr; }
+      }
+      .grid div{
+        background:var(--panel);
+        border:1px solid var(--stroke);
+        border-radius:10px;
+        padding:10px 12px;
+        font-size:0.9rem;
+      }
+      .grid-item-title{
+        font-weight:600;
+        color:var(--ink);
+        margin-bottom:4px;
+      }
+      .grid-item-value{
+        color:var(--muted);
+        font-size:0.85rem;
+      }
       section{
         margin-bottom:20px;
+        display:none;
       }
       section h2{
         margin:0 0 8px;
         font-size:1.1rem;
         color:var(--accent);
-      }
-      ul.routes{
-        list-style:none;
-        padding-left:16px;
-        margin:0;
-      }
-      ul.routes li{
-        margin-bottom:6px;
-        color:var(--muted);
-        font-size:0.9rem;
       }
       .placeholder{
         color:var(--muted);
@@ -193,14 +209,8 @@
         <div>Difficulty <span class="value" id="factDifficulty">—</span></div>
         <div>Exposure <span class="value" id="factExposure">—</span></div>
       </div>
-      <section id="routesSection" hidden>
-        <h2>Standard Routes</h2>
-        <ul class="routes" id="routesList"></ul>
-      </section>
-      <section id="notesSection" hidden>
-        <h2>Notes</h2>
-        <p id="notesText" class="placeholder">—</p>
-      </section>
+      <div class="grid" id="routesGrid" hidden></div>
+      <div class="grid" id="notesGrid" hidden></div>
       <div id="debug" class="debug" hidden></div>
     </div>
     <script>
@@ -382,8 +392,10 @@
           const name = p.peakName || p['Peak Name'] || slug;
           document.getElementById('peakTitle').textContent = name;
           // Facts
-          document.getElementById('factElev').textContent = p['Elevation (ft)'] || '—';
-          document.getElementById('factProm').textContent = p['Prominence (ft)'] || '—';
+          const elev = p['Elevation (ft)'];
+          const prom = p['Prominence (ft)'];
+          document.getElementById('factElev').textContent = (elev ? elev + "'" : '—');
+          document.getElementById('factProm').textContent = (prom ? prom + "'" : '—');
           document.getElementById('factRange').textContent = p['Range / Subrange'] || '—';
           document.getElementById('factTrail').textContent = p['Trail Type'] || '—';
           document.getElementById('factDifficulty').textContent = p['Difficulty'] || '—';
@@ -392,32 +404,39 @@
           // Routes
           const routes = p['Standard Routes'] || [];
           if(routes.length > 0){
-            const list = document.getElementById('routesList');
+            const routesGrid = document.getElementById('routesGrid');
             routes.forEach(r => {
-              const li = document.createElement('li');
-              const dist  = r['Distance (mi)'] || '';
-              const gain  = r['Elevation Gain (ft)'] || '';
-              const diff  = r['Difficulty'] || '';
-              li.textContent = `${r['Route Name']} (${dist}, ${gain} gain, ${diff})`;
-              list.appendChild(li);
+              const div = document.createElement('div');
+              const dist  = r['Distance (mi)'] || '—';
+              const gain  = r['Elevation Gain (ft)'] || '—';
+              const diff  = r['Difficulty'] || '—';
+              div.innerHTML = `<div class="grid-item-title">${r['Route Name']}</div><div class="grid-item-value"><strong>Distance:</strong> ${dist} mi | <strong>Gain:</strong> ${gain}' | <strong>Difficulty:</strong> ${diff}</div>`;
+              routesGrid.appendChild(div);
             });
-            document.getElementById('routesSection').hidden = false;
+            routesGrid.hidden = false;
           }
           // Notes
-          const notes = [];
-          if(p['View Type']) notes.push(`View: ${p['View Type']}`);
-          if(p['Best Seasons to Hike']) notes.push(`Seasons: ${p['Best Seasons to Hike']}`);
-          if(p['Terrain Character']) notes.push(`Terrain: ${p['Terrain Character']}`);
-          if(p['Scramble Sections']) notes.push(`Scramble: ${p['Scramble Sections']}`);
-          if(p['Water Availability']) notes.push(`Water: ${p['Water Availability']}`);
-          if(p['Cell Reception Quality']) notes.push(`Reception: ${p['Cell Reception Quality']}`);
-          if(p['Nearby Notable Features']) notes.push(`Nearby: ${p['Nearby Notable Features']}`);
-          if(p['Weather Exposure Rating']) notes.push(`Weather Exposure: ${p['Weather Exposure Rating']}`);
-          if(p['Emergency Bailout Options']) notes.push(`Bailout: ${p['Emergency Bailout Options']}`);
-          if(p['Dog Friendly']) notes.push(`Dog Friendly: ${p['Dog Friendly']}`);
-          if(notes.length > 0){
-            document.getElementById('notesText').innerHTML = notes.map(n => `<div style="margin-bottom:4px">${n}</div>`).join('');
-            document.getElementById('notesSection').hidden = false;
+          const notes = {
+            'View': p['View Type'],
+            'Seasons': p['Best Seasons to Hike'],
+            'Terrain': p['Terrain Character'],
+            'Scramble': p['Scramble Sections'],
+            'Water': p['Water Availability'],
+            'Reception': p['Cell Reception Quality'],
+            'Nearby': p['Nearby Notable Features'],
+            'Weather Exposure': p['Weather Exposure Rating'],
+            'Bailout': p['Emergency Bailout Options'],
+            'Dog Friendly': p['Dog Friendly']
+          };
+          const notesEntries = Object.entries(notes).filter(([_, v]) => v);
+          if(notesEntries.length > 0){
+            const notesGrid = document.getElementById('notesGrid');
+            notesEntries.forEach(([label, value]) => {
+              const div = document.createElement('div');
+              div.innerHTML = `<div class="grid-item-title">${label}</div><div class="grid-item-value">${value}</div>`;
+              notesGrid.appendChild(div);
+            });
+            notesGrid.hidden = false;
           }
           // Images
           // Collect photo URLs.  Entries in `p.photos` may be strings or
