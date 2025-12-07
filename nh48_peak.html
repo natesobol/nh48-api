@@ -1,17 +1,18 @@
-<!doctype html>
+<!doctype html> 
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NH48 Peak Details (Debug/Resilient)</title>
+    <title>NH48 Peak Details (Enhanced with Metadata)</title>
     <!--
       Standalone details view for a single NH48 peak with robust error handling.
       This version mirrors the styling of the original peak page but adds
-      diagnostic output and multiple API fallbacks to cope with CORS and
-      formatting issues in the JSON.  Use this page in Wix or directly via
-      GitHub Pages when you need to troubleshoot why a particular peak
-      failed to load.  The slug of the desired peak is provided as
-      ?slug=xyz in the query string.
+      diagnostic output, multiple API fallbacks and a dynamic metadata panel
+      beneath the photo carousel.  Each photo’s EXIF-derived metadata from
+      `nh48.json` is displayed in a dark panel with dotted separators when
+      the corresponding slide is active.  A circular countdown timer
+      indicates time remaining until the next automatic slide change.  The
+      carousel duration has been doubled for a more relaxed viewing pace.
     -->
     <style>
       :root{
@@ -120,6 +121,37 @@
         cursor:pointer;
         pointer-events:auto;
       }
+      /* Countdown timer styles */
+      .timer{
+        position:absolute;
+        top:8px;
+        right:8px;
+        width:50px;
+        height:50px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        z-index:3;
+      }
+      .timer svg{
+        width:100%;
+        height:100%;
+        transform:rotate(-90deg);
+      }
+      .timer-ring{
+        fill:none;
+        stroke:var(--accent);
+        stroke-width:4;
+        stroke-linecap:round;
+        transition:stroke-dashoffset 0.1s linear;
+      }
+      .timer-text{
+        position:absolute;
+        color:var(--accent);
+        font-size:0.75rem;
+        font-weight:600;
+        pointer-events:none;
+      }
       .facts{
         display:grid;
         gap:10px;
@@ -191,6 +223,40 @@
         color:var(--muted);
         font-style:italic;
       }
+      /* Metadata panel styles */
+      .metadata-panel{
+        background:var(--panel);
+        border:1px solid var(--stroke);
+        border-radius:10px;
+        padding:12px;
+        margin-bottom:16px;
+        font-size:0.9rem;
+      }
+      .metadata-row{
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:12px;
+        padding:6px 0;
+        border-bottom:1px dotted var(--stroke);
+      }
+      .metadata-row:last-child{
+        border-bottom:none;
+      }
+      .metadata-label{
+        font-weight:600;
+        color:var(--muted);
+        font-size:0.8rem;
+        text-transform:uppercase;
+        letter-spacing:0.3px;
+      }
+      .metadata-value{
+        color:var(--ink);
+        font-size:0.9rem;
+        text-align:right;
+        flex:1 1 auto;
+        word-break:break-word;
+      }
       /* Debug panel styles */
       .debug{
         margin-top:20px;
@@ -209,7 +275,6 @@
   </head>
   <body>
     <div class="wrap">
-      <!-- Use the correct relative link back to the catalog.  Update if you rename the catalog file. -->
       <a href="nh48_catalog.html" class="back">← Back to catalog</a>
       <h1 id="peakTitle">Loading…</h1>
       <div class="media" id="media" hidden>
@@ -219,7 +284,15 @@
           <button id="prevBtn" aria-label="Previous image">‹</button>
           <button id="nextBtn" aria-label="Next image">›</button>
         </div>
+        <!-- Countdown timer overlay -->
+        <div class="timer" id="carouselTimer" hidden>
+          <svg width="50" height="50" viewBox="0 0 40 40">
+            <circle id="timerRing" class="timer-ring" cx="20" cy="20" r="18"></circle>
+          </svg>
+          <span id="timerText" class="timer-text"></span>
+        </div>
       </div>
+      <div id="photoMetadataPanel" class="metadata-panel" hidden></div>
       <div class="facts" id="facts" hidden>
         <div>Elevation <span class="value" id="factElev">—</span></div>
         <div>Prominence <span class="value" id="factProm">—</span></div>
@@ -237,47 +310,25 @@
       <div id="debug" class="debug" hidden></div>
     </div>
     <script>
-      /*
-        List of API endpoints to try in order.  We start with jsDelivr for CORS,
-        then fall back to raw GitHub.  You can add more mirrors if needed.
-      */
+      /* API endpoints list remains unchanged */
       const API_URLS = [
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
-      // Placeholder image used when no photos are available
       const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
         `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">no image</text></svg>`
       );
-
-      // Debug helper: show messages in the debug panel
       function showDebug(msg){
         const dbg = document.getElementById('debug');
         const time = new Date().toLocaleTimeString();
         dbg.hidden = false;
         dbg.textContent += (dbg.textContent ? '\n\n' : '') + '[' + time + '] ' + msg;
       }
-
-      /*
-        Clean up the raw JSON by removing citation markers and omitted line comments.
-        The aggressive regex replacements in the previous version were corrupting
-        valid JSON structure and preventing proper parsing. Now we only remove
-        the actual problematic content.
-      */
       function cleanJSON(raw){
-        // Remove citation markers like :contentReference[...]{index=...}
         let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
-        // Remove comments that look like: /* ... omitted */
         cleaned = cleaned.replace(/\/\*\s*Lines?\s+\d+[\d\-,\s]*omitted\s*\*\//g, '');
         return cleaned;
       }
-
-      /*
-        Fetch and parse the peaks object from one of the API endpoints.  Try
-        each URL in order until one succeeds.  Any network or parse errors
-        will result in trying the next URL.  If all attempts fail, reject
-        with an error.
-      */
       async function fetchPeaks(){
         for(let i=0; i<API_URLS.length; i++){
           const url = API_URLS[i];
@@ -306,33 +357,66 @@
         }
         throw new Error('All API endpoints failed');
       }
-
-      // Helper to extract slug parameter
       function getSlug(){
         const params = new URLSearchParams(window.location.search);
         return params.get('slug');
       }
-
       // Carousel state
       let carouselImgs = [];
       let carouselIdx = 0;
       let carouselTimer = null;
-
-      function buildCarousel(images, altBase){
+      let timerInterval = null;
+      let photoMetaData = [];
+      let currentDelay = 8000;
+      const BASE_DELAY = 8000;
+      // Update metadata panel for current slide
+      function updateMetadata(i){
+        const panel = document.getElementById('photoMetadataPanel');
+        if(!photoMetaData || !photoMetaData[i]){
+          panel.innerHTML = '';
+          panel.hidden = true;
+          return;
+        }
+        const meta = photoMetaData[i];
+        panel.innerHTML = '';
+        let entries = Object.entries(meta).filter(([k,v]) => v !== null && v !== '' && !['photoId','filename','url','isPrimary','tags'].includes(k));
+        if(entries.length === 0){
+          panel.innerHTML = '<div class="metadata-row"><div class="metadata-label">No metadata</div><div class="metadata-value"></div></div>';
+          panel.hidden = false;
+          return;
+        }
+        entries.forEach(([key, value], idx) => {
+          const row = document.createElement('div');
+          row.className = 'metadata-row';
+          const label = document.createElement('div');
+          label.className = 'metadata-label';
+          // Convert camelCase / pascalCase keys into spaced labels
+          label.textContent = key.replace(/([A-Z])/g, ' $1').replace(/^./, s=>s.toUpperCase());
+          const val = document.createElement('div');
+          val.className = 'metadata-value';
+          val.textContent = value;
+          row.appendChild(label);
+          row.appendChild(val);
+          panel.appendChild(row);
+        });
+        panel.hidden = false;
+      }
+      function buildCarousel(images, meta, altBase){
         const carouselEl = document.getElementById('carousel');
         const dotsEl = document.getElementById('dots');
         carouselEl.innerHTML = '';
         dotsEl.innerHTML = '';
         carouselImgs = [];
         carouselIdx = 0;
-        if(!images || !images.length){ images = [PLACEHOLDER]; }
+        photoMetaData = meta || [];
+        if(!images || images.length === 0){ images = [PLACEHOLDER]; }
         images.forEach((src, i) => {
           const slide = document.createElement('div');
           slide.className = 'slide' + (i === 0 ? ' active' : '');
           const img = document.createElement('img');
           img.alt = `${altBase} image ${i+1} of ${images.length}`;
-          if(i === 0){ 
-            img.src = src; 
+          if(i === 0){
+            img.src = src;
           } else {
             img.loading = 'lazy';
             img.decoding = 'async';
@@ -345,56 +429,62 @@
           carouselImgs.push(img);
           const dot = document.createElement('div');
           dot.className = 'dot' + (i === 0 ? ' active' : '');
-          dot.addEventListener('click', () => goTo(i));
+          dot.addEventListener('click', () => goTo(i, true));
           dotsEl.appendChild(dot);
         });
         document.getElementById('media').hidden = false;
+        document.getElementById('carouselTimer').hidden = false;
         // Controls
-        document.getElementById('prevBtn').onclick = prev;
-        document.getElementById('nextBtn').onclick = next;
-        // Start automatic cycling
+        document.getElementById('prevBtn').onclick = () => prev(true);
+        document.getElementById('nextBtn').onclick = () => next(true);
+        // Start
         startCarousel();
-        // Setup lazy loading for carousel images
         setupCarouselLazyLoading();
+        updateMetadata(0);
       }
-
       function updateSlides(){
         const slides = Array.from(document.querySelectorAll('.slide'));
         const dots = Array.from(document.querySelectorAll('.dot'));
-        slides.forEach((s, i) => s.classList.toggle('active', i === carouselIdx));
-        dots.forEach((d, i) => d.classList.toggle('active', i === carouselIdx));
+        slides.forEach((s,i) => s.classList.toggle('active', i === carouselIdx));
+        dots.forEach((d,i) => d.classList.toggle('active', i === carouselIdx));
+        updateMetadata(carouselIdx);
       }
       function ensureImgLoaded(i){
         const img = carouselImgs[i]; if(!img) return;
         const real = img.getAttribute('data-src');
         if(real){ img.src = real; img.removeAttribute('data-src'); }
       }
-      function next(){
+      function next(manual=false){
         carouselIdx = (carouselIdx + 1) % carouselImgs.length;
         ensureImgLoaded(carouselIdx);
         updateSlides();
+        if(manual){ startCarousel(); }
       }
-      function prev(){
+      function prev(manual=false){
         carouselIdx = (carouselIdx - 1 + carouselImgs.length) % carouselImgs.length;
         ensureImgLoaded(carouselIdx);
         updateSlides();
+        if(manual){ startCarousel(); }
       }
-      function goTo(i){
+      function goTo(i, manual=false){
         carouselIdx = i % carouselImgs.length;
         ensureImgLoaded(carouselIdx);
         updateSlides();
+        if(manual){ startCarousel(); }
       }
       function startCarousel(){
         stopCarousel();
-        carouselTimer = setInterval(next, 4000 + Math.floor(Math.random()*1000));
+        // Randomise interval slightly for variety
+        currentDelay = BASE_DELAY + Math.floor(Math.random()*2000);
+        carouselTimer = setInterval(() => next(false), currentDelay);
+        startTimer(currentDelay);
       }
       function stopCarousel(){
         if(carouselTimer){ clearInterval(carouselTimer); carouselTimer = null; }
+        if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
       }
-
       function setupCarouselLazyLoading(){
         if (!('IntersectionObserver' in window)) {
-          // Fallback: load all images immediately
           carouselImgs.forEach(img => {
             const src = img.getAttribute('data-src');
             if(src){ img.src = src; img.removeAttribute('data-src'); }
@@ -410,19 +500,41 @@
               observer.unobserve(img);
             }
           });
-        }, { rootMargin: '100px' });
+        }, { rootMargin:'100px' });
         carouselImgs.forEach(img => {
           if(img.getAttribute('data-src')){ observer.observe(img); }
         });
       }
-
       function scheduleResize(){
         setTimeout(() => {
           const h = document.documentElement.scrollHeight;
           if(window.parent){ window.parent.postMessage({ type:'resize', height:h }, '*'); }
         }, 150);
       }
-
+      // Countdown timer logic: animate ring and update text
+      function startTimer(duration){
+        const ring = document.getElementById('timerRing');
+        const textEl = document.getElementById('timerText');
+        const radius = 18;
+        const circumference = 2 * Math.PI * radius;
+        ring.style.strokeDasharray = circumference;
+        ring.style.strokeDashoffset = 0;
+        let start = Date.now();
+        let end = start + duration;
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+          const now = Date.now();
+          const remaining = Math.max(end - now, 0);
+          const percent = remaining / duration;
+          const offset = circumference * (1 - percent);
+          ring.style.strokeDashoffset = offset;
+          const secs = Math.ceil(remaining / 1000);
+          textEl.textContent = secs;
+          if(remaining <= 0){ clearInterval(timerInterval); }
+        }, 100);
+        // Set initial text and offset
+        textEl.textContent = Math.ceil(duration / 1000);
+      }
       async function init(){
         const slug = getSlug();
         if(!slug){
@@ -438,10 +550,8 @@
             scheduleResize();
             return;
           }
-          // Title
           const name = p.peakName || p['Peak Name'] || slug;
           document.getElementById('peakTitle').textContent = name;
-          // Facts
           const elev = p['Elevation (ft)'];
           const prom = p['Prominence (ft)'];
           document.getElementById('factElev').textContent = (elev ? elev + "'" : '—');
@@ -451,7 +561,6 @@
           document.getElementById('factDifficulty').textContent = p['Difficulty'] || '—';
           document.getElementById('factExposure').textContent = p['Exposure Level'] || '—';
           document.getElementById('facts').hidden = false;
-          // Routes
           const routes = p['Standard Routes'] || [];
           if(routes.length > 0){
             const routesGrid = document.getElementById('routesGrid');
@@ -466,24 +575,20 @@
             });
             routesGrid.hidden = false;
           }
-          // Organize other attributes into categories
           const terrainItems = [
-            { label: 'Terrain', value: p['Terrain Character'] },
-            { label: 'Scramble', value: p['Scramble Sections'] },
-            { label: 'View', value: p['View Type'] }
+            { label:'Terrain', value:p['Terrain Character'] },
+            { label:'Scramble', value:p['Scramble Sections'] },
+            { label:'View', value:p['View Type'] }
           ].filter(item => item.value);
-          
           const conditionItems = [
-            { label: 'Best Seasons', value: p['Best Seasons to Hike'] },
-            { label: 'Water Availability', value: p['Water Availability'] },
-            { label: 'Cell Reception', value: p['Cell Reception Quality'] },
-            { label: 'Weather Exposure', value: p['Weather Exposure Rating'] },
-            { label: 'Emergency Bailout', value: p['Emergency Bailout Options'] },
-            { label: 'Dog Friendly', value: p['Dog Friendly'] },
-            { label: 'Nearby Features', value: p['Nearby Notable Features'] }
+            { label:'Best Seasons', value:p['Best Seasons to Hike'] },
+            { label:'Water Availability', value:p['Water Availability'] },
+            { label:'Cell Reception', value:p['Cell Reception Quality'] },
+            { label:'Weather Exposure', value:p['Weather Exposure Rating'] },
+            { label:'Emergency Bailout', value:p['Emergency Bailout Options'] },
+            { label:'Dog Friendly', value:p['Dog Friendly'] },
+            { label:'Nearby Features', value:p['Nearby Notable Features'] }
           ].filter(item => item.value);
-          
-          // Populate terrain grid
           if(terrainItems.length > 0){
             const terrainGrid = document.getElementById('terrainGrid');
             terrainItems.forEach(item => {
@@ -494,8 +599,6 @@
             });
             terrainGrid.hidden = false;
           }
-          
-          // Populate conditions grid
           if(conditionItems.length > 0){
             const conditionsGrid = document.getElementById('conditionsGrid');
             conditionItems.forEach(item => {
@@ -506,23 +609,17 @@
             });
             conditionsGrid.hidden = false;
           }
-          // Images
-          // Collect photo URLs.  Entries in `p.photos` may be strings or
-          // objects with a `url` property.  Convert any objects into
-          // their URL; skip entries without a valid URL.  Fallback to
-          // a placeholder if no usable photos exist.
+          // Images and metadata arrays
           let imgs = [];
-          if (Array.isArray(p.photos) && p.photos.length > 0) {
-            imgs = p.photos
-              .map(item => {
-                if (typeof item === 'string') return item;
-                if (item && item.url) return item.url;
-                return null;
-              })
-              .filter(Boolean);
+          let photoMeta = [];
+          if(Array.isArray(p.photos) && p.photos.length > 0){
+            p.photos.forEach(item => {
+              if(typeof item === 'string'){ imgs.push(item); photoMeta.push({}); }
+              else if(item && item.url){ imgs.push(item.url); photoMeta.push(item); }
+            });
           }
-          if (imgs.length === 0) imgs = [PLACEHOLDER];
-          buildCarousel(imgs, name);
+          if(imgs.length === 0){ imgs = [PLACEHOLDER]; photoMeta = [{}]; }
+          buildCarousel(imgs, photoMeta, name);
         }catch(err){
           console.error(err);
           showDebug('Error: ' + (err && err.message ? err.message : err));
