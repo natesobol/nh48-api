@@ -132,41 +132,42 @@
       }
       .facts span.value{
         float:right;
-        color:var(--muted);
+        color:var(--ink);
       }
-      .grid{
+      .section-title{
+        margin:20px 0 12px 0;
+        font-size:0.95rem;
+        font-weight:600;
+        color:var(--accent);
+        text-transform:uppercase;
+        letter-spacing:0.5px;
+      }
+      .info-grid{
         display:grid;
         gap:10px;
         grid-template-columns:1fr;
         margin-bottom:16px;
       }
-      @media(max-width:560px){
-        .grid{ grid-template-columns:1fr; }
-      }
-      .grid div{
+      .info-panel{
         background:var(--panel);
         border:1px solid var(--stroke);
         border-radius:10px;
-        padding:10px 12px;
+        padding:12px;
         font-size:0.9rem;
       }
-      .grid-item-title{
+      .info-label{
         font-weight:600;
-        color:var(--ink);
-        margin-bottom:4px;
-      }
-      .grid-item-value{
-        color:var(--muted);
-        font-size:0.85rem;
-      }
-      section{
-        margin-bottom:20px;
-        display:none;
-      }
-      section h2{
-        margin:0 0 8px;
-        font-size:1.1rem;
         color:var(--accent);
+        font-size:0.85rem;
+        margin-bottom:6px;
+        text-transform:uppercase;
+        letter-spacing:0.5px;
+      }
+      .info-value{
+        color:var(--ink);
+        font-size:0.9rem;
+        word-wrap:break-word;
+        white-space:normal;
       }
       .placeholder{
         color:var(--muted);
@@ -209,8 +210,12 @@
         <div>Difficulty <span class="value" id="factDifficulty">—</span></div>
         <div>Exposure <span class="value" id="factExposure">—</span></div>
       </div>
-      <div class="grid" id="routesGrid" hidden></div>
-      <div class="grid" id="notesGrid" hidden></div>
+      <div class="section-title">Hiking Routes</div>
+      <div class="info-grid" id="routesGrid" hidden></div>
+      <div class="section-title">Trail & Terrain</div>
+      <div class="info-grid" id="terrainGrid" hidden></div>
+      <div class="section-title">Conditions & Access</div>
+      <div class="info-grid" id="conditionsGrid" hidden></div>
       <div id="debug" class="debug" hidden></div>
     </div>
     <script>
@@ -407,36 +412,54 @@
             const routesGrid = document.getElementById('routesGrid');
             routes.forEach(r => {
               const div = document.createElement('div');
+              div.className = 'info-panel';
               const dist  = r['Distance (mi)'] || '—';
               const gain  = r['Elevation Gain (ft)'] || '—';
               const diff  = r['Difficulty'] || '—';
-              div.innerHTML = `<div class="grid-item-title">${r['Route Name']}</div><div class="grid-item-value"><strong>Distance:</strong> ${dist} mi | <strong>Gain:</strong> ${gain}' | <strong>Difficulty:</strong> ${diff}</div>`;
+              div.innerHTML = `<div class="info-label">${r['Route Name']}</div><div class="info-value"><strong>Distance:</strong> ${dist} mi  •  <strong>Gain:</strong> ${gain}'  •  <strong>Difficulty:</strong> ${diff}</div>`;
               routesGrid.appendChild(div);
             });
             routesGrid.hidden = false;
           }
-          // Notes
-          const notes = {
-            'View': p['View Type'],
-            'Seasons': p['Best Seasons to Hike'],
-            'Terrain': p['Terrain Character'],
-            'Scramble': p['Scramble Sections'],
-            'Water': p['Water Availability'],
-            'Reception': p['Cell Reception Quality'],
-            'Nearby': p['Nearby Notable Features'],
-            'Weather Exposure': p['Weather Exposure Rating'],
-            'Bailout': p['Emergency Bailout Options'],
-            'Dog Friendly': p['Dog Friendly']
-          };
-          const notesEntries = Object.entries(notes).filter(([_, v]) => v);
-          if(notesEntries.length > 0){
-            const notesGrid = document.getElementById('notesGrid');
-            notesEntries.forEach(([label, value]) => {
+          // Organize other attributes into categories
+          const terrainItems = [
+            { label: 'Terrain', value: p['Terrain Character'] },
+            { label: 'Scramble', value: p['Scramble Sections'] },
+            { label: 'View', value: p['View Type'] }
+          ].filter(item => item.value);
+          
+          const conditionItems = [
+            { label: 'Best Seasons', value: p['Best Seasons to Hike'] },
+            { label: 'Water Availability', value: p['Water Availability'] },
+            { label: 'Cell Reception', value: p['Cell Reception Quality'] },
+            { label: 'Weather Exposure', value: p['Weather Exposure Rating'] },
+            { label: 'Emergency Bailout', value: p['Emergency Bailout Options'] },
+            { label: 'Dog Friendly', value: p['Dog Friendly'] },
+            { label: 'Nearby Features', value: p['Nearby Notable Features'] }
+          ].filter(item => item.value);
+          
+          // Populate terrain grid
+          if(terrainItems.length > 0){
+            const terrainGrid = document.getElementById('terrainGrid');
+            terrainItems.forEach(item => {
               const div = document.createElement('div');
-              div.innerHTML = `<div class="grid-item-title">${label}</div><div class="grid-item-value">${value}</div>`;
-              notesGrid.appendChild(div);
+              div.className = 'info-panel';
+              div.innerHTML = `<div class="info-label">${item.label}</div><div class="info-value">${item.value}</div>`;
+              terrainGrid.appendChild(div);
             });
-            notesGrid.hidden = false;
+            terrainGrid.hidden = false;
+          }
+          
+          // Populate conditions grid
+          if(conditionItems.length > 0){
+            const conditionsGrid = document.getElementById('conditionsGrid');
+            conditionItems.forEach(item => {
+              const div = document.createElement('div');
+              div.className = 'info-panel';
+              div.innerHTML = `<div class="info-label">${item.label}</div><div class="info-value">${item.value}</div>`;
+              conditionsGrid.appendChild(div);
+            });
+            conditionsGrid.hidden = false;
           }
           // Images
           // Collect photo URLs.  Entries in `p.photos` may be strings or
