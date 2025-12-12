@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PowerPoint-to-PDF Converter</title>
+  <style>
+    :root{
+      --bg:#08080f;
+      --panel:#0e1421;
+      --card:#111827;
+      --stroke:#1f2937;
+      --ink:#f8fafc;
+      --muted:#cbd5e1;
+      --accent:#22c55e;
+      --accent-2:#38bdf8;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:radial-gradient(circle at 15% 20%,#122033 0,#08080f 40%),
+                 radial-gradient(circle at 80% 10%,#0c1a2c 0,#08080f 35%),
+                 var(--bg);
+      color:var(--ink);
+      min-height:100vh;
+    }
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:22px 16px 32px;
+      display:grid;
+      grid-template-columns:1.1fr 0.9fr;
+      gap:18px;
+    }
+    @media(max-width:960px){
+      .wrap{grid-template-columns:1fr;}
+    }
+    header{grid-column:1/-1; margin-bottom:4px;}
+    h1{margin:0 0 6px; font-size:clamp(24px,4vw,32px);}    
+    p.sub{margin:0; color:var(--muted); max-width:840px; line-height:1.55;}
+    .panel{
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      padding:16px;
+      box-shadow:0 12px 30px #0006;
+    }
+    .upload{
+      border:1px dashed var(--stroke);
+      border-radius:14px;
+      padding:16px;
+      background:linear-gradient(135deg,#0b1020,#0f172a);
+      text-align:center;
+      cursor:pointer;
+      transition:border-color .2s ease, transform .1s ease;
+    }
+    .upload:hover{border-color:var(--accent); transform:translateY(-1px);}    
+    .upload h2{margin:0 0 6px; font-size:1.1rem;}
+    .upload p{margin:0; color:var(--muted); line-height:1.45;}
+    input[type=file]{display:none;}
+    .status{margin-top:12px; font-size:0.95rem; color:var(--muted);}
+    .status strong{color:var(--ink);}    
+    .progress{
+      margin-top:10px;
+      height:12px;
+      border-radius:8px;
+      background:#0b1220;
+      border:1px solid var(--stroke);
+      overflow:hidden;
+    }
+    .progress span{
+      display:block;
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      transition:width .25s ease;
+    }
+    button.action{
+      margin-top:12px;
+      padding:10px 14px;
+      border:none;
+      border-radius:10px;
+      background:var(--accent);
+      color:#0b0f16;
+      font-weight:700;
+      letter-spacing:0.25px;
+      cursor:pointer;
+      box-shadow:0 8px 18px #22c55e33;
+    }
+    button.action:disabled{opacity:0.45; cursor:not-allowed; box-shadow:none;}
+    .preview{
+      width:100%;
+      height:600px;
+      border:1px solid var(--stroke);
+      border-radius:12px;
+      background:#0b1220;
+    }
+    @media(max-width:600px){.preview{height:480px;}}
+    .note{
+      margin-top:12px;
+      font-size:0.92rem;
+      color:var(--muted);
+      line-height:1.5;
+    }
+    .pill{
+      display:inline-block;
+      background:#0b1220;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      padding:6px 10px;
+      margin-right:8px;
+      color:var(--muted);
+      font-size:0.85rem;
+    }
+    ul.timeline{margin:12px 0 0; padding-left:20px; color:var(--muted); line-height:1.5;}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      background:#0b1220;
+      border-radius:10px;
+      border:1px solid var(--stroke);
+      color:var(--muted);
+      font-size:0.9rem;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>PowerPoint-to-PDF Converter</h1>
+      <p class="sub">Upload a PPT or PPTX and instantly generate a PDF handout of your slides. Everything runs in-browser — your presentation never leaves your device.</p>
+    </header>
+
+    <div class="panel">
+      <label class="upload" for="fileInput" id="dropzone">
+        <h2>Select or drop a PowerPoint</h2>
+        <p>.pptx preferred; .ppt files will try to open but may have limited support. Max 30MB suggested.</p>
+        <input id="fileInput" type="file" accept=".ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation">
+      </label>
+      <div class="status" id="status">No file loaded yet.</div>
+      <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+      <button id="convertBtn" class="action" disabled>Convert to PDF</button>
+      <div class="note">Tip: Text is extracted slide-by-slide. Complex layouts (animations, charts, SmartArt) become clean bullet points so you can share or print quickly.</div>
+    </div>
+
+    <div class="panel">
+      <div class="badge" id="fileBadge">Waiting for upload…</div>
+      <iframe title="PDF preview" class="preview" id="preview"></iframe>
+      <div class="note">Once converted, a download will start automatically and the preview updates so you can skim the PDF without leaving the page.</div>
+    </div>
+
+    <div class="panel" style="grid-column:1/-1;">
+      <h2 style="margin:0 0 6px;">What this webapp does</h2>
+      <div class="pill">Secure: runs fully client-side</div>
+      <div class="pill">Lean: focuses on text-first slides</div>
+      <div class="pill">Fast: converts in seconds</div>
+      <ul class="timeline">
+        <li><strong>Drop a PPT/PPTX.</strong> We unpack the file with JSZip and read each slide.</li>
+        <li><strong>Extract text content.</strong> Slide titles and body text become clean bullet points.</li>
+        <li><strong>Create a PDF.</strong> PDF-LIB builds landscape pages with pagination and attribution so you can download or preview.</li>
+      </ul>
+    </div>
+  </div>
+  <script>
+    const statusEl = document.getElementById('status');
+    const bar = document.getElementById('bar');
+    const fileInput = document.getElementById('fileInput');
+    const convertBtn = document.getElementById('convertBtn');
+    const preview = document.getElementById('preview');
+    const fileBadge = document.getElementById('fileBadge');
+    const dropzone = document.getElementById('dropzone');
+
+    let loadedFile = null;
+    let loadedBuffer = null;
+
+    const resetUI = () => {
+      statusEl.textContent = 'No file loaded yet.';
+      bar.style.width = '0%';
+      convertBtn.disabled = true;
+      fileBadge.textContent = 'Waiting for upload…';
+      fileBadge.style.borderColor = 'var(--stroke)';
+      preview.src = '';
+    };
+
+    const setStatus = (msg, pct) => {
+      statusEl.innerHTML = msg;
+      if(typeof pct === 'number'){
+        bar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+      }
+    };
+
+    const wrapLines = (text, font, size, maxWidth) => {
+      const words = text.split(/\s+/);
+      const lines = [];
+      let current = '';
+      words.forEach(word => {
+        const testLine = current ? `${current} ${word}` : word;
+        const width = font.widthOfTextAtSize(testLine, size);
+        if(width > maxWidth && current){
+          lines.push(current);
+          current = word;
+        }else{
+          current = testLine;
+        }
+      });
+      if(current){ lines.push(current); }
+      return lines;
+    };
+
+    const readPptx = async (buffer) => {
+      const zip = await JSZip.loadAsync(buffer);
+      const slidePaths = Object.keys(zip.files)
+        .filter(name => name.startsWith('ppt/slides/slide') && name.endsWith('.xml'))
+        .sort((a, b) => {
+          const num = n => Number((/slide(\d+)\.xml/).exec(n)?.[1] || 0);
+          return num(a) - num(b);
+        });
+      if(!slidePaths.length){
+        throw new Error('No slides were found in this file.');
+      }
+      const slides = [];
+      for(let i = 0; i < slidePaths.length; i++){
+        const xmlStr = await zip.file(slidePaths[i]).async('string');
+        const doc = new DOMParser().parseFromString(xmlStr, 'application/xml');
+        const texts = Array.from(doc.getElementsByTagName('a:t'))
+          .map(el => el.textContent.trim())
+          .filter(Boolean);
+        const title = texts[0] || `Slide ${i + 1}`;
+        const body = texts.slice(1);
+        slides.push({ title, body });
+        setStatus(`Read slide ${i + 1} of ${slidePaths.length}`, ((i + 1) / slidePaths.length) * 50);
+      }
+      return slides;
+    };
+
+    const buildPdf = async (slides, fileName) => {
+      const pdfDoc = await PDFLib.PDFDocument.create();
+      const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+      const fontBold = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+      const pageSize = [842, 595]; // A4 landscape in points
+      const margin = 40;
+      slides.forEach((slide, idx) => {
+        const page = pdfDoc.addPage(pageSize);
+        const { width, height } = page.getSize();
+        const titleSize = 20;
+        const bodySize = 14;
+        page.drawText(slide.title, {
+          x: margin,
+          y: height - margin - titleSize,
+          size: titleSize,
+          font: fontBold,
+          color: PDFLib.rgb(0.85, 0.95, 0.85)
+        });
+        const bodyLines = (slide.body.length ? slide.body : ['(No extracted text on this slide)'])
+          .flatMap(line => wrapLines(`• ${line}`, font, bodySize, width - margin * 2));
+        let y = height - margin - titleSize - 24;
+        bodyLines.forEach(line => {
+          if(y < margin + 40){
+            // start a new page if a slide runs long
+            y = height - margin - bodySize;
+            page.drawText('…continued…', { x: margin, y, size: bodySize, font, color: PDFLib.rgb(0.7,0.8,0.9) });
+            y -= 18;
+          }
+          page.drawText(line, {
+            x: margin,
+            y,
+            size: bodySize,
+            font,
+            color: PDFLib.rgb(0.9,0.93,0.97)
+          });
+          y -= 18;
+        });
+        page.drawText(`Slide ${idx + 1} of ${slides.length} — ${fileName}`, {
+          x: margin,
+          y: margin - 6,
+          size: 10,
+          font,
+          color: PDFLib.rgb(0.6, 0.74, 0.85)
+        });
+      });
+      return pdfDoc.save();
+    };
+
+    const handleFile = async (file) => {
+      if(!file){ return; }
+      if(file.size > 30 * 1024 * 1024){
+        setStatus('<strong>File is large.</strong> Conversion may be slow.');
+      }
+      loadedFile = file;
+      loadedBuffer = await file.arrayBuffer();
+      fileBadge.textContent = `${file.name} • ${(file.size / (1024*1024)).toFixed(2)} MB`;
+      fileBadge.style.borderColor = 'var(--accent)';
+      convertBtn.disabled = false;
+      setStatus(`<strong>${file.name}</strong> is ready. Click Convert to start.`, 10);
+    };
+
+    fileInput.addEventListener('change', (e) => {
+      const [file] = e.target.files;
+      handleFile(file);
+    });
+
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.style.borderColor = 'var(--accent)';
+    });
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.style.borderColor = 'var(--stroke)';
+    });
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.style.borderColor = 'var(--stroke)';
+      const file = e.dataTransfer.files?.[0];
+      handleFile(file);
+    });
+
+    convertBtn.addEventListener('click', async () => {
+      if(!loadedBuffer || !loadedFile){ return; }
+      convertBtn.disabled = true;
+      setStatus('Reading slides…', 5);
+      try{
+        const slides = await readPptx(loadedBuffer);
+        setStatus('Building PDF…', 65);
+        const pdfBytes = await buildPdf(slides, loadedFile.name);
+        setStatus('Preparing download…', 90);
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${loadedFile.name.replace(/\.(pptx?|PPTX?|PPT?)$/, '') || 'presentation'}-export.pdf`;
+        a.click();
+        preview.src = url;
+        setStatus('All set! Download should start, and the preview is updated.', 100);
+        convertBtn.disabled = false;
+      }catch(err){
+        console.error(err);
+        setStatus(`<strong>Conversion failed:</strong> ${err.message}`);
+        convertBtn.disabled = false;
+      }
+    });
+
+    resetUI();
+  </script>
+</body>
+</html>
