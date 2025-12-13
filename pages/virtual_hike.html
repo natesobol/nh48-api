@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WMNF Virtual Hike</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.109/Widgets/widgets.min.css" rel="stylesheet">
+<style>
+  /* Dark theme styling for the virtual hike page */
+  body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1d23;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    overflow: hidden;
+  }
+  #toolbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background-color: rgba(40, 45, 55, 0.9);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  #toolbar h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    flex: 1;
+  }
+  #toolbar button {
+    background-color: #2f855a;
+    border: none;
+    border-radius: 4px;
+    padding: 0.4rem 0.8rem;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  #toolbar button:hover {
+    background-color: #276749;
+  }
+  #cesiumContainer {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+</style>
+</head>
+<body>
+<div id="toolbar">
+  <h2 id="trailName">Virtual Hike</h2>
+  <button id="playBtn">Fly Trail</button>
+  <button id="clearBtn">Clear Markers</button>
+</div>
+<div id="cesiumContainer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.109/Cesium.min.js"></script>
+<script>
+// Helper to get query parameters
+function getQueryParam(name) {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+
+// Main async function to initialize the virtual hike
+async function init() {
+  const trail = getQueryParam('trail');
+  const decoded = trail ? decodeURIComponent(trail) : '';
+  document.getElementById('trailName').textContent = decoded ? decoded + ' — Virtual Hike' : 'Virtual Hike';
+
+  // Create the Cesium viewer
+  const viewer = new Cesium.Viewer('cesiumContainer', {
+    terrainProvider: Cesium.createWorldTerrain(),
+    animation: false,
+    timeline: false,
+    sceneModePicker: false,
+    baseLayerPicker: false,
+    navigationHelpButton: false,
+    geocoder: false,
+    homeButton: false,
+    infoBox: false,
+    fullscreenButton: false,
+    selectionIndicator: false
+  });
+
+  // Store user-added markers
+  const userMarkers = [];
+
+  // Add click handler to add markers
+  const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  handler.setInputAction(function(click) {
+    const cartesian = viewer.scene.pickPosition(click.position);
+    if (Cesium.defined(cartesian)) {
+      const marker = viewer.entities.add({
+        position: cartesian,
+        point: {
+          pixelSize: 8,
+          color: Cesium.Color.YELLOW,
+          outlineColor: Cesium.Color.BLACK,
+          outlineWidth: 1
+        }
+      });
+      userMarkers.push(marker);
+    }
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+  // Clear button to remove all markers
+  document.getElementById('clearBtn').addEventListener('click', function() {
+    userMarkers.forEach(entity => viewer.entities.remove(entity));
+    userMarkers.length = 0;
+  });
+
+  // Load the GeoJSON trail data from the bundled copy first, then fall back to mirrors
+  const geoUrls = [
+    '../data/merged_trails.geojson',
+    'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/merged_trails.geojson',
+    'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/merged_trails.geojson',
+    'https://unpkg.com/natesobol/nh48-api@main/data/merged_trails.geojson'
+  ];
+  let geoData;
+  for (const url of geoUrls) {
+    try {
+      const res = await fetch(url, {cache: 'no-cache'});
+      if (res.ok) {
+        geoData = await res.json();
+        break;
+      }
+    } catch {
+      continue;
+    }
+  }
+  if (!geoData) {
+    alert('Failed to load trail data.');
+    return;
+  }
+
+  // Filter features by name
+  const features = geoData.features.filter(f => {
+    const name = f.properties && f.properties.name;
+    return name && name === decoded;
+  });
+  if (features.length === 0) {
+    alert('Trail not found: ' + decoded);
+    return;
+  }
+
+  // Create a GeoJsonDataSource for the selected trail
+  const dataSource = await Cesium.GeoJsonDataSource.load(
+    {type: 'FeatureCollection', features: features},
+    {
+      clampToGround: true,
+      stroke: Cesium.Color.ORANGERED,
+      strokeWidth: 4
+    }
+  );
+  viewer.dataSources.add(dataSource);
+
+  // Fly to the trail when the page loads
+  viewer.flyTo(dataSource.entities, {duration: 3});
+
+  // Play button: fly along the trail path
+  document.getElementById('playBtn').addEventListener('click', function() {
+    let positions;
+    const entity = dataSource.entities.values[0];
+    if (entity.polyline && entity.polyline.positions) {
+      positions = entity.polyline.positions.getValue(Cesium.JulianDate.now());
+    } else if (entity.polygon) {
+      positions = entity.polygon.hierarchy.getValue(Cesium.JulianDate.now()).positions;
+    }
+    if (!positions || positions.length === 0) {
+      alert('No positions found for this trail.');
+      return;
+    }
+    // Create a set of sampled positions to fly through
+    const total = positions.length;
+    const flyPositions = [];
+    for (let i = 0; i < total; i += Math.floor(total/100) || 1) {
+      flyPositions.push(positions[i]);
+    }
+    let index = 0;
+    function flyNext() {
+      if (index >= flyPositions.length) return;
+      viewer.camera.flyTo({
+        destination: flyPositions[index],
+        orientation: {
+          heading: viewer.camera.heading,
+          pitch: viewer.camera.pitch,
+          roll: viewer.camera.roll
+        },
+        duration: 1.0,
+        complete: function() {
+          index++;
+          flyNext();
+        }
+      });
+    }
+    flyNext();
+  });
+}
+
+init();
+</script>
+</body>
+</html>

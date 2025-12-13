@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse and explore all 48 of New Hampshire's 4000-foot peaks. Interactive catalog with search, sorting, and filtering.">
+    <title>NH48 Peak Catalog - New Hampshire 4000-Footers</title>
+    <!--
+      Enhanced catalog page for the NH48 peak list.
+
+      This version adds:
+        • Larger cards in a 2-column layout.
+        • Sort-by dropdown covering all general info API fields.
+        • A two-tier filter: 1) choose field, 2) choose value (Range, Difficulty, Trail Type, Exposure).
+        • Cards display the same “General Peak Info” as the details page.
+    -->
+    <style>
+      :root{
+        --bg:#0a0a0a;
+        --panel:#12121a;
+        --card:#171a22;
+        --ink:#ffffff;
+        --muted:#a5b4c3;
+        --stroke:#ffffff33;
+        --accent:#22c55e;
+        --gap:10px;
+      }
+      body{
+        margin:0;
+        background:var(--bg);
+        color:var(--ink);
+        font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+        -webkit-font-smoothing:antialiased;
+        text-rendering:optimizeLegibility;
+      }
+
+      /* Navigation Menu */
+      .top-nav{
+        background:var(--panel);
+        border-bottom:1px solid var(--stroke);
+        padding:12px 0;
+        margin-bottom:16px;
+      }
+      .nav-container{
+        max-width:1100px;
+        margin:0 auto;
+        padding:0 16px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+      }
+      .nav-brand{
+        font-size:1.1rem;
+        font-weight:600;
+        color:var(--accent);
+        text-decoration:none;
+      }
+      .nav-links{
+        display:flex;
+        gap:24px;
+        align-items:center;
+      }
+      .nav-links a{
+        color:var(--ink);
+        text-decoration:none;
+        font-size:0.95rem;
+        transition:color 0.2s ease;
+        white-space:nowrap;
+      }
+      .nav-links a:hover{
+        color:var(--accent);
+      }
+      .nav-toggle{
+        display:none;
+        background:none;
+        border:none;
+        color:var(--ink);
+        font-size:1.5rem;
+        cursor:pointer;
+        padding:4px;
+      }
+      @media(max-width:640px){
+        .top-nav{ padding:10px 0; margin-bottom:12px; }
+        .nav-container{ padding:0 12px; flex-wrap:wrap; }
+        .nav-toggle{ display:block; }
+        .nav-links{
+          display:none;
+          width:100%;
+          flex-direction:column;
+          gap:12px;
+          margin-top:12px;
+          padding-top:12px;
+          border-top:1px solid var(--stroke);
+          align-items:flex-start;
+        }
+        .nav-links.active{
+          display:flex;
+        }
+        .nav-brand{ font-size:1rem; }
+      }
+      .wrap{
+        max-width:1100px;
+        margin:0 auto;
+        padding:16px;
+      }
+      @media(max-width:640px){
+        .wrap{ padding:12px; }
+      }
+      header h1{
+        margin:0;
+        font-size:clamp(24px,4vw,32px);
+        line-height:1.2;
+      }
+      header p{
+        margin:4px 0 16px;
+        color:var(--muted);
+      }
+      @media(max-width:640px){
+        header h1{ font-size:clamp(20px,5vw,24px); }
+        header p{ font-size:0.9rem; margin:4px 0 12px; }
+      }
+      .search{
+        margin-bottom:12px;
+      }
+      .search input{
+        width:100%;
+        height:40px;
+        padding:0 14px;
+        font-size:16px;
+        border:1px solid var(--stroke);
+        border-radius:10px;
+        background:var(--card);
+        color:var(--ink);
+        outline:none;
+        box-sizing:border-box;
+      }
+      @media(max-width:640px){
+        .search{ margin-bottom:10px; }
+        .search input{ height:36px; font-size:14px; padding:0 10px; }
+      }
+      .controls{
+        display:flex;
+        flex-wrap:wrap;
+        gap:12px;
+        margin-bottom:14px;
+        align-items:center;
+      }
+      .controls label{
+        font-size:0.85rem;
+        color:var(--muted);
+        margin-right:4px;
+      }
+      .controls select{
+        background:var(--card);
+        color:var(--ink);
+        border:1px solid var(--stroke);
+        border-radius:10px;
+        padding:6px 10px;
+        font-size:0.9rem;
+      }
+      @media(max-width:640px){
+        .controls{ gap:8px; margin-bottom:10px; }
+        .controls label{ font-size:0.75rem; margin-right:2px; }
+        .controls select{ padding:4px 8px; font-size:0.8rem; }
+      }
+
+      /* GRID: 2 columns desktop, 1 column mobile */
+      .grid{
+        display:grid;
+        gap:16px;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+      @media(max-width:800px){
+        .grid{ grid-template-columns:1fr; }
+      }
+
+      .card{
+        background:var(--card);
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        overflow:hidden;
+        cursor:pointer;
+        display:flex;
+        flex-direction:column;
+        transition:transform .12s ease, box-shadow .12s ease;
+      }
+      .card:hover{
+        transform:translateY(-2px);
+        box-shadow:0 8px 20px #0005;
+      }
+      .thumb{
+        aspect-ratio:5/3;
+        background:var(--panel);
+        position:relative;
+        overflow:hidden;
+      }
+      .thumb img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        display:block;
+      }
+      .body{
+        padding:14px;
+        flex:1 1 auto;
+        display:flex;
+        flex-direction:column;
+        gap:6px;
+      }
+      .body h3{
+        margin:0;
+        font-size:1.1rem;
+      }
+
+      /* “General info” block inside card */
+      .card-meta{
+        margin-top:2px;
+        border-top:1px solid var(--stroke);
+        padding-top:6px;
+      }
+      .meta-row{
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:12px;
+        padding:4px 0;
+        border-bottom:1px dotted var(--stroke);
+        font-size:0.85rem;
+      }
+      .meta-row:last-child{
+        border-bottom:none;
+      }
+      .meta-label{
+        text-transform:uppercase;
+        letter-spacing:0.4px;
+        font-size:0.75rem;
+        color:var(--muted);
+        max-width:45%;
+      }
+      .meta-value{
+        text-align:right;
+        color:var(--ink);
+        flex:1 1 auto;
+        word-wrap:break-word;
+        white-space:normal;
+      }
+
+      @media(max-width:640px){
+        .body{ padding:12px; }
+        .body h3{ font-size:0.98rem; }
+        .meta-row{ font-size:0.8rem; }
+        .meta-label{ font-size:0.72rem; }
+      }
+
+      .empty{
+        padding:40px;
+        text-align:center;
+        color:var(--muted);
+        font-size:1rem;
+      }
+
+      /* Pagination styles */
+      .pagination{
+        display:flex;
+        gap:4px;
+        justify-content:center;
+        margin-top:12px;
+        flex-wrap:wrap;
+      }
+      .pagination button{
+        background:var(--card);
+        color:var(--ink);
+        border:1px solid var(--stroke);
+        border-radius:8px;
+        padding:4px 8px;
+        cursor:pointer;
+      }
+      .pagination button.active{
+        background:var(--accent);
+        color:#0a0a0a;
+      }
+      .pagination button:disabled{
+        opacity:0.5;
+        cursor:default;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="top-nav">
+      <div class="nav-container">
+        <a href="nh48_catalog.html" class="nav-brand">NH48</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+        <div class="nav-links" id="navLinks">
+          <a href="nh48_catalog.html">Catalog</a>
+          <a href="nh48_peak.html">Peak Details</a>
+          <a href="trails_app.html">WMNF Trails</a>
+          <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
+          <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
+        </div>
+      </div>
+    </nav>
+    <div class="wrap">
+      <header>
+        <h1>NH48 Peak Catalog</h1>
+        <p>Browse New Hampshire's forty-eight 4000-footers. Click a peak to view more details. If errors occur, details will appear below.</p>
+      </header>
+
+      <!-- search with datalist for suggestions -->
+      <div class="search">
+        <input type="text" id="searchInput" list="nameSuggestions" placeholder="Search peaks by name…" />
+        <datalist id="nameSuggestions"></datalist>
+      </div>
+
+      <!-- controls for sorting and filtering -->
+      <div class="controls">
+        <div class="control">
+          <label for="sortSelect">Sort by:</label>
+          <select id="sortSelect">
+            <option value="name">Name (A–Z)</option>
+            <option value="elev-asc">Elevation ↑</option>
+            <option value="elev-desc">Elevation ↓</option>
+            <option value="prom-asc">Prominence ↑</option>
+            <option value="prom-desc">Prominence ↓</option>
+            <option value="difficulty-asc">Difficulty A–Z</option>
+            <option value="difficulty-desc">Difficulty Z–A</option>
+            <option value="range-asc">Range A–Z</option>
+            <option value="trail-asc">Trail Type A–Z</option>
+            <option value="exposure-asc">Exposure A–Z</option>
+          </select>
+        </div>
+
+        <!-- Two-tier filter: choose field + value -->
+        <div class="control">
+          <label for="filterField">Filter by:</label>
+          <select id="filterField">
+            <option value="">None</option>
+            <option value="range">Range</option>
+            <option value="difficulty">Difficulty</option>
+            <option value="trail">Trail Type</option>
+            <option value="exposure">Exposure</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="filterValue">Value:</label>
+          <select id="filterValue" disabled>
+            <option value="">All</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="grid" class="grid"></div>
+      <nav id="pagination" class="pagination"></nav>
+      <div id="emptyMessage" class="empty" hidden>No peaks found.</div>
+    </div>
+
+    <script>
+      // API endpoints to attempt in order.
+      const API_URLS = [
+        'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
+        'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
+      ];
+
+      // Placeholder image when no photo is available
+      const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">no image</text></svg>`
+      );
+
+      // Pagination
+      const ITEMS_PER_PAGE = 30;
+      let currentPage = 1;
+
+      let peaks = [];
+      let activeSort = 'name';
+
+      // two-tier filter state
+      const filters = {
+        field: '',
+        value: ''
+      };
+
+      // options per filter field (built after loading peaks)
+      const filterOptions = {
+        range: [],
+        difficulty: [],
+        trail: [],
+        exposure: []
+      };
+
+      function cleanJSON(raw){
+        let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
+        cleaned = cleaned.replace(/\/\*\s*Lines?\s+\d+[\d\-,\s]*omitted\s*\*\//g, '');
+        return cleaned;
+      }
+
+      async function fetchPeaks(){
+        for(let i=0;i<API_URLS.length;i++){
+          const url = API_URLS[i];
+          try{
+            const res = await fetch(url, { mode:'cors' });
+            if(!res.ok){
+              console.log(`Attempt ${i+1}: Status ${res.status} ${res.statusText}`);
+              continue;
+            }
+            const text = await res.text();
+            const cleaned = cleanJSON(text);
+            let obj;
+            try{
+              obj = JSON.parse(cleaned);
+            }catch(err){
+              console.error(`JSON parse error: ${err.message}`);
+              continue;
+            }
+            const arr = Object.keys(obj).map(slug => {
+              const p = obj[slug] || {};
+              p.slug = slug;
+              p.peakName = p.peakName || p['Peak Name'] || slug;
+              return p;
+            });
+            console.log(`Loaded ${arr.length} peaks from ${url}`);
+            return arr;
+          }catch(err){
+            console.error(`Fetch error: ${err.message || err}`);
+          }
+        }
+        throw new Error('All API endpoints failed');
+      }
+
+      function createCard(p){
+        const card = document.createElement('article');
+        card.className = 'card';
+
+        // Thumbnail
+        let thumbSrc = PLACEHOLDER;
+        if (Array.isArray(p.photos) && p.photos.length > 0) {
+          const first = p.photos[0];
+          if (typeof first === 'string') {
+            thumbSrc = first;
+          } else if (first && first.url) {
+            thumbSrc = first.url;
+          }
+        }
+
+        const elev = p['Elevation (ft)'];
+        const prom = p['Prominence (ft)'];
+        const range = p['Range / Subrange'] || '—';
+        const trail = p['Trail Type'] || '—';
+        const difficulty = p['Difficulty'] || '—';
+        const exposure = p['Exposure Level'] || p['Weather Exposure Rating'] || '—';
+
+        card.innerHTML = `
+          <div class="thumb">
+            <img src="${thumbSrc}" alt="${p.peakName} thumbnail" loading="lazy" decoding="async">
+          </div>
+          <div class="body">
+            <h3>${p.peakName}</h3>
+            <div class="card-meta">
+              <div class="meta-row"><span class="meta-label">Elevation</span><span class="meta-value">${elev ? elev + "'" : '—'}</span></div>
+              <div class="meta-row"><span class="meta-label">Prominence</span><span class="meta-value">${prom ? prom + "'" : '—'}</span></div>
+              <div class="meta-row"><span class="meta-label">Range</span><span class="meta-value">${range}</span></div>
+              <div class="meta-row"><span class="meta-label">Trail Type</span><span class="meta-value">${trail}</span></div>
+              <div class="meta-row"><span class="meta-label">Difficulty</span><span class="meta-value">${difficulty}</span></div>
+              <div class="meta-row"><span class="meta-label">Exposure</span><span class="meta-value">${exposure}</span></div>
+            </div>
+          </div>`;
+
+        card.addEventListener('click', () => {
+          const base = window.location.href.replace(/[^\/]*$/, '');
+          const url = new URL('nh48_peak.html', base);
+          url.searchParams.set('slug', p.slug);
+          window.open(url.toString(), '_top');
+        });
+
+        return card;
+      }
+
+      function setupLazyLoading(){
+        if (!('IntersectionObserver' in window)) return;
+        const observer = new IntersectionObserver((entries, obs) => {
+          entries.forEach(entry => {
+            if(entry.isIntersecting){
+              const img = entry.target;
+              const real = img.getAttribute('data-src');
+              if(real){ img.src = real; img.removeAttribute('data-src'); }
+              obs.unobserve(img);
+            }
+          });
+        }, { rootMargin: '200px' });
+        document.querySelectorAll('img[data-src]').forEach(img => observer.observe(img));
+      }
+
+      function renderGrid(list){
+        const grid = document.getElementById('grid');
+        const empty = document.getElementById('emptyMessage');
+        grid.innerHTML = '';
+        if(!list || list.length === 0){
+          empty.hidden = false;
+          return;
+        }
+        empty.hidden = true;
+        list.forEach(p => grid.appendChild(createCard(p)));
+        setupLazyLoading();
+      }
+
+      // Build suggestions list, stripping common words
+      function updateSuggestions(){
+        const list = peaks.map(p => p.peakName.replace(/\b(Mount|Mountain|Peak)\b/gi, '').trim()).filter(Boolean);
+        const seen = new Set();
+        const unique = [];
+        list.forEach(name => {
+          const key = name.toLowerCase();
+          if(!seen.has(key)){
+            seen.add(key);
+            unique.push(name);
+          }
+        });
+        const dl = document.getElementById('nameSuggestions');
+        dl.innerHTML = unique.sort().map(name => `<option value="${name}"></option>`).join('');
+      }
+
+      // Build filter options for each field
+      function buildFilterOptions(){
+        const ranges = new Set();
+        const diffs = new Set();
+        const trails = new Set();
+        const exposures = new Set();
+
+        peaks.forEach(p => {
+          const r = p['Range / Subrange'];
+          if(r) ranges.add(r);
+          const d = p['Difficulty'] || p.Difficulty;
+          if(d) diffs.add(d);
+          const t = p['Trail Type'];
+          if(t) trails.add(t);
+          const e = p['Exposure Level'] || p['Weather Exposure Rating'];
+          if(e) exposures.add(e);
+        });
+
+        filterOptions.range = Array.from(ranges).sort();
+        filterOptions.difficulty = Array.from(diffs).sort();
+        filterOptions.trail = Array.from(trails).sort();
+        filterOptions.exposure = Array.from(exposures).sort();
+      }
+
+      function populateFilterValueSelect(field){
+        const valueSel = document.getElementById('filterValue');
+        valueSel.innerHTML = '<option value=\"\">All</option>';
+
+        if(!field){
+          valueSel.disabled = true;
+          return;
+        }
+
+        const opts = filterOptions[field] || [];
+        opts.forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = v;
+          opt.textContent = v;
+          valueSel.appendChild(opt);
+        });
+
+        valueSel.disabled = false;
+      }
+
+      function applyFilters(list){
+        if(!filters.field || !filters.value) return list;
+
+        const val = filters.value;
+        return list.filter(p => {
+          switch(filters.field){
+            case 'range':
+              return (p['Range / Subrange'] || '') === val;
+            case 'difficulty':
+              return (p['Difficulty'] || p.Difficulty || '') === val;
+            case 'trail':
+              return (p['Trail Type'] || '') === val;
+            case 'exposure':
+              return (p['Exposure Level'] || p['Weather Exposure Rating'] || '') === val;
+          }
+          return true;
+        });
+      }
+
+      function sortPeaks(list){
+        const arr = list.slice();
+        arr.sort((a, b) => {
+          switch(activeSort){
+            case 'name':
+              return (a.peakName || '').localeCompare(b.peakName || '');
+            case 'elev-asc':
+              return (a['Elevation (ft)'] || 0) - (b['Elevation (ft)'] || 0);
+            case 'elev-desc':
+              return (b['Elevation (ft)'] || 0) - (a['Elevation (ft)'] || 0);
+            case 'prom-asc':
+              return (a['Prominence (ft)'] || 0) - (b['Prominence (ft)'] || 0);
+            case 'prom-desc':
+              return (b['Prominence (ft)'] || 0) - (a['Prominence (ft)'] || 0);
+            case 'difficulty-asc':
+              return ((a['Difficulty'] || '')).localeCompare((b['Difficulty'] || ''));
+            case 'difficulty-desc':
+              return ((b['Difficulty'] || '')).localeCompare((a['Difficulty'] || ''));
+            case 'range-asc':
+              return ((a['Range / Subrange'] || '')).localeCompare((b['Range / Subrange'] || ''));
+            case 'trail-asc':
+              return ((a['Trail Type'] || '')).localeCompare((b['Trail Type'] || ''));
+            case 'exposure-asc':
+              return ((a['Exposure Level'] || a['Weather Exposure Rating'] || ''))
+                .localeCompare((b['Exposure Level'] || b['Weather Exposure Rating'] || ''));
+          }
+          return 0;
+        });
+        return arr;
+      }
+
+      // Render pagination controls
+      function renderPagination(totalPages){
+        const nav = document.getElementById('pagination');
+        nav.innerHTML = '';
+        if(totalPages <= 1){
+          return;
+        }
+        const makeBtn = (label, page) => {
+          const btn = document.createElement('button');
+          btn.textContent = label;
+          if(page === currentPage){
+            btn.disabled = true;
+            btn.classList.add('active');
+          }
+          btn.addEventListener('click', () => {
+            currentPage = page;
+            updateDisplay();
+          });
+          return btn;
+        };
+        // First and previous
+        nav.appendChild(makeBtn('«', 1));
+        nav.appendChild(makeBtn('‹', Math.max(1, currentPage - 1)));
+        // Window of pages
+        const delta = 2;
+        const start = Math.max(1, currentPage - delta);
+        const end = Math.min(totalPages, currentPage + delta);
+        for(let i=start; i<=end; i++){
+          nav.appendChild(makeBtn(i.toString(), i));
+        }
+        // Next and last
+        nav.appendChild(makeBtn('›', Math.min(totalPages, currentPage + 1)));
+        nav.appendChild(makeBtn('»', totalPages));
+      }
+
+      function updateDisplay(){
+        let list = peaks;
+
+        // Search filter from input
+        const searchVal = document.getElementById('searchInput').value.trim().toLowerCase();
+        if(searchVal){
+          list = list.filter(p => p.peakName && p.peakName.toLowerCase().includes(searchVal));
+        }
+
+        list = applyFilters(list);
+        list = sortPeaks(list);
+
+        // Pagination
+        const totalPages = Math.ceil(list.length / ITEMS_PER_PAGE);
+        if(currentPage > totalPages){
+          currentPage = totalPages || 1;
+        }
+        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+        const endIdx = startIdx + ITEMS_PER_PAGE;
+        const pageItems = list.slice(startIdx, endIdx);
+
+        renderGrid(pageItems);
+        renderPagination(totalPages);
+      }
+
+      async function init(){
+        try{
+          peaks = await fetchPeaks();
+          updateSuggestions();
+          buildFilterOptions();
+          updateDisplay();
+        }catch(err){
+          console.error(err);
+          document.getElementById('emptyMessage').textContent = 'Error loading peaks';
+          document.getElementById('emptyMessage').hidden = false;
+        }
+
+        document.getElementById('searchInput').addEventListener('input', () => {
+          currentPage = 1;
+          updateDisplay();
+        });
+
+        document.getElementById('sortSelect').addEventListener('change', (e) => {
+          activeSort = e.target.value;
+          currentPage = 1;
+          updateDisplay();
+        });
+
+        document.getElementById('filterField').addEventListener('change', (e) => {
+          filters.field = e.target.value;
+          filters.value = '';
+          populateFilterValueSelect(filters.field);
+          currentPage = 1;
+          updateDisplay();
+        });
+
+        document.getElementById('filterValue').addEventListener('change', (e) => {
+          filters.value = e.target.value;
+          currentPage = 1;
+          updateDisplay();
+        });
+      }
+
+      window.addEventListener('load', init);
+
+      // Mobile navigation toggle
+      document.getElementById('navToggle').addEventListener('click', () => {
+        document.getElementById('navLinks').classList.toggle('active');
+      });
+    </script>
+  </body>
+</html>
