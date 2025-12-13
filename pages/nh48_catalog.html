@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Browse and explore all 48 of New Hampshire's 4000-foot peaks. Interactive catalog with search, sorting, and filtering.">
     <title>NH48 Peak Catalog - New Hampshire 4000-Footers</title>
+    <link rel="stylesheet" href="../css/nh48_catalog.css">
     <!--
       Enhanced catalog page for the NH48 peak list.
 
@@ -12,9 +13,8 @@
         • Larger cards in a 2-column layout.
         • Sort-by dropdown covering all general info API fields.
         • A two-tier filter: 1) choose field, 2) choose value (Range, Difficulty, Trail Type, Exposure).
-        • Cards display the same “General Peak Info” as the details page.
+        • Cards display the same "General Peak Info" as the details page.
     -->
-    <style>
       :root{
         --bg:#0a0a0a;
         --panel:#12121a;
@@ -282,11 +282,6 @@
         background:var(--accent);
         color:#0a0a0a;
       }
-      .pagination button:disabled{
-        opacity:0.5;
-        cursor:default;
-      }
-    </style>
   </head>
   <body>
     <nav class="top-nav">

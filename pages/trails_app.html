@@ -6,7 +6,7 @@
   <title>WMNF Trails - White Mountain National Forest Trail Finder</title>
   <meta name="description" content="Interactive trail finder and completion tracker for White Mountain National Forest hiking trails.">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <style>
+  <link rel="stylesheet" href="../css/trails_app.css">
     * {
       box-sizing: border-box;
     }
@@ -50,8 +50,9 @@
       margin: 0 auto;
       padding: 0 16px;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
+      gap: 3rem;
     }
     .nav-brand{
       display: flex;
@@ -73,6 +74,13 @@
       font-size: 0.95rem;
       transition: color 0.2s ease;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .nav-links a img{
+      height: 20px;
+      width: auto;
     }
     .nav-links a:hover{
       color: var(--accent-blue);
@@ -161,48 +169,66 @@
       border-radius: 8px;
     }
 
-    /* Peak info panel next to map */
+    /* Peak Bagger promo panel next to map */
     #peakInfoPanel {
       flex: 1;
       display: flex;
       flex-direction: column;
-      padding: 1rem;
-      background-color: var(--bg-secondary);
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      overflow-y: auto;
+      text-align: center;
     }
 
     #peakInfoPanel h2 {
-      margin: 0 0 1rem 0;
-      font-size: 1.2rem;
+      margin: 0 0 1.5rem 0;
+      font-size: 2rem;
       color: var(--text-primary);
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 0.5rem;
+      font-weight: 700;
     }
 
-    #peakPhoto {
-      width: 100%;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-    }
-
-    .peak-detail {
-      margin-bottom: 0.75rem;
-      font-size: 0.9rem;
-    }
-
-    .peak-detail-label {
+    #peakInfoPanel p {
+      font-size: 1.1rem;
       color: var(--text-secondary);
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 0.25rem;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+      max-width: 400px;
     }
 
-    .peak-detail-value {
+    .promo-link {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background-color: var(--accent-blue);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+    }
+
+    .promo-link:hover {
+      background-color: var(--accent-blue-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(74, 158, 255, 0.4);
+    }
+
+    .user-details {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .user-details strong {
       color: var(--text-primary);
-      font-weight: 500;
+      display: block;
+      margin-bottom: 0.5rem;
     }
 
     /* Map itself fills its container */
@@ -723,23 +749,15 @@
       font-size: 1rem;
       line-height: 1;
     }
-    .hike-btn:hover {
-      background-color: var(--button-green-dark);
-    }
-
-    }
-  </style>
 </head>
 
 <body>
   <nav class="top-nav">
     <div class="nav-container">
-      <a href="nh48_catalog.html" class="nav-brand"><img src="../nh48API_logo.png" alt="NH48 Logo"></a>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
       <div class="nav-links" id="navLinks">
-        <a href="nh48_catalog.html">Catalog</a>
-        <a href="nh48_peak.html">Peak Details</a>
-        <a href="trails_app.html">WMNF Trails</a>
+        <a href="nh48_catalog.html"><img src="../nh48API_logo.png" alt="">Catalog</a>
+        <a href="trails_app.html"><img src="../WMNF_Trails_API_logo.png" alt="">WMNF Trails</a>
         <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
         <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
       </div>
@@ -751,7 +769,7 @@
       <aside id="sidebar">
         <!-- Sidebar Header -->
         <div class="sidebar-header">
-        <h1>🏔️ WMNF Trails API Map Tool</h1>
+        <h1><img src="../WMNF_Trails_API_logo.png" alt="WMNF" style="height: 32px; vertical-align: middle; margin-right: 0.5rem;"> WMNF Trails API Map Tool</h1>
           <p>White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker.</p>
         </div>
         <!-- Information panel with collapsible instructions and import/export controls -->
@@ -802,27 +820,12 @@
           <div id="map"></div>
         </div>
         <div id="peakInfoPanel">
-          <h2>Featured Peak</h2>
-          <img id="peakPhoto" src="" alt="Peak photo" style="display:none;">
-          <div class="peak-detail">
-            <div class="peak-detail-label">Peak Name</div>
-            <div class="peak-detail-value" id="peakName">Loading...</div>
-          </div>
-          <div class="peak-detail">
-            <div class="peak-detail-label">Elevation</div>
-            <div class="peak-detail-value" id="peakElevation">—</div>
-          </div>
-          <div class="peak-detail">
-            <div class="peak-detail-label">Prominence</div>
-            <div class="peak-detail-value" id="peakProminence">—</div>
-          </div>
-          <div class="peak-detail">
-            <div class="peak-detail-label">Range</div>
-            <div class="peak-detail-value" id="peakRange">—</div>
-          </div>
-          <div class="peak-detail">
-            <div class="peak-detail-label">Difficulty</div>
-            <div class="peak-detail-value" id="peakDifficulty">—</div>
+          <h2>Track Your NH48 Progress</h2>
+          <p>Log your peak completions, track your hiking stats, and join the community of White Mountain adventurers.</p>
+          <a href="https://nh48.app" target="_blank" rel="noopener" class="promo-link">Visit Peak Bagger →</a>
+          <div class="user-details">
+            <strong>Main User:</strong>
+            <span>Nate Sobol</span>
           </div>
         </div>
       </div>
@@ -1466,53 +1469,6 @@
         renderTrailList();
       }
 
-      // Load random peak for info panel
-      async function loadRandomPeak() {
-        const peakUrls = [
-          '../data/nh48.json',
-          'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
-          'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
-        ];
-
-        for (const url of peakUrls) {
-          try {
-            const response = await fetch(url);
-            if (response.ok) {
-              const data = await response.json();
-              const peakKeys = Object.keys(data);
-              const randomKey = peakKeys[Math.floor(Math.random() * peakKeys.length)];
-              const peak = data[randomKey];
-              
-              // Update peak info panel
-              document.getElementById('peakName').textContent = peak.peakName || peak['Peak Name'] || randomKey;
-              document.getElementById('peakElevation').textContent = peak['Elevation (ft)'] ? peak['Elevation (ft)'] + "'" : '—';
-              document.getElementById('peakProminence').textContent = peak['Prominence (ft)'] ? peak['Prominence (ft)'] + "'" : '—';
-              document.getElementById('peakRange').textContent = peak['Range / Subrange'] || '—';
-              document.getElementById('peakDifficulty').textContent = peak['Difficulty'] || '—';
-              
-              // Load photo if available
-              if (Array.isArray(peak.photos) && peak.photos.length > 0) {
-                const photoUrl = typeof peak.photos[0] === 'string' ? peak.photos[0] : peak.photos[0].url;
-                if (photoUrl) {
-                  const img = document.getElementById('peakPhoto');
-                  img.src = photoUrl;
-                  img.style.display = 'block';
-                }
-              }
-              
-              return;
-            }
-          } catch (err) {
-            console.warn(`Failed to load peak from ${url}:`, err);
-            continue;
-          }
-        }
-      }
-
-      // Load random peak on desktop only
-      if (window.innerWidth > 768) {
-        loadRandomPeak();
-      }
       // Attach event listeners for search, sort, hide completed, and clear progress.
       document.getElementById('searchInput').addEventListener('input', renderTrailList);
       document.getElementById('sortSelect').addEventListener('change', renderTrailList);

@@ -1,0 +1,747 @@
+* {
+  box-sizing: border-box;
+}
+
+/* Dark theme color palette */
+:root {
+  --bg-primary: #1a1d23;
+  --bg-secondary: #25282f;
+  --bg-tertiary: #2d3039;
+  --border-color: #3d4048;
+  --text-primary: #ffffff;
+  --text-secondary: #ffffff;
+  --accent-blue: #4a9eff;
+  --accent-blue-dark: #2d7dd8;
+  --accent-red: #ff6b6b;
+  --success-green: #51cf66;
+  --hover-bg: #33373f;
+
+  /* Dark green used for primary action buttons (Export/Import) */
+  --button-green: #2f855a;
+  --button-green-dark: #276749;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Navigation Menu */
+.top-nav{
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 0;
+}
+.nav-container{
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+}
+.nav-brand{
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+.nav-brand img{
+  height: 40px;
+  width: auto;
+}
+.nav-links{
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.nav-links a{
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.nav-links a img{
+  height: 20px;
+  width: auto;
+}
+.nav-links a:hover{
+  color: var(--accent-blue);
+}
+.nav-toggle{
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 4px;
+}
+@media(max-width:640px){
+  .top-nav{ padding: 10px 0; }
+  .nav-container{ padding: 0 12px; flex-wrap: wrap; }
+  .nav-toggle{ display: block; }
+  .nav-links{
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+    align-items: flex-start;
+  }
+  .nav-links.active{
+    display: flex;
+  }
+  .nav-brand img{ height: 32px; }
+}
+
+/* Root container for the app */
+#app {
+  /* Layout as a column: top section (map + settings) on top, list section below */
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 65px); /* Subtract nav height */
+  gap: 0;
+}
+
+/* Top section holds the sidebar and the map side by side */
+#topSection {
+  display: flex;
+  /* Allocate more vertical space to the top section using flex-grow. A higher value
+     means a taller map. Increase from 3 to 4 to give the map and settings area
+     roughly 30–50% more height relative to the list section. */
+  flex: 4 1 0;
+  /* Raise the minimum height so the map and settings are taller vertically. Increase
+     from 600px to 800px to provide more vertical space for the map and sidebar. */
+  min-height: 800px;
+}
+
+/* Adjust the sidebar dimensions; allow vertical scrolling for long content */
+#sidebar {
+  width: 28%;
+  min-width: 280px;
+  max-width: 400px;
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* Wrapper for map and peak info panels */
+#mapSection {
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+  margin: 1rem;
+}
+
+/* Map occupies the remaining width of the top section */
+/* Container wrapping the map. Provides padding and its own border to avoid
+   the map touching other edges. On mobile, this container will stack
+   neatly below the sidebar. */
+#mapContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+/* Peak Bagger promo panel next to map */
+#peakInfoPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  text-align: center;
+}
+
+#peakInfoPanel h2 {
+  margin: 0 0 1.5rem 0;
+  font-size: 2rem;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+#peakInfoPanel p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  max-width: 400px;
+}
+
+.promo-link {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: var(--accent-blue);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+}
+
+.promo-link:hover {
+  background-color: var(--accent-blue-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(74, 158, 255, 0.4);
+}
+
+.user-details {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.user-details strong {
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/* Map itself fills its container */
+#map {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  background-color: #2d2d2d;
+  border-radius: 6px;
+}
+
+/* List section below the map; spans full width */
+#listSection {
+  width: 100%;
+  /* Allow the list section to grow and fill the remaining height */
+  flex: 1 1 auto;
+  /* Light grey panel similar to WMNF trails app */
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem;
+  overflow-y: auto;
+}
+
+/* Sidebar (settings) styles defined above.  Old definitions removed to avoid conflicts. */
+
+/* Header section with title */
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+}
+
+.sidebar-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sidebar-header p {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Controls container */
+.controls {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background-color: var(--bg-secondary);
+}
+
+.controls input[type="text"],
+.controls select {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.controls input[type="text"]::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Wrapper for the letter navigation bar and its label */
+.letter-nav-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.5rem 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.jump-label {
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  user-select: none;
+}
+.letter-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.15rem;
+}
+.letter-nav span {
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  margin: 0.15rem 0.2rem;
+  padding: 0.25rem 0.4rem;
+  border-radius: 4px;
+  flex: none;
+  user-select: none;
+}
+.letter-nav span:hover {
+  background-color: var(--hover-bg);
+  color: var(--accent-blue);
+}
+
+/* List header styling */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.header-name {
+  flex: 1;
+}
+.header-completed {
+  flex: 0;
+  margin-left: 0.5rem;
+}
+
+.controls input[type="text"]:focus,
+.controls select:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  background-color: var(--bg-tertiary);
+  box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+}
+
+.controls select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23a0a3a8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
+}
+
+/* Trail list container */
+.trail-list-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.trail-list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.trail-list-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.trail-list-container::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.trail-list-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Trail list styles */
+#trailList {
+  list-style: none;
+  padding: 0.5rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#trailList li {
+  padding: 1rem;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+#trailList li:hover {
+  background-color: var(--hover-bg);
+  border-color: var(--accent-blue);
+  transform: translateX(4px);
+}
+
+#trailList li.active {
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-dark) 100%);
+  border-color: var(--accent-blue);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.25);
+  color: white;
+}
+
+/* Empty state message */
+.empty-state {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* Loading state message */
+.loading-state {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.loading-state p {
+  margin: 0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Map container */
+#map {
+  flex: 1;
+  background-color: #2d2d2d;
+}
+
+/* Leaflet customization */
+.leaflet-control-container {
+  font-family: inherit;
+}
+
+.leaflet-control {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  color: var(--text-primary);
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.leaflet-control-zoom-in:hover,
+.leaflet-control-zoom-out:hover {
+  background-color: var(--hover-bg);
+  color: var(--accent-blue);
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.leaflet-popup-content {
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.leaflet-popup-tip {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+/* Information panel at the top of the sidebar.  This panel provides
+   instructions about using the site and buttons for exporting/importing
+   completion status.  It borrows styling cues from peakbagger: dark
+   background, rounded borders, and subtle borders. */
+.info-panel {
+  margin: 1rem;
+  margin-bottom: 0;
+  padding: 1rem;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+.info-panel strong {
+  color: var(--accent-blue);
+}
+.export-import {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+.export-import button,
+.export-import label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  background-color: var(--button-green);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-decoration: none;
+}
+.export-import button:hover,
+.export-import label:hover {
+  background-color: var(--button-green-dark);
+}
+/* Hide file input element */
+.export-import input[type="file"] {
+  display: none;
+}
+
+/* Style for the link to view the GitHub API repository */
+.view-api-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  background-color: var(--button-green);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+.view-api-link:hover {
+  background-color: var(--button-green-dark);
+}
+
+/* Trail list styling adjustments for completed status */
+#trailList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.status-circle {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  margin-left: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.status-circle.completed {
+  background-color: var(--success-green);
+  border-color: var(--success-green);
+}
+
+/* Allow the trail name span to grow, pushing controls to the right */
+.trail-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Date display and input styling */
+.date-container {
+  margin-left: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.date-container .date-icon {
+  font-size: 1rem;
+  margin-left: 0.25rem;
+}
+.date-input {
+  display: none;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  padding: 0.2rem;
+  margin-left: 0.25rem;
+  font-size: 0.85rem;
+}
+/* invert calendar picker icon colors in date input */
+.date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* Styling for collapsible instructions */
+details summary {
+  color: var(--text-primary);
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+details summary::-webkit-details-marker {
+  color: var(--accent-blue);
+}
+details summary::marker {
+  color: var(--accent-blue);
+}
+details p {
+  margin: 0.5rem 0 0;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1024px) {
+  /* Increase sidebar width on medium screens */
+  #sidebar {
+    width: 35%;
+    min-width: 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Stack sidebar and map vertically on small screens */
+  #topSection {
+    flex-direction: column;
+    height: auto;
+  }
+  #sidebar {
+    width: 100%;
+    max-width: none;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  /* Hide peak info panel on mobile */
+  #peakInfoPanel {
+    display: none;
+  }
+  /* Single column on mobile */
+  #mapSection {
+    flex-direction: column;
+  }
+  /* Ensure the map container has appropriate margin on mobile */
+  #mapContainer {
+    margin: 0;
+  }
+  #map {
+    height: 300px;
+  }
+
+  #mapContainer {
+    min-height: 320px;
+  }
+
+  /* Enable smooth touch-based scrolling on mobile */
+  #sidebar {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+  #listSection {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+  .trail-list-container {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+  
+  /* Allow natural scrolling behavior for the main app container */
+  #app {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: auto;
+    touch-action: pan-y;
+  }
+  
+  /* Ensure body allows scrolling but contains it */
+  body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  html {
+    overflow-y: auto;
+  }
+      /* Button for launching virtual hike page */
+.hike-btn {
+  width: 24px;
+  height: 24px;
+  margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--button-green); /* reuse existing button color */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+.hike-btn:hover {
+  background-color: var(--button-green-dark);
+}
+
+}

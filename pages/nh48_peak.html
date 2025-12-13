@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Detailed information about New Hampshire 4000-foot peaks including routes, terrain, conditions, and photos.">
     <title>NH48 Peak Details - New Hampshire 4000-Footers</title>
+    <link rel="stylesheet" href="../css/nh48_peak.css">
     <!--
       Standalone details view for a single NH48 peak with robust error handling.
       This version adds:
         • A photo carousel with a circular countdown timer.
-        • A “Current Photo Metadata” panel that updates per slide.
-        • A “General Peak Info” panel with dotted-line rows.
+        • A "Current Photo Metadata" panel that updates per slide.
+        • A "General Peak Info" panel with dotted-line rows.
         • Side-by-side layout of metadata + general info on larger screens.
     -->
-    <style>
       :root{
         --bg:#0a0a0a;
         --panel:#12121a;
@@ -342,13 +342,6 @@
       @media(max-width:640px){
         .info-label{ font-size:0.8rem; margin-bottom:4px; }
       }
-      .info-value{
-        color:var(--ink);
-        font-size:0.9rem;
-        word-wrap:break-word;
-        white-space:normal;
-      }
-    </style>
   </head>
   <body>
     <nav class="top-nav">
