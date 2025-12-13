@@ -32,15 +32,18 @@
     </nav>
     <div class="wrap">
       <header>
-        max-width:1100px;
-        margin:0 auto;
-        padding:0 16px;
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-      }
-      .nav-brand{
-        display:flex;
+        <h1>NH48 Peak Catalog</h1>
+        <p>Browse New Hampshire's forty-eight 4000-footers. Click a peak to view more details. If errors occur, details will appear below.</p>
+      </header>
+
+      <!-- search with datalist for suggestions -->
+      <div class="search">
+        <input type="text" id="searchInput" list="nameSuggestions" placeholder="Search peaks by name…" />
+        <datalist id="nameSuggestions"></datalist>
+      </div>
+
+      <!-- controls for sorting and filtering -->
+      <div class="controls">
         align-items:center;
         text-decoration:none;
       }
