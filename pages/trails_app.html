@@ -1,22 +1,11 @@
-<!--
-  WMNF Trail Explorer
-
-  This HTML document builds a simple, responsive web application that allows users to browse
-  hiking trails in New Hampshire's White Mountain National Forest (WMNF).  It displays a
-  searchable, sortable list of trails alongside an interactive Leaflet map.  When a user
-  selects a trail from the list, the map pans/zooms to the trail and highlights it.  The
-  layout adapts gracefully between desktop and mobile screen sizes using CSS flexbox and
-  media queries.
-
-  For Wix embedding: This version uses GitHub's raw content URL to load the GeoJSON file.
-  No DOCTYPE or full HTML structure is needed for Wix embeds. The Leaflet libraries are
-  loaded via CDN. This works across all deployment contexts (GitHub Pages, Wix, etc).
--->
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  crossorigin=""
-/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WMNF Trails - White Mountain National Forest Trail Finder</title>
+  <meta name="description" content="Interactive trail finder and completion tracker for White Mountain National Forest hiking trails.">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <style>
     * {
       box-sizing: border-box;
@@ -50,17 +39,80 @@
       color: var(--text-primary);
     }
 
+    /* Navigation Menu */
+    .top-nav{
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 0;
+    }
+    .nav-container{
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-brand{
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    .nav-brand img{
+      height: 40px;
+      width: auto;
+    }
+    .nav-links{
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .nav-links a{
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+      white-space: nowrap;
+    }
+    .nav-links a:hover{
+      color: var(--accent-blue);
+    }
+    .nav-toggle{
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 4px;
+    }
+    @media(max-width:640px){
+      .top-nav{ padding: 10px 0; }
+      .nav-container{ padding: 0 12px; flex-wrap: wrap; }
+      .nav-toggle{ display: block; }
+      .nav-links{
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border-color);
+        align-items: flex-start;
+      }
+      .nav-links.active{
+        display: flex;
+      }
+      .nav-brand img{ height: 32px; }
+    }
+
     /* Root container for the app */
     #app {
       /* Layout as a column: top section (map + settings) on top, list section below */
       display: flex;
       flex-direction: column;
-      height: 100%;
+      height: calc(100vh - 65px); /* Subtract nav height */
       gap: 0;
-      /* Pure white border around the entire application similar to peakbagger */
-      border: 1px solid #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
     }
 
     /* Top section holds the sidebar and the map side by side */
@@ -87,6 +139,14 @@
       overflow-y: auto;
     }
 
+    /* Wrapper for map and peak info panels */
+    #mapSection {
+      flex: 1;
+      display: flex;
+      gap: 1rem;
+      margin: 1rem;
+    }
+
     /* Map occupies the remaining width of the top section */
     /* Container wrapping the map. Provides padding and its own border to avoid
        the map touching other edges. On mobile, this container will stack
@@ -95,11 +155,54 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      margin: 1rem;
       padding: 1rem;
       background-color: var(--bg-secondary);
       border: 1px solid var(--border-color);
       border-radius: 8px;
+    }
+
+    /* Peak info panel next to map */
+    #peakInfoPanel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow-y: auto;
+    }
+
+    #peakInfoPanel h2 {
+      margin: 0 0 1rem 0;
+      font-size: 1.2rem;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+    }
+
+    #peakPhoto {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .peak-detail {
+      margin-bottom: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .peak-detail-label {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .peak-detail-value {
+      color: var(--text-primary);
+      font-weight: 500;
     }
 
     /* Map itself fills its container */
@@ -550,9 +653,17 @@
         border-right: none;
         border-bottom: 1px solid var(--border-color);
       }
+      /* Hide peak info panel on mobile */
+      #peakInfoPanel {
+        display: none;
+      }
+      /* Single column on mobile */
+      #mapSection {
+        flex-direction: column;
+      }
       /* Ensure the map container has appropriate margin on mobile */
       #mapContainer {
-        margin: 1rem;
+        margin: 0;
       }
       #map {
         height: 300px;
@@ -621,6 +732,19 @@
 </head>
 
 <body>
+  <nav class="top-nav">
+    <div class="nav-container">
+      <a href="nh48_catalog.html" class="nav-brand"><img src="../nh48API_logo.png" alt="NH48 Logo"></a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+      <div class="nav-links" id="navLinks">
+        <a href="nh48_catalog.html">Catalog</a>
+        <a href="nh48_peak.html">Peak Details</a>
+        <a href="trails_app.html">WMNF Trails</a>
+        <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
+        <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
+      </div>
+    </div>
+  </nav>
   <div id="app">
     <!-- Top section containing the sidebar and the map -->
     <div id="topSection">
@@ -672,9 +796,35 @@
       </div>
         </div>
       </aside>
-      <!-- Map container wrapped in its own panel to provide padding and border -->
-      <div id="mapContainer">
-        <div id="map"></div>
+      <!-- Map section with map and peak info panels -->
+      <div id="mapSection">
+        <div id="mapContainer">
+          <div id="map"></div>
+        </div>
+        <div id="peakInfoPanel">
+          <h2>Featured Peak</h2>
+          <img id="peakPhoto" src="" alt="Peak photo" style="display:none;">
+          <div class="peak-detail">
+            <div class="peak-detail-label">Peak Name</div>
+            <div class="peak-detail-value" id="peakName">Loading...</div>
+          </div>
+          <div class="peak-detail">
+            <div class="peak-detail-label">Elevation</div>
+            <div class="peak-detail-value" id="peakElevation">—</div>
+          </div>
+          <div class="peak-detail">
+            <div class="peak-detail-label">Prominence</div>
+            <div class="peak-detail-value" id="peakProminence">—</div>
+          </div>
+          <div class="peak-detail">
+            <div class="peak-detail-label">Range</div>
+            <div class="peak-detail-value" id="peakRange">—</div>
+          </div>
+          <div class="peak-detail">
+            <div class="peak-detail-label">Difficulty</div>
+            <div class="peak-detail-value" id="peakDifficulty">—</div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- List section below the map, spanning full width -->
@@ -1315,6 +1465,54 @@
         populateSuggestions();
         renderTrailList();
       }
+
+      // Load random peak for info panel
+      async function loadRandomPeak() {
+        const peakUrls = [
+          '../data/nh48.json',
+          'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
+          'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
+        ];
+
+        for (const url of peakUrls) {
+          try {
+            const response = await fetch(url);
+            if (response.ok) {
+              const data = await response.json();
+              const peakKeys = Object.keys(data);
+              const randomKey = peakKeys[Math.floor(Math.random() * peakKeys.length)];
+              const peak = data[randomKey];
+              
+              // Update peak info panel
+              document.getElementById('peakName').textContent = peak.peakName || peak['Peak Name'] || randomKey;
+              document.getElementById('peakElevation').textContent = peak['Elevation (ft)'] ? peak['Elevation (ft)'] + "'" : '—';
+              document.getElementById('peakProminence').textContent = peak['Prominence (ft)'] ? peak['Prominence (ft)'] + "'" : '—';
+              document.getElementById('peakRange').textContent = peak['Range / Subrange'] || '—';
+              document.getElementById('peakDifficulty').textContent = peak['Difficulty'] || '—';
+              
+              // Load photo if available
+              if (Array.isArray(peak.photos) && peak.photos.length > 0) {
+                const photoUrl = typeof peak.photos[0] === 'string' ? peak.photos[0] : peak.photos[0].url;
+                if (photoUrl) {
+                  const img = document.getElementById('peakPhoto');
+                  img.src = photoUrl;
+                  img.style.display = 'block';
+                }
+              }
+              
+              return;
+            }
+          } catch (err) {
+            console.warn(`Failed to load peak from ${url}:`, err);
+            continue;
+          }
+        }
+      }
+
+      // Load random peak on desktop only
+      if (window.innerWidth > 768) {
+        loadRandomPeak();
+      }
       // Attach event listeners for search, sort, hide completed, and clear progress.
       document.getElementById('searchInput').addEventListener('input', renderTrailList);
       document.getElementById('sortSelect').addEventListener('change', renderTrailList);
@@ -1403,6 +1601,11 @@
       });
 
     })();
+
+    // Mobile navigation toggle
+    document.getElementById('navToggle').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('active');
+    });
   </script>
 </body>
 </html>
