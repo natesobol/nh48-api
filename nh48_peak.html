@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NH48 Peak Details (Enhanced with Metadata)</title>
+    <meta name="description" content="Detailed information about New Hampshire 4000-foot peaks including routes, terrain, conditions, and photos.">
+    <title>NH48 Peak Details - New Hampshire 4000-Footers</title>
     <!--
       Standalone details view for a single NH48 peak with robust error handling.
       This version adds:
@@ -713,15 +714,6 @@
         });
       }
 
-      function scheduleResize(){
-        setTimeout(() => {
-          const h = document.documentElement.scrollHeight;
-          if(window.parent){
-            window.parent.postMessage({ type:'resize', height:h }, '*');
-          }
-        }, 150);
-      }
-
       /* COUNTDOWN TIMER ------------------------------------------------------ */
       function startTimer(duration){
         const ring = document.getElementById('timerRing');
@@ -760,7 +752,6 @@
         const slug = getSlug();
         if(!slug){
           document.getElementById('peakTitle').textContent = 'Peak not specified';
-          scheduleResize();
           return;
         }
 
@@ -770,7 +761,6 @@
 
           if(!p){
             document.getElementById('peakTitle').textContent = 'Peak not found';
-            scheduleResize();
             return;
           }
 
@@ -872,14 +862,9 @@
           showDebug('Error: ' + (err && err.message ? err.message : err));
           document.getElementById('peakTitle').textContent = 'Error loading peak';
         }
-
-        scheduleResize();
       }
 
-      window.addEventListener('load', () => {
-        init();
-        window.addEventListener('resize', scheduleResize);
-      });
+      window.addEventListener('load', init);
     </script>
   </body>
 </html>

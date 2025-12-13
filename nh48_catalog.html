@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NH48 Peak Catalog (Enhanced, Paginated)</title>
+    <meta name="description" content="Browse and explore all 48 of New Hampshire's 4000-foot peaks. Interactive catalog with search, sorting, and filtering.">
+    <title>NH48 Peak Catalog - New Hampshire 4000-Footers</title>
     <!--
       Enhanced catalog page for the NH48 peak list.
 
@@ -436,26 +437,17 @@
         document.querySelectorAll('img[data-src]').forEach(img => observer.observe(img));
       }
 
-      function scheduleResize(){
-        setTimeout(() => {
-          const h = document.documentElement.scrollHeight;
-          if(window.parent){ window.parent.postMessage({ type:'resize', height:h }, '*'); }
-        }, 100);
-      }
-
       function renderGrid(list){
         const grid = document.getElementById('grid');
         const empty = document.getElementById('emptyMessage');
         grid.innerHTML = '';
         if(!list || list.length === 0){
           empty.hidden = false;
-          scheduleResize();
           return;
         }
         empty.hidden = true;
         list.forEach(p => grid.appendChild(createCard(p)));
         setupLazyLoading();
-        scheduleResize();
       }
 
       // Build suggestions list, stripping common words
@@ -667,10 +659,7 @@
         });
       }
 
-      window.addEventListener('load', () => {
-        init();
-        window.addEventListener('resize', scheduleResize);
-      });
+      window.addEventListener('load', init);
     </script>
   </body>
 </html>
