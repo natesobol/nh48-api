@@ -280,26 +280,11 @@
         word-wrap:break-word;
         white-space:normal;
       }
-
-      /* Debug panel --------------------------------------------------------- */
-      .debug{
-        margin-top:20px;
-        padding:12px;
-        background:#1f2937;
-        border:1px solid #374151;
-        border-radius:8px;
-        color:#9ca3af;
-        font-family:monospace;
-        font-size:0.85rem;
-        white-space:pre-wrap;
-        overflow:auto;
-        max-height:300px;
-      }
     </style>
   </head>
   <body>
     <div class="wrap">
-      <a href="https://www.nh48pics.com/nh48-api" class="back"> ← Back to catalog</a>
+      <a href="nh48_catalog.html" class="back"> ← Back to catalog</a>
       <h1 id="peakTitle">Loading…</h1>
 
       <!-- MEDIA / CAROUSEL ---------------------------------------------------->
@@ -334,8 +319,6 @@
 
       <div class="section-title">Conditions &amp; Access</div>
       <div class="info-grid" id="conditionsGrid" hidden></div>
-
-      <div id="debug" class="debug" hidden></div>
     </div>
 
     <script>
@@ -350,13 +333,6 @@
         `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">no image</text></svg>`
       );
 
-      function showDebug(msg){
-        const dbg = document.getElementById('debug');
-        const time = new Date().toLocaleTimeString();
-        dbg.hidden = false;
-        dbg.textContent += (dbg.textContent ? '\n\n' : '') + '[' + time + '] ' + msg;
-      }
-
       function cleanJSON(raw){
         let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
         cleaned = cleaned.replace(/\/\*\s*Lines?\s+\d+[\d\-,\s]*omitted\s*\*\//g, '');
@@ -367,26 +343,24 @@
         for(let i=0; i<API_URLS.length; i++){
           const url = API_URLS[i];
           try{
-            showDebug(`Attempt ${i+1}/${API_URLS.length}: fetching ${url}`);
             const res = await fetch(url, { mode:'cors' });
             if(!res.ok){
-              showDebug(`  Status ${res.status} ${res.statusText}`);
+              console.log(`Attempt ${i+1}: Status ${res.status} ${res.statusText}`);
               continue;
             }
             const text = await res.text();
-            showDebug(`  Received ${text.length} characters`);
             const cleaned = cleanJSON(text);
             let data;
             try{
               data = JSON.parse(cleaned);
             }catch(err){
-              showDebug(`  JSON parse error: ${err.message}`);
+              console.error(`JSON parse error: ${err.message}`);
               continue;
             }
-            showDebug('  Parsed JSON successfully');
+            console.log(`Loaded peak data from ${url}`);
             return data;
           }catch(err){
-            showDebug(`  Fetch error: ${err.message || err}`);
+            console.error(`Fetch error: ${err.message || err}`);
           }
         }
         throw new Error('All API endpoints failed');
@@ -859,7 +833,6 @@
 
         }catch(err){
           console.error(err);
-          showDebug('Error: ' + (err && err.message ? err.message : err));
           document.getElementById('peakTitle').textContent = 'Error loading peak';
         }
       }

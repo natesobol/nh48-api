@@ -32,8 +32,6 @@
         font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
         -webkit-font-smoothing:antialiased;
         text-rendering:optimizeLegibility;
-        /* Prevent page from scrolling when the mouse wheel is used. */
-        overflow:hidden;
       }
       .wrap{
         max-width:1100px;
@@ -196,21 +194,6 @@
         font-size:1rem;
       }
 
-      /* Debug panel styles */
-      .debug{
-        margin-top:20px;
-        padding:12px;
-        background:#1f2937;
-        border:1px solid #374151;
-        border-radius:8px;
-        color:#9ca3af;
-        font-family:monospace;
-        font-size:0.85rem;
-        white-space:pre-wrap;
-        overflow:auto;
-        max-height:300px;
-      }
-
       /* Pagination styles */
       .pagination{
         display:flex;
@@ -290,7 +273,6 @@
       <div id="grid" class="grid"></div>
       <nav id="pagination" class="pagination"></nav>
       <div id="emptyMessage" class="empty" hidden>No peaks found.</div>
-      <div id="debug" class="debug" hidden></div>
     </div>
 
     <script>
@@ -326,13 +308,6 @@
         exposure: []
       };
 
-      function showDebug(msg){
-        const dbg = document.getElementById('debug');
-        const time = new Date().toLocaleTimeString();
-        dbg.hidden = false;
-        dbg.textContent += (dbg.textContent ? '\n\n' : '') + '[' + time + '] ' + msg;
-      }
-
       function cleanJSON(raw){
         let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
         cleaned = cleaned.replace(/\/\*\s*Lines?\s+\d+[\d\-,\s]*omitted\s*\*\//g, '');
@@ -343,20 +318,18 @@
         for(let i=0;i<API_URLS.length;i++){
           const url = API_URLS[i];
           try{
-            showDebug(`Attempt ${i+1}/${API_URLS.length}: fetching ${url}`);
             const res = await fetch(url, { mode:'cors' });
             if(!res.ok){
-              showDebug(`  Status ${res.status} ${res.statusText}`);
+              console.log(`Attempt ${i+1}: Status ${res.status} ${res.statusText}`);
               continue;
             }
             const text = await res.text();
-            showDebug(`  Received ${text.length} characters`);
             const cleaned = cleanJSON(text);
             let obj;
             try{
               obj = JSON.parse(cleaned);
             }catch(err){
-              showDebug(`  JSON parse error: ${err.message}`);
+              console.error(`JSON parse error: ${err.message}`);
               continue;
             }
             const arr = Object.keys(obj).map(slug => {
@@ -365,10 +338,10 @@
               p.peakName = p.peakName || p['Peak Name'] || slug;
               return p;
             });
-            showDebug(`  Parsed ${arr.length} peaks successfully`);
+            console.log(`Loaded ${arr.length} peaks from ${url}`);
             return arr;
           }catch(err){
-            showDebug(`  Fetch error: ${err.message || err}`);
+            console.error(`Fetch error: ${err.message || err}`);
           }
         }
         throw new Error('All API endpoints failed');
@@ -623,7 +596,6 @@
       async function init(){
         try{
           peaks = await fetchPeaks();
-          showDebug('Loaded ' + peaks.length + ' peaks');
           updateSuggestions();
           buildFilterOptions();
           updateDisplay();
