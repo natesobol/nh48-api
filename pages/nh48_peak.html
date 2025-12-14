@@ -439,7 +439,7 @@
 
         try{
           const data = await fetchPeaks();
-          const p = data && data[slug];
+          const p = data.find(peak => peak.slug === slug);
 
           if(!p){
             document.getElementById('peakTitle').textContent = 'Peak not found';
@@ -464,17 +464,21 @@
           });
           buildCarousel(images, photoMeta, name);
 
+          // Show media carousel
+          const mediaEl = document.getElementById('media');
+          if(mediaEl) mediaEl.hidden = false;
+
           // Render info sections
           if(p['Standard Routes']){
-            renderInfoGrid('routesGrid', p['Standard Routes'], route => {
+            renderInfoGrid('routesSection', p['Standard Routes'], route => {
               return `<div class="info-label">${route.name || 'Route'}</div><div>${route.description || ''}</div>`;
             });
           }
           if(p.terrain){
-            renderInfoGrid('terrainGrid', [p.terrain], t => `<div>${t}</div>`);
+            renderInfoGrid('terrainSection', [p.terrain], t => `<div>${t}</div>`);
           }
           if(p.conditions){
-            renderInfoGrid('conditionsGrid', [p.conditions], c => `<div>${c}</div>`);
+            renderInfoGrid('conditionsSection', [p.conditions], c => `<div>${c}</div>`);
           }
 
         }catch(err){
