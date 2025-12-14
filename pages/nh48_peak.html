@@ -41,7 +41,7 @@
         text-rendering:optimizeLegibility;
       }
 
-      /* Navigation Menu */
+      /* Navigation Menu - using shared nav from nav.html */
       .top-nav{
         background:var(--panel);
         border-bottom:1px solid var(--stroke);
@@ -49,7 +49,7 @@
         margin-bottom:16px;
       }
       .nav-container{
-        max-width:900px;
+        max-width:1100px;
         margin:0 auto;
         padding:0 16px;
         display:flex;
@@ -360,18 +360,16 @@
     </style>
   </head>
   <body>
-    <nav class="top-nav">
-      <div class="nav-container">
-        <a href="nh48_catalog.html" class="nav-brand"><img src="../nh48API_logo.png" alt="NH48 Logo"></a>
-        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
-        <div class="nav-links" id="navLinks">
-          <a href="nh48_catalog.html">Catalog</a>
-          <a href="trails_app.html">WMNF Trails</a>
-          <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
-          <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
-        </div>
-      </div>
-    </nav>
+    <div id="nav-placeholder"></div>
+    <script>
+      // Load shared navigation
+      fetch('nav.html')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('nav-placeholder').innerHTML = html;
+        })
+        .catch(err => console.error('Failed to load navigation:', err));
+    </script>
     <div class="wrap">
       <a href="nh48_catalog.html" class="back"> ← Back to catalog</a>
       <h1 id="peakTitle">Loading…</h1>
@@ -1086,15 +1084,6 @@
       }
 
       window.addEventListener('load', init);
-
-      // Mobile navigation toggle
-      const navToggle = document.getElementById('navToggle');
-      const navLinks = document.getElementById('navLinks');
-      if (navToggle && navLinks) {
-        navToggle.addEventListener('click', () => {
-          navLinks.classList.toggle('active');
-        });
-      }
     </script>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";

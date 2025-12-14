@@ -53,19 +53,16 @@
     -->
   </head>
   <body>
-    <nav class="top-nav">
-      <div class="nav-container">
-        <a href="nh48_catalog.html" class="nav-brand"><img src="../nh48API_logo.png" alt="NH48 Logo"></a>
-        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
-        <div class="nav-links" id="navLinks">
-          <a href="nh48_catalog.html">Catalog</a>
-          <a href="nh48_peak.html">Peak Details</a>
-          <a href="trails_app.html">WMNF Trails</a>
-          <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
-          <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
-        </div>
-      </div>
-    </nav>
+    <div id="nav-placeholder"></div>
+    <script>
+      // Load shared navigation
+      fetch('nav.html')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('nav-placeholder').innerHTML = html;
+        })
+        .catch(err => console.error('Failed to load navigation:', err));
+    </script>
     <div class="wrap">
       <header>
         <h1>NH48 Peak Catalog</h1>
@@ -525,15 +522,6 @@
       }
 
       window.addEventListener('load', init);
-
-      // Mobile navigation toggle
-      const navToggle = document.getElementById('navToggle');
-      const navLinks = document.getElementById('navLinks');
-      if (navToggle && navLinks) {
-        navToggle.addEventListener('click', () => {
-          navLinks.classList.toggle('active');
-        });
-      }
 
       // Column selector handler
       const columnSelect = document.getElementById('columnSelect');

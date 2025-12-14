@@ -1,0 +1,22 @@
+<nav class="top-nav">
+  <div class="nav-container">
+    <a href="nh48_catalog.html" class="nav-brand"><img src="../nh48API_logo.png" alt="NH48 Logo"></a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="nh48_catalog.html">Catalog</a>
+      <a href="trails_app.html">WMNF Trails</a>
+      <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
+      <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
+    </div>
+  </div>
+</nav>
+<script>
+  // Mobile navigation toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+  }
+</script>
