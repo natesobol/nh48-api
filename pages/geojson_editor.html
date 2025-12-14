@@ -641,26 +641,49 @@
         updateLastAction('Deleted features');
       });
 
-      document.getElementById('download').addEventListener('click', exportGeoJson);
+      const downloadBtn = document.getElementById('download');
+      if (downloadBtn) {
+        downloadBtn.addEventListener('click', exportGeoJson);
+      }
 
-      startImportBtn.addEventListener('click', importTrailProperties);
-      populateNamesBtn.addEventListener('click', gatherNamesFromMap);
-      downloadPropertiesBtn.addEventListener('click', downloadTrailPropertiesFile);
-      clearPropertiesBtn.addEventListener('click', clearTrailProperties);
+      if (startImportBtn) {
+        startImportBtn.addEventListener('click', importTrailProperties);
+      }
+      if (populateNamesBtn) {
+        populateNamesBtn.addEventListener('click', gatherNamesFromMap);
+      }
+      if (downloadPropertiesBtn) {
+        downloadPropertiesBtn.addEventListener('click', downloadTrailPropertiesFile);
+      }
+      if (clearPropertiesBtn) {
+        clearPropertiesBtn.addEventListener('click', clearTrailProperties);
+      }
 
-      document.getElementById('fileInput').addEventListener('change', (event) => {
-        const file = event.target.files?.[0];
-        if (file) handleFileUpload(file);
-      });
+      const fileInput = document.getElementById('fileInput');
+      if (fileInput) {
+        fileInput.addEventListener('change', (event) => {
+          const file = event.target.files?.[0];
+          if (file) handleFileUpload(file);
+        });
+      }
 
-      document.getElementById('reset').addEventListener('click', () => {
-        drawnItems.clearLayers();
-        updateCounts();
-        updateLastAction('Cleared all features');
-      });
+      const resetBtn = document.getElementById('reset');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          drawnItems.clearLayers();
+          updateCounts();
+          updateLastAction('Cleared all features');
+        });
+      }
 
-      document.getElementById('loadLocal').addEventListener('click', () => loadGeoJson('../data/merged_trails.geojson'));
-      loadTrailPropertiesBtn.addEventListener('click', loadTrailPropertiesFromFile);
+      const loadLocalBtn = document.getElementById('loadLocal');
+      if (loadLocalBtn) {
+        loadLocalBtn.addEventListener('click', () => loadGeoJson('../data/merged_trails.geojson'));
+      }
+      
+      if (loadTrailPropertiesBtn) {
+        loadTrailPropertiesBtn.addEventListener('click', loadTrailPropertiesFromFile);
+      }
 
       drawnItems.on('click', (event) => {
         handleTrailSelection(event.layer);

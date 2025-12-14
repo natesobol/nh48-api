@@ -478,43 +478,62 @@
           buildFilterOptions();
           updateDisplay();
         }catch(err){
-          console.error(err);
-          document.getElementById('emptyMessage').textContent = 'Error loading peaks';
-          document.getElementById('emptyMessage').hidden = false;
+          console.error('Error loading peaks:', err);
+          const emptyMessage = document.getElementById('emptyMessage');
+          if (emptyMessage) {
+            emptyMessage.textContent = 'Error loading peaks';
+            emptyMessage.hidden = false;
+          }
         }
 
-        document.getElementById('searchInput').addEventListener('input', () => {
-          currentPage = 1;
-          updateDisplay();
-        });
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+          searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            updateDisplay();
+          });
+        }
 
-        document.getElementById('sortSelect').addEventListener('change', (e) => {
-          activeSort = e.target.value;
-          currentPage = 1;
-          updateDisplay();
-        });
+        const sortSelect = document.getElementById('sortSelect');
+        if (sortSelect) {
+          sortSelect.addEventListener('change', (e) => {
+            activeSort = e.target.value;
+            currentPage = 1;
+            updateDisplay();
+          });
+        }
 
-        document.getElementById('filterField').addEventListener('change', (e) => {
-          filters.field = e.target.value;
-          filters.value = '';
-          populateFilterValueSelect(filters.field);
-          currentPage = 1;
-          updateDisplay();
-        });
+        const filterField = document.getElementById('filterField');
+        if (filterField) {
+          filterField.addEventListener('change', (e) => {
+            filters.field = e.target.value;
+            filters.value = '';
+            populateFilterValueSelect(filters.field);
+            currentPage = 1;
+            updateDisplay();
+          });
+        }
 
-        document.getElementById('filterValue').addEventListener('change', (e) => {
-          filters.value = e.target.value;
-          currentPage = 1;
-          updateDisplay();
-        });
+        const filterValue = document.getElementById('filterValue');
+        if (filterValue) {
+          filterValue.addEventListener('change', (e) => {
+            filters.value = e.target.value;
+            currentPage = 1;
+            updateDisplay();
+          });
+        }
       }
 
       window.addEventListener('load', init);
 
       // Mobile navigation toggle
-      document.getElementById('navToggle').addEventListener('click', () => {
-        document.getElementById('navLinks').classList.toggle('active');
-      });
+      const navToggle = document.getElementById('navToggle');
+      const navLinks = document.getElementById('navLinks');
+      if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+          navLinks.classList.toggle('active');
+        });
+      }
 
       // Column selector handler
       const columnSelect = document.getElementById('columnSelect');

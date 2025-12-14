@@ -43,10 +43,12 @@
 <body>
   <nav class="top-nav">
     <div class="nav-container">
+      <a href="nh48_catalog.html" class="nav-brand"><img src="../nh48API_logo.png" alt="NH48 Logo"></a>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
       <div class="nav-links" id="navLinks">
-        <a href="nh48_catalog.html"><img src="../nh48API_logo.png" alt="">Catalog</a>
-        <a href="trails_app.html"><img src="../WMNF_Trails_API_logo.png" alt="">WMNF Trails</a>
+        <a href="nh48_catalog.html">Catalog</a>
+        <a href="nh48_peak.html">Peak Details</a>
+        <a href="trails_app.html">WMNF Trails</a>
         <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
         <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
       </div>
@@ -398,32 +400,43 @@
       }
 
       // Hook up export button click
-      document.getElementById('exportBtn').addEventListener('click', exportCSV);
+      const exportBtn = document.getElementById('exportBtn');
+      if (exportBtn) {
+        exportBtn.addEventListener('click', exportCSV);
+      } else {
+        console.warn('Export button not found');
+      }
+      
       // Hook up import file change
-      document.getElementById('importFile').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const ext = file.name.split('.').pop().toLowerCase();
-        if (ext === 'csv') {
-          const reader = new FileReader();
-          reader.onload = function(ev) {
-            parseCSV(ev.target.result);
-          };
-          reader.readAsText(file);
-        } else if (ext === 'xlsx' || ext === 'xls') {
-          const reader = new FileReader();
-          reader.onload = function(ev) {
-            const data = new Uint8Array(ev.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-            parseRows(rows);
-          };
-          reader.readAsArrayBuffer(file);
-        }
-        // reset input to allow re-import of same file
-        this.value = '';
-      });
+      const importFile = document.getElementById('importFile');
+      if (importFile) {
+        importFile.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (!file) return;
+          const ext = file.name.split('.').pop().toLowerCase();
+          if (ext === 'csv') {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+              parseCSV(ev.target.result);
+            };
+            reader.readAsText(file);
+          } else if (ext === 'xlsx' || ext === 'xls') {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+              const data = new Uint8Array(ev.target.result);
+              const workbook = XLSX.read(data, { type: 'array' });
+              const sheet = workbook.Sheets[workbook.SheetNames[0]];
+              const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+              parseRows(rows);
+            };
+            reader.readAsArrayBuffer(file);
+          }
+          // reset input to allow re-import of same file
+          this.value = '';
+        });
+      } else {
+        console.warn('Import file input not found');
+      }
 
       /**
        * Load trail properties from trail_properties.json file.
@@ -618,6 +631,12 @@
        * "Loop", "Cutoff", etc.) and inserts them as options into the datalist.
        */
       function populateSuggestions() {
+        const datalist = document.getElementById('trailSuggestions');
+        if (!datalist) {
+          console.warn('Trail suggestions datalist element not found');
+          return;
+        }
+        
         const suffixes = ['trail','loop','cutoff','road','path','connector','summit','route'];
         const suggestions = new Set();
         trailNames.forEach(name => {
@@ -629,8 +648,6 @@
           const suggestion = parts.join(' ');
           suggestions.add(suggestion);
         });
-        const datalist = document.getElementById('trailSuggestions');
-        if (!datalist) return;
         datalist.innerHTML = '';
         suggestions.forEach(s => {
           const option = document.createElement('option');
@@ -654,6 +671,12 @@
           return;
         }
         
+        if (!Array.isArray(geoData.features)) {
+          console.error('GeoJSON features is not an array');
+          alert('Unable to display trails: Malformed data');
+          return;
+        }
+        
         console.log(`Adding ${geoData.features.length} trails to map...`);
         
         const geoLayer = L.geoJSON(geoData, {
@@ -662,9 +685,7 @@
             return { color: '#3388ff', weight: 3 };
           },
           onEachFeature: function(feature, layer) {
-            const name = feature.properties && feature.properties.name
-              ? feature.properties.name
-              : 'Unnamed trail';
+            const name = feature?.properties?.name || 'Unnamed trail';
             // Store reference to this layer and its original feature
             trailLayers[name] = { layer: layer, feature: feature };
             trailNames.push(name);
@@ -677,7 +698,7 @@
               map.fitBounds(layer.getBounds(), { maxZoom: 14, animate: true });
               layer.openPopup();
               // Display trail properties in info panel
-              displayTrailInfo(name, feature);
+              displayTrailInfo(name, feature?.properties || {});
             });
           }
         }).addTo(map);
@@ -693,9 +714,22 @@
        */
       function renderTrailList() {
         const listElement  = document.getElementById('trailList');
+        if (!listElement) {
+          console.error('trailList element not found');
+          return;
+        }
+        
         const container    = listElement.parentElement;
-        const searchQuery  = document.getElementById('searchInput').value.trim().toLowerCase();
-        const sortOrder    = document.getElementById('sortSelect').value;
+        if (!container) {
+          console.error('trailList container not found');
+          return;
+        }
+        
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
+        
+        const searchQuery  = searchInput ? searchInput.value.trim().toLowerCase() : '';
+        const sortOrder    = sortSelect ? sortSelect.value : 'az';
 
         // 1. Filter names by search query and hide‑completed flag.
         let names = trailNames.filter(name => filterBySearch(name, searchQuery));
@@ -781,7 +815,7 @@
           window.open(`virtual_hike.html?trail=${encoded}`, '_blank');
         });
 
-        // When clicking the list item, highlight the trail on the map.
+        // When clicking the list item, highlight the trail on the map AND show trail details.
         li.addEventListener('click', () => {
           const info = trailLayers[name];
           if (info) {
@@ -790,6 +824,8 @@
             info.layer.openPopup();
             document.querySelectorAll('#trailList li').forEach(el => el.classList.remove('active'));
             li.classList.add('active');
+            // Display trail information in the panel
+            displayTrailInfo(name, info.feature.properties || {});
           }
         });
 
@@ -928,20 +964,35 @@
       console.log('=== Initialization Complete ===');
 
       // Attach event listeners for search, sort, hide completed, and clear progress.
-      document.getElementById('searchInput').addEventListener('input', renderTrailList);
-      document.getElementById('sortSelect').addEventListener('change', renderTrailList);
-      document.getElementById('hideCompleted').addEventListener('change', function() {
-        hideCompleted = this.checked;
-        renderTrailList();
-      });
-      document.getElementById('clearProgress').addEventListener('click', function() {
-        if (confirm('Are you sure you want to clear all progress?')) {
-          completedTrails = {};
-          saveCompletion();
-          applyCompletionStyles();
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', renderTrailList);
+      }
+      
+      const sortSelect = document.getElementById('sortSelect');
+      if (sortSelect) {
+        sortSelect.addEventListener('change', renderTrailList);
+      }
+      
+      const hideCompletedCheckbox = document.getElementById('hideCompleted');
+      if (hideCompletedCheckbox) {
+        hideCompletedCheckbox.addEventListener('change', function() {
+          hideCompleted = this.checked;
           renderTrailList();
-        }
-      });
+        });
+      }
+      
+      const clearProgressBtn = document.getElementById('clearProgress');
+      if (clearProgressBtn) {
+        clearProgressBtn.addEventListener('click', function() {
+          if (confirm('Are you sure you want to clear all progress? This cannot be undone.')) {
+            completedTrails = {};
+            saveCompletion();
+            applyCompletionStyles();
+            renderTrailList();
+          }
+        });
+      }
 
       // ------------------------
       // Mobile scroll optimization
@@ -1017,9 +1068,13 @@
     })();
 
     // Mobile navigation toggle
-    document.getElementById('navToggle').addEventListener('click', () => {
-      document.getElementById('navLinks').classList.toggle('active');
-    });
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    if (navToggle && navLinks) {
+      navToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+      });
+    }
   </script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";

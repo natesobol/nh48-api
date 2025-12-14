@@ -907,8 +907,15 @@
       /* INIT ----------------------------------------------------------------- */
       async function init(){
         const slug = getSlug();
+        const peakTitle = document.getElementById('peakTitle');
+        
+        if (!peakTitle) {
+          console.error('Peak title element not found');
+          return;
+        }
+        
         if(!slug){
-          document.getElementById('peakTitle').textContent = 'Peak not specified';
+          peakTitle.textContent = 'Peak not specified';
           return;
         }
 
@@ -917,12 +924,12 @@
           const p = data && data[slug];
 
           if(!p){
-            document.getElementById('peakTitle').textContent = 'Peak not found';
+            peakTitle.textContent = 'Peak not found';
             return;
           }
 
           const name = p.peakName || p['Peak Name'] || slug;
-          document.getElementById('peakTitle').textContent = name;
+          peakTitle.textContent = name;
 
           const canonicalUrl = slug ? `${BASE_CANONICAL}?slug=${encodeURIComponent(slug)}` : BASE_CANONICAL;
           const description = `Detailed information for ${name}, including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata.`;
@@ -1070,17 +1077,24 @@
           buildCarousel(imgs, meta, name);
 
         }catch(err){
-          console.error(err);
-          document.getElementById('peakTitle').textContent = 'Error loading peak';
+          console.error('Error loading peak data:', err);
+          const peakTitle = document.getElementById('peakTitle');
+          if (peakTitle) {
+            peakTitle.textContent = 'Error loading peak';
+          }
         }
       }
 
       window.addEventListener('load', init);
 
       // Mobile navigation toggle
-      document.getElementById('navToggle').addEventListener('click', () => {
-        document.getElementById('navLinks').classList.toggle('active');
-      });
+      const navToggle = document.getElementById('navToggle');
+      const navLinks = document.getElementById('navLinks');
+      if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+          navLinks.classList.toggle('active');
+        });
+      }
     </script>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
