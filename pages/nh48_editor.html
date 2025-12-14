@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NH48 JSON Editor</title>
+  <link rel="stylesheet" href="../css/nh48_editor.css">
+  <script src="https://unpkg.com/exifr/dist/lite.umd.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>NH48 JSON Editor</h1>
+        <p>Edit <code>nh48.json</code> directly in your browser. Choose a peak from the list to see and edit its details.</p>
+      </div>
+      <label class="field-label" for="peakSelect">Mountains by range</label>
+      <select id="peakSelect" class="peak-select" size="12"></select>
+      <div class="sidebar-actions">
+        <button id="addPhotoFromFile" class="ghost">Add photo from file</button>
+        <input id="photoFileInput" type="file" accept="image/*" class="hidden-input">
+        <div id="sidebarStatus" class="sidebar-status"></div>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Peak overview</p>
+            <h2 id="peakTitle">Select a mountain</h2>
+            <p id="peakSubtitle" class="muted"></p>
+          </div>
+          <div id="rangePill" class="pill"></div>
+        </div>
+        <div id="generalFields" class="form-grid"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Photo library</p>
+            <h3>Photos & metadata</h3>
+            <p class="muted">Attach photos, edit captions, and manage EXIF metadata.</p>
+          </div>
+          <button id="addPhotoManual" class="ghost">Add blank photo</button>
+        </div>
+        <div id="photoGrid" class="photo-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <button id="saveJson" class="save-button">Save JSON</button>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="errorBox" class="error-box" role="alert"></div>
+  <datalist id="trailSuggestions"></datalist>
+
+  <script>
+    const intFields = ["Elevation (ft)", "Prominence (ft)"];
+    const arrayFields = ["Standard Routes", "Nearby 4000-footer Connections", "trails", "Trails"];
+    const trailFieldKey = 'trails';
+    const dataStore = {};
+    const trailStore = { features: [], byName: new Map() };
+    let currentSlug = null;
+
+    const fieldOrder = [
+      "peakName",
+      "slug",
+      "Peak Name",
+      "Elevation (ft)",
+      "Prominence (ft)",
+      "Range / Subrange",
+      "Coordinates",
+      "Standard Routes",
+      "trails",
+      "View Type",
+      "Best Seasons to Hike",
+      "Exposure Level",
+      "Terrain Character",
+      "Scramble Sections",
+      "Water Availability",
+      "Cell Reception Quality",
+      "Nearby Notable Features",
+      "Weather Exposure Rating",
+      "Emergency Bailout Options",
+      "Most Common Trailhead",
+      "Parking Notes",
+      "Dog Friendly",
+      "Typical Completion Time",
+      "Summit Marker Type",
+      "Difficulty",
+      "Trail Type",
+      "Flora/Environment Zones",
+      "Nearby 4000-footer Connections"
+    ];
+
+    const photoFieldOrder = [
+      "photoId",
+      "filename",
+      "url",
+      "alt",
+      "caption",
+      "season",
+      "timeOfDay",
+      "orientation",
+      "tags",
+      "isPrimary",
+      "captureDate",
+      "cameraMaker",
+      "cameraModel",
+      "camera",
+      "lens",
+      "fStop",
+      "shutterSpeed",
+      "iso",
+      "exposureBias",
+      "focalLength",
+      "flashMode",
+      "meteringMode",
+      "maxAperture",
+      "author",
+      "dimensions",
+      "fileSize",
+      "fileCreateDate",
+      "fileModifiedDate"
+    ];
+
+    const toast = document.getElementById('toast');
+    const errorBox = document.getElementById('errorBox');
+    const photoFileInput = document.getElementById('photoFileInput');
+    const trailSuggestions = document.getElementById('trailSuggestions');
+
+    document.getElementById('addPhotoFromFile').addEventListener('click', () => photoFileInput.click());
+    photoFileInput.addEventListener('change', onPhotoFileChosen);
+    document.getElementById('addPhotoManual').addEventListener('click', () => addPhotoCard(createBlankPhoto()));
+    document.getElementById('saveJson').addEventListener('click', saveJsonToFile);
+
+    Promise.all([
+      fetch('../data/nh48.json').then((response) => response.json()),
+      fetch('../data/merged_trails.geojson').then((response) => response.json()).catch(() => null)
+    ])
+      .then(([peaks, trails]) => {
+        Object.assign(dataStore, peaks);
+        if (trails?.features) {
+          setTrailStore(trails.features);
+        }
+        buildPeakSelect();
+        const first = Object.keys(dataStore)[0];
+        if (first) {
+          loadPeak(first);
+        }
+      })
+      .catch(() => showError('Unable to load nh48.json. Make sure you are running over HTTP or a local server.'));
+
+    function buildPeakSelect() {
+      const select = document.getElementById('peakSelect');
+      select.innerHTML = '';
+      const grouped = {};
+      Object.entries(dataStore).forEach(([slug, peak]) => {
+        const range = peak['Range / Subrange'] || 'Uncategorized';
+        if (!grouped[range]) {
+          grouped[range] = [];
+        }
+        grouped[range].push({ slug, name: peak.peakName || peak['Peak Name'] || slug });
+      });
+
+      Object.keys(grouped).sort().forEach((range) => {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = range;
+        grouped[range].sort((a, b) => a.name.localeCompare(b.name)).forEach(({ slug, name }) => {
+          const option = document.createElement('option');
+          option.value = slug;
+          option.textContent = name;
+          optgroup.appendChild(option);
+        });
+        select.appendChild(optgroup);
+      });
+
+      select.addEventListener('change', (event) => loadPeak(event.target.value));
+    }
+
+    function loadPeak(slug) {
+      currentSlug = slug;
+      clearError();
+      const peak = structuredClone(dataStore[slug]);
+      peak[trailFieldKey] ??= [];
+      document.getElementById('peakTitle').textContent = peak.peakName || peak['Peak Name'] || slug;
+      document.getElementById('peakSubtitle').textContent = `Slug: ${peak.slug}`;
+      document.getElementById('rangePill').textContent = peak['Range / Subrange'] || 'No range provided';
+      populateGeneralFields(peak);
+      renderPhotos(peak.photos || []);
+      document.getElementById('peakSelect').value = slug;
+    }
+
+    function populateGeneralFields(peak) {
+      const container = document.getElementById('generalFields');
+      container.innerHTML = '';
+      const extraFields = Object.keys(peak).filter((key) => key !== 'photos' && !fieldOrder.includes(key));
+      const ordered = [...fieldOrder, ...extraFields];
+
+      ordered.forEach((key) => {
+        if (!(key in peak) && key !== 'Range / Subrange') {
+          return;
+        }
+        const value = peak[key] ?? '';
+        const field = document.createElement('div');
+        field.className = 'field';
+        field.dataset.field = key;
+
+        const label = document.createElement('label');
+        label.textContent = key;
+        field.appendChild(label);
+
+        if (Array.isArray(value) || arrayFields.includes(key)) {
+          const list = document.createElement('div');
+          list.className = 'chip-list';
+          list.dataset.type = 'array';
+          (value || []).forEach((item) => list.appendChild(createChipInput(key, item)));
+          const add = document.createElement('button');
+          add.type = 'button';
+          add.textContent = 'Add item';
+          add.className = 'ghost small';
+          add.addEventListener('click', () => list.appendChild(createChipInput(key, '')));
+          field.append(list, add);
+        } else if (intFields.includes(key)) {
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.value = value;
+          input.step = '1';
+          input.dataset.type = 'number';
+          field.appendChild(input);
+        } else {
+          const textarea = document.createElement('textarea');
+          textarea.value = value;
+          textarea.rows = 2;
+          textarea.dataset.type = 'string';
+          field.appendChild(textarea);
+        }
+
+        container.appendChild(field);
+      });
+    }
+
+    function createChipInput(key, value) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'chip-input';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = value || '';
+      input.placeholder = `Add ${key.toLowerCase()}`;
+      if (key.toLowerCase() === trailFieldKey) {
+        input.setAttribute('list', 'trailSuggestions');
+      }
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.textContent = '×';
+      remove.className = 'ghost small';
+      remove.addEventListener('click', () => wrapper.remove());
+      wrapper.append(input, remove);
+      return wrapper;
+    }
+
+    function renderPhotos(photos) {
+      const grid = document.getElementById('photoGrid');
+      grid.innerHTML = '';
+      photos.forEach((photo) => addPhotoCard(photo));
+    }
+
+    function addPhotoCard(photo) {
+      const grid = document.getElementById('photoGrid');
+      const card = document.createElement('article');
+      card.className = 'photo-card';
+
+      const header = document.createElement('div');
+      header.className = 'photo-card__header';
+      const title = document.createElement('h4');
+      title.textContent = photo.photoId || photo.filename || 'New photo';
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.textContent = 'Remove';
+      remove.className = 'ghost';
+      remove.addEventListener('click', () => card.remove());
+      header.append(title, remove);
+
+      const gridFields = document.createElement('div');
+      gridFields.className = 'photo-card__grid';
+
+      const keys = new Set([...photoFieldOrder, ...Object.keys(photo)]);
+      keys.forEach((key) => {
+        const value = photo[key];
+        const field = document.createElement('label');
+        field.className = 'photo-field';
+        field.textContent = key;
+        field.dataset.field = key;
+
+        if (key === 'isPrimary') {
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = Boolean(value);
+          checkbox.dataset.type = 'boolean';
+          field.appendChild(checkbox);
+        } else if (key === 'tags') {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = Array.isArray(value) ? value.join(', ') : (value || '');
+          input.placeholder = 'comma separated';
+          input.dataset.type = 'tags';
+          field.appendChild(input);
+        } else {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = value ?? '';
+          input.dataset.type = 'string';
+          field.appendChild(input);
+        }
+
+        gridFields.appendChild(field);
+      });
+
+      card.append(header, gridFields);
+      grid.appendChild(card);
+    }
+
+    function createBlankPhoto() {
+      return {
+        photoId: `${currentSlug || 'peak'}__photo__${Date.now()}`,
+        filename: '',
+        url: '',
+        alt: '',
+        caption: '',
+        season: '',
+        timeOfDay: '',
+        orientation: '',
+        tags: [],
+        isPrimary: false,
+        captureDate: '',
+        cameraMaker: '',
+        cameraModel: '',
+        camera: '',
+        lens: '',
+        fStop: '',
+        shutterSpeed: '',
+        iso: '',
+        exposureBias: '',
+        focalLength: '',
+        flashMode: '',
+        meteringMode: '',
+        maxAperture: '',
+        author: '',
+        dimensions: '',
+        fileSize: '',
+        fileCreateDate: new Date().toISOString(),
+        fileModifiedDate: new Date().toISOString()
+      };
+    }
+
+    async function onPhotoFileChosen(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const metadata = await readExif(file);
+      const dimensions = await getImageDimensions(file);
+      const sizeMB = `${(file.size / 1_000_000).toFixed(2)} MB`;
+      const captureDate = metadata?.DateTimeOriginal ? toIso(metadata.DateTimeOriginal) : '';
+      const shutter = metadata?.ExposureTime ? formatShutter(metadata.ExposureTime) : '';
+      const focal = metadata?.FocalLength ? `${metadata.FocalLength} mm` : '';
+      const fStop = metadata?.FNumber ? `f/${metadata.FNumber}` : '';
+
+      const photo = {
+        ...createBlankPhoto(),
+        photoId: `${currentSlug || 'peak'}__${file.name.replace(/\.[^/.]+$/, '')}`,
+        filename: file.name,
+        url: '',
+        captureDate,
+        cameraMaker: metadata?.Make || '',
+        cameraModel: metadata?.Model || '',
+        camera: metadata?.Make || metadata?.Model || '',
+        lens: metadata?.LensModel || '',
+        fStop,
+        shutterSpeed: shutter,
+        iso: metadata?.ISO || '',
+        exposureBias: metadata?.ExposureCompensation || '',
+        focalLength: focal,
+        dimensions,
+        fileSize: sizeMB,
+        fileCreateDate: new Date(file.lastModified).toISOString(),
+        fileModifiedDate: new Date().toISOString()
+      };
+
+      addPhotoCard(photo);
+      event.target.value = '';
+      showToast('Photo added with metadata.');
+    }
+
+    async function readExif(file) {
+      if (!window.exifr) return null;
+      try {
+        return await window.exifr.parse(file);
+      } catch (error) {
+        console.warn('Exif parse failed', error);
+        return null;
+      }
+    }
+
+    function formatShutter(value) {
+      if (!value) return '';
+      if (value >= 1) return `${value.toFixed(1)} sec`;
+      return `1/${Math.round(1 / value)} sec`;
+    }
+
+    function toIso(value) {
+      if (!value) return '';
+      if (value instanceof Date) {
+        return value.toISOString();
+      }
+      const parsed = new Date(value);
+      return Number.isNaN(parsed.getTime()) ? '' : parsed.toISOString();
+    }
+
+    function getImageDimensions(file) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          resolve(`${img.naturalWidth} x ${img.naturalHeight}`);
+          URL.revokeObjectURL(url);
+        };
+        img.onerror = () => resolve('');
+        img.src = url;
+      });
+    }
+
+    function collectFormData() {
+      if (!currentSlug) return null;
+      const peak = {};
+      const fieldNodes = document.querySelectorAll('#generalFields .field');
+      for (const field of fieldNodes) {
+        const key = field.dataset.field;
+        const isArray = field.querySelector('[data-type="array"]');
+        if (isArray) {
+          const values = Array.from(field.querySelectorAll('input')).map((input) => input.value.trim()).filter(Boolean);
+          peak[key] = values;
+          continue;
+        }
+        const input = field.querySelector('input, textarea');
+        const type = input?.dataset.type;
+        if (type === 'number') {
+          const value = Number.parseInt(input.value, 10);
+          if (Number.isNaN(value)) {
+            return { error: `"${key}" must be a number.` };
+          }
+          peak[key] = value;
+        } else {
+          peak[key] = input?.value ?? '';
+        }
+      }
+
+      const photos = [];
+      const photoCards = document.querySelectorAll('.photo-card');
+      photoCards.forEach((card) => {
+        const photo = {};
+        card.querySelectorAll('.photo-field').forEach((field) => {
+          const key = field.dataset.field;
+          const input = field.querySelector('input');
+          const type = input?.dataset.type;
+          if (type === 'boolean') {
+            photo[key] = input.checked;
+          } else if (type === 'tags') {
+            photo[key] = input.value.split(',').map((tag) => tag.trim()).filter(Boolean);
+          } else {
+            photo[key] = input.value;
+          }
+        });
+        photos.push(photo);
+      });
+      peak.photos = photos;
+      return peak;
+    }
+
+    function saveJsonToFile() {
+      const updated = collectFormData();
+      if (!updated) return;
+      if (updated.error) {
+        showError(updated.error);
+        return;
+      }
+      dataStore[currentSlug] = updated;
+      syncTrailAssociations(currentSlug, updated[trailFieldKey] || []);
+      downloadFile('nh48.json', JSON.stringify(dataStore, null, 2));
+      downloadFile('merged_trails.geojson', JSON.stringify({ type: 'FeatureCollection', features: trailStore.features }, null, 2));
+      buildTrailDatalist();
+      showToast('Updated files downloaded. Replace files in data/ to persist changes.');
+    }
+
+    function downloadFile(filename, content) {
+      const blob = new Blob([content], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function setTrailStore(features) {
+      trailStore.features = features;
+      trailStore.byName = new Map();
+      trailStore.features.forEach((feature) => {
+        const name = feature?.properties?.name;
+        if (!name) return;
+        trailStore.byName.set(normalizeTrailName(name), feature);
+      });
+      buildTrailDatalist();
+    }
+
+    function buildTrailDatalist() {
+      if (!trailSuggestions) return;
+      trailSuggestions.innerHTML = '';
+      const names = Array.from(trailStore.byName.values())
+        .map((feature) => feature?.properties?.name)
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b));
+      names.forEach((name) => {
+        const option = document.createElement('option');
+        option.value = name;
+        trailSuggestions.appendChild(option);
+      });
+    }
+
+    function syncTrailAssociations(slug, trails) {
+      const names = [...new Set((trails || []).map((name) => name.trim()).filter(Boolean))];
+      trailStore.features.forEach((feature) => {
+        const peaks = Array.isArray(feature.properties?.peaks) ? feature.properties.peaks : [];
+        feature.properties.peaks = peaks.filter((peakSlug) => peakSlug !== slug);
+      });
+
+      names.forEach((trailName) => {
+        const normalized = normalizeTrailName(trailName);
+        let feature = trailStore.byName.get(normalized);
+        if (!feature) {
+          feature = {
+            type: 'Feature',
+            properties: { name: trailName, peaks: [] },
+            geometry: { type: 'LineString', coordinates: [] }
+          };
+          trailStore.features.push(feature);
+          trailStore.byName.set(normalized, feature);
+        }
+        if (!Array.isArray(feature.properties.peaks)) {
+          feature.properties.peaks = [];
+        }
+        if (!feature.properties.peaks.includes(slug)) {
+          feature.properties.peaks.push(slug);
+        }
+      });
+    }
+
+    function normalizeTrailName(name) {
+      return name.trim().toLowerCase();
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2800);
+    }
+
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.classList.add('visible');
+    }
+
+    function clearError() {
+      errorBox.textContent = '';
+      errorBox.classList.remove('visible');
+    }
+  </script>
+</body>
+</html>
