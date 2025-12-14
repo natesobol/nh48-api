@@ -456,7 +456,10 @@
         const gridEl = document.getElementById('trailPropertiesGrid');
         const promoEl = document.getElementById('trailPromoSection');
         
-        if (!titleEl || !descEl || !gridEl) return;
+        if (!titleEl || !descEl || !gridEl) {
+          console.warn('Trail info panel elements not found');
+          return;
+        }
         
         titleEl.textContent = trailName || 'Trail Information';
         
@@ -478,6 +481,13 @@
         const entries = Object.entries(props.properties)
           .filter(([key, value]) => value !== null && value !== undefined && value !== '')
           .sort(([a], [b]) => a.localeCompare(b));
+        
+        if (entries.length === 0) {
+          descEl.textContent = 'No additional trail properties available yet.';
+          gridEl.style.display = 'none';
+          if (promoEl) promoEl.style.display = 'block';
+          return;
+        }
         
         entries.forEach(([key, value]) => {
           // Create label (format key nicely)
@@ -529,25 +539,26 @@
         const urls = [
           '../data/merged_trails.geojson',
           'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/merged_trails.geojson',
-          'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/merged_trails.geojson',
-          'https://unpkg.com/natesobol/nh48-api@main/data/merged_trails.geojson'
+          'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/merged_trails.geojson'
         ];
 
         for (const url of urls) {
           try {
-            console.log(`Attempting to fetch from: ${url}`);
+            console.log(`Attempting to fetch GeoJSON from: ${url}`);
             const response = await fetch(url, {
               method: 'GET',
               headers: {
-                'Accept': 'application/json',
+                'Accept': 'application/json, application/geo+json',
               },
               cache: 'no-cache'
             });
             
             if (response.ok) {
               const data = await response.json();
-              console.log(`Successfully loaded GeoJSON from ${url}`);
+              console.log(`Successfully loaded GeoJSON from ${url}`, `Features: ${data?.features?.length || 0}`);
               return data;
+            } else {
+              console.warn(`Failed to load from ${url}: HTTP ${response.status} ${response.statusText}`);
             }
           } catch (err) {
             console.warn(`Failed to load from ${url}:`, err.message);
@@ -607,6 +618,14 @@
        * @param {Object} geoData The GeoJSON FeatureCollection to display
        */
       function addTrailsToMap(geoData) {
+        if (!geoData || !geoData.features) {
+          console.error('Invalid GeoJSON data provided to addTrailsToMap:', geoData);
+          alert('Unable to display trails: Invalid data format');
+          return;
+        }
+        
+        console.log(`Adding ${geoData.features.length} trails to map...`);
+        
         const geoLayer = L.geoJSON(geoData, {
           style: function(feature) {
             // Default line styling.  You can change the color or weight here.
@@ -634,6 +653,7 @@
         }).addTo(map);
         // After adding all features, apply completion styles to set initial colors
         applyCompletionStyles();
+        console.log(`Successfully added ${trailNames.length} trails to map and list`);
       }
 
       /**
@@ -853,15 +873,29 @@
       // ------------------------
       // Initialization logic
       // ------------------------
-      // Load completion state, fetch GeoJSON, then populate map and list.
+      // Load GeoJSON first to populate map and list, then optionally load trail properties
+      console.log('=== Starting WMNF Trails App Initialization ===');
       loadCompletion();
-      await loadTrailProperties(); // Load trail properties first
+      console.log('Completion data loaded from localStorage');
+      
       const geoData = await loadGeoJSON();
       if (geoData) {
+        console.log('GeoJSON loaded successfully, adding to map...');
         addTrailsToMap(geoData);
+        console.log('Populating search suggestions...');
         populateSuggestions();
+        console.log('Rendering trail list...');
         renderTrailList();
+        console.log('Map and list initialization complete');
+        
+        // Load trail properties in background (optional enhancement)
+        console.log('Loading trail properties in background...');
+        loadTrailProperties().catch(err => console.log('Trail properties not available:', err));
+      } else {
+        console.error('Failed to load GeoJSON data - trails will not be displayed');
       }
+      
+      console.log('=== Initialization Complete ===');
 
       // Attach event listeners for search, sort, hide completed, and clear progress.
       document.getElementById('searchInput').addEventListener('input', renderTrailList);
