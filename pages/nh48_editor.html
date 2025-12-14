@@ -53,11 +53,14 @@
   <button id="saveJson" class="save-button">Save JSON</button>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <div id="errorBox" class="error-box" role="alert"></div>
+  <datalist id="trailSuggestions"></datalist>
 
   <script>
     const intFields = ["Elevation (ft)", "Prominence (ft)"];
-    const arrayFields = ["Standard Routes", "Nearby 4000-footer Connections"];
+    const arrayFields = ["Standard Routes", "Nearby 4000-footer Connections", "trails", "Trails"];
+    const trailFieldKey = 'trails';
     const dataStore = {};
+    const trailStore = { features: [], byName: new Map() };
     let currentSlug = null;
 
     const fieldOrder = [
@@ -69,6 +72,7 @@
       "Range / Subrange",
       "Coordinates",
       "Standard Routes",
+      "trails",
       "View Type",
       "Best Seasons to Hike",
       "Exposure Level",
@@ -124,16 +128,22 @@
     const toast = document.getElementById('toast');
     const errorBox = document.getElementById('errorBox');
     const photoFileInput = document.getElementById('photoFileInput');
+    const trailSuggestions = document.getElementById('trailSuggestions');
 
     document.getElementById('addPhotoFromFile').addEventListener('click', () => photoFileInput.click());
     photoFileInput.addEventListener('change', onPhotoFileChosen);
     document.getElementById('addPhotoManual').addEventListener('click', () => addPhotoCard(createBlankPhoto()));
     document.getElementById('saveJson').addEventListener('click', saveJsonToFile);
 
-    fetch('../data/nh48.json')
-      .then((response) => response.json())
-      .then((data) => {
-        Object.assign(dataStore, data);
+    Promise.all([
+      fetch('../data/nh48.json').then((response) => response.json()),
+      fetch('../data/merged_trails.geojson').then((response) => response.json()).catch(() => null)
+    ])
+      .then(([peaks, trails]) => {
+        Object.assign(dataStore, peaks);
+        if (trails?.features) {
+          setTrailStore(trails.features);
+        }
         buildPeakSelect();
         const first = Object.keys(dataStore)[0];
         if (first) {
@@ -173,6 +183,7 @@
       currentSlug = slug;
       clearError();
       const peak = structuredClone(dataStore[slug]);
+      peak[trailFieldKey] ??= [];
       document.getElementById('peakTitle').textContent = peak.peakName || peak['Peak Name'] || slug;
       document.getElementById('peakSubtitle').textContent = `Slug: ${peak.slug}`;
       document.getElementById('rangePill').textContent = peak['Range / Subrange'] || 'No range provided';
@@ -237,6 +248,9 @@
       input.type = 'text';
       input.value = value || '';
       input.placeholder = `Add ${key.toLowerCase()}`;
+      if (key.toLowerCase() === trailFieldKey) {
+        input.setAttribute('list', 'trailSuggestions');
+      }
       const remove = document.createElement('button');
       remove.type = 'button';
       remove.textContent = '×';
@@ -470,16 +484,80 @@
         return;
       }
       dataStore[currentSlug] = updated;
-      const blob = new Blob([JSON.stringify(dataStore, null, 2)], { type: 'application/json' });
+      syncTrailAssociations(currentSlug, updated[trailFieldKey] || []);
+      downloadFile('nh48.json', JSON.stringify(dataStore, null, 2));
+      downloadFile('merged_trails.geojson', JSON.stringify({ type: 'FeatureCollection', features: trailStore.features }, null, 2));
+      buildTrailDatalist();
+      showToast('Updated files downloaded. Replace files in data/ to persist changes.');
+    }
+
+    function downloadFile(filename, content) {
+      const blob = new Blob([content], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'nh48.json';
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-      showToast('Updated nh48.json downloaded. Replace the file in data/ to persist changes.');
+    }
+
+    function setTrailStore(features) {
+      trailStore.features = features;
+      trailStore.byName = new Map();
+      trailStore.features.forEach((feature) => {
+        const name = feature?.properties?.name;
+        if (!name) return;
+        trailStore.byName.set(normalizeTrailName(name), feature);
+      });
+      buildTrailDatalist();
+    }
+
+    function buildTrailDatalist() {
+      if (!trailSuggestions) return;
+      trailSuggestions.innerHTML = '';
+      const names = Array.from(trailStore.byName.values())
+        .map((feature) => feature?.properties?.name)
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b));
+      names.forEach((name) => {
+        const option = document.createElement('option');
+        option.value = name;
+        trailSuggestions.appendChild(option);
+      });
+    }
+
+    function syncTrailAssociations(slug, trails) {
+      const names = [...new Set((trails || []).map((name) => name.trim()).filter(Boolean))];
+      trailStore.features.forEach((feature) => {
+        const peaks = Array.isArray(feature.properties?.peaks) ? feature.properties.peaks : [];
+        feature.properties.peaks = peaks.filter((peakSlug) => peakSlug !== slug);
+      });
+
+      names.forEach((trailName) => {
+        const normalized = normalizeTrailName(trailName);
+        let feature = trailStore.byName.get(normalized);
+        if (!feature) {
+          feature = {
+            type: 'Feature',
+            properties: { name: trailName, peaks: [] },
+            geometry: { type: 'LineString', coordinates: [] }
+          };
+          trailStore.features.push(feature);
+          trailStore.byName.set(normalized, feature);
+        }
+        if (!Array.isArray(feature.properties.peaks)) {
+          feature.properties.peaks = [];
+        }
+        if (!feature.properties.peaks.includes(slug)) {
+          feature.properties.peaks.push(slug);
+        }
+      });
+    }
+
+    function normalizeTrailName(name) {
+      return name.trim().toLowerCase();
     }
 
     function showToast(message) {
