@@ -3,8 +3,16 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Detailed information about New Hampshire 4000-foot peaks including routes, terrain, conditions, and photos.">
-    <title>NH48 Peak Details - New Hampshire 4000-Footers</title>
+    <meta name="description" content="NH48 API – peak-level details, routes, terrain notes and photography for New Hampshire’s 4000-footers.">
+    <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak details, mountain routes, White Mountains data, hiking API, peak metadata, mountain photos">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://nh48.info/pages/nh48_peak.html">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nh48.info/pages/nh48_peak.html">
+    <meta property="og:title" content="NH48 API – Peak details, routes &amp; photos">
+    <meta property="og:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata.">
+    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48API_logo.png">
+    <title>NH48 API – Peak details, routes &amp; photos</title>
     <link rel="icon" type="image/png" href="../nh48API_logo.png">
     <!--
       Standalone details view for a single NH48 peak with robust error handling.
@@ -414,6 +422,100 @@
         `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">no image</text></svg>`
       );
 
+      const BASE_CANONICAL = 'https://nh48.info/pages/nh48_peak.html';
+
+      function setMeta(name, content){
+        let el = document.querySelector(`meta[name="${name}"]`);
+        if(!el){
+          el = document.createElement('meta');
+          el.setAttribute('name', name);
+          document.head.appendChild(el);
+        }
+        el.setAttribute('content', content);
+      }
+
+      function setMetaProperty(prop, content){
+        let el = document.querySelector(`meta[property="${prop}"]`);
+        if(!el){
+          el = document.createElement('meta');
+          el.setAttribute('property', prop);
+          document.head.appendChild(el);
+        }
+        el.setAttribute('content', content);
+      }
+
+      function setCanonical(url){
+        let link = document.querySelector('link[rel="canonical"]');
+        if(!link){
+          link = document.createElement('link');
+          link.setAttribute('rel', 'canonical');
+          document.head.appendChild(link);
+        }
+        link.setAttribute('href', url);
+      }
+
+      function parseCoordinates(coordStr){
+        if(!coordStr) return null;
+        const cleaned = coordStr.split(':')[0].trim();
+        const [lat, lon] = cleaned.split(',').map(v => parseFloat(v));
+        if(Number.isFinite(lat) && Number.isFinite(lon)){
+          return { lat, lon };
+        }
+        return null;
+      }
+
+      function buildPhotoAltText(name, meta, index, total){
+        const parts = [name];
+        if(meta && typeof meta === 'object'){
+          if(meta.caption) parts.push(meta.caption);
+          if(meta.season) parts.push(meta.season);
+          if(meta.timeOfDay) parts.push(meta.timeOfDay);
+          if(meta.orientation) parts.push(`${meta.orientation} orientation`);
+        }
+        parts.push(`image ${index+1} of ${total}`);
+        return parts.filter(Boolean).join(' — ');
+      }
+
+      function buildPlaceSchema(p, name, canonicalUrl, photoObjects){
+        const coords = parseCoordinates(p['Coordinates']);
+        const schema = {
+          '@context': 'https://schema.org',
+          '@type': 'Place',
+          'name': name,
+          'description': `Detailed information for ${name}, including elevation, prominence, difficulty, exposure, trail types, routes and photography from the NH48 API.`,
+          'url': canonicalUrl,
+          'creator': {
+            '@type': 'Person',
+            'name': 'Nathan Sobol',
+            'url': 'https://www.nh48pics.com/'
+          }
+        };
+
+        if(coords){
+          schema.geo = { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon };
+        }
+        if(p['Elevation (ft)']){
+          schema.elevation = {
+            '@type': 'QuantitativeValue',
+            'value': p['Elevation (ft)'],
+            'unitText': 'ft'
+          };
+        }
+        if(Array.isArray(photoObjects) && photoObjects.length > 0){
+          schema.photo = photoObjects;
+          schema.image = photoObjects.map(ph => ph.url).filter(Boolean);
+        }
+
+        let ld = document.getElementById('peakSchema');
+        if(!ld){
+          ld = document.createElement('script');
+          ld.type = 'application/ld+json';
+          ld.id = 'peakSchema';
+          document.head.appendChild(ld);
+        }
+        ld.textContent = JSON.stringify(schema);
+      }
+
       function cleanJSON(raw){
         let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
         cleaned = cleaned.replace(/\/\*\s*Lines?\s+\d+[\d\-,\s]*omitted\s*\*\//g, '');
@@ -648,7 +750,7 @@
           slide.className = 'slide' + (i === 0 ? ' active' : '');
 
           const img = document.createElement('img');
-          img.alt = `${altBase} image ${i+1} of ${images.length}`;
+          img.alt = buildPhotoAltText(altBase, meta[i], i, images.length);
 
           if(i === 0){
             img.src = src;
@@ -822,6 +924,17 @@
           const name = p.peakName || p['Peak Name'] || slug;
           document.getElementById('peakTitle').textContent = name;
 
+          const canonicalUrl = slug ? `${BASE_CANONICAL}?slug=${encodeURIComponent(slug)}` : BASE_CANONICAL;
+          const description = `Detailed information for ${name}, including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata.`;
+
+          document.title = `NH48 API – ${name} details, routes & photos`;
+          setCanonical(canonicalUrl);
+          setMeta('description', description);
+          setMeta('keywords', `NH48 API, ${name} peak details, New Hampshire 4000 footers, White Mountains routes, hiking data, peak metadata, mountain photos`);
+          setMetaProperty('og:title', `NH48 API – ${name} details, routes & photos`);
+          setMetaProperty('og:description', description);
+          setMetaProperty('og:url', canonicalUrl);
+
           // Build general info panel
           buildGeneralInfo(p);
 
@@ -898,7 +1011,7 @@
             p.photos.forEach(item => {
               if(typeof item === 'string'){
                 imgs.push(item);
-                meta.push({});
+                meta.push({ url: item });
               }else if(item && item.url){
                 imgs.push(item.url);
                 meta.push(item);
@@ -909,6 +1022,50 @@
             imgs = [PLACEHOLDER];
             meta = [{}];
           }
+
+          const primaryImage = imgs[0] || 'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48API_logo.png';
+          setMetaProperty('og:image', primaryImage);
+
+          const photoObjects = meta.map((m, idx) => {
+            const obj = {
+              '@type': 'ImageObject',
+              url: imgs[idx] || m.url,
+              contentUrl: imgs[idx] || m.url,
+              name: `${name} photo ${idx + 1}`,
+              caption: m.caption || undefined,
+              creator: m.author ? { '@type': 'Person', name: m.author } : undefined,
+              dateCreated: m.captureDate || m.fileCreateDate || undefined
+            };
+            const exifData = {
+              camera: m.cameraModel || m.cameraMaker || m.camera || undefined,
+              lens: m.lens || undefined,
+              exposureTime: m.shutterSpeed || undefined,
+              aperture: m.fStop || undefined,
+              iso: m.iso || undefined
+            };
+            Object.keys(exifData).forEach(key => {
+              if(exifData[key] === undefined){
+                delete exifData[key];
+              }
+            });
+            if(Object.keys(exifData).length > 0){
+              obj.exifData = exifData;
+            }
+            if(idx === 0){
+              obj.representativeOfPage = true;
+            }
+            Object.keys(obj).forEach(key => {
+              if(obj[key] === undefined || obj[key] === null){
+                delete obj[key];
+              }
+            });
+            if(obj.exifData && Object.values(obj.exifData).every(v => v === undefined)){
+              delete obj.exifData;
+            }
+            return obj;
+          });
+
+          buildPlaceSchema(p, name, canonicalUrl, photoObjects);
 
           buildCarousel(imgs, meta, name);
 
@@ -923,6 +1080,35 @@
       // Mobile navigation toggle
       document.getElementById('navToggle').addEventListener('click', () => {
         document.getElementById('navLinks').classList.toggle('active');
+      });
+    </script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+      import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCUSHYxwXVGEDNzMeIwSFmDaYeXSqRK4A",
+        authDomain: "nh48-info.firebaseapp.com",
+        projectId: "nh48-info",
+        storageBucket: "nh48-info.firebasestorage.app",
+        messagingSenderId: "732743288228",
+        appId: "1:732743288228:web:d82d62cae0c3999ee5ad31",
+        measurementId: "G-Q9F2W8YB7D"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+
+      // Expose globally for app scripts
+      window.NH48_INFO_ANALYTICS = {
+        analytics,
+        logEvent
+      };
+
+      // Base page-load event
+      logEvent(analytics, "page_loaded", {
+        site: "nh48-info",
+        page: location.pathname
       });
     </script>
   </body>

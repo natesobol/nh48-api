@@ -3,10 +3,45 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Browse and explore all 48 of New Hampshire's 4000-foot peaks. Interactive catalog with search, sorting, and filtering.">
-    <title>NH48 Peak Catalog - New Hampshire 4000-Footers</title>
+    <meta name="description" content="Browse the NH48 Peak Catalog with elevation, prominence, range, difficulty and photo thumbnails for all 48 four-thousand-foot peaks in New Hampshire. Search, filter and sort using this open dataset.">
+    <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak catalog, White Mountains data, hiking database, open hiking API, peak metadata, mountain photos, NH 48 peaks dataset, White Mountain peak list, open source hiking API">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://nh48.info/pages/nh48_catalog.html">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nh48.info/pages/nh48_catalog.html">
+    <meta property="og:title" content="NH48 Peak Catalog – Data &amp; photos for New Hampshire’s 4000-footers">
+    <meta property="og:description" content="Browse the NH48 Peak Catalog with elevation, prominence, range, difficulty and photo thumbnails for all 48 four-thousand-foot peaks in New Hampshire. Search, filter and sort using this open dataset.">
+    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48API_logo.png">
+    <title>NH48 Peak Catalog – Data &amp; photos for New Hampshire’s 4000-footers</title>
     <link rel="icon" type="image/png" href="../nh48API_logo.png">
     <link rel="stylesheet" href="../css/nh48_catalog.css">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": "NH48 API – New Hampshire 4000-Footers Data",
+        "description": "Structured data and photos for the 48 four-thousand-foot peaks of the White Mountain National Forest, including elevation, prominence, difficulty, routes and rich photo metadata.",
+        "url": "https://nh48.info/",
+        "license": "https://opensource.org/licenses/MIT",
+        "creator": {
+          "@type": "Person",
+          "name": "Nathan Sobol",
+          "url": "https://www.nh48pics.com/"
+        },
+        "keywords": ["NH48", "White Mountains", "4000 footers", "hiking data", "peak metadata", "photo metadata", "open dataset"],
+        "distribution": {
+          "@type": "DataDownload",
+          "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json",
+          "encodingFormat": "application/json"
+        },
+        "temporalCoverage": "2025-12-06/2025-12-06",
+        "spatialCoverage": {
+          "@type": "Place",
+          "name": "White Mountain National Forest",
+          "geo": {"@type": "GeoShape", "circle": "44.15 -71.34 50km"}
+        }
+      }
+    </script>
     <!--
       Enhanced catalog page for the NH48 peak list.
 
@@ -39,14 +74,14 @@
 
       <!-- search with datalist for suggestions -->
       <div class="search">
-        <input type="text" id="searchInput" list="nameSuggestions" placeholder="Search peaks by name…" />
+        <input type="text" id="searchInput" list="nameSuggestions" placeholder="Search peaks by name…" aria-label="Search peaks by name" />
         <datalist id="nameSuggestions"></datalist>
       </div>
 
       <!-- column selector (desktop only) -->
       <div class="column-selector">
         <label for="columnSelect">Columns:</label>
-        <select id="columnSelect">
+        <select id="columnSelect" aria-label="Select number of catalog columns">
           <option value="2">2</option>
           <option value="3" selected>3</option>
           <option value="4">4</option>
@@ -58,7 +93,7 @@
       <div class="controls">
         <div class="control">
           <label for="sortSelect">Sort by:</label>
-          <select id="sortSelect">
+          <select id="sortSelect" aria-label="Sort peaks by attribute">
             <option value="name">Name (A–Z)</option>
             <option value="elev-asc">Elevation ↑</option>
             <option value="elev-desc">Elevation ↓</option>
@@ -75,7 +110,7 @@
         <!-- Two-tier filter: choose field + value -->
         <div class="control">
           <label for="filterField">Filter by:</label>
-          <select id="filterField">
+          <select id="filterField" aria-label="Select field to filter peaks">
             <option value="">None</option>
             <option value="range">Range</option>
             <option value="difficulty">Difficulty</option>
@@ -85,7 +120,7 @@
         </div>
         <div class="control">
           <label for="filterValue">Value:</label>
-          <select id="filterValue" disabled>
+          <select id="filterValue" disabled aria-label="Select value for chosen filter">
             <option value="">All</option>
           </select>
         </div>
@@ -168,14 +203,36 @@
         throw new Error('All API endpoints failed');
       }
 
+      function buildPhotoAlt(p, photo){
+        if(photo && typeof photo === 'object'){
+          const parts = [p.peakName];
+          if(photo.caption){
+            parts.push(photo.caption);
+          }
+          if(photo.season){
+            parts.push(photo.season);
+          }
+          if(photo.timeOfDay){
+            parts.push(photo.timeOfDay);
+          }
+          if(photo.orientation){
+            parts.push(`${photo.orientation} orientation`);
+          }
+          return parts.filter(Boolean).join(' — ');
+        }
+        return `${p.peakName} photo`;
+      }
+
       function createCard(p){
         const card = document.createElement('article');
         card.className = 'card';
 
         // Thumbnail
         let thumbSrc = PLACEHOLDER;
+        let thumbAlt = `${p.peakName} thumbnail photo`;
         if (Array.isArray(p.photos) && p.photos.length > 0) {
           const first = p.photos[0];
+          thumbAlt = buildPhotoAlt(p, first);
           if (typeof first === 'string') {
             thumbSrc = first;
           } else if (first && first.url) {
@@ -192,7 +249,7 @@
 
         card.innerHTML = `
           <div class="thumb">
-            <img src="${thumbSrc}" alt="${p.peakName} thumbnail" loading="lazy" decoding="async">
+            <img src="${thumbSrc}" alt="${thumbAlt}" loading="lazy" decoding="async">
           </div>
           <div class="body">
             <h3>${p.peakName}</h3>
@@ -476,6 +533,35 @@
         const columns = this.value;
         grid.setAttribute('data-columns', columns);
         localStorage.setItem('nh48-catalog-columns', columns);
+      });
+    </script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+      import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCUSHYxwXVGEDNzMeIwSFmDaYeXSqRK4A",
+        authDomain: "nh48-info.firebaseapp.com",
+        projectId: "nh48-info",
+        storageBucket: "nh48-info.firebasestorage.app",
+        messagingSenderId: "732743288228",
+        appId: "1:732743288228:web:d82d62cae0c3999ee5ad31",
+        measurementId: "G-Q9F2W8YB7D"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+
+      // Expose globally for app scripts
+      window.NH48_INFO_ANALYTICS = {
+        analytics,
+        logEvent
+      };
+
+      // Base page-load event
+      logEvent(analytics, "page_loaded", {
+        site: "nh48-info",
+        page: location.pathname
       });
     </script>
   </body>
