@@ -78,18 +78,7 @@
         <datalist id="nameSuggestions"></datalist>
       </div>
 
-      <!-- column selector (desktop only) -->
-      <div class="column-selector">
-        <label for="columnSelect">Columns:</label>
-        <select id="columnSelect" aria-label="Select number of catalog columns">
-          <option value="2">2</option>
-          <option value="3" selected>3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
-      </div>
-
-      <!-- controls for sorting and filtering -->
+      <!-- controls for sorting, filtering, and columns (desktop only) -->
       <div class="controls">
         <div class="control">
           <label for="sortSelect">Sort by:</label>
@@ -122,6 +111,17 @@
           <label for="filterValue">Value:</label>
           <select id="filterValue" disabled aria-label="Select value for chosen filter">
             <option value="">All</option>
+          </select>
+        </div>
+
+        <!-- Column selector -->
+        <div class="control column-selector-control">
+          <label for="columnSelect">Columns:</label>
+          <select id="columnSelect" aria-label="Select number of catalog columns">
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
           </select>
         </div>
       </div>

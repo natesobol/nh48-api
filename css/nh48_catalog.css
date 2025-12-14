@@ -114,40 +114,33 @@ header p{
   height:40px;
   padding:0 14px;
   font-size:16px;
-  border:1px solid var(--stroke);
+  border:1px solid #ffffff;
   border-radius:10px;
   background:var(--card);
   color:var(--ink);
   outline:none;
   box-sizing:border-box;
 }
+/* Make datalist dropdown full width */
+.search input::-webkit-calendar-picker-indicator {
+  display: none;
+}
+input[list]::-webkit-list-button {
+  display: none;
+}
 @media(max-width:640px){
   .search{ margin-bottom:10px; }
   .search input{ height:36px; font-size:14px; padding:0 10px; }
 }
 
-/* Column selector (desktop only) */
-.column-selector{
+/* Column selector (desktop only) - now inside controls */
+.column-selector-control{
   display:flex;
   align-items:center;
   gap:8px;
-  margin-bottom:12px;
-}
-.column-selector label{
-  font-size:0.85rem;
-  color:var(--muted);
-}
-.column-selector select{
-  background:var(--card);
-  color:var(--ink);
-  border:1px solid var(--stroke);
-  border-radius:10px;
-  padding:6px 10px;
-  font-size:0.9rem;
-  cursor:pointer;
 }
 @media(max-width:800px){
-  .column-selector{ display:none; }
+  .column-selector-control{ display:none; }
 }
 .controls{
   display:flex;
@@ -196,7 +189,7 @@ header p{
 
 .card{
   background:var(--card);
-  border:1px solid var(--stroke);
+  border:1px solid #ffffff;
   border-radius:12px;
   overflow:hidden;
   cursor:pointer;

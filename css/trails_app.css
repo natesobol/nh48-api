@@ -37,11 +37,11 @@ html, body {
   padding: 12px 0;
 }
 .nav-container{
-  max-width: 1400px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 0 16px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 .nav-brand{
@@ -344,7 +344,7 @@ html, body {
   width: 100%;
   padding: 0.75rem;
   background-color: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
+  border: 1px solid #ffffff;
   border-radius: 6px;
   font-size: 0.95rem;
   color: var(--text-primary);
