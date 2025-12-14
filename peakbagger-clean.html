@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NH48 Peakbagger Clean</title>
+</head>
+<body>
+  <h1>NH48 Peakbagger</h1>
+  <p>This placeholder page now includes Firebase Analytics integration.</p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0oVfsHNCBoMbJs3qPVtww8rizKSZ84uo",
+      authDomain: "nh48-app.firebaseapp.com",
+      projectId: "nh48-app",
+      storageBucket: "nh48-app.firebasestorage.app",
+      messagingSenderId: "287695607808",
+      appId: "1:287695607808:web:a45dc3bc0f5096b22560e5",
+      measurementId: "G-T3QTRLC22T"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    // Expose globally so your existing JS can use it
+    window.NH48_ANALYTICS = {
+      analytics,
+      logEvent
+    };
+
+    // First event to confirm wiring works
+    logEvent(analytics, "app_loaded", {
+      app: "peakbagger",
+      host: location.hostname
+    });
+  </script>
+</body>
+</html>
