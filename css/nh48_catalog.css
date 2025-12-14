@@ -85,7 +85,8 @@ body{
   .nav-brand img{ height:32px; }
 }
 .wrap{
-  max-width:1100px;
+  /* Fixed width for all column selections - cards auto-adjust based on column count */
+  max-width:1130px;
   margin:0 auto;
   padding:16px;
 }
@@ -124,6 +125,30 @@ header p{
   .search{ margin-bottom:10px; }
   .search input{ height:36px; font-size:14px; padding:0 10px; }
 }
+
+/* Column selector (desktop only) */
+.column-selector{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:12px;
+}
+.column-selector label{
+  font-size:0.85rem;
+  color:var(--muted);
+}
+.column-selector select{
+  background:var(--card);
+  color:var(--ink);
+  border:1px solid var(--stroke);
+  border-radius:10px;
+  padding:6px 10px;
+  font-size:0.9rem;
+  cursor:pointer;
+}
+@media(max-width:800px){
+  .column-selector{ display:none; }
+}
 .controls{
   display:flex;
   flex-wrap:wrap;
@@ -150,12 +175,21 @@ header p{
   .controls select{ padding:4px 8px; font-size:0.8rem; }
 }
 
-/* GRID: 2 columns desktop, 1 column mobile */
+/* GRID: Dynamic columns on desktop, 1 column on mobile */
 .grid{
   display:grid;
   gap:16px;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
 }
+
+/* Dynamic column layouts (desktop only) - all within 1130px container */
+@media(min-width:801px){
+  .grid[data-columns="2"]{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .grid[data-columns="3"]{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .grid[data-columns="4"]{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .grid[data-columns="5"]{ grid-template-columns:repeat(5,minmax(0,1fr)); }
+}
+
 @media(max-width:800px){
   .grid{ grid-template-columns:1fr; }
 }

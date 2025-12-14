@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Browse and explore all 48 of New Hampshire's 4000-foot peaks. Interactive catalog with search, sorting, and filtering.">
     <title>NH48 Peak Catalog - New Hampshire 4000-Footers</title>
+    <link rel="icon" type="image/png" href="../nh48API_logo.png">
     <link rel="stylesheet" href="../css/nh48_catalog.css">
     <!--
       Enhanced catalog page for the NH48 peak list.
@@ -40,6 +41,17 @@
       <div class="search">
         <input type="text" id="searchInput" list="nameSuggestions" placeholder="Search peaks by name…" />
         <datalist id="nameSuggestions"></datalist>
+      </div>
+
+      <!-- column selector (desktop only) -->
+      <div class="column-selector">
+        <label for="columnSelect">Columns:</label>
+        <select id="columnSelect">
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
       </div>
 
       <!-- controls for sorting and filtering -->
@@ -445,6 +457,25 @@
       // Mobile navigation toggle
       document.getElementById('navToggle').addEventListener('click', () => {
         document.getElementById('navLinks').classList.toggle('active');
+      });
+
+      // Column selector handler
+      const columnSelect = document.getElementById('columnSelect');
+      const grid = document.getElementById('grid');
+      
+      // Load saved column preference
+      const savedColumns = localStorage.getItem('nh48-catalog-columns');
+      if (savedColumns && ['2', '3', '4', '5'].includes(savedColumns)) {
+        columnSelect.value = savedColumns;
+        grid.setAttribute('data-columns', savedColumns);
+      } else {
+        grid.setAttribute('data-columns', '3');
+      }
+      
+      columnSelect.addEventListener('change', function() {
+        const columns = this.value;
+        grid.setAttribute('data-columns', columns);
+        localStorage.setItem('nh48-catalog-columns', columns);
       });
     </script>
   </body>

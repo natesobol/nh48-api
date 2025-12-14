@@ -221,6 +221,64 @@ html, body {
   margin-bottom: 0.5rem;
 }
 
+/* Trail Properties Grid */
+.trail-properties-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  margin: 1.5rem auto 0;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  text-align: left;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.property-label {
+  font-weight: 600;
+  color: var(--accent-blue);
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+.property-value {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  word-break: break-word;
+}
+
+#trailPromoSection {
+  display: block;
+}
+
+#trailPromoSection h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+#trailInfoTitle {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.75rem;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+#trailInfoDescription {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Map itself fills its container */
 #map {
   flex: 1;

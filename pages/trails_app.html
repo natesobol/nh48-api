@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WMNF Trails - White Mountain National Forest Trail Finder</title>
   <meta name="description" content="Interactive trail finder and completion tracker for White Mountain National Forest hiking trails.">
+  <link rel="icon" type="image/png" href="../WMNF_Trails_API_logo.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="stylesheet" href="../css/trails_app.css">
 </head>
@@ -78,12 +79,17 @@
           <div id="map"></div>
         </div>
         <div id="peakInfoPanel">
-          <h2>Track Your NH48 Progress</h2>
-          <p>Log your peak completions, track your hiking stats, and join the community of White Mountain adventurers.</p>
-          <a href="https://nh48.app" target="_blank" rel="noopener" class="promo-link">Visit Peak Bagger →</a>
-          <div class="user-details">
-            <strong>Main User:</strong>
-            <span>Nate Sobol</span>
+          <h2 id="trailInfoTitle">Trail Information</h2>
+          <p id="trailInfoDescription">Click on a trail to view its details and properties from OpenStreetMap.</p>
+          <div id="trailPropertiesGrid" class="trail-properties-grid" style="display: none;"></div>
+          <div id="trailPromoSection">
+            <h3>Track Your NH48 Progress</h3>
+            <p>Log your peak completions, track your hiking stats, and join the community of White Mountain adventurers.</p>
+            <a href="https://nh48.app" target="_blank" rel="noopener" class="promo-link">Visit Peak Bagger →</a>
+            <div class="user-details">
+              <strong>Main User:</strong>
+              <span>Nate Sobol</span>
+            </div>
           </div>
         </div>
       </div>
@@ -156,6 +162,7 @@
       const trailNames = [];
       const completionKey = 'wmnfTrailCompletion';
       let completedTrails = {};
+      let trailProperties = []; // Store trail properties from JSON
       // A‑Z navigation helpers
       const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
       let letterPositions = {};
@@ -389,6 +396,132 @@
       });
 
       /**
+       * Load trail properties from trail_properties.json file.
+       * This file contains OpenStreetMap data for each trail.
+       * Fails gracefully if file doesn't exist.
+       */
+      async function loadTrailProperties() {
+        const urls = [
+          '../data/trail_properties.json',
+          'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/trail_properties.json',
+          'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/trail_properties.json'
+        ];
+
+        for (const url of urls) {
+          try {
+            console.log(`Attempting to fetch trail properties from: ${url}`);
+            const response = await fetch(url, {
+              method: 'GET',
+              headers: { 'Accept': 'application/json' },
+              cache: 'no-cache'
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              if (Array.isArray(data)) {
+                trailProperties = data;
+                console.log(`Successfully loaded ${trailProperties.length} trail properties from ${url}`);
+                return true;
+              }
+            }
+          } catch (err) {
+            console.warn(`Failed to load trail properties from ${url}:`, err.message);
+            continue;
+          }
+        }
+        
+        console.warn('Trail properties file not available. Trail info panel will show limited data.');
+        return false;
+      }
+
+      /**
+       * Find trail properties by trail name.
+       * Normalizes names for matching.
+       */
+      function findTrailProperties(trailName) {
+        if (!trailName || !trailProperties.length) return null;
+        const normalized = trailName.trim().replace(/\s+/g, ' ');
+        return trailProperties.find(t => 
+          t.name && t.name.trim().replace(/\s+/g, ' ') === normalized
+        );
+      }
+
+      /**
+       * Display trail properties in the peakInfoPanel.
+       * Shows all available API fields with labels.
+       */
+      function displayTrailInfo(trailName, feature) {
+        const titleEl = document.getElementById('trailInfoTitle');
+        const descEl = document.getElementById('trailInfoDescription');
+        const gridEl = document.getElementById('trailPropertiesGrid');
+        const promoEl = document.getElementById('trailPromoSection');
+        
+        if (!titleEl || !descEl || !gridEl) return;
+        
+        titleEl.textContent = trailName || 'Trail Information';
+        
+        const props = findTrailProperties(trailName);
+        
+        if (!props || !props.properties || Object.keys(props.properties).length === 0) {
+          descEl.textContent = 'No additional trail properties available yet. Properties will be populated from OpenStreetMap data.';
+          gridEl.style.display = 'none';
+          if (promoEl) promoEl.style.display = 'block';
+          return;
+        }
+        
+        descEl.textContent = 'Trail properties from OpenStreetMap:';
+        gridEl.innerHTML = '';
+        gridEl.style.display = 'grid';
+        if (promoEl) promoEl.style.display = 'none';
+        
+        // Sort properties alphabetically and display them
+        const entries = Object.entries(props.properties)
+          .filter(([key, value]) => value !== null && value !== undefined && value !== '')
+          .sort(([a], [b]) => a.localeCompare(b));
+        
+        entries.forEach(([key, value]) => {
+          // Create label (format key nicely)
+          const label = document.createElement('div');
+          label.className = 'property-label';
+          label.textContent = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+          
+          // Create value
+          const valueEl = document.createElement('div');
+          valueEl.className = 'property-value';
+          
+          // Handle array values
+          if (Array.isArray(value)) {
+            valueEl.textContent = value.join(', ');
+          } else if (typeof value === 'object') {
+            valueEl.textContent = JSON.stringify(value);
+          } else {
+            valueEl.textContent = String(value);
+          }
+          
+          gridEl.appendChild(label);
+          gridEl.appendChild(valueEl);
+        });
+      }
+
+      /**
+       * Clear trail info panel back to default state.
+       */
+      function clearTrailInfo() {
+        const titleEl = document.getElementById('trailInfoTitle');
+        const descEl = document.getElementById('trailInfoDescription');
+        const gridEl = document.getElementById('trailPropertiesGrid');
+        const promoEl = document.getElementById('trailPromoSection');
+        
+        if (titleEl) titleEl.textContent = 'Trail Information';
+        if (descEl) descEl.textContent = 'Click on a trail to view its details and properties from OpenStreetMap.';
+        if (gridEl) {
+          gridEl.innerHTML = '';
+          gridEl.style.display = 'none';
+        }
+        if (promoEl) promoEl.style.display = 'block';
+      }
+
+      /**
        * Fetch the GeoJSON file from the server.  For standalone hosting (no iframe),
        * try the local bundled file first, then fall back to GitHub mirrors.
        */
@@ -494,6 +627,8 @@
               highlightLayer(layer);
               map.fitBounds(layer.getBounds(), { maxZoom: 14, animate: true });
               layer.openPopup();
+              // Display trail properties in info panel
+              displayTrailInfo(name, feature);
             });
           }
         }).addTo(map);
@@ -720,6 +855,7 @@
       // ------------------------
       // Load completion state, fetch GeoJSON, then populate map and list.
       loadCompletion();
+      await loadTrailProperties(); // Load trail properties first
       const geoData = await loadGeoJSON();
       if (geoData) {
         addTrailsToMap(geoData);
