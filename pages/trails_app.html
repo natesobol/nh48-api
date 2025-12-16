@@ -52,9 +52,10 @@
 
     /* Root container for the app */
     #app {
-      /* Layout as a column: top section (map + settings) on top, list section below */
-      display: flex;
-      flex-direction: column;
+      /* Layout as a grid to support a draggable divider between the top and list panels */
+      --top-height: 55vh;
+      display: grid;
+      grid-template-rows: var(--top-height) 10px 1fr;
       height: 100%;
       gap: 0;
       /* Pure white border around the entire application similar to peakbagger */
@@ -66,13 +67,25 @@
     /* Top section holds the sidebar and the map side by side */
     #topSection {
       display: flex;
-      /* Allocate more vertical space to the top section using flex-grow. A higher value
-         means a taller map. Increase from 3 to 4 to give the map and settings area
-         roughly 30–50% more height relative to the list section. */
-      flex: 4 1 0;
-      /* Raise the minimum height so the map and settings are taller vertically. Increase
-         from 600px to 800px to provide more vertical space for the map and sidebar. */
-      min-height: 800px;
+      min-height: 320px;
+    }
+
+    /* Draggable divider between the map panel and the trail list */
+    #panelResizer {
+      height: 10px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.25) 25%,
+        rgba(255, 255, 255, 0.35) 50%,
+        rgba(255, 255, 255, 0.25) 75%,
+        transparent 100%
+      );
+      cursor: row-resize;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      user-select: none;
+      touch-action: none;
     }
 
     /* Adjust the sidebar dimensions; allow vertical scrolling for long content */
@@ -116,6 +129,8 @@
       width: 100%;
       /* Allow the list section to grow and fill the remaining height */
       flex: 1 1 auto;
+      height: 100%;
+      min-height: 280px;
       /* Light grey panel similar to WMNF trails app */
       background-color: var(--bg-secondary);
       border: 1px solid var(--border-color);
@@ -800,6 +815,7 @@
         </div>
       </div>
     </div>
+    <div id="panelResizer" role="separator" aria-label="Resize panels"></div>
     <!-- List section below the map, spanning full width -->
     <div id="listSection">
       <!-- Search and sort controls -->
@@ -859,6 +875,35 @@
           'Map data: &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)',
         maxZoom: 17
       }).addTo(map);
+
+      // Allow the user to resize the split between the map/top content and the list below.
+      const appContainer = document.getElementById('app');
+      const panelResizer = document.getElementById('panelResizer');
+      const minimumTopHeight = 260;
+      const minimumListHeight = 240;
+
+      function setPanelHeight(clientY) {
+        if (!appContainer) return;
+        const rect = appContainer.getBoundingClientRect();
+        const rawHeight = clientY - rect.top;
+        const maxTop = rect.height - minimumListHeight;
+        const clampedHeight = Math.min(Math.max(rawHeight, minimumTopHeight), maxTop);
+        appContainer.style.setProperty('--top-height', `${clampedHeight}px`);
+        requestAnimationFrame(() => map.invalidateSize());
+      }
+
+      if (panelResizer) {
+        panelResizer.addEventListener('pointerdown', event => {
+          event.preventDefault();
+          const handleMove = moveEvent => setPanelHeight(moveEvent.clientY);
+          const handleUp = () => {
+            window.removeEventListener('pointermove', handleMove);
+            window.removeEventListener('pointerup', handleUp);
+          };
+          window.addEventListener('pointermove', handleMove);
+          window.addEventListener('pointerup', handleUp);
+        });
+      }
 
       // Containers for the trail data.  `trailLayers` maps trail names to their
       // Leaflet layer and feature information.  `trailNames` holds just the names
@@ -932,7 +977,8 @@
       // Fetch supplemental trail info (distance, elevation, OSM properties).
       async function loadTrailInfoData() {
         const urls = [
-          './trails_with_osm.json',
+          '../data/trails_with_osm.json',
+          '/data/trails_with_osm.json',
           'https://cdn.jsdelivr.net/gh/natesobol/WMNF-Trails-API@main/trails_with_osm.json',
           'https://raw.githubusercontent.com/natesobol/WMNF-Trails-API/main/trails_with_osm.json',
           'https://unpkg.com/natesobol/WMNF-Trails-API@main/trails_with_osm.json'
