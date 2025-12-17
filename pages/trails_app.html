@@ -50,101 +50,125 @@
       color: var(--text-primary);
     }
 
-    /* Navigation Menu */
-    .top-nav {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color);
-      padding: 12px 0;
-    }
-
-    .nav-container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 16px;
+    /* Site Navigation Header (Peakbagger style) */
+    .site-nav {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
+      padding: 12px 24px;
+      background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+      border-bottom: 1px solid #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
-    .nav-brand {
+    .site-nav-logo {
       display: flex;
       align-items: center;
+      gap: 10px;
       text-decoration: none;
+      color: #fff;
     }
 
-    .nav-brand img {
+    .site-nav-logo img {
+      width: 40px;
       height: 40px;
-      width: auto;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    .nav-links {
+    .site-nav-title-wrap {
       display: flex;
-      gap: 24px;
-      align-items: center;
+      flex-direction: column;
+      gap: 6px;
+      line-height: 1.1;
     }
 
-    .nav-links a {
-      color: var(--text-primary);
+    .site-nav-title {
+      font-weight: 800;
+      font-size: 38px;
+      line-height: 1;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .site-nav-tagline {
+      font-size: 13px;
+      color: #e5f8ec;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .site-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .site-nav-links a {
+      color: #ffffff;
       text-decoration: none;
-      font-size: 0.95rem;
-      transition: color 0.2s ease;
-      white-space: nowrap;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: all 0.2s ease;
+    }
+
+    .site-nav-links a:hover {
+      color: #22c55e;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .site-nav-links a.active {
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .site-nav-auth {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
     }
 
-    .nav-links a img {
-      height: 20px;
-      width: auto;
+    .site-nav-auth .btn-small {
+      padding: 6px 14px;
+      font-size: 13px;
+      border-radius: 6px;
     }
 
-    .nav-links a:hover {
-      color: var(--accent-blue);
+    .site-nav-avatar {
+      display: flex;
+      align-items: center;
     }
 
-    .nav-toggle {
-      display: none;
-      background: none;
-      border: none;
-      color: var(--text-primary);
-      font-size: 1.5rem;
-      cursor: pointer;
-      padding: 4px;
-    }
-
-    @media (max-width: 640px) {
-      .top-nav {
-        padding: 10px 0;
+    @media (max-width: 768px) {
+      .site-nav {
+        padding: 10px 12px;
       }
 
-      .nav-container {
-        padding: 0 12px;
-        flex-wrap: wrap;
-      }
-
-      .nav-toggle {
-        display: block;
-      }
-
-      .nav-links {
+      .site-nav-title,
+      .site-nav-tagline {
         display: none;
-        width: 100%;
-        flex-direction: column;
-        gap: 12px;
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid var(--border-color);
-        align-items: flex-start;
       }
 
-      .nav-links.active {
-        display: flex;
+      .site-nav-links {
+        gap: 4px;
       }
 
-      .nav-brand img {
-        height: 32px;
+      .site-nav-links a {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .site-nav-links a {
+        padding: 6px 8px;
+        font-size: 11px;
       }
     }
 
@@ -813,28 +837,42 @@
 </head>
 
 <body>
-  <nav class="top-nav">
-    <div class="nav-container">
-      <a href="/pages/nh48_catalog.html" class="nav-brand"><img src="../nh48API_logo.png" alt="NH48 Logo"></a>
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
-      <div class="nav-links" id="navLinks">
-        <a href="/pages/nh48_catalog.html">Catalog</a>
-        <a href="/pages/trails_app.html">WMNF Trails</a>
-        <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
-        <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
+  <nav class="site-nav">
+    <a href="/pages/nh48_catalog.html" class="site-nav-logo">
+      <img src="../nh48API_logo.png" alt="NH48 API Logo" />
+      <div class="site-nav-title-wrap">
+        <span class="site-nav-title">NH48 API</span>
+        <span class="site-nav-tagline">A comprehensive hike log application.</span>
+      </div>
+    </a>
+    <div class="site-nav-links">
+      <a href="/pages/nh48_catalog.html">Catalog</a>
+      <a href="/pages/trails_app.html" class="active">WMNF Trails</a>
+      <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
+      <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
+      <div class="site-nav-auth" id="navAuthCard">
+        <div id="navAuthSignedOut">
+          <button
+            class="btn btn-primary btn-small"
+            id="openAuthNav"
+            style="background:#22c55e;border-color:#22c55e;color:#fff"
+          >
+            Log in
+          </button>
+        </div>
+        <div id="navAuthSignedIn" style="display:none">
+          <a href="/profile" class="site-nav-avatar" title="View profile">
+            <div
+              id="navUserAvatarIcon"
+              style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#6b8cff);display:flex;align-items:center;justify-content:center;font-size:12px;color:white;font-weight:600;border:2px solid rgba(255,255,255,0.3)"
+            >
+              <span id="navUserInitials">U</span>
+            </div>
+          </a>
+        </div>
       </div>
     </div>
   </nav>
-  <script>
-    // Mobile navigation toggle
-    const navToggle = document.getElementById('navToggle');
-    const navLinks = document.getElementById('navLinks');
-    if (navToggle && navLinks) {
-      navToggle.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-      });
-    }
-  </script>
   <header class="page-header">
     <h1>🏔️ WMNF Trails API Map Tool</h1>
     <p>White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker.</p>
