@@ -60,14 +60,20 @@
         • Cards display the same "General Peak Info" as the details page.
     -->
   </head>
-  <body>
+  <body data-page="catalog">
     <div id="nav-placeholder"></div>
     <script>
       // Load shared navigation
+      const navPlaceholder = document.getElementById('nav-placeholder');
       fetch('nav.html')
         .then(response => response.text())
         .then(html => {
-          document.getElementById('nav-placeholder').innerHTML = html;
+          navPlaceholder.innerHTML = html;
+          const activeRoute = document.body.dataset.page;
+          const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
+          if (activeLink) {
+            activeLink.classList.add('active');
+          }
         })
         .catch(err => console.error('Failed to load navigation:', err));
     </script>
