@@ -85,7 +85,7 @@
             ></textarea>
             <div class="importer__buttons">
               <button id="populateNames" class="secondary">Populate from map</button>
-              <button id="startImport" class="primary">Import from OpenStreetMap</button>
+              <button id="startImport" class="primary">Import trails (OSM + USFS)</button>
             </div>
           </div>
 
@@ -182,7 +182,7 @@
         lastAction.textContent = message;
       };
 
-      const normalizeName = (name) => name.trim().replace(/\s+/g, ' ');
+      const normalizeName = (name = '') => name.trim().replace(/\s+/g, ' ');
 
       const toTitleCase = (name) =>
         name
@@ -191,17 +191,36 @@
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' ');
 
+      const slugifyName = (name) =>
+        normalizeName(name)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '');
+
+      const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
       const generateNameCandidates = (name) => {
         const cleaned = normalizeName(name);
         const withoutTrail = cleaned.replace(/\s*trail$/i, '');
+        const hyphenated = cleaned.replace(/\s+/g, '-');
+        const deHyphenated = cleaned.replace(/-/g, ' ');
+        const compact = cleaned.replace(/[-\s]+/g, '');
+        const slug = slugifyName(cleaned);
         const candidates = new Set([
           cleaned,
           toTitleCase(cleaned),
           cleaned.toLowerCase(),
           `${withoutTrail} Trail`,
           `${toTitleCase(withoutTrail)} Trail`,
+          hyphenated,
+          deHyphenated,
+          compact,
+          slug,
+          `${slug} trail`,
         ]);
-        return Array.from(candidates).filter(Boolean);
+        return Array.from(candidates)
+          .map((candidate) => normalizeName(candidate))
+          .filter(Boolean);
       };
 
       const logImportMessage = (message, type = 'info') => {
@@ -365,12 +384,15 @@
       };
 
       const buildOverpassQuery = (name) => {
-        const escaped = name.replace(/"/g, '\\"');
+        const escaped = escapeRegex(name).replace(/"/g, '\\"');
+        const altPattern = escaped.replace(/\s+/g, '\\s+');
         return `
           [out:json][timeout:30];
           (
-            way["name"="${escaped}"]["highway"~"path|footway"]; 
-            relation["name"="${escaped}"]["route"~"hiking|foot"]; 
+            way["name"~"^${altPattern}$", i]["highway"~"path|footway"];
+            way["alt_name"~"${altPattern}", i]["highway"~"path|footway"];
+            relation["name"~"^${altPattern}$", i]["route"~"hiking|foot"];
+            relation["alt_name"~"${altPattern}", i]["route"~"hiking|foot"];
           );
           out body;
           >;
@@ -390,6 +412,92 @@
           });
         });
         return tags;
+      };
+
+      const deriveDifficulty = (tags = {}) => {
+        const sacScale = (tags.sac_scale || '').toLowerCase();
+        const trailClass = String(tags.trail_class || tags.TRAIL_CLASS || '').trim();
+        const classNumber = parseInt(trailClass, 10);
+
+        if (sacScale) {
+          if (sacScale.includes('demanding_alpine')) return 'T5';
+          if (sacScale.includes('alpine_hiking')) return 'T4';
+          if (sacScale.includes('demanding_mountain_hiking')) return 'T3';
+          if (sacScale.includes('mountain_hiking')) return 'T2';
+          if (sacScale.includes('hiking')) return 'T1';
+        }
+
+        if (!Number.isNaN(classNumber)) {
+          if (classNumber >= 5) return 'T5';
+          if (classNumber === 4) return 'T4';
+          if (classNumber === 3) return 'T3';
+          if (classNumber === 2) return 'T2';
+          if (classNumber === 1) return 'T1';
+        }
+
+        return tags.difficulty || null;
+      };
+
+      const deriveAllowedUses = (tags = {}) => {
+        const uses = new Set();
+        const normalized = (value) => (value || '').toString().toLowerCase();
+        const allowedTags = normalized(tags.allowed_uses || tags.USES || tags.ALLOWEDUSES || '');
+
+        if (allowedTags) {
+          allowedTags
+            .split(/[,;\s]+/)
+            .map((part) => part.trim())
+            .filter(Boolean)
+            .forEach((entry) => uses.add(entry));
+        }
+
+        if (normalized(tags.foot) !== 'no') uses.add('hiking');
+        if (normalized(tags.bicycle) === 'yes' || normalized(tags.bike) === 'yes') uses.add('bicycle');
+        if (normalized(tags.horse) === 'yes') uses.add('horse');
+
+        return Array.from(uses).filter(Boolean).join(', ');
+      };
+
+      const mergeProperties = (base = {}, fallback = {}) => {
+        const merged = { ...base };
+        Object.entries(fallback).forEach(([key, value]) => {
+          if (merged[key] === undefined || merged[key] === null || merged[key] === '') {
+            merged[key] = value;
+          }
+        });
+        return merged;
+      };
+
+      const applyFallbackTemplate = (name, properties = {}) => {
+        const difficulty = deriveDifficulty(properties) || 'T2';
+        const allowedUses = deriveAllowedUses(properties) || 'hiking';
+        return {
+          trail_name: normalizeName(name),
+          distance_miles: null,
+          osm_properties: {
+            surface: properties.surface || 'trail',
+            difficulty,
+            trail_visibility: properties.trail_visibility || 'Good',
+            width: properties.width || '2-4ft',
+            allowed_uses: allowedUses,
+            season: properties.season || 'all (unless stated)',
+            elevation_gain_ft: properties.elevation_gain_ft ?? null,
+            min_elevation_ft: properties.min_elevation_ft ?? null,
+            max_elevation_ft: properties.max_elevation_ft ?? null,
+            trail_type: properties.trail_type || 'hiking',
+            maintainer: properties.maintainer || 'USFS',
+            source: properties.source || 'fallback',
+          },
+        };
+      };
+
+      const ensureAssociatedPeaks = (record) => {
+        const props = record.properties || {};
+        if (!Array.isArray(props.associated_peaks)) {
+          const maybeArray = props.associated_peaks ? [props.associated_peaks].flat() : [];
+          props.associated_peaks = maybeArray.filter(Boolean);
+        }
+        record.properties = props;
       };
 
       const fetchOSMTrail = async (name) => {
@@ -422,13 +530,78 @@
         throw lastError || new Error(`No OpenStreetMap data found for ${name}`);
       };
 
+      const fetchUSFSTrail = async (name) => {
+        const candidates = generateNameCandidates(name);
+        const baseUrl = 'https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_TrailNFSPublish_01/MapServer/0/query';
+        const envelope = '-72.2,42.5,-70.5,45.5';
+        let lastError = null;
+
+        for (const candidate of candidates) {
+          try {
+            const uppercase = candidate.toUpperCase();
+            const params = new URLSearchParams({
+              f: 'json',
+              where: `UPPER(TRAIL_NAME) LIKE '%${uppercase}%' OR UPPER(TRAILNO) LIKE '%${uppercase}%'`,
+              outFields: 'TRAIL_NAME,TRAILNO,TRAIL_CLASS,ALLOWEDUSES,USES,MILES,LENGTH,MAINTAINER,REGION',
+              geometry: envelope,
+              geometryType: 'esriGeometryEnvelope',
+              inSR: 4326,
+              spatialRel: 'esriSpatialRelIntersects',
+              outSR: 4326,
+            });
+
+            const response = await fetch(`${baseUrl}?${params.toString()}`, {
+              signal: importAbortController?.signal,
+            });
+
+            if (!response.ok) throw new Error(`USFS request failed (${response.status}) for ${candidate}`);
+            const payload = await response.json();
+            const features = payload?.features || [];
+            if (features.length) {
+              return { candidate, features };
+            }
+          } catch (error) {
+            lastError = error;
+            console.warn('USFS fetch attempt failed', candidate, error);
+          }
+        }
+
+        throw lastError || new Error(`No USFS data found for ${name}`);
+      };
+
+      const buildUSFSTrailRecord = (name, features) => {
+        const attributes = features[0]?.attributes || {};
+        const distance = attributes.MILES ?? attributes.LENGTH ?? null;
+        const difficulty = deriveDifficulty(attributes);
+        const allowedUses = deriveAllowedUses(attributes);
+        return {
+          name: normalizeName(attributes.TRAIL_NAME || name),
+          properties: {
+            trail_no: attributes.TRAILNO || null,
+            difficulty,
+            allowed_uses: allowedUses,
+            distance_miles: distance,
+            maintainer: attributes.MAINTAINER || attributes.REGION || 'USFS',
+            trail_class: attributes.TRAIL_CLASS || null,
+            associated_peaks: [],
+            source: 'usfs',
+            usfs_feature_count: features.length,
+          },
+        };
+      };
+
       const buildTrailPropertyRecord = (name, elements) => {
         const tags = aggregateTags(elements);
         const osmIds = elements.map((el) => `${el.type}/${el.id}`);
+        const difficulty = deriveDifficulty(tags);
+        const allowedUses = deriveAllowedUses(tags);
         return {
           name: normalizeName(name),
           properties: {
             ...tags,
+            difficulty,
+            allowed_uses: allowedUses,
+            associated_peaks: Array.isArray(tags.associated_peaks) ? tags.associated_peaks : [],
             source: 'openstreetmap',
             osm_elements: osmIds,
             osm_element_count: elements.length,
@@ -437,6 +610,7 @@
       };
 
       const persistTrailRecord = (record) => {
+        ensureAssociatedPeaks(record);
         const existingIndex = trailProperties.findIndex((entry) => entry.name === record.name);
         if (existingIndex >= 0) {
           trailProperties[existingIndex] = record;
@@ -539,15 +713,41 @@
 
         startImportBtn.disabled = true;
         startImportBtn.textContent = 'Importing…';
-        logImportMessage(`Starting OpenStreetMap import for ${names.length} trail names…`);
+        logImportMessage(`Starting multi-source import (OSM → USFS → fallback) for ${names.length} trail names…`);
 
         for (let index = 0; index < names.length; index++) {
           const name = names[index];
           try {
-            const { candidate, elements } = await fetchOSMTrail(name);
-            const record = buildTrailPropertyRecord(name, elements);
+            let record = null;
+            let source = '';
+
+            try {
+              const { candidate, elements } = await fetchOSMTrail(name);
+              record = buildTrailPropertyRecord(name, elements);
+              source = `OSM via “${candidate}” (${elements.length} elements)`;
+            } catch (osmError) {
+              console.warn('OSM lookup failed, falling back to USFS', osmError);
+              try {
+                const { candidate, features } = await fetchUSFSTrail(name);
+                record = buildUSFSTrailRecord(name, features);
+                source = `USFS via “${candidate}” (${features.length} features)`;
+              } catch (usfsError) {
+                console.warn('USFS lookup failed, applying fallback template', usfsError);
+                const template = applyFallbackTemplate(name);
+                const fallbackRecord = {
+                  name: normalizeName(name),
+                  properties: { trail_name: template.trail_name, ...template.osm_properties },
+                };
+                record = fallbackRecord;
+                source = 'fallback template';
+              }
+            }
+
+            const fallback = applyFallbackTemplate(record.name, record.properties);
+            record.properties = mergeProperties({ trail_name: fallback.trail_name, ...record.properties }, fallback.osm_properties);
+            ensureAssociatedPeaks(record);
             persistTrailRecord(record);
-            logImportMessage(`Imported “${name}” via candidate “${candidate}” with ${elements.length} OSM elements.`, 'success');
+            logImportMessage(`Imported “${name}” using ${source}.`, 'success');
           } catch (error) {
             rejectedTrails.push(name);
             renderRejects();
@@ -561,8 +761,8 @@
         renderRejects();
         renderSuccessCount();
         startImportBtn.disabled = false;
-        startImportBtn.textContent = 'Import from OpenStreetMap';
-        updateLastAction('Finished importing OpenStreetMap trail properties');
+        startImportBtn.textContent = 'Import trails (OSM + USFS)';
+        updateLastAction('Finished importing trail properties');
         importAbortController = null;
       };
 
