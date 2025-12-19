@@ -83,29 +83,40 @@
       min-height: 360px;
     }
 
-    .trail-details {
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      margin-bottom: 12px;
-      background: var(--bg-tertiary);
-      overflow: hidden;
-    }
-
-    .trail-summary {
+    .filter-panel {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 10px;
-      padding: 12px 14px;
-      cursor: pointer;
-      font-weight: 600;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-tertiary);
+      margin-bottom: 16px;
     }
 
-    .trail-summary::marker {
-      content: '';
+    .filter-label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
     }
 
-    .trail-summary span {
-      flex: 1;
+    .filter-select {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: #20242b;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    .section-details {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-tertiary);
+      margin-bottom: 16px;
+      min-height: 72px;
     }
 
     .color-dot {
@@ -113,39 +124,6 @@
       height: 12px;
       border-radius: 50%;
       display: inline-block;
-    }
-
-    .trail-meta {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-left: 22px;
-      margin-bottom: 8px;
-    }
-
-    .section-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding: 0 14px 14px;
-    }
-
-    .section-item {
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid transparent;
-      background: #20242b;
-      cursor: pointer;
-      transition: border-color 0.2s ease, background 0.2s ease;
-    }
-
-    .section-item:hover {
-      border-color: var(--accent);
-      background: #242833;
-    }
-
-    .section-item.active {
-      border-color: var(--accent);
-      background: #1f2a38;
     }
 
     .section-title {
@@ -205,12 +183,18 @@
   <header class="page-header">
     <h1>Long-Distance Trails</h1>
     <p>Explore multi-day trail campaigns with interactive maps, segment details, and color-coded highlights.</p>
-    <p>Click a section to fly the map to that segment and inspect its stats.</p>
+    <p>Use the dropdowns to focus the map on a trail section and inspect its stats.</p>
   </header>
 
   <main id="app">
     <aside class="sidebar" aria-live="polite">
-      <div id="trailList"></div>
+      <div class="filter-panel">
+        <label class="filter-label" for="trailSelect">Select a trail</label>
+        <select id="trailSelect" class="filter-select"></select>
+        <label class="filter-label" for="sectionSelect">Select a section</label>
+        <select id="sectionSelect" class="filter-select" disabled></select>
+      </div>
+      <div id="sectionDetails" class="section-details"></div>
       <div class="legend">
         <h2>Trail colors</h2>
         <div id="legendList"></div>
@@ -223,14 +207,43 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script>
-    const DATA_URLS = [
-      '../data/long-trails-index.json',
-      '/data/long-trails-index.json'
+    const MANIFEST_URLS = [
+      '../data/long-trails-manifest.json',
+      '/data/long-trails-manifest.json'
+    ];
+
+    const TRAIL_COLORS = {
+      'appalachian-trail': '#008A5E',
+      'tuscarora-trail': '#0065A4',
+      'allegheny-trail': '#8b5cf6',
+      'long-trail': '#16a34a',
+      'north-country-trail': '#f97316',
+      'finger-lakes-trail': '#db2777',
+      'quehanna-trail': '#0ea5e9',
+      'mid-state-trail': '#facc15'
+    };
+
+    const FALLBACK_PALETTE = [
+      '#1f77b4',
+      '#ff7f0e',
+      '#2ca02c',
+      '#d62728',
+      '#9467bd',
+      '#8c564b',
+      '#e377c2',
+      '#7f7f7f',
+      '#bcbd22',
+      '#17becf'
     ];
 
     let map;
     let activeSection = null;
+    let activeTrail = null;
+    let trailData = [];
+    let globalBounds = null;
     const sectionLayers = new Map();
+    const trailLayers = new Map();
+    const usedColors = new Set();
 
     function createMap(){
       map = L.map('map', { zoomControl: true });
@@ -265,10 +278,6 @@
         previous.lines.forEach(line => line.setStyle({ weight: 3, opacity: 0.7 }));
         previous.markers.forEach(marker => marker.setStyle({ radius: 6, opacity: 0.9, fillOpacity: 0.9 }));
       }
-      const previousEl = document.querySelector(`[data-section-id="${activeSection.id}"]`);
-      if(previousEl){
-        previousEl.classList.remove('active');
-      }
       activeSection = null;
     }
 
@@ -279,10 +288,6 @@
       if(layer){
         layer.lines.forEach(line => line.setStyle({ weight: 5, opacity: 1 }));
         layer.markers.forEach(marker => marker.setStyle({ radius: 8, opacity: 1, fillOpacity: 1 }));
-      }
-      const el = document.querySelector(`[data-section-id="${section.id}"]`);
-      if(el){
-        el.classList.add('active');
       }
     }
 
@@ -324,10 +329,129 @@
         lines.push(line);
       }
 
-      markers.forEach(marker => marker.addTo(map));
-      lines.forEach(line => line.addTo(map));
-
+      markers.forEach(marker => marker.addTo(trail.layer));
+      lines.forEach(line => line.addTo(trail.layer));
       sectionLayers.set(section.id, { markers, lines });
+    }
+
+    function toNumber(value){
+      const num = Number(value);
+      return Number.isFinite(num) ? num : null;
+    }
+
+    function normalizeBounds(input){
+      if(!input){
+        return null;
+      }
+      if(Array.isArray(input) && input.length === 4){
+        const [minLat, minLon, maxLat, maxLon] = input;
+        return {
+          minLat: toNumber(minLat),
+          minLon: toNumber(minLon),
+          maxLat: toNumber(maxLat),
+          maxLon: toNumber(maxLon)
+        };
+      }
+      if(typeof input === 'object'){
+        return {
+          minLat: toNumber(input.minLat ?? input.south ?? input.min_lat),
+          minLon: toNumber(input.minLon ?? input.west ?? input.min_lon),
+          maxLat: toNumber(input.maxLat ?? input.north ?? input.max_lat),
+          maxLon: toNumber(input.maxLon ?? input.east ?? input.max_lon)
+        };
+      }
+      return null;
+    }
+
+    function mergeBounds(a, b){
+      if(!a) return b;
+      if(!b) return a;
+      return {
+        minLat: Math.min(a.minLat, b.minLat),
+        minLon: Math.min(a.minLon, b.minLon),
+        maxLat: Math.max(a.maxLat, b.maxLat),
+        maxLon: Math.max(a.maxLon, b.maxLon)
+      };
+    }
+
+    function normalizeEndpoints(stats){
+      if(!stats) return null;
+      const endpoints = stats.endpoints;
+      if(Array.isArray(endpoints) && endpoints.length >= 2){
+        return { start: endpoints[0], end: endpoints[endpoints.length - 1] };
+      }
+      if(typeof endpoints === 'object'){
+        return endpoints;
+      }
+      return null;
+    }
+
+    function sectionCenter(section){
+      if(section.start && section.end){
+        const lat = (toNumber(section.start.lat) + toNumber(section.end.lat)) / 2;
+        const lon = (toNumber(section.start.lon) + toNumber(section.end.lon)) / 2;
+        if(Number.isFinite(lat) && Number.isFinite(lon)){
+          return { lat, lon };
+        }
+      }
+      return null;
+    }
+
+    function resolveColor(slug){
+      if(TRAIL_COLORS[slug]){
+        return TRAIL_COLORS[slug];
+      }
+      const color = FALLBACK_PALETTE[usedColors.size % FALLBACK_PALETTE.length];
+      usedColors.add(color);
+      return color;
+    }
+
+    function normalizeSection(section, index, trailSlug){
+      const start = section.start || null;
+      const end = section.end || null;
+      const bounds = normalizeBounds(section.geometry || section.bounds || section.bbox);
+      const center = sectionCenter({ start, end });
+      const id = section.id || `${trailSlug}-section-${index + 1}`;
+      return {
+        ...section,
+        id,
+        start,
+        end,
+        bounds,
+        center
+      };
+    }
+
+    function normalizeTrail(trail, index, fileName){
+      const slug = trail.slug || trail.id || (fileName ? fileName.replace(/\\.json$/i, '') : `trail-${index + 1}`);
+      const color = resolveColor(slug);
+      const sections = (trail.sections || []).map((section, sectionIndex) => normalizeSection(section, sectionIndex, slug)).sort((a, b) => {
+        return (a.order ?? 0) - (b.order ?? 0);
+      });
+
+      let trailBounds = null;
+      sections.forEach(section => {
+        trailBounds = mergeBounds(trailBounds, section.bounds);
+      });
+      trailBounds = mergeBounds(trailBounds, normalizeBounds(trail.map && (trail.map.bbox || trail.map.bounds)));
+      globalBounds = mergeBounds(globalBounds, trailBounds);
+
+      return {
+        ...trail,
+        slug,
+        color,
+        bounds: trailBounds,
+        stats: {
+          ...trail.stats,
+          endpoints: normalizeEndpoints(trail.stats)
+        },
+        map: {
+          ...trail.map,
+          bounds: normalizeBounds(trail.map && (trail.map.bbox || trail.map.bounds))
+        },
+        sections,
+        layer: L.layerGroup()
+      };
     }
 
     function renderLegend(trails){
@@ -341,80 +465,170 @@
       });
     }
 
-    function renderTrailList(trails){
-      const container = document.getElementById('trailList');
-      container.innerHTML = '';
+    function renderTrailSelect(trails){
+      const select = document.getElementById('trailSelect');
+      select.innerHTML = '';
 
       if(trails.length === 0){
-        const empty = document.createElement('div');
-        empty.className = 'empty-state';
-        empty.textContent = 'Add trail JSON files to data/long-trails and run scripts/prepare-long-trails.js to populate this view.';
-        container.appendChild(empty);
+        const option = document.createElement('option');
+        option.textContent = 'No trails found';
+        option.value = '';
+        select.appendChild(option);
+        select.disabled = true;
         return;
       }
 
       trails.forEach(trail => {
-        const details = document.createElement('details');
-        details.className = 'trail-details';
-
-        const summary = document.createElement('summary');
-        summary.className = 'trail-summary';
-        summary.innerHTML = `<span class="color-dot" style="background:${trail.color}"></span><span>${trail.name}</span>`;
-
-        const meta = document.createElement('div');
-        meta.className = 'trail-meta';
-        const distance = trail.stats && (trail.stats.officialLength || trail.stats.distance);
-        meta.textContent = distance ? `Official length: ${distance}` : 'Sections available';
-
-        const sectionList = document.createElement('div');
-        sectionList.className = 'section-list';
-        (trail.sections || []).forEach(section => {
-          const item = document.createElement('div');
-          item.className = 'section-item';
-          item.dataset.sectionId = section.id;
-          item.innerHTML = `
-            <div class="section-title">${buildSectionLabel(section)}</div>
-            <div class="section-subtitle">
-              ${section.distance ? `<span>${section.distance} mi</span>` : ''}
-              ${section.difficulty && section.difficulty.rating ? `<span>Difficulty: ${section.difficulty.rating}</span>` : ''}
-              ${section.jurisdictions && section.jurisdictions.length ? `<span>${section.jurisdictions.join(', ')}</span>` : ''}
-            </div>
-          `;
-          item.addEventListener('click', () => focusSection(section));
-          sectionList.appendChild(item);
-        });
-
-        details.appendChild(summary);
-        details.appendChild(meta);
-        details.appendChild(sectionList);
-        container.appendChild(details);
+        const option = document.createElement('option');
+        option.value = trail.slug;
+        option.textContent = trail.name || trail.slug;
+        select.appendChild(option);
       });
+
+      select.disabled = false;
     }
 
-    async function loadTrails(){
-      for(const url of DATA_URLS){
+    function renderSectionSelect(trail){
+      const select = document.getElementById('sectionSelect');
+      select.innerHTML = '';
+
+      if(!trail || !trail.sections || trail.sections.length === 0){
+        const option = document.createElement('option');
+        option.textContent = 'No sections available';
+        option.value = '';
+        select.appendChild(option);
+        select.disabled = true;
+        return;
+      }
+
+      trail.sections.forEach(section => {
+        const option = document.createElement('option');
+        option.value = section.id;
+        option.textContent = buildSectionLabel(section);
+        select.appendChild(option);
+      });
+
+      select.disabled = false;
+    }
+
+    function renderSectionDetails(section){
+      const container = document.getElementById('sectionDetails');
+      if(!section){
+        container.innerHTML = '<div class="empty-state">Select a section to see details.</div>';
+        return;
+      }
+      const distance = section.distance ? `${section.distance} mi` : null;
+      const difficulty = section.difficulty && section.difficulty.rating ? `Difficulty: ${section.difficulty.rating}` : null;
+      const jurisdictions = section.jurisdictions && section.jurisdictions.length ? section.jurisdictions.join(', ') : null;
+      container.innerHTML = `
+        <div class="section-title">${buildSectionLabel(section)}</div>
+        <div class="section-subtitle">
+          ${[distance, difficulty, jurisdictions].filter(Boolean).map(item => `<span>${item}</span>`).join('')}
+        </div>
+      `;
+    }
+
+    function showTrailLayer(trail){
+      if(activeTrail && trailLayers.has(activeTrail.slug)){
+        map.removeLayer(trailLayers.get(activeTrail.slug));
+      }
+      if(trail && trailLayers.has(trail.slug)){
+        map.addLayer(trailLayers.get(trail.slug));
+      }
+      activeTrail = trail || null;
+    }
+
+    function handleTrailChange(slug){
+      const trail = trailData.find(item => item.slug === slug);
+      if(!trail) return;
+      showTrailLayer(trail);
+      renderSectionSelect(trail);
+      renderSectionDetails(null);
+      resetActiveSection();
+      fitBounds(trail.bounds || trail.map.bounds || null);
+      if(trail.sections && trail.sections.length > 0){
+        const sectionSelect = document.getElementById('sectionSelect');
+        sectionSelect.value = trail.sections[0].id;
+        handleSectionChange(trail.sections[0].id);
+      }
+    }
+
+    function handleSectionChange(sectionId){
+      if(!activeTrail) return;
+      const section = activeTrail.sections.find(item => item.id === sectionId);
+      if(!section) return;
+      focusSection(section);
+      renderSectionDetails(section);
+    }
+
+    async function loadManifest(){
+      for(const url of MANIFEST_URLS){
         try{
           const response = await fetch(url);
           if(!response.ok) continue;
-          const data = await response.json();
-          return data;
+          return await response.json();
         }catch(error){
-          console.warn('Unable to load long trail data:', error);
+          console.warn('Unable to load trail manifest:', error);
         }
       }
-      return { trails: [], bounds: null };
+      return { files: [] };
+    }
+
+    async function loadTrailsFromManifest(){
+      const manifest = await loadManifest();
+      if(!manifest || !manifest.files || manifest.files.length === 0){
+        return [];
+      }
+      const results = await Promise.all(manifest.files.map(async (file) => {
+        try{
+          const urlCandidates = [
+            `../data/long-trails/${file}`,
+            `/data/long-trails/${file}`
+          ];
+          let response = null;
+          for(const url of urlCandidates){
+            const candidate = await fetch(url);
+            if(candidate.ok){
+              response = candidate;
+              break;
+            }
+          }
+          if(!response) return null;
+          const data = await response.json();
+          return { data, file };
+        }catch(error){
+          console.warn('Unable to load trail data:', error);
+          return null;
+        }
+      }));
+      return results.filter(Boolean);
     }
 
     async function init(){
       createMap();
-      const data = await loadTrails();
-      const trails = data.trails || [];
-      trails.forEach(trail => {
+      const trailFiles = await loadTrailsFromManifest();
+      trailData = trailFiles.map((entry, index) => normalizeTrail(entry.data, index, entry.file));
+      trailData.forEach(trail => {
+        trailLayers.set(trail.slug, trail.layer);
         (trail.sections || []).forEach(section => addSectionLayers(trail, section));
       });
-      renderTrailList(trails);
-      renderLegend(trails);
-      fitBounds(data.bounds || null);
+      renderTrailSelect(trailData);
+      renderLegend(trailData);
+
+      if(trailData.length > 0){
+        handleTrailChange(trailData[0].slug);
+        document.getElementById('trailSelect').value = trailData[0].slug;
+      }else{
+        fitBounds(globalBounds);
+        renderSectionDetails(null);
+      }
+
+      document.getElementById('trailSelect').addEventListener('change', (event) => {
+        handleTrailChange(event.target.value);
+      });
+      document.getElementById('sectionSelect').addEventListener('change', (event) => {
+        handleSectionChange(event.target.value);
+      });
     }
 
     window.addEventListener('DOMContentLoaded', init);
