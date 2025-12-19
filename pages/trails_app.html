@@ -6,6 +6,7 @@
   <title>White Mountain Trails – NH48</title>
   <meta name="description" content="Browse trails in the White Mountain National Forest by distance, elevation gain, difficulty and more. Interactive maps, route descriptions and GPX downloads. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
   <link rel="canonical" href="https://nh48.info/trails.html">
+  <script src="../js/i18n.js"></script>
 
   <script id="trailsJsonLd" type="application/ld+json"></script>
   <script>
@@ -138,6 +139,45 @@
       font-weight: 600;
       font-size: 1.1rem;
       color: #d6f5df;
+    }
+    .nh48-lang {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .nh48-lang-label {
+      font-size: 0.75rem;
+      color: #d6f5df;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-right: 4px;
+    }
+    .nh48-flag {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    .nh48-flag .flag {
+      font-size: 18px;
+      line-height: 1;
+    }
+    .nh48-flag.active {
+      border-color: var(--success-green);
+      box-shadow: 0 0 0 2px rgba(81, 207, 102, 0.25);
+    }
+    .nh48-flag:focus-visible {
+      outline: 2px solid var(--success-green);
+      outline-offset: 2px;
     }
 
     /* Root container for the app */
@@ -804,9 +844,30 @@
       .catch(err => console.error('Failed to load navigation:', err));
   </script>
   <header class="page-header">
-    <h1>🏔️ WMNF Trails API Map Tool</h1>
-    <h2 class="page-subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
-    <p>White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
+    <h1 data-i18n="trails.title">🏔️ WMNF Trails API Map Tool</h1>
+    <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
+    <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
+    <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
+      <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
+      <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
+        <span class="flag flag-en" aria-hidden="true">🇺🇸</span>
+      </button>
+      <button class="nh48-flag" data-lang="es" aria-label="Español" title="Español">
+        <span class="flag flag-es" aria-hidden="true">🇪🇸</span>
+      </button>
+      <button class="nh48-flag" data-lang="fr" aria-label="Français" title="Français">
+        <span class="flag flag-fr" aria-hidden="true">🇫🇷</span>
+      </button>
+      <button class="nh48-flag" data-lang="de" aria-label="Deutsch" title="Deutsch">
+        <span class="flag flag-de" aria-hidden="true">🇩🇪</span>
+      </button>
+      <button class="nh48-flag" data-lang="zh" aria-label="中文" title="中文">
+        <span class="flag flag-zh" aria-hidden="true">🇨🇳</span>
+      </button>
+      <button class="nh48-flag" data-lang="ja" aria-label="日本語" title="日本語">
+        <span class="flag flag-ja" aria-hidden="true">🇯🇵</span>
+      </button>
+    </div>
   </header>
   <div id="app">
     <!-- Top section containing the map and trail details -->
@@ -816,69 +877,71 @@
         <div id="map"></div>
       </div>
       <div id="trailInfoPanel" class="trail-info-panel">
-        <h2>Trail details</h2>
-        <p>Select a trail to view distance, elevation, and OpenStreetMap details.</p>
+        <h2 data-i18n="trails.details.title">Trail details</h2>
+        <p data-i18n="trails.details.empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
       </div>
     </div>
-    <div id="panelResizer" role="separator" aria-label="Resize panels"></div>
+    <div id="panelResizer" role="separator" data-i18n="trails.resizePanels" data-i18n-attr="aria-label" aria-label="Resize panels"></div>
     <!-- List section below the map, spanning full width -->
     <div id="bottomSection">
       <div id="listSection">
         <!-- Search and sort controls -->
         <div class="controls">
           <!-- Search input with autocomplete support using datalist -->
-          <input type="text" id="searchInput" placeholder="Search trails…" list="trailSuggestions" autocomplete="off" />
+          <input type="text" id="searchInput" data-i18n="trails.search" data-i18n-attr="placeholder" placeholder="Search trails…" list="trailSuggestions" autocomplete="off" />
           <!-- Datalist providing autocomplete suggestions for trail names sans suffixes -->
         <datalist id="trailSuggestions"></datalist>
         <select id="sortSelect">
-          <option value="az">Sort A → Z</option>
-          <option value="za">Sort Z → A</option>
+          <option value="az" data-i18n="trails.sort.az">Sort A → Z</option>
+          <option value="za" data-i18n="trails.sort.za">Sort Z → A</option>
         </select>
       </div>
       <!-- A‑Z letter navigation bar with label -->
       <div class="letter-nav-wrapper">
-        <span class="jump-label">Jump To:</span>
+        <span class="jump-label" data-i18n="trails.jumpTo">Jump To:</span>
         <div id="letterNav" class="letter-nav"></div>
       </div>
       <!-- Header row for the trail list -->
       <div class="list-header">
-        <span class="header-name">Trail Name</span>
-        <span class="header-completed">Completed</span>
+        <span class="header-name" data-i18n="trails.list.headerName">Trail Name</span>
+        <span class="header-completed" data-i18n="trails.list.headerCompleted">Completed</span>
       </div>
       <!-- Trail list container -->
       <div class="trail-list-container">
         <ul id="trailList"></ul>
         <div id="loadingState" class="loading-state" style="display: none;">
-          <p>Loading trails...</p>
+          <p data-i18n="trails.loading">Loading trails...</p>
         </div>
       </div>
     </div>
       <div class="info-panel about-panel">
         <details open>
-          <summary>About this list</summary>
-          <p>NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths.</p>
+          <summary data-i18n="trails.about.title">About this list</summary>
+          <p data-i18n="trails.about.body">NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths.</p>
         </details>
         <details open>
-          <summary>Disclaimer</summary>
-          <p>This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry.</p>
+          <summary data-i18n="trails.disclaimer.title">Disclaimer</summary>
+          <p data-i18n-html="trails.disclaimer.body">This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry.</p>
         </details>
         <details open>
-          <summary>How to use</summary>
-          <p>Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below.</p>
+          <summary data-i18n="trails.howto.title">How to use</summary>
+          <p data-i18n="trails.howto.body">Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below.</p>
         </details>
         <!-- Settings collapsible section for additional options -->
         <details>
-          <summary>Settings</summary>
+          <summary data-i18n="trails.settings.title">Settings</summary>
           <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
             <label style="display: flex; align-items: center; gap: 0.5rem;">
-              <input type="checkbox" id="hideCompleted" style="accent-color: var(--button-green);"> Hide completed trails
+              <input type="checkbox" id="hideCompleted" style="accent-color: var(--button-green);">
+              <span data-i18n="trails.settings.hideCompleted">Hide completed trails</span>
             </label>
-            <button id="clearProgress" type="button" style="padding: 0.4rem 0.75rem; background-color: var(--button-green); color: white; border: none; border-radius: 5px; font-size: 0.8rem; cursor: pointer; width: fit-content;">Clear all progress</button>
+            <button id="clearProgress" type="button" style="padding: 0.4rem 0.75rem; background-color: var(--button-green); color: white; border: none; border-radius: 5px; font-size: 0.8rem; cursor: pointer; width: fit-content;" data-i18n="trails.settings.clearProgress">Clear all progress</button>
           </div>
         </details>
         <div class="export-import">
-          <button id="exportBtn" type="button">Export CSV</button>
-          <label for="importFile" class="import-label">Import
+          <button id="exportBtn" type="button" data-i18n="trails.export">Export CSV</button>
+          <label for="importFile" class="import-label">
+            <span data-i18n="trails.import">Import</span>
             <input type="file" id="importFile" accept=".csv,.xlsx,.json" />
           </label>
         </div>
@@ -889,7 +952,7 @@
             <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" style="fill: currentColor; margin-right: 0.4rem;">
               <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.62 7.62 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
             </svg>
-            View API
+            <span data-i18n="trails.viewApi">View API</span>
           </a>
         </div>
       </div>
@@ -907,6 +970,8 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script>
     (async function() {
+      const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
+
       // Set an improved center and zoom over the White Mountain National Forest.
       // These coordinates zoom closer to the core of the WMNF while showing most trails.
       const defaultCenter = [44.15, -71.5];
@@ -917,9 +982,9 @@
 
       // Use a detailed topographic map tile layer (OpenTopoMap) which includes contour lines
       // and hiking paths.  Attribution is required to credit data sources.
-      L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      const baseLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
         attribution:
-          'Map data: &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)',
+          t('trails.map.attribution'),
         maxZoom: 17
       }).addTo(map);
 
@@ -1082,8 +1147,8 @@
 
         if (!name) {
           trailInfoPanel.innerHTML = `
-            <h2>Trail details</h2>
-            <p class="trail-info-empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
+            <h2>${t('trails.details.title')}</h2>
+            <p class="trail-info-empty">${t('trails.details.empty')}</p>
           `;
           return;
         }
@@ -1091,8 +1156,8 @@
         const record = trailInfoLookup.get(normalizeTrailName(name));
         if (!record) {
           const message = trailInfoLoaded
-            ? 'No additional trail properties available yet. Properties will be populated from OpenStreetMap data.'
-            : 'Loading additional trail properties from OpenStreetMap...';
+            ? t('trails.info.noProperties')
+            : t('trails.info.loadingProperties');
           trailInfoPanel.innerHTML = `
             <h2>${name}</h2>
             <p class="trail-info-empty">${message}</p>
@@ -1106,19 +1171,19 @@
           : (props.allowed_uses ?? '—');
 
         const fields = [
-          { label: 'Distance', value: formatDistance(record.distance_miles) },
-          { label: 'Elevation Gain', value: formatFeet(props.elevation_gain_ft) },
-          { label: 'Min Elevation', value: formatFeet(props.min_elevation_ft) },
-          { label: 'Max Elevation', value: formatFeet(props.max_elevation_ft) },
-          { label: 'Surface', value: props.surface ?? '—' },
-          { label: 'Trail Type', value: props.trail_type ?? '—' },
-          { label: 'Difficulty', value: props.difficulty ?? '—' },
-          { label: 'Visibility', value: props.trail_visibility ?? '—' },
-          { label: 'Width', value: props.width ?? '—' },
-          { label: 'Allowed Uses', value: allowedUses },
-          { label: 'Season', value: props.season ?? '—' },
-          { label: 'Maintainer', value: props.maintainer ?? '—' },
-          { label: 'Source', value: props.source ?? '—' }
+          { label: t('trails.info.distance'), value: formatDistance(record.distance_miles) },
+          { label: t('trails.info.elevationGain'), value: formatFeet(props.elevation_gain_ft) },
+          { label: t('trails.info.minElevation'), value: formatFeet(props.min_elevation_ft) },
+          { label: t('trails.info.maxElevation'), value: formatFeet(props.max_elevation_ft) },
+          { label: t('trails.info.surface'), value: props.surface ?? '—' },
+          { label: t('trails.info.trailType'), value: props.trail_type ?? '—' },
+          { label: t('trails.info.difficulty'), value: props.difficulty ?? '—' },
+          { label: t('trails.info.visibility'), value: props.trail_visibility ?? '—' },
+          { label: t('trails.info.width'), value: props.width ?? '—' },
+          { label: t('trails.info.allowedUses'), value: allowedUses },
+          { label: t('trails.info.season'), value: props.season ?? '—' },
+          { label: t('trails.info.maintainer'), value: props.maintainer ?? '—' },
+          { label: t('trails.info.source'), value: props.source ?? '—' }
         ];
 
         const items = fields.map(field => `
@@ -1130,7 +1195,7 @@
 
         trailInfoPanel.innerHTML = `
           <h2>${record.trail_name || name}</h2>
-          <p>Information sourced from OpenStreetMap where available.</p>
+          <p>${t('trails.info.sourceNote')}</p>
           <div class="trail-info-grid">${items}</div>
         `;
       }
@@ -1239,7 +1304,12 @@
        * whether it is completed (true/false).
        */
       function exportCSV() {
-        let csv = 'Trail,Completed,Date\n';
+        const headers = [
+          t('trails.csv.headerTrail'),
+          t('trails.csv.headerCompleted'),
+          t('trails.csv.headerDate')
+        ];
+        let csv = `${headers.join(',')}\n`;
         trailNames.forEach(name => {
           const status = completedTrails[name] || { completed: false, date: '' };
           const completed = status.completed ? 'true' : 'false';
@@ -1252,7 +1322,7 @@
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'trail-progress.csv';
+        link.download = t('trails.csv.filename');
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -1376,7 +1446,7 @@
 
         // If all URLs fail, show helpful error message
         console.error('Failed to load GeoJSON from all sources');
-        alert('Unable to load trail data. Please ensure you have internet connectivity and try refreshing the page.');
+        alert(t('trails.alertLoadFail'));
         return null;
       }
 
@@ -1434,7 +1504,7 @@
           onEachFeature: function(feature, layer) {
             const name = feature.properties && feature.properties.name
               ? feature.properties.name
-              : 'Unnamed trail';
+              : t('trails.unnamedTrail');
             // Store reference to this layer and its original feature
             trailLayers[name] = { layer: layer, feature: feature };
             trailNames.push(name);
@@ -1520,8 +1590,8 @@
         const emptyMsg    = document.createElement('div');
         emptyMsg.className = 'empty-state';
         emptyMsg.textContent = query
-          ? 'No trails found.\u00A0Try a different search.'
-          : 'No trails available.';
+          ? t('trails.list.noMatches')
+          : t('trails.list.noTrails');
         container.appendChild(emptyMsg);
       }
 
@@ -1541,7 +1611,8 @@
         // Optional: button to launch virtual hike (remove if not needed).
         const hikeBtn = document.createElement('button');
         hikeBtn.className = 'hike-btn';
-        hikeBtn.title     = 'Virtual Hike';
+        hikeBtn.title     = t('trails.virtualHike');
+        hikeBtn.setAttribute('aria-label', t('trails.virtualHike'));
         hikeBtn.innerHTML = '🌄';
         hikeBtn.addEventListener('click', e => {
           e.stopPropagation();
@@ -1699,13 +1770,21 @@
         renderTrailList();
       });
       document.getElementById('clearProgress').addEventListener('click', function() {
-        if (confirm('Are you sure you want to clear all progress?')) {
+        if (confirm(t('trails.confirmClear'))) {
           completedTrails = {};
           saveCompletion();
           applyCompletionStyles();
           renderTrailList();
         }
       });
+
+      if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
+        window.NH48_I18N.onLangChange(() => {
+          baseLayer.setAttribution(t('trails.map.attribution'));
+          renderTrailInfo(currentTrailSelection);
+          renderTrailList();
+        });
+      }
 
       // ------------------------
       // Mobile scroll optimization
