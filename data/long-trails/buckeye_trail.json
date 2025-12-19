@@ -1,0 +1,651 @@
+{
+  "id": "BT",
+  "slug": "buckeye-trail",
+  "name": "Buckeye Trail",
+  "shortName": "BT",
+  "type": "trail",
+  "classification": "long-distance",
+  "continuity": "loop",
+  "maintenance_level": "managed",
+  "region": "Ohio",
+  "countryCodes": ["US"],
+  "stats": {
+    "distance": { "miles": 1444, "kilometers": 2324 },
+    "elevation_max": { "feet": 1276, "meters": 389 },
+    "elevation_min": { "feet": 570, "meters": 174 },
+    "endpoints": [
+      {
+        "name": "Northern Terminus (Headlands Beach State Park, Lake Erie)",
+        "lat": 41.7583,
+        "lon": -81.2872
+      },
+      {
+        "name": "Southern Terminus (Eden Park, Cincinnati)",
+        "lat": 39.1167,
+        "lon": -84.4917
+      }
+    ]
+  },
+  "map": {
+    "defaultCenter": { "lat": 40.0, "lon": -82.5 },
+    "defaultZoom": 6,
+    "bounds": {
+      "minLat": 38.4,
+      "maxLat": 42.0,
+      "minLon": -84.8,
+      "maxLon": -80.5
+    }
+  },
+  "routing": {
+    "mileageSystem": "continuous",
+    "gpxSourceCRS": "WGS84",
+    "sectionMethod": "official",
+    "routeVariants": "all segments included"
+  },
+  "sources": {
+    "official": {
+      "name": "Buckeye Trail Association",
+      "url": "https://buckeyetrail.org"
+    }
+  },
+  "sections": [
+    {
+      "id": 1,
+      "order": 1,
+      "name": "Burton Section",
+      "slug": "burton-section",
+      "distance": { "miles": 50, "kilometers": 80.5 },
+      "mileRange": { "start": 0, "end": 50 },
+      "start": {
+        "name": "Headlands Beach State Park (Lake Erie)",
+        "lat": 41.7583,
+        "lon": -81.2872
+      },
+      "end": {
+        "name": "Burton, OH",
+        "lat": 41.4706,
+        "lon": -81.1451
+      },
+      "jurisdictions": ["Lake County, OH", "Geauga County, OH"],
+      "tags": ["Northeast Ohio"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_burton.gpx", "metadata": {} }
+    },
+    {
+      "id": 2,
+      "order": 2,
+      "name": "Bedford Section",
+      "slug": "bedford-section",
+      "distance": { "miles": 45, "kilometers": 72.4 },
+      "mileRange": { "start": 50, "end": 95 },
+      "start": {
+        "name": "Burton, OH",
+        "lat": 41.4706,
+        "lon": -81.1451
+      },
+      "end": {
+        "name": "Bedford, OH",
+        "lat": 41.3923,
+        "lon": -81.5348
+      },
+      "jurisdictions": ["Geauga County, OH", "Cuyahoga County, OH"],
+      "tags": ["Northeast Ohio"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_bedford.gpx", "metadata": {} }
+    },
+    {
+      "id": 3,
+      "order": 3,
+      "name": "Akron Section",
+      "slug": "akron-section",
+      "distance": { "miles": 57, "kilometers": 91.7 },
+      "mileRange": { "start": 95, "end": 152 },
+      "start": {
+        "name": "Bedford, OH",
+        "lat": 41.3923,
+        "lon": -81.5348
+      },
+      "end": {
+        "name": "Akron (Crystal Springs)",
+        "lat": 40.9836,
+        "lon": -81.5717
+      },
+      "jurisdictions": ["Summit County, OH", "Stark County, OH"],
+      "tags": ["Northeast Ohio"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_akron.gpx", "metadata": {} }
+    },
+    {
+      "id": 4,
+      "order": 4,
+      "name": "Mogadore Section",
+      "slug": "mogadore-section",
+      "distance": { "miles": 75, "kilometers": 120.7 },
+      "mileRange": { "start": 152, "end": 227 },
+      "start": {
+        "name": "Akron (Crystal Springs)",
+        "lat": 40.9836,
+        "lon": -81.5717
+      },
+      "end": {
+        "name": "Mogadore, OH",
+        "lat": 41.0459,
+        "lon": -81.4012
+      },
+      "jurisdictions": ["Summit County, OH", "Portage County, OH"],
+      "tags": ["Northeast Ohio"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_mogadore.gpx", "metadata": {} }
+    },
+    {
+      "id": 5,
+      "order": 5,
+      "name": "Massillon Section",
+      "slug": "massillon-section",
+      "distance": { "miles": 54, "kilometers": 86.9 },
+      "mileRange": { "start": 227, "end": 281 },
+      "start": {
+        "name": "Mogadore, OH",
+        "lat": 41.0459,
+        "lon": -81.4012
+      },
+      "end": {
+        "name": "Massillon, OH",
+        "lat": 40.7967,
+        "lon": -81.5215
+      },
+      "jurisdictions": ["Portage County, OH", "Stark County, OH"],
+      "tags": ["Northeast Ohio"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_massillon.gpx", "metadata": {} }
+    },
+    {
+      "id": 6,
+      "order": 6,
+      "name": "Bowerston Section",
+      "slug": "bowerston-section",
+      "distance": { "miles": 60, "kilometers": 96.6 },
+      "mileRange": { "start": 281, "end": 341 },
+      "start": {
+        "name": "Massillon, OH",
+        "lat": 40.7967,
+        "lon": -81.5215
+      },
+      "end": {
+        "name": "Bowerston, OH",
+        "lat": 40.4353,
+        "lon": -81.1868
+      },
+      "jurisdictions": ["Stark County, OH", "Harrison County, OH"],
+      "tags": ["Southeast Ohio"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_bowerston.gpx", "metadata": {} }
+    },
+    {
+      "id": 7,
+      "order": 7,
+      "name": "Belle Valley Section",
+      "slug": "belle-valley-section",
+      "distance": { "miles": 55, "kilometers": 88.5 },
+      "mileRange": { "start": 341, "end": 396 },
+      "start": {
+        "name": "Bowerston, OH",
+        "lat": 40.4353,
+        "lon": -81.1868
+      },
+      "end": {
+        "name": "Belle Valley, OH",
+        "lat": 39.8067,
+        "lon": -81.5829
+      },
+      "jurisdictions": ["Guernsey County, OH", "Noble County, OH"],
+      "tags": ["Southeast Ohio"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_bellevalley.gpx", "metadata": {} }
+    },
+    {
+      "id": 8,
+      "order": 8,
+      "name": "Stockport Section",
+      "slug": "stockport-section",
+      "distance": { "miles": 50, "kilometers": 80.5 },
+      "mileRange": { "start": 396, "end": 446 },
+      "start": {
+        "name": "Belle Valley, OH",
+        "lat": 39.8067,
+        "lon": -81.5829
+      },
+      "end": {
+        "name": "Stockport, OH",
+        "lat": 39.5501,
+        "lon": -81.7929
+      },
+      "jurisdictions": ["Morgan County, OH"],
+      "tags": ["Southeast Ohio"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_stockport.gpx", "metadata": {} }
+    },
+    {
+      "id": 9,
+      "order": 9,
+      "name": "Road Fork Section",
+      "slug": "road-fork-section",
+      "distance": { "miles": 60, "kilometers": 96.6 },
+      "mileRange": { "start": 446, "end": 506 },
+      "start": {
+        "name": "Stockport, OH",
+        "lat": 39.5501,
+        "lon": -81.7929
+      },
+      "end": {
+        "name": "Road Fork (Monroe County)",
+        "lat": 39.6673,
+        "lon": -81.2615
+      },
+      "jurisdictions": ["Washington County, OH", "Monroe County, OH"],
+      "tags": ["Southeast Ohio"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_roadfork.gpx", "metadata": {} }
+    },
+    {
+      "id": 10,
+      "order": 10,
+      "name": "Whipple Section",
+      "slug": "whipple-section",
+      "distance": { "miles": 50, "kilometers": 80.5 },
+      "mileRange": { "start": 506, "end": 556 },
+      "start": {
+        "name": "Road Fork, OH",
+        "lat": 39.6673,
+        "lon": -81.2615
+      },
+      "end": {
+        "name": "Whipple, OH",
+        "lat": 39.4937,
+        "lon": -81.3765
+      },
+      "jurisdictions": ["Monroe County, OH", "Washington County, OH"],
+      "tags": ["Southeast Ohio"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_whipple.gpx", "metadata": {} }
+    },
+    {
+      "id": 11,
+      "order": 11,
+      "name": "New Straitsville Section",
+      "slug": "new-straitsville-section",
+      "distance": { "miles": 55, "kilometers": 88.5 },
+      "mileRange": { "start": 556, "end": 611 },
+      "start": {
+        "name": "Whipple, OH",
+        "lat": 39.4937,
+        "lon": -81.3765
+      },
+      "end": {
+        "name": "New Straitsville, OH",
+        "lat": 39.5848,
+        "lon": -82.2371
+      },
+      "jurisdictions": ["Athens County, OH", "Perry County, OH"],
+      "tags": ["Southeast Ohio"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_newstraitsville.gpx", "metadata": {} }
+    },
+    {
+      "id": 12,
+      "order": 12,
+      "name": "Old Man's Cave Section",
+      "slug": "old-mans-cave-section",
+      "distance": { "miles": 50, "kilometers": 80.5 },
+      "mileRange": { "start": 611, "end": 661 },
+      "start": {
+        "name": "New Straitsville, OH",
+        "lat": 39.5848,
+        "lon": -82.2371
+      },
+      "end": {
+        "name": "Old Man's Cave (Hocking Hills)",
+        "lat": 39.4356,
+        "lon": -82.5390
+      },
+      "jurisdictions": ["Hocking County, OH"],
+      "tags": ["Southeast Ohio"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_oldmanscave.gpx", "metadata": {} }
+    },
+    {
+      "id": 13,
+      "order": 13,
+      "name": "Shawnee Section",
+      "slug": "shawnee-section",
+      "distance": { "miles": 55, "kilometers": 88.5 },
+      "mileRange": { "start": 661, "end": 716 },
+      "start": {
+        "name": "Old Man's Cave, OH",
+        "lat": 39.4356,
+        "lon": -82.5390
+      },
+      "end": {
+        "name": "Shawnee (Scioto Trail State Forest)",
+        "lat": 38.9811,
+        "lon": -83.1680
+      },
+      "jurisdictions": ["Hocking County, OH", "Ross County, OH"],
+      "tags": ["Southern Ohio"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_shawnee.gpx", "metadata": {} }
+    },
+    {
+      "id": 14,
+      "order": 14,
+      "name": "West Union Section",
+      "slug": "west-union-section",
+      "distance": { "miles": 60, "kilometers": 96.6 },
+      "mileRange": { "start": 716, "end": 776 },
+      "start": {
+        "name": "Shawnee (Scioto Trail)",
+        "lat": 38.9811,
+        "lon": -83.1680
+      },
+      "end": {
+        "name": "West Union, OH",
+        "lat": 38.7934,
+        "lon": -83.5457
+      },
+      "jurisdictions": ["Scioto County, OH", "Adams County, OH"],
+      "tags": ["Southern Ohio"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_westunion.gpx", "metadata": {} }
+    },
+    {
+      "id": 15,
+      "order": 15,
+      "name": "Williamsburg Section",
+      "slug": "williamsburg-section",
+      "distance": { "miles": 50, "kilometers": 80.5 },
+      "mileRange": { "start": 776, "end": 826 },
+      "start": {
+        "name": "West Union, OH",
+        "lat": 38.7934,
+        "lon": -83.5457
+      },
+      "end": {
+        "name": "Williamsburg, OH",
+        "lat": 39.0531,
+        "lon": -84.0491
+      },
+      "jurisdictions": ["Adams County, OH", "Clermont County, OH"],
+      "tags": ["Southwest Ohio"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_williamsburg.gpx", "metadata": {} }
+    },
+    {
+      "id": 16,
+      "order": 16,
+      "name": "Loveland Section",
+      "slug": "loveland-section",
+      "distance": { "miles": 50, "kilometers": 80.5 },
+      "mileRange": { "start": 826, "end": 876 },
+      "start": {
+        "name": "Williamsburg, OH",
+        "lat": 39.0531,
+        "lon": -84.0491
+      },
+      "end": {
+        "name": "Loveland, OH",
+        "lat": 39.2689,
+        "lon": -84.2630
+      },
+      "jurisdictions": ["Clermont County, OH", "Hamilton County, OH"],
+      "tags": ["Southwest Ohio"],
+      "difficulty": { "rating": 1, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_loveland.gpx", "metadata": {} }
+    },
+    {
+      "id": 17,
+      "order": 17,
+      "name": "Wilmington Section",
+      "slug": "wilmington-section",
+      "distance": { "miles": 55, "kilometers": 88.5 },
+      "mileRange": { "start": 876, "end": 931 },
+      "start": {
+        "name": "Loveland, OH",
+        "lat": 39.2689,
+        "lon": -84.2630
+      },
+      "end": {
+        "name": "Wilmington, OH",
+        "lat": 39.4453,
+        "lon": -83.8288
+      },
+      "jurisdictions": ["Warren County, OH", "Clinton County, OH"],
+      "tags": ["Southwest Ohio"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_wilmington.gpx", "metadata": {} }
+    },
+    {
+      "id": 18,
+      "order": 18,
+      "name": "Dayton Section",
+      "slug": "dayton-section",
+      "distance": { "miles": 60, "kilometers": 96.6 },
+      "mileRange": { "start": 931, "end": 991 },
+      "start": {
+        "name": "Wilmington, OH",
+        "lat": 39.4453,
+        "lon": -83.8288
+      },
+      "end": {
+        "name": "Dayton, OH",
+        "lat": 39.7589,
+        "lon": -84.1916
+      },
+      "jurisdictions": ["Greene County, OH", "Montgomery County, OH"],
+      "tags": ["Southwest Ohio"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_dayton.gpx", "metadata": {} }
+    },
+    {
+      "id": 19,
+      "order": 19,
+      "name": "Troy Section",
+      "slug": "troy-section",
+      "distance": { "miles": 50, "kilometers": 80.5 },
+      "mileRange": { "start": 991, "end": 1041 },
+      "start": {
+        "name": "Dayton, OH",
+        "lat": 39.7589,
+        "lon": -84.1916
+      },
+      "end": {
+        "name": "Troy, OH",
+        "lat": 40.0395,
+        "lon": -84.2033
+      },
+      "jurisdictions": ["Montgomery County, OH", "Miami County, OH"],
+      "tags": ["West Central Ohio"],
+      "difficulty": { "rating": 1, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_troy.gpx", "metadata": {} }
+    },
+    {
+      "id": 20,
+      "order": 20,
+      "name": "St. Marys Section",
+      "slug": "stmarys-section",
+      "distance": { "miles": 50, "kilometers": 80.5 },
+      "mileRange": { "start": 1041, "end": 1091 },
+      "start": {
+        "name": "Troy, OH",
+        "lat": 40.0395,
+        "lon": -84.2033
+      },
+      "end": {
+        "name": "St. Marys, OH",
+        "lat": 40.5420,
+        "lon": -84.3897
+      },
+      "jurisdictions": ["Shelby County, OH", "Auglaize County, OH"],
+      "tags": ["West Central Ohio"],
+      "difficulty": { "rating": 1, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_stmarys.gpx", "metadata": {} }
+    },
+    {
+      "id": 21,
+      "order": 21,
+      "name": "Delphos Section",
+      "slug": "delphos-section",
+      "distance": { "miles": 47, "kilometers": 75.6 },
+      "mileRange": { "start": 1091, "end": 1138 },
+      "start": {
+        "name": "St. Marys, OH",
+        "lat": 40.5420,
+        "lon": -84.3897
+      },
+      "end": {
+        "name": "Delphos, OH",
+        "lat": 40.8434,
+        "lon": -84.3416
+      },
+      "jurisdictions": ["Auglaize County, OH", "Allen County, OH"],
+      "tags": ["Northwest Ohio"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_delphos.gpx", "metadata": {} }
+    },
+    {
+      "id": 22,
+      "order": 22,
+      "name": "Defiance Section",
+      "slug": "defiance-section",
+      "distance": { "miles": 50, "kilometers": 80.5 },
+      "mileRange": { "start": 1138, "end": 1188 },
+      "start": {
+        "name": "Delphos, OH",
+        "lat": 40.8434,
+        "lon": -84.3416
+      },
+      "end": {
+        "name": "Defiance, OH",
+        "lat": 41.2842,
+        "lon": -84.3558
+      },
+      "jurisdictions": ["Van Wert County, OH", "Defiance County, OH"],
+      "tags": ["Northwest Ohio"],
+      "difficulty": { "rating": 1, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_defiance.gpx", "metadata": {} }
+    },
+    {
+      "id": 23,
+      "order": 23,
+      "name": "Pemberville Section",
+      "slug": "pemberville-section",
+      "distance": { "miles": 52, "kilometers": 83.7 },
+      "mileRange": { "start": 1188, "end": 1240 },
+      "start": {
+        "name": "Defiance, OH",
+        "lat": 41.2842,
+        "lon": -84.3558
+      },
+      "end": {
+        "name": "Pemberville, OH",
+        "lat": 41.4128,
+        "lon": -83.4624
+      },
+      "jurisdictions": ["Defiance County, OH", "Wood County, OH"],
+      "tags": ["Northwest Ohio"],
+      "difficulty": { "rating": 1, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_pemberville.gpx", "metadata": {} }
+    },
+    {
+      "id": 24,
+      "order": 24,
+      "name": "Norwalk Section",
+      "slug": "norwalk-section",
+      "distance": { "miles": 52, "kilometers": 83.7 },
+      "mileRange": { "start": 1240, "end": 1292 },
+      "start": {
+        "name": "Pemberville, OH",
+        "lat": 41.4128,
+        "lon": -83.4624
+      },
+      "end": {
+        "name": "Norwalk, OH",
+        "lat": 41.2428,
+        "lon": -82.6157
+      },
+      "jurisdictions": ["Sandusky County, OH", "Huron County, OH"],
+      "tags": ["Northwest Ohio"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_norwalk.gpx", "metadata": {} }
+    },
+    {
+      "id": 25,
+      "order": 25,
+      "name": "Medina Section",
+      "slug": "medina-section",
+      "distance": { "miles": 50, "kilometers": 80.5 },
+      "mileRange": { "start": 1292, "end": 1342 },
+      "start": {
+        "name": "Norwalk, OH",
+        "lat": 41.2428,
+        "lon": -82.6157
+      },
+      "end": {
+        "name": "Medina, OH",
+        "lat": 41.1384,
+        "lon": -81.8637
+      },
+      "jurisdictions": ["Huron County, OH", "Medina County, OH"],
+      "tags": ["Northern Ohio"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_medina.gpx", "metadata": {} }
+    },
+    {
+      "id": 26,
+      "order": 26,
+      "name": "Cleveland Section",
+      "slug": "cleveland-section",
+      "distance": { "miles": 102, "kilometers": 164.2 },
+      "mileRange": { "start": 1342, "end": 1444 },
+      "start": {
+        "name": "Medina, OH",
+        "lat": 41.1384,
+        "lon": -81.8637
+      },
+      "end": {
+        "name": "Headlands Beach State Park (Northern Terminus)",
+        "lat": 41.7583,
+        "lon": -81.2872
+      },
+      "jurisdictions": ["Medina County, OH", "Cuyahoga County, OH", "Lake County, OH"],
+      "tags": ["Northern Ohio"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/bt_cleveland.gpx", "metadata": {} }
+    }
+  ]
+}
