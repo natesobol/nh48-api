@@ -20,6 +20,13 @@ const cleanText = (value) => {
   return text.replace(/:contentReference\[[^\]]*\]\{[^}]*\}/g, "").trim();
 };
 
+const numberFrom = (value) => {
+  const cleaned = cleanText(value);
+  if (!cleaned) return null;
+  const match = cleaned.match(/-?\d+(?:\.\d+)?/);
+  return match ? Number(match[0]) : null;
+};
+
 const escapeHtml = (value) =>
   String(value)
     .replace(/&/g, "&amp;")
@@ -94,26 +101,129 @@ const buildGallery = (photos, peakName) => {
   }).join("\n");
 };
 
-const buildJsonLd = (peak, canonicalUrl, coordinates) => {
-  const name = cleanText(peak["Peak Name"] || peak.peakName || peak.slug);
-  const elevation = cleanText(peak["Elevation (ft)"] || "");
-  const prominence = cleanText(peak["Prominence (ft)"] || "");
+const escapeScriptJson = (value) => String(value).replace(/<\/script/gi, "<\\/script");
+
+const buildJsonLd = (peak, canonicalUrl, coordinates, primaryImageUrl, descriptionText, range) => {
+  const peakName = cleanText(peak.peakName || peak["Peak Name"] || peak.slug);
+  const elevationFt = numberFrom(peak["Elevation (ft)"]);
+  const prominenceFt = numberFrom(peak["Prominence (ft)"]);
+  const difficulty = cleanText(peak["Difficulty"]);
+  const trailType = cleanText(peak["Trail Type"]);
+  const additionalProperty = [
+    prominenceFt != null
+      ? {
+        "@type": "PropertyValue",
+        name: "Prominence (ft)",
+        value: prominenceFt,
+        unitText: "FT",
+      }
+      : null,
+    difficulty
+      ? {
+        "@type": "PropertyValue",
+        name: "Difficulty",
+        value: difficulty,
+      }
+      : null,
+    range
+      ? {
+        "@type": "PropertyValue",
+        name: "Range / Subrange",
+        value: range,
+      }
+      : null,
+    trailType
+      ? {
+        "@type": "PropertyValue",
+        name: "Trail Type",
+        value: trailType,
+      }
+      : null,
+  ].filter(Boolean);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Mountain",
-    name,
+    name: peakName,
+    description: descriptionText,
     url: canonicalUrl,
-    description: cleanText(peak["View Type"] || peak["Terrain Character"] || "") || `${name} in the White Mountains of New Hampshire.`,
-    elevation: elevation ? `${elevation} ft` : undefined,
-    prominence: prominence ? `${prominence} ft` : undefined,
-    geo: coordinates.latitude && coordinates.longitude ? {
-      "@type": "GeoCoordinates",
-      latitude: coordinates.latitude,
-      longitude: coordinates.longitude,
-    } : undefined,
+    image: primaryImageUrl ? [primaryImageUrl] : undefined,
+    geo: coordinates.latitude && coordinates.longitude
+      ? {
+        "@type": "GeoCoordinates",
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+      }
+      : undefined,
+    elevation: elevationFt != null
+      ? {
+        "@type": "QuantitativeValue",
+        value: elevationFt,
+        unitText: "FT",
+      }
+      : undefined,
+    containedInPlace: range
+      ? { "@type": "Place", name: "White Mountain National Forest" }
+      : undefined,
+    additionalProperty: additionalProperty.length ? additionalProperty : undefined,
   };
+
   Object.keys(jsonLd).forEach((key) => jsonLd[key] === undefined && delete jsonLd[key]);
   return JSON.stringify(jsonLd, null, 2);
+};
+
+const TRAIL_KEYWORDS = [
+  "Trail",
+  "Path",
+  "Ridge",
+  "Brook",
+  "River",
+  "Notch",
+  "Road",
+  "Cutoff",
+  "Loop",
+  "Slide",
+  "Spur",
+  "Connector",
+];
+
+const extractRelatedTrailNames = (routes) => {
+  if (!Array.isArray(routes)) return [];
+  const keywords = TRAIL_KEYWORDS.join("|");
+  const endPattern = new RegExp(`\\b(?:${keywords})\\b$`, "i");
+  const names = new Set();
+
+  routes.forEach((route) => {
+    const raw = cleanText(route["Route Name"] || route.name || "");
+    if (!raw) return;
+    const parts = raw
+      .replace(/[()]/g, " ")
+      .split(/\s*(?:>|via|to|,|;|\/|&)\s*/i);
+    parts.forEach((part) => {
+      const cleaned = part.replace(/[^\w\s'-]/g, " ").replace(/\s+/g, " ").trim();
+      if (!cleaned) return;
+      const words = cleaned.split(" ").filter(Boolean);
+      if (words.length < 2 || words.length > 4) return;
+      if (!endPattern.test(cleaned)) return;
+      names.add(words.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" "));
+    });
+  });
+
+  return Array.from(names);
+};
+
+const buildRelatedTrailsList = (routes) => {
+  const relatedNames = extractRelatedTrailNames(routes);
+  if (!relatedNames.length) {
+    return "<li>No related trails listed yet.</li>";
+  }
+  return relatedNames
+    .map((name) => {
+      const href = `https://nh48.info/trails.html?trail=${encodeURIComponent(name)}`;
+      const text = `${name} route`;
+      return `<li><a href="${href}">${escapeHtml(text)}</a></li>`;
+    })
+    .join("\n");
 };
 
 const renderTemplate = (values) => {
@@ -131,15 +241,19 @@ slugs.forEach((slug) => {
   const name = cleanText(peak["Peak Name"] || peak.peakName || slug);
   const elevation = cleanText(peak["Elevation (ft)"] || "Unknown");
   const prominence = cleanText(peak["Prominence (ft)"] || "Unknown");
-  const range = cleanText(peak["Range / Subrange"] || "White Mountains");
-  const difficulty = cleanText(peak["Difficulty"] || "Unknown");
-  const trailType = cleanText(peak["Trail Type"] || "Unknown");
+  const rangeValue = cleanText(peak["Range / Subrange"] || "");
+  const difficultyValue = cleanText(peak["Difficulty"] || "");
+  const trailTypeValue = cleanText(peak["Trail Type"] || "");
+  const range = rangeValue || "White Mountains";
+  const difficulty = difficultyValue || "Unknown";
+  const trailType = trailTypeValue || "Unknown";
   const time = cleanText(peak["Typical Completion Time"] || "Varies");
   const summary = cleanText(peak["Terrain Character"] || peak["View Type"] || "");
   const coordinates = parseCoordinates(peak["Coordinates"]);
   const primaryPhoto = pickPrimaryPhoto(peak.photos, name);
   const canonicalUrl = `${CANONICAL_BASE}/${slug}/`;
   const appUrl = `${APP_BASE}?slug=${slug}`;
+  const descriptionText = summary || `${name} guide with route details, elevation, and photos.`;
   const description = `${name} guide with route details, elevation, and photos.`;
 
   const values = {
@@ -157,11 +271,21 @@ slugs.forEach((slug) => {
     SUMMARY: escapeHtml(summary || `${name} is one of the classic New Hampshire 4,000-footers.`),
     COORDINATES: escapeHtml(coordinates.text || "Coordinates coming soon."),
     ROUTES_LIST: buildRoutesList(peak["Standard Routes"]),
+    RELATED_TRAILS_LI: buildRelatedTrailsList(peak["Standard Routes"]),
     GALLERY_IMAGES: buildGallery(peak.photos, name),
     APP_URL: appUrl,
     HERO_IMAGE: primaryPhoto.url,
     HERO_ALT: escapeHtml(primaryPhoto.alt),
-    JSON_LD: buildJsonLd(peak, canonicalUrl, coordinates),
+    JSON_LD: escapeScriptJson(
+      buildJsonLd(
+        peak,
+        canonicalUrl,
+        coordinates,
+        primaryPhoto.url,
+        descriptionText,
+        rangeValue || null
+      )
+    ),
   };
 
   const outputDir = path.join(OUTPUT_DIR, slug);
