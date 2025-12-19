@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Madison",
+  "description": "Steep, rocky trail; extensive boulders near summit",
   "url": "https://nh48.info/peaks/mount-madison/",
-  "description": "360°  - summit is alpine with sweeping views.",
-  "elevation": "5367 ft",
-  "prominence": "466 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-madison/mount-madison__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.32833,
     "longitude": -71.27667
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 5367,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 466,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Very Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Presidential Range  - Northern."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back  - commonly."
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Steep, rocky trail; extensive boulders near summit</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Valley Way &amp; Osgood Trail  - via Madison Hut.</strong> — 8.3 mi • 4,100 ft gain • Out &amp; back  - same route. • Very difficult</li>
 <li><strong>Airline Trail  - direct ridge ascent.</strong> — 8.4 mi • 4,100 ft gain • Out &amp; back • Very difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li>No related trails listed yet.</li>
         </ul>
       </section>
       <section>

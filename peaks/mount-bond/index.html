@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Bond",
+  "description": "Long, remote approach on old railroad grade followed by gradual climb; rocky alpine ridge with open ledges and talus",
   "url": "https://nh48.info/peaks/mount-bond/",
-  "description": "360° open summit with dramatic views of the Pemigewasset Wilderness and neighboring Bonds",
-  "elevation": "4698 ft",
-  "prominence": "298 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-bond/mount-bond__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.15306,
     "longitude": -71.53
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4698,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 298,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Extremely Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Twin Range  - Bonds."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back or traverse"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Long, remote approach on old railroad grade followed by gradual climb; rocky alpine ridge with open ledges and talus</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Lincoln Woods → Wilderness Trail → Bondcliff Trail → West Bond Spur  - Bonds Traverse.</strong> — 22.6 mi • 4800 ft gain • Point‑to‑point traverse • Extremely difficult</li>
 <li><strong>Zealand Trail → Twinway → Bondcliff Trail  - via Zealand Hut &amp; Guyot.</strong> — 19.8 mi • 3950 ft gain • Traverse • Very difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li>No related trails listed yet.</li>
         </ul>
       </section>
       <section>

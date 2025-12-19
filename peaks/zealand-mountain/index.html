@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Zealand Mountain",
+  "description": "Easy grade to Zealand Hut, then moderate climb to Zeacliff  - rocky.; gentle, mossy ridge to summit sign",
   "url": "https://nh48.info/peaks/zealand-mountain/",
-  "description": "Wooded  - no view at the summit itself; outstanding view from Zeacliff outlook nearby.",
-  "elevation": "4260 ft",
-  "prominence": "246 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/zealand-mountain/zealand-mountain__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.17967,
     "longitude": -71.52133
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4260,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 246,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Twin Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back  - commonly."
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Easy grade to Zealand Hut, then moderate climb to Zeacliff  - rocky.; gentle, mossy ridge to summit sign</p>
@@ -159,6 +206,12 @@
         <h2>Standard Routes</h2>
         <ul class="routes">
           <li><strong>Zealand Trail &gt; Twinway  - via Zealand Hut &amp; Zeacliff.</strong> — 11.0 mi • 2,300 ft gain • Out &amp; back  - or traverse over Bonds. • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Zealand%20Trail">Zealand Trail route</a></li>
         </ul>
       </section>
       <section>

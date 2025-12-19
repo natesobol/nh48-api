@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Tom",
+  "description": "Moderate grade through hardwoods then fir; relatively smooth footing with some rocky sections, never extremely steep",
   "url": "https://nh48.info/peaks/mount-tom/",
-  "description": "Partial  - a few steps beyond summit spur end leads to outlook ledge with decent views; true summit wooded.",
-  "elevation": "4051 ft",
-  "prominence": "331 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-tom/mount-tom__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.22889,
     "longitude": -71.44417
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4051,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 331,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Moderate"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Willey Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Moderate grade through hardwoods then fir; relatively smooth footing with some rocky sections, never extremely steep</p>
@@ -160,6 +207,14 @@
         <ul class="routes">
           <li><strong>Avalon Trail &gt; A-Z Trail &gt; Mount Tom Spur</strong> — 5.8 mi • 2,150 ft gain • Out &amp; back  - or loop with Field &amp; Willey. • Moderate</li>
 <li><strong>Willey Range Traverse  - see Mount Field description, includes Tom spur.</strong> — 10.0 mi • 3,400 ft gain • Loop • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Avalon%20Trail">Avalon Trail route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=A-Z%20Trail">A-Z Trail route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=M%20Spur">M Spur route</a></li>
         </ul>
       </section>
       <section>

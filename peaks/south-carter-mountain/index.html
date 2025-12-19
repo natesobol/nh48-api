@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "South Carter Mountain",
+  "description": "Mossy, root-filled ridge trail with short steep sections; generally moderate footing",
   "url": "https://nh48.info/peaks/south-carter-mountain/",
-  "description": "Partial  - one or two small outlook spur paths; summit itself wooded.",
-  "elevation": "4430 ft",
-  "prominence": "230 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/south-carter-mountain/south-carter-mountain__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.30167,
     "longitude": -71.17528
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4430,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 230,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Carter-Moriah Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Loop or traverse"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Mossy, root-filled ridge trail with short steep sections; generally moderate footing</p>
@@ -160,6 +207,13 @@
         <ul class="routes">
           <li><strong>19 Mile Brook &gt; Carter Dome Trail &gt; Carter-Moriah  - via Zeta Pass.</strong> — 12.7 mi • 3,750 ft gain • Loop  - together with Middle Carter. • Very difficult</li>
 <li><strong>Imp Trail loop  - North Imp -&gt; North Carter Trail -&gt; Carter-Moriah -&gt; South Imp.</strong> — 11.0 mi • 3,300 ft gain • Loop • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=19%20Mile%20Brook">19 Mile Brook route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=Carter%20Dome%20Trail">Carter Dome Trail route</a></li>
         </ul>
       </section>
       <section>

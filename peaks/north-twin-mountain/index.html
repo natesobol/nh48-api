@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "North Twin Mountain",
+  "description": "Forest trail with steady grade; several river crossings  - Little River.; typical roots and rocks",
   "url": "https://nh48.info/peaks/north-twin-mountain/",
-  "description": "Partial  - small outlook near summit to south; true summit wooded.",
-  "elevation": "4761 ft",
-  "prominence": "299 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/north-twin-mountain/north-twin-mountain__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.16667,
     "longitude": -71.5625
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4761,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 299,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Moderate/Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Twin Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Forest trail with steady grade; several river crossings  - Little River.; typical roots and rocks</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>North Twin Trail  - to summit and back.</strong> — 8.6 mi • 2,950 ft gain • Out &amp; back • Moderate/Difficult</li>
 <li><strong>Twinway from Galehead Hut  - via South Twin.</strong> — 4.6  - one-way from hut. mi • 1,150  - from hut. ft gain • Thru-hike segment • Moderate</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li>No related trails listed yet.</li>
         </ul>
       </section>
       <section>

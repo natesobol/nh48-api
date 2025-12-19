@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Field",
+  "description": "Steep in sections  - Avalon Trail has short, very steep pitch to Avalon spur.; typical rooty and rocky footing",
   "url": "https://nh48.info/peaks/mount-field/",
-  "description": "Partial  - limited view near summit; better outlook from nearby Mt. Avalon.",
-  "elevation": "4340 ft",
-  "prominence": "1706 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-field/mount-field__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.19639,
     "longitude": -71.44417
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4340,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 1706,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Willey Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back or loop  - with Tom and Willey."
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Steep in sections  - Avalon Trail has short, very steep pitch to Avalon spur.; typical rooty and rocky footing</p>
@@ -160,6 +207,13 @@
         <ul class="routes">
           <li><strong>Willey Range Traverse  - Avalon Trail &gt; Willey Range Trail.</strong> — 10.0 mi • 3,400 ft gain • Semi-loop  - includes Tom &amp; Willey. • Difficult</li>
 <li><strong>Avalon Trail  - direct out-and-back via Mount Avalon spur.</strong> — 6.2 mi • 3,050 ft gain • Out &amp; back • Moderate/Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Willey%20Range%20Trail">Willey Range Trail route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=Mount%20Avalon%20Spur">Mount Avalon Spur route</a></li>
         </ul>
       </section>
       <section>

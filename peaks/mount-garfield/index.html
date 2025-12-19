@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Garfield",
+  "description": "Moderate grade on old fire road path; final push steeper with switchbacks; rocky summit area",
   "url": "https://nh48.info/peaks/mount-garfield/",
-  "description": "360°  - open rocky summit foundation with sweeping views.",
-  "elevation": "4500 ft",
-  "prominence": "855 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-garfield/mount-garfield__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.18833,
     "longitude": -71.61167
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4500,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 855,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Moderate/Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Franconia Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Moderate grade on old fire road path; final push steeper with switchbacks; rocky summit area</p>
@@ -160,6 +207,13 @@
         <ul class="routes">
           <li><strong>Garfield Trail  - via Garfield Ridge Trail.</strong> — 10.0 mi • 3,000 ft gain • Out &amp; back • Moderate/Difficult</li>
 <li><strong>Skookumchuck Trail &amp; Garfield Ridge Trail  - alternate approach.</strong> — 12.0 mi • 4,250 ft gain • Out &amp; back or point-to-point to Franconia Notch • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Garfield%20Ridge%20Trail">Garfield Ridge Trail route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=Skookumchuck%20Trail">Skookumchuck Trail route</a></li>
         </ul>
       </section>
       <section>

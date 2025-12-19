@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Middle Tripyramid",
+  "description": "Ridge between North and Middle is steep and rough but forested; Sabbaday approach is gradual then steep near ridge with some mud/stream in places",
   "url": "https://nh48.info/peaks/middle-tripyramid/",
-  "description": "Partial  - small view spot a short distance off summit on north side; summit itself wooded.",
-  "elevation": "4140 ft",
-  "prominence": "288 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/middle-tripyramid/middle-tripyramid__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 43.96471,
     "longitude": -71.43995
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4140,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 288,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Sandwich Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Loop or Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Ridge between North and Middle is steep and rough but forested; Sabbaday approach is gradual then steep near ridge with some mud/stream in places</p>
@@ -160,6 +207,13 @@
         <ul class="routes">
           <li><strong>Pine Bend Brook &gt; Mt. Tripyramid Trail  - North &amp; Middle loop.</strong> — 11.0 mi • 3,100 ft gain • Loop  - via both North &amp; Middle peaks. • Difficult</li>
 <li><strong>Sabbaday Brook Trail  - longer gradual approach to Middle.</strong> — 14.0 mi • 3,000 ft gain • Out &amp; back • Difficult  - many stream crossings.</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Pine%20Bend%20Brook">Pine Bend Brook route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=Middle%20Loop">Middle Loop route</a></li>
         </ul>
       </section>
       <section>

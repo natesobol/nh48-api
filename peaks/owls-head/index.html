@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Owl's Head",
+  "description": "Extremely long flat approach, then very steep loose slide  - gravel, scree. for 1,000 ft gain; herd path in thick forest on ridge",
   "url": "https://nh48.info/peaks/owls-head/",
-  "description": "Wooded  - no view at true summit; limited outlook halfway up slide gives a peek at Franconia Ridge.",
-  "elevation": "4025 ft",
-  "prominence": "825 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/owls-head/owls-head__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.14,
     "longitude": -71.61167
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4025,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 825,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Very difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Franconia Range  - Pemigewasset Wilderness."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Extremely long flat approach, then very steep loose slide  - gravel, scree. for 1,000 ft gain; herd path in thick forest on ridge</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Lincoln Woods &gt; Wilderness Trail &gt; Owl’s Head Path  - Slide.</strong> — 18.4 mi • 2,900 ft gain • Out &amp; back • Very difficult</li>
 <li><strong>Lincoln Woods &gt; Black Pond Bushwhack &gt; Lincoln Brook Trail  - winter variation.</strong> — ~16.0 mi • 2,900 ft gain • Out &amp; back • Very difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Wilderness%20Trail">Wilderness Trail route</a></li>
         </ul>
       </section>
       <section>

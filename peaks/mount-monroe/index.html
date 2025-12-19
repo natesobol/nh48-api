@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Monroe",
+  "description": "Rocky alpine terrain; steep ascent from hut over talus",
   "url": "https://nh48.info/peaks/mount-monroe/",
-  "description": "360°  - open alpine summit, panoramic views.",
-  "elevation": "5384 ft",
-  "prominence": "254 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-monroe/mount-monroe__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.25537,
     "longitude": -71.32154
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 5384,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 254,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Presidential Range  - Southern."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back  - common. or loop with connector trails"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Rocky alpine terrain; steep ascent from hut over talus</p>
@@ -160,6 +207,13 @@
         <ul class="routes">
           <li><strong>Ammonoosuc Ravine Trail &amp; Crawford Path</strong> — 7.0 mi • 2,900 ft gain • Out &amp; back  - or loop via Jewel Trail. • Difficult</li>
 <li><strong>Mount Monroe Loop  - from Lakes of the Clouds.</strong> — 0.7  - spur from AT. mi • ~350 ft gain • Out &amp; back spur • Moderate</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Ammonoosuc%20Ravine%20Trail">Ammonoosuc Ravine Trail route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=Crawford%20Path">Crawford Path route</a></li>
         </ul>
       </section>
       <section>

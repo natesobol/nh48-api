@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Cabot",
+  "description": "Long gentle approach on old logging roads and moderate climb on Kilkenny Ridge; rocky/rooty sections near summit",
   "url": "https://nh48.info/peaks/mount-cabot/",
-  "description": "Limited – summit wooded; a small clearing near Cabot Cabin provides a partial view",
-  "elevation": "4170 ft",
-  "prominence": "2674 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-cabot/mount-cabot__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.506,
     "longitude": -71.41433
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4170,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 2674,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Moderate"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Pilot Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back or loop"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Long gentle approach on old logging roads and moderate climb on Kilkenny Ridge; rocky/rooty sections near summit</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Bunnell Notch Trail → Kilkenny Ridge Trail</strong> — 9.6 mi • 2950 ft gain • Out &amp; back • Moderate</li>
 <li><strong>Unknown Pond Trail → Kilkenny Ridge Trail → Bunnell Notch Trail  - loop via The Horn and The Bulge.</strong> — 11.4 mi • 3100 ft gain • Loop • Moderate</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li>No related trails listed yet.</li>
         </ul>
       </section>
       <section>

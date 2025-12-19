@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Adams",
+  "description": "Rocky and rough trail, extensive boulder scrambling near summit",
   "url": "https://nh48.info/peaks/mount-adams/",
-  "description": "360° expansive  - summit above treeline.",
-  "elevation": "5774 ft",
-  "prominence": "804 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-adams/mount-adams__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.32056,
     "longitude": -71.29139
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 5774,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 804,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Extremely Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Presidential Range  - Northern Presidentials."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back or loop combining trails"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Rocky and rough trail, extensive boulder scrambling near summit</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Airline &amp; Valley Way Loop  - via Durand Ridge.</strong> — 9.0 mi • 4,500 ft gain • Semi-loop • Extremely difficult</li>
 <li><strong>Lowe’s Path  - direct ascent.</strong> — 9.6 mi • 4,400 ft gain • Out &amp; back • Extremely difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Durand%20Ridge">Durand Ridge route</a></li>
         </ul>
       </section>
       <section>

@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Waumbek",
+  "description": "Gentle to moderate grade old bridle path; footing generally smooth with some rocky sections; mossy boreal forest near top",
   "url": "https://nh48.info/peaks/mount-waumbek/",
-  "description": "Wooded  - summit itself in trees; a cleared outlook near Starr King summit offers fine views of northern Presidentials.",
-  "elevation": "4006 ft",
-  "prominence": "1289 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-waumbek/mount-waumbek__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.42833,
     "longitude": -71.36972
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4006,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 1289,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Moderate"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Pliny Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Gentle to moderate grade old bridle path; footing generally smooth with some rocky sections; mossy boreal forest near top</p>
@@ -159,6 +206,12 @@
         <h2>Standard Routes</h2>
         <ul class="routes">
           <li><strong>Starr King Trail  - via Mt Starr King.</strong> — 7.2 mi • 2,700 ft gain • Out &amp; back • Moderate</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li>No related trails listed yet.</li>
         </ul>
       </section>
       <section>

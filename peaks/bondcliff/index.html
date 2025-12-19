@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Bondcliff",
+  "description": "Flat approach on old railroad grade, then long gradual climb; above treeline near summit with rocky footing",
   "url": "https://nh48.info/peaks/bondcliff/",
-  "description": "360°  - iconic open cliff with expansive views into wilderness.",
-  "elevation": "4265 ft",
-  "prominence": "220 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/bondcliff/bondcliff__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.14065,
     "longitude": -71.54062
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4265,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 220,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Very Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Twin Range  - Bonds."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back or traverse"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Flat approach on old railroad grade, then long gradual climb; above treeline near summit with rocky footing</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Lincoln Woods &gt; Wilderness Trail &gt; Bondcliff Trail  - out &amp; back.</strong> — 18.0 mi • 3,000 ft gain • Out &amp; back • Very difficult</li>
 <li><strong>North-to-south Bonds Traverse  - via Zealand → Bondcliff.</strong> — 19.8 mi • 3,950 ft gain • Traverse  - point-to-point. • Extremely difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Wilderness%20Trail">Wilderness Trail route</a></li>
         </ul>
       </section>
       <section>

@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "North Tripyramid",
+  "description": "If via slides: loose rock and slab on slides  - very steep.; otherwise typical steep, rough wooded trail with many roots",
   "url": "https://nh48.info/peaks/north-tripyramid/",
-  "description": "Partial  - limited view near summit from top of slide; summit itself wooded.",
-  "elevation": "4180 ft",
-  "prominence": "1345 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/north-tripyramid/north-tripyramid__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 43.97333,
     "longitude": -71.4473
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4180,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 1345,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Sandwich Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Loop or Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>If via slides: loose rock and slab on slides  - very steep.; otherwise typical steep, rough wooded trail with many roots</p>
@@ -160,6 +207,13 @@
         <ul class="routes">
           <li><strong>Pine Bend Brook Trail &gt; Mt. Tripyramid Trail  - North Slide up, South Slide down loop.</strong> — 11.0 mi • 3,100 ft gain • Loop  - over Middle Peak. • Difficult</li>
 <li><strong>Pine Bend Brook Trail  - out &amp; back avoiding slides.</strong> — 9.6 mi • 3,000 ft gain • Out &amp; back • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Pine%20Bend%20Brook%20Trail">Pine Bend Brook Trail route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=South%20Slide%20Down%20Loop">South Slide Down Loop route</a></li>
         </ul>
       </section>
       <section>

@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Jefferson",
+  "description": "Rocky trail with large boulders; ‘Caps’ are open rock ledges requiring hands",
   "url": "https://nh48.info/peaks/mount-jefferson/",
-  "description": "360° above treeline  - extensive alpine views.",
-  "elevation": "5712 ft",
-  "prominence": "742 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-jefferson/mount-jefferson__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.30417,
     "longitude": -71.31667
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 5712,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 742,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Presidential Range  - Northern."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Rocky trail with large boulders; ‘Caps’ are open rock ledges requiring hands</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Caps Ridge Trail  - direct ascent.</strong> — 5.0 mi • 2,700 ft gain • Out &amp; back • Difficult  - steep, with rock scrambles.</li>
 <li><strong>Castle Trail  - longer approach.</strong> — 10.0 mi • 4,200 ft gain • Out &amp; back • Very difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li>No related trails listed yet.</li>
         </ul>
       </section>
       <section>

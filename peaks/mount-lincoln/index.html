@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Lincoln",
+  "description": "Steep ascent next to waterfalls, then rocky alpine ridge trail",
   "url": "https://nh48.info/peaks/mount-lincoln/",
-  "description": "360°  - exposed alpine ridge summit.",
-  "elevation": "5089 ft",
-  "prominence": "180 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-lincoln/mount-lincoln__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.14833,
     "longitude": -71.64444
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 5089,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 180,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Very Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Franconia Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Loop or Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Steep ascent next to waterfalls, then rocky alpine ridge trail</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Franconia Ridge Loop  - via Falling Waters Trail.</strong> — 8.9 mi • 3,900 ft gain • Loop  - includes Mount Lafayette. • Very difficult</li>
 <li><strong>Falling Waters Trail  - direct up-and-back to ridge.</strong> — 7.8 mi • 3,400 ft gain • Out &amp; back  - to ridge and back down. • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Falling%20Waters%20Trail">Falling Waters Trail route</a></li>
         </ul>
       </section>
       <section>

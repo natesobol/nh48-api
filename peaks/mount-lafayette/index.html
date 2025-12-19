@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Lafayette",
+  "description": "Steep, rocky ascent; alpine ridge with talus and some slab sections",
   "url": "https://nh48.info/peaks/mount-lafayette/",
-  "description": "360°  - open summit and ridge, expansive views.",
-  "elevation": "5249 ft",
-  "prominence": "3320 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-lafayette/mount-lafayette__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.16028,
     "longitude": -71.64417
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 5249,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 3320,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Very Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Franconia Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Loop or Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Steep, rocky ascent; alpine ridge with talus and some slab sections</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Franconia Ridge Loop  - Falling Waters &amp; Old Bridle Path.</strong> — 8.9 mi • 3,900 ft gain • Loop  - ridge traverse. • Very difficult</li>
 <li><strong>Old Bridle Path  - out-and-back.</strong> — 8.0 mi • 3,600 ft gain • Out &amp; back • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Old%20Bridle%20Path">Old Bridle Path route</a></li>
         </ul>
       </section>
       <section>

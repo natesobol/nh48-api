@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Moriah",
+  "description": "Moderately steep, with some rocky ledges to ascend  - especially via Carter-Moriah trail from Gorham which includes several ledgy knobs.",
   "url": "https://nh48.info/peaks/mount-moriah/",
-  "description": "Excellent 360° from ledges near summit  - summit proper has open ledge with sweeping views.",
-  "elevation": "4049 ft",
-  "prominence": "922 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-moriah/mount-moriah__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.3325,
     "longitude": -71.1375
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4049,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 922,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Carter-Moriah Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Moderately steep, with some rocky ledges to ascend  - especially via Carter-Moriah trail from Gorham which includes several ledgy knobs.</p>
@@ -160,6 +207,13 @@
         <ul class="routes">
           <li><strong>Stony Brook Trail &gt; Carter-Moriah Trail</strong> — 10.0 mi • 3,150 ft gain • Out &amp; back • Difficult</li>
 <li><strong>Carter-Moriah Trail  - from Gorham end.</strong> — 9.0 mi • 3,100 ft gain • Out &amp; back • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Ny%20Brook%20Trail">Ny Brook Trail route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=Carter-Moriah%20Trail">Carter-Moriah Trail route</a></li>
         </ul>
       </section>
       <section>

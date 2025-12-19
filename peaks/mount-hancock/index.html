@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Hancock  - North Peak.",
+  "description": "Gentle approach, then very steep, loose trail section on loop; soft forest floor in many areas",
   "url": "https://nh48.info/peaks/mount-hancock/",
-  "description": "Partial  - small outlook near summit through a clearing.",
-  "elevation": "4420 ft",
-  "prominence": "1247 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-hancock/mount-hancock__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.08368,
     "longitude": -71.49369
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4420,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 1247,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Moderate/Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Pemigewasset Wilderness  - Hancock Range."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Loop"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Gentle approach, then very steep, loose trail section on loop; soft forest floor in many areas</p>
@@ -159,6 +206,13 @@
         <h2>Standard Routes</h2>
         <ul class="routes">
           <li><strong>Hancock Loop Trail  - via Hancock Notch &amp; Cedar Brook.</strong> — 9.8 mi • 2,650 ft gain • Loop  - climbing South then North Hancock or vice versa. • Moderate/Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Hancock%20Notch">Hancock Notch route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=Cedar%20Brook">Cedar Brook route</a></li>
         </ul>
       </section>
       <section>

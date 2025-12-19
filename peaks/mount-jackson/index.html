@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Jackson",
+  "description": "Gentle to moderate grade until steep final cone; final 0.1 mi involves rocky ledges that can be slick",
   "url": "https://nh48.info/peaks/mount-jackson/",
-  "description": "360°  - open ledgy summit with excellent views of Presidentials and Crawford Notch.",
-  "elevation": "4052 ft",
-  "prominence": "358 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-jackson/mount-jackson__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.20333,
     "longitude": -71.37583
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4052,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 358,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Moderate"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Presidential Range  - Southern."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back  - common. or small loop including Mt Webster"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Gentle to moderate grade until steep final cone; final 0.1 mi involves rocky ledges that can be slick</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Webster-Jackson Trail  - Jackson Branch.</strong> — 5.2 mi • 2,150 ft gain • Out &amp; back • Moderate</li>
 <li><strong>Webster-Jackson Loop  - ascending Jackson, optional Webster then down.</strong> — 6.5 mi • 2,500 ft gain • Loop • Moderate</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li>No related trails listed yet.</li>
         </ul>
       </section>
       <section>

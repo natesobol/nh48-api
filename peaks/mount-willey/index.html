@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Willey",
+  "description": "Steep climb from notch with wooden ladders on upper Willey Range Trail; typical White Mountain rocks and roots",
   "url": "https://nh48.info/peaks/mount-willey/",
-  "description": "Partial  - small outlook near summit overlooking Crawford Notch; summit itself wooded.",
-  "elevation": "4285 ft",
-  "prominence": "256 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-willey/mount-willey__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.18667,
     "longitude": -71.43333
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4285,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 256,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Willey Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back or loop"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Steep climb from notch with wooden ladders on upper Willey Range Trail; typical White Mountain rocks and roots</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Willey Range Trail  - from Ethan Pond Trail via Kedron Flume.</strong> — 5.4 mi • 2,900 ft gain • Out &amp; back • Difficult</li>
 <li><strong>Willey Range Traverse  - Tom–Field–Willey loop via Avalon/A-Z Trails.</strong> — 10.0 mi • 3,400 ft gain • Loop • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=M%20Field%20Willey%20Loop">M Field Willey Loop route</a></li>
         </ul>
       </section>
       <section>

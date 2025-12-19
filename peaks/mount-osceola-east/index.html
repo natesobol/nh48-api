@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Osceola  - East Peak.",
+  "description": "Steep, rocky ridge connecting from the main peak with a rock chimney requiring hands or bypass; footing is rough and slippery when wet",
   "url": "https://nh48.info/peaks/mount-osceola-east/",
-  "description": "Minimal – the summit is wooded; limited outlooks along the ridge",
-  "elevation": "4156 ft",
-  "prominence": "316 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-osceola-east/mount-osceola-east__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.00611,
     "longitude": -71.52028
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4156,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 316,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Sandwich Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Steep, rocky ridge connecting from the main peak with a rock chimney requiring hands or bypass; footing is rough and slippery when wet</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Greeley Ponds Trail → Mount Osceola Trail  - via East Peak.</strong> — 7.6 mi • 3100 ft gain • Out &amp; back • Difficult</li>
 <li><strong>Mount Osceola Trail  - Tripoli Road. → East Peak</strong> — 8.4 mi • 3050 ft gain • Out &amp; back • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li>No related trails listed yet.</li>
         </ul>
       </section>
       <section>

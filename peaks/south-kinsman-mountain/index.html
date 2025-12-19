@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "South Kinsman Mountain",
+  "description": "Steep rocky sections  - Fishin’ Jimmy has wooden blocks on steep slabs.; Mount Kinsman Trail more gradual",
   "url": "https://nh48.info/peaks/south-kinsman-mountain/",
-  "description": "360°  - open rock ledges at summit with great views.",
-  "elevation": "4358 ft",
-  "prominence": "2240 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/south-kinsman-mountain/south-kinsman-mountain__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.123,
     "longitude": -71.73667
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4358,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 2240,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Kinsman Range  - Western White Mountains."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back  - commonly."
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Steep rocky sections  - Fishin’ Jimmy has wooden blocks on steep slabs.; Mount Kinsman Trail more gradual</p>
@@ -160,6 +207,13 @@
         <ul class="routes">
           <li><strong>Mount Kinsman Trail &gt; Kinsman Ridge Trail  - via North Kinsman.</strong> — 10.0 mi • 3,950 ft gain • Out &amp; back  - hits North &amp; South peaks. • Difficult</li>
 <li><strong>Fishin’ Jimmy Trail  - from Lonesome Lake. to Kinsman Ridge</strong> — 12.0 mi • 3,550 ft gain • Out &amp; back  - or loop via Mt Kinsman Trail with car spot. • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Mount%20Kinsman%20Trail">Mount Kinsman Trail route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=Kinsman%20Ridge">Kinsman Ridge route</a></li>
         </ul>
       </section>
       <section>

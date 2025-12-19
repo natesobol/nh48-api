@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Osceola",
+  "description": "Well‑graded path from Tripoli Road with moderate rocky sections; via Greeley Ponds it is steeper and rougher and includes the rock chimney between peaks",
   "url": "https://nh48.info/peaks/mount-osceola/",
-  "description": "Excellent 360° view from open ledges overlooking the Pemigewasset Wilderness and the Presidential Range",
-  "elevation": "4315 ft",
-  "prominence": "2000 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-osceola/mount-osceola__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.00161,
     "longitude": -71.53561
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4315,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 2000,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Moderate/Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Sandwich Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back or traverse"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Well‑graded path from Tripoli Road with moderate rocky sections; via Greeley Ponds it is steeper and rougher and includes the rock chimney between peaks</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Mount Osceola Trail  - Tripoli Road.</strong> — 6.4 mi • 2100 ft gain • Out &amp; back • Moderate</li>
 <li><strong>Greeley Ponds Trail → Mount Osceola Trail  - via East Osceola.</strong> — 7.6 mi • 3100 ft gain • Out &amp; back or traverse • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li>No related trails listed yet.</li>
         </ul>
       </section>
       <section>

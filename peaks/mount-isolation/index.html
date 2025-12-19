@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Isolation",
+  "description": "Long approach through Wilderness: muddy, many stream crossings  - water hazard in wet seasons.; final Davis Path section moderate; if via Glen Boulder, significant above-treeline steep sections",
   "url": "https://nh48.info/peaks/mount-isolation/",
-  "description": "Panoramic 180°  - open ledgy summit with excellent view of Mt Washington and Southern Presidentials.",
-  "elevation": "4004 ft",
-  "prominence": "203 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-isolation/mount-isolation__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.21479,
     "longitude": -71.30924
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4004,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 203,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Very difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Presidential Range  - Montalban Ridge."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back  - common. or long traverse"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Long approach through Wilderness: muddy, many stream crossings  - water hazard in wet seasons.; final Davis Path section moderate; if via Glen Boulder, significant above-treeline steep sections</p>
@@ -160,6 +207,14 @@
         <ul class="routes">
           <li><strong>Rocky Branch Trail &gt; Isolation Trail &gt; Davis Path  - standard.</strong> — 14.6 mi • 3,400 ft gain • Out &amp; back • Very difficult</li>
 <li><strong>Glen Boulder Trail &gt; Davis Path  - scenic but longer, car spot.</strong> — 12.0 mi • 5,050 ft gain • Traverse  - car spot needed. • Very difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Rocky%20Branch%20Trail">Rocky Branch Trail route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=Isolation%20Trail">Isolation Trail route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=Glen%20Boulder%20Trail">Glen Boulder Trail route</a></li>
         </ul>
       </section>
       <section>

@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Tecumseh",
+  "description": "Well-maintained trail with some rocky 'staircase' sections; steady moderate grade; ski area route has some eroded areas but generally easy footing",
   "url": "https://nh48.info/peaks/mount-tecumseh/",
-  "description": "Partial  - limited outlook near summit by a ledge, overlooking Waterville Valley; summit mostly wooded.",
-  "elevation": "4003 ft",
-  "prominence": "1739 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-tecumseh/mount-tecumseh__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 43.96667,
     "longitude": -71.55667
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4003,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 1739,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Moderate"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Osceola Range  - Waterville Valley."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Well-maintained trail with some rocky &#39;staircase&#39; sections; steady moderate grade; ski area route has some eroded areas but generally easy footing</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Mt. Tecumseh Trail  - Waterville Valley ski area side.</strong> — 5.0 mi • 2,300 ft gain • Out &amp; back • Moderate</li>
 <li><strong>Mt. Tecumseh Trail  - Tripoli Road side.</strong> — 7.5 mi • 2,250 ft gain • Out &amp; back • Moderate</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li>No related trails listed yet.</li>
         </ul>
       </section>
       <section>

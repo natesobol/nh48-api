@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Eisenhower",
+  "description": "Smooth, well-graded path for most of ascent; rocky alpine cone near summit",
   "url": "https://nh48.info/peaks/mount-eisenhower/",
-  "description": "360°  - open dome summit with panoramic views.",
-  "elevation": "4760 ft",
-  "prominence": "353 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-eisenhower/mount-eisenhower__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.25833,
     "longitude": -71.35333
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4760,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 353,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Moderate"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Presidential Range  - Southern."
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Smooth, well-graded path for most of ascent; rocky alpine cone near summit</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Edmands Path  - western approach.</strong> — 6.6 mi • 2,750 ft gain • Out &amp; back • Moderate</li>
 <li><strong>Crawford Path &amp; Eisenhower Loop  - from south.</strong> — 7.2 mi • 2,700 ft gain • Out &amp; back  - or through hike on Presi Ridge. • Moderate</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Crawford%20Path">Crawford Path route</a></li>
         </ul>
       </section>
       <section>

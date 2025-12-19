@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Mount Flume",
+  "description": "Long approach on old road, then extremely steep and loose rock slabs on Flume Slide; Liberty Spring route is more gradual but rocky",
   "url": "https://nh48.info/peaks/mount-flume/",
-  "description": "360° open summit with panoramic views of Franconia Ridge and the Pemigewasset Wilderness",
-  "elevation": "4328 ft",
-  "prominence": "408 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/mount-flume/mount-flume__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.10889,
     "longitude": -71.62778
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4328,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 408,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Very Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Franconia Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back or loop"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Long approach on old road, then extremely steep and loose rock slabs on Flume Slide; Liberty Spring route is more gradual but rocky</p>
@@ -160,6 +207,12 @@
         <ul class="routes">
           <li><strong>Flume Slide Trail → Liberty Spring Trail → Franconia Ridge  - loop with Mount Liberty.</strong> — 10.1 mi • 3500 ft gain • Loop • Very difficult</li>
 <li><strong>Liberty Spring Trail  - direct out‑and‑back via summit spur.</strong> — 7.8 mi • 3300 ft gain • Out &amp; back • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Summit%20Spur">Summit Spur route</a></li>
         </ul>
       </section>
       <section>

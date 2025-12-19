@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "South Twin Mountain",
+  "description": "Steep, rocky final climb; lower trails gradual with typical roots and rocks",
   "url": "https://nh48.info/peaks/south-twin-mountain/",
-  "description": "360°  - open summit with panoramic views.",
-  "elevation": "4902 ft",
-  "prominence": "1522 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/south-twin-mountain/south-twin-mountain__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.16,
     "longitude": -71.55417
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4902,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 1522,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Twin Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back  - commonly."
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Steep, rocky final climb; lower trails gradual with typical roots and rocks</p>
@@ -160,6 +207,13 @@
         <ul class="routes">
           <li><strong>North Twin Trail via North Twin  - out &amp; back.</strong> — 11.2 mi • 3,700 ft gain • Out &amp; back  - over North Twin. • Difficult</li>
 <li><strong>Gale River Trail to Twinway  - via Galehead Hut.</strong> — 13.0 mi • 3,300 ft gain • Out &amp; back  - or car spot loop via North Twin Trail. • Difficult</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=North%20Twin%20Trail">North Twin Trail route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=Gale%20River%20Trail">Gale River Trail route</a></li>
         </ul>
       </section>
       <section>

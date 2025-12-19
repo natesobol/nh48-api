@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -116,15 +127,48 @@
   "@context": "https://schema.org",
   "@type": "Mountain",
   "name": "Wildcat Mountain  - A Peak.",
+  "description": "Extremely steep, rocky ascents on Ridge Trail including wood ladders and ledges; generally rugged",
   "url": "https://nh48.info/peaks/wildcat-mountain-a/",
-  "description": "Partial  - viewpoint near summit looking at Carter Notch; summit itself wooded.",
-  "elevation": "4422 ft",
-  "prominence": "1034 ft",
+  "image": [
+    "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/wildcat-mountain-a/wildcat-mountain-a__001.jpg"
+  ],
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": 44.24444,
     "longitude": -71.2225
-  }
+  },
+  "elevation": {
+    "@type": "QuantitativeValue",
+    "value": 4422,
+    "unitText": "FT"
+  },
+  "containedInPlace": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Prominence (ft)",
+      "value": 1034,
+      "unitText": "FT"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Difficulty",
+      "value": "Very Difficult"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Range / Subrange",
+      "value": "Carter-Moriah Range"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Trail Type",
+      "value": "Out & back or traverse"
+    }
+  ]
 }
     </script>
   </head>
@@ -150,6 +194,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>Extremely steep, rocky ascents on Ridge Trail including wood ladders and ledges; generally rugged</p>
@@ -160,6 +207,13 @@
         <ul class="routes">
           <li><strong>Wildcat Ridge Trail  - via Glen Ellis Falls, up over Wildcat Ridge.</strong> — 8.5 mi • 3,150 ft gain • Loop  - requires car spot or road walk. • Very difficult</li>
 <li><strong>Polecat Ski Trail  - alternate summer route via ski area to D then ridge to A.</strong> — 8.0 mi • 2,100 ft gain • Out &amp; back • Moderate</li>
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          <li><a href="https://nh48.info/trails.html?trail=Up%20Over%20Wildcat%20Ridge">Up Over Wildcat Ridge route</a></li>
+<li><a href="https://nh48.info/trails.html?trail=D%20Then%20Ridge">D Then Ridge route</a></li>
         </ul>
       </section>
       <section>
