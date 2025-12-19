@@ -19,6 +19,7 @@
     <meta id="dynamicTwitterTitle" name="twitter:title" content="NH48 API – Peak details, routes &amp; photos">
     <meta id="dynamicTwitterDescription" name="twitter:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata.">
     <meta id="dynamicTwitterImage" name="twitter:image" content="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48-preview.png">
+    <script id="peakJsonLd" type="application/ld+json"></script>
     
     <title id="dynamicTitle">NH48 API – Peak details, routes &amp; photos</title>
     <link rel="icon" type="image/png" href="../nh48API_logo.png">
@@ -124,12 +125,37 @@
       @media(max-width:640px){
         .wrap{ padding:12px; }
       }
-      a.back{
+      .seo-links{
+        display:flex;
+        flex-direction:column;
+        gap:6px;
+        margin-bottom:16px;
+      }
+      .seo-links a{
         color:var(--accent);
         text-decoration:none;
-        display:inline-block;
-        margin-bottom:12px;
         font-size:0.95rem;
+      }
+      .related-trails{
+        margin:16px 0 20px;
+        padding:12px 16px;
+        background:var(--panel);
+        border:1px solid var(--stroke);
+        border-radius:10px;
+      }
+      .related-trails h2{
+        margin:0 0 8px;
+        font-size:1rem;
+      }
+      .related-trails ul{
+        margin:0;
+        padding-left:1.1rem;
+        color:var(--ink);
+        font-size:0.9rem;
+      }
+      .related-trails a{
+        color:var(--accent);
+        text-decoration:none;
       }
       h1{
         margin:0 0 16px;
@@ -392,8 +418,14 @@
         .catch(err => console.error('Failed to load navigation:', err));
     </script>
     <div class="wrap">
-      <a href="/pages/nh48_catalog.html" class="back"> ← Back to catalog</a>
+      <div class="seo-links">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </div>
       <h1 id="peakTitle">Loading…</h1>
+      <div class="related-trails" id="relatedTrails" hidden>
+        <h2>Related Trails &amp; Routes</h2>
+        <ul id="relatedTrailList"></ul>
+      </div>
 
       <!-- MEDIA / CAROUSEL ---------------------------------------------------->
       <div class="media" id="media" hidden>
@@ -467,6 +499,12 @@
         return null;
       }
 
+      function numberFrom(value){
+        if(value === undefined || value === null) return null;
+        const match = String(value).match(/-?\d+(?:\.\d+)?/);
+        return match ? Number(match[0]) : null;
+      }
+
       function buildPhotoAltText(name, meta){
         if(meta && typeof meta === 'object'){
           const explicit = meta.alt && meta.alt.trim();
@@ -481,37 +519,129 @@
         return `${name} photo`;
       }
 
-      function buildMountainSchema(p, name, canonicalUrl, photoObjects){
+      function buildMountainSchema(p, name, canonicalUrl, primaryImageUrl, descriptionText){
         const coords = parseCoordinates(p['Coordinates']);
+        const elevationFt = numberFrom(p['Elevation (ft)']);
+        const prominenceFt = numberFrom(p['Prominence (ft)']);
+        const difficulty = p['Difficulty'];
+        const range = p['Range / Subrange'];
+        const trailType = p['Trail Type'];
+        const additionalProperty = [
+          prominenceFt != null ? {
+            '@type': 'PropertyValue',
+            name: 'Prominence (ft)',
+            value: prominenceFt,
+            unitText: 'FT'
+          } : null,
+          difficulty ? {
+            '@type': 'PropertyValue',
+            name: 'Difficulty',
+            value: difficulty
+          } : null,
+          range ? {
+            '@type': 'PropertyValue',
+            name: 'Range / Subrange',
+            value: range
+          } : null,
+          trailType ? {
+            '@type': 'PropertyValue',
+            name: 'Trail Type',
+            value: trailType
+          } : null
+        ].filter(Boolean);
+
         const schema = {
           '@context': 'https://schema.org',
           '@type': 'Mountain',
-          'name': name,
-          'url': canonicalUrl
+          name,
+          description: descriptionText,
+          url: canonicalUrl,
+          image: primaryImageUrl ? [primaryImageUrl] : undefined,
+          geo: coords ? { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon } : undefined,
+          elevation: elevationFt != null ? {
+            '@type': 'QuantitativeValue',
+            value: elevationFt,
+            unitText: 'FT'
+          } : undefined,
+          containedInPlace: range ? { '@type': 'Place', name: 'White Mountain National Forest' } : undefined,
+          additionalProperty: additionalProperty.length ? additionalProperty : undefined
         };
 
-        if(p['Elevation (ft)']){
-          schema.elevation = `${p['Elevation (ft)']} ft`;
-        }
-        if(p['Prominence (ft)']){
-          schema.prominence = `${p['Prominence (ft)']} ft`;
-        }
-        if(coords){
-          schema.geo = { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon };
-        }
-        if(Array.isArray(photoObjects) && photoObjects.length > 0){
-          schema.image = photoObjects.map(ph => ph.url).filter(Boolean);
-          schema.photo = photoObjects;
-        }
+        Object.keys(schema).forEach(key => {
+          if(schema[key] === undefined){
+            delete schema[key];
+          }
+        });
 
-        let ld = document.getElementById('peakSchema');
+        let ld = document.getElementById('peakJsonLd');
         if(!ld){
           ld = document.createElement('script');
           ld.type = 'application/ld+json';
-          ld.id = 'peakSchema';
+          ld.id = 'peakJsonLd';
           document.head.appendChild(ld);
         }
         ld.textContent = JSON.stringify(schema);
+      }
+
+      const TRAIL_KEYWORDS = [
+        'Trail',
+        'Path',
+        'Ridge',
+        'Brook',
+        'River',
+        'Notch',
+        'Road',
+        'Cutoff',
+        'Loop',
+        'Slide',
+        'Spur',
+        'Connector'
+      ];
+
+      function extractRelatedTrailNames(routes){
+        if(!Array.isArray(routes)) return [];
+        const endPattern = new RegExp(`\\b(?:${TRAIL_KEYWORDS.join('|')})\\b$`, 'i');
+        const names = new Set();
+        routes.forEach(route => {
+          const raw = (route['Route Name'] || route.name || '').toString();
+          if(!raw) return;
+          const parts = raw
+            .replace(/[()]/g, ' ')
+            .split(/\s*(?:>|via|to|,|;|\/|&)\s*/i);
+          parts.forEach(part => {
+            const cleaned = part.replace(/[^\w\s'-]/g, ' ').replace(/\s+/g, ' ').trim();
+            if(!cleaned) return;
+            const words = cleaned.split(' ').filter(Boolean);
+            if(words.length < 2 || words.length > 4) return;
+            if(!endPattern.test(cleaned)) return;
+            names.add(words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '));
+          });
+        });
+        return Array.from(names);
+      }
+
+      function renderRelatedTrails(routes){
+        const container = document.getElementById('relatedTrails');
+        const listEl = document.getElementById('relatedTrailList');
+        if(!container || !listEl) return;
+        const names = extractRelatedTrailNames(routes);
+        listEl.innerHTML = '';
+        if(names.length === 0){
+          const li = document.createElement('li');
+          li.textContent = 'No related trails listed yet.';
+          listEl.appendChild(li);
+          container.hidden = false;
+          return;
+        }
+        names.forEach(name => {
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = `/trails.html?trail=${encodeURIComponent(name)}`;
+          link.textContent = `${name} route`;
+          li.appendChild(link);
+          listEl.appendChild(li);
+        });
+        container.hidden = false;
       }
 
       function cleanJSON(raw){
@@ -908,7 +1038,7 @@
         }
         
         if(!slug){
-          peakTitle.textContent = 'Peak not specified';
+          window.location.replace('/not-found.html');
           return;
         }
 
@@ -917,7 +1047,7 @@
           const p = data && data[slug];
 
           if(!p){
-            peakTitle.textContent = 'Peak not found';
+            window.location.replace('/not-found.html');
             return;
           }
 
@@ -993,6 +1123,8 @@
             });
             routesGrid.hidden = false;
           }
+
+          renderRelatedTrails(routes);
 
           const trailNames = p['Trail Names'] || [];
           if(trailNames.length > 0){
@@ -1082,46 +1214,7 @@
             twitterImageEl.setAttribute('content', primaryImage);
           }
 
-          const photoObjects = meta.map((m, idx) => {
-            const obj = {
-              '@type': 'ImageObject',
-              url: imgs[idx] || m.url,
-              contentUrl: imgs[idx] || m.url,
-              name: `${name} photo ${idx + 1}`,
-              caption: m.caption || undefined,
-              creator: m.author ? { '@type': 'Person', name: m.author } : undefined,
-              dateCreated: m.captureDate || m.fileCreateDate || undefined
-            };
-            const exifData = {
-              camera: m.cameraModel || m.cameraMaker || m.camera || undefined,
-              lens: m.lens || undefined,
-              exposureTime: m.shutterSpeed || undefined,
-              aperture: m.fStop || undefined,
-              iso: m.iso || undefined
-            };
-            Object.keys(exifData).forEach(key => {
-              if(exifData[key] === undefined){
-                delete exifData[key];
-              }
-            });
-            if(Object.keys(exifData).length > 0){
-              obj.exifData = exifData;
-            }
-            if(idx === 0){
-              obj.representativeOfPage = true;
-            }
-            Object.keys(obj).forEach(key => {
-              if(obj[key] === undefined || obj[key] === null){
-                delete obj[key];
-              }
-            });
-            if(obj.exifData && Object.values(obj.exifData).every(v => v === undefined)){
-              delete obj.exifData;
-            }
-            return obj;
-          });
-
-          buildMountainSchema(p, name, canonicalUrl, photoObjects);
+          buildMountainSchema(p, name, canonicalUrl, primaryImage, descriptionText);
 
           buildCarousel(imgs, meta, name);
 

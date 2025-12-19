@@ -7,10 +7,11 @@
   <meta name="description" content="Browse trails in the White Mountain National Forest by distance, elevation gain, difficulty and more.  Interactive maps, route descriptions and GPX downloads.">
   <link rel="canonical" href="https://nh48.info/trails.html">
 
-  <script id="trailItemListJsonLd" type="application/ld+json"></script>
+  <script id="trailsJsonLd" type="application/ld+json"></script>
   <script>
-    const TRAIL_ITEMLIST_SCRIPT_ID = 'trailItemListJsonLd';
-    const TRAIL_LIST_PAGE = 'https://nh48.info/pages/virtual_hike.html?trail=';
+    const TRAILS_JSONLD_SCRIPT_ID = 'trailsJsonLd';
+    const TRAIL_LIST_PAGE = 'https://nh48.info/trails.html?trail=';
+    const TRAIL_ITEMLIST_LIMIT = 300;
     const TRAIL_DATA_URLS = [
       '../data/trails_with_osm.json',
       '/data/trails_with_osm.json',
@@ -18,12 +19,12 @@
       'https://raw.githubusercontent.com/natesobol/WMNF-Trails-API/main/trails_with_osm.json'
     ];
 
-    function normalizeTrailName(name){
+    function normalizeTrailNameForJsonLd(name){
       return String(name || '').trim();
     }
 
     function buildTrailItemList(names){
-      const itemListElement = names.map((name, index) => ({
+      const itemListElement = names.slice(0, TRAIL_ITEMLIST_LIMIT).map((name, index) => ({
         '@type': 'ListItem',
         position: index + 1,
         url: `${TRAIL_LIST_PAGE}${encodeURIComponent(name)}`,
@@ -32,8 +33,7 @@
       return {
         '@context': 'https://schema.org',
         '@type': 'ItemList',
-        name: 'White Mountain Trails',
-        description: 'A list of hiking trails in the White Mountain National Forest.',
+        name: 'White Mountain National Forest Trails',
         itemListElement
       };
     }
@@ -45,11 +45,11 @@
           if(!response.ok) continue;
           const data = await response.json();
           const names = data
-            .map(record => normalizeTrailName(record.trail_name || record.name))
+            .map(record => normalizeTrailNameForJsonLd(record.trail_name || record.name))
             .filter(Boolean)
             .sort((a, b) => a.localeCompare(b));
           if(names.length === 0) continue;
-          const scriptEl = document.getElementById(TRAIL_ITEMLIST_SCRIPT_ID);
+          const scriptEl = document.getElementById(TRAILS_JSONLD_SCRIPT_ID);
           if(scriptEl){
             scriptEl.textContent = JSON.stringify(buildTrailItemList(names));
           }
@@ -996,6 +996,15 @@
           .toLowerCase();
       }
 
+      function matchTrailName(query, names) {
+        if (!query) return null;
+        const normalizedQuery = normalizeTrailName(query);
+        const strippedQuery = normalizedQuery.replace(/\btrail\b/g, '').trim();
+        return names.find(name => normalizeTrailName(name) === normalizedQuery)
+          || names.find(name => normalizeTrailName(name) === strippedQuery)
+          || names.find(name => normalizeTrailName(name).replace(/\btrail\b/g, '').trim() === strippedQuery);
+      }
+
       // Register a record in the lookup map using a few common name variants.
       function registerTrailRecord(record) {
         if (!record || !record.trail_name) return;
@@ -1664,6 +1673,15 @@
         addTrailsToMap(geoData);
         populateSuggestions();
         renderTrailList();
+        const trailQuery = new URLSearchParams(window.location.search).get('trail');
+        if (trailQuery) {
+          const matched = matchTrailName(trailQuery, trailNames);
+          if (!matched) {
+            window.location.replace('/not-found.html');
+            return;
+          }
+          renderTrailInfo(matched);
+        }
       }
       // Attach event listeners for search, sort, hide completed, and clear progress.
       document.getElementById('searchInput').addEventListener('input', renderTrailList);

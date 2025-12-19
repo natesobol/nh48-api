@@ -104,6 +104,17 @@
         color: #fff;
         text-decoration: none;
       }
+      .seo-nav {
+        margin-bottom: 24px;
+      }
+      .seo-nav a {
+        color: #0f172a;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .related ul {
+        margin-bottom: 0;
+      }
       footer {
         text-align: center;
         padding: 24px;
@@ -137,6 +148,9 @@
       </div>
     </header>
     <main>
+      <nav class="seo-nav">
+        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+      </nav>
       <section>
         <h2>Overview</h2>
         <p>{{SUMMARY}}</p>
@@ -146,6 +160,12 @@
         <h2>Standard Routes</h2>
         <ul class="routes">
           {{ROUTES_LIST}}
+        </ul>
+      </section>
+      <section class="related">
+        <h2>Related Trails &amp; Routes</h2>
+        <ul>
+          {{RELATED_TRAILS_LI}}
         </ul>
       </section>
       <section>
