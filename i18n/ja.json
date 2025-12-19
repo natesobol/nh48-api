@@ -7,7 +7,13 @@
     "noResults": "結果が見つかりません。",
     "noImage": "画像なし",
     "unknown": "不明",
-    "notAvailable": "利用不可"
+    "notAvailable": "利用不可",
+    "units": {
+      "ariaLabel": "単位を選択"
+    },
+    "unitsLabel": "単位",
+    "unitsFeet": "フィート",
+    "unitsMeters": "メートル"
   },
   "nav": {
     "logoAlt": "NH48 API ロゴ",
@@ -89,6 +95,39 @@
     "day": "日中",
     "dawn": "夜明け",
     "dusk": "夕暮れ"
+  },
+  "values": {
+    "trailType": {
+      "loop": "周回",
+      "loop_or_out_back": "周回または往復",
+      "loop_or_traverse": "周回または縦走",
+      "loop_or_traverse_along_ridge": "稜線の周回または縦走",
+      "out_back": "往復",
+      "out_back_common": "往復 - 一般的",
+      "out_back_common_or_long_traverse": "往復 - 一般的または長い縦走",
+      "out_back_common_or_loop_with_connector_trails": "往復 - 一般的または連絡路を含む周回",
+      "out_back_common_or_small_loop_including_mt_webster": "往復 - 一般的またはマウント・ウェブスターを含む小さな周回",
+      "out_back_commonly": "往復 - しばしば",
+      "out_back_or_loop": "往復または周回",
+      "out_back_or_loop_with_tom_and_willey": "往復または周回 - Tom と Willey を含む",
+      "out_back_or_loop_combining_trails": "往復または複数トレイルの周回",
+      "out_back_or_loop_options": "往復または周回の選択肢",
+      "out_back_or_point_to_point_traverse": "往復またはポイント間縦走",
+      "out_back_or_traverse": "往復または縦走"
+    },
+    "difficulty": {
+      "moderate": "中級",
+      "moderate_difficult": "中級/難しい",
+      "difficult": "難しい",
+      "very_difficult": "とても難しい",
+      "extremely_difficult": "非常に難しい"
+    },
+    "exposure": {
+      "high": "高",
+      "medium": "中",
+      "low": "低",
+      "low_to_medium": "低〜中"
+    }
   },
   "peak": {
     "back": "NH48 ピーク・カタログに戻る",

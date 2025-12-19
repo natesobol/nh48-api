@@ -108,21 +108,11 @@
           </select>
         </div>
 
-        <!-- Two-tier filter: choose field + value -->
         <div class="control">
-          <label for="filterField" data-i18n="catalog.filter.label">Filter by:</label>
-          <select id="filterField" data-i18n="catalog.filter" data-i18n-attr="aria-label" aria-label="Select field to filter peaks">
-            <option value="" data-i18n="catalog.filter.none">None</option>
-            <option value="range" data-i18n="catalog.filter.range">Range</option>
-            <option value="difficulty" data-i18n="catalog.filter.difficulty">Difficulty</option>
-            <option value="trail" data-i18n="catalog.filter.trail">Trail Type</option>
-            <option value="exposure" data-i18n="catalog.filter.exposure">Exposure</option>
-          </select>
-        </div>
-        <div class="control">
-          <label for="filterValue" data-i18n="catalog.value.label">Value:</label>
-          <select id="filterValue" data-i18n="catalog.value" data-i18n-attr="aria-label" disabled aria-label="Select value for chosen filter">
-            <option value="" data-i18n="catalog.value.all">All</option>
+          <label for="unitsSelect" data-i18n="common.unitsLabel">Units:</label>
+          <select id="unitsSelect" data-i18n-attr="aria-label" data-i18n="common.units" aria-label="Select units">
+            <option value="feet" data-i18n="common.unitsFeet">Feet</option>
+            <option value="meters" data-i18n="common.unitsMeters">Meters</option>
           </select>
         </div>
 
@@ -161,6 +151,10 @@
         </div>
       </div>
 
+      <div id="catalogLoading" class="loading-indicator" aria-live="polite">
+        <span class="loading-spinner" aria-hidden="true"></span>
+        <span class="loading-text" data-i18n="common.loading">Loading…</span>
+      </div>
       <div id="grid" class="grid"></div>
       <nav id="pagination" class="pagination"></nav>
       <div id="emptyMessage" class="empty" data-i18n="catalog.empty" hidden>No peaks found.</div>
@@ -188,19 +182,12 @@
       let peaks = [];
       let activeSort = 'name';
 
-      // two-tier filter state
-      const filters = {
-        field: '',
-        value: ''
+      const UNIT_STORAGE_KEY = 'nh48_units';
+      const UNITS = {
+        FEET: 'feet',
+        METERS: 'meters'
       };
-
-      // options per filter field (built after loading peaks)
-      const filterOptions = {
-        range: [],
-        difficulty: [],
-        trail: [],
-        exposure: []
-      };
+      let currentUnits = UNITS.FEET;
 
       function cleanJSON(raw){
         let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
@@ -273,6 +260,105 @@
         return map[key] ? t(map[key]) : value;
       }
 
+      const TRAIL_TYPE_TRANSLATIONS = {
+        'Loop': 'values.trailType.loop',
+        'Loop or Out & back': 'values.trailType.loop_or_out_back',
+        'Loop or traverse': 'values.trailType.loop_or_traverse',
+        'Loop or traverse along ridge': 'values.trailType.loop_or_traverse_along_ridge',
+        'Out & back': 'values.trailType.out_back',
+        'Out & back  - common.': 'values.trailType.out_back_common',
+        'Out & back  - common. or long traverse': 'values.trailType.out_back_common_or_long_traverse',
+        'Out & back  - common. or loop with connector trails': 'values.trailType.out_back_common_or_loop_with_connector_trails',
+        'Out & back  - common. or small loop including Mt Webster': 'values.trailType.out_back_common_or_small_loop_including_mt_webster',
+        'Out & back  - commonly.': 'values.trailType.out_back_commonly',
+        'Out & back or loop': 'values.trailType.out_back_or_loop',
+        'Out & back or loop  - with Tom and Willey.': 'values.trailType.out_back_or_loop_with_tom_and_willey',
+        'Out & back or loop combining trails': 'values.trailType.out_back_or_loop_combining_trails',
+        'Out & back or loop options': 'values.trailType.out_back_or_loop_options',
+        'Out & back or point-to-point traverse': 'values.trailType.out_back_or_point_to_point_traverse',
+        'Out & back or traverse': 'values.trailType.out_back_or_traverse'
+      };
+
+      const DIFFICULTY_TRANSLATIONS = {
+        'Moderate': 'values.difficulty.moderate',
+        'Moderate/Difficult': 'values.difficulty.moderate_difficult',
+        'Difficult': 'values.difficulty.difficult',
+        'Very Difficult': 'values.difficulty.very_difficult',
+        'Very difficult': 'values.difficulty.very_difficult',
+        'Extremely Difficult': 'values.difficulty.extremely_difficult'
+      };
+
+      function translateTrailType(value){
+        if(!value) return value;
+        const key = TRAIL_TYPE_TRANSLATIONS[value];
+        return key ? t(key) : value;
+      }
+
+      function translateDifficulty(value){
+        if(!value) return value;
+        const key = DIFFICULTY_TRANSLATIONS[value];
+        return key ? t(key) : value;
+      }
+
+      function translateExposure(value){
+        if(!value) return value;
+        const trimmed = String(value).trim();
+        const match = trimmed.match(/^(Low to Medium|Low|Medium|High)/i);
+        if(!match) return value;
+        const normalized = match[1].toLowerCase().replace(/\s+/g, '_');
+        const translated = t(`values.exposure.${normalized}`);
+        if(!translated || translated.startsWith('values.exposure')) return value;
+        return trimmed.replace(match[1], translated);
+      }
+
+      function formatElevation(value){
+        if(value === undefined || value === null || value === '') return '—';
+        const num = Number(value);
+        if(!Number.isFinite(num)) return '—';
+        if(currentUnits === UNITS.METERS){
+          return `${Math.round(num * 0.3048)} m`;
+        }
+        return `${num} ft`;
+      }
+
+      function formatProminence(value){
+        return formatElevation(value);
+      }
+
+      function setUnits(units, { persist = true } = {}){
+        if(!Object.values(UNITS).includes(units)){
+          units = UNITS.FEET;
+        }
+        currentUnits = units;
+        const select = document.getElementById('unitsSelect');
+        if(select){
+          select.value = units;
+        }
+        if(persist){
+          localStorage.setItem(UNIT_STORAGE_KEY, units);
+        }
+      }
+
+      function syncUnitsWithLanguage(lang){
+        if(lang && lang !== 'en'){
+          setUnits(UNITS.METERS, { persist: false });
+        }else{
+          const stored = localStorage.getItem(UNIT_STORAGE_KEY);
+          setUnits(stored || UNITS.FEET, { persist: false });
+        }
+      }
+
+      function setCatalogLoading(isLoading){
+        const loadingEl = document.getElementById('catalogLoading');
+        const grid = document.getElementById('grid');
+        if(loadingEl){
+          loadingEl.hidden = !isLoading;
+        }
+        if(grid){
+          grid.hidden = isLoading;
+        }
+      }
+
       function buildPhotoAlt(p, photo){
         if(photo && typeof photo === 'object'){
           const explicit = photo.alt && String(photo.alt).trim();
@@ -311,9 +397,9 @@
         const elev = p['Elevation (ft)'];
         const prom = p['Prominence (ft)'];
         const range = p['Range / Subrange'] || '—';
-        const trail = p['Trail Type'] || '—';
-        const difficulty = p['Difficulty'] || '—';
-        const exposure = p['Exposure Level'] || p['Weather Exposure Rating'] || '—';
+        const trail = translateTrailType(p['Trail Type']) || '—';
+        const difficulty = translateDifficulty(p['Difficulty']) || '—';
+        const exposure = translateExposure(p['Exposure Level'] || p['Weather Exposure Rating']) || '—';
 
         card.innerHTML = `
           <div class="thumb">
@@ -322,8 +408,8 @@
           <div class="body">
             <h3>${p.peakName}</h3>
             <div class="card-meta">
-              <div class="meta-row"><span class="meta-label">${t('catalog.card.elevation')}</span><span class="meta-value">${elev ? elev + "'" : '—'}</span></div>
-              <div class="meta-row"><span class="meta-label">${t('catalog.card.prominence')}</span><span class="meta-value">${prom ? prom + "'" : '—'}</span></div>
+              <div class="meta-row"><span class="meta-label">${t('catalog.card.elevation')}</span><span class="meta-value">${formatElevation(elev)}</span></div>
+              <div class="meta-row"><span class="meta-label">${t('catalog.card.prominence')}</span><span class="meta-value">${formatProminence(prom)}</span></div>
               <div class="meta-row"><span class="meta-label">${t('catalog.card.range')}</span><span class="meta-value">${range}</span></div>
               <div class="meta-row"><span class="meta-label">${t('catalog.card.trailType')}</span><span class="meta-value">${trail}</span></div>
               <div class="meta-row"><span class="meta-label">${t('catalog.card.difficulty')}</span><span class="meta-value">${difficulty}</span></div>
@@ -380,69 +466,6 @@
         });
         const dl = document.getElementById('nameSuggestions');
         dl.innerHTML = unique.sort().map(name => `<option value="${name}"></option>`).join('');
-      }
-
-      // Build filter options for each field
-      function buildFilterOptions(){
-        const ranges = new Set();
-        const diffs = new Set();
-        const trails = new Set();
-        const exposures = new Set();
-
-        peaks.forEach(p => {
-          const r = p['Range / Subrange'];
-          if(r) ranges.add(r);
-          const d = p['Difficulty'] || p.Difficulty;
-          if(d) diffs.add(d);
-          const t = p['Trail Type'];
-          if(t) trails.add(t);
-          const e = p['Exposure Level'] || p['Weather Exposure Rating'];
-          if(e) exposures.add(e);
-        });
-
-        filterOptions.range = Array.from(ranges).sort();
-        filterOptions.difficulty = Array.from(diffs).sort();
-        filterOptions.trail = Array.from(trails).sort();
-        filterOptions.exposure = Array.from(exposures).sort();
-      }
-
-      function populateFilterValueSelect(field){
-        const valueSel = document.getElementById('filterValue');
-        valueSel.innerHTML = `<option value=\"\">${t('catalog.value.all')}</option>`;
-
-        if(!field){
-          valueSel.disabled = true;
-          return;
-        }
-
-        const opts = filterOptions[field] || [];
-        opts.forEach(v => {
-          const opt = document.createElement('option');
-          opt.value = v;
-          opt.textContent = v;
-          valueSel.appendChild(opt);
-        });
-
-        valueSel.disabled = false;
-      }
-
-      function applyFilters(list){
-        if(!filters.field || !filters.value) return list;
-
-        const val = filters.value;
-        return list.filter(p => {
-          switch(filters.field){
-            case 'range':
-              return (p['Range / Subrange'] || '') === val;
-            case 'difficulty':
-              return (p['Difficulty'] || p.Difficulty || '') === val;
-            case 'trail':
-              return (p['Trail Type'] || '') === val;
-            case 'exposure':
-              return (p['Exposure Level'] || p['Weather Exposure Rating'] || '') === val;
-          }
-          return true;
-        });
       }
 
       function sortPeaks(list){
@@ -520,7 +543,6 @@
           list = list.filter(p => p.peakName && p.peakName.toLowerCase().includes(searchVal));
         }
 
-        list = applyFilters(list);
         list = sortPeaks(list);
 
         // Pagination
@@ -538,9 +560,9 @@
 
       async function init(){
         try{
+          setCatalogLoading(true);
           peaks = await fetchPeaks();
           updateSuggestions();
-          buildFilterOptions();
           updateDisplay();
         }catch(err){
           console.error('Error loading peaks:', err);
@@ -549,6 +571,8 @@
             emptyMessage.textContent = t('catalog.error');
             emptyMessage.hidden = false;
           }
+        }finally{
+          setCatalogLoading(false);
         }
 
         const searchInput = document.getElementById('searchInput');
@@ -567,23 +591,10 @@
             updateDisplay();
           });
         }
-
-        const filterField = document.getElementById('filterField');
-        if (filterField) {
-          filterField.addEventListener('change', (e) => {
-            filters.field = e.target.value;
-            filters.value = '';
-            populateFilterValueSelect(filters.field);
-            currentPage = 1;
-            updateDisplay();
-          });
-        }
-
-        const filterValue = document.getElementById('filterValue');
-        if (filterValue) {
-          filterValue.addEventListener('change', (e) => {
-            filters.value = e.target.value;
-            currentPage = 1;
+        const unitsSelect = document.getElementById('unitsSelect');
+        if(unitsSelect){
+          unitsSelect.addEventListener('change', (e) => {
+            setUnits(e.target.value);
             updateDisplay();
           });
         }
@@ -592,8 +603,8 @@
       window.addEventListener('load', init);
 
       if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
-        window.NH48_I18N.onLangChange(() => {
-          populateFilterValueSelect(filters.field);
+        window.NH48_I18N.onLangChange((lang) => {
+          syncUnitsWithLanguage(lang);
           updateDisplay();
         });
       }
@@ -610,6 +621,8 @@
       } else {
         grid.setAttribute('data-columns', '3');
       }
+
+      syncUnitsWithLanguage(window.NH48_I18N ? window.NH48_I18N.getLang() : 'en');
       
       columnSelect.addEventListener('change', function() {
         const columns = this.value;
