@@ -1,3 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>White Mountain Trails – NH48</title>
+  <meta name="description" content="Browse trails in the White Mountain National Forest by distance, elevation gain, difficulty and more.  Interactive maps, route descriptions and GPX downloads.">
+  <link rel="canonical" href="https://nh48.info/trails.html">
+
+  <script id="trailItemListJsonLd" type="application/ld+json"></script>
+  <script>
+    const TRAIL_ITEMLIST_SCRIPT_ID = 'trailItemListJsonLd';
+    const TRAIL_LIST_PAGE = 'https://nh48.info/pages/virtual_hike.html?trail=';
+    const TRAIL_DATA_URLS = [
+      '../data/trails_with_osm.json',
+      '/data/trails_with_osm.json',
+      'https://cdn.jsdelivr.net/gh/natesobol/WMNF-Trails-API@main/trails_with_osm.json',
+      'https://raw.githubusercontent.com/natesobol/WMNF-Trails-API/main/trails_with_osm.json'
+    ];
+
+    function normalizeTrailName(name){
+      return String(name || '').trim();
+    }
+
+    function buildTrailItemList(names){
+      const itemListElement = names.map((name, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: `${TRAIL_LIST_PAGE}${encodeURIComponent(name)}`,
+        name
+      }));
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'White Mountain Trails',
+        description: 'A list of hiking trails in the White Mountain National Forest.',
+        itemListElement
+      };
+    }
+
+    async function loadTrailItemList(){
+      for(const url of TRAIL_DATA_URLS){
+        try{
+          const response = await fetch(url);
+          if(!response.ok) continue;
+          const data = await response.json();
+          const names = data
+            .map(record => normalizeTrailName(record.trail_name || record.name))
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b));
+          if(names.length === 0) continue;
+          const scriptEl = document.getElementById(TRAIL_ITEMLIST_SCRIPT_ID);
+          if(scriptEl){
+            scriptEl.textContent = JSON.stringify(buildTrailItemList(names));
+          }
+          return;
+        }catch(err){
+          console.warn('Unable to load trail list data for JSON-LD:', err);
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadTrailItemList);
+  </script>
+
 <!--
   WMNF Trail Explorer
 
@@ -711,7 +776,7 @@
     .hike-btn:hover {
       background-color: var(--button-green-dark);
     }
-  </style>
+</style>
 </head>
 
 <body data-page="trails">

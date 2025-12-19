@@ -3,24 +3,24 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="NH48 API – peak-level details, routes, terrain notes and photography for New Hampshire’s 4000-footers.">
+    <meta id="dynamicDescription" name="description" content="NH48 API – peak-level details, routes, terrain notes and photography for New Hampshire’s 4000-footers.">
     <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak details, mountain routes, White Mountains data, hiking API, peak metadata, mountain photos">
     <meta name="robots" content="index,follow">
-    <link rel="canonical" href="https://nh48.info/peak.html">
+    <link id="dynamicCanonical" rel="canonical" href="https://nh48.info/peak.html">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://nh48.info/peak.html">
-    <meta property="og:title" content="NH48 API – Peak details, routes &amp; photos">
-    <meta property="og:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata.">
-    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48-preview.png">
+    <meta id="dynamicOgUrl" property="og:url" content="https://nh48.info/peak.html">
+    <meta id="dynamicOgTitle" property="og:title" content="NH48 API – Peak details, routes &amp; photos">
+    <meta id="dynamicOgDescription" property="og:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata.">
+    <meta id="dynamicOgImage" property="og:image" content="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48-preview.png">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://nh48.info/peak.html">
-    <meta name="twitter:title" content="NH48 API – Peak details, routes &amp; photos">
-    <meta name="twitter:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata.">
-    <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48-preview.png">
+    <meta id="dynamicTwitterTitle" name="twitter:title" content="NH48 API – Peak details, routes &amp; photos">
+    <meta id="dynamicTwitterDescription" name="twitter:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata.">
+    <meta id="dynamicTwitterImage" name="twitter:image" content="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48-preview.png">
     
-    <title>NH48 API – Peak details, routes &amp; photos</title>
+    <title id="dynamicTitle">NH48 API – Peak details, routes &amp; photos</title>
     <link rel="icon" type="image/png" href="../nh48API_logo.png">
     <!--
       Standalone details view for a single NH48 peak with robust error handling.
@@ -445,6 +445,7 @@
       );
 
       const BASE_CANONICAL = 'https://nh48.info/pages/nh48_peak.html';
+      const DEFAULT_OG_IMAGE = 'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48API_logo.png';
 
       function setMeta(name, content){
         let el = document.querySelector(`meta[name="${name}"]`);
@@ -454,26 +455,6 @@
           document.head.appendChild(el);
         }
         el.setAttribute('content', content);
-      }
-
-      function setMetaProperty(prop, content){
-        let el = document.querySelector(`meta[property="${prop}"]`);
-        if(!el){
-          el = document.createElement('meta');
-          el.setAttribute('property', prop);
-          document.head.appendChild(el);
-        }
-        el.setAttribute('content', content);
-      }
-
-      function setCanonical(url){
-        let link = document.querySelector('link[rel="canonical"]');
-        if(!link){
-          link = document.createElement('link');
-          link.setAttribute('rel', 'canonical');
-          document.head.appendChild(link);
-        }
-        link.setAttribute('href', url);
       }
 
       function parseCoordinates(coordStr){
@@ -486,46 +467,41 @@
         return null;
       }
 
-      function buildPhotoAltText(name, meta, index, total){
-        const parts = [name];
+      function buildPhotoAltText(name, meta){
         if(meta && typeof meta === 'object'){
-          if(meta.caption) parts.push(meta.caption);
-          if(meta.season) parts.push(meta.season);
-          if(meta.timeOfDay) parts.push(meta.timeOfDay);
-          if(meta.orientation) parts.push(`${meta.orientation} orientation`);
+          const explicit = meta.alt && meta.alt.trim();
+          if(explicit){
+            return explicit;
+          }
+          const details = [meta.season, meta.timeOfDay].filter(Boolean).join(' ');
+          if(details){
+            return `${name} – ${details} photo`;
+          }
         }
-        parts.push(`image ${index+1} of ${total}`);
-        return parts.filter(Boolean).join(' — ');
+        return `${name} photo`;
       }
 
-      function buildPlaceSchema(p, name, canonicalUrl, photoObjects){
+      function buildMountainSchema(p, name, canonicalUrl, photoObjects){
         const coords = parseCoordinates(p['Coordinates']);
         const schema = {
           '@context': 'https://schema.org',
-          '@type': 'Place',
+          '@type': 'Mountain',
           'name': name,
-          'description': `Detailed information for ${name}, including elevation, prominence, difficulty, exposure, trail types, routes and photography from the NH48 API.`,
-          'url': canonicalUrl,
-          'creator': {
-            '@type': 'Person',
-            'name': 'Nathan Sobol',
-            'url': 'https://www.nh48pics.com/'
-          }
+          'url': canonicalUrl
         };
 
+        if(p['Elevation (ft)']){
+          schema.elevation = `${p['Elevation (ft)']} ft`;
+        }
+        if(p['Prominence (ft)']){
+          schema.prominence = `${p['Prominence (ft)']} ft`;
+        }
         if(coords){
           schema.geo = { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon };
         }
-        if(p['Elevation (ft)']){
-          schema.elevation = {
-            '@type': 'QuantitativeValue',
-            'value': p['Elevation (ft)'],
-            'unitText': 'ft'
-          };
-        }
         if(Array.isArray(photoObjects) && photoObjects.length > 0){
-          schema.photo = photoObjects;
           schema.image = photoObjects.map(ph => ph.url).filter(Boolean);
+          schema.photo = photoObjects;
         }
 
         let ld = document.getElementById('peakSchema');
@@ -569,11 +545,6 @@
           }
         }
         throw new Error('All API endpoints failed');
-      }
-
-      function getSlug(){
-        const params = new URLSearchParams(window.location.search);
-        return params.get('slug');
       }
 
       /* CAROUSEL + TIMER STATE ----------------------------------------------- */
@@ -772,7 +743,7 @@
           slide.className = 'slide' + (i === 0 ? ' active' : '');
 
           const img = document.createElement('img');
-          img.alt = buildPhotoAltText(altBase, meta[i], i, images.length);
+          img.alt = buildPhotoAltText(altBase, meta[i]);
 
           if(i === 0){
             img.src = src;
@@ -928,7 +899,7 @@
 
       /* INIT ----------------------------------------------------------------- */
       async function init(){
-        const slug = getSlug();
+        const slug = new URLSearchParams(window.location.search).get('slug');
         const peakTitle = document.getElementById('peakTitle');
         
         if (!peakTitle) {
@@ -951,18 +922,52 @@
           }
 
           const name = p.peakName || p['Peak Name'] || slug;
+          const elevation = p['Elevation (ft)'] || 'Unknown';
+          const prominence = p['Prominence (ft)'] || 'Unknown';
+          const range = p['Range / Subrange'] || 'White Mountains';
           peakTitle.textContent = name;
 
           const canonicalUrl = slug ? `${BASE_CANONICAL}?slug=${encodeURIComponent(slug)}` : BASE_CANONICAL;
-          const description = `Detailed information for ${name}, including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata.`;
+          const titleText = `${name} (${elevation} ft) – NH48`;
+          const descriptionText = `${name} – ${elevation} ft high, ${prominence} ft prominence, in the ${range}. Routes, difficulty, and photos for this 4,000-footer.`;
 
-          document.title = `NH48 API – ${name} details, routes & photos`;
-          setCanonical(canonicalUrl);
-          setMeta('description', description);
+          const titleEl = document.getElementById('dynamicTitle');
+          if(titleEl){
+            titleEl.textContent = titleText;
+          }
+          const descriptionEl = document.getElementById('dynamicDescription');
+          if(descriptionEl){
+            descriptionEl.setAttribute('content', descriptionText);
+          }
+          const canonicalEl = document.getElementById('dynamicCanonical');
+          if(canonicalEl){
+            canonicalEl.setAttribute('href', canonicalUrl);
+          }
+          const ogTitleEl = document.getElementById('dynamicOgTitle');
+          if(ogTitleEl){
+            ogTitleEl.setAttribute('content', titleText);
+          }
+          const ogDescriptionEl = document.getElementById('dynamicOgDescription');
+          if(ogDescriptionEl){
+            ogDescriptionEl.setAttribute('content', descriptionText);
+          }
+          const ogUrlEl = document.getElementById('dynamicOgUrl');
+          if(ogUrlEl){
+            ogUrlEl.setAttribute('content', canonicalUrl);
+          }
+          const twitterTitleEl = document.getElementById('dynamicTwitterTitle');
+          if(twitterTitleEl){
+            twitterTitleEl.setAttribute('content', titleText);
+          }
+          const twitterDescriptionEl = document.getElementById('dynamicTwitterDescription');
+          if(twitterDescriptionEl){
+            twitterDescriptionEl.setAttribute('content', descriptionText);
+          }
+          const twitterUrlEl = document.querySelector('meta[name="twitter:url"]');
+          if(twitterUrlEl){
+            twitterUrlEl.setAttribute('content', canonicalUrl);
+          }
           setMeta('keywords', `NH48 API, ${name} peak details, New Hampshire 4000 footers, White Mountains routes, hiking data, peak metadata, mountain photos`);
-          setMetaProperty('og:title', `NH48 API – ${name} details, routes & photos`);
-          setMetaProperty('og:description', description);
-          setMetaProperty('og:url', canonicalUrl);
 
           // Build general info panel
           buildGeneralInfo(p);
@@ -1066,8 +1071,16 @@
             meta = [{}];
           }
 
-          const primaryImage = imgs[0] || 'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48API_logo.png';
-          setMetaProperty('og:image', primaryImage);
+          const primaryPhotoIndex = meta.findIndex(item => item && item.isPrimary);
+          const primaryImage = (primaryPhotoIndex >= 0 ? imgs[primaryPhotoIndex] : imgs[0]) || DEFAULT_OG_IMAGE;
+          const ogImageEl = document.getElementById('dynamicOgImage');
+          if(ogImageEl){
+            ogImageEl.setAttribute('content', primaryImage);
+          }
+          const twitterImageEl = document.getElementById('dynamicTwitterImage');
+          if(twitterImageEl){
+            twitterImageEl.setAttribute('content', primaryImage);
+          }
 
           const photoObjects = meta.map((m, idx) => {
             const obj = {
@@ -1108,7 +1121,7 @@
             return obj;
           });
 
-          buildPlaceSchema(p, name, canonicalUrl, photoObjects);
+          buildMountainSchema(p, name, canonicalUrl, photoObjects);
 
           buildCarousel(imgs, meta, name);
 
