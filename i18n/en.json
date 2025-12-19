@@ -7,15 +7,23 @@
     "noResults": "No results found.",
     "noImage": "no image",
     "unknown": "Unknown",
-    "notAvailable": "Not available"
+    "notAvailable": "Not available",
+    "units": {
+      "ariaLabel": "Select units"
+    },
+    "unitsLabel": "Units",
+    "unitsFeet": "Feet",
+    "unitsMeters": "Meters"
   },
   "nav": {
     "logoAlt": "NH48 API logo",
     "tagline": "Open data & structured metadata for New Hampshire’s 4,000-foot peaks.",
     "catalog": "Catalog",
     "trails": "WMNF Trails",
+    "longTrails": "Long Trails",
     "pics": "NH48 Pics",
     "peakBagger": "Peak Bagger",
+    "latestPhotos": "Latest WMNF Photos",
     "login": "Log in",
     "viewProfile": "View profile"
   },
@@ -89,6 +97,39 @@
     "day": "day",
     "dawn": "dawn",
     "dusk": "dusk"
+  },
+  "values": {
+    "trailType": {
+      "loop": "Loop",
+      "loop_or_out_back": "Loop or out & back",
+      "loop_or_traverse": "Loop or traverse",
+      "loop_or_traverse_along_ridge": "Loop or traverse along ridge",
+      "out_back": "Out & back",
+      "out_back_common": "Out & back - common",
+      "out_back_common_or_long_traverse": "Out & back - common or long traverse",
+      "out_back_common_or_loop_with_connector_trails": "Out & back - common or loop with connector trails",
+      "out_back_common_or_small_loop_including_mt_webster": "Out & back - common or small loop including Mt Webster",
+      "out_back_commonly": "Out & back - commonly",
+      "out_back_or_loop": "Out & back or loop",
+      "out_back_or_loop_with_tom_and_willey": "Out & back or loop - with Tom and Willey",
+      "out_back_or_loop_combining_trails": "Out & back or loop combining trails",
+      "out_back_or_loop_options": "Out & back or loop options",
+      "out_back_or_point_to_point_traverse": "Out & back or point-to-point traverse",
+      "out_back_or_traverse": "Out & back or traverse"
+    },
+    "difficulty": {
+      "moderate": "Moderate",
+      "moderate_difficult": "Moderate/Difficult",
+      "difficult": "Difficult",
+      "very_difficult": "Very Difficult",
+      "extremely_difficult": "Extremely Difficult"
+    },
+    "exposure": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low",
+      "low_to_medium": "Low to Medium"
+    }
   },
   "peak": {
     "back": "Back to NH48 Peak Catalog",

@@ -7,15 +7,23 @@
     "noResults": "Keine Ergebnisse gefunden.",
     "noImage": "kein Bild",
     "unknown": "Unbekannt",
-    "notAvailable": "Nicht verfügbar"
+    "notAvailable": "Nicht verfügbar",
+    "units": {
+      "ariaLabel": "Einheiten auswählen"
+    },
+    "unitsLabel": "Einheiten",
+    "unitsFeet": "Fuß",
+    "unitsMeters": "Meter"
   },
   "nav": {
     "logoAlt": "NH48 API-Logo",
     "tagline": "Offene Daten und strukturierte Metadaten für die 4.000-Fuß-Gipfel in New Hampshire.",
     "catalog": "Katalog",
     "trails": "WMNF Trails",
+    "longTrails": "Lange Trails",
     "pics": "NH48 Pics",
     "peakBagger": "Peak Bagger",
+    "latestPhotos": "Neueste WMNF-Fotos",
     "login": "Anmelden",
     "viewProfile": "Profil ansehen"
   },
@@ -89,6 +97,39 @@
     "day": "Tag",
     "dawn": "Morgendämmerung",
     "dusk": "Abenddämmerung"
+  },
+  "values": {
+    "trailType": {
+      "loop": "Rundweg",
+      "loop_or_out_back": "Rundweg oder Hin und zurück",
+      "loop_or_traverse": "Rundweg oder Traverse",
+      "loop_or_traverse_along_ridge": "Rundweg oder Traverse entlang des Grats",
+      "out_back": "Hin und zurück",
+      "out_back_common": "Hin und zurück - üblich",
+      "out_back_common_or_long_traverse": "Hin und zurück - üblich oder lange Traverse",
+      "out_back_common_or_loop_with_connector_trails": "Hin und zurück - üblich oder Rundweg mit Verbindungswegen",
+      "out_back_common_or_small_loop_including_mt_webster": "Hin und zurück - üblich oder kleine Schleife einschließlich Mt Webster",
+      "out_back_commonly": "Hin und zurück - üblicherweise",
+      "out_back_or_loop": "Hin und zurück oder Rundweg",
+      "out_back_or_loop_with_tom_and_willey": "Hin und zurück oder Rundweg - mit Tom und Willey",
+      "out_back_or_loop_combining_trails": "Hin und zurück oder Rundweg mit kombinierten Wegen",
+      "out_back_or_loop_options": "Hin und zurück oder Rundweg-Optionen",
+      "out_back_or_point_to_point_traverse": "Hin und zurück oder Punkt-zu-Punkt-Traverse",
+      "out_back_or_traverse": "Hin und zurück oder Traverse"
+    },
+    "difficulty": {
+      "moderate": "Moderat",
+      "moderate_difficult": "Moderat/Schwierig",
+      "difficult": "Schwierig",
+      "very_difficult": "Sehr schwierig",
+      "extremely_difficult": "Extrem schwierig"
+    },
+    "exposure": {
+      "high": "Hoch",
+      "medium": "Mittel",
+      "low": "Niedrig",
+      "low_to_medium": "Niedrig bis Mittel"
+    }
   },
   "peak": {
     "back": "Zurück zum NH48-Gipfelkatalog",

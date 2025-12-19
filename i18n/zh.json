@@ -7,15 +7,23 @@
     "noResults": "未找到结果。",
     "noImage": "无图片",
     "unknown": "未知",
-    "notAvailable": "暂无"
+    "notAvailable": "暂无",
+    "units": {
+      "ariaLabel": "选择单位"
+    },
+    "unitsLabel": "单位",
+    "unitsFeet": "英尺",
+    "unitsMeters": "米"
   },
   "nav": {
     "logoAlt": "NH48 API 标志",
     "tagline": "面向新罕布什尔州 4,000 英尺山峰的开放数据与结构化元数据。",
     "catalog": "目录",
     "trails": "WMNF 步道",
+    "longTrails": "长距离步道",
     "pics": "NH48 Pics",
     "peakBagger": "Peak Bagger",
+    "latestPhotos": "最新 WMNF 照片",
     "login": "登录",
     "viewProfile": "查看个人资料"
   },
@@ -89,6 +97,39 @@
     "day": "白天",
     "dawn": "黎明",
     "dusk": "黄昏"
+  },
+  "values": {
+    "trailType": {
+      "loop": "环线",
+      "loop_or_out_back": "环线或往返",
+      "loop_or_traverse": "环线或穿越",
+      "loop_or_traverse_along_ridge": "沿山脊环线或穿越",
+      "out_back": "往返",
+      "out_back_common": "往返 - 常见",
+      "out_back_common_or_long_traverse": "往返 - 常见或长距离穿越",
+      "out_back_common_or_loop_with_connector_trails": "往返 - 常见或含连接步道的环线",
+      "out_back_common_or_small_loop_including_mt_webster": "往返 - 常见或包含韦伯斯特山的小环线",
+      "out_back_commonly": "往返 - 通常",
+      "out_back_or_loop": "往返或环线",
+      "out_back_or_loop_with_tom_and_willey": "往返或环线 - 包含 Tom 和 Willey",
+      "out_back_or_loop_combining_trails": "往返或组合步道的环线",
+      "out_back_or_loop_options": "往返或环线选项",
+      "out_back_or_point_to_point_traverse": "往返或点对点穿越",
+      "out_back_or_traverse": "往返或穿越"
+    },
+    "difficulty": {
+      "moderate": "中等",
+      "moderate_difficult": "中等/困难",
+      "difficult": "困难",
+      "very_difficult": "非常困难",
+      "extremely_difficult": "极其困难"
+    },
+    "exposure": {
+      "high": "高",
+      "medium": "中",
+      "low": "低",
+      "low_to_medium": "低到中等"
+    }
   },
   "peak": {
     "back": "返回 NH48 山峰目录",

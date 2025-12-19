@@ -7,15 +7,23 @@
     "noResults": "Aucun résultat trouvé.",
     "noImage": "pas d’image",
     "unknown": "Inconnu",
-    "notAvailable": "Non disponible"
+    "notAvailable": "Non disponible",
+    "units": {
+      "ariaLabel": "Sélectionner les unités"
+    },
+    "unitsLabel": "Unités",
+    "unitsFeet": "Pieds",
+    "unitsMeters": "Mètres"
   },
   "nav": {
     "logoAlt": "Logo NH48 API",
     "tagline": "Données ouvertes et métadonnées structurées pour les sommets de 4 000 pieds du New Hampshire.",
     "catalog": "Catalogue",
     "trails": "Sentiers WMNF",
+    "longTrails": "Longues randonnées",
     "pics": "NH48 Pics",
     "peakBagger": "Peak Bagger",
+    "latestPhotos": "Dernières photos WMNF",
     "login": "Se connecter",
     "viewProfile": "Voir le profil"
   },
@@ -89,6 +97,39 @@
     "day": "jour",
     "dawn": "aube",
     "dusk": "crépuscule"
+  },
+  "values": {
+    "trailType": {
+      "loop": "Boucle",
+      "loop_or_out_back": "Boucle ou aller-retour",
+      "loop_or_traverse": "Boucle ou traversée",
+      "loop_or_traverse_along_ridge": "Boucle ou traversée le long de la crête",
+      "out_back": "Aller-retour",
+      "out_back_common": "Aller-retour - courant",
+      "out_back_common_or_long_traverse": "Aller-retour - courant ou longue traversée",
+      "out_back_common_or_loop_with_connector_trails": "Aller-retour - courant ou boucle avec sentiers de liaison",
+      "out_back_common_or_small_loop_including_mt_webster": "Aller-retour - courant ou petite boucle incluant le mont Webster",
+      "out_back_commonly": "Aller-retour - généralement",
+      "out_back_or_loop": "Aller-retour ou boucle",
+      "out_back_or_loop_with_tom_and_willey": "Aller-retour ou boucle - avec Tom et Willey",
+      "out_back_or_loop_combining_trails": "Aller-retour ou boucle combinant des sentiers",
+      "out_back_or_loop_options": "Aller-retour ou options de boucle",
+      "out_back_or_point_to_point_traverse": "Aller-retour ou traversée point à point",
+      "out_back_or_traverse": "Aller-retour ou traversée"
+    },
+    "difficulty": {
+      "moderate": "Modéré",
+      "moderate_difficult": "Modéré/Difficile",
+      "difficult": "Difficile",
+      "very_difficult": "Très difficile",
+      "extremely_difficult": "Extrêmement difficile"
+    },
+    "exposure": {
+      "high": "Élevée",
+      "medium": "Moyenne",
+      "low": "Faible",
+      "low_to_medium": "Faible à moyenne"
+    }
   },
   "peak": {
     "back": "Retour au catalogue des sommets NH48",

@@ -7,15 +7,23 @@
     "noResults": "No se encontraron resultados.",
     "noImage": "sin imagen",
     "unknown": "Desconocido",
-    "notAvailable": "No disponible"
+    "notAvailable": "No disponible",
+    "units": {
+      "ariaLabel": "Seleccionar unidades"
+    },
+    "unitsLabel": "Unidades",
+    "unitsFeet": "Pies",
+    "unitsMeters": "Metros"
   },
   "nav": {
     "logoAlt": "Logotipo de NH48 API",
     "tagline": "Datos abiertos y metadatos estructurados para los picos de 4.000 pies de New Hampshire.",
     "catalog": "Catálogo",
     "trails": "Senderos WMNF",
+    "longTrails": "Senderos largos",
     "pics": "NH48 Pics",
     "peakBagger": "Peak Bagger",
+    "latestPhotos": "Últimas fotos de WMNF",
     "login": "Iniciar sesión",
     "viewProfile": "Ver perfil"
   },
@@ -89,6 +97,39 @@
     "day": "día",
     "dawn": "alba",
     "dusk": "crepúsculo"
+  },
+  "values": {
+    "trailType": {
+      "loop": "Bucle",
+      "loop_or_out_back": "Bucle o ida y vuelta",
+      "loop_or_traverse": "Bucle o travesía",
+      "loop_or_traverse_along_ridge": "Bucle o travesía por la cresta",
+      "out_back": "Ida y vuelta",
+      "out_back_common": "Ida y vuelta - común",
+      "out_back_common_or_long_traverse": "Ida y vuelta - común o travesía larga",
+      "out_back_common_or_loop_with_connector_trails": "Ida y vuelta - común o bucle con senderos de conexión",
+      "out_back_common_or_small_loop_including_mt_webster": "Ida y vuelta - común o bucle pequeño que incluye Mt Webster",
+      "out_back_commonly": "Ida y vuelta - habitualmente",
+      "out_back_or_loop": "Ida y vuelta o bucle",
+      "out_back_or_loop_with_tom_and_willey": "Ida y vuelta o bucle - con Tom y Willey",
+      "out_back_or_loop_combining_trails": "Ida y vuelta o bucle combinando senderos",
+      "out_back_or_loop_options": "Ida y vuelta o opciones de bucle",
+      "out_back_or_point_to_point_traverse": "Ida y vuelta o travesía punto a punto",
+      "out_back_or_traverse": "Ida y vuelta o travesía"
+    },
+    "difficulty": {
+      "moderate": "Moderado",
+      "moderate_difficult": "Moderado/Difícil",
+      "difficult": "Difícil",
+      "very_difficult": "Muy difícil",
+      "extremely_difficult": "Extremadamente difícil"
+    },
+    "exposure": {
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja",
+      "low_to_medium": "Baja a media"
+    }
   },
   "peak": {
     "back": "Volver al catálogo de picos NH48",

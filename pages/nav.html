@@ -21,10 +21,13 @@
   }
 
   .site-nav-logo img {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    border: 2px solid #ffffff;
+    padding: 2px;
+    background: #0a0a0a;
+    box-sizing: border-box;
   }
 
   .site-nav-title-wrap {
@@ -78,20 +81,26 @@
     background: rgba(34, 197, 94, 0.1);
   }
 
-  .site-nav-auth {
-    display: flex;
+  .site-nav-cta {
+    display: inline-flex;
     align-items: center;
-  }
-
-  .site-nav-auth .btn-small {
+    gap: 8px;
     padding: 6px 14px;
     font-size: 13px;
     border-radius: 6px;
+    background: #22c55e;
+    border: 2px solid #22c55e;
+    color: #ffffff;
+    font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue Condensed", Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
   }
 
-  .site-nav-avatar {
-    display: flex;
-    align-items: center;
+  .site-nav-cta svg {
+    width: 16px;
+    height: 16px;
+    stroke: #ffffff;
   }
 
   @media (max-width: 768px) {
@@ -111,6 +120,11 @@
     .site-nav-links a {
       padding: 6px 10px;
       font-size: 12px;
+    }
+
+    .site-nav-cta {
+      padding: 6px 10px;
+      font-size: 11px;
     }
   }
 
@@ -132,28 +146,22 @@
   <div class="site-nav-links">
     <a href="/pages/nh48_catalog.html" data-route="catalog" data-i18n="nav.catalog">Catalog</a>
     <a href="/pages/trails_app.html" data-route="trails" data-i18n="nav.trails">WMNF Trails</a>
+    <a href="/pages/long_trails_app.html" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
     <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
     <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
-    <div class="site-nav-auth" id="navAuthCard">
-      <div id="navAuthSignedOut">
-        <button
-          class="btn btn-primary btn-small"
-          id="openAuthNav"
-          style="background:#22c55e;border-color:#22c55e;color:#fff"
-        >
-          <span data-i18n="nav.login">Log in</span>
-        </button>
-      </div>
-      <div id="navAuthSignedIn" style="display:none">
-        <a href="/profile" class="site-nav-avatar" title="View profile" data-i18n="nav.viewProfile" data-i18n-attr="title">
-          <div
-            id="navUserAvatarIcon"
-            style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#6b8cff);display:flex;align-items:center;justify-content:center;font-size:12px;color:white;font-weight:600;border:2px solid rgba(255,255,255,0.3)"
-          >
-            <span id="navUserInitials">U</span>
-          </div>
-        </a>
-      </div>
-    </div>
+    <a
+      class="site-nav-cta"
+      href="https://www.instagram.com/nate_dumps_pics/"
+      target="_blank"
+      rel="noopener"
+      aria-label="Latest WMNF Photos"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+        <circle cx="12" cy="12" r="3.5"></circle>
+        <circle cx="17" cy="7" r="1.2" fill="#ffffff" stroke="none"></circle>
+      </svg>
+      <span data-i18n="nav.latestPhotos">Latest WMNF Photos</span>
+    </a>
   </div>
 </nav>
