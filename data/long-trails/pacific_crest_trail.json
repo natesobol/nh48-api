@@ -1,0 +1,1048 @@
+{
+  "id": "pacific-crest-trail",
+  "type": "trail",
+  "name": "Pacific Crest Trail",
+  "shortName": "PCT",
+  "slug": "pacific-crest-trail",
+  "region": "north-america",
+  "countryCodes": ["US"],
+
+  "classification": "national_scenic",
+  "continuity": "continuous",
+  "maintenance_level": "maintained",
+
+  "stats": {
+    "officialLength": { "miles": 2655.8, "km": 4274.1 },
+    "elevation": {
+      "highestPoint": { "name": "Forester Pass", "elevationFt": 13153 },
+      "lowestPoint": { "name": "Bridge of the Gods (Columbia River)", "elevationFt": 140 }
+    },
+    "endpoints": {
+      "south": { "name": "Campo, CA (Southern Terminus)", "lat": 32.5898, "lon": -116.4685, "elevationFt": 2915 },
+      "north": { "name": "Monument 78 (US–Canada Border)", "lat": 49.0000, "lon": -120.7987, "elevationFt": 4240 }
+    }
+  },
+
+  "map": {
+    "defaultZoom": 6,
+    "defaultCenter": { "lat": 40.0, "lon": -120.5 },
+    "bbox": { "minLat": 32.5, "minLon": -123.5, "maxLat": 49.2, "maxLon": -116.3 }
+  },
+
+  "routing": {
+    "mileSystem": "northbound_from_campo",
+    "gpxCrsHint": "WGS84",
+    "sectioningMethod": "app_defined",
+    "routeVariantPolicy": "single_primary"
+  },
+
+  "sources": [
+    {
+      "id": "pcta",
+      "name": "Pacific Crest Trail Association",
+      "type": "organization",
+      "url": "https://pcta.org"
+    }
+  ],
+
+  "sections": [
+    {
+      "id": "pct-001-campo-to-warner-springs",
+      "order": 1,
+      "name": "Campo → Warner Springs",
+      "slug": "pct-001-campo-to-warner-springs",
+
+      "distance": { "miles": 109.5, "km": 176.1 },
+      "mileRange": { "start": 0.0, "end": 109.5 },
+
+      "start": { "name": "Campo, CA (Southern Terminus)", "lat": 32.5898, "lon": -116.4685 },
+      "end": { "name": "Warner Springs, CA", "lat": 33.2822, "lon": -116.6330 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["starter", "desert", "california"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-001-campo-to-warner-springs.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 32.58, "minLon": -116.64, "maxLat": 33.29, "maxLon": -116.46 }
+      }
+    },
+
+    {
+      "id": "pct-002-warner-springs-to-interstate-10",
+      "order": 2,
+      "name": "Warner Springs → Interstate 10 (San Gorgonio Pass)",
+      "slug": "pct-002-warner-springs-to-interstate-10",
+
+      "distance": { "miles": 100.0, "km": 160.9 },
+      "mileRange": { "start": 109.5, "end": 209.5 },
+
+      "start": { "name": "Warner Springs, CA", "lat": 33.2822, "lon": -116.6330 },
+      "end": { "name": "Interstate 10 (Cabazon, CA)", "lat": 33.9230, "lon": -116.6110 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["desert", "california"],
+      "difficulty": { "rating": 4, "label": "Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-002-warner-springs-to-interstate-10.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 33.27, "minLon": -116.64, "maxLat": 33.93, "maxLon": -116.60 }
+      }
+    },
+
+    {
+      "id": "pct-003-interstate-10-to-cajon-pass",
+      "order": 3,
+      "name": "Interstate 10 → Interstate 15 (Cajon Pass)",
+      "slug": "pct-003-interstate-10-to-cajon-pass",
+
+      "distance": { "miles": 132.5, "km": 213.2 },
+      "mileRange": { "start": 209.5, "end": 342.0 },
+
+      "start": { "name": "Interstate 10 (San Gorgonio Pass)", "lat": 33.9230, "lon": -116.6110 },
+      "end": { "name": "Interstate 15 (Cajon Pass)", "lat": 34.3050, "lon": -117.5003 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["desert", "california"],
+      "difficulty": { "rating": 4, "label": "Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-003-interstate-10-to-cajon-pass.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 33.91, "minLon": -117.51, "maxLat": 34.31, "maxLon": -116.60 }
+      }
+    },
+
+    {
+      "id": "pct-004-cajon-pass-to-agua-dulce",
+      "order": 4,
+      "name": "Cajon Pass → Agua Dulce",
+      "slug": "pct-004-cajon-pass-to-agua-dulce",
+
+      "distance": { "miles": 112.5, "km": 181.1 },
+      "mileRange": { "start": 342.0, "end": 454.5 },
+
+      "start": { "name": "Interstate 15 (Cajon Pass)", "lat": 34.3050, "lon": -117.5003 },
+      "end": { "name": "Agua Dulce, CA", "lat": 34.4965, "lon": -118.3215 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["desert", "california"],
+      "difficulty": { "rating": 4, "label": "Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-004-cajon-pass-to-agua-dulce.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 34.30, "minLon": -118.33, "maxLat": 34.51, "maxLon": -117.49 }
+      }
+    },
+
+    {
+      "id": "pct-005-agua-dulce-to-tehachapi-pass",
+      "order": 5,
+      "name": "Agua Dulce → Tehachapi Pass",
+      "slug": "pct-005-agua-dulce-to-tehachapi-pass",
+
+      "distance": { "miles": 112.0, "km": 180.2 },
+      "mileRange": { "start": 454.5, "end": 566.5 },
+
+      "start": { "name": "Agua Dulce, CA", "lat": 34.4965, "lon": -118.3215 },
+      "end": { "name": "Tehachapi Pass (CA-58)", "lat": 35.0352, "lon": -118.2461 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["desert", "california"],
+      "difficulty": { "rating": 4, "label": "Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-005-agua-dulce-to-tehachapi-pass.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 34.49, "minLon": -118.33, "maxLat": 35.05, "maxLon": -118.24 }
+      }
+    },
+
+    {
+      "id": "pct-006-tehachapi-pass-to-walker-pass",
+      "order": 6,
+      "name": "Tehachapi Pass → Walker Pass",
+      "slug": "pct-006-tehachapi-pass-to-walker-pass",
+
+      "distance": { "miles": 85.5, "km": 137.6 },
+      "mileRange": { "start": 566.5, "end": 652.0 },
+
+      "start": { "name": "Tehachapi Pass (CA-58)", "lat": 35.0352, "lon": -118.2461 },
+      "end": { "name": "Walker Pass (CA-178)", "lat": 35.6592, "lon": -118.0629 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["desert", "california"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-006-tehachapi-pass-to-walker-pass.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 35.03, "minLon": -118.26, "maxLat": 35.67, "maxLon": -118.05 }
+      }
+    },
+
+    {
+      "id": "pct-007-walker-pass-to-crabtree-meadow",
+      "order": 7,
+      "name": "Walker Pass → Crabtree Meadow",
+      "slug": "pct-007-walker-pass-to-crabtree-meadow",
+
+      "distance": { "miles": 115.0, "km": 185.1 },
+      "mileRange": { "start": 652.0, "end": 767.0 },
+
+      "start": { "name": "Walker Pass, CA", "lat": 35.6592, "lon": -118.0629 },
+      "end": { "name": "Crabtree Meadow (Mt. Whitney)", "lat": 36.5682, "lon": -118.3478 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["sierra", "california", "classic"],
+      "difficulty": { "rating": 5, "label": "Very Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-007-walker-pass-to-crabtree-meadow.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 35.65, "minLon": -118.35, "maxLat": 36.58, "maxLon": -118.05 }
+      }
+    },
+
+    {
+      "id": "pct-008-crabtree-meadow-to-tuolumne-meadows",
+      "order": 8,
+      "name": "Crabtree Meadow → Tuolumne Meadows",
+      "slug": "pct-008-crabtree-meadow-to-tuolumne-meadows",
+
+      "distance": { "miles": 175.5, "km": 282.4 },
+      "mileRange": { "start": 767.0, "end": 942.5 },
+
+      "start": { "name": "Crabtree Meadow, CA", "lat": 36.5682, "lon": -118.3478 },
+      "end": { "name": "Tuolumne Meadows (CA-120)", "lat": 37.8742, "lon": -119.3594 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["sierra", "california", "classic"],
+      "difficulty": { "rating": 5, "label": "Very Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-008-crabtree-meadow-to-tuolumne-meadows.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 36.56, "minLon": -119.37, "maxLat": 37.88, "maxLon": -118.34 }
+      }
+    },
+
+    {
+      "id": "pct-009-tuolumne-meadows-to-sonora-pass",
+      "order": 9,
+      "name": "Tuolumne Meadows → Sonora Pass",
+      "slug": "pct-009-tuolumne-meadows-to-sonora-pass",
+
+      "distance": { "miles": 74.4, "km": 119.7 },
+      "mileRange": { "start": 942.5, "end": 1016.9 },
+
+      "start": { "name": "Tuolumne Meadows, CA", "lat": 37.8742, "lon": -119.3594 },
+      "end": { "name": "Sonora Pass (CA-108)", "lat": 38.3317, "lon": -119.6355 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["sierra", "california"],
+      "difficulty": { "rating": 4, "label": "Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-009-tuolumne-meadows-to-sonora-pass.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 37.87, "minLon": -119.64, "maxLat": 38.34, "maxLon": -119.35 }
+      }
+    },
+
+    {
+      "id": "pct-010-sonora-pass-to-echo-lake",
+      "order": 10,
+      "name": "Sonora Pass → Echo Lake",
+      "slug": "pct-010-sonora-pass-to-echo-lake",
+
+      "distance": { "miles": 75.4, "km": 121.3 },
+      "mileRange": { "start": 1016.9, "end": 1092.3 },
+
+      "start": { "name": "Sonora Pass (CA-108)", "lat": 38.3317, "lon": -119.6355 },
+      "end": { "name": "Echo Lake (CA-50)", "lat": 38.8270, "lon": -120.0429 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["california"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-010-sonora-pass-to-echo-lake.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 38.33, "minLon": -120.05, "maxLat": 38.84, "maxLon": -119.63 }
+      }
+    },
+
+    {
+      "id": "pct-011-echo-lake-to-donner-summit",
+      "order": 11,
+      "name": "Echo Lake → Donner Summit",
+      "slug": "pct-011-echo-lake-to-donner-summit",
+
+      "distance": { "miles": 64.8, "km": 104.3 },
+      "mileRange": { "start": 1092.3, "end": 1157.1 },
+
+      "start": { "name": "Echo Lake (Lake Tahoe, CA)", "lat": 38.8270, "lon": -120.0429 },
+      "end": { "name": "Donner Summit (I-80)", "lat": 39.3187, "lon": -120.3704 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["california"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-011-echo-lake-to-donner-summit.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 38.82, "minLon": -120.38, "maxLat": 39.33, "maxLon": -120.04 }
+      }
+    },
+
+    {
+      "id": "pct-012-donner-summit-to-sierra-city",
+      "order": 12,
+      "name": "Donner Summit → Sierra City",
+      "slug": "pct-012-donner-summit-to-sierra-city",
+
+      "distance": { "miles": 38.3, "km": 61.6 },
+      "mileRange": { "start": 1157.1, "end": 1195.4 },
+
+      "start": { "name": "Donner Summit (I-80)", "lat": 39.3187, "lon": -120.3704 },
+      "end": { "name": "CA-49 (Sierra City)", "lat": 39.5677, "lon": -120.6323 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["california"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-012-donner-summit-to-sierra-city.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 39.31, "minLon": -120.64, "maxLat": 39.58, "maxLon": -120.37 }
+      }
+    },
+
+    {
+      "id": "pct-013-sierra-city-to-belden",
+      "order": 13,
+      "name": "Sierra City → Belden",
+      "slug": "pct-013-sierra-city-to-belden",
+
+      "distance": { "miles": 89.0, "km": 143.2 },
+      "mileRange": { "start": 1195.4, "end": 1286.9 },
+
+      "start": { "name": "CA-49 (Sierra City)", "lat": 39.5677, "lon": -120.6323 },
+      "end": { "name": "CA-70 (Belden)", "lat": 40.0040, "lon": -121.2590 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["california"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-013-sierra-city-to-belden.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 39.56, "minLon": -121.26, "maxLat": 40.01, "maxLon": -120.63 }
+      }
+    },
+
+    {
+      "id": "pct-014-belden-to-burney-falls",
+      "order": 14,
+      "name": "Belden → Burney Falls",
+      "slug": "pct-014-belden-to-burney-falls",
+
+      "distance": { "miles": 132.2, "km": 212.7 },
+      "mileRange": { "start": 1286.9, "end": 1419.0 },
+
+      "start": { "name": "CA-70 (Belden)", "lat": 40.0040, "lon": -121.2590 },
+      "end": { "name": "McArthur-Burney Falls State Park", "lat": 41.0113, "lon": -121.6503 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["california"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-014-belden-to-burney-falls.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 40.00, "minLon": -121.66, "maxLat": 41.02, "maxLon": -121.25 }
+      }
+    },
+
+    {
+      "id": "pct-015-burney-falls-to-castella",
+      "order": 15,
+      "name": "Burney Falls → Interstate 5 (Castella)",
+      "slug": "pct-015-burney-falls-to-castella",
+
+      "distance": { "miles": 82.2, "km": 132.3 },
+      "mileRange": { "start": 1419.0, "end": 1501.2 },
+
+      "start": { "name": "Burney Falls State Park, CA", "lat": 41.0113, "lon": -121.6503 },
+      "end": { "name": "Interstate 5 (Castle Crags)", "lat": 41.1543, "lon": -122.2901 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["california"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-015-burney-falls-to-castella.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 41.01, "minLon": -122.30, "maxLat": 41.16, "maxLon": -121.65 }
+      }
+    },
+
+    {
+      "id": "pct-016-castella-to-etna-summit",
+      "order": 16,
+      "name": "Interstate 5 → Etna Summit",
+      "slug": "pct-016-castella-to-etna-summit",
+
+      "distance": { "miles": 98.5, "km": 158.5 },
+      "mileRange": { "start": 1501.2, "end": 1599.7 },
+
+      "start": { "name": "Interstate 5 (Castella, CA)", "lat": 41.1543, "lon": -122.2901 },
+      "end": { "name": "Etna Summit, CA", "lat": 41.4223, "lon": -123.0153 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["california"],
+      "difficulty": { "rating": 4, "label": "Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-016-castella-to-etna-summit.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 41.14, "minLon": -123.03, "maxLat": 41.43, "maxLon": -122.28 }
+      }
+    },
+
+    {
+      "id": "pct-017-etna-summit-to-seiad-valley",
+      "order": 17,
+      "name": "Etna Summit → Seiad Valley",
+      "slug": "pct-017-etna-summit-to-seiad-valley",
+
+      "distance": { "miles": 56.2, "km": 90.4 },
+      "mileRange": { "start": 1599.7, "end": 1655.9 },
+
+      "start": { "name": "Etna Summit, CA", "lat": 41.4223, "lon": -123.0153 },
+      "end": { "name": "Seiad Valley, CA", "lat": 41.8403, "lon": -123.2284 },
+
+      "jurisdictions": [{ "type": "state", "code": "CA", "name": "California" }],
+      "tags": ["california"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-017-etna-summit-to-seiad-valley.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 41.41, "minLon": -123.24, "maxLat": 41.85, "maxLon": -123.01 }
+      }
+    },
+
+    {
+      "id": "pct-018-seiad-valley-to-oregon-border",
+      "order": 18,
+      "name": "Seiad Valley → California–Oregon Border",
+      "slug": "pct-018-seiad-valley-to-oregon-border",
+
+      "distance": { "miles": 63.0, "km": 101.4 },
+      "mileRange": { "start": 1655.9, "end": 1691.7 },
+
+      "start": { "name": "Seiad Valley, CA", "lat": 41.8403, "lon": -123.2284 },
+      "end": { "name": "California–Oregon Border", "lat": 42.0038, "lon": -122.9100 },
+
+      "jurisdictions": [
+        { "type": "state", "code": "CA", "name": "California" },
+        { "type": "state", "code": "OR", "name": "Oregon" }
+      ],
+      "tags": ["california", "oregon"],
+      "difficulty": { "rating": 4, "label": "Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-018-seiad-valley-to-oregon-border.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 41.83, "minLon": -123.24, "maxLat": 42.01, "maxLon": -122.90 }
+      }
+    },
+
+    {
+      "id": "pct-019-oregon-border-to-ashland",
+      "order": 19,
+      "name": "California–Oregon Border → Interstate 5 (Ashland)",
+      "slug": "pct-019-oregon-border-to-ashland",
+
+      "distance": { "miles": 27.2, "km": 43.8 },
+      "mileRange": { "start": 1691.7, "end": 1718.9 },
+
+      "start": { "name": "California/Oregon Border", "lat": 42.0038, "lon": -122.9100 },
+      "end": { "name": "Interstate 5 (Siskiyou Summit, OR)", "lat": 42.0924, "lon": -122.6231 },
+
+      "jurisdictions": [{ "type": "state", "code": "OR", "name": "Oregon" }],
+      "tags": ["oregon"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-019-oregon-border-to-ashland.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 41.99, "minLon": -122.92, "maxLat": 42.10, "maxLon": -122.61 }
+      }
+    },
+
+    {
+      "id": "pct-020-ashland-to-fish-lake",
+      "order": 20,
+      "name": "Interstate 5 (Ashland) → Highway 140 (Fish Lake)",
+      "slug": "pct-020-ashland-to-fish-lake",
+
+      "distance": { "miles": 54.5, "km": 87.7 },
+      "mileRange": { "start": 1718.9, "end": 1773.4 },
+
+      "start": { "name": "Interstate 5 (Ashland, OR)", "lat": 42.0924, "lon": -122.6231 },
+      "end": { "name": "Highway 140 (Fish Lake, OR)", "lat": 42.4223, "lon": -122.2500 },
+
+      "jurisdictions": [{ "type": "state", "code": "OR", "name": "Oregon" }],
+      "tags": ["oregon"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-020-ashland-to-fish-lake.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 42.08, "minLon": -122.63, "maxLat": 42.43, "maxLon": -122.24 }
+      }
+    },
+
+    {
+      "id": "pct-021-fish-lake-to-cascade-crest",
+      "order": 21,
+      "name": "Highway 140 → Highway 138 (Cascade Crest)",
+      "slug": "pct-021-fish-lake-to-cascade-crest",
+
+      "distance": { "miles": 74.4, "km": 119.7 },
+      "mileRange": { "start": 1773.4, "end": 1847.8 },
+
+      "start": { "name": "Highway 140 (Fish Lake, OR)", "lat": 42.4223, "lon": -122.2500 },
+      "end": { "name": "Highway 138 (Cascade Crest, OR)", "lat": 43.0913, "lon": -122.1337 },
+
+      "jurisdictions": [{ "type": "state", "code": "OR", "name": "Oregon" }],
+      "tags": ["oregon"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-021-fish-lake-to-cascade-crest.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 42.41, "minLon": -122.26, "maxLat": 43.10, "maxLon": -122.12 }
+      }
+    },
+
+    {
+      "id": "pct-022-cascade-crest-to-willamette-pass",
+      "order": 22,
+      "name": "Highway 138 → Highway 58 (Willamette Pass)",
+      "slug": "pct-022-cascade-crest-to-willamette-pass",
+
+      "distance": { "miles": 60.1, "km": 96.7 },
+      "mileRange": { "start": 1847.8, "end": 1907.9 },
+
+      "start": { "name": "Highway 138 (Cascade Crest, OR)", "lat": 43.0913, "lon": -122.1337 },
+      "end": { "name": "Highway 58 (Willamette Pass, OR)", "lat": 43.5149, "lon": -122.0300 },
+
+      "jurisdictions": [{ "type": "state", "code": "OR", "name": "Oregon" }],
+      "tags": ["oregon"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-022-cascade-crest-to-willamette-pass.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 43.08, "minLon": -122.14, "maxLat": 43.52, "maxLon": -122.02 }
+      }
+    },
+
+    {
+      "id": "pct-023-willamette-pass-to-mckenzie-pass",
+      "order": 23,
+      "name": "Willamette Pass → McKenzie Pass",
+      "slug": "pct-023-willamette-pass-to-mckenzie-pass",
+
+      "distance": { "miles": 75.9, "km": 122.1 },
+      "mileRange": { "start": 1907.9, "end": 1983.8 },
+
+      "start": { "name": "Highway 58 (Willamette Pass, OR)", "lat": 43.5149, "lon": -122.0300 },
+      "end": { "name": "Highway 242 (McKenzie Pass, OR)", "lat": 44.2673, "lon": -121.8090 },
+
+      "jurisdictions": [{ "type": "state", "code": "OR", "name": "Oregon" }],
+      "tags": ["oregon"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-023-willamette-pass-to-mckenzie-pass.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 43.50, "minLon": -122.04, "maxLat": 44.28, "maxLon": -121.80 }
+      }
+    },
+
+    {
+      "id": "pct-024-mckenzie-pass-to-barlow-pass",
+      "order": 24,
+      "name": "McKenzie Pass → Barlow Pass",
+      "slug": "pct-024-mckenzie-pass-to-barlow-pass",
+
+      "distance": { "miles": 107.9, "km": 173.6 },
+      "mileRange": { "start": 1983.8, "end": 2091.7 },
+
+      "start": { "name": "Highway 242 (McKenzie Pass, OR)", "lat": 44.2673, "lon": -121.8090 },
+      "end": { "name": "Highway 35 (Barlow Pass, OR)", "lat": 45.2870, "lon": -121.6778 },
+
+      "jurisdictions": [{ "type": "state", "code": "OR", "name": "Oregon" }],
+      "tags": ["oregon"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-024-mckenzie-pass-to-barlow-pass.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 44.26, "minLon": -121.82, "maxLat": 45.30, "maxLon": -121.67 }
+      }
+    },
+
+    {
+      "id": "pct-025-barlow-pass-to-cascade-locks",
+      "order": 25,
+      "name": "Barlow Pass → Cascade Locks",
+      "slug": "pct-025-barlow-pass-to-cascade-locks",
+
+      "distance": { "miles": 55.2, "km": 88.8 },
+      "mileRange": { "start": 2091.7, "end": 2146.9 },
+
+      "start": { "name": "Highway 35 (Barlow Pass, OR)", "lat": 45.2870, "lon": -121.6778 },
+      "end": { "name": "Cascade Locks (Bridge of the Gods)", "lat": 45.6632, "lon": -121.9013 },
+
+      "jurisdictions": [{ "type": "state", "code": "OR", "name": "Oregon" }],
+      "tags": ["oregon"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-025-barlow-pass-to-cascade-locks.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 45.28, "minLon": -121.91, "maxLat": 45.67, "maxLon": -121.67 }
+      }
+    },
+
+    {
+      "id": "pct-026-cascade-locks-to-white-pass",
+      "order": 26,
+      "name": "Cascade Locks → White Pass",
+      "slug": "pct-026-cascade-locks-to-white-pass",
+
+      "distance": { "miles": 148.0, "km": 238.2 },
+      "mileRange": { "start": 2146.9, "end": 2294.9 },
+
+      "start": { "name": "Cascade Locks, OR/WA", "lat": 45.6632, "lon": -121.9013 },
+      "end": { "name": "White Pass (US-12)", "lat": 46.6372, "lon": -121.3892 },
+
+      "jurisdictions": [
+        { "type": "state", "code": "OR", "name": "Oregon" },
+        { "type": "state", "code": "WA", "name": "Washington" }
+      ],
+      "tags": ["oregon", "washington", "classic"],
+      "difficulty": { "rating": 4, "label": "Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-026-cascade-locks-to-white-pass.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 45.65, "minLon": -121.91, "maxLat": 46.65, "maxLon": -121.38 }
+      }
+    },
+
+    {
+      "id": "pct-027-white-pass-to-snoqualmie-pass",
+      "order": 27,
+      "name": "White Pass → Snoqualmie Pass",
+      "slug": "pct-027-white-pass-to-snoqualmie-pass",
+
+      "distance": { "miles": 98.3, "km": 158.2 },
+      "mileRange": { "start": 2294.9, "end": 2393.2 },
+
+      "start": { "name": "White Pass (US-12, WA)", "lat": 46.6372, "lon": -121.3892 },
+      "end": { "name": "Snoqualmie Pass (I-90)", "lat": 47.4247, "lon": -121.4123 },
+
+      "jurisdictions": [{ "type": "state", "code": "WA", "name": "Washington" }],
+      "tags": ["washington"],
+      "difficulty": { "rating": 4, "label": "Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-027-white-pass-to-snoqualmie-pass.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 46.63, "minLon": -121.42, "maxLat": 47.43, "maxLon": -121.38 }
+      }
+    },
+
+    {
+      "id": "pct-028-snoqualmie-pass-to-stevens-pass",
+      "order": 28,
+      "name": "Snoqualmie Pass → Stevens Pass",
+      "slug": "pct-028-snoqualmie-pass-to-stevens-pass",
+
+      "distance": { "miles": 70.9, "km": 114.1 },
+      "mileRange": { "start": 2393.2, "end": 2464.1 },
+
+      "start": { "name": "Snoqualmie Pass (I-90, WA)", "lat": 47.4247, "lon": -121.4123 },
+      "end": { "name": "Stevens Pass (US-2)", "lat": 47.7448, "lon": -121.0899 },
+
+      "jurisdictions": [{ "type": "state", "code": "WA", "name": "Washington" }],
+      "tags": ["washington", "classic"],
+      "difficulty": { "rating": 5, "label": "Very Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-028-snoqualmie-pass-to-stevens-pass.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 47.41, "minLon": -121.10, "maxLat": 47.75, "maxLon": -121.08 }
+      }
+    },
+
+    {
+      "id": "pct-029-stevens-pass-to-rainy-pass",
+      "order": 29,
+      "name": "Stevens Pass → Rainy Pass",
+      "slug": "pct-029-stevens-pass-to-rainy-pass",
+
+      "distance": { "miles": 127.0, "km": 204.4 },
+      "mileRange": { "start": 2464.1, "end": 2591.1 },
+
+      "start": { "name": "Stevens Pass (US-2, WA)", "lat": 47.7448, "lon": -121.0899 },
+      "end": { "name": "Rainy Pass (HWY 20)", "lat": 48.5165, "lon": -120.7374 },
+
+      "jurisdictions": [{ "type": "state", "code": "WA", "name": "Washington" }],
+      "tags": ["washington", "classic"],
+      "difficulty": { "rating": 5, "label": "Very Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-029-stevens-pass-to-rainy-pass.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 47.73, "minLon": -121.10, "maxLat": 48.53, "maxLon": -120.73 }
+      }
+    },
+
+    {
+      "id": "pct-030-rainy-pass-to-manning-park",
+      "order": 30,
+      "name": "Rainy Pass → Manning Park",
+      "slug": "pct-030-rainy-pass-to-manning-park",
+
+      "distance": { "miles": 70.3, "km": 113.1 },
+      "mileRange": { "start": 2591.1, "end": 2661.4 },
+
+      "start": { "name": "Rainy Pass (HWY 20, WA)", "lat": 48.5165, "lon": -120.7374 },
+      "end": { "name": "Manning Park, BC (Northern Terminus)", "lat": 49.0667, "lon": -120.7850 },
+
+      "jurisdictions": [
+        { "type": "state", "code": "WA", "name": "Washington" },
+        { "type": "province", "code": "BC", "name": "British Columbia" }
+      ],
+      "tags": ["washington", "finish"],
+      "difficulty": { "rating": 4, "label": "Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/pct/pct-030-rainy-pass-to-manning-park.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 48.51, "minLon": -120.80, "maxLat": 49.08, "maxLon": -120.73 }
+      }
+    }
+  ]
+}

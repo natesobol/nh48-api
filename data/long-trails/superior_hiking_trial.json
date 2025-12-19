@@ -1,0 +1,214 @@
+{
+  "id": "SHT",
+  "slug": "superior-hiking-trail",
+  "name": "Superior Hiking Trail",
+  "shortName": "SHT",
+  "type": "trail",
+  "classification": "long-distance",
+  "continuity": "continuous",
+  "maintenance_level": "managed",
+  "region": "Minnesota",
+  "countryCodes": ["US"],
+  "stats": {
+    "distance": { "miles": 310, "kilometers": 500 },
+    "elevation_max": { "feet": 1829, "meters": 557 },
+    "elevation_min": { "feet": 602, "meters": 183 },
+    "endpoints": [
+      {
+        "name": "Southern Terminus (MN/WI Border, Jay Cooke State Park)",
+        "lat": 46.66,
+        "lon": -92.33
+      },
+      {
+        "name": "Northern Terminus (270 Degree Overlook, Canadian Border)",
+        "lat": 47.9989,
+        "lon": -89.9333
+      }
+    ]
+  },
+  "map": {
+    "defaultCenter": { "lat": 47.3, "lon": -91.2 },
+    "defaultZoom": 7,
+    "bounds": {
+      "minLat": 46.6,
+      "maxLat": 48.0,
+      "minLon": -92.4,
+      "maxLon": -89.9
+    }
+  },
+  "routing": {
+    "mileageSystem": "continuous",
+    "gpxSourceCRS": "WGS84",
+    "sectionMethod": "official",
+    "routeVariants": "none"
+  },
+  "sources": {
+    "official": {
+      "name": "Superior Hiking Trail Association",
+      "url": "https://superiorhiking.org"
+    }
+  },
+  "sections": [
+    {
+      "id": 1,
+      "order": 1,
+      "name": "MN/WI Border to Duluth",
+      "slug": "border-to-duluth",
+      "distance": { "miles": 50.2, "kilometers": 80.8 },
+      "mileRange": { "start": 0.0, "end": 50.2 },
+      "start": {
+        "name": "Minnesota-Wisconsin Border (Southern Terminus)",
+        "lat": 46.66,
+        "lon": -92.33
+      },
+      "end": {
+        "name": "Martin Road Trailhead, Duluth",
+        "lat": 46.93,
+        "lon": -92.18
+      },
+      "jurisdictions": ["Carlton County, MN", "St. Louis County, MN"],
+      "tags": ["Duluth Region"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/sht_section1.gpx", "metadata": {} }
+    },
+    {
+      "id": 2,
+      "order": 2,
+      "name": "Duluth to Two Harbors",
+      "slug": "duluth-to-two-harbors",
+      "distance": { "miles": 57.2, "kilometers": 92.0 },
+      "mileRange": { "start": 50.2, "end": 107.4 },
+      "start": {
+        "name": "Martin Road Trailhead, Duluth",
+        "lat": 46.93,
+        "lon": -92.18
+      },
+      "end": {
+        "name": "Two Harbors",
+        "lat": 47.02,
+        "lon": -91.67
+      },
+      "jurisdictions": ["St. Louis County, MN", "Lake County, MN"],
+      "tags": ["North Shore"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/sht_section2.gpx", "metadata": {} }
+    },
+    {
+      "id": 3,
+      "order": 3,
+      "name": "Two Harbors to Silver Bay",
+      "slug": "two-harbors-to-silver-bay",
+      "distance": { "miles": 44.6, "kilometers": 71.8 },
+      "mileRange": { "start": 107.4, "end": 152.0 },
+      "start": {
+        "name": "Two Harbors",
+        "lat": 47.02,
+        "lon": -91.67
+      },
+      "end": {
+        "name": "Silver Bay",
+        "lat": 47.29,
+        "lon": -91.28
+      },
+      "jurisdictions": ["Lake County, MN"],
+      "tags": ["North Shore"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/sht_section3.gpx", "metadata": {} }
+    },
+    {
+      "id": 4,
+      "order": 4,
+      "name": "Silver Bay to Caribou Falls",
+      "slug": "silver-bay-to-caribou-falls",
+      "distance": { "miles": 45.3, "kilometers": 72.9 },
+      "mileRange": { "start": 152.0, "end": 197.3 },
+      "start": {
+        "name": "Silver Bay",
+        "lat": 47.29,
+        "lon": -91.28
+      },
+      "end": {
+        "name": "Caribou Falls State Wayside",
+        "lat": 47.48,
+        "lon": -91.18
+      },
+      "jurisdictions": ["Lake County, MN"],
+      "tags": ["North Shore"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/sht_section4.gpx", "metadata": {} }
+    },
+    {
+      "id": 5,
+      "order": 5,
+      "name": "Caribou Falls to Lutsen",
+      "slug": "caribou-falls-to-lutsen",
+      "distance": { "miles": 34.5, "kilometers": 55.5 },
+      "mileRange": { "start": 197.3, "end": 231.8 },
+      "start": {
+        "name": "Caribou Falls State Wayside",
+        "lat": 47.48,
+        "lon": -91.18
+      },
+      "end": {
+        "name": "Lutsen (Ski Hill Road)",
+        "lat": 47.65,
+        "lon": -90.71
+      },
+      "jurisdictions": ["Cook County, MN"],
+      "tags": ["North Shore"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/sht_section5.gpx", "metadata": {} }
+    },
+    {
+      "id": 6,
+      "order": 6,
+      "name": "Lutsen to Grand Marais",
+      "slug": "lutsen-to-grand-marais",
+      "distance": { "miles": 35.2, "kilometers": 56.6 },
+      "mileRange": { "start": 231.8, "end": 267.0 },
+      "start": {
+        "name": "Lutsen (Ski Hill Road)",
+        "lat": 47.65,
+        "lon": -90.71
+      },
+      "end": {
+        "name": "Grand Marais",
+        "lat": 47.75,
+        "lon": -90.34
+      },
+      "jurisdictions": ["Cook County, MN"],
+      "tags": ["North Shore"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/sht_section6.gpx", "metadata": {} }
+    },
+    {
+      "id": 7,
+      "order": 7,
+      "name": "Grand Marais to 270 Degree Overlook",
+      "slug": "grand-marais-to-270-overlook",
+      "distance": { "miles": 54.2, "kilometers": 87.2 },
+      "mileRange": { "start": 267.0, "end": 321.2 },
+      "start": {
+        "name": "Grand Marais",
+        "lat": 47.75,
+        "lon": -90.34
+      },
+      "end": {
+        "name": "270° Overlook (Northern Terminus)",
+        "lat": 47.9989,
+        "lon": -89.9333
+      },
+      "jurisdictions": ["Cook County, MN"],
+      "tags": ["North Shore"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "geometry": { "bbox": null },
+      "gpx": { "uri": "tracks/sht_section7.gpx", "metadata": {} }
+    }
+  ]
+}
