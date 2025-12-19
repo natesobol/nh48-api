@@ -1,0 +1,175 @@
+{
+  "id": "allegheny-trail",
+  "slug": "allegheny-trail",
+  "name": "Allegheny Trail",
+  "shortName": "ALT",
+  "type": "Trail",
+  "classification": "Long-distance hiking trail",
+  "continuity": "Continuous (30-mile roadwalk gap in southern section)",
+  "maintenance_level": "Volunteer maintained (WVSTA, moderate use)",
+  "region": "Allegheny Mountains, West Virginia",
+  "countryCodes": ["US"],
+  "stats": {
+    "distance": { "miles": 311, "kilometers": 500 },
+    "elevationHigh": { "feet": 4000, "meters": 1219 },
+    "elevationLow": { "feet": 1000, "meters": 305 },
+    "endpoints": [
+      {
+        "name": "Mason-Dixon Line (PA/WV Border)",
+        "lat": 39.720749,
+        "lon": -79.700628,
+        "elevation": 2700
+      },
+      {
+        "name": "Peters Mountain (Appalachian Trail Junction)",
+        "lat": 37.424070,
+        "lon": -80.676320,
+        "elevation": 3200
+      }
+    ]
+  },
+  "map": {
+    "center": { "lat": 38.57, "lon": -80.19 },
+    "zoom": 8,
+    "bounds": {
+      "minLat": 37.424, "maxLat": 39.721,
+      "minLon": -80.676, "maxLon": -79.45
+    }
+  },
+  "routing": {
+    "mileSystem": "north-to-south",
+    "crs": "WGS84",
+    "sectionMethod": "Official WVSTA sections (4 segments)",
+    "routeVariantPolicy": "Main route only (road connector included as official route)"
+  },
+  "sources": {
+    "organization": "WV Scenic Trails Association (WVSTA)",
+    "website": "https://www.wvscenictrails.org/allegheny-trail"
+  },
+  "sections": [
+    {
+      "id": "allegheny-01",
+      "order": 1,
+      "name": "Section 1: Mason-Dixon to Blackwater Falls",
+      "slug": "mason-dixon-blackwater",
+      "distance": { "miles": 95.1, "kilometers": 153.0 },
+      "mileRange": { "start": 0.0, "end": 95.1 },
+      "start": {
+        "name": "Northern Terminus (Mason-Dixon Line)",
+        "lat": 39.720749,
+        "lon": -79.700628
+      },
+      "end": {
+        "name": "Blackwater Falls State Park (Stables)",
+        "lat": 39.120, 
+        "lon": -79.483 
+      },
+      "jurisdictions": ["WV"],
+      "tags": ["West Virginia", "Hiking", "Moderate"],
+      "difficulty": { "rating": 3, "text": "Moderate" },
+      "geometry": {
+        "bbox": {
+          "minLat": 39.10, "maxLat": 39.72,
+          "minLon": -79.70, "maxLon": -79.48
+        }
+      },
+      "gpx": {
+        "name": "allegheny_section1.gpx",
+        "description": "GPX track for Allegheny Trail Section 1 (Mason-Dixon to Blackwater Falls)"
+      }
+    },
+    {
+      "id": "allegheny-02",
+      "order": 2,
+      "name": "Section 2: Blackwater Falls to Cass",
+      "slug": "blackwater-cass",
+      "distance": { "miles": 91.8, "kilometers": 147.7 },
+      "mileRange": { "start": 95.1, "end": 186.9 },
+      "start": {
+        "name": "Blackwater Falls State Park",
+        "lat": 39.120,
+        "lon": -79.483
+      },
+      "end": {
+        "name": "Cass Scenic Railroad (Cass, WV)",
+        "lat": 38.393,
+        "lon": -79.914
+      },
+      "jurisdictions": ["WV"],
+      "tags": ["West Virginia", "Hiking", "Moderate"],
+      "difficulty": { "rating": 3, "text": "Moderate" },
+      "geometry": {
+        "bbox": {
+          "minLat": 38.39, "maxLat": 39.12,
+          "minLon": -79.91, "maxLon": -79.48
+        }
+      },
+      "gpx": {
+        "name": "allegheny_section2.gpx",
+        "description": "GPX track for Allegheny Trail Section 2 (Blackwater Falls to Cass)"
+      }
+    },
+    {
+      "id": "allegheny-03",
+      "order": 3,
+      "name": "Section 3: Cass to Lake Sherwood",
+      "slug": "cass-lake-sherwood",
+      "distance": { "miles": 64.3, "kilometers": 103.5 },
+      "mileRange": { "start": 186.9, "end": 251.2 },
+      "start": {
+        "name": "Cass Scenic Railroad (Cass, WV)",
+        "lat": 38.393,
+        "lon": -79.914
+      },
+      "end": {
+        "name": "WV Route 14 at Lake Sherwood",
+        "lat": 38.0067,
+        "lon": -80.0105
+      },
+      "jurisdictions": ["WV"],
+      "tags": ["West Virginia", "Hiking", "Moderate"],
+      "difficulty": { "rating": 3, "text": "Moderate" },
+      "geometry": {
+        "bbox": {
+          "minLat": 38.00, "maxLat": 38.39,
+          "minLon": -80.01, "maxLon": -79.87
+        }
+      },
+      "gpx": {
+        "name": "allegheny_section3.gpx",
+        "description": "GPX track for Allegheny Trail Section 3 (Cass to Lake Sherwood)"
+      }
+    },
+    {
+      "id": "allegheny-04",
+      "order": 4,
+      "name": "Section 4: Lake Sherwood to Peters Mountain",
+      "slug": "lake-sherwood-peters-mtn",
+      "distance": { "miles": 60.2, "kilometers": 96.9 },
+      "mileRange": { "start": 251.2, "end": 311.4 },
+      "start": {
+        "name": "Lake Sherwood Recreation Area",
+        "lat": 38.0067,
+        "lon": -80.0105
+      },
+      "end": {
+        "name": "Southern Terminus (Peters Mtn AT Junction)",
+        "lat": 37.4241,
+        "lon": -80.6763
+      },
+      "jurisdictions": ["WV"],
+      "tags": ["West Virginia", "Hiking", "Strenuous"],
+      "difficulty": { "rating": 4, "text": "Strenuous" },
+      "geometry": {
+        "bbox": {
+          "minLat": 37.424, "maxLat": 38.007,
+          "minLon": -80.676, "maxLon": -80.005
+        }
+      },
+      "gpx": {
+        "name": "allegheny_section4.gpx",
+        "description": "GPX track for Allegheny Trail Section 4 (Lake Sherwood to Peters Mountain)"
+      }
+    }
+  ]
+}
