@@ -133,6 +133,26 @@
         flex-wrap:wrap;
         margin:12px 0 16px;
       }
+      .units-control{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        margin-bottom:16px;
+      }
+      .units-control label{
+        font-size:0.75rem;
+        color:var(--muted);
+        text-transform:uppercase;
+        letter-spacing:0.8px;
+      }
+      .units-control select{
+        background:var(--card);
+        color:var(--ink);
+        border:1px solid var(--stroke);
+        border-radius:10px;
+        padding:6px 10px;
+        font-size:0.85rem;
+      }
       .nh48-lang-label{
         font-size:0.75rem;
         color:var(--muted);
@@ -215,6 +235,32 @@
         margin-bottom:16px;
         position:relative;
         aspect-ratio:5/3;
+      }
+      .media-loading{
+        position:absolute;
+        inset:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:10px;
+        background:rgba(10, 10, 10, 0.6);
+        color:var(--accent);
+        z-index:4;
+      }
+      .media-loading[hidden]{
+        display:none;
+      }
+      .loading-spinner{
+        width:22px;
+        height:22px;
+        border-radius:50%;
+        border:3px solid rgba(34, 197, 94, 0.25);
+        border-top-color:var(--accent);
+        animation:spin 0.9s linear infinite;
+      }
+      .loading-text{
+        font-size:0.9rem;
+        color:var(--muted);
       }
       .carousel{
         position:relative;
@@ -438,6 +484,9 @@
         font-size:0.9rem;
         line-height:1.5;
       }
+      @keyframes spin{
+        to{ transform:rotate(360deg); }
+      }
     </style>
   </head>
   <body data-page="catalog">
@@ -482,6 +531,13 @@
           <span class="flag flag-ja" aria-hidden="true">🇯🇵</span>
         </button>
       </div>
+      <div class="units-control">
+        <label for="unitsSelect" data-i18n="common.unitsLabel">Units</label>
+        <select id="unitsSelect" data-i18n="common.units" data-i18n-attr="aria-label" aria-label="Select units">
+          <option value="feet" data-i18n="common.unitsFeet">Feet</option>
+          <option value="meters" data-i18n="common.unitsMeters">Meters</option>
+        </select>
+      </div>
       <h1 id="peakTitle" data-i18n="peak.loading">Loading…</h1>
       <div class="related-trails" id="relatedTrails" hidden>
         <h2 data-i18n="peak.relatedTrails.title">Related Trails &amp; Routes</h2>
@@ -490,6 +546,10 @@
 
       <!-- MEDIA / CAROUSEL ---------------------------------------------------->
       <div class="media" id="media" hidden>
+        <div class="media-loading" id="mediaLoading">
+          <span class="loading-spinner" aria-hidden="true"></span>
+          <span class="loading-text" data-i18n="common.loading">Loading…</span>
+        </div>
         <div class="carousel" id="carousel"></div>
         <div class="dots" id="dots"></div>
         <div class="ctrls">
@@ -533,6 +593,13 @@
       ];
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
+
+      const UNIT_STORAGE_KEY = 'nh48_units';
+      const UNITS = {
+        FEET: 'feet',
+        METERS: 'meters'
+      };
+      let currentUnits = UNITS.FEET;
 
       /* Fallback image */
       function getPlaceholder() {
@@ -600,6 +667,105 @@
           dusk: 'time.dusk'
         };
         return map[key] ? t(map[key]) : value;
+      }
+
+      const TRAIL_TYPE_TRANSLATIONS = {
+        'Loop': 'values.trailType.loop',
+        'Loop or Out & back': 'values.trailType.loop_or_out_back',
+        'Loop or traverse': 'values.trailType.loop_or_traverse',
+        'Loop or traverse along ridge': 'values.trailType.loop_or_traverse_along_ridge',
+        'Out & back': 'values.trailType.out_back',
+        'Out & back  - common.': 'values.trailType.out_back_common',
+        'Out & back  - common. or long traverse': 'values.trailType.out_back_common_or_long_traverse',
+        'Out & back  - common. or loop with connector trails': 'values.trailType.out_back_common_or_loop_with_connector_trails',
+        'Out & back  - common. or small loop including Mt Webster': 'values.trailType.out_back_common_or_small_loop_including_mt_webster',
+        'Out & back  - commonly.': 'values.trailType.out_back_commonly',
+        'Out & back or loop': 'values.trailType.out_back_or_loop',
+        'Out & back or loop  - with Tom and Willey.': 'values.trailType.out_back_or_loop_with_tom_and_willey',
+        'Out & back or loop combining trails': 'values.trailType.out_back_or_loop_combining_trails',
+        'Out & back or loop options': 'values.trailType.out_back_or_loop_options',
+        'Out & back or point-to-point traverse': 'values.trailType.out_back_or_point_to_point_traverse',
+        'Out & back or traverse': 'values.trailType.out_back_or_traverse'
+      };
+
+      const DIFFICULTY_TRANSLATIONS = {
+        'Moderate': 'values.difficulty.moderate',
+        'Moderate/Difficult': 'values.difficulty.moderate_difficult',
+        'Difficult': 'values.difficulty.difficult',
+        'Very Difficult': 'values.difficulty.very_difficult',
+        'Very difficult': 'values.difficulty.very_difficult',
+        'Extremely Difficult': 'values.difficulty.extremely_difficult'
+      };
+
+      function translateTrailType(value){
+        if(!value) return value;
+        const key = TRAIL_TYPE_TRANSLATIONS[value];
+        return key ? t(key) : value;
+      }
+
+      function translateDifficulty(value){
+        if(!value) return value;
+        const key = DIFFICULTY_TRANSLATIONS[value];
+        return key ? t(key) : value;
+      }
+
+      function translateExposure(value){
+        if(!value) return value;
+        const trimmed = String(value).trim();
+        const match = trimmed.match(/^(Low to Medium|Low|Medium|High)/i);
+        if(!match) return value;
+        const normalized = match[1].toLowerCase().replace(/\s+/g, '_');
+        const translated = t(`values.exposure.${normalized}`);
+        if(!translated || translated.startsWith('values.exposure')) return value;
+        return trimmed.replace(match[1], translated);
+      }
+
+      function formatFeetValue(value){
+        const num = numberFrom(value);
+        if(num === null) return '—';
+        if(currentUnits === UNITS.METERS){
+          return `${Math.round(num * 0.3048)} m`;
+        }
+        return `${num} ft`;
+      }
+
+      function formatDistanceMiles(value){
+        const num = numberFrom(value);
+        if(num === null) return '—';
+        if(currentUnits === UNITS.METERS){
+          return `${(num * 1.60934).toFixed(1)} km`;
+        }
+        return `${num} mi`;
+      }
+
+      function setUnits(units, { persist = true } = {}){
+        if(!Object.values(UNITS).includes(units)){
+          units = UNITS.FEET;
+        }
+        currentUnits = units;
+        const select = document.getElementById('unitsSelect');
+        if(select){
+          select.value = units;
+        }
+        if(persist){
+          localStorage.setItem(UNIT_STORAGE_KEY, units);
+        }
+      }
+
+      function syncUnitsWithLanguage(lang){
+        if(lang && lang !== 'en'){
+          setUnits(UNITS.METERS, { persist: false });
+        }else{
+          const stored = localStorage.getItem(UNIT_STORAGE_KEY);
+          setUnits(stored || UNITS.FEET, { persist: false });
+        }
+      }
+
+      function setMediaLoading(isLoading){
+        const loading = document.getElementById('mediaLoading');
+        if(loading){
+          loading.hidden = !isLoading;
+        }
       }
 
       function buildPhotoAltText(name, meta){
@@ -948,12 +1114,12 @@
         const elev = p['Elevation (ft)'];
         const prom = p['Prominence (ft)'];
 
-        body.appendChild(makeRow(t('peak.generalInfo.elevation'), elev ? `${elev}'` : '—'));
-        body.appendChild(makeRow(t('peak.generalInfo.prominence'), prom ? `${prom}'` : '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.elevation'), formatFeetValue(elev)));
+        body.appendChild(makeRow(t('peak.generalInfo.prominence'), formatFeetValue(prom)));
         body.appendChild(makeRow(t('peak.generalInfo.range'), p['Range / Subrange'] || '—'));
-        body.appendChild(makeRow(t('peak.generalInfo.trailType'), p['Trail Type'] || '—'));
-        body.appendChild(makeRow(t('peak.generalInfo.difficulty'), p['Difficulty'] || '—'));
-        body.appendChild(makeRow(t('peak.generalInfo.exposure'), p['Exposure Level'] || p['Weather Exposure Rating'] || '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.trailType'), translateTrailType(p['Trail Type']) || '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.difficulty'), translateDifficulty(p['Difficulty']) || '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.exposure'), translateExposure(p['Exposure Level'] || p['Weather Exposure Rating']) || '—'));
 
         panel.hidden = false;
       }
@@ -969,14 +1135,14 @@
         routes.forEach(r => {
           const div = document.createElement('div');
           div.className = 'info-panel';
-          const dist  = r['Distance (mi)'] || '—';
-          const gain  = r['Elevation Gain (ft)'] || '—';
-          const diff  = r['Difficulty'] || '—';
+          const dist  = formatDistanceMiles(r['Distance (mi)']);
+          const gain  = formatFeetValue(r['Elevation Gain (ft)']);
+          const diff  = translateDifficulty(r['Difficulty']) || '—';
           div.innerHTML = `
             <div class="info-label">${r['Route Name']}</div>
             <div class="info-value">
-              <strong>${t('peak.routes.distance')}:</strong> ${dist} mi • 
-              <strong>${t('peak.routes.gain')}:</strong> ${gain}' • 
+              <strong>${t('peak.routes.distance')}:</strong> ${dist} • 
+              <strong>${t('peak.routes.gain')}:</strong> ${gain} • 
               <strong>${t('peak.routes.difficulty')}:</strong> ${diff}
             </div>`;
           routesGrid.appendChild(div);
@@ -1036,7 +1202,7 @@
           { label: t('peak.conditions.bestSeasons'), value: p['Best Seasons to Hike'] },
           { label: t('peak.conditions.waterAvailability'), value: p['Water Availability'] },
           { label: t('peak.conditions.cellReception'), value: p['Cell Reception Quality'] },
-          { label: t('peak.conditions.weatherExposure'), value: p['Weather Exposure Rating'] },
+          { label: t('peak.conditions.weatherExposure'), value: translateExposure(p['Weather Exposure Rating']) },
           { label: t('peak.conditions.emergencyBailout'), value: p['Emergency Bailout Options'] },
           { label: t('peak.conditions.dogFriendly'), value: p['Dog Friendly'] },
           { label: t('peak.conditions.nearbyFeatures'), value: p['Nearby Notable Features'] }
@@ -1119,6 +1285,8 @@
         photoMetaData = meta || [];
 
         const placeholder = getPlaceholder();
+        setMediaLoading(true);
+        let firstImageResolved = false;
         if(!images || images.length === 0){
           images = [placeholder];
           photoMetaData = [{}];
@@ -1140,7 +1308,17 @@
             img.src = placeholder;
           }
 
-          img.onerror = () => { img.onerror = null; img.src = placeholder; };
+          const resolveFirstImage = () => {
+            if(firstImageResolved) return;
+            firstImageResolved = true;
+            setMediaLoading(false);
+          };
+          img.addEventListener('load', resolveFirstImage, { once: true });
+          img.onerror = () => {
+            img.onerror = null;
+            img.src = placeholder;
+            resolveFirstImage();
+          };
 
           slide.appendChild(img);
           carouselEl.appendChild(slide);
@@ -1373,7 +1551,8 @@
       window.addEventListener('load', init);
 
       if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
-        window.NH48_I18N.onLangChange(() => {
+        window.NH48_I18N.onLangChange((lang) => {
+          syncUnitsWithLanguage(lang);
           if (!currentPeak) return;
           const name = currentPeak.peakName || currentPeak['Peak Name'] || currentSlug;
           updateHeadMeta(currentPeak, currentSlug, name);
@@ -1389,6 +1568,19 @@
           }
         });
       }
+
+      const unitsSelect = document.getElementById('unitsSelect');
+      if(unitsSelect){
+        unitsSelect.addEventListener('change', (e) => {
+          setUnits(e.target.value);
+          if (!currentPeak) return;
+          buildGeneralInfo(currentPeak);
+          const routes = currentPeak['Standard Routes'] || [];
+          renderRoutes(routes);
+        });
+      }
+
+      syncUnitsWithLanguage(window.NH48_I18N ? window.NH48_I18N.getLang() : 'en');
     </script>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";

@@ -162,6 +162,30 @@ input[list]::-webkit-list-button {
   padding:6px 10px;
   font-size:0.9rem;
 }
+.loading-indicator{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  color:var(--accent);
+  font-weight:600;
+  padding:24px 0;
+}
+.loading-indicator[hidden]{
+  display:none;
+}
+.loading-spinner{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  border:3px solid rgba(34, 197, 94, 0.25);
+  border-top-color:var(--accent);
+  animation:spin 0.9s linear infinite;
+}
+.loading-text{
+  font-size:0.9rem;
+  color:var(--muted);
+}
 .nh48-lang{
   display:flex;
   align-items:center;
@@ -334,4 +358,8 @@ input[list]::-webkit-list-button {
 .pagination button:disabled{
   opacity:0.5;
   cursor:default;
+}
+
+@keyframes spin{
+  to{ transform:rotate(360deg); }
 }
