@@ -6,6 +6,7 @@ const path = require('path');
 const DATA_DIR = path.join(__dirname, '..', 'data', 'long-trails');
 const OUTPUT_INDEX = path.join(__dirname, '..', 'data', 'long-trails-index.json');
 const OUTPUT_FULL = path.join(__dirname, '..', 'data', 'long-trails-full.json');
+const OUTPUT_MANIFEST = path.join(__dirname, '..', 'data', 'long-trails-manifest.json');
 
 const TRAIL_COLORS = {
   'appalachian-trail': '#008A5E',
@@ -72,6 +73,24 @@ function normalizeBounds(input){
   return null;
 }
 
+function normalizePoint(point){
+  if(!point){
+    return null;
+  }
+  if(Array.isArray(point) && point.length >= 2){
+    const [lat, lon] = point;
+    return { lat: toNumber(lat), lon: toNumber(lon) };
+  }
+  if(point.coordinates && Array.isArray(point.coordinates) && point.coordinates.length >= 2){
+    const [lat, lon] = point.coordinates;
+    return { ...point, lat: toNumber(lat), lon: toNumber(lon) };
+  }
+  if(point.lat != null || point.lon != null){
+    return { ...point, lat: toNumber(point.lat), lon: toNumber(point.lon) };
+  }
+  return { ...point };
+}
+
 function mergeBounds(a, b){
   if(!a) return b;
   if(!b) return a;
@@ -104,12 +123,15 @@ function normalizeEndpoints(stats){
   const endpoints = stats.endpoints;
   if(Array.isArray(endpoints) && endpoints.length >= 2){
     return {
-      start: endpoints[0],
-      end: endpoints[endpoints.length - 1]
+      start: normalizePoint(endpoints[0]),
+      end: normalizePoint(endpoints[endpoints.length - 1])
     };
   }
   if(typeof endpoints === 'object'){
-    return endpoints;
+    return {
+      start: normalizePoint(endpoints.start),
+      end: normalizePoint(endpoints.end)
+    };
   }
   return null;
 }
@@ -148,9 +170,9 @@ function sectionCenter(section){
 }
 
 function normalizeSection(section, index, trailSlug){
-  const start = section.start || null;
-  const end = section.end || null;
-  const bounds = normalizeBounds(section.geometry || section.bounds || section.bbox);
+  const start = normalizePoint(section.start) || null;
+  const end = normalizePoint(section.end) || null;
+  const bounds = normalizeBounds(section.geometry || section.bounds || section.bbox || section.bounding_box);
   const pointBounds = boundsFromPoints([
     start && { lat: toNumber(start.lat), lon: toNumber(start.lon) },
     end && { lat: toNumber(end.lat), lon: toNumber(end.lon) }
@@ -167,7 +189,8 @@ function normalizeSection(section, index, trailSlug){
     end,
     bounds: mergedBounds,
     center,
-    distanceMiles: normalizeDistance(section.distance)
+    distanceMiles: normalizeDistance(section.distance ?? section.mileage ?? section.miles ?? section.length),
+    difficulty: typeof section.difficulty === 'string' ? { rating: section.difficulty } : section.difficulty
   };
 }
 
@@ -191,6 +214,7 @@ function buildIndex(){
     const slug = trail.slug || trail.id || path.basename(file, '.json');
     const color = resolveColor(slug, usedColors, index);
     colors[slug] = color;
+    const trailEndpoints = normalizeEndpoints({ endpoints: trail.endpoints || trail.stats?.endpoints });
     const normalizedSections = (trail.sections || []).map((section, sectionIndex) => {
       return normalizeSection(section, sectionIndex, slug);
     }).sort((a, b) => {
@@ -211,8 +235,10 @@ function buildIndex(){
       color,
       stats: {
         ...trail.stats,
-        endpoints: normalizeEndpoints(trail.stats)
+        endpoints: normalizeEndpoints(trail.stats),
+        officialLength: trail.stats?.officialLength ?? trail.stats?.length_mi ?? trail.stats?.length ?? trail.stats?.distance
       },
+      endpoints: trailEndpoints,
       map: {
         ...trail.map,
         bounds: normalizeBounds(trail.map && (trail.map.bbox || trail.map.bounds))
@@ -241,12 +267,19 @@ function buildIndex(){
     trails
   };
 
-  return { index, full };
+  const manifest = {
+    generatedAt: new Date().toISOString(),
+    files: files.sort()
+  };
+
+  return { index, full, manifest };
 }
 
 const output = buildIndex();
 fs.writeFileSync(OUTPUT_INDEX, JSON.stringify(output.index, null, 2));
 fs.writeFileSync(OUTPUT_FULL, JSON.stringify(output.full, null, 2));
+fs.writeFileSync(OUTPUT_MANIFEST, JSON.stringify(output.manifest, null, 2));
 
 console.log(`Wrote ${OUTPUT_INDEX}`);
 console.log(`Wrote ${OUTPUT_FULL}`);
+console.log(`Wrote ${OUTPUT_MANIFEST}`);
