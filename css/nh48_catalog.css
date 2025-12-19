@@ -114,7 +114,7 @@ header p{
   height:40px;
   padding:0 14px;
   font-size:16px;
-  border:1px solid #ffffff;
+  border:2px solid #ffffff;
   border-radius:10px;
   background:var(--card);
   color:var(--ink);
@@ -151,13 +151,13 @@ input[list]::-webkit-list-button {
 }
 .controls label{
   font-size:0.85rem;
-  color:var(--muted);
+  color:#ffffff;
   margin-right:4px;
 }
 .controls select{
   background:var(--card);
   color:var(--ink);
-  border:1px solid var(--stroke);
+  border:2px solid #ffffff;
   border-radius:10px;
   padding:6px 10px;
   font-size:0.9rem;
@@ -194,7 +194,7 @@ input[list]::-webkit-list-button {
 }
 .nh48-lang-label{
   font-size:0.75rem;
-  color:var(--muted);
+  color:#ffffff;
   text-transform:uppercase;
   letter-spacing:0.8px;
   margin-right:4px;
@@ -203,7 +203,7 @@ input[list]::-webkit-list-button {
   width:34px;
   height:34px;
   border-radius:8px;
-  border:1px solid var(--stroke);
+  border:2px solid #ffffff;
   background:var(--card);
   color:var(--ink);
   display:flex;
@@ -252,7 +252,7 @@ input[list]::-webkit-list-button {
 
 .card{
   background:var(--card);
-  border:1px solid #ffffff;
+  border:2px solid #ffffff;
   border-radius:12px;
   overflow:hidden;
   cursor:pointer;
