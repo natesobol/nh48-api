@@ -1,0 +1,255 @@
+{
+  "common": {
+    "language": "Language",
+    "languagePicker": "Language picker",
+    "loading": "Loading…",
+    "errorLoading": "Error loading data",
+    "noResults": "No results found.",
+    "noImage": "no image",
+    "unknown": "Unknown",
+    "notAvailable": "Not available"
+  },
+  "nav": {
+    "logoAlt": "NH48 API logo",
+    "tagline": "Open data & structured metadata for New Hampshire’s 4,000-foot peaks.",
+    "catalog": "Catalog",
+    "trails": "WMNF Trails",
+    "pics": "NH48 Pics",
+    "peakBagger": "Peak Bagger",
+    "login": "Log in",
+    "viewProfile": "View profile"
+  },
+  "catalog": {
+    "title": "NH48 Peak Catalog",
+    "intro": "Browse New Hampshire's forty-eight 4000-footers. Click a peak to view more details. If errors occur, details will appear below. Open API and datasets for New Hampshire’s 4,000-foot mountains.",
+    "search": {
+      "placeholder": "Search peaks by name…",
+      "ariaLabel": "Search peaks by name"
+    },
+    "sort": {
+      "label": "Sort by:",
+      "ariaLabel": "Sort peaks by attribute",
+      "name": "Name (A–Z)",
+      "elevAsc": "Elevation ↑",
+      "elevDesc": "Elevation ↓",
+      "promAsc": "Prominence ↑",
+      "promDesc": "Prominence ↓",
+      "diffAsc": "Difficulty A–Z",
+      "diffDesc": "Difficulty Z–A",
+      "rangeAsc": "Range A–Z",
+      "trailAsc": "Trail Type A–Z",
+      "exposureAsc": "Exposure A–Z"
+    },
+    "filter": {
+      "label": "Filter by:",
+      "ariaLabel": "Select field to filter peaks",
+      "none": "None",
+      "range": "Range",
+      "difficulty": "Difficulty",
+      "trail": "Trail Type",
+      "exposure": "Exposure"
+    },
+    "value": {
+      "label": "Value:",
+      "ariaLabel": "Select value for chosen filter",
+      "all": "All"
+    },
+    "columns": {
+      "label": "Columns:",
+      "ariaLabel": "Select number of catalog columns"
+    },
+    "empty": "No peaks found.",
+    "error": "Error loading peaks",
+    "card": {
+      "elevation": "Elevation",
+      "prominence": "Prominence",
+      "range": "Range",
+      "trailType": "Trail Type",
+      "difficulty": "Difficulty",
+      "exposure": "Exposure"
+    }
+  },
+  "photo": {
+    "altTemplate": "{peak} photo — {season} {timeOfDay}"
+  },
+  "season": {
+    "spring": "spring",
+    "summer": "summer",
+    "fall": "fall",
+    "autumn": "autumn",
+    "winter": "winter"
+  },
+  "time": {
+    "sunrise": "sunrise",
+    "sunset": "sunset",
+    "morning": "morning",
+    "afternoon": "afternoon",
+    "evening": "evening",
+    "night": "night",
+    "day": "day",
+    "dawn": "dawn",
+    "dusk": "dusk"
+  },
+  "peak": {
+    "back": "Back to NH48 Peak Catalog",
+    "loading": "Loading…",
+    "relatedTrails": {
+      "title": "Related Trails & Routes",
+      "none": "No related trails listed yet.",
+      "link": "{name} route"
+    },
+    "section": {
+      "routes": "Hiking Routes",
+      "trails": "Associated Trails",
+      "terrain": "Trail & Terrain",
+      "conditions": "Conditions & Access"
+    },
+    "carousel": {
+      "prev": "Previous image",
+      "next": "Next image"
+    },
+    "metadata": {
+      "title": "Current Photo Metadata",
+      "notAvailable": "Not available",
+      "moreDetails": "More details ▾",
+      "lessDetails": "Less details ▴",
+      "labels": {
+        "season": "Season",
+        "timeOfDay": "Time of Day",
+        "orientation": "Orientation",
+        "captureDate": "Capture Date",
+        "cameraMaker": "Camera Maker",
+        "cameraModel": "Camera Model",
+        "camera": "Camera",
+        "lens": "Lens",
+        "fStop": "F Stop",
+        "shutterSpeed": "Shutter Speed",
+        "iso": "ISO",
+        "exposureBias": "Exposure Bias",
+        "focalLength": "Focal Length",
+        "flashMode": "Flash Mode",
+        "meteringMode": "Metering Mode",
+        "maxAperture": "Max Aperture",
+        "author": "Author",
+        "dimensions": "Dimensions",
+        "fileSize": "File Size",
+        "fileCreateDate": "File Create Date",
+        "fileModifiedDate": "File Modified Date",
+        "rating": "Rating",
+        "metadata": "Metadata"
+      }
+    },
+    "generalInfo": {
+      "title": "General Peak Info",
+      "elevation": "Elevation",
+      "prominence": "Prominence",
+      "range": "Range",
+      "trailType": "Trail Type",
+      "difficulty": "Difficulty",
+      "exposure": "Exposure"
+    },
+    "routes": {
+      "distance": "Distance",
+      "gain": "Gain",
+      "difficulty": "Difficulty"
+    },
+    "trailList": {
+      "title": "Trail List"
+    },
+    "terrain": {
+      "terrain": "Terrain",
+      "scramble": "Scramble",
+      "view": "View"
+    },
+    "conditions": {
+      "bestSeasons": "Best Seasons",
+      "waterAvailability": "Water Availability",
+      "cellReception": "Cell Reception",
+      "weatherExposure": "Weather Exposure",
+      "emergencyBailout": "Emergency Bailout",
+      "dogFriendly": "Dog Friendly",
+      "nearbyFeatures": "Nearby Features"
+    },
+    "errorLoading": "Error loading peak",
+    "meta": {
+      "titleTemplate": "{name} ({elevation} ft) – NH48",
+      "descriptionTemplate": "{name} – {elevation} ft high, {prominence} ft prominence, in the {range}. Routes, difficulty, and photos for this 4,000-footer."
+    }
+  },
+  "trails": {
+    "title": "🏔️ WMNF Trails API Map Tool",
+    "subtitle": "Open peak, trail, and route data structure for the White Mountains.",
+    "intro": "White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.",
+    "details": {
+      "title": "Trail details",
+      "empty": "Select a trail to view distance, elevation, and OpenStreetMap details."
+    },
+    "search": {
+      "placeholder": "Search trails…"
+    },
+    "sort": {
+      "az": "Sort A → Z",
+      "za": "Sort Z → A"
+    },
+    "jumpTo": "Jump To:",
+    "list": {
+      "headerName": "Trail Name",
+      "headerCompleted": "Completed",
+      "noMatches": "No trails found. Try a different search.",
+      "noTrails": "No trails available."
+    },
+    "loading": "Loading trails...",
+    "about": {
+      "title": "About this list",
+      "body": "NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths."
+    },
+    "disclaimer": {
+      "title": "Disclaimer",
+      "body": "This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry."
+    },
+    "howto": {
+      "title": "How to use",
+      "body": "Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below."
+    },
+    "settings": {
+      "title": "Settings",
+      "hideCompleted": "Hide completed trails",
+      "clearProgress": "Clear all progress"
+    },
+    "export": "Export CSV",
+    "import": "Import",
+    "viewApi": "View API",
+    "resizePanels": "Resize panels",
+    "info": {
+      "noProperties": "No additional trail properties available yet. Properties will be populated from OpenStreetMap data.",
+      "loadingProperties": "Loading additional trail properties from OpenStreetMap...",
+      "sourceNote": "Information sourced from OpenStreetMap where available.",
+      "distance": "Distance",
+      "elevationGain": "Elevation Gain",
+      "minElevation": "Min Elevation",
+      "maxElevation": "Max Elevation",
+      "surface": "Surface",
+      "trailType": "Trail Type",
+      "difficulty": "Difficulty",
+      "visibility": "Visibility",
+      "width": "Width",
+      "allowedUses": "Allowed Uses",
+      "season": "Season",
+      "maintainer": "Maintainer",
+      "source": "Source"
+    },
+    "virtualHike": "Virtual Hike",
+    "unnamedTrail": "Unnamed trail",
+    "confirmClear": "Are you sure you want to clear all progress?",
+    "alertLoadFail": "Unable to load trail data. Please ensure you have internet connectivity and try refreshing the page.",
+    "csv": {
+      "headerTrail": "Trail",
+      "headerCompleted": "Completed",
+      "headerDate": "Date",
+      "filename": "trail-progress.csv"
+    },
+    "map": {
+      "attribution": "Map data: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    }
+  }
+}

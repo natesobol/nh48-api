@@ -1,0 +1,255 @@
+{
+  "common": {
+    "language": "Sprache",
+    "languagePicker": "Sprachauswahl",
+    "loading": "Wird geladen…",
+    "errorLoading": "Fehler beim Laden der Daten",
+    "noResults": "Keine Ergebnisse gefunden.",
+    "noImage": "kein Bild",
+    "unknown": "Unbekannt",
+    "notAvailable": "Nicht verfügbar"
+  },
+  "nav": {
+    "logoAlt": "NH48 API-Logo",
+    "tagline": "Offene Daten und strukturierte Metadaten für die 4.000-Fuß-Gipfel in New Hampshire.",
+    "catalog": "Katalog",
+    "trails": "WMNF Trails",
+    "pics": "NH48 Pics",
+    "peakBagger": "Peak Bagger",
+    "login": "Anmelden",
+    "viewProfile": "Profil ansehen"
+  },
+  "catalog": {
+    "title": "NH48-Gipfelkatalog",
+    "intro": "Durchstöbern Sie New Hampshires achtundvierzig 4.000-Fuß-Gipfel. Klicken Sie auf einen Gipfel, um mehr Details zu sehen. Bei Fehlern erscheinen die Details unten. Offene API und Datensätze für New Hampshires 4.000-Fuß-Berge.",
+    "search": {
+      "placeholder": "Gipfel nach Namen suchen…",
+      "ariaLabel": "Gipfel nach Namen suchen"
+    },
+    "sort": {
+      "label": "Sortieren nach:",
+      "ariaLabel": "Gipfel nach Attribut sortieren",
+      "name": "Name (A–Z)",
+      "elevAsc": "Höhe ↑",
+      "elevDesc": "Höhe ↓",
+      "promAsc": "Prominenz ↑",
+      "promDesc": "Prominenz ↓",
+      "diffAsc": "Schwierigkeit A–Z",
+      "diffDesc": "Schwierigkeit Z–A",
+      "rangeAsc": "Gebirge A–Z",
+      "trailAsc": "Wegtyp A–Z",
+      "exposureAsc": "Exposition A–Z"
+    },
+    "filter": {
+      "label": "Filtern nach:",
+      "ariaLabel": "Feld zum Filtern auswählen",
+      "none": "Keine",
+      "range": "Gebirge",
+      "difficulty": "Schwierigkeit",
+      "trail": "Wegtyp",
+      "exposure": "Exposition"
+    },
+    "value": {
+      "label": "Wert:",
+      "ariaLabel": "Wert für Filter auswählen",
+      "all": "Alle"
+    },
+    "columns": {
+      "label": "Spalten:",
+      "ariaLabel": "Anzahl der Spalten auswählen"
+    },
+    "empty": "Keine Gipfel gefunden.",
+    "error": "Fehler beim Laden der Gipfel",
+    "card": {
+      "elevation": "Höhe",
+      "prominence": "Prominenz",
+      "range": "Gebirge",
+      "trailType": "Wegtyp",
+      "difficulty": "Schwierigkeit",
+      "exposure": "Exposition"
+    }
+  },
+  "photo": {
+    "altTemplate": "{peak} Foto — {season} {timeOfDay}"
+  },
+  "season": {
+    "spring": "Frühling",
+    "summer": "Sommer",
+    "fall": "Herbst",
+    "autumn": "Herbst",
+    "winter": "Winter"
+  },
+  "time": {
+    "sunrise": "Sonnenaufgang",
+    "sunset": "Sonnenuntergang",
+    "morning": "Morgen",
+    "afternoon": "Nachmittag",
+    "evening": "Abend",
+    "night": "Nacht",
+    "day": "Tag",
+    "dawn": "Morgendämmerung",
+    "dusk": "Abenddämmerung"
+  },
+  "peak": {
+    "back": "Zurück zum NH48-Gipfelkatalog",
+    "loading": "Wird geladen…",
+    "relatedTrails": {
+      "title": "Verwandte Wege & Routen",
+      "none": "Noch keine verwandten Wege aufgeführt.",
+      "link": "{name}-Route"
+    },
+    "section": {
+      "routes": "Wanderrouten",
+      "trails": "Zugehörige Wege",
+      "terrain": "Weg & Gelände",
+      "conditions": "Bedingungen & Zugang"
+    },
+    "carousel": {
+      "prev": "Vorheriges Bild",
+      "next": "Nächstes Bild"
+    },
+    "metadata": {
+      "title": "Aktuelle Foto-Metadaten",
+      "notAvailable": "Nicht verfügbar",
+      "moreDetails": "Mehr Details ▾",
+      "lessDetails": "Weniger Details ▴",
+      "labels": {
+        "season": "Jahreszeit",
+        "timeOfDay": "Tageszeit",
+        "orientation": "Ausrichtung",
+        "captureDate": "Aufnahmedatum",
+        "cameraMaker": "Kamerahersteller",
+        "cameraModel": "Kameramodell",
+        "camera": "Kamera",
+        "lens": "Objektiv",
+        "fStop": "Blende",
+        "shutterSpeed": "Verschlusszeit",
+        "iso": "ISO",
+        "exposureBias": "Belichtungskorrektur",
+        "focalLength": "Brennweite",
+        "flashMode": "Blitzmodus",
+        "meteringMode": "Messmodus",
+        "maxAperture": "Max. Blende",
+        "author": "Autor",
+        "dimensions": "Abmessungen",
+        "fileSize": "Dateigröße",
+        "fileCreateDate": "Dateierstellung",
+        "fileModifiedDate": "Dateiänderung",
+        "rating": "Bewertung",
+        "metadata": "Metadaten"
+      }
+    },
+    "generalInfo": {
+      "title": "Allgemeine Gipfelinfo",
+      "elevation": "Höhe",
+      "prominence": "Prominenz",
+      "range": "Gebirge",
+      "trailType": "Wegtyp",
+      "difficulty": "Schwierigkeit",
+      "exposure": "Exposition"
+    },
+    "routes": {
+      "distance": "Distanz",
+      "gain": "Höhengewinn",
+      "difficulty": "Schwierigkeit"
+    },
+    "trailList": {
+      "title": "Wege-Liste"
+    },
+    "terrain": {
+      "terrain": "Gelände",
+      "scramble": "Kraxeln",
+      "view": "Aussicht"
+    },
+    "conditions": {
+      "bestSeasons": "Beste Jahreszeiten",
+      "waterAvailability": "Wasserverfügbarkeit",
+      "cellReception": "Mobilfunkempfang",
+      "weatherExposure": "Wettereinfluss",
+      "emergencyBailout": "Notausstieg",
+      "dogFriendly": "Hundefreundlich",
+      "nearbyFeatures": "Nahegelegene Merkmale"
+    },
+    "errorLoading": "Fehler beim Laden des Gipfels",
+    "meta": {
+      "titleTemplate": "{name} ({elevation} ft) – NH48",
+      "descriptionTemplate": "{name} – {elevation} ft hoch, {prominence} ft Prominenz, in {range}. Routen, Schwierigkeit und Fotos dieses 4.000-Fuß-Gipfels."
+    }
+  },
+  "trails": {
+    "title": "🏔️ WMNF Trails API-Kartentool",
+    "subtitle": "Offene Datenstruktur für Gipfel, Wege und Routen der White Mountains.",
+    "intro": "White Mountain National Forest — zusammengestellt von Nate Sobol. Nutzen Sie dies als schnellen Wegfinder und Fortschrittstracker. Offene API und Datensätze für New Hampshires 4.000-Fuß-Berge.",
+    "details": {
+      "title": "Wegdetails",
+      "empty": "Wählen Sie einen Weg, um Distanz, Höhenmeter und OpenStreetMap-Details zu sehen."
+    },
+    "search": {
+      "placeholder": "Wege suchen…"
+    },
+    "sort": {
+      "az": "Sortieren A → Z",
+      "za": "Sortieren Z → A"
+    },
+    "jumpTo": "Springen zu:",
+    "list": {
+      "headerName": "Wegname",
+      "headerCompleted": "Abgeschlossen",
+      "noMatches": "Keine Wege gefunden. Bitte andere Suche.",
+      "noTrails": "Keine Wege verfügbar."
+    },
+    "loading": "Wege werden geladen...",
+    "about": {
+      "title": "Über diese Liste",
+      "body": "NH Tracing, Redlining und White Mountain Trails beziehen sich auf dieselbe Wegesammlung im Guidebook. Egal welcher Name genutzt wird, das Ziel ist dasselbe: diese Wege zu erleben."
+    },
+    "disclaimer": {
+      "title": "Haftungsausschluss",
+      "body": "Diese Seite ist <strong>nicht für Planung oder Navigation gedacht</strong>. Wegdaten können kleine Fehler oder Ungenauigkeiten enthalten, und diese Sammlung ist nicht die offizielle Liste (enthält aber die meisten bekannten Wege). Bitte nutzen Sie offizielle Quellen und seien Sie im Gelände vorsichtig."
+    },
+    "howto": {
+      "title": "So funktioniert’s",
+      "body": "Nutzen Sie die grünen Kreise, um einen Weg als abgeschlossen zu markieren. Danach tippen Sie auf das Kalender-Symbol, um ein Abschlussdatum hinzuzufügen — das Datum ersetzt das Symbol und kann durch Antippen wieder bearbeitet werden. Ihr Fortschritt wird lokal im Browser gespeichert. Sie können Ihren Fortschritt mit den Schaltflächen unten exportieren oder importieren."
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "hideCompleted": "Abgeschlossene Wege ausblenden",
+      "clearProgress": "Gesamten Fortschritt löschen"
+    },
+    "export": "CSV exportieren",
+    "import": "Importieren",
+    "viewApi": "API ansehen",
+    "resizePanels": "Paneele anpassen",
+    "info": {
+      "noProperties": "Noch keine zusätzlichen Weg-Eigenschaften verfügbar. Sie werden aus OpenStreetMap-Daten ergänzt.",
+      "loadingProperties": "Zusätzliche Eigenschaften werden aus OpenStreetMap geladen...",
+      "sourceNote": "Informationen aus OpenStreetMap, sofern verfügbar.",
+      "distance": "Distanz",
+      "elevationGain": "Höhengewinn",
+      "minElevation": "Min. Höhe",
+      "maxElevation": "Max. Höhe",
+      "surface": "Untergrund",
+      "trailType": "Wegtyp",
+      "difficulty": "Schwierigkeit",
+      "visibility": "Sichtbarkeit",
+      "width": "Breite",
+      "allowedUses": "Erlaubte Nutzungen",
+      "season": "Jahreszeit",
+      "maintainer": "Betreuer",
+      "source": "Quelle"
+    },
+    "virtualHike": "Virtuelle Wanderung",
+    "unnamedTrail": "Unbenannter Weg",
+    "confirmClear": "Möchten Sie wirklich den gesamten Fortschritt löschen?",
+    "alertLoadFail": "Wegdaten konnten nicht geladen werden. Bitte prüfen Sie Ihre Internetverbindung und laden Sie die Seite neu.",
+    "csv": {
+      "headerTrail": "Weg",
+      "headerCompleted": "Abgeschlossen",
+      "headerDate": "Datum",
+      "filename": "weg-fortschritt.csv"
+    },
+    "map": {
+      "attribution": "Kartendaten: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> Mitwirkende, SRTM | Kartenstil: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    }
+  }
+}

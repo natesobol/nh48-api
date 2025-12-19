@@ -23,6 +23,7 @@
     <title>NH48 Peak Catalog – Data &amp; photos for New Hampshire’s 4000-footers</title>
     <link rel="icon" type="image/png" href="../nh48API_logo.png">
     <link rel="stylesheet" href="../css/nh48_catalog.css">
+    <script src="../js/i18n.js"></script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -79,67 +80,90 @@
     </script>
     <div class="wrap">
       <header>
-        <h1>NH48 Peak Catalog</h1>
-        <p>Browse New Hampshire's forty-eight 4000-footers. Click a peak to view more details. If errors occur, details will appear below. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
+        <h1 data-i18n="catalog.title">NH48 Peak Catalog</h1>
+        <p data-i18n="catalog.intro">Browse New Hampshire's forty-eight 4000-footers. Click a peak to view more details. If errors occur, details will appear below. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
       </header>
 
       <!-- search with datalist for suggestions -->
       <div class="search">
-        <input type="text" id="searchInput" list="nameSuggestions" placeholder="Search peaks by name…" aria-label="Search peaks by name" />
+        <input type="text" id="searchInput" list="nameSuggestions" data-i18n="catalog.search" data-i18n-attr="placeholder,aria-label" placeholder="Search peaks by name…" aria-label="Search peaks by name" />
         <datalist id="nameSuggestions"></datalist>
       </div>
 
       <!-- controls for sorting, filtering, and columns (desktop only) -->
       <div class="controls">
         <div class="control">
-          <label for="sortSelect">Sort by:</label>
-          <select id="sortSelect" aria-label="Sort peaks by attribute">
-            <option value="name">Name (A–Z)</option>
-            <option value="elev-asc">Elevation ↑</option>
-            <option value="elev-desc">Elevation ↓</option>
-            <option value="prom-asc">Prominence ↑</option>
-            <option value="prom-desc">Prominence ↓</option>
-            <option value="difficulty-asc">Difficulty A–Z</option>
-            <option value="difficulty-desc">Difficulty Z–A</option>
-            <option value="range-asc">Range A–Z</option>
-            <option value="trail-asc">Trail Type A–Z</option>
-            <option value="exposure-asc">Exposure A–Z</option>
+          <label for="sortSelect" data-i18n="catalog.sort.label">Sort by:</label>
+          <select id="sortSelect" data-i18n="catalog.sort" data-i18n-attr="aria-label" aria-label="Sort peaks by attribute">
+            <option value="name" data-i18n="catalog.sort.name">Name (A–Z)</option>
+            <option value="elev-asc" data-i18n="catalog.sort.elevAsc">Elevation ↑</option>
+            <option value="elev-desc" data-i18n="catalog.sort.elevDesc">Elevation ↓</option>
+            <option value="prom-asc" data-i18n="catalog.sort.promAsc">Prominence ↑</option>
+            <option value="prom-desc" data-i18n="catalog.sort.promDesc">Prominence ↓</option>
+            <option value="difficulty-asc" data-i18n="catalog.sort.diffAsc">Difficulty A–Z</option>
+            <option value="difficulty-desc" data-i18n="catalog.sort.diffDesc">Difficulty Z–A</option>
+            <option value="range-asc" data-i18n="catalog.sort.rangeAsc">Range A–Z</option>
+            <option value="trail-asc" data-i18n="catalog.sort.trailAsc">Trail Type A–Z</option>
+            <option value="exposure-asc" data-i18n="catalog.sort.exposureAsc">Exposure A–Z</option>
           </select>
         </div>
 
         <!-- Two-tier filter: choose field + value -->
         <div class="control">
-          <label for="filterField">Filter by:</label>
-          <select id="filterField" aria-label="Select field to filter peaks">
-            <option value="">None</option>
-            <option value="range">Range</option>
-            <option value="difficulty">Difficulty</option>
-            <option value="trail">Trail Type</option>
-            <option value="exposure">Exposure</option>
+          <label for="filterField" data-i18n="catalog.filter.label">Filter by:</label>
+          <select id="filterField" data-i18n="catalog.filter" data-i18n-attr="aria-label" aria-label="Select field to filter peaks">
+            <option value="" data-i18n="catalog.filter.none">None</option>
+            <option value="range" data-i18n="catalog.filter.range">Range</option>
+            <option value="difficulty" data-i18n="catalog.filter.difficulty">Difficulty</option>
+            <option value="trail" data-i18n="catalog.filter.trail">Trail Type</option>
+            <option value="exposure" data-i18n="catalog.filter.exposure">Exposure</option>
           </select>
         </div>
         <div class="control">
-          <label for="filterValue">Value:</label>
-          <select id="filterValue" disabled aria-label="Select value for chosen filter">
-            <option value="">All</option>
+          <label for="filterValue" data-i18n="catalog.value.label">Value:</label>
+          <select id="filterValue" data-i18n="catalog.value" data-i18n-attr="aria-label" disabled aria-label="Select value for chosen filter">
+            <option value="" data-i18n="catalog.value.all">All</option>
           </select>
         </div>
 
         <!-- Column selector -->
         <div class="control column-selector-control">
-          <label for="columnSelect">Columns:</label>
-          <select id="columnSelect" aria-label="Select number of catalog columns">
+          <label for="columnSelect" data-i18n="catalog.columns.label">Columns:</label>
+          <select id="columnSelect" data-i18n="catalog.columns" data-i18n-attr="aria-label" aria-label="Select number of catalog columns">
             <option value="2">2</option>
             <option value="3" selected>3</option>
             <option value="4">4</option>
             <option value="5">5</option>
           </select>
         </div>
+        <div class="control nh48-lang-control">
+          <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
+            <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
+            <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
+              <span class="flag flag-en" aria-hidden="true">🇺🇸</span>
+            </button>
+            <button class="nh48-flag" data-lang="es" aria-label="Español" title="Español">
+              <span class="flag flag-es" aria-hidden="true">🇪🇸</span>
+            </button>
+            <button class="nh48-flag" data-lang="fr" aria-label="Français" title="Français">
+              <span class="flag flag-fr" aria-hidden="true">🇫🇷</span>
+            </button>
+            <button class="nh48-flag" data-lang="de" aria-label="Deutsch" title="Deutsch">
+              <span class="flag flag-de" aria-hidden="true">🇩🇪</span>
+            </button>
+            <button class="nh48-flag" data-lang="zh" aria-label="中文" title="中文">
+              <span class="flag flag-zh" aria-hidden="true">🇨🇳</span>
+            </button>
+            <button class="nh48-flag" data-lang="ja" aria-label="日本語" title="日本語">
+              <span class="flag flag-ja" aria-hidden="true">🇯🇵</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div id="grid" class="grid"></div>
       <nav id="pagination" class="pagination"></nav>
-      <div id="emptyMessage" class="empty" hidden>No peaks found.</div>
+      <div id="emptyMessage" class="empty" data-i18n="catalog.empty" hidden>No peaks found.</div>
     </div>
 
     <script>
@@ -149,10 +173,13 @@
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
 
-      // Placeholder image when no photo is available
-      const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">no image</text></svg>`
-      );
+      const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
+
+      function getPlaceholder() {
+        return 'data:image/svg+xml;utf8,' + encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">${t('common.noImage')}</text></svg>`
+        );
+      }
 
       // Pagination
       const ITEMS_PER_PAGE = 30;
@@ -214,24 +241,54 @@
         throw new Error('All API endpoints failed');
       }
 
+      function normalizeToken(value){
+        return String(value || '').trim().toLowerCase();
+      }
+
+      function translateSeason(value){
+        const key = normalizeToken(value);
+        const map = {
+          spring: 'season.spring',
+          summer: 'season.summer',
+          fall: 'season.fall',
+          autumn: 'season.autumn',
+          winter: 'season.winter'
+        };
+        return map[key] ? t(map[key]) : value;
+      }
+
+      function translateTimeOfDay(value){
+        const key = normalizeToken(value);
+        const map = {
+          sunrise: 'time.sunrise',
+          sunset: 'time.sunset',
+          morning: 'time.morning',
+          afternoon: 'time.afternoon',
+          evening: 'time.evening',
+          night: 'time.night',
+          day: 'time.day',
+          dawn: 'time.dawn',
+          dusk: 'time.dusk'
+        };
+        return map[key] ? t(map[key]) : value;
+      }
+
       function buildPhotoAlt(p, photo){
         if(photo && typeof photo === 'object'){
-          const parts = [p.peakName];
-          if(photo.caption){
-            parts.push(photo.caption);
+          const explicit = photo.alt && String(photo.alt).trim();
+          if(explicit){
+            return explicit;
           }
-          if(photo.season){
-            parts.push(photo.season);
-          }
-          if(photo.timeOfDay){
-            parts.push(photo.timeOfDay);
-          }
-          if(photo.orientation){
-            parts.push(`${photo.orientation} orientation`);
-          }
-          return parts.filter(Boolean).join(' — ');
+          const season = photo.season ? translateSeason(photo.season) : '';
+          const timeOfDay = photo.timeOfDay ? translateTimeOfDay(photo.timeOfDay) : '';
+          const text = t('photo.altTemplate', {
+            peak: p.peakName,
+            season: season ? `${season}` : '',
+            timeOfDay: timeOfDay ? `${timeOfDay}` : ''
+          }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
+          return text.replace(/\s—\s$/, '').replace(/\s$/, '').replace(/—\s*$/, '').trim();
         }
-        return `${p.peakName} photo`;
+        return t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
       }
 
       function createCard(p){
@@ -239,8 +296,8 @@
         card.className = 'card';
 
         // Thumbnail
-        let thumbSrc = PLACEHOLDER;
-        let thumbAlt = `${p.peakName} thumbnail photo`;
+        let thumbSrc = getPlaceholder();
+        let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
           const first = p.photos[0];
           thumbAlt = buildPhotoAlt(p, first);
@@ -265,12 +322,12 @@
           <div class="body">
             <h3>${p.peakName}</h3>
             <div class="card-meta">
-              <div class="meta-row"><span class="meta-label">Elevation</span><span class="meta-value">${elev ? elev + "'" : '—'}</span></div>
-              <div class="meta-row"><span class="meta-label">Prominence</span><span class="meta-value">${prom ? prom + "'" : '—'}</span></div>
-              <div class="meta-row"><span class="meta-label">Range</span><span class="meta-value">${range}</span></div>
-              <div class="meta-row"><span class="meta-label">Trail Type</span><span class="meta-value">${trail}</span></div>
-              <div class="meta-row"><span class="meta-label">Difficulty</span><span class="meta-value">${difficulty}</span></div>
-              <div class="meta-row"><span class="meta-label">Exposure</span><span class="meta-value">${exposure}</span></div>
+              <div class="meta-row"><span class="meta-label">${t('catalog.card.elevation')}</span><span class="meta-value">${elev ? elev + "'" : '—'}</span></div>
+              <div class="meta-row"><span class="meta-label">${t('catalog.card.prominence')}</span><span class="meta-value">${prom ? prom + "'" : '—'}</span></div>
+              <div class="meta-row"><span class="meta-label">${t('catalog.card.range')}</span><span class="meta-value">${range}</span></div>
+              <div class="meta-row"><span class="meta-label">${t('catalog.card.trailType')}</span><span class="meta-value">${trail}</span></div>
+              <div class="meta-row"><span class="meta-label">${t('catalog.card.difficulty')}</span><span class="meta-value">${difficulty}</span></div>
+              <div class="meta-row"><span class="meta-label">${t('catalog.card.exposure')}</span><span class="meta-value">${exposure}</span></div>
             </div>
           </div>`;
 
@@ -351,7 +408,7 @@
 
       function populateFilterValueSelect(field){
         const valueSel = document.getElementById('filterValue');
-        valueSel.innerHTML = '<option value=\"\">All</option>';
+        valueSel.innerHTML = `<option value=\"\">${t('catalog.value.all')}</option>`;
 
         if(!field){
           valueSel.disabled = true;
@@ -489,7 +546,7 @@
           console.error('Error loading peaks:', err);
           const emptyMessage = document.getElementById('emptyMessage');
           if (emptyMessage) {
-            emptyMessage.textContent = 'Error loading peaks';
+            emptyMessage.textContent = t('catalog.error');
             emptyMessage.hidden = false;
           }
         }
@@ -533,6 +590,13 @@
       }
 
       window.addEventListener('load', init);
+
+      if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
+        window.NH48_I18N.onLangChange(() => {
+          populateFilterValueSelect(filters.field);
+          updateDisplay();
+        });
+      }
 
       // Column selector handler
       const columnSelect = document.getElementById('columnSelect');

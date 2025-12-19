@@ -1,0 +1,255 @@
+{
+  "common": {
+    "language": "Langue",
+    "languagePicker": "Sélecteur de langue",
+    "loading": "Chargement…",
+    "errorLoading": "Erreur lors du chargement des données",
+    "noResults": "Aucun résultat trouvé.",
+    "noImage": "pas d’image",
+    "unknown": "Inconnu",
+    "notAvailable": "Non disponible"
+  },
+  "nav": {
+    "logoAlt": "Logo NH48 API",
+    "tagline": "Données ouvertes et métadonnées structurées pour les sommets de 4 000 pieds du New Hampshire.",
+    "catalog": "Catalogue",
+    "trails": "Sentiers WMNF",
+    "pics": "NH48 Pics",
+    "peakBagger": "Peak Bagger",
+    "login": "Se connecter",
+    "viewProfile": "Voir le profil"
+  },
+  "catalog": {
+    "title": "Catalogue des sommets NH48",
+    "intro": "Parcourez les quarante-huit sommets de 4 000 pieds du New Hampshire. Cliquez sur un sommet pour voir plus de détails. En cas d’erreur, les détails apparaîtront ci-dessous. API ouverte et jeux de données des montagnes de 4 000 pieds du New Hampshire.",
+    "search": {
+      "placeholder": "Rechercher un sommet…",
+      "ariaLabel": "Rechercher un sommet par nom"
+    },
+    "sort": {
+      "label": "Trier par :",
+      "ariaLabel": "Trier les sommets par attribut",
+      "name": "Nom (A–Z)",
+      "elevAsc": "Altitude ↑",
+      "elevDesc": "Altitude ↓",
+      "promAsc": "Proéminence ↑",
+      "promDesc": "Proéminence ↓",
+      "diffAsc": "Difficulté A–Z",
+      "diffDesc": "Difficulté Z–A",
+      "rangeAsc": "Chaîne A–Z",
+      "trailAsc": "Type de sentier A–Z",
+      "exposureAsc": "Exposition A–Z"
+    },
+    "filter": {
+      "label": "Filtrer par :",
+      "ariaLabel": "Sélectionner le champ de filtre",
+      "none": "Aucun",
+      "range": "Chaîne",
+      "difficulty": "Difficulté",
+      "trail": "Type de sentier",
+      "exposure": "Exposition"
+    },
+    "value": {
+      "label": "Valeur :",
+      "ariaLabel": "Sélectionner la valeur du filtre",
+      "all": "Tous"
+    },
+    "columns": {
+      "label": "Colonnes :",
+      "ariaLabel": "Sélectionner le nombre de colonnes"
+    },
+    "empty": "Aucun sommet trouvé.",
+    "error": "Erreur lors du chargement des sommets",
+    "card": {
+      "elevation": "Altitude",
+      "prominence": "Proéminence",
+      "range": "Chaîne",
+      "trailType": "Type de sentier",
+      "difficulty": "Difficulté",
+      "exposure": "Exposition"
+    }
+  },
+  "photo": {
+    "altTemplate": "Photo de {peak} — {season} {timeOfDay}"
+  },
+  "season": {
+    "spring": "printemps",
+    "summer": "été",
+    "fall": "automne",
+    "autumn": "automne",
+    "winter": "hiver"
+  },
+  "time": {
+    "sunrise": "lever du soleil",
+    "sunset": "coucher du soleil",
+    "morning": "matin",
+    "afternoon": "après-midi",
+    "evening": "soir",
+    "night": "nuit",
+    "day": "jour",
+    "dawn": "aube",
+    "dusk": "crépuscule"
+  },
+  "peak": {
+    "back": "Retour au catalogue des sommets NH48",
+    "loading": "Chargement…",
+    "relatedTrails": {
+      "title": "Sentiers et itinéraires associés",
+      "none": "Aucun sentier associé pour le moment.",
+      "link": "Itinéraire {name}"
+    },
+    "section": {
+      "routes": "Itinéraires de randonnée",
+      "trails": "Sentiers associés",
+      "terrain": "Sentier & terrain",
+      "conditions": "Conditions & accès"
+    },
+    "carousel": {
+      "prev": "Image précédente",
+      "next": "Image suivante"
+    },
+    "metadata": {
+      "title": "Métadonnées de la photo actuelle",
+      "notAvailable": "Non disponible",
+      "moreDetails": "Plus de détails ▾",
+      "lessDetails": "Moins de détails ▴",
+      "labels": {
+        "season": "Saison",
+        "timeOfDay": "Moment de la journée",
+        "orientation": "Orientation",
+        "captureDate": "Date de prise",
+        "cameraMaker": "Fabricant de l’appareil",
+        "cameraModel": "Modèle de l’appareil",
+        "camera": "Appareil",
+        "lens": "Objectif",
+        "fStop": "Ouverture",
+        "shutterSpeed": "Vitesse d’obturation",
+        "iso": "ISO",
+        "exposureBias": "Compensation d’exposition",
+        "focalLength": "Focale",
+        "flashMode": "Mode flash",
+        "meteringMode": "Mode de mesure",
+        "maxAperture": "Ouverture max",
+        "author": "Auteur",
+        "dimensions": "Dimensions",
+        "fileSize": "Taille du fichier",
+        "fileCreateDate": "Date de création",
+        "fileModifiedDate": "Date de modification",
+        "rating": "Note",
+        "metadata": "Métadonnées"
+      }
+    },
+    "generalInfo": {
+      "title": "Infos générales du sommet",
+      "elevation": "Altitude",
+      "prominence": "Proéminence",
+      "range": "Chaîne",
+      "trailType": "Type de sentier",
+      "difficulty": "Difficulté",
+      "exposure": "Exposition"
+    },
+    "routes": {
+      "distance": "Distance",
+      "gain": "Dénivelé",
+      "difficulty": "Difficulté"
+    },
+    "trailList": {
+      "title": "Liste des sentiers"
+    },
+    "terrain": {
+      "terrain": "Terrain",
+      "scramble": "Escalade",
+      "view": "Vue"
+    },
+    "conditions": {
+      "bestSeasons": "Meilleures saisons",
+      "waterAvailability": "Disponibilité de l’eau",
+      "cellReception": "Réception cellulaire",
+      "weatherExposure": "Exposition météo",
+      "emergencyBailout": "Sortie d’urgence",
+      "dogFriendly": "Chiens admis",
+      "nearbyFeatures": "Points d’intérêt proches"
+    },
+    "errorLoading": "Erreur lors du chargement du sommet",
+    "meta": {
+      "titleTemplate": "{name} ({elevation} ft) – NH48",
+      "descriptionTemplate": "{name} – {elevation} ft d’altitude, {prominence} ft de proéminence, dans {range}. Itinéraires, difficulté et photos pour ce sommet de 4 000 pieds."
+    }
+  },
+  "trails": {
+    "title": "🏔️ Outil de carte WMNF Trails API",
+    "subtitle": "Structure de données ouverte pour les sommets, sentiers et itinéraires des White Mountains.",
+    "intro": "White Mountain National Forest — compilé par Nate Sobol. Utilisez-le comme chercheur de sentiers et suivi des accomplissements. API ouverte et jeux de données des montagnes de 4 000 pieds du New Hampshire.",
+    "details": {
+      "title": "Détails du sentier",
+      "empty": "Sélectionnez un sentier pour voir distance, dénivelé et détails OpenStreetMap."
+    },
+    "search": {
+      "placeholder": "Rechercher des sentiers…"
+    },
+    "sort": {
+      "az": "Trier A → Z",
+      "za": "Trier Z → A"
+    },
+    "jumpTo": "Aller à :",
+    "list": {
+      "headerName": "Nom du sentier",
+      "headerCompleted": "Terminé",
+      "noMatches": "Aucun sentier trouvé. Essayez une autre recherche.",
+      "noTrails": "Aucun sentier disponible."
+    },
+    "loading": "Chargement des sentiers...",
+    "about": {
+      "title": "À propos de cette liste",
+      "body": "NH Tracing, Redlining et White Mountain Trails désignent la même collection de sentiers décrite dans le guide. Quel que soit le nom utilisé, l’objectif est le même : parcourir ces chemins."
+    },
+    "disclaimer": {
+      "title": "Avertissement",
+      "body": "Ce site <strong>n’est pas destiné à la planification ou à la navigation</strong>. Les données de sentiers peuvent contenir des erreurs ou imprécisions, et cette collection n’est pas la liste officielle (bien qu’elle inclue la plupart des sentiers connus). Référez-vous aux sources officielles et faites preuve de prudence en montagne."
+    },
+    "howto": {
+      "title": "Mode d’emploi",
+      "body": "Utilisez les cercles verts pour marquer un sentier comme terminé. Après avoir marqué un sentier, touchez l’icône calendrier pour ajouter une date — elle remplacera l’icône et pourra être modifiée en touchant à nouveau. Votre progression est stockée localement dans votre navigateur. Vous pouvez exporter ou importer votre progression avec les boutons ci-dessous."
+    },
+    "settings": {
+      "title": "Paramètres",
+      "hideCompleted": "Masquer les sentiers terminés",
+      "clearProgress": "Effacer toute la progression"
+    },
+    "export": "Exporter CSV",
+    "import": "Importer",
+    "viewApi": "Voir l’API",
+    "resizePanels": "Redimensionner les panneaux",
+    "info": {
+      "noProperties": "Aucune propriété supplémentaire disponible pour l’instant. Elles seront renseignées à partir d’OpenStreetMap.",
+      "loadingProperties": "Chargement des propriétés supplémentaires depuis OpenStreetMap...",
+      "sourceNote": "Informations issues d’OpenStreetMap lorsque disponibles.",
+      "distance": "Distance",
+      "elevationGain": "Dénivelé",
+      "minElevation": "Altitude min",
+      "maxElevation": "Altitude max",
+      "surface": "Surface",
+      "trailType": "Type de sentier",
+      "difficulty": "Difficulté",
+      "visibility": "Visibilité",
+      "width": "Largeur",
+      "allowedUses": "Usages autorisés",
+      "season": "Saison",
+      "maintainer": "Responsable",
+      "source": "Source"
+    },
+    "virtualHike": "Randonnée virtuelle",
+    "unnamedTrail": "Sentier sans nom",
+    "confirmClear": "Voulez-vous vraiment effacer toute la progression ?",
+    "alertLoadFail": "Impossible de charger les données de sentiers. Vérifiez votre connexion internet et actualisez la page.",
+    "csv": {
+      "headerTrail": "Sentier",
+      "headerCompleted": "Terminé",
+      "headerDate": "Date",
+      "filename": "progression-sentiers.csv"
+    },
+    "map": {
+      "attribution": "Données carte : &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributeurs, SRTM | Style : &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    }
+  }
+}

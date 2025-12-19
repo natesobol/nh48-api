@@ -23,6 +23,7 @@
     
     <title id="dynamicTitle">NH48 API – Peak details, routes &amp; photos</title>
     <link rel="icon" type="image/png" href="../nh48API_logo.png">
+    <script src="../js/i18n.js"></script>
     <!--
       Standalone details view for a single NH48 peak with robust error handling.
       This version adds:
@@ -124,6 +125,45 @@
       }
       @media(max-width:640px){
         .wrap{ padding:12px; }
+      }
+      .nh48-lang{
+        display:flex;
+        align-items:center;
+        gap:6px;
+        flex-wrap:wrap;
+        margin:12px 0 16px;
+      }
+      .nh48-lang-label{
+        font-size:0.75rem;
+        color:var(--muted);
+        text-transform:uppercase;
+        letter-spacing:0.8px;
+        margin-right:4px;
+      }
+      .nh48-flag{
+        width:34px;
+        height:34px;
+        border-radius:8px;
+        border:1px solid var(--stroke);
+        background:var(--card);
+        color:var(--ink);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        cursor:pointer;
+        transition:border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      }
+      .nh48-flag .flag{
+        font-size:18px;
+        line-height:1;
+      }
+      .nh48-flag.active{
+        border-color:var(--accent);
+        box-shadow:0 0 0 2px rgba(34, 197, 94, 0.25);
+      }
+      .nh48-flag:focus-visible{
+        outline:2px solid var(--accent);
+        outline-offset:2px;
       }
       .seo-links{
         display:flex;
@@ -419,11 +459,32 @@
     </script>
     <div class="wrap">
       <div class="seo-links">
-        <a href="/catalog.html">Back to NH48 Peak Catalog</a>
+        <a href="/catalog.html" data-i18n="peak.back">Back to NH48 Peak Catalog</a>
       </div>
-      <h1 id="peakTitle">Loading…</h1>
+      <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
+        <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
+        <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
+          <span class="flag flag-en" aria-hidden="true">🇺🇸</span>
+        </button>
+        <button class="nh48-flag" data-lang="es" aria-label="Español" title="Español">
+          <span class="flag flag-es" aria-hidden="true">🇪🇸</span>
+        </button>
+        <button class="nh48-flag" data-lang="fr" aria-label="Français" title="Français">
+          <span class="flag flag-fr" aria-hidden="true">🇫🇷</span>
+        </button>
+        <button class="nh48-flag" data-lang="de" aria-label="Deutsch" title="Deutsch">
+          <span class="flag flag-de" aria-hidden="true">🇩🇪</span>
+        </button>
+        <button class="nh48-flag" data-lang="zh" aria-label="中文" title="中文">
+          <span class="flag flag-zh" aria-hidden="true">🇨🇳</span>
+        </button>
+        <button class="nh48-flag" data-lang="ja" aria-label="日本語" title="日本語">
+          <span class="flag flag-ja" aria-hidden="true">🇯🇵</span>
+        </button>
+      </div>
+      <h1 id="peakTitle" data-i18n="peak.loading">Loading…</h1>
       <div class="related-trails" id="relatedTrails" hidden>
-        <h2>Related Trails &amp; Routes</h2>
+        <h2 data-i18n="peak.relatedTrails.title">Related Trails &amp; Routes</h2>
         <ul id="relatedTrailList"></ul>
       </div>
 
@@ -432,8 +493,8 @@
         <div class="carousel" id="carousel"></div>
         <div class="dots" id="dots"></div>
         <div class="ctrls">
-          <button id="prevBtn" aria-label="Previous image">‹</button>
-          <button id="nextBtn" aria-label="Next image">›</button>
+          <button id="prevBtn" data-i18n="peak.carousel.prev" data-i18n-attr="aria-label" aria-label="Previous image">‹</button>
+          <button id="nextBtn" data-i18n="peak.carousel.next" data-i18n-attr="aria-label" aria-label="Next image">›</button>
         </div>
         <!-- Countdown timer overlay -->
         <div class="timer" id="carouselTimer" hidden>
@@ -451,16 +512,16 @@
       </div>
 
       <!-- OTHER SECTIONS ------------------------------------------------------>
-      <div class="section-title">Hiking Routes</div>
+      <div class="section-title" data-i18n="peak.section.routes">Hiking Routes</div>
       <div class="info-grid" id="routesGrid" hidden></div>
 
-      <div class="section-title">Associated Trails</div>
+      <div class="section-title" data-i18n="peak.section.trails">Associated Trails</div>
       <div class="info-grid" id="trailNamesGrid" hidden></div>
 
-      <div class="section-title">Trail &amp; Terrain</div>
+      <div class="section-title" data-i18n="peak.section.terrain">Trail &amp; Terrain</div>
       <div class="info-grid" id="terrainGrid" hidden></div>
 
-      <div class="section-title">Conditions &amp; Access</div>
+      <div class="section-title" data-i18n="peak.section.conditions">Conditions &amp; Access</div>
       <div class="info-grid" id="conditionsGrid" hidden></div>
     </div>
 
@@ -471,10 +532,14 @@
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
 
+      const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
+
       /* Fallback image */
-      const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">no image</text></svg>`
-      );
+      function getPlaceholder() {
+        return 'data:image/svg+xml;utf8,' + encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">${t('common.noImage')}</text></svg>`
+        );
+      }
 
       const BASE_CANONICAL = 'https://nh48.info/pages/nh48_peak.html';
       const DEFAULT_OG_IMAGE = 'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48API_logo.png';
@@ -505,18 +570,54 @@
         return match ? Number(match[0]) : null;
       }
 
+      function normalizeToken(value){
+        return String(value || '').trim().toLowerCase();
+      }
+
+      function translateSeason(value){
+        const key = normalizeToken(value);
+        const map = {
+          spring: 'season.spring',
+          summer: 'season.summer',
+          fall: 'season.fall',
+          autumn: 'season.autumn',
+          winter: 'season.winter'
+        };
+        return map[key] ? t(map[key]) : value;
+      }
+
+      function translateTimeOfDay(value){
+        const key = normalizeToken(value);
+        const map = {
+          sunrise: 'time.sunrise',
+          sunset: 'time.sunset',
+          morning: 'time.morning',
+          afternoon: 'time.afternoon',
+          evening: 'time.evening',
+          night: 'time.night',
+          day: 'time.day',
+          dawn: 'time.dawn',
+          dusk: 'time.dusk'
+        };
+        return map[key] ? t(map[key]) : value;
+      }
+
       function buildPhotoAltText(name, meta){
         if(meta && typeof meta === 'object'){
           const explicit = meta.alt && meta.alt.trim();
           if(explicit){
             return explicit;
           }
-          const details = [meta.season, meta.timeOfDay].filter(Boolean).join(' ');
-          if(details){
-            return `${name} – ${details} photo`;
-          }
+          const season = meta.season ? translateSeason(meta.season) : '';
+          const timeOfDay = meta.timeOfDay ? translateTimeOfDay(meta.timeOfDay) : '';
+          const text = t('photo.altTemplate', {
+            peak: name,
+            season: season ? `${season}` : '',
+            timeOfDay: timeOfDay ? `${timeOfDay}` : ''
+          }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
+          return text.replace(/\s—\s$/, '').replace(/\s$/, '').replace(/—\s*$/, '').trim();
         }
-        return `${name} photo`;
+        return t('photo.altTemplate', { peak: name, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
       }
 
       function buildMountainSchema(p, name, canonicalUrl, primaryImageUrl, descriptionText){
@@ -628,7 +729,7 @@
         listEl.innerHTML = '';
         if(names.length === 0){
           const li = document.createElement('li');
-          li.textContent = 'No related trails listed yet.';
+          li.textContent = t('peak.relatedTrails.none');
           listEl.appendChild(li);
           container.hidden = false;
           return;
@@ -637,7 +738,7 @@
           const li = document.createElement('li');
           const link = document.createElement('a');
           link.href = `/trails.html?trail=${encodeURIComponent(name)}`;
-          link.textContent = `${name} route`;
+          link.textContent = t('peak.relatedTrails.link', { name });
           li.appendChild(link);
           listEl.appendChild(li);
         });
@@ -685,6 +786,10 @@
       let photoMetaData = [];
       let currentDelay = 8000;
       const BASE_DELAY = 8000; // doubled from 4s
+      let currentPeak = null;
+      let currentSlug = null;
+      let currentImages = [];
+      let currentMeta = [];
 
       /* METADATA PANEL -------------------------------------------------------- */
       function makeRow(label, value){
@@ -706,30 +811,31 @@
 
       function humanLabelFromKey(key){
         const map = {
-          season: 'Season',
-          timeOfDay: 'Time of Day',
-          orientation: 'Orientation',
-          captureDate: 'Capture Date',
-          cameraMaker: 'Camera Maker',
-          cameraModel: 'Camera Model',
-          camera: 'Camera',
-          lens: 'Lens',
-          fStop: 'F Stop',
-          shutterSpeed: 'Shutter Speed',
-          iso: 'ISO',
-          exposureBias: 'Exposure Bias',
-          focalLength: 'Focal Length',
-          flashMode: 'Flash Mode',
-          meteringMode: 'Metering Mode',
-          maxAperture: 'Max Aperture',
-          author: 'Author',
-          dimensions: 'Dimensions',
-          fileSize: 'File Size',
-          fileCreateDate: 'File Create Date',
-          fileModifiedDate: 'File Modified Date',
-          rating: 'Rating'
+          season: 'peak.metadata.labels.season',
+          timeOfDay: 'peak.metadata.labels.timeOfDay',
+          orientation: 'peak.metadata.labels.orientation',
+          captureDate: 'peak.metadata.labels.captureDate',
+          cameraMaker: 'peak.metadata.labels.cameraMaker',
+          cameraModel: 'peak.metadata.labels.cameraModel',
+          camera: 'peak.metadata.labels.camera',
+          lens: 'peak.metadata.labels.lens',
+          fStop: 'peak.metadata.labels.fStop',
+          shutterSpeed: 'peak.metadata.labels.shutterSpeed',
+          iso: 'peak.metadata.labels.iso',
+          exposureBias: 'peak.metadata.labels.exposureBias',
+          focalLength: 'peak.metadata.labels.focalLength',
+          flashMode: 'peak.metadata.labels.flashMode',
+          meteringMode: 'peak.metadata.labels.meteringMode',
+          maxAperture: 'peak.metadata.labels.maxAperture',
+          author: 'peak.metadata.labels.author',
+          dimensions: 'peak.metadata.labels.dimensions',
+          fileSize: 'peak.metadata.labels.fileSize',
+          fileCreateDate: 'peak.metadata.labels.fileCreateDate',
+          fileModifiedDate: 'peak.metadata.labels.fileModifiedDate',
+          rating: 'peak.metadata.labels.rating',
+          metadata: 'peak.metadata.labels.metadata'
         };
-        if(map[key]) return map[key];
+        if(map[key]) return t(map[key]);
         return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
       }
 
@@ -753,7 +859,7 @@
 
         const title = document.createElement('div');
         title.className = 'metadata-title';
-        title.textContent = 'Current Photo Metadata';
+        title.textContent = t('peak.metadata.title');
 
         header.appendChild(title);
         panel.appendChild(header);
@@ -769,7 +875,7 @@
         const meta = (photoMetaData && photoMetaData[i]) || null;
 
         if(!meta || typeof meta !== 'object'){
-          primaryWrap.appendChild(makeRow('Metadata', 'Not available'));
+          primaryWrap.appendChild(makeRow(t('peak.metadata.labels.metadata'), t('peak.metadata.notAvailable')));
           panel.hidden = false;
           return;
         }
@@ -801,19 +907,19 @@
         });
 
         if(!hasPrimary && !hasExtra){
-          primaryWrap.appendChild(makeRow('Metadata', 'Not available'));
+          primaryWrap.appendChild(makeRow(t('peak.metadata.labels.metadata'), t('peak.metadata.notAvailable')));
         }
 
         if(hasExtra){
           const toggleBtn = document.createElement('button');
           toggleBtn.type = 'button';
           toggleBtn.className = 'meta-toggle';
-          toggleBtn.textContent = 'More details ▾';
+          toggleBtn.textContent = t('peak.metadata.moreDetails');
           header.appendChild(toggleBtn);
 
           toggleBtn.addEventListener('click', () => {
             const open = extraWrap.classList.toggle('open');
-            toggleBtn.textContent = open ? 'Less details ▴' : 'More details ▾';
+            toggleBtn.textContent = open ? t('peak.metadata.lessDetails') : t('peak.metadata.moreDetails');
           });
         }
 
@@ -830,7 +936,7 @@
 
         const title = document.createElement('div');
         title.className = 'metadata-title';
-        title.textContent = 'General Peak Info';
+        title.textContent = t('peak.generalInfo.title');
 
         header.appendChild(title);
         panel.appendChild(header);
@@ -842,14 +948,163 @@
         const elev = p['Elevation (ft)'];
         const prom = p['Prominence (ft)'];
 
-        body.appendChild(makeRow('Elevation', elev ? `${elev}'` : '—'));
-        body.appendChild(makeRow('Prominence', prom ? `${prom}'` : '—'));
-        body.appendChild(makeRow('Range', p['Range / Subrange'] || '—'));
-        body.appendChild(makeRow('Trail Type', p['Trail Type'] || '—'));
-        body.appendChild(makeRow('Difficulty', p['Difficulty'] || '—'));
-        body.appendChild(makeRow('Exposure', p['Exposure Level'] || p['Weather Exposure Rating'] || '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.elevation'), elev ? `${elev}'` : '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.prominence'), prom ? `${prom}'` : '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.range'), p['Range / Subrange'] || '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.trailType'), p['Trail Type'] || '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.difficulty'), p['Difficulty'] || '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.exposure'), p['Exposure Level'] || p['Weather Exposure Rating'] || '—'));
 
         panel.hidden = false;
+      }
+
+      function renderRoutes(routes){
+        const routesGrid = document.getElementById('routesGrid');
+        if(!routesGrid) return;
+        routesGrid.innerHTML = '';
+        if(!Array.isArray(routes) || routes.length === 0){
+          routesGrid.hidden = true;
+          return;
+        }
+        routes.forEach(r => {
+          const div = document.createElement('div');
+          div.className = 'info-panel';
+          const dist  = r['Distance (mi)'] || '—';
+          const gain  = r['Elevation Gain (ft)'] || '—';
+          const diff  = r['Difficulty'] || '—';
+          div.innerHTML = `
+            <div class="info-label">${r['Route Name']}</div>
+            <div class="info-value">
+              <strong>${t('peak.routes.distance')}:</strong> ${dist} mi • 
+              <strong>${t('peak.routes.gain')}:</strong> ${gain}' • 
+              <strong>${t('peak.routes.difficulty')}:</strong> ${diff}
+            </div>`;
+          routesGrid.appendChild(div);
+        });
+        routesGrid.hidden = false;
+      }
+
+      function renderTrailNames(trailNames){
+        const trailNamesGrid = document.getElementById('trailNamesGrid');
+        if(!trailNamesGrid) return;
+        trailNamesGrid.innerHTML = '';
+        if(!Array.isArray(trailNames) || trailNames.length === 0){
+          trailNamesGrid.hidden = true;
+          return;
+        }
+        const div = document.createElement('div');
+        div.className = 'info-panel';
+        div.innerHTML = `
+          <div class="info-label">${t('peak.trailList.title')}</div>
+          <ul class="trail-list">
+            ${trailNames.map(trail => `<li>${trail}</li>`).join('')}
+          </ul>`;
+        trailNamesGrid.appendChild(div);
+        trailNamesGrid.hidden = false;
+      }
+
+      function renderTerrain(p){
+        const terrainGrid = document.getElementById('terrainGrid');
+        if(!terrainGrid) return;
+        terrainGrid.innerHTML = '';
+        const terrainItems = [
+          { label: t('peak.terrain.terrain'), value: p['Terrain Character'] },
+          { label: t('peak.terrain.scramble'), value: p['Scramble Sections'] },
+          { label: t('peak.terrain.view'), value: p['View Type'] }
+        ].filter(x => x.value);
+
+        if(terrainItems.length === 0){
+          terrainGrid.hidden = true;
+          return;
+        }
+        terrainItems.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'info-panel';
+          div.innerHTML = `
+            <div class="info-label">${item.label}</div>
+            <div class="info-value">${item.value}</div>`;
+          terrainGrid.appendChild(div);
+        });
+        terrainGrid.hidden = false;
+      }
+
+      function renderConditions(p){
+        const conditionsGrid = document.getElementById('conditionsGrid');
+        if(!conditionsGrid) return;
+        conditionsGrid.innerHTML = '';
+        const conditionItems = [
+          { label: t('peak.conditions.bestSeasons'), value: p['Best Seasons to Hike'] },
+          { label: t('peak.conditions.waterAvailability'), value: p['Water Availability'] },
+          { label: t('peak.conditions.cellReception'), value: p['Cell Reception Quality'] },
+          { label: t('peak.conditions.weatherExposure'), value: p['Weather Exposure Rating'] },
+          { label: t('peak.conditions.emergencyBailout'), value: p['Emergency Bailout Options'] },
+          { label: t('peak.conditions.dogFriendly'), value: p['Dog Friendly'] },
+          { label: t('peak.conditions.nearbyFeatures'), value: p['Nearby Notable Features'] }
+        ].filter(x => x.value);
+
+        if(conditionItems.length === 0){
+          conditionsGrid.hidden = true;
+          return;
+        }
+        conditionItems.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'info-panel';
+          div.innerHTML = `
+            <div class="info-label">${item.label}</div>
+            <div class="info-value">${item.value}</div>`;
+          conditionsGrid.appendChild(div);
+        });
+        conditionsGrid.hidden = false;
+      }
+
+      function updateHeadMeta(p, slug, name){
+        const elevation = p['Elevation (ft)'] || t('common.unknown');
+        const prominence = p['Prominence (ft)'] || t('common.unknown');
+        const range = p['Range / Subrange'] || 'White Mountains';
+
+        const canonicalUrl = slug ? `${BASE_CANONICAL}?slug=${encodeURIComponent(slug)}` : BASE_CANONICAL;
+        const titleText = t('peak.meta.titleTemplate', { name, elevation });
+        const descriptionText = t('peak.meta.descriptionTemplate', { name, elevation, prominence, range });
+
+        const titleEl = document.getElementById('dynamicTitle');
+        if(titleEl){
+          titleEl.textContent = titleText;
+        }
+        const descriptionEl = document.getElementById('dynamicDescription');
+        if(descriptionEl){
+          descriptionEl.setAttribute('content', descriptionText);
+        }
+        const canonicalEl = document.getElementById('dynamicCanonical');
+        if(canonicalEl){
+          canonicalEl.setAttribute('href', canonicalUrl);
+        }
+        const ogTitleEl = document.getElementById('dynamicOgTitle');
+        if(ogTitleEl){
+          ogTitleEl.setAttribute('content', titleText);
+        }
+        const ogDescriptionEl = document.getElementById('dynamicOgDescription');
+        if(ogDescriptionEl){
+          ogDescriptionEl.setAttribute('content', descriptionText);
+        }
+        const ogUrlEl = document.getElementById('dynamicOgUrl');
+        if(ogUrlEl){
+          ogUrlEl.setAttribute('content', canonicalUrl);
+        }
+        const twitterTitleEl = document.getElementById('dynamicTwitterTitle');
+        if(twitterTitleEl){
+          twitterTitleEl.setAttribute('content', titleText);
+        }
+        const twitterDescriptionEl = document.getElementById('dynamicTwitterDescription');
+        if(twitterDescriptionEl){
+          twitterDescriptionEl.setAttribute('content', descriptionText);
+        }
+        const twitterUrlEl = document.querySelector('meta[name=\"twitter:url\"]');
+        if(twitterUrlEl){
+          twitterUrlEl.setAttribute('content', canonicalUrl);
+        }
+        setMeta('keywords', `NH48 API, ${name} peak details, New Hampshire 4000 footers, White Mountains routes, hiking data, peak metadata, mountain photos`);
+
+        return { canonicalUrl, descriptionText };
       }
 
       /* CAROUSEL ------------------------------------------------------------- */
@@ -863,8 +1118,9 @@
         carouselIdx = 0;
         photoMetaData = meta || [];
 
+        const placeholder = getPlaceholder();
         if(!images || images.length === 0){
-          images = [PLACEHOLDER];
+          images = [placeholder];
           photoMetaData = [{}];
         }
 
@@ -881,10 +1137,10 @@
             img.loading = 'lazy';
             img.decoding = 'async';
             img.setAttribute('data-src', src);
-            img.src = PLACEHOLDER;
+            img.src = placeholder;
           }
 
-          img.onerror = () => { img.onerror = null; img.src = PLACEHOLDER; };
+          img.onerror = () => { img.onerror = null; img.src = placeholder; };
 
           slide.appendChild(img);
           carouselEl.appendChild(slide);
@@ -1052,137 +1308,23 @@
           }
 
           const name = p.peakName || p['Peak Name'] || slug;
-          const elevation = p['Elevation (ft)'] || 'Unknown';
-          const prominence = p['Prominence (ft)'] || 'Unknown';
-          const range = p['Range / Subrange'] || 'White Mountains';
           peakTitle.textContent = name;
+          currentPeak = p;
+          currentSlug = slug;
 
-          const canonicalUrl = slug ? `${BASE_CANONICAL}?slug=${encodeURIComponent(slug)}` : BASE_CANONICAL;
-          const titleText = `${name} (${elevation} ft) – NH48`;
-          const descriptionText = `${name} – ${elevation} ft high, ${prominence} ft prominence, in the ${range}. Routes, difficulty, and photos for this 4,000-footer.`;
-
-          const titleEl = document.getElementById('dynamicTitle');
-          if(titleEl){
-            titleEl.textContent = titleText;
-          }
-          const descriptionEl = document.getElementById('dynamicDescription');
-          if(descriptionEl){
-            descriptionEl.setAttribute('content', descriptionText);
-          }
-          const canonicalEl = document.getElementById('dynamicCanonical');
-          if(canonicalEl){
-            canonicalEl.setAttribute('href', canonicalUrl);
-          }
-          const ogTitleEl = document.getElementById('dynamicOgTitle');
-          if(ogTitleEl){
-            ogTitleEl.setAttribute('content', titleText);
-          }
-          const ogDescriptionEl = document.getElementById('dynamicOgDescription');
-          if(ogDescriptionEl){
-            ogDescriptionEl.setAttribute('content', descriptionText);
-          }
-          const ogUrlEl = document.getElementById('dynamicOgUrl');
-          if(ogUrlEl){
-            ogUrlEl.setAttribute('content', canonicalUrl);
-          }
-          const twitterTitleEl = document.getElementById('dynamicTwitterTitle');
-          if(twitterTitleEl){
-            twitterTitleEl.setAttribute('content', titleText);
-          }
-          const twitterDescriptionEl = document.getElementById('dynamicTwitterDescription');
-          if(twitterDescriptionEl){
-            twitterDescriptionEl.setAttribute('content', descriptionText);
-          }
-          const twitterUrlEl = document.querySelector('meta[name="twitter:url"]');
-          if(twitterUrlEl){
-            twitterUrlEl.setAttribute('content', canonicalUrl);
-          }
-          setMeta('keywords', `NH48 API, ${name} peak details, New Hampshire 4000 footers, White Mountains routes, hiking data, peak metadata, mountain photos`);
+          const { canonicalUrl, descriptionText } = updateHeadMeta(p, slug, name);
 
           // Build general info panel
           buildGeneralInfo(p);
 
-          // Routes
           const routes = p['Standard Routes'] || [];
-          if(routes.length > 0){
-            const routesGrid = document.getElementById('routesGrid');
-            routes.forEach(r => {
-              const div = document.createElement('div');
-              div.className = 'info-panel';
-              const dist  = r['Distance (mi)'] || '—';
-              const gain  = r['Elevation Gain (ft)'] || '—';
-              const diff  = r['Difficulty'] || '—';
-              div.innerHTML = `
-                <div class="info-label">${r['Route Name']}</div>
-                <div class="info-value">
-                  <strong>Distance:</strong> ${dist} mi • 
-                  <strong>Gain:</strong> ${gain}' • 
-                  <strong>Difficulty:</strong> ${diff}
-                </div>`;
-              routesGrid.appendChild(div);
-            });
-            routesGrid.hidden = false;
-          }
-
+          renderRoutes(routes);
           renderRelatedTrails(routes);
 
           const trailNames = p['Trail Names'] || [];
-          if(trailNames.length > 0){
-            const trailNamesGrid = document.getElementById('trailNamesGrid');
-            const div = document.createElement('div');
-            div.className = 'info-panel';
-            div.innerHTML = `
-              <div class="info-label">Trail List</div>
-              <ul class="trail-list">
-                ${trailNames.map(trail => `<li>${trail}</li>`).join('')}
-              </ul>`;
-            trailNamesGrid.appendChild(div);
-            trailNamesGrid.hidden = false;
-          }
-
-          // Terrain & view
-          const terrainItems = [
-            { label:'Terrain', value:p['Terrain Character'] },
-            { label:'Scramble', value:p['Scramble Sections'] },
-            { label:'View', value:p['View Type'] }
-          ].filter(x => x.value);
-
-          if(terrainItems.length > 0){
-            const terrainGrid = document.getElementById('terrainGrid');
-            terrainItems.forEach(item => {
-              const div = document.createElement('div');
-              div.className = 'info-panel';
-              div.innerHTML = `
-                <div class="info-label">${item.label}</div>
-                <div class="info-value">${item.value}</div>`;
-              terrainGrid.appendChild(div);
-            });
-            terrainGrid.hidden = false;
-          }
-
-          // Conditions & access
-          const conditionItems = [
-            { label:'Best Seasons', value:p['Best Seasons to Hike'] },
-            { label:'Water Availability', value:p['Water Availability'] },
-            { label:'Cell Reception', value:p['Cell Reception Quality'] },
-            { label:'Weather Exposure', value:p['Weather Exposure Rating'] },
-            { label:'Emergency Bailout', value:p['Emergency Bailout Options'] },
-            { label:'Dog Friendly', value:p['Dog Friendly'] },
-            { label:'Nearby Features', value:p['Nearby Notable Features'] }
-          ].filter(x => x.value);
-
-          if(conditionItems.length > 0){
-            const conditionsGrid = document.getElementById('conditionsGrid');
-            conditionItems.forEach(item => {
-              const div = document.createElement('div');
-              div.className = 'info-panel';
-              div.innerHTML = `
-                <div class="info-label">${item.label}</div>
-                <div class="info-value">${item.value}</div>`;
-              conditionsGrid.appendChild(div);
-            });
-            conditionsGrid.hidden = false;
-          }
+          renderTrailNames(trailNames);
+          renderTerrain(p);
+          renderConditions(p);
 
           // Photos + per-photo metadata
           let imgs = [];
@@ -1199,9 +1341,11 @@
             });
           }
           if(imgs.length === 0){
-            imgs = [PLACEHOLDER];
+            imgs = [getPlaceholder()];
             meta = [{}];
           }
+          currentImages = imgs.slice();
+          currentMeta = meta.slice();
 
           const primaryPhotoIndex = meta.findIndex(item => item && item.isPrimary);
           const primaryImage = (primaryPhotoIndex >= 0 ? imgs[primaryPhotoIndex] : imgs[0]) || DEFAULT_OG_IMAGE;
@@ -1215,19 +1359,36 @@
           }
 
           buildMountainSchema(p, name, canonicalUrl, primaryImage, descriptionText);
-
           buildCarousel(imgs, meta, name);
 
         }catch(err){
           console.error('Error loading peak data:', err);
           const peakTitle = document.getElementById('peakTitle');
           if (peakTitle) {
-            peakTitle.textContent = 'Error loading peak';
+            peakTitle.textContent = t('peak.errorLoading');
           }
         }
       }
 
       window.addEventListener('load', init);
+
+      if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
+        window.NH48_I18N.onLangChange(() => {
+          if (!currentPeak) return;
+          const name = currentPeak.peakName || currentPeak['Peak Name'] || currentSlug;
+          updateHeadMeta(currentPeak, currentSlug, name);
+          buildGeneralInfo(currentPeak);
+          const routes = currentPeak['Standard Routes'] || [];
+          renderRoutes(routes);
+          renderRelatedTrails(routes);
+          renderTrailNames(currentPeak['Trail Names'] || []);
+          renderTerrain(currentPeak);
+          renderConditions(currentPeak);
+          if (currentImages.length) {
+            buildCarousel(currentImages, currentMeta, name);
+          }
+        });
+      }
     </script>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";

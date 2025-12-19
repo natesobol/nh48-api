@@ -162,10 +162,49 @@ input[list]::-webkit-list-button {
   padding:6px 10px;
   font-size:0.9rem;
 }
+.nh48-lang{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.nh48-lang-label{
+  font-size:0.75rem;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+  margin-right:4px;
+}
+.nh48-flag{
+  width:34px;
+  height:34px;
+  border-radius:8px;
+  border:1px solid var(--stroke);
+  background:var(--card);
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.nh48-flag .flag{
+  font-size:18px;
+  line-height:1;
+}
+.nh48-flag.active{
+  border-color:#22c55e;
+  box-shadow:0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+.nh48-flag:focus-visible{
+  outline:2px solid #22c55e;
+  outline-offset:2px;
+}
 @media(max-width:640px){
   .controls{ gap:8px; margin-bottom:10px; }
   .controls label{ font-size:0.75rem; margin-right:2px; }
   .controls select{ padding:4px 8px; font-size:0.8rem; }
+  .nh48-flag{ width:32px; height:32px; }
 }
 
 /* GRID: Dynamic columns on desktop, 1 column on mobile */

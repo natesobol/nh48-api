@@ -1,0 +1,255 @@
+{
+  "common": {
+    "language": "言語",
+    "languagePicker": "言語セレクター",
+    "loading": "読み込み中…",
+    "errorLoading": "データの読み込みに失敗しました",
+    "noResults": "結果が見つかりません。",
+    "noImage": "画像なし",
+    "unknown": "不明",
+    "notAvailable": "利用不可"
+  },
+  "nav": {
+    "logoAlt": "NH48 API ロゴ",
+    "tagline": "ニューハンプシャー州の4,000フィート峰向けオープンデータと構造化メタデータ。",
+    "catalog": "カタログ",
+    "trails": "WMNF トレイル",
+    "pics": "NH48 Pics",
+    "peakBagger": "Peak Bagger",
+    "login": "ログイン",
+    "viewProfile": "プロフィールを見る"
+  },
+  "catalog": {
+    "title": "NH48 ピーク・カタログ",
+    "intro": "ニューハンプシャー州の4,000フィート峰48座を閲覧できます。ピークをクリックすると詳細が表示されます。エラーが発生した場合は下に表示されます。ニューハンプシャー州4,000フィート峰のオープンAPIとデータセット。",
+    "search": {
+      "placeholder": "ピーク名で検索…",
+      "ariaLabel": "ピーク名で検索"
+    },
+    "sort": {
+      "label": "並び替え：",
+      "ariaLabel": "属性で並び替え",
+      "name": "名前 (A–Z)",
+      "elevAsc": "標高 ↑",
+      "elevDesc": "標高 ↓",
+      "promAsc": "顕著度 ↑",
+      "promDesc": "顕著度 ↓",
+      "diffAsc": "難易度 A–Z",
+      "diffDesc": "難易度 Z–A",
+      "rangeAsc": "山域 A–Z",
+      "trailAsc": "トレイル種別 A–Z",
+      "exposureAsc": "露出度 A–Z"
+    },
+    "filter": {
+      "label": "絞り込み：",
+      "ariaLabel": "フィルター項目を選択",
+      "none": "なし",
+      "range": "山域",
+      "difficulty": "難易度",
+      "trail": "トレイル種別",
+      "exposure": "露出度"
+    },
+    "value": {
+      "label": "値：",
+      "ariaLabel": "フィルター値を選択",
+      "all": "すべて"
+    },
+    "columns": {
+      "label": "列数：",
+      "ariaLabel": "列数を選択"
+    },
+    "empty": "ピークが見つかりません。",
+    "error": "ピークの読み込みに失敗しました",
+    "card": {
+      "elevation": "標高",
+      "prominence": "顕著度",
+      "range": "山域",
+      "trailType": "トレイル種別",
+      "difficulty": "難易度",
+      "exposure": "露出度"
+    }
+  },
+  "photo": {
+    "altTemplate": "{peak} の写真 — {season}{timeOfDay}"
+  },
+  "season": {
+    "spring": "春",
+    "summer": "夏",
+    "fall": "秋",
+    "autumn": "秋",
+    "winter": "冬"
+  },
+  "time": {
+    "sunrise": "日の出",
+    "sunset": "日没",
+    "morning": "朝",
+    "afternoon": "午後",
+    "evening": "夕方",
+    "night": "夜",
+    "day": "日中",
+    "dawn": "夜明け",
+    "dusk": "夕暮れ"
+  },
+  "peak": {
+    "back": "NH48 ピーク・カタログに戻る",
+    "loading": "読み込み中…",
+    "relatedTrails": {
+      "title": "関連トレイルとルート",
+      "none": "関連トレイルはまだありません。",
+      "link": "{name} ルート"
+    },
+    "section": {
+      "routes": "登山ルート",
+      "trails": "関連トレイル",
+      "terrain": "トレイルと地形",
+      "conditions": "コンディションとアクセス"
+    },
+    "carousel": {
+      "prev": "前の画像",
+      "next": "次の画像"
+    },
+    "metadata": {
+      "title": "現在の写真メタデータ",
+      "notAvailable": "利用不可",
+      "moreDetails": "詳細を表示 ▾",
+      "lessDetails": "詳細を非表示 ▴",
+      "labels": {
+        "season": "季節",
+        "timeOfDay": "時間帯",
+        "orientation": "向き",
+        "captureDate": "撮影日",
+        "cameraMaker": "カメラメーカー",
+        "cameraModel": "カメラモデル",
+        "camera": "カメラ",
+        "lens": "レンズ",
+        "fStop": "F値",
+        "shutterSpeed": "シャッタースピード",
+        "iso": "ISO",
+        "exposureBias": "露出補正",
+        "focalLength": "焦点距離",
+        "flashMode": "フラッシュモード",
+        "meteringMode": "測光モード",
+        "maxAperture": "最大絞り",
+        "author": "作者",
+        "dimensions": "寸法",
+        "fileSize": "ファイルサイズ",
+        "fileCreateDate": "作成日時",
+        "fileModifiedDate": "更新日時",
+        "rating": "評価",
+        "metadata": "メタデータ"
+      }
+    },
+    "generalInfo": {
+      "title": "ピーク概要",
+      "elevation": "標高",
+      "prominence": "顕著度",
+      "range": "山域",
+      "trailType": "トレイル種別",
+      "difficulty": "難易度",
+      "exposure": "露出度"
+    },
+    "routes": {
+      "distance": "距離",
+      "gain": "標高差",
+      "difficulty": "難易度"
+    },
+    "trailList": {
+      "title": "トレイル一覧"
+    },
+    "terrain": {
+      "terrain": "地形",
+      "scramble": "スクランブル",
+      "view": "眺望"
+    },
+    "conditions": {
+      "bestSeasons": "最適な季節",
+      "waterAvailability": "水の確保",
+      "cellReception": "携帯電波",
+      "weatherExposure": "天候露出",
+      "emergencyBailout": "緊急エスケープ",
+      "dogFriendly": "犬同伴可",
+      "nearbyFeatures": "周辺の特徴"
+    },
+    "errorLoading": "ピークの読み込みに失敗しました",
+    "meta": {
+      "titleTemplate": "{name}（{elevation} ft）– NH48",
+      "descriptionTemplate": "{name} — 標高 {elevation} ft、顕著度 {prominence} ft、{range} に位置。ルート、難易度、写真を収録。"
+    }
+  },
+  "trails": {
+    "title": "🏔️ WMNF Trails API マップツール",
+    "subtitle": "White Mountains のピーク・トレイル・ルートのオープンデータ構造。",
+    "intro": "White Mountain National Forest — Nate Sobol により編纂。手軽なトレイル検索と達成状況の管理に使えます。ニューハンプシャー州4,000フィート峰のオープンAPIとデータセット。",
+    "details": {
+      "title": "トレイル詳細",
+      "empty": "トレイルを選択して距離、標高、OpenStreetMap の詳細を表示してください。"
+    },
+    "search": {
+      "placeholder": "トレイルを検索…"
+    },
+    "sort": {
+      "az": "A → Z で並び替え",
+      "za": "Z → A で並び替え"
+    },
+    "jumpTo": "移動：",
+    "list": {
+      "headerName": "トレイル名",
+      "headerCompleted": "完了",
+      "noMatches": "トレイルが見つかりません。別の検索をお試しください。",
+      "noTrails": "利用可能なトレイルがありません。"
+    },
+    "loading": "トレイルを読み込み中...",
+    "about": {
+      "title": "この一覧について",
+      "body": "NH Tracing、Redlining、White Mountain Trails はガイドブックに記載された同じトレイル群を指します。名称が異なっても、これらの道を体験するという目標は同じです。"
+    },
+    "disclaimer": {
+      "title": "免責事項",
+      "body": "このサイトは<strong>計画やナビゲーション用ではありません</strong>。トレイルデータには誤りや不正確な点が含まれる可能性があり、この一覧は公式リストではありません（ただし多くのトレイルを含みます）。公式情報を参照し、現地では慎重に行動してください。"
+    },
+    "howto": {
+      "title": "使い方",
+      "body": "緑の丸でトレイルを完了としてマークできます。マーク後、カレンダーアイコンをタップして完了日を追加すると、日付がアイコンに置き換わり、再度タップして編集できます。進捗はブラウザにローカル保存されます。下のボタンで進捗をエクスポートまたはインポートできます。"
+    },
+    "settings": {
+      "title": "設定",
+      "hideCompleted": "完了済みトレイルを非表示",
+      "clearProgress": "進捗をすべてクリア"
+    },
+    "export": "CSV をエクスポート",
+    "import": "インポート",
+    "viewApi": "API を表示",
+    "resizePanels": "パネルサイズを調整",
+    "info": {
+      "noProperties": "追加のトレイル情報はまだありません。OpenStreetMap のデータで補完されます。",
+      "loadingProperties": "OpenStreetMap から追加情報を読み込み中...",
+      "sourceNote": "情報は利用可能な場合 OpenStreetMap から取得しています。",
+      "distance": "距離",
+      "elevationGain": "累積標高差",
+      "minElevation": "最低標高",
+      "maxElevation": "最高標高",
+      "surface": "路面",
+      "trailType": "トレイル種別",
+      "difficulty": "難易度",
+      "visibility": "視認性",
+      "width": "幅",
+      "allowedUses": "利用可能用途",
+      "season": "季節",
+      "maintainer": "管理者",
+      "source": "出典"
+    },
+    "virtualHike": "バーチャルハイク",
+    "unnamedTrail": "名前のないトレイル",
+    "confirmClear": "進捗をすべてクリアしますか？",
+    "alertLoadFail": "トレイルデータを読み込めません。ネット接続を確認し、ページを再読み込みしてください。",
+    "csv": {
+      "headerTrail": "トレイル",
+      "headerCompleted": "完了",
+      "headerDate": "日付",
+      "filename": "trail-progress.csv"
+    },
+    "map": {
+      "attribution": "地図データ: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | 地図スタイル: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    }
+  }
+}
