@@ -365,6 +365,13 @@
         word-wrap:break-word;
         white-space:normal;
       }
+      .trail-list{
+        margin:0;
+        padding-left:1.1rem;
+        color:var(--ink);
+        font-size:0.9rem;
+        line-height:1.5;
+      }
     </style>
   </head>
   <body data-page="catalog">
@@ -414,6 +421,9 @@
       <!-- OTHER SECTIONS ------------------------------------------------------>
       <div class="section-title">Hiking Routes</div>
       <div class="info-grid" id="routesGrid" hidden></div>
+
+      <div class="section-title">Associated Trails</div>
+      <div class="info-grid" id="trailNamesGrid" hidden></div>
 
       <div class="section-title">Trail &amp; Terrain</div>
       <div class="info-grid" id="terrainGrid" hidden></div>
@@ -977,6 +987,20 @@
               routesGrid.appendChild(div);
             });
             routesGrid.hidden = false;
+          }
+
+          const trailNames = p['Trail Names'] || [];
+          if(trailNames.length > 0){
+            const trailNamesGrid = document.getElementById('trailNamesGrid');
+            const div = document.createElement('div');
+            div.className = 'info-panel';
+            div.innerHTML = `
+              <div class="info-label">Trail List</div>
+              <ul class="trail-list">
+                ${trailNames.map(trail => `<li>${trail}</li>`).join('')}
+              </ul>`;
+            trailNamesGrid.appendChild(div);
+            trailNamesGrid.hidden = false;
           }
 
           // Terrain & view
