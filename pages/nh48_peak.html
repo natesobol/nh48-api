@@ -126,18 +126,25 @@
       @media(max-width:640px){
         .wrap{ padding:12px; }
       }
+      .controls-row{
+        display:flex;
+        align-items:flex-start;
+        gap:16px 20px;
+        flex-wrap:wrap;
+        margin:12px 0 16px;
+      }
       .nh48-lang{
         display:flex;
         align-items:center;
         gap:6px;
         flex-wrap:wrap;
-        margin:12px 0 16px;
+        margin:0;
       }
       .units-control{
         display:flex;
         align-items:center;
         gap:8px;
-        margin-bottom:16px;
+        margin:0;
       }
       .units-control label{
         font-size:0.75rem;
@@ -510,39 +517,37 @@
       <div class="seo-links">
         <a href="/catalog.html" data-i18n="peak.back">Back to NH48 Peak Catalog</a>
       </div>
-      <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
-        <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
-        <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
-          <span class="flag flag-en" aria-hidden="true">🇺🇸</span>
-        </button>
-        <button class="nh48-flag" data-lang="es" aria-label="Español" title="Español">
-          <span class="flag flag-es" aria-hidden="true">🇪🇸</span>
-        </button>
-        <button class="nh48-flag" data-lang="fr" aria-label="Français" title="Français">
-          <span class="flag flag-fr" aria-hidden="true">🇫🇷</span>
-        </button>
-        <button class="nh48-flag" data-lang="de" aria-label="Deutsch" title="Deutsch">
-          <span class="flag flag-de" aria-hidden="true">🇩🇪</span>
-        </button>
-        <button class="nh48-flag" data-lang="zh" aria-label="中文" title="中文">
-          <span class="flag flag-zh" aria-hidden="true">🇨🇳</span>
-        </button>
-        <button class="nh48-flag" data-lang="ja" aria-label="日本語" title="日本語">
-          <span class="flag flag-ja" aria-hidden="true">🇯🇵</span>
-        </button>
-      </div>
-      <div class="units-control">
-        <label for="unitsSelect" data-i18n="common.unitsLabel">Units</label>
-        <select id="unitsSelect" data-i18n="common.units" data-i18n-attr="aria-label" aria-label="Select units">
-          <option value="feet" data-i18n="common.unitsFeet">Feet</option>
-          <option value="meters" data-i18n="common.unitsMeters">Meters</option>
-        </select>
+      <div class="controls-row">
+        <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
+          <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
+          <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
+            <span class="flag flag-en" aria-hidden="true">🇺🇸</span>
+          </button>
+          <button class="nh48-flag" data-lang="es" aria-label="Español" title="Español">
+            <span class="flag flag-es" aria-hidden="true">🇪🇸</span>
+          </button>
+          <button class="nh48-flag" data-lang="fr" aria-label="Français" title="Français">
+            <span class="flag flag-fr" aria-hidden="true">🇫🇷</span>
+          </button>
+          <button class="nh48-flag" data-lang="de" aria-label="Deutsch" title="Deutsch">
+            <span class="flag flag-de" aria-hidden="true">🇩🇪</span>
+          </button>
+          <button class="nh48-flag" data-lang="zh" aria-label="中文" title="中文">
+            <span class="flag flag-zh" aria-hidden="true">🇨🇳</span>
+          </button>
+          <button class="nh48-flag" data-lang="ja" aria-label="日本語" title="日本語">
+            <span class="flag flag-ja" aria-hidden="true">🇯🇵</span>
+          </button>
+        </div>
+        <div class="units-control">
+          <label for="unitsSelect" data-i18n="common.unitsLabel">Units</label>
+          <select id="unitsSelect" data-i18n="common.units" data-i18n-attr="aria-label" aria-label="Select units">
+            <option value="feet" data-i18n="common.unitsFeet">Feet</option>
+            <option value="meters" data-i18n="common.unitsMeters">Meters</option>
+          </select>
+        </div>
       </div>
       <h1 id="peakTitle" data-i18n="peak.loading">Loading…</h1>
-      <div class="related-trails" id="relatedTrails" hidden>
-        <h2 data-i18n="peak.relatedTrails.title">Related Trails &amp; Routes</h2>
-        <ul id="relatedTrailList"></ul>
-      </div>
 
       <!-- MEDIA / CAROUSEL ---------------------------------------------------->
       <div class="media" id="media" hidden>
@@ -848,67 +853,6 @@
           document.head.appendChild(ld);
         }
         ld.textContent = JSON.stringify(schema);
-      }
-
-      const TRAIL_KEYWORDS = [
-        'Trail',
-        'Path',
-        'Ridge',
-        'Brook',
-        'River',
-        'Notch',
-        'Road',
-        'Cutoff',
-        'Loop',
-        'Slide',
-        'Spur',
-        'Connector'
-      ];
-
-      function extractRelatedTrailNames(routes){
-        if(!Array.isArray(routes)) return [];
-        const endPattern = new RegExp(`\\b(?:${TRAIL_KEYWORDS.join('|')})\\b$`, 'i');
-        const names = new Set();
-        routes.forEach(route => {
-          const raw = (route['Route Name'] || route.name || '').toString();
-          if(!raw) return;
-          const parts = raw
-            .replace(/[()]/g, ' ')
-            .split(/\s*(?:>|via|to|,|;|\/|&)\s*/i);
-          parts.forEach(part => {
-            const cleaned = part.replace(/[^\w\s'-]/g, ' ').replace(/\s+/g, ' ').trim();
-            if(!cleaned) return;
-            const words = cleaned.split(' ').filter(Boolean);
-            if(words.length < 2 || words.length > 4) return;
-            if(!endPattern.test(cleaned)) return;
-            names.add(words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '));
-          });
-        });
-        return Array.from(names);
-      }
-
-      function renderRelatedTrails(routes){
-        const container = document.getElementById('relatedTrails');
-        const listEl = document.getElementById('relatedTrailList');
-        if(!container || !listEl) return;
-        const names = extractRelatedTrailNames(routes);
-        listEl.innerHTML = '';
-        if(names.length === 0){
-          const li = document.createElement('li');
-          li.textContent = t('peak.relatedTrails.none');
-          listEl.appendChild(li);
-          container.hidden = false;
-          return;
-        }
-        names.forEach(name => {
-          const li = document.createElement('li');
-          const link = document.createElement('a');
-          link.href = `/trails.html?trail=${encodeURIComponent(name)}`;
-          link.textContent = t('peak.relatedTrails.link', { name });
-          li.appendChild(link);
-          listEl.appendChild(li);
-        });
-        container.hidden = false;
       }
 
       function cleanJSON(raw){
@@ -1485,7 +1429,7 @@
             return;
           }
 
-          const name = p.peakName || p['Peak Name'] || slug;
+          const name = p.peakName || p['Peak Name'] || p.name || p['Name'] || p.peak || p['Peak'] || p['PeakName'] || slug;
           peakTitle.textContent = name;
           currentPeak = p;
           currentSlug = slug;
@@ -1497,8 +1441,6 @@
 
           const routes = p['Standard Routes'] || [];
           renderRoutes(routes);
-          renderRelatedTrails(routes);
-
           const trailNames = p['Trail Names'] || [];
           renderTrailNames(trailNames);
           renderTerrain(p);
