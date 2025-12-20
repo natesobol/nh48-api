@@ -78,6 +78,7 @@
       border-radius: 12px;
       padding: 16px;
       overflow-y: auto;
+      overflow-x: hidden;
       min-height: 0;
       word-wrap: break-word;
       overflow-wrap: break-word;
@@ -99,7 +100,7 @@
 
     .filter-panel {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 12px;
       padding: 12px;
       border-radius: 10px;
@@ -112,6 +113,7 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+      min-width: 0;
     }
 
     .filter-label {
@@ -123,6 +125,7 @@
 
     .filter-input,
     .filter-select {
+      width: 100%;
       padding: 8px 10px;
       border-radius: 8px;
       border: 1px solid var(--border-color);
@@ -161,6 +164,14 @@
       margin-bottom: 16px;
     }
 
+    .trail-directory-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      margin: 4px 2px 10px;
+    }
+
     .accordion {
       display: flex;
       flex-direction: column;
@@ -172,6 +183,7 @@
       border-radius: 10px;
       background: var(--bg-tertiary);
       overflow: hidden;
+      border-left: 4px solid var(--trail-color, var(--border-color));
     }
 
     .trail-summary {
@@ -189,7 +201,8 @@
     }
 
     .trail-summary span {
-      flex: 1;
+      flex: 1 1 0;
+      min-width: 0;
     }
 
     .color-dot {
@@ -245,6 +258,9 @@
 
     .section-actions {
       margin-top: 6px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .section-link {
@@ -254,23 +270,21 @@
       font-weight: 600;
     }
 
-    .legend {
-      margin-top: 16px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border-color);
+    .section-pan {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(32, 36, 43, 0.85);
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
     }
 
-    .legend h2 {
-      font-size: 1rem;
-      margin: 0 0 8px;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.9rem;
-      margin-bottom: 6px;
+    .section-pan:hover {
+      color: var(--text-primary);
+      border-color: var(--accent);
     }
 
     .empty-state {
@@ -430,11 +444,8 @@
       </div>
 
       <div id="sectionDetails" class="section-details"></div>
+      <div class="trail-directory-title">Trail segments</div>
       <div id="trailList" class="accordion"></div>
-      <div class="legend">
-        <h2>Trail colors</h2>
-        <div id="legendList"></div>
-      </div>
     </aside>
     <section class="map-panel">
       <div id="map"></div>
@@ -505,17 +516,46 @@
     }
 
     function getSectionBounds(section){
-      if(section.bounds){
-        return section.bounds;
+      const bounds = normalizeBounds(section.bounds)
+        || normalizeBounds(section.geometry && section.geometry.bbox);
+      const start = normalizePoint(section.start);
+      const end = normalizePoint(section.end);
+      const fallback = start && end
+        ? {
+            minLat: Math.min(start.lat, end.lat),
+            maxLat: Math.max(start.lat, end.lat),
+            minLon: Math.min(start.lon, end.lon),
+            maxLon: Math.max(start.lon, end.lon)
+          }
+        : null;
+      if(bounds){
+        const boundsHasZero = [bounds.minLat, bounds.maxLat, bounds.minLon, bounds.maxLon].some(value => value === 0);
+        const fallbackHasZero = fallback
+          ? [fallback.minLat, fallback.maxLat, fallback.minLon, fallback.maxLon].some(value => value === 0)
+          : true;
+        if(boundsHasZero && !fallbackHasZero){
+          return fallback;
+        }
+        return bounds;
       }
-      if(section.start && section.end){
-        const minLat = Math.min(section.start.lat, section.end.lat);
-        const maxLat = Math.max(section.start.lat, section.end.lat);
-        const minLon = Math.min(section.start.lon, section.end.lon);
-        const maxLon = Math.max(section.start.lon, section.end.lon);
-        return { minLat, minLon, maxLat, maxLon };
+      if(fallback){
+        return fallback;
       }
       return null;
+    }
+
+    function normalizeBounds(bounds){
+      if(!bounds){
+        return null;
+      }
+      const minLat = toNumber(bounds.minLat ?? bounds.min_lat ?? bounds.south);
+      const maxLat = toNumber(bounds.maxLat ?? bounds.max_lat ?? bounds.north);
+      const minLon = toNumber(bounds.minLon ?? bounds.min_lon ?? bounds.west);
+      const maxLon = toNumber(bounds.maxLon ?? bounds.max_lon ?? bounds.east);
+      if([minLat, maxLat, minLon, maxLon].some(value => value == null)){
+        return null;
+      }
+      return { minLat, minLon, maxLat, maxLon };
     }
 
     function normalizePoint(point){
@@ -562,17 +602,6 @@
       return null;
     }
 
-    function renderLegend(trails){
-      const legend = document.getElementById('legendList');
-      legend.innerHTML = '';
-      trails.forEach(trail => {
-        const item = document.createElement('div');
-        item.className = 'legend-item';
-        item.innerHTML = `<span class="color-dot" style="background:${trail.color}"></span>${trail.name}`;
-        legend.appendChild(item);
-      });
-    }
-
     function renderSectionDetails(section){
       const container = document.getElementById('sectionDetails');
       if(!section){
@@ -601,8 +630,8 @@
         const color = trail.color || '#4a9eff';
         const endpoints = trail.endpoints || (trail.stats && trail.stats.endpoints);
         if(endpoints && endpoints.start && endpoints.end){
-          const start = endpoints.start;
-          const end = endpoints.end;
+          const start = normalizePoint(endpoints.start);
+          const end = normalizePoint(endpoints.end);
           if(start && start.lat != null && start.lon != null){
             L.circleMarker([start.lat, start.lon], {
               radius: 8,
@@ -629,21 +658,23 @@
       trails.forEach(trail => {
         const color = trail.color || '#4a9eff';
         trail.sections.forEach(section => {
-          if(section.start && section.start.lat != null && section.start.lon != null){
-            L.circleMarker([section.start.lat, section.start.lon], {
+          const start = normalizePoint(section.start);
+          const end = normalizePoint(section.end);
+          if(start && start.lat != null && start.lon != null){
+            L.circleMarker([start.lat, start.lon], {
               radius: 5,
               color,
               fillColor: color,
               fillOpacity: 0.8
-            }).bindTooltip(`Start: ${section.start.name || ''}`.trim()).addTo(activeLayers);
+            }).bindTooltip(`Start: ${start.name || ''}`.trim()).addTo(activeLayers);
           }
-          if(section.end && section.end.lat != null && section.end.lon != null){
-            L.circleMarker([section.end.lat, section.end.lon], {
+          if(end && end.lat != null && end.lon != null){
+            L.circleMarker([end.lat, end.lon], {
               radius: 5,
               color,
               fillColor: color,
               fillOpacity: 0.8
-            }).bindTooltip(`End: ${section.end.name || ''}`.trim()).addTo(activeLayers);
+            }).bindTooltip(`End: ${end.name || ''}`.trim()).addTo(activeLayers);
           }
         });
       });
@@ -732,13 +763,15 @@
         return { ...trail, sections: filteredSections };
       }).filter(Boolean).filter(trail => trail.sections.length > 0);
 
-      const selectedTrail = filters.trail || (filteredTrails[0] ? filteredTrails[0].slug : '');
+      const selectedTrail = filters.trail;
       if(selectedTrail && !filteredTrails.some(trail => trail.slug === selectedTrail)){
         document.getElementById('trailSelect').value = '';
+        activeTrailSlug = '';
+      }else{
+        activeTrailSlug = selectedTrail;
       }
-      activeTrailSlug = selectedTrail;
       updateQueryFromFilters({ ...filters, trail: selectedTrail });
-      renderTrailList(filteredTrails, selectedTrail);
+      renderTrailList(filteredTrails);
       renderMap(filteredTrails);
 
       const totalSections = filteredTrails.reduce((sum, trail) => sum + trail.sections.length, 0);
@@ -764,7 +797,7 @@
       return query ? `${baseUrl}?${query}` : baseUrl;
     }
 
-    function renderTrailList(trails, activeTrailSlug){
+    function renderTrailList(trails){
       const container = document.getElementById('trailList');
       container.innerHTML = '';
 
@@ -779,21 +812,17 @@
       trails.forEach(trail => {
         const details = document.createElement('details');
         details.className = 'trail-details';
-        if(trail.slug === activeTrailSlug){
-          details.open = true;
-        }
+        details.style.setProperty('--trail-color', trail.color || '#4a9eff');
 
         const summary = document.createElement('summary');
         summary.className = 'trail-summary';
         summary.innerHTML = `<span class="color-dot" style="background:${trail.color}"></span><span>${trail.name}</span><span>${trail.sections.length} sections</span>`;
         summary.addEventListener('click', () => {
-          document.getElementById('trailSelect').value = trail.slug;
-          applyFilters();
           // Pan to center between start and end points
           const endpoints = trail.endpoints || (trail.stats && trail.stats.endpoints);
           if(endpoints && endpoints.start && endpoints.end){
-            const start = endpoints.start;
-            const end = endpoints.end;
+            const start = normalizePoint(endpoints.start);
+            const end = normalizePoint(endpoints.end);
             if(start && end && start.lat != null && start.lon != null && end.lat != null && end.lon != null){
               const centerLat = (start.lat + end.lat) / 2;
               const centerLon = (start.lon + end.lon) / 2;
@@ -827,7 +856,10 @@
             <div class="section-subtitle">
               ${[distanceLabel, difficultyLabel, jurisdictions].filter(Boolean).map(item => `<span>${item}</span>`).join('')}
             </div>
-            <div class="section-actions"><a class="section-link" href="${buildSectionLink(trail, section)}">View section</a></div>
+            <div class="section-actions">
+              <button class="section-pan" type="button">Pan to segment</button>
+              <a class="section-link" href="${buildSectionLink(trail, section)}">View section</a>
+            </div>
           `;
 
           item.addEventListener('mouseenter', () => {
@@ -842,7 +874,24 @@
             if(event.target && event.target.matches('a')){
               return;
             }
-            window.location.href = buildSectionLink(trail, section);
+            if(event.target && event.target.matches('button')){
+              event.stopPropagation();
+            }
+            const bounds = getSectionBounds(section);
+            if(bounds){
+              fitBounds(bounds);
+            }
+            renderSectionDetails(section);
+          });
+
+          const panButton = item.querySelector('.section-pan');
+          panButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const bounds = getSectionBounds(section);
+            if(bounds){
+              fitBounds(bounds);
+            }
+            renderSectionDetails(section);
           });
 
           sectionList.appendChild(item);
@@ -930,7 +979,6 @@
       populateSelect(document.getElementById('tagSelect'), Array.from(tagValues).sort());
 
       hydrateFiltersFromQuery();
-      renderLegend(trailData);
       applyFilters();
 
       document.getElementById('trailSelect').addEventListener('change', applyFilters);
