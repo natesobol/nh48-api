@@ -226,7 +226,7 @@ const buildRelatedTrailsList = (routes) => {
   }
   return relatedNames
     .map((name) => {
-      const href = `https://nh48.info/trails.html?trail=${encodeURIComponent(name)}`;
+      const href = `https://nh48.info/trails?trail=${encodeURIComponent(name)}`;
       const text = `${name} route`;
       return `<li><a href="${href}">${escapeHtml(text)}</a></li>`;
     })

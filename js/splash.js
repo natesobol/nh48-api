@@ -1,10 +1,11 @@
 const SPLASH_ICON_PATH = "/UI-Elements/";
 const MAX_SPLASH_ICONS = 40;
-const SPLASH_MIN_DURATION_S = 10;
-const SPLASH_MAX_DURATION_S = 20;
+const SPLASH_MIN_DURATION_S = 18;
+const SPLASH_MAX_DURATION_S = 32;
 const SPLASH_MIN_SIZE_MULTIPLIER = 1;
 const SPLASH_MAX_SIZE_MULTIPLIER = 4;
 const SPLASH_DIAGONAL_SPEED_PX = 12;
+const SPLASH_SPEED_VARIANCE = 0.35;
 const SPLASH_MASK_PADDING_PX = 24;
 const SPLASH_ICON_EXCLUSIONS = [
   "og-cover.png",
@@ -220,16 +221,23 @@ const initSplash = async () => {
     imgEl.style.animationDuration = `${duration}s, ${duration}s`;
     imgEl.style.animationDelay = `-${delay}s, -${delay}s`;
     container.appendChild(imgEl);
-    icons.push({ el: imgEl, x, y, size });
+    const speedVariance = 1 + (Math.random() * 2 - 1) * SPLASH_SPEED_VARIANCE;
+    icons.push({
+      el: imgEl,
+      x,
+      y,
+      size,
+      speed: SPLASH_DIAGONAL_SPEED_PX * speedVariance
+    });
   });
 
   let lastTime = performance.now();
   const tick = (now) => {
     const delta = (now - lastTime) / 1000;
     lastTime = now;
-    const dx = SPLASH_DIAGONAL_SPEED_PX * delta;
-    const dy = SPLASH_DIAGONAL_SPEED_PX * delta;
     icons.forEach((icon) => {
+      const dx = icon.speed * delta;
+      const dy = icon.speed * delta;
       icon.x += dx;
       icon.y += dy;
       if (icon.x > viewportWidth + icon.size) {
