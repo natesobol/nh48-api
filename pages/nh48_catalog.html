@@ -166,7 +166,8 @@
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
-      const PHOTO_BASE_URL = 'https://17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com/nh48-photos';
+      const PHOTO_BASE_URL = 'https://nh48-photos.17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com';
+      const PHOTO_PATH_PREFIX = '/nh48-photos/';
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
 
@@ -191,6 +192,11 @@
         if(url.startsWith(PHOTO_BASE_URL)) return url;
         const isJsdelivrPhoto = url.includes('cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/');
         const isGithubRawPhoto = url.includes('raw.githubusercontent.com/natesobol/nh48-api/main/photos/');
+        const isR2PathStyle = url.includes('r2.cloudflarestorage.com/nh48-photos/');
+        if(isR2PathStyle){
+          const [, tail] = url.split(PHOTO_PATH_PREFIX);
+          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+        }
         if(isJsdelivrPhoto || isGithubRawPhoto){
           const [, tail] = url.split('/photos/');
           return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
