@@ -13,7 +13,7 @@ keywords.  All existing EXIF metadata extraction behaviour is retained.
 
 Usage:
     python manifest_generator_modified.py --api data/nh48.json --photos photos \
-        --base-url https://cdn.jsdelivr.net/gh/user/repo/photos --output out.json
+        --base-url https://photos.example.com --output out.json
 """
 
 import os
@@ -22,6 +22,11 @@ import argparse
 from typing import List, Dict, Optional
 
 from PIL import Image, ExifTags
+
+DEFAULT_PHOTO_BASE_URL = os.getenv(
+    "PHOTO_BASE_URL",
+    "https://17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com/nh48-photos",
+)
 
 
 def _convert_fraction(value) -> Optional[float]:
@@ -331,7 +336,14 @@ def main():
     parser = argparse.ArgumentParser(description="Generate or update photo manifests for NH48 peaks (enhanced version).")
     parser.add_argument("--api", required=True, help="Path to the input API JSON file (e.g. nh48_api_merged.json).")
     parser.add_argument("--photos", required=True, help="Root directory containing photos organised by slug.")
-    parser.add_argument("--base-url", required=True, help="Base URL for public access to photos (e.g. https://cdn.jsdelivr.net/gh/user/repo/photos).")
+    parser.add_argument(
+        "--base-url",
+        default=DEFAULT_PHOTO_BASE_URL,
+        help=(
+            "Base URL for public access to photos "
+            "(defaults to PHOTO_BASE_URL env var)."
+        ),
+    )
     parser.add_argument("--output", required=True, help="Path to write the updated API JSON file.")
     parser.add_argument("--append", action="store_true", help="If set, existing photos arrays are preserved and new photo files are appended.")
     args = parser.parse_args()
