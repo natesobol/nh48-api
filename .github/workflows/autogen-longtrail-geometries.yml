@@ -1,0 +1,42 @@
+name: Autogenerate long trail geometries
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/long-trails/**'
+      - 'scripts/autogen-longtrail-geometries.mjs'
+      - 'scripts/routing/**'
+  schedule:
+    - cron: '15 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Generate long trail geometries
+        run: node scripts/autogen-longtrail-geometries.mjs
+
+      - name: Commit generated geometries
+        run: |
+          if git status --porcelain | grep -q "^ M data/long-trails/generated\|^?? data/long-trails/generated"; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add data/long-trails/generated
+            git commit -m "chore: update long trail geometries"
+            git push
+          else
+            echo "No geometry updates to commit."
+          fi
