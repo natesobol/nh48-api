@@ -99,9 +99,9 @@ function buildShape(section){
   return { points: points.map(point => ({ lat: point.lat, lon: point.lon })), error: null };
 }
 
-function buildSectionOutput({ trailSlug, sectionSlug, provider, result, status, error }){
+function buildSectionOutput({ trailSlug, sectionSlug, provider, result, status, error, geometryOverride }){
   const generatedAt = new Date().toISOString();
-  const geometry = result?.geometry ?? null;
+  const geometry = geometryOverride ?? result?.geometry ?? null;
   const distanceMiles = result?.distanceKm != null
     ? result.distanceKm * MILES_PER_KM
     : lineDistanceMiles(geometry);
@@ -119,6 +119,27 @@ function buildSectionOutput({ trailSlug, sectionSlug, provider, result, status, 
     status,
     error
   };
+}
+
+function buildLineGeometry(points){
+  if(!Array.isArray(points) || points.length < 2){
+    return null;
+  }
+  return {
+    type: 'LineString',
+    coordinates: points.map(point => [point.lon, point.lat])
+  };
+}
+
+function fallbackGeometryFromSection(section){
+  const geometry = section?.geometry;
+  if(geometry?.type === 'LineString' && Array.isArray(geometry.coordinates) && geometry.coordinates.length >= 2){
+    return geometry;
+  }
+  if(Array.isArray(geometry?.coordinates) && geometry.coordinates.length >= 2){
+    return { type: 'LineString', coordinates: geometry.coordinates };
+  }
+  return null;
 }
 
 async function generateSection({ trailSlug, section, outputDir, force }){
@@ -139,9 +160,23 @@ async function generateSection({ trailSlug, section, outputDir, force }){
   const costing = routing.costing || 'pedestrian';
   const useTraceRoute = routing.useTraceRoute !== false;
   const shapeResult = buildShape(section);
+  const sectionGeometry = fallbackGeometryFromSection(section);
   if(!shapeResult.points){
     if(existingOutput){
       return existingOutput;
+    }
+    if(sectionGeometry){
+      const output = buildSectionOutput({
+        trailSlug,
+        sectionSlug,
+        provider: 'fallback',
+        result: null,
+        geometryOverride: sectionGeometry,
+        status: 'fallback',
+        error: `${shapeResult.error} Using existing geometry.`
+      });
+      await writeJson(outputPath, output);
+      return output;
     }
     const output = buildSectionOutput({
       trailSlug,
@@ -189,6 +224,21 @@ async function generateSection({ trailSlug, section, outputDir, force }){
       result,
       status: 'ok',
       error: null
+    });
+    await writeJson(outputPath, output);
+    return output;
+  }
+
+  const fallbackGeometry = sectionGeometry || buildLineGeometry(shape);
+  if(fallbackGeometry){
+    const output = buildSectionOutput({
+      trailSlug,
+      sectionSlug,
+      provider: 'fallback',
+      result: null,
+      geometryOverride: fallbackGeometry,
+      status: 'fallback',
+      error: errorMessage || 'Routing failed, using fallback geometry.'
     });
     await writeJson(outputPath, output);
     return output;
