@@ -3,9 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Long-Distance Trails – NH48</title>
-  <meta name="description" content="Explore long-distance trail campaigns with interactive maps, segment details, and downloadable data on NH48.">
-  <link rel="canonical" href="https://nh48.info/long-trails.html">
+  <title>Long-Distance Trails & Sections Map (Appalachian Trail, NH Sections, PCT, CDT) | NH48 API</title>
+  <meta name="description" content="Explore long-distance trail campaigns with interactive maps and segment details, including Appalachian Trail New Hampshire sections, on NH48.">
+  <link rel="canonical" href="https://nh48.info/pages/long_trails_app.html">
+  <meta property="og:title" content="Long-Distance Trails & Sections Map (Appalachian Trail, NH Sections, PCT, CDT) | NH48 API">
+  <meta property="og:description" content="Explore long-distance trail campaigns with interactive maps and segment details, including Appalachian Trail New Hampshire sections, on NH48.">
+  <meta property="og:url" content="https://nh48.info/pages/long_trails_app.html">
+  <meta property="og:image" content="https://nh48.info/nh48-preview.png">
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -308,6 +312,18 @@
       white-space: nowrap;
     }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     @media (max-width: 1100px){
       #app {
         grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
@@ -401,6 +417,11 @@
       <div id="map"></div>
     </section>
   </main>
+
+  <section id="seo-trails" class="sr-only" aria-label="Long-distance trail sections index">
+    <h2>Trail Sections Index</h2>
+  </section>
+  <script id="ld-long-trails" type="application/ld+json">{}</script>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script>
@@ -629,6 +650,211 @@
       return null;
     }
 
+    function extractLengthMiles(value){
+      if(value == null){
+        return null;
+      }
+      if(typeof value === 'number' || typeof value === 'string'){
+        return toNumber(value);
+      }
+      if(typeof value === 'object'){
+        return toNumber(value.miles ?? value.mi ?? value.value);
+      }
+      return null;
+    }
+
+    function formatMilesLabel(miles){
+      if(miles == null){
+        return null;
+      }
+      return `${miles} mi`;
+    }
+
+    function buildHashLink(trail, section){
+      const params = new URLSearchParams();
+      params.set('trail', trail.slug);
+      if(section){
+        params.set('section', section.slug);
+      }
+      return `#${params.toString()}`;
+    }
+
+    function buildSeoSectionDescription(trail, section){
+      const distance = getSectionDistance(section);
+      const distanceLabel = distance != null ? `${distance} mi` : null;
+      const difficultyValue = typeof section.difficulty === 'string' ? section.difficulty : section.difficulty && section.difficulty.rating;
+      const difficultyLabel = difficultyValue ? `Difficulty: ${difficultyValue}` : null;
+      const jurisdictions = formatJurisdictions(section.jurisdictions);
+      const startName = section.start && section.start.name ? `Start: ${section.start.name}` : null;
+      const endName = section.end && section.end.name ? `End: ${section.end.name}` : null;
+      const meta = [distanceLabel, difficultyLabel, jurisdictions].filter(Boolean).join(' · ');
+      const endpoints = [startName, endName].filter(Boolean).join(' · ');
+      return [meta, endpoints].filter(Boolean).join(' — ');
+    }
+
+    function buildSeoTrailIndex(trails){
+      const container = document.getElementById('seo-trails');
+      if(!container){
+        return;
+      }
+      if(!trails || trails.length === 0){
+        container.innerHTML = '<h2>Trail Sections Index</h2><p>No trails available.</p>';
+        return;
+      }
+      const trailHtml = trails.map(trail => {
+        const shortName = trail.shortName ? ` (${trail.shortName})` : '';
+        const officialMiles = extractLengthMiles(trail.stats && trail.stats.officialLength);
+        const totalMiles = extractLengthMiles(trail.stats && (trail.stats.distance ?? trail.stats.length ?? trail.stats.totalLength));
+        const lengthParts = [];
+        const officialLabel = formatMilesLabel(officialMiles);
+        const totalLabel = formatMilesLabel(totalMiles);
+        if(officialLabel){
+          lengthParts.push(`Official length: ${officialLabel}`);
+        }
+        if(totalLabel && totalLabel !== officialLabel){
+          lengthParts.push(`Total length: ${totalLabel}`);
+        }
+        if(lengthParts.length === 0){
+          lengthParts.push('Length data pending');
+        }
+        if(trail.slug === 'appalachian-trail'){
+          lengthParts.push('Appalachian Trail (sometimes misspelled “Appalachain”)');
+        }
+        const sectionsHtml = (trail.sections || []).map(section => {
+          const description = buildSeoSectionDescription(trail, section);
+          const jurisdictions = formatJurisdictions(section.jurisdictions);
+          const linkLabel = jurisdictions ? `${buildSectionLabel(section)} (${jurisdictions})` : buildSectionLabel(section);
+          return `
+            <li>
+              <a href="${buildHashLink(trail, section)}">${linkLabel}</a>
+              ${description ? `: ${description}` : ''}
+            </li>
+          `;
+        }).join('');
+        return `
+          <article>
+            <h3>${trail.name}${shortName}</h3>
+            <p>${lengthParts.join(' · ')}</p>
+            <ul>
+              ${sectionsHtml}
+            </ul>
+          </article>
+        `;
+      }).join('');
+      container.innerHTML = `<h2>Trail Sections Index</h2>${trailHtml}`;
+    }
+
+    function buildStructuredData(trails){
+      const script = document.getElementById('ld-long-trails');
+      if(!script){
+        return;
+      }
+      const canonical = document.querySelector('link[rel="canonical"]');
+      const pageUrl = canonical ? canonical.href : window.location.href;
+      const itemList = (trails || []).map((trail, index) => {
+        const sectionItems = (trail.sections || []).map((section, sectionIndex) => {
+          const description = buildSeoSectionDescription(trail, section);
+          const startName = section.start && section.start.name ? section.start.name : null;
+          const endName = section.end && section.end.name ? section.end.name : null;
+          const endpointLabel = startName && endName ? `${startName} → ${endName}` : startName || endName;
+          const keywords = [
+            trail.name,
+            section.name,
+            endpointLabel,
+            formatJurisdictions(section.jurisdictions)
+          ].filter(Boolean).join(', ');
+          return {
+            "@type": "ListItem",
+            "position": sectionIndex + 1,
+            "name": buildSectionLabel(section),
+            "description": description || undefined,
+            "item": {
+              "@type": "CreativeWork",
+              "name": buildSectionLabel(section),
+              "description": description || undefined,
+              "keywords": keywords || undefined
+            }
+          };
+        });
+        const trailKeywords = [
+          trail.name,
+          trail.shortName,
+          formatJurisdictions(trail.jurisdictions),
+          trail.slug === 'appalachian-trail' ? 'Appalachain Trail' : null
+        ].filter(Boolean).join(', ');
+        return {
+          "@type": "ListItem",
+          "position": index + 1,
+          "item": {
+            "@type": "CreativeWork",
+            "name": trail.name,
+            "alternateName": trail.shortName || undefined,
+            "description": `${trail.name} long-distance trail with ${trail.sections ? trail.sections.length : 0} sections.`,
+            "keywords": trailKeywords || undefined,
+            "hasPart": {
+              "@type": "ItemList",
+              "itemListElement": sectionItems
+            }
+          }
+        };
+      });
+      const payload = {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Long-Distance Trails – NH48",
+        "url": pageUrl,
+        "about": {
+          "@type": "ItemList",
+          "itemListElement": itemList
+        }
+      };
+      script.textContent = JSON.stringify(payload, null, 2);
+    }
+
+    function getHashParams(){
+      if(!window.location.hash){
+        return null;
+      }
+      const hash = window.location.hash.replace(/^#/, '');
+      if(!hash){
+        return null;
+      }
+      const params = new URLSearchParams(hash);
+      const trail = params.get('trail');
+      const section = params.get('section');
+      if(!trail){
+        return null;
+      }
+      return { trail, section };
+    }
+
+    function applyHashSelection(){
+      const params = getHashParams();
+      if(!params){
+        return;
+      }
+      const trail = trailData.find(item => item.slug === params.trail);
+      if(!trail){
+        return;
+      }
+      const trailDetails = document.querySelector(`[data-trail-slug="${trail.slug}"]`);
+      if(trailDetails){
+        trailDetails.open = true;
+      }
+      if(params.section){
+        const section = (trail.sections || []).find(item => item.slug === params.section);
+        if(section){
+          renderSectionDetails(section);
+          const bounds = getSectionBounds(section);
+          if(bounds){
+            fitBounds(bounds);
+          }
+          return;
+        }
+      }
+      fitBounds(trail.bounds || globalBounds);
+    }
+
     function renderMap(trails){
       activeLayers.clearLayers();
       const sourceTrails = trails && trails.length ? trails : trailData;
@@ -744,6 +970,7 @@
         details.className = 'trail-details';
         details.style.setProperty('--trail-color', trail.color || '#4a9eff');
         details.open = false;
+        details.dataset.trailSlug = trail.slug;
 
         const summary = document.createElement('summary');
         summary.className = 'trail-summary';
@@ -890,6 +1117,10 @@
       await mergeGeneratedTrails(trailData);
 
       renderAllTrails();
+      buildSeoTrailIndex(trailData);
+      buildStructuredData(trailData);
+      applyHashSelection();
+      window.addEventListener('hashchange', applyHashSelection);
     }
 
     window.addEventListener('DOMContentLoaded', init);
