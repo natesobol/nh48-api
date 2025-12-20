@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NH48 API — Open data for New Hampshire 4,000-foot peaks</title>
+  <title>NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails</title>
   <meta name="description" content="NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Explore the catalog, routes, and WMNF trails.">
   <link rel="icon" type="image/png" href="nh48API_logo.png">
   <link rel="canonical" href="https://nh48.info/">
@@ -14,6 +14,37 @@
   <link rel="alternate" hreflang="zh" href="https://nh48.info/i18n/zh.html">
   <link rel="alternate" hreflang="ja" href="https://nh48.info/i18n/ja.html">
   <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
+  <meta property="og:title" content="NH48 API – Open Trails and Peaks Data">
+  <meta property="og:description" content="Browse the peak catalog, explore WMNF trails, and access long-distance route data for New Hampshire’s mountains.">
+  <meta property="og:image" content="https://nh48.info/UI-Elements/og-cover.png">
+  <meta property="og:url" content="https://nh48.info/">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://nh48.info/#org",
+          "name": "NH48 API",
+          "url": "https://nh48.info",
+          "logo": "https://nh48.info/UI-Elements/logo.png"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://nh48.info/#website",
+          "url": "https://nh48.info",
+          "name": "NH48 API",
+          "publisher": { "@id": "https://nh48.info/#org" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://nh48.info/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+  </script>
   <style>
     body {
       margin: 0;
@@ -21,6 +52,7 @@
       color: #ffffff;
       font-family: system-ui, -apple-system, sans-serif;
       min-height: 100vh;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -29,6 +61,8 @@
     main {
       max-width: 720px;
       text-align: center;
+      position: relative;
+      z-index: 1;
     }
     h1 {
       font-size: clamp(28px, 4vw, 40px);
@@ -66,9 +100,30 @@
       font-size: 0.9rem;
       color: #9aa8c7;
     }
+    #splash-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .splash-icon {
+      position: absolute;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #splash-background {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
+  <div id="splash-background" aria-hidden="true"></div>
   <main>
     <h1>NH48 API</h1>
     <p>Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore WMNF trails, and build on top of the dataset.</p>
@@ -83,12 +138,13 @@
       localStorage.setItem('nh48_lang', 'en');
     }
   </script>
+  <script src="/js/splash.js" defer></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyCUSHYxwXVGEDNzMeIwSFmDaYeXSqRK4A",
+      apiKey: "AIzaSyCUShYXwxGVEDNzMeIwSFPmDaYeXSqRK4A",
       authDomain: "nh48-info.firebaseapp.com",
       projectId: "nh48-info",
       storageBucket: "nh48-info.firebasestorage.app",
