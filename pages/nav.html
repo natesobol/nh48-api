@@ -1,5 +1,17 @@
 <style>
   /* Site Navigation Header (Peakbagger-inspired) */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   .site-nav {
     display: flex;
     align-items: center;
@@ -106,6 +118,9 @@
   @media (max-width: 768px) {
     .site-nav {
       padding: 10px 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
     }
 
     .site-nav-title,
@@ -113,8 +128,16 @@
       display: none;
     }
 
+    .site-nav-logo {
+      flex: 1 1 100%;
+      justify-content: center;
+    }
+
     .site-nav-links {
       gap: 4px;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .site-nav-links a {
@@ -125,6 +148,7 @@
     .site-nav-cta {
       padding: 6px 10px;
       font-size: 11px;
+      justify-content: center;
     }
   }
 
@@ -132,6 +156,10 @@
     .site-nav-links a {
       padding: 6px 8px;
       font-size: 11px;
+    }
+
+    .site-nav-cta {
+      width: 100%;
     }
   }
 </style>
