@@ -150,16 +150,24 @@
       content: '';
     }
 
-    .trail-summary span {
-      flex: 1 1 0;
-      min-width: 0;
-    }
-
     .color-dot {
       width: 12px;
       height: 12px;
       border-radius: 50%;
       display: inline-block;
+      flex: 0 0 12px;
+    }
+
+    .trail-name {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .trail-count {
+      flex: 0 0 auto;
+      color: var(--text-secondary);
+      font-weight: 500;
+      white-space: nowrap;
     }
 
     .trail-meta {
@@ -555,7 +563,7 @@
       const distanceLabel = distance != null ? `${distance} mi` : null;
       const difficultyValue = typeof section.difficulty === 'string' ? section.difficulty : section.difficulty && section.difficulty.rating;
       const difficulty = difficultyValue ? `Difficulty: ${difficultyValue}` : null;
-      const jurisdictions = section.jurisdictions && section.jurisdictions.length ? section.jurisdictions.join(', ') : null;
+      const jurisdictions = formatJurisdictions(section.jurisdictions);
       const tags = section.tags && section.tags.length ? section.tags.join(', ') : null;
       const geometryBadge = getGeometryBadgeLabel(section);
       container.innerHTML = `
@@ -565,6 +573,39 @@
           ${geometryBadge ? `<span class=\"geometry-badge\">${geometryBadge}</span>` : ''}
         </div>
       `;
+    }
+
+    function formatJurisdictions(jurisdictions){
+      if(!Array.isArray(jurisdictions) || !jurisdictions.length){
+        return null;
+      }
+      const labels = jurisdictions.map(item => {
+        if(typeof item === 'string'){
+          return item;
+        }
+        if(item && typeof item === 'object'){
+          return item.name || item.code || item.abbrev || item.id || null;
+        }
+        return null;
+      }).filter(Boolean);
+      return labels.length ? labels.join(', ') : null;
+    }
+
+    function formatTrailLength(stats){
+      if(!stats){
+        return null;
+      }
+      const official = stats.officialLength ?? stats.length ?? stats.length_mi ?? stats.distance;
+      if(!official){
+        return null;
+      }
+      if(typeof official === 'number' || typeof official === 'string'){
+        return official;
+      }
+      if(typeof official === 'object'){
+        return official.miles ?? official.mi ?? official.km ?? official.value ?? null;
+      }
+      return null;
     }
 
     function renderMap(trails){
@@ -682,11 +723,15 @@
         const details = document.createElement('details');
         details.className = 'trail-details';
         details.style.setProperty('--trail-color', trail.color || '#4a9eff');
-        details.open = true;
+        details.open = false;
 
         const summary = document.createElement('summary');
         summary.className = 'trail-summary';
-        summary.innerHTML = `<span class="color-dot" style="background:${trail.color}"></span><span>${trail.name}</span><span>${trail.sections.length} sections</span>`;
+        summary.innerHTML = `
+          <span class="color-dot" style="background:${trail.color}"></span>
+          <span class="trail-name">${trail.name}</span>
+          <span class="trail-count">${trail.sections.length} sections</span>
+        `;
         summary.addEventListener('click', () => {
           // Pan to center between start and end points
           const endpoints = trail.endpoints || (trail.stats && trail.stats.endpoints);
@@ -707,7 +752,7 @@
 
         const meta = document.createElement('div');
         meta.className = 'trail-meta';
-        const distance = trail.stats && (trail.stats.officialLength || trail.stats.distance || trail.stats.length_mi);
+        const distance = formatTrailLength(trail.stats);
         meta.textContent = distance ? `Official length: ${distance}` : 'Sections available';
 
         const sectionList = document.createElement('div');
@@ -719,7 +764,7 @@
           const distanceLabel = getSectionDistance(section) != null ? `${getSectionDistance(section)} mi` : '';
           const difficultyValue = typeof section.difficulty === 'string' ? section.difficulty : section.difficulty && section.difficulty.rating;
           const difficultyLabel = difficultyValue ? `Difficulty: ${difficultyValue}` : '';
-          const jurisdictions = section.jurisdictions && section.jurisdictions.length ? section.jurisdictions.join(', ') : '';
+          const jurisdictions = formatJurisdictions(section.jurisdictions) || '';
           const geometryBadge = getGeometryBadgeLabel(section);
 
           item.innerHTML = `
@@ -734,24 +779,12 @@
             </div>
           `;
 
-          item.addEventListener('mouseenter', () => {
-            const bounds = getSectionBounds(section);
-            if(bounds){
-              fitBounds(bounds);
-            }
-            renderSectionDetails(section);
-          });
-
           item.addEventListener('click', (event) => {
             if(event.target && event.target.matches('a')){
               return;
             }
             if(event.target && event.target.matches('button')){
               event.stopPropagation();
-            }
-            const bounds = getSectionBounds(section);
-            if(bounds){
-              fitBounds(bounds);
             }
             renderSectionDetails(section);
           });
