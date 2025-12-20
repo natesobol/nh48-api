@@ -139,6 +139,21 @@ function buildShape(section){
   return { points: points.map(point => ({ lat: point.lat, lon: point.lon })), error: null };
 }
 
+function buildCostingOptions(section){
+  const base = section.routing?.costing_options && typeof section.routing.costing_options === 'object'
+    ? section.routing.costing_options
+    : {};
+  return {
+    pedestrian: {
+      use_roads: 0.0,
+      use_highways: 0.0,
+      use_ferry: 0.0,
+      ...base.pedestrian
+    },
+    ...base
+  };
+}
+
 function buildSectionOutput({ trailSlug, sectionSlug, provider, result, status, error, geometryOverride }){
   const generatedAt = new Date().toISOString();
   const geometry = geometryOverride ?? result?.geometry ?? null;
@@ -198,6 +213,7 @@ async function generateSection({ trailSlug, section, outputDir, force }){
 
   const routing = section.routing || {};
   const costing = routing.costing || 'pedestrian';
+  const costingOptions = buildCostingOptions(section);
   const useTraceRoute = routing.useTraceRoute !== false;
   const shapeResult = buildShape(section);
   const sectionGeometry = fallbackGeometryFromSection(section);
@@ -237,7 +253,7 @@ async function generateSection({ trailSlug, section, outputDir, force }){
   try{
     if(useTraceRoute){
       didRequest = true;
-      result = await withRetries(() => traceRoute(shape, { costing }));
+      result = await withRetries(() => traceRoute(shape, { costing, costing_options: costingOptions }));
     }
   }catch(error){
     errorMessage = error.message;
@@ -246,7 +262,7 @@ async function generateSection({ trailSlug, section, outputDir, force }){
   if(!result){
     try{
       didRequest = true;
-      result = await withRetries(() => routeFallback(shape, { costing }));
+      result = await withRetries(() => routeFallback(shape, { costing, costing_options: costingOptions }));
     }catch(error){
       errorMessage = error.message;
     }
