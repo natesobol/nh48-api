@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NH48 API — Offene Daten zu New Hampshires 4.000-Fuß-Gipfeln</title>
-  <meta name="description" content="NH48 API bietet offene, strukturierte Daten und Fotos zu den 48 4.000-Fuß-Gipfeln in New Hampshire. Erkunden Sie den Katalog, Routen und WMNF-Wege.">
+  <title data-i18n="landing.title">NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails</title>
+  <meta name="description" data-i18n="landing.metaDescription" data-i18n-attr="content" content="NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Explore the catalog, routes, and White Mountain trails.">
   <link rel="icon" type="image/png" href="/nh48API_logo.png">
   <link rel="canonical" href="https://nh48.info/i18n/de.html">
   <link rel="alternate" hreflang="en" href="https://nh48.info/">
@@ -14,6 +14,11 @@
   <link rel="alternate" hreflang="zh" href="https://nh48.info/i18n/zh.html">
   <link rel="alternate" hreflang="ja" href="https://nh48.info/i18n/ja.html">
   <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
+  <meta property="og:title" data-i18n="landing.ogTitle" data-i18n-attr="content" content="NH48 API – Open Trails and Peaks Data">
+  <meta property="og:description" data-i18n="landing.ogDescription" data-i18n-attr="content" content="Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains.">
+  <meta property="og:image" content="https://nh48.info/UI-Elements/og-cover.png">
+  <meta property="og:url" content="https://nh48.info/i18n/de.html">
+  <meta name="twitter:card" content="summary_large_image">
   <style>
     body {
       margin: 0;
@@ -21,6 +26,7 @@
       color: #ffffff;
       font-family: system-ui, -apple-system, sans-serif;
       min-height: 100vh;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -29,6 +35,8 @@
     main {
       max-width: 720px;
       text-align: center;
+      position: relative;
+      z-index: 1;
     }
     h1 {
       font-size: clamp(28px, 4vw, 40px);
@@ -61,19 +69,177 @@
       background: transparent;
       color: #22c55e;
     }
+    .meta {
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: #9aa8c7;
+    }
+    .dataset-notes {
+      margin: 24px auto 0;
+      text-align: left;
+      max-width: 680px;
+      padding: 18px 20px;
+      border-radius: 12px;
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    .dataset-notes h2 {
+      margin: 0 0 12px;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #d6f5df;
+    }
+    .dataset-notes ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #cfe1ff;
+      line-height: 1.5;
+    }
+    .lang-bar {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 2;
+    }
+    .nh48-lang {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .nh48-lang-label {
+      font-size: 0.75rem;
+      color: #d6f5df;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-right: 4px;
+    }
+    .nh48-flag {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.6);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    .nh48-flag .flag {
+      font-size: 18px;
+      line-height: 1;
+    }
+    .nh48-flag.active {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 2px rgba(81, 207, 102, 0.25);
+    }
+    .nh48-flag:focus-visible {
+      outline: 2px solid #22c55e;
+      outline-offset: 2px;
+    }
+    #splash-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .splash-icon {
+      position: absolute;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #splash-background {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
-  <main>
-    <h1>NH48 API</h1>
-    <p>Offene Daten, Routen und Foto-Metadaten zu New Hampshires 48 4.000-Fuß-Gipfeln. Erkunden Sie den Katalog, WMNF-Wege und bauen Sie auf dem Datensatz auf.</p>
-    <div class="cta">
-      <a href="/catalog.html">Gipfelkatalog öffnen</a>
-      <a href="/trails.html" class="secondary">WMNF-Wege erkunden</a>
+  <div id="splash-background" aria-hidden="true"></div>
+  <div class="lang-bar">
+    <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
+      <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
+      <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
+        <span class="flag flag-en" aria-hidden="true">🇺🇸</span>
+      </button>
+      <button class="nh48-flag" data-lang="es" aria-label="Español" title="Español">
+        <span class="flag flag-es" aria-hidden="true">🇪🇸</span>
+      </button>
+      <button class="nh48-flag" data-lang="fr" aria-label="Français" title="Français">
+        <span class="flag flag-fr" aria-hidden="true">🇫🇷</span>
+      </button>
+      <button class="nh48-flag" data-lang="de" aria-label="Deutsch" title="Deutsch">
+        <span class="flag flag-de" aria-hidden="true">🇩🇪</span>
+      </button>
+      <button class="nh48-flag" data-lang="zh" aria-label="中文" title="中文">
+        <span class="flag flag-zh" aria-hidden="true">🇨🇳</span>
+      </button>
+      <button class="nh48-flag" data-lang="ja" aria-label="日本語" title="日本語">
+        <span class="flag flag-ja" aria-hidden="true">🇯🇵</span>
+      </button>
     </div>
+  </div>
+  <main>
+    <h1 data-i18n="landing.heroTitle">NH48 API</h1>
+    <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.</p>
+    <div class="cta">
+      <a href="/catalog.html" data-i18n="landing.cta.catalog">Open the Peak Catalog</a>
+      <a href="/trails.html" class="secondary" data-i18n="landing.cta.trails">White Mountain Trails</a>
+      <a href="/long-trails.html" class="secondary" data-i18n="landing.cta.campaigns">Trail Campaigns</a>
+    </div>
+    <section class="dataset-notes">
+      <h2 data-i18n="landing.notesTitle">Dataset notes</h2>
+      <ul>
+        <li data-i18n="landing.notes.versioned">Versioned releases with changelog and citation-ready metadata.</li>
+        <li data-i18n="landing.notes.methodology">Provenance + collection methodology noted for peaks, routes, and trail segments.</li>
+        <li data-i18n="landing.notes.validation">Validation checks for elevation ranges, mileage, and geometry consistency.</li>
+        <li data-i18n="landing.notes.reproducible">Reproducible pipelines backed by source scripts and QA artifacts.</li>
+      </ul>
+    </section>
+    <p class="meta" data-i18n="landing.author">Author: Nathan Sobol</p>
   </main>
   <script>
     localStorage.setItem('nh48_lang', 'de');
+  </script>
+  <script src="/js/i18n.js" defer></script>
+  <script src="/js/splash.js" defer></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUShYXwxGVEDNzMeIwSFPmDaYeXSqRK4A",
+      authDomain: "nh48-info.firebaseapp.com",
+      projectId: "nh48-info",
+      storageBucket: "nh48-info.firebasestorage.app",
+      messagingSenderId: "732743288228",
+      appId: "1:732743288228:web:d82d62cae0c3999ee5ad31",
+      measurementId: "G-Q9F2W8YB7D"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    // Expose globally for app scripts
+    window.NH48_INFO_ANALYTICS = {
+      analytics,
+      logEvent
+    };
+
+    // Base page-load event
+    logEvent(analytics, "page_loaded", {
+      site: "nh48-info",
+      page: location.pathname
+    });
   </script>
 </body>
 </html>
