@@ -31,12 +31,12 @@ jobs:
       - name: Prepare Pages artifact
         run: |
           mkdir -p site
-          rsync -a --delete \
+          tar \
             --exclude=site \
             --exclude=.git \
             --exclude=.github \
             --exclude=photos \
-            ./ site/
+            -cf - . | tar -xf - -C site
           du -sh site
 
       - name: Upload Pages artifact
