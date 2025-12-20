@@ -31,12 +31,33 @@ const parseIconListFromHtml = (htmlText) => {
   return Array.from(new Set(icons));
 };
 
+const SPLASH_MANIFEST_PATH = "/UI-Elements/manifest.json";
+
 const buildJsdelivrApiUrl = () =>
   "https://data.jsdelivr.com/v1/packages/gh/natesobol/nh48-api@main?path=/UI-Elements";
+
+const loadManifestIcons = async () => {
+  const response = await fetch(SPLASH_MANIFEST_PATH, { cache: "no-store" });
+  if (!response.ok) {
+    return [];
+  }
+  const payload = await response.json();
+  if (!Array.isArray(payload)) {
+    return [];
+  }
+  return payload
+    .filter((entry) => typeof entry === "string")
+    .filter((name) => name.toLowerCase().endsWith(".png"))
+    .map((name) => `${SPLASH_ICON_PATH}${name}`);
+};
 
 const loadSplashIcons = async () => {
   try {
     const isLocalhost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+    const manifestIcons = await loadManifestIcons();
+    if (manifestIcons.length) {
+      return manifestIcons;
+    }
     if (isLocalhost) {
       const response = await fetch(SPLASH_ICON_PATH, { cache: "no-store" });
       if (!response.ok) {
