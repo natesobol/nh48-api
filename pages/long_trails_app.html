@@ -24,6 +24,7 @@
       --text-primary: #ffffff;
       --text-secondary: #d9dde5;
       --accent: #4a9eff;
+      --page-padding: clamp(16px, 4vw, 48px);
     }
 
     html, body {
@@ -35,10 +36,16 @@
       color: var(--text-primary);
     }
 
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
     .page-header {
-      max-width: 1200px;
       margin: 1.5rem auto 0;
-      padding: 0 20px;
+      padding: 0 var(--page-padding);
+      width: 100%;
     }
 
     .page-header h1 {
@@ -53,13 +60,14 @@
     }
 
     #app {
-      max-width: 1200px;
+      width: 100%;
       margin: 1.5rem auto 2rem;
-      padding: 0 20px;
+      padding: 0 var(--page-padding) 2rem;
       display: grid;
-      grid-template-columns: minmax(300px, 420px) 1fr;
-      gap: 16px;
-      height: 70vh;
+      grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+      gap: clamp(16px, 2.5vw, 24px);
+      flex: 1 1 auto;
+      min-height: 0;
       align-items: stretch;
     }
 
@@ -77,7 +85,7 @@
       border-radius: 12px;
       overflow: hidden;
       background: var(--bg-secondary);
-      min-height: 0;
+      min-height: 420px;
     }
 
     #map {
@@ -130,6 +138,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .filter-button {
@@ -169,6 +178,7 @@
       padding: 12px 14px;
       cursor: pointer;
       font-weight: 600;
+      flex-wrap: wrap;
     }
 
     .trail-summary::marker {
@@ -294,6 +304,12 @@
       white-space: nowrap;
     }
 
+    @media (max-width: 1100px){
+      #app {
+        grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+      }
+    }
+
     @media (max-width: 900px){
       #app {
         grid-template-columns: 1fr;
@@ -308,9 +324,67 @@
         grid-template-columns: 1fr;
       }
     }
+
+    @media (max-width: 700px){
+      .page-header {
+        margin-top: 1rem;
+      }
+
+      .filter-actions {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .map-panel {
+        min-height: 360px;
+      }
+    }
+
+    @media (max-width: 520px){
+      :root {
+        --page-padding: 14px;
+      }
+
+      .page-header h1 {
+        font-size: 1.6rem;
+      }
+
+      .sidebar {
+        padding: 12px;
+      }
+
+      .filter-panel,
+      .section-details,
+      .trail-details {
+        padding: 10px;
+      }
+
+      .section-item {
+        padding: 10px;
+      }
+
+      .map-panel {
+        min-height: 320px;
+      }
+    }
   </style>
 </head>
-<body>
+<body data-page="long-trails">
+  <div id="nav-placeholder"></div>
+  <script>
+    const navPlaceholder = document.getElementById('nav-placeholder');
+    fetch('nav.html')
+      .then(response => response.text())
+      .then(html => {
+        navPlaceholder.innerHTML = html;
+        const activeRoute = document.body.dataset.page;
+        const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
+        if (activeLink) {
+          activeLink.classList.add('active');
+        }
+      })
+      .catch(err => console.error('Failed to load navigation:', err));
+  </script>
   <header class="page-header">
     <h1>Long-Distance Trails</h1>
     <p>Explore multi-day trail campaigns with interactive maps, filters, and section details.</p>
