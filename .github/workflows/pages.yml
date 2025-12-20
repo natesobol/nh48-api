@@ -35,6 +35,7 @@ jobs:
             --exclude=site \
             --exclude=.git \
             --exclude=.github \
+            --exclude=photos \
             ./ site/
           du -sh site
 
