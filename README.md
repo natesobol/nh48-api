@@ -64,8 +64,10 @@ The system is static — **no backend required**. Distribution is handled throug
 
 * **GitHub Pages**
 * **jsDelivr CDN**
+* **Cloudflare R2** for photo storage and delivery
 
-Both automatically serve updated JSON and media assets.
+GitHub Pages and jsDelivr serve the JSON and UI assets, while Cloudflare R2
+hosts the photo originals via the S3-compatible endpoint.
 
 ---
 
@@ -282,6 +284,13 @@ Required GitHub secrets:
 
 The sync job mirrors `photos/` to the bucket and deletes removed files. It also
 applies long-lived cache headers for CDN usage.
+
+If you need to retrace how photos are published:
+
+* Workflow: `.github/workflows/sync-r2-photos.yml` (runs on `photos/**` changes)
+* Upload command: `aws s3 sync` with the `--endpoint-url` set to the R2 endpoint
+* Photo URL base for manifests: `scripts/manifest_generator.py` (`PHOTO_BASE_URL`)
+* Bucket contents: `photos/<peak-slug>/` mapped to `s3://$R2_BUCKET/<peak-slug>/`
 
 ---
 
