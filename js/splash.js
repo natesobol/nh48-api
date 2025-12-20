@@ -1,6 +1,11 @@
 const SPLASH_ICON_PATH = "/UI-Elements/";
 const MAX_SPLASH_ICONS = 40;
-const SPLASH_LIFETIME_MS = 6000;
+const SPLASH_MIN_DURATION_S = 10;
+const SPLASH_MAX_DURATION_S = 20;
+const SPLASH_MIN_SIZE_MULTIPLIER = 1;
+const SPLASH_MAX_SIZE_MULTIPLIER = 4;
+const SPLASH_DIAGONAL_SPEED_PX = 12;
+const SPLASH_MASK_PADDING_PX = 24;
 const SPLASH_ICON_EXCLUSIONS = [
   "og-cover.png",
   "nh48-preview.png",
@@ -31,12 +36,33 @@ const parseIconListFromHtml = (htmlText) => {
   return Array.from(new Set(icons));
 };
 
+const SPLASH_MANIFEST_PATH = "/UI-Elements/manifest.json";
+
 const buildJsdelivrApiUrl = () =>
   "https://data.jsdelivr.com/v1/packages/gh/natesobol/nh48-api@main?path=/UI-Elements";
+
+const loadManifestIcons = async () => {
+  const response = await fetch(SPLASH_MANIFEST_PATH, { cache: "no-store" });
+  if (!response.ok) {
+    return [];
+  }
+  const payload = await response.json();
+  if (!Array.isArray(payload)) {
+    return [];
+  }
+  return payload
+    .filter((entry) => typeof entry === "string")
+    .filter((name) => name.toLowerCase().endsWith(".png"))
+    .map((name) => `${SPLASH_ICON_PATH}${name}`);
+};
 
 const loadSplashIcons = async () => {
   try {
     const isLocalhost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+    const manifestIcons = await loadManifestIcons();
+    if (manifestIcons.length) {
+      return manifestIcons;
+    }
     if (isLocalhost) {
       const response = await fetch(SPLASH_ICON_PATH, { cache: "no-store" });
       if (!response.ok) {
@@ -101,30 +127,129 @@ const initSplash = async () => {
   const viewportH = window.innerHeight;
   const shuffledIcons = iconList.sort(() => 0.5 - Math.random());
   const selectedIcons = shuffledIcons.slice(0, MAX_SPLASH_ICONS);
+  const maskEl = document.getElementById("splash-mask");
+  const mainEl = document.querySelector("main");
+  let viewportWidth = viewportW;
+  let viewportHeight = viewportH;
 
+  const getMaskRect = () => {
+    if (!mainEl || !maskEl) {
+      return null;
+    }
+    const rect = mainEl.getBoundingClientRect();
+    const left = Math.max(0, rect.left - SPLASH_MASK_PADDING_PX);
+    const top = Math.max(0, rect.top - SPLASH_MASK_PADDING_PX);
+    const right = Math.min(
+      window.innerWidth,
+      rect.right + SPLASH_MASK_PADDING_PX
+    );
+    const bottom = Math.min(
+      window.innerHeight,
+      rect.bottom + SPLASH_MASK_PADDING_PX
+    );
+    return {
+      left,
+      top,
+      width: Math.max(0, right - left),
+      height: Math.max(0, bottom - top)
+    };
+  };
+
+  const updateMask = () => {
+    if (!maskEl) {
+      return;
+    }
+    const rect = getMaskRect();
+    if (!rect) {
+      maskEl.style.display = "none";
+      return;
+    }
+    maskEl.style.display = "block";
+    maskEl.style.left = `${rect.left}px`;
+    maskEl.style.top = `${rect.top}px`;
+    maskEl.style.width = `${rect.width}px`;
+    maskEl.style.height = `${rect.height}px`;
+  };
+
+  updateMask();
+
+  const isInMask = (x, y, size, maskRect) => {
+    if (!maskRect) {
+      return false;
+    }
+    const right = x + size;
+    const bottom = y + size;
+    const maskRight = maskRect.left + maskRect.width;
+    const maskBottom = maskRect.top + maskRect.height;
+    return !(
+      right < maskRect.left ||
+      x > maskRight ||
+      bottom < maskRect.top ||
+      y > maskBottom
+    );
+  };
+
+  const icons = [];
+  const maskRect = getMaskRect();
   selectedIcons.forEach((iconPath) => {
     const imgEl = document.createElement("img");
     imgEl.src = iconPath;
     imgEl.className = "splash-icon";
     imgEl.alt = "";
     imgEl.setAttribute("aria-hidden", "true");
-    const size = 24 + Math.random() * 32;
-    const x = Math.random() * viewportW;
-    const y = Math.random() * viewportH;
+    const baseSize = 24 + Math.random() * 32;
+    const sizeMultiplier =
+      SPLASH_MIN_SIZE_MULTIPLIER +
+      Math.random() * (SPLASH_MAX_SIZE_MULTIPLIER - SPLASH_MIN_SIZE_MULTIPLIER);
+    const size = baseSize * sizeMultiplier;
+    let x = Math.random() * viewportW;
+    let y = Math.random() * viewportH;
+    let attempts = 0;
+    while (isInMask(x, y, size, maskRect) && attempts < 20) {
+      x = Math.random() * viewportW;
+      y = Math.random() * viewportH;
+      attempts += 1;
+    }
     imgEl.style.width = `${size}px`;
-    imgEl.style.left = `${x}px`;
-    imgEl.style.top = `${y}px`;
+    imgEl.style.left = "0";
+    imgEl.style.top = "0";
+    const duration =
+      SPLASH_MIN_DURATION_S +
+      Math.random() * (SPLASH_MAX_DURATION_S - SPLASH_MIN_DURATION_S);
+    const delay = Math.random() * SPLASH_MAX_DURATION_S;
+    imgEl.style.animationDuration = `${duration}s, ${duration}s`;
+    imgEl.style.animationDelay = `-${delay}s, -${delay}s`;
     container.appendChild(imgEl);
-
-    const delay = Math.random() * 3;
-    imgEl.style.transition = `opacity 1s ease ${delay}s, transform 5s linear ${delay}s`;
-    imgEl.style.opacity = "1";
-    imgEl.style.transform = `translateY(-20px) rotate(${Math.random() * 360}deg)`;
+    icons.push({ el: imgEl, x, y, size });
   });
 
-  setTimeout(() => {
-    container.style.display = "none";
-  }, SPLASH_LIFETIME_MS);
+  let lastTime = performance.now();
+  const tick = (now) => {
+    const delta = (now - lastTime) / 1000;
+    lastTime = now;
+    const dx = SPLASH_DIAGONAL_SPEED_PX * delta;
+    const dy = SPLASH_DIAGONAL_SPEED_PX * delta;
+    icons.forEach((icon) => {
+      icon.x += dx;
+      icon.y += dy;
+      if (icon.x > viewportWidth + icon.size) {
+        icon.x = -icon.size;
+      }
+      if (icon.y > viewportHeight + icon.size) {
+        icon.y = -icon.size;
+      }
+      icon.el.style.transform = `translate(${icon.x}px, ${icon.y}px)`;
+    });
+    requestAnimationFrame(tick);
+  };
+
+  requestAnimationFrame(tick);
+
+  window.addEventListener("resize", () => {
+    viewportWidth = window.innerWidth;
+    viewportHeight = window.innerHeight;
+    updateMask();
+  });
 };
 
 window.addEventListener("load", initSplash);

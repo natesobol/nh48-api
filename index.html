@@ -177,13 +177,46 @@
       z-index: 0;
       overflow: hidden;
     }
+    #splash-mask {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+      background: #0b0b0b;
+      border-radius: 24px;
+    }
     .splash-icon {
       position: absolute;
       opacity: 0;
       will-change: transform, opacity;
+      animation: splashFade 16s ease-in-out infinite;
+    }
+    @keyframes splashFade {
+      0% {
+        opacity: 0;
+      }
+      60% {
+        opacity: 0;
+      }
+      72% {
+        opacity: 0.85;
+      }
+      82% {
+        opacity: 0.2;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+    main,
+    .lang-bar {
+      position: relative;
+      z-index: 2;
     }
     @media (prefers-reduced-motion: reduce) {
       #splash-background {
+        display: none;
+      }
+      #splash-mask {
         display: none;
       }
     }
@@ -191,6 +224,7 @@
 </head>
 <body>
   <div id="splash-background" aria-hidden="true"></div>
+  <div id="splash-mask" aria-hidden="true"></div>
   <div class="lang-bar">
     <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
       <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
