@@ -11,8 +11,15 @@ const CANONICAL_BASE = "https://nh48.info/peaks";
 const APP_BASE = "https://nh48.info/pages/nh48_peak.html";
 const FALLBACK_IMAGE = "https://nh48.info/nh48-preview.png";
 
-const template = fs.readFileSync(TEMPLATE_PATH, "utf8");
-const data = JSON.parse(fs.readFileSync(DATA_PATH, "utf8"));
+process.on("uncaughtException", (err) => {
+  console.error("Unhandled error during prerender:", err);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.error("Unhandled promise rejection during prerender:", err);
+  process.exit(1);
+});
 
 const cleanText = (value) => {
   if (value === null || value === undefined) return "";
@@ -226,15 +233,19 @@ const buildRelatedTrailsList = (routes) => {
     .join("\n");
 };
 
-const renderTemplate = (values) => {
+const renderTemplate = (templateHtml, values) => {
   return Object.entries(values).reduce((html, [key, value]) => {
     const safeValue = value === undefined || value === null ? "" : String(value);
     return html.split(`{{${key}}}`).join(safeValue);
-  }, template);
+  }, templateHtml);
 };
 
-const slugs = Object.keys(data).sort();
-fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+const main = () => {
+  try {
+    const template = fs.readFileSync(TEMPLATE_PATH, "utf8");
+    const data = JSON.parse(fs.readFileSync(DATA_PATH, "utf8"));
+    const slugs = Object.keys(data).sort();
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
 slugs.forEach((slug) => {
   const peak = data[slug];
@@ -289,7 +300,14 @@ slugs.forEach((slug) => {
   };
 
   const outputDir = path.join(OUTPUT_DIR, slug);
-  fs.mkdirSync(outputDir, { recursive: true });
-  fs.writeFileSync(path.join(outputDir, "index.html"), renderTemplate(values));
-  console.log(`Rendered ${slug}`);
-});
+      fs.mkdirSync(outputDir, { recursive: true });
+      fs.writeFileSync(path.join(outputDir, "index.html"), renderTemplate(template, values));
+      console.log(`Rendered ${slug}`);
+    });
+  } catch (err) {
+    console.error("Error during prerender:", err);
+    process.exit(1);
+  }
+};
+
+main();
