@@ -25,7 +25,7 @@ from PIL import Image, ExifTags
 
 DEFAULT_PHOTO_BASE_URL = os.getenv(
     "PHOTO_BASE_URL",
-    "https://17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com/nh48-photos",
+    "https://photos.nh48.info",
 )
 
 
