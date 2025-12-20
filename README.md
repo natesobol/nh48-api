@@ -138,6 +138,11 @@ Reads:
 
 Each image becomes a structured object under `p.photos`.
 
+Photo URL base:
+
+* Default: `https://17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com/nh48-photos`
+* Override with `PHOTO_BASE_URL` env var or the `--base-url` CLI argument.
+
 ### **4. Tag Inference**
 
 Automatically adds tags based on:
@@ -261,6 +266,22 @@ This openness encourages developers to create:
 * Educational tools
 * Conservation resources
 * API-driven hiking dashboards
+
+---
+
+# 🗂️ **R2 Photo Sync**
+
+Photos under `photos/` are synced to Cloudflare R2 via GitHub Actions.
+
+Required GitHub secrets:
+
+* `R2_ACCESS_KEY_ID`
+* `R2_SECRET_ACCESS_KEY`
+* `R2_ENDPOINT` (e.g. `https://17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com`)
+* `R2_BUCKET` (e.g. `nh48-photos`)
+
+The sync job mirrors `photos/` to the bucket and deletes removed files. It also
+applies long-lived cache headers for CDN usage.
 
 ---
 

@@ -1,0 +1,34 @@
+name: Sync R2 photos
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "photos/**"
+      - ".github/workflows/sync-r2-photos.yml"
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials for R2
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          aws-region: auto
+
+      - name: Sync photos to R2
+        env:
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          aws s3 sync photos "s3://${R2_BUCKET}" \
+            --endpoint-url "${R2_ENDPOINT}" \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable"
