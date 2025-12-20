@@ -181,6 +181,24 @@
       position: absolute;
       opacity: 0;
       will-change: transform, opacity;
+      animation: splashFade 16s ease-in-out infinite;
+    }
+    @keyframes splashFade {
+      0% {
+        opacity: 0;
+      }
+      20% {
+        opacity: 0.85;
+      }
+      50% {
+        opacity: 0.15;
+      }
+      80% {
+        opacity: 0.9;
+      }
+      100% {
+        opacity: 0;
+      }
     }
     @media (prefers-reduced-motion: reduce) {
       #splash-background {
