@@ -206,6 +206,21 @@
       flex-wrap: wrap;
     }
 
+    .geometry-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #5c5f69;
+      background: rgba(250, 204, 21, 0.15);
+      color: #fcd34d;
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
     .section-actions {
       margin-top: 6px;
       display: flex;
@@ -483,6 +498,25 @@
       return null;
     }
 
+    function hasGeneratedGeometry(section){
+      const geometry = section && section.generated && section.generated.geometry;
+      return Boolean(geometry && Array.isArray(geometry.coordinates) && geometry.coordinates.length > 1);
+    }
+
+    function getSectionGeometry(section){
+      return hasGeneratedGeometry(section) ? section.generated.geometry : null;
+    }
+
+    function getGeometryBadgeLabel(section){
+      if(hasGeneratedGeometry(section)){
+        return null;
+      }
+      if(section && section.generated && section.generated.status === 'failed'){
+        return 'Geometry failed';
+      }
+      return 'Geometry pending';
+    }
+
     function boundsCenter(bounds){
       if(!bounds){
         return null;
@@ -523,10 +557,12 @@
       const difficulty = difficultyValue ? `Difficulty: ${difficultyValue}` : null;
       const jurisdictions = section.jurisdictions && section.jurisdictions.length ? section.jurisdictions.join(', ') : null;
       const tags = section.tags && section.tags.length ? section.tags.join(', ') : null;
+      const geometryBadge = getGeometryBadgeLabel(section);
       container.innerHTML = `
         <div class="section-title">${buildSectionLabel(section)}</div>
         <div class="section-subtitle">
           ${[distanceLabel, difficulty, jurisdictions, tags].filter(Boolean).map(item => `<span>${item}</span>`).join('')}
+          ${geometryBadge ? `<span class=\"geometry-badge\">${geometryBadge}</span>` : ''}
         </div>
       `;
     }
@@ -568,8 +604,25 @@
       (sourceTrails || []).forEach(trail => {
         const color = trail.color || '#4a9eff';
         (trail.sections || []).forEach(section => {
+          const geometry = getSectionGeometry(section);
+          if(geometry){
+            const latLngs = geometry.coordinates.map(([lon, lat]) => [lat, lon]);
+            L.polyline(latLngs, {
+              color,
+              weight: 3,
+              opacity: 0.9
+            }).addTo(activeLayers);
+          }
           const start = normalizePoint(section.start);
           const end = normalizePoint(section.end);
+          if(!geometry && start && end && start.lat != null && start.lon != null && end.lat != null && end.lon != null){
+            L.polyline([[start.lat, start.lon], [end.lat, end.lon]], {
+              color,
+              weight: 2,
+              opacity: 0.4,
+              dashArray: '4 6'
+            }).addTo(activeLayers);
+          }
           if(start && start.lat != null && start.lon != null){
             L.circleMarker([start.lat, start.lon], {
               radius: 5,
@@ -667,11 +720,13 @@
           const difficultyValue = typeof section.difficulty === 'string' ? section.difficulty : section.difficulty && section.difficulty.rating;
           const difficultyLabel = difficultyValue ? `Difficulty: ${difficultyValue}` : '';
           const jurisdictions = section.jurisdictions && section.jurisdictions.length ? section.jurisdictions.join(', ') : '';
+          const geometryBadge = getGeometryBadgeLabel(section);
 
           item.innerHTML = `
             <div class="section-title">${buildSectionLabel(section)}</div>
             <div class="section-subtitle">
               ${[distanceLabel, difficultyLabel, jurisdictions].filter(Boolean).map(item => `<span>${item}</span>`).join('')}
+              ${geometryBadge ? `<span class=\"geometry-badge\">${geometryBadge}</span>` : ''}
             </div>
             <div class="section-actions">
               <button class="section-pan" type="button">Pan to segment</button>
@@ -735,11 +790,51 @@
       return { trails: [], bounds: null };
     }
 
+    const GENERATED_BASE_URLS = [
+      '../data/long-trails/generated',
+      '/data/long-trails/generated'
+    ];
+
+    async function loadGeneratedTrail(trail){
+      for(const baseUrl of GENERATED_BASE_URLS){
+        const url = `${baseUrl}/${trail.slug}.sections.generated.json`;
+        try{
+          const response = await fetch(url);
+          if(!response.ok) continue;
+          return await response.json();
+        }catch(error){
+          console.warn('Unable to load generated geometry:', error);
+        }
+      }
+      return null;
+    }
+
+    async function mergeGeneratedTrails(trails){
+      const updates = trails.map(async (trail) => {
+        const generated = await loadGeneratedTrail(trail);
+        if(!generated || !Array.isArray(generated.sections)){
+          return;
+        }
+        const sectionMap = new Map(
+          generated.sections.map(section => [section.sectionSlug || section.slug, section])
+        );
+        (trail.sections || []).forEach(section => {
+          const generatedSection = sectionMap.get(section.slug);
+          if(generatedSection){
+            section.generated = generatedSection;
+          }
+        });
+      });
+      await Promise.all(updates);
+    }
+
     async function init(){
       createMap();
       const data = await loadTrails();
       trailData = data.trails || [];
       globalBounds = data.bounds || null;
+
+      await mergeGeneratedTrails(trailData);
 
       renderAllTrails();
     }
