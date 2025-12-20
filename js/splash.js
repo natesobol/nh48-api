@@ -1,4 +1,5 @@
 const SPLASH_ICON_PATH = "/UI-Elements/";
+const SPLASH_ALT_TEXT_PATH = "/UI-Elements/alt-text.json";
 const MAX_SPLASH_ICONS = 40;
 const SPLASH_MIN_DURATION_S = 18;
 const SPLASH_MAX_DURATION_S = 32;
@@ -55,6 +56,22 @@ const loadManifestIcons = async () => {
     .filter((entry) => typeof entry === "string")
     .filter((name) => name.toLowerCase().endsWith(".png"))
     .map((name) => `${SPLASH_ICON_PATH}${name}`);
+};
+
+const loadAltTextMap = async () => {
+  const response = await fetch(SPLASH_ALT_TEXT_PATH, { cache: "no-store" });
+  if (!response.ok) {
+    return new Map();
+  }
+  const payload = await response.json();
+  if (!payload || !Array.isArray(payload.images)) {
+    return new Map();
+  }
+  return new Map(
+    payload.images
+      .filter((entry) => entry && typeof entry.file === "string")
+      .map((entry) => [entry.file, entry.alt || ""])
+  );
 };
 
 const loadSplashIcons = async () => {
@@ -119,7 +136,10 @@ const initSplash = async () => {
     return;
   }
 
-  const iconList = await loadSplashIcons();
+  const [iconList, altTextMap] = await Promise.all([
+    loadSplashIcons(),
+    loadAltTextMap()
+  ]);
   if (!iconList.length) {
     return;
   }
@@ -196,8 +216,11 @@ const initSplash = async () => {
     const imgEl = document.createElement("img");
     imgEl.src = iconPath;
     imgEl.className = "splash-icon";
-    imgEl.alt = "";
-    imgEl.setAttribute("aria-hidden", "true");
+    const fileName = decodeURIComponent(iconPath.split("/").pop() || "");
+    imgEl.alt = altTextMap.get(fileName) || "";
+    if (imgEl.alt) {
+      imgEl.title = imgEl.alt;
+    }
     const baseSize = 24 + Math.random() * 32;
     const sizeMultiplier =
       SPLASH_MIN_SIZE_MULTIPLIER +
