@@ -28,10 +28,18 @@ jobs:
       - name: Render peak pages
         run: node scripts/prerender-peaks.js
 
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p site
+          rsync -a --delete \
+            --exclude=.git \
+            --exclude=.github \
+            ./ site/
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: site
 
   deploy:
     needs: build
