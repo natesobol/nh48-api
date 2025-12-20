@@ -240,11 +240,27 @@ const renderTemplate = (templateHtml, values) => {
   }, templateHtml);
 };
 
+const readFile = (filePath, label) => {
+  try {
+    return fs.readFileSync(filePath, "utf8");
+  } catch (err) {
+    console.error(`Failed to read ${label} at ${filePath}:`, err);
+    throw err;
+  }
+};
+
 const main = () => {
   try {
-    const template = fs.readFileSync(TEMPLATE_PATH, "utf8");
-    const data = JSON.parse(fs.readFileSync(DATA_PATH, "utf8"));
+    console.log("Starting peak prerender...");
+    console.log(`Template path: ${TEMPLATE_PATH}`);
+    console.log(`Data path: ${DATA_PATH}`);
+    console.log(`Output directory: ${OUTPUT_DIR}`);
+
+    const template = readFile(TEMPLATE_PATH, "template");
+    const data = JSON.parse(readFile(DATA_PATH, "data"));
     const slugs = Object.keys(data).sort();
+
+    console.log(`Rendering ${slugs.length} peak pages...`);
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
 slugs.forEach((slug) => {
