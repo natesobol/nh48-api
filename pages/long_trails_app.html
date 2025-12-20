@@ -151,11 +151,11 @@
     }
 
     .color-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
+      width: 36px;
+      height: 10px;
+      border-radius: 999px;
       display: inline-block;
-      flex: 0 0 12px;
+      flex: 0 0 36px;
     }
 
     .trail-name {
@@ -286,6 +286,18 @@
       padding-left: 6px;
     }
 
+    .trail-tooltip {
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.2);
+      white-space: nowrap;
+    }
+
     .trail-endpoint {
       font-size: 0.7rem;
       background: rgba(15, 23, 42, 0.85);
@@ -306,6 +318,11 @@
       #app {
         grid-template-columns: 1fr;
         height: auto;
+      }
+
+      .sidebar {
+        max-height: 220px;
+        overflow-y: auto;
       }
 
       .map-panel {
@@ -371,7 +388,7 @@
   <header class="page-header">
     <h1>Long-Distance Trails</h1>
     <p>Explore multi-day trail campaigns with interactive maps, filters, and section details.</p>
-    <p>Hover a section to zoom the map, then click “View section” for the full section page.</p>
+    <p>Click a section to view details, then click “View section” for the full section page.</p>
   </header>
 
   <main id="app">
@@ -396,7 +413,12 @@
     let trailData = [];
     let globalBounds = null;
     let activeLayers = L.layerGroup();
-    let labelLayers = L.layerGroup();
+    const DEFAULT_BOUNDS = {
+      minLat: 24.5,
+      minLon: -124.8,
+      maxLat: 49.5,
+      maxLon: -66.9
+    };
 
     function createMap(){
       map = L.map('map', { zoomControl: true });
@@ -404,7 +426,6 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
       activeLayers.addTo(map);
-      labelLayers.addTo(map);
     }
 
     function toNumber(value){
@@ -414,7 +435,10 @@
 
     function fitBounds(bounds){
       if(!bounds){
-        map.setView([44.0, -71.4], 7);
+        map.fitBounds([
+          [DEFAULT_BOUNDS.minLat, DEFAULT_BOUNDS.minLon],
+          [DEFAULT_BOUNDS.maxLat, DEFAULT_BOUNDS.maxLon]
+        ]);
         return;
       }
       const southWest = [bounds.minLat, bounds.minLon];
@@ -436,15 +460,12 @@
       return `${trail.name} ${kind}${name}`;
     }
 
-    function addEndpointLabel(lat, lon, color, label){
-      const dot = `<span style="width:8px;height:8px;border-radius:999px;background:${color};display:inline-block;"></span>`;
-      const html = `<span style="display:inline-flex;align-items:center;gap:6px;">${dot}<span>${label}</span></span>`;
-      L.marker([lat, lon], {
-        icon: L.divIcon({
-          className: 'trail-endpoint',
-          html
-        })
-      }).addTo(labelLayers);
+    function attachEndpointTooltip(marker, label){
+      marker.bindTooltip(label, {
+        direction: 'top',
+        className: 'trail-tooltip',
+        opacity: 0.95
+      });
     }
 
     function getSectionBounds(section){
@@ -610,7 +631,6 @@
 
     function renderMap(trails){
       activeLayers.clearLayers();
-      labelLayers.clearLayers();
       const sourceTrails = trails && trails.length ? trails : trailData;
       // Always plot all start/endpoints for all trails
       (sourceTrails || []).forEach(trail => {
@@ -620,24 +640,24 @@
           const start = normalizePoint(endpoints.start);
           const end = normalizePoint(endpoints.end);
           if(start && start.lat != null && start.lon != null){
-            L.circleMarker([start.lat, start.lon], {
+            const marker = L.circleMarker([start.lat, start.lon], {
               radius: 8,
               color,
               fillColor: color,
               fillOpacity: 1,
               weight: 2
-            }).bindTooltip(`Start: ${start.name || trail.name}`).addTo(activeLayers);
-            addEndpointLabel(start.lat, start.lon, color, buildEndpointLabel(trail, start, 'Start'));
+            }).addTo(activeLayers);
+            attachEndpointTooltip(marker, buildEndpointLabel(trail, start, 'Start'));
           }
           if(end && end.lat != null && end.lon != null){
-            L.circleMarker([end.lat, end.lon], {
+            const marker = L.circleMarker([end.lat, end.lon], {
               radius: 8,
               color,
               fillColor: color,
               fillOpacity: 1,
               weight: 2
-            }).bindTooltip(`End: ${end.name || trail.name}`).addTo(activeLayers);
-            addEndpointLabel(end.lat, end.lon, color, buildEndpointLabel(trail, end, 'End'));
+            }).addTo(activeLayers);
+            attachEndpointTooltip(marker, buildEndpointLabel(trail, end, 'End'));
           }
         }
       });
