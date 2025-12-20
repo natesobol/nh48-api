@@ -98,70 +98,28 @@
       min-height: 360px;
     }
 
-    .filter-panel {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-tertiary);
-      margin-bottom: 16px;
-    }
-
-    .filter-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      min-width: 0;
-    }
-
-    .filter-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-secondary);
-    }
-
-    .filter-input,
-    .filter-select {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background: #20242b;
-      color: var(--text-primary);
-      font-size: 0.9rem;
-    }
-
-    .filter-select[multiple] {
-      min-height: 80px;
-    }
-
-    .filter-actions {
-      grid-column: 1 / -1;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .filter-button {
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background: #20242b;
-      color: var(--text-primary);
-      cursor: pointer;
-    }
-
     .section-details {
       padding: 12px;
       border-radius: 10px;
       border: 1px solid var(--border-color);
       background: var(--bg-tertiary);
       margin-bottom: 16px;
+    }
+
+    .trail-directory-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      margin: 4px 2px 10px;
+    }
+
+    .trail-directory-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      margin: 4px 2px 10px;
     }
 
     .trail-directory-title {
@@ -339,19 +297,11 @@
         height: 60vh;
       }
 
-      .filter-panel {
-        grid-template-columns: 1fr;
-      }
     }
 
     @media (max-width: 700px){
       .page-header {
         margin-top: 1rem;
-      }
-
-      .filter-actions {
-        flex-direction: column;
-        align-items: flex-start;
       }
 
       .map-panel {
@@ -372,7 +322,6 @@
         padding: 12px;
       }
 
-      .filter-panel,
       .section-details,
       .trail-details {
         padding: 10px;
@@ -412,37 +361,6 @@
 
   <main id="app">
     <aside class="sidebar" aria-live="polite">
-      <div class="filter-panel">
-        <div class="filter-group">
-          <label class="filter-label" for="trailSelect">Trail</label>
-          <select id="trailSelect" class="filter-select"></select>
-        </div>
-        <div class="filter-group">
-          <label class="filter-label" for="minMiles">Min miles</label>
-          <input id="minMiles" class="filter-input" type="number" min="0" step="0.1" placeholder="0">
-        </div>
-        <div class="filter-group">
-          <label class="filter-label" for="maxMiles">Max miles</label>
-          <input id="maxMiles" class="filter-input" type="number" min="0" step="0.1" placeholder="Any">
-        </div>
-        <div class="filter-group">
-          <label class="filter-label" for="difficultySelect">Difficulty</label>
-          <select id="difficultySelect" class="filter-select" multiple></select>
-        </div>
-        <div class="filter-group">
-          <label class="filter-label" for="stateSelect">State / jurisdiction</label>
-          <select id="stateSelect" class="filter-select" multiple></select>
-        </div>
-        <div class="filter-group">
-          <label class="filter-label" for="tagSelect">Tags</label>
-          <select id="tagSelect" class="filter-select" multiple></select>
-        </div>
-        <div class="filter-actions">
-          <span id="resultCount" class="filter-label"></span>
-          <button id="resetFilters" class="filter-button" type="button">Reset filters</button>
-        </div>
-      </div>
-
       <div id="sectionDetails" class="section-details"></div>
       <div class="trail-directory-title">Trail segments</div>
       <div id="trailList" class="accordion"></div>
@@ -462,7 +380,6 @@
     let map;
     let trailData = [];
     let globalBounds = null;
-    let activeTrailSlug = '';
     let activeLayers = L.layerGroup();
     let labelLayers = L.layerGroup();
 
@@ -625,8 +542,9 @@
     function renderMap(trails){
       activeLayers.clearLayers();
       labelLayers.clearLayers();
+      const sourceTrails = trails && trails.length ? trails : trailData;
       // Always plot all start/endpoints for all trails
-      (trailData || []).forEach(trail => {
+      (sourceTrails || []).forEach(trail => {
         const color = trail.color || '#4a9eff';
         const endpoints = trail.endpoints || (trail.stats && trail.stats.endpoints);
         if(endpoints && endpoints.start && endpoints.end){
@@ -655,9 +573,9 @@
         }
       });
       // Plot filtered trails' sections as before
-      trails.forEach(trail => {
+      (sourceTrails || []).forEach(trail => {
         const color = trail.color || '#4a9eff';
-        trail.sections.forEach(section => {
+        (trail.sections || []).forEach(section => {
           const start = normalizePoint(section.start);
           const end = normalizePoint(section.end);
           if(start && start.lat != null && start.lon != null){
@@ -680,109 +598,15 @@
       });
     }
 
-    function updateResultCount(count){
-      const label = document.getElementById('resultCount');
-      label.textContent = `${count} sections`;
-    }
+    function renderAllTrails(){
+      renderTrailList(trailData);
+      renderMap(trailData);
 
-    function populateSelect(select, values){
-      select.innerHTML = '';
-      values.forEach(value => {
-        const option = document.createElement('option');
-        option.value = value;
-        option.textContent = value;
-        select.appendChild(option);
-      });
-    }
-
-    function parseFiltersFromQuery(){
-      const params = new URLSearchParams(window.location.search);
-      return {
-        minMiles: params.get('minMiles') || '',
-        maxMiles: params.get('maxMiles') || '',
-        difficulties: (params.get('diff') || '').split(',').filter(Boolean),
-        states: (params.get('states') || '').split(',').filter(Boolean),
-        tags: (params.get('tags') || '').split(',').filter(Boolean),
-        trail: params.get('trail') || ''
-      };
-    }
-
-    function updateQueryFromFilters(filters){
-      const params = new URLSearchParams();
-      if(filters.minMiles) params.set('minMiles', filters.minMiles);
-      if(filters.maxMiles) params.set('maxMiles', filters.maxMiles);
-      if(filters.difficulties.length) params.set('diff', filters.difficulties.join(','));
-      if(filters.states.length) params.set('states', filters.states.join(','));
-      if(filters.tags.length) params.set('tags', filters.tags.join(','));
-      if(filters.trail) params.set('trail', filters.trail);
-      const query = params.toString();
-      const newUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
-      window.history.replaceState({}, '', newUrl);
-    }
-
-    function getFilterState(){
-      return {
-        minMiles: document.getElementById('minMiles').value,
-        maxMiles: document.getElementById('maxMiles').value,
-        difficulties: Array.from(document.getElementById('difficultySelect').selectedOptions).map(option => option.value),
-        states: Array.from(document.getElementById('stateSelect').selectedOptions).map(option => option.value),
-        tags: Array.from(document.getElementById('tagSelect').selectedOptions).map(option => option.value),
-        trail: document.getElementById('trailSelect').value
-      };
-    }
-
-    function applyFilters(){
-      const filters = getFilterState();
-      const minMiles = toNumber(filters.minMiles);
-      const maxMiles = toNumber(filters.maxMiles);
-
-      const filteredTrails = trailData.map(trail => {
-        if(filters.trail && trail.slug !== filters.trail){
-          return null;
-        }
-        const filteredSections = trail.sections.filter(section => {
-          const distance = getSectionDistance(section);
-          if(minMiles != null && distance != null && distance < minMiles) return false;
-          if(maxMiles != null && distance != null && distance > maxMiles) return false;
-          if(filters.difficulties.length){
-            const rating = typeof section.difficulty === 'string'
-              ? section.difficulty
-              : (section.difficulty && section.difficulty.rating ? String(section.difficulty.rating) : null);
-            if(!rating || !filters.difficulties.includes(rating)) return false;
-          }
-          if(filters.states.length){
-            const states = section.jurisdictions || [];
-            if(!states.some(state => filters.states.includes(state))) return false;
-          }
-          if(filters.tags.length){
-            const tags = section.tags || [];
-            if(!tags.some(tag => filters.tags.includes(tag))) return false;
-          }
-          return true;
-        });
-        return { ...trail, sections: filteredSections };
-      }).filter(Boolean).filter(trail => trail.sections.length > 0);
-
-      const selectedTrail = filters.trail;
-      if(selectedTrail && !filteredTrails.some(trail => trail.slug === selectedTrail)){
-        document.getElementById('trailSelect').value = '';
-        activeTrailSlug = '';
-      }else{
-        activeTrailSlug = selectedTrail;
-      }
-      updateQueryFromFilters({ ...filters, trail: selectedTrail });
-      renderTrailList(filteredTrails);
-      renderMap(filteredTrails);
-
-      const totalSections = filteredTrails.reduce((sum, trail) => sum + trail.sections.length, 0);
-      updateResultCount(totalSections);
-      if(filteredTrails.length > 0){
-        const focusTrail = activeTrailSlug
-          ? filteredTrails.find(trail => trail.slug === activeTrailSlug)
-          : filteredTrails[0];
-        const focusSection = focusTrail ? focusTrail.sections[0] : filteredTrails[0].sections[0];
-        renderSectionDetails(focusSection);
-        fitBounds((focusTrail && focusTrail.bounds) || globalBounds);
+      if(trailData.length > 0){
+        const focusTrail = trailData[0];
+        const focusSection = focusTrail.sections && focusTrail.sections[0];
+        renderSectionDetails(focusSection || null);
+        fitBounds(focusTrail.bounds || globalBounds);
       }else{
         renderSectionDetails(null);
         fitBounds(globalBounds);
@@ -813,6 +637,7 @@
         const details = document.createElement('details');
         details.className = 'trail-details';
         details.style.setProperty('--trail-color', trail.color || '#4a9eff');
+        details.open = true;
 
         const summary = document.createElement('summary');
         summary.className = 'trail-summary';
@@ -842,7 +667,7 @@
 
         const sectionList = document.createElement('div');
         sectionList.className = 'section-list';
-        trail.sections.forEach(section => {
+        (trail.sections || []).forEach(section => {
           const item = document.createElement('div');
           item.className = 'section-item';
 
@@ -904,33 +729,6 @@
       });
     }
 
-    function hydrateFiltersFromQuery(){
-      const filters = parseFiltersFromQuery();
-      activeTrailSlug = filters.trail || '';
-      document.getElementById('trailSelect').value = activeTrailSlug;
-      document.getElementById('minMiles').value = filters.minMiles;
-      document.getElementById('maxMiles').value = filters.maxMiles;
-      Array.from(document.getElementById('difficultySelect').options).forEach(option => {
-        option.selected = filters.difficulties.includes(option.value);
-      });
-      Array.from(document.getElementById('stateSelect').options).forEach(option => {
-        option.selected = filters.states.includes(option.value);
-      });
-      Array.from(document.getElementById('tagSelect').options).forEach(option => {
-        option.selected = filters.tags.includes(option.value);
-      });
-    }
-
-    function resetFilters(){
-      document.getElementById('trailSelect').value = '';
-      document.getElementById('minMiles').value = '';
-      document.getElementById('maxMiles').value = '';
-      Array.from(document.getElementById('difficultySelect').options).forEach(option => { option.selected = false; });
-      Array.from(document.getElementById('stateSelect').options).forEach(option => { option.selected = false; });
-      Array.from(document.getElementById('tagSelect').options).forEach(option => { option.selected = false; });
-      applyFilters();
-    }
-
     async function loadTrails(){
       for(const url of DATA_URLS){
         try{
@@ -951,43 +749,7 @@
       trailData = data.trails || [];
       globalBounds = data.bounds || null;
 
-      const difficultyValues = new Set();
-      const stateValues = new Set();
-      const tagValues = new Set();
-      trailData.forEach(trail => {
-        trail.sections.forEach(section => {
-          const difficultyValue = typeof section.difficulty === 'string' ? section.difficulty : section.difficulty && section.difficulty.rating;
-          if(difficultyValue){
-            difficultyValues.add(String(difficultyValue));
-          }
-          (section.jurisdictions || []).forEach(state => stateValues.add(state));
-          (section.tags || []).forEach(tag => tagValues.add(tag));
-        });
-      });
-
-      const trailSelect = document.getElementById('trailSelect');
-      trailSelect.innerHTML = '<option value="">All trails</option>';
-      trailData.forEach(trail => {
-        const option = document.createElement('option');
-        option.value = trail.slug;
-        option.textContent = trail.name;
-        trailSelect.appendChild(option);
-      });
-
-      populateSelect(document.getElementById('difficultySelect'), Array.from(difficultyValues).sort());
-      populateSelect(document.getElementById('stateSelect'), Array.from(stateValues).sort());
-      populateSelect(document.getElementById('tagSelect'), Array.from(tagValues).sort());
-
-      hydrateFiltersFromQuery();
-      applyFilters();
-
-      document.getElementById('trailSelect').addEventListener('change', applyFilters);
-      document.getElementById('minMiles').addEventListener('input', applyFilters);
-      document.getElementById('maxMiles').addEventListener('input', applyFilters);
-      document.getElementById('difficultySelect').addEventListener('change', applyFilters);
-      document.getElementById('stateSelect').addEventListener('change', applyFilters);
-      document.getElementById('tagSelect').addEventListener('change', applyFilters);
-      document.getElementById('resetFilters').addEventListener('click', resetFilters);
+      renderAllTrails();
     }
 
     window.addEventListener('DOMContentLoaded', init);
