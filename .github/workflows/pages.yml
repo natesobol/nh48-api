@@ -32,9 +32,11 @@ jobs:
         run: |
           mkdir -p site
           rsync -a --delete \
+            --exclude=site \
             --exclude=.git \
             --exclude=.github \
             ./ site/
+          du -sh site
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
