@@ -1,0 +1,24 @@
+{
+  "trailSlug": "oregon-trail",
+  "sectionSlug": "oregon",
+  "provider": "fallback",
+  "generatedAt": "2025-12-20T22:37:11.298Z",
+  "distance_mi": 294.7,
+  "time_min": null,
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        -117.0132,
+        43.8291
+      ],
+      [
+        -122.6068,
+        45.3573
+      ]
+    ]
+  },
+  "providerMeta": null,
+  "status": "fallback",
+  "error": "Valhalla 400: {\"error_code\":154,\"error\":\"Path distance exceeds the max distance limit: 200000 meters\",\"status_code\":400,\"status\":\"Bad Request\"}"
+}

@@ -1,0 +1,24 @@
+{
+  "trailSlug": "oregon-trail",
+  "sectionSlug": "idaho-snake-river-plain",
+  "provider": "fallback",
+  "generatedAt": "2025-12-20T22:37:05.002Z",
+  "distance_mi": 420.68,
+  "time_min": null,
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        -108.9136,
+        42.37
+      ],
+      [
+        -117.0132,
+        43.8291
+      ]
+    ]
+  },
+  "providerMeta": null,
+  "status": "fallback",
+  "error": "Valhalla 400: {\"error_code\":154,\"error\":\"Path distance exceeds the max distance limit: 200000 meters\",\"status_code\":400,\"status\":\"Bad Request\"}"
+}

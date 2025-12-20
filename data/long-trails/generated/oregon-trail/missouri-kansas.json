@@ -1,0 +1,24 @@
+{
+  "trailSlug": "oregon-trail",
+  "sectionSlug": "missouri-kansas",
+  "provider": "fallback",
+  "generatedAt": "2025-12-20T22:36:47.042Z",
+  "distance_mi": 265.86,
+  "time_min": null,
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        -94.4155,
+        39.0911
+      ],
+      [
+        -99,
+        40.65
+      ]
+    ]
+  },
+  "providerMeta": null,
+  "status": "fallback",
+  "error": "Valhalla 400: {\"error_code\":154,\"error\":\"Path distance exceeds the max distance limit: 200000 meters\",\"status_code\":400,\"status\":\"Bad Request\"}"
+}

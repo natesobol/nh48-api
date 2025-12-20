@@ -1,5 +1,126 @@
 {
   "trailSlug": "oregon-trail",
-  "generatedAt": "2025-12-20T22:08:36.623Z",
-  "sections": []
+  "generatedAt": "2025-12-20T22:37:11.299Z",
+  "sections": [
+    {
+      "trailSlug": "oregon-trail",
+      "sectionSlug": "missouri-kansas",
+      "provider": "fallback",
+      "generatedAt": "2025-12-20T22:36:47.042Z",
+      "distance_mi": 265.86,
+      "time_min": null,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.4155,
+            39.0911
+          ],
+          [
+            -99,
+            40.65
+          ]
+        ]
+      },
+      "providerMeta": null,
+      "status": "fallback",
+      "error": "Valhalla 400: {\"error_code\":154,\"error\":\"Path distance exceeds the max distance limit: 200000 meters\",\"status_code\":400,\"status\":\"Bad Request\"}"
+    },
+    {
+      "trailSlug": "oregon-trail",
+      "sectionSlug": "nebraska",
+      "provider": "fallback",
+      "generatedAt": "2025-12-20T22:36:53.335Z",
+      "distance_mi": 306.28,
+      "time_min": null,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -99,
+            40.65
+          ],
+          [
+            -104.5359,
+            42.2092
+          ]
+        ]
+      },
+      "providerMeta": null,
+      "status": "fallback",
+      "error": "Valhalla 400: {\"error_code\":154,\"error\":\"Path distance exceeds the max distance limit: 200000 meters\",\"status_code\":400,\"status\":\"Bad Request\"}"
+    },
+    {
+      "trailSlug": "oregon-trail",
+      "sectionSlug": "wyoming",
+      "provider": "fallback",
+      "generatedAt": "2025-12-20T22:36:58.708Z",
+      "distance_mi": 224,
+      "time_min": null,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -104.5359,
+            42.2092
+          ],
+          [
+            -108.9136,
+            42.37
+          ]
+        ]
+      },
+      "providerMeta": null,
+      "status": "fallback",
+      "error": "Valhalla 400: {\"error_code\":154,\"error\":\"Path distance exceeds the max distance limit: 200000 meters\",\"status_code\":400,\"status\":\"Bad Request\"}"
+    },
+    {
+      "trailSlug": "oregon-trail",
+      "sectionSlug": "idaho-snake-river-plain",
+      "provider": "fallback",
+      "generatedAt": "2025-12-20T22:37:05.002Z",
+      "distance_mi": 420.68,
+      "time_min": null,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -108.9136,
+            42.37
+          ],
+          [
+            -117.0132,
+            43.8291
+          ]
+        ]
+      },
+      "providerMeta": null,
+      "status": "fallback",
+      "error": "Valhalla 400: {\"error_code\":154,\"error\":\"Path distance exceeds the max distance limit: 200000 meters\",\"status_code\":400,\"status\":\"Bad Request\"}"
+    },
+    {
+      "trailSlug": "oregon-trail",
+      "sectionSlug": "oregon",
+      "provider": "fallback",
+      "generatedAt": "2025-12-20T22:37:11.298Z",
+      "distance_mi": 294.7,
+      "time_min": null,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -117.0132,
+            43.8291
+          ],
+          [
+            -122.6068,
+            45.3573
+          ]
+        ]
+      },
+      "providerMeta": null,
+      "status": "fallback",
+      "error": "Valhalla 400: {\"error_code\":154,\"error\":\"Path distance exceeds the max distance limit: 200000 meters\",\"status_code\":400,\"status\":\"Bad Request\"}"
+    }
+  ]
 }

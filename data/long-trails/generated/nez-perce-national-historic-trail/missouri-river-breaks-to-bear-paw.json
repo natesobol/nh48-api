@@ -1,0 +1,24 @@
+{
+  "trailSlug": "nez-perce-national-historic-trail",
+  "sectionSlug": "missouri-river-breaks-to-bear-paw",
+  "provider": "fallback",
+  "generatedAt": "2025-12-20T22:36:40.748Z",
+  "distance_mi": 233.74,
+  "time_min": null,
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        -109.5,
+        45
+      ],
+      [
+        -109.2104,
+        48.3772
+      ]
+    ]
+  },
+  "providerMeta": null,
+  "status": "fallback",
+  "error": "Valhalla 400: {\"error_code\":154,\"error\":\"Path distance exceeds the max distance limit: 200000 meters\",\"status_code\":400,\"status\":\"Bad Request\"}"
+}
