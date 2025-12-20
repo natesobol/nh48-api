@@ -1,0 +1,755 @@
+{
+  "id": "colorado-trail",
+  "type": "Trail",
+  "slug": "colorado-trail",
+  "name": "Colorado Trail",
+  "shortName": "CT",
+  "region": "Rocky Mountains (Colorado)",
+  "countryCodes": ["US"],
+  "classification": "Long-distance hiking trail",
+  "continuity": "Continuous (single connected trail from Denver to Durango)",
+  "maintenance_level": "High (well-maintained by CTF & USFS)",
+  "stats": {
+    "distance": { "mi": 486.0, "km": 782.0 },  /* Denver to Durango via Collegiate East:contentReference[oaicite:25]{index=25} */
+    "elevationHigh": { "value": 13271, "unit": "ft" },  /* Highest point 13,271 ft:contentReference[oaicite:26]{index=26} */
+    "elevationLow":  { "value": 5500,  "unit": "ft" },  /* Lowest ~5,500 ft at Waterton Canyon:contentReference[oaicite:27]{index=27} */
+    "start": {
+      "name": "Waterton Canyon Trailhead (Denver area)",
+      "lat": 39.49139, "lon": -105.09472,
+      "elev": 5520  /* ~5,520 ft at Waterton Canyon terminus:contentReference[oaicite:28]{index=28} */
+    },
+    "end": {
+      "name": "Junction Creek Trailhead (Durango terminus)",
+      "lat": 37.33139, "lon": -107.90278,
+      "elev": 7000  /* ~7,000 ft near Durango terminus (approximate) */
+    }
+  },
+  "map": {
+    "center": { "lat": 38.41, "lon": -106.50 },
+    "zoom": 7,
+    "bounds": {
+      "minLat": 37.33, "minLon": -107.90,
+      "maxLat": 39.49, "maxLon": -105.09
+    }
+  },
+  "routing": {
+    "mileSystem": "Continuous mileage from Denver (mile 0 at Waterton Canyon)",
+    "crs": "EPSG:4326 (WGS84 lat/long)",
+    "sectioning": "28 segments (1–28) defined by major trailhead access points:contentReference[oaicite:29]{index=29}",
+    "routeVariants": "Collegiate East (main route) vs Collegiate West alternate (~83 mi); both officially part of CT:contentReference[oaicite:30]{index=30}"
+  },
+  "sources": [
+    {
+      "name": "Colorado Trail Foundation",
+      "url": "https://coloradotrail.org",
+      "type": "trail organization"
+    },
+    {
+      "name": "Wikivoyage – Colorado Trail",
+      "url": "https://en.wikivoyage.org/wiki/Colorado_Trail",
+      "type": "wiki guide"
+    }
+  ],
+  "sections": [
+    {
+      "id": "ct-seg-1",
+      "order": 1,
+      "name": "Segment 1: Waterton Canyon to South Platte River",
+      "slug": "ct-segment-1",
+      "distance": { "mi": 16.8, "km": 27.0 },
+      "mileRange": { "start": 0.0, "end": 16.8 },
+      "start": { "name": "Waterton Canyon Trailhead", "lat": 39.49139, "lon": -105.09472 },
+      "end":   { "name": "South Platte River Trailhead (Gudy Gaskill Bridge)", "lat": 39.400429, "lon": -105.167897 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Front Range Foothills", "Pike National Forest"],
+      "difficulty": { "rating": 2, "label": "Easy-Moderate" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_1.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 39.38, "minLon": -105.18,
+          "maxLat": 39.49, "maxLon": -105.09
+        }
+      }
+    },
+    {
+      "id": "ct-seg-2",
+      "order": 2,
+      "name": "Segment 2: South Platte River to Little Scraggy Trailhead",
+      "slug": "ct-segment-2",
+      "distance": { "mi": 11.5, "km": 18.5 },
+      "mileRange": { "start": 16.8, "end": 28.3 },
+      "start": { "name": "South Platte River Trailhead", "lat": 39.400429, "lon": -105.167897 },
+      "end":   { "name": "Little Scraggy Trailhead", "lat": 39.343669, "lon": -105.257364 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Front Range Foothills", "Buffalo Creek Burn Area"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_2.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 39.34, "minLon": -105.26,
+          "maxLat": 39.40, "maxLon": -105.16
+        }
+      }
+    },
+    {
+      "id": "ct-seg-3",
+      "order": 3,
+      "name": "Segment 3: Little Scraggy TH to FS-560 (Wellington Lake Rd)",
+      "slug": "ct-segment-3",
+      "distance": { "mi": 12.2, "km": 19.6 },
+      "mileRange": { "start": 28.3, "end": 40.5 },
+      "start": { "name": "Little Scraggy Trailhead", "lat": 39.343669, "lon": -105.257364 },
+      "end":   { "name": "Wellington Lake Rd (FS-560) Trailhead", "lat": 39.338351, "lon": -105.401202 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Front Range Foothills", "Pike National Forest"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_3.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 39.33, "minLon": -105.40,
+          "maxLat": 39.35, "maxLon": -105.25
+        }
+      }
+    },
+    {
+      "id": "ct-seg-4",
+      "order": 4,
+      "name": "Segment 4: FS-560 to Long Gulch",
+      "slug": "ct-segment-4",
+      "distance": { "mi": 16.6, "km": 26.7 },
+      "mileRange": { "start": 40.5, "end": 57.1 },
+      "start": { "name": "Wellington Lake Rd (FS-560) Trailhead", "lat": 39.338351, "lon": -105.401202 },
+      "end":   { "name": "Long Gulch Trailhead", "lat": 39.347521, "lon": -105.619008 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Lost Creek Wilderness", "Pike National Forest"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_4.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 39.33, "minLon": -105.62,
+          "maxLat": 39.35, "maxLon": -105.40
+        }
+      }
+    },
+    {
+      "id": "ct-seg-5",
+      "order": 5,
+      "name": "Segment 5: Long Gulch to Kenosha Pass",
+      "slug": "ct-segment-5",
+      "distance": { "mi": 14.6, "km": 23.5 },
+      "mileRange": { "start": 57.1, "end": 71.7 },
+      "start": { "name": "Long Gulch Trailhead", "lat": 39.347521, "lon": -105.619008 },
+      "end":   { "name": "Kenosha Pass Trailhead", "lat": 39.413300, "lon": -105.757000 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Lost Creek Wilderness", "Kenosha Mountains"],
+      "difficulty": { "rating": 2, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_5.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 39.34, "minLon": -105.76,
+          "maxLat": 39.41, "maxLon": -105.62
+        }
+      }
+    },
+    {
+      "id": "ct-seg-6",
+      "order": 6,
+      "name": "Segment 6: Kenosha Pass to Gold Hill Trailhead",
+      "slug": "ct-segment-6",
+      "distance": { "mi": 32.9, "km": 52.9 },
+      "mileRange": { "start": 71.7, "end": 104.6 },
+      "start": { "name": "Kenosha Pass Trailhead", "lat": 39.413300, "lon": -105.757000 },
+      "end":   { "name": "Gold Hill Trailhead (Breckenridge)", "lat": 39.500000, "lon": -106.110000 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Summit County", "Continental Divide (Georgia Pass)"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_6.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 39.35, "minLon": -106.12,
+          "maxLat": 39.50, "maxLon": -105.75
+        }
+      }
+    },
+    {
+      "id": "ct-seg-7",
+      "order": 7,
+      "name": "Segment 7: Gold Hill TH to Copper Mountain",
+      "slug": "ct-segment-7",
+      "distance": { "mi": 12.8, "km": 20.6 },
+      "mileRange": { "start": 104.6, "end": 117.4 },
+      "start": { "name": "Gold Hill Trailhead", "lat": 39.500000, "lon": -106.110000 },
+      "end":   { "name": "Copper Mountain (Hwy 91)", "lat": 39.506667, "lon": -106.142222 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Tenmile Range", "White River National Forest"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_7.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 39.47, "minLon": -106.15,
+          "maxLat": 39.51, "maxLon": -106.11
+        }
+      }
+    },
+    {
+      "id": "ct-seg-8",
+      "order": 8,
+      "name": "Segment 8: Copper Mountain to Tennessee Pass",
+      "slug": "ct-segment-8",
+      "distance": { "mi": 25.4, "km": 40.9 },
+      "mileRange": { "start": 117.4, "end": 142.8 },
+      "start": { "name": "Copper Mountain (Hwy 91)", "lat": 39.506667, "lon": -106.142222 },
+      "end":   { "name": "Tennessee Pass Trailhead (US 24)", "lat": 39.321400, "lon": -106.311000 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Gore Range", "Camp Hale"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_8.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 39.32, "minLon": -106.31,
+          "maxLat": 39.51, "maxLon": -106.14
+        }
+      }
+    },
+    {
+      "id": "ct-seg-9",
+      "order": 9,
+      "name": "Segment 9: Tennessee Pass to Timberline Lake Trailhead",
+      "slug": "ct-segment-9",
+      "distance": { "mi": 13.6, "km": 21.9 },
+      "mileRange": { "start": 142.8, "end": 156.4 },
+      "start": { "name": "Tennessee Pass Trailhead", "lat": 39.321400, "lon": -106.311000 },
+      "end":   { "name": "Timberline Lake Trailhead", "lat": 39.239000, "lon": -106.331000 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Holy Cross Wilderness", "San Isabel National Forest"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_9.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 39.23, "minLon": -106.42,
+          "maxLat": 39.33, "maxLon": -106.31
+        }
+      }
+    },
+    {
+      "id": "ct-seg-10",
+      "order": 10,
+      "name": "Segment 10: Timberline Lake TH to Mount Massive TH",
+      "slug": "ct-segment-10",
+      "distance": { "mi": 13.6, "km": 21.9 },
+      "mileRange": { "start": 156.4, "end": 170.0 },
+      "start": { "name": "Timberline Lake Trailhead", "lat": 39.239000, "lon": -106.331000 },
+      "end":   { "name": "Mount Massive Trailhead", "lat": 39.151502, "lon": -106.419403 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Mount Massive Wilderness", "San Isabel National Forest"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_10.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 39.15, "minLon": -106.42,
+          "maxLat": 39.24, "maxLon": -106.33
+        }
+      }
+    },
+    {
+      "id": "ct-seg-11",
+      "order": 11,
+      "name": "Segment 11: Mount Massive TH to Clear Creek Road",
+      "slug": "ct-segment-11",
+      "distance": { "mi": 21.5, "km": 34.6 },
+      "mileRange": { "start": 170.0, "end": 191.5 },
+      "start": { "name": "Mount Massive Trailhead", "lat": 39.151502, "lon": -106.419403 },
+      "end":   { "name": "Clear Creek Road (near Twin Lakes)", "lat": 39.093000, "lon": -106.375000 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Collegiate Peaks Wilderness"],
+      "difficulty": { "rating": 5, "label": "Very Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_11.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 39.09, "minLon": -106.42,
+          "maxLat": 39.16, "maxLon": -106.33
+        }
+      }
+    },
+    {
+      "id": "ct-seg-12",
+      "order": 12,
+      "name": "Segment 12: Clear Creek Road to Silver Creek TH",
+      "slug": "ct-segment-12",
+      "distance": { "mi": 18.5, "km": 29.8 },
+      "mileRange": { "start": 191.5, "end": 210.0 },
+      "start": { "name": "Clear Creek Road (Twin Lakes)", "lat": 39.093000, "lon": -106.375000 },
+      "end":   { "name": "Silver Creek Trailhead", "lat": 38.865561, "lon": -106.241178 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Collegiate Peaks Wilderness"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_12.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 38.86, "minLon": -106.38,
+          "maxLat": 39.09, "maxLon": -106.24
+        }
+      }
+    },
+    {
+      "id": "ct-seg-13",
+      "order": 13,
+      "name": "Segment 13: Silver Creek TH to Chalk Creek TH",
+      "slug": "ct-segment-13",
+      "distance": { "mi": 22.8, "km": 36.7 },
+      "mileRange": { "start": 210.0, "end": 232.8 },
+      "start": { "name": "Silver Creek Trailhead", "lat": 38.865561, "lon": -106.241178 },
+      "end":   { "name": "Chalk Creek Trailhead (Cascade Creek Rd)", "lat": 38.716854, "lon": -106.200021 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Collegiate Peaks Wilderness"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_13.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 38.71, "minLon": -106.24,
+          "maxLat": 38.87, "maxLon": -106.20
+        }
+      }
+    },
+    {
+      "id": "ct-seg-14",
+      "order": 14,
+      "name": "Segment 14: Chalk Creek TH to US-50 (Monarch Pass)",
+      "slug": "ct-segment-14",
+      "distance": { "mi": 20.4, "km": 32.8 },
+      "mileRange": { "start": 232.8, "end": 253.2 },
+      "start": { "name": "Chalk Creek Trailhead", "lat": 38.716854, "lon": -106.200021 },
+      "end":   { "name": "US-50 at Monarch Pass", "lat": 38.496700, "lon": -106.325000 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Continental Divide", "Sawatch Range"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_14.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 38.49, "minLon": -106.33,
+          "maxLat": 38.72, "maxLon": -106.20
+        }
+      }
+    },
+    {
+      "id": "ct-seg-15",
+      "order": 15,
+      "name": "Segment 15: US-50 (Monarch) to Marshall Pass",
+      "slug": "ct-segment-15",
+      "distance": { "mi": 14.3, "km": 23.0 },
+      "mileRange": { "start": 253.2, "end": 267.5 },
+      "start": { "name": "US-50 at Monarch Pass", "lat": 38.496700, "lon": -106.325000 },
+      "end":   { "name": "Marshall Pass Trailhead", "lat": 38.391400, "lon": -106.247000 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Continental Divide", "Gunnison National Forest"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_15.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 38.39, "minLon": -106.33,
+          "maxLat": 38.50, "maxLon": -106.24
+        }
+      }
+    },
+    {
+      "id": "ct-seg-16",
+      "order": 16,
+      "name": "Segment 16: Marshall Pass to Saguache Park Road (Eddiesville)",
+      "slug": "ct-segment-16",
+      "distance": { "mi": 15.2, "km": 24.5 },
+      "mileRange": { "start": 267.5, "end": 282.7 },
+      "start": { "name": "Marshall Pass Trailhead", "lat": 38.391400, "lon": -106.247000 },
+      "end":   { "name": "Saguache Park Road (near Eddiesville TH)", "lat": 38.150091, "lon": -106.689133 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Cochetopa Hills", "Gunnison National Forest"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_16.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 38.15, "minLon": -106.84,
+          "maxLat": 38.39, "maxLon": -106.25
+        }
+      }
+    },
+    {
+      "id": "ct-seg-17",
+      "order": 17,
+      "name": "Segment 17: Saguache Park Road to Colorado Hwy 114",
+      "slug": "ct-segment-17",
+      "distance": { "mi": 20.4, "km": 32.8 },
+      "mileRange": { "start": 282.7, "end": 303.1 },
+      "start": { "name": "Saguache Park Road / Eddiesville", "lat": 38.150091, "lon": -106.689133 },
+      "end":   { "name": "CO Highway 114 (North Pass)", "lat": 38.118074, "lon": -106.752464 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Cochetopa Hills"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_17.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 38.11, "minLon": -106.76,
+          "maxLat": 38.16, "maxLon": -106.68
+        }
+      }
+    },
+    {
+      "id": "ct-seg-18",
+      "order": 18,
+      "name": "Segment 18: Colorado Hwy 114 to Saguache Park Road",
+      "slug": "ct-segment-18",
+      "distance": { "mi": 13.8, "km": 22.2 },
+      "mileRange": { "start": 303.1, "end": 316.9 },
+      "start": { "name": "CO Highway 114 (North Pass)", "lat": 38.118074, "lon": -106.752464 },
+      "end":   { "name": "Saguache Park Road (Lujan Creek)", "lat": 38.150091, "lon": -106.689133 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Cochetopa Hills"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_18.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 38.12, "minLon": -106.75,
+          "maxLat": 38.15, "maxLon": -106.68
+        }
+      }
+    },
+    {
+      "id": "ct-seg-19",
+      "order": 19,
+      "name": "Segment 19: Saguache Park Road to Eddiesville (San Luis Pass)",
+      "slug": "ct-segment-19",
+      "distance": { "mi": 13.7, "km": 22.0 },
+      "mileRange": { "start": 316.9, "end": 330.6 },
+      "start": { "name": "Saguache Park Road (Lujan Creek)", "lat": 38.150091, "lon": -106.689133 },
+      "end":   { "name": "San Luis Pass Trail Junction", "lat": 37.970554, "lon": -106.972794 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["La Garita Wilderness"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_19.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 37.97, "minLon": -106.97,
+          "maxLat": 38.15, "maxLon": -106.68
+        }
+      }
+    },
+    {
+      "id": "ct-seg-20",
+      "order": 20,
+      "name": "Segment 20: San Luis Pass to Spring Creek Pass",
+      "slug": "ct-segment-20",
+      "distance": { "mi": 12.7, "km": 20.4 },
+      "mileRange": { "start": 330.6, "end": 343.3 },
+      "start": { "name": "San Luis Pass Junction", "lat": 37.970554, "lon": -106.972794 },
+      "end":   { "name": "Spring Creek Pass (CO Hwy 149)", "lat": 37.940800, "lon": -107.159000 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["La Garita Wilderness", "Continental Divide"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_20.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 37.94, "minLon": -107.16,
+          "maxLat": 37.98, "maxLon": -106.97
+        }
+      }
+    },
+    {
+      "id": "ct-seg-21",
+      "order": 21,
+      "name": "Segment 21: Spring Creek Pass to Carson Saddle",
+      "slug": "ct-segment-21",
+      "distance": { "mi": 21.5, "km": 34.6 },
+      "mileRange": { "start": 343.3, "end": 364.8 },
+      "start": { "name": "Spring Creek Pass (CO 149)", "lat": 37.940800, "lon": -107.159000 },
+      "end":   { "name": "Carson Saddle Trailhead", "lat": 37.856128, "lon": -107.367789 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Weminuche Wilderness", "Continental Divide"],
+      "difficulty": { "rating": 5, "label": "Very Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_21.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 37.85, "minLon": -107.37,
+          "maxLat": 37.94, "maxLon": -107.15
+        }
+      }
+    },
+    {
+      "id": "ct-seg-22",
+      "order": 22,
+      "name": "Segment 22: Carson Saddle to Stony Pass",
+      "slug": "ct-segment-22",
+      "distance": { "mi": 17.2, "km": 27.7 },
+      "mileRange": { "start": 364.8, "end": 382.0 },
+      "start": { "name": "Carson Saddle Trailhead", "lat": 37.856128, "lon": -107.367789 },
+      "end":   { "name": "Stony Pass Trailhead", "lat": 37.795300, "lon": -107.549000 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Weminuche Wilderness", "Continental Divide"],
+      "difficulty": { "rating": 5, "label": "Very Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_22.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 37.79, "minLon": -107.55,
+          "maxLat": 37.86, "maxLon": -107.36
+        }
+      }
+    },
+    {
+      "id": "ct-seg-23",
+      "order": 23,
+      "name": "Segment 23: Stony Pass to Molas Pass",
+      "slug": "ct-segment-23",
+      "distance": { "mi": 15.9, "km": 25.6 },
+      "mileRange": { "start": 382.0, "end": 397.9 },
+      "start": { "name": "Stony Pass Trailhead", "lat": 37.795300, "lon": -107.549000 },
+      "end":   { "name": "Molas Pass (US 550)", "lat": 37.737800, "lon": -107.698000 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["Weminuche Wilderness", "San Juan National Forest"],
+      "difficulty": { "rating": 5, "label": "Very Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_23.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 37.73, "minLon": -107.70,
+          "maxLat": 37.80, "maxLon": -107.54
+        }
+      }
+    },
+    {
+      "id": "ct-seg-24",
+      "order": 24,
+      "name": "Segment 24: Molas Pass to Bolam Pass Road",
+      "slug": "ct-segment-24",
+      "distance": { "mi": 20.9, "km": 33.6 },
+      "mileRange": { "start": 397.9, "end": 418.8 },
+      "start": { "name": "Molas Pass (US 550)", "lat": 37.737800, "lon": -107.698000 },
+      "end":   { "name": "Bolam Pass Road", "lat": 37.713118, "lon": -107.903491 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["San Juan National Forest"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_24.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 37.71, "minLon": -107.90,
+          "maxLat": 37.74, "maxLon": -107.69
+        }
+      }
+    },
+    {
+      "id": "ct-seg-25",
+      "order": 25,
+      "name": "Segment 25: Bolam Pass Road to Hotel Draw Road",
+      "slug": "ct-segment-25",
+      "distance": { "mi": 10.9, "km": 17.5 },
+      "mileRange": { "start": 418.8, "end": 429.7 },
+      "start": { "name": "Bolam Pass Road", "lat": 37.713118, "lon": -107.903491 },
+      "end":   { "name": "Hotel Draw Road", "lat": 37.649512, "lon": -107.956863 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["San Juan National Forest"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_25.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 37.64, "minLon": -107.96,
+          "maxLat": 37.71, "maxLon": -107.90
+        }
+      }
+    },
+    {
+      "id": "ct-seg-26",
+      "order": 26,
+      "name": "Segment 26: Hotel Draw Road to Kennebec Trailhead",
+      "slug": "ct-segment-26",
+      "distance": { "mi": 20.6, "km": 33.2 },
+      "mileRange": { "start": 429.7, "end": 450.3 },
+      "start": { "name": "Hotel Draw Road", "lat": 37.649512, "lon": -107.956863 },
+      "end":   { "name": "Kennebec Trailhead (La Plata Mtns)", "lat": 37.630000, "lon": -108.050000 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["San Juan National Forest", "La Plata Mountains"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_26.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 37.62, "minLon": -108.05,
+          "maxLat": 37.69, "maxLon": -107.95
+        }
+      }
+    },
+    {
+      "id": "ct-seg-27",
+      "order": 27,
+      "name": "Segment 27: Kennebec TH to Junction Creek (Straight Creek)",
+      "slug": "ct-segment-27",
+      "distance": { "mi": 21.5, "km": 34.6 },
+      "mileRange": { "start": 450.3, "end": 471.8 },
+      "start": { "name": "Kennebec Trailhead", "lat": 37.630000, "lon": -108.050000 },
+      "end":   { "name": "Straight Creek (Junction Creek headwaters)", "lat": 37.560000, "lon": -107.980000 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["San Juan National Forest"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_27.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 37.56, "minLon": -108.05,
+          "maxLat": 37.69, "maxLon": -107.97
+        }
+      }
+    },
+    {
+      "id": "ct-seg-28",
+      "order": 28,
+      "name": "Segment 28: Straight Creek to Durango",
+      "slug": "ct-segment-28",
+      "distance": { "mi": 21.5, "km": 34.6 },
+      "mileRange": { "start": 471.8, "end": 493.3 },
+      "start": { "name": "Straight Creek (Junction Creek)", "lat": 37.560000, "lon": -107.980000 },
+      "end":   { "name": "Junction Creek Trailhead (Durango)", "lat": 37.331377, "lon": -107.902893 },
+      "jurisdictions": ["Colorado"],
+      "tags": ["San Juan National Forest"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/ct/CT_segment_28.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 37.33, "minLon": -107.98,
+          "maxLat": 37.56, "maxLon": -107.90
+        }
+      }
+    }
+  ]
+}

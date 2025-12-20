@@ -1,0 +1,266 @@
+{
+  "id": 102,
+  "name": "Nez Perce (Nee-Me-Poo) National Historic Trail",
+  "shortName": "Nez Perce Trail",
+  "slug": "nez-perce-national-historic-trail",
+  "type": "National Historic Trail",
+  "classification": "Historic indigenous flight route",
+  "continuity": "Discrete historical route (1877) retraced via marked auto tours",
+  "maintenance_level": "Auto tour signage, some trail segments in parks/forests",
+  "region": "Pacific Northwest & Northern Rocky Mountains, USA",
+  "countryCodes": ["US"],
+  "stats": {
+    "officialLength": {
+      "miles": 1170,
+      "kilometers": 1883
+    },
+    "elevation": {
+      "highest": {
+        "name": "Dead Indian Pass, WY",
+        "feet": 8071,
+        "meters": 2460,
+        "lat": 44.7436,
+        "lon": -109.3849
+      },
+      "lowest": {
+        "name": "Snake River Crossing (Dug Bar, OR/ID)",
+        "feet": 1100,
+        "meters": 335,
+        "lat": 45.8046,
+        "lon": -116.6867
+      }
+    },
+    "endpoints": {
+      "start": {
+        "name": "Wallowa Lake, Oregon",
+        "lat": 45.3042,
+        "lon": -117.2117
+      },
+      "end": {
+        "name": "Bear Paw Battlefield (Chinook), Montana",
+        "lat": 48.3772,
+        "lon": -109.2104
+      }
+    }
+  },
+  "map": {
+    "defaultZoom": 6,
+    "defaultCenter": {
+      "lat": 46.5,
+      "lon": -113.2
+    },
+    "boundingBox": {
+      "minLat": 44.5,
+      "minLon": -117.3,
+      "maxLat": 48.5,
+      "maxLon": -109.2
+    }
+  },
+  "routing": {
+    "mileSystem": "Chronological route mileage (0 at Wallowa Lake, ~1170 at Bear Paw, MT)",
+    "gpxStructure": "Route provided in sequential segments corresponding to historical legs of the 1877 flight",
+    "sectioning": "Broken into 7 segments reflecting major trail phases (Imnaha, White Bird, Lolo, Big Hole, Overland, Yellowstone, Missouri Breaks)",
+    "routeVariantPolicy": "Route follows the 1877 flight path; alternate or divergent routes are not included (historic deviations noted for context)"
+  },
+  "sources": [
+    {
+      "name": "U.S. Forest Service – Nez Perce NHT (Official)",
+      "url": "https://www.fs.usda.gov/npnht",
+      "official": true
+    },
+    {
+      "name": "National Park Service – Nez Perce National Historical Park",
+      "url": "https://www.nps.gov/nepe",
+      "official": true
+    },
+    {
+      "name": "Wikipedia – Nez Perce National Historic Trail",
+      "url": "https://en.wikipedia.org/wiki/Nez_Perce_National_Historic_Trail",
+      "official": false
+    }
+  ],
+  "sections": [
+    {
+      "id": 1,
+      "name": "Imnaha River to Snake Crossing",
+      "description": "From the Wallowa Valley in Oregon down the Imnaha River canyon to the Snake River at Dug Bar. This segment covers the Nez Perce departure from their homelands, ending with a difficult river crossing of the Snake (May 31, 1877).",
+      "start": {
+        "name": "Wallowa Lake, OR",
+        "lat": 45.3042,
+        "lon": -117.2117
+      },
+      "end": {
+        "name": "Snake River (Dug Bar crossing)",
+        "lat": 45.8046,
+        "lon": -116.6867
+      },
+      "distanceMiles": 75,
+      "distanceKm": 121,
+      "difficulty": "Difficult (steep canyon terrain, river crossing)",
+      "jurisdiction": ["OR", "ID"],
+      "gpxStub": "NPNHT-section1-Imnaha.gpx",
+      "boundingBox": {
+        "minLat": 45.30,
+        "minLon": -117.3,
+        "maxLat": 45.81,
+        "maxLon": -116.60
+      }
+    },
+    {
+      "id": 2,
+      "name": "White Bird Canyon (Idaho)",
+      "description": "After crossing into Idaho, the trail passes through the Camas Prairie and White Bird Canyon area. Site of the first battle (Battle of White Bird Canyon, June 1877). Ends near the Clearwater River and Weippe Prairie, where the Nez Perce turned toward the Bitterroots.",
+      "start": {
+        "name": "Snake River (Idaho side)",
+        "lat": 45.8400,
+        "lon": -116.4650
+      },
+      "end": {
+        "name": "Weippe Prairie, ID",
+        "lat": 46.3500,
+        "lon": -115.9250
+      },
+      "distanceMiles": 200,
+      "distanceKm": 322,
+      "difficulty": "Moderate (canyon country, some skirmishes)",
+      "jurisdiction": ["ID"],
+      "gpxStub": "NPNHT-section2-WhiteBird.gpx",
+      "boundingBox": {
+        "minLat": 45.5,
+        "minLon": -116.7,
+        "maxLat": 46.4,
+        "maxLon": -115.5
+      }
+    },
+    {
+      "id": 3,
+      "name": "Lolo Trail (Bitterroot Mountains)",
+      "description": "The route over the Bitterroot Mountains along the historic Lolo Trail from Weippe Prairie to Lolo Pass (Idaho–Montana border). A rugged mountain segment used by the Nez Perce to evade pursuing U.S. Army forces in July 1877.",
+      "start": {
+        "name": "Weippe Prairie, ID",
+        "lat": 46.3500,
+        "lon": -115.9250
+      },
+      "end": {
+        "name": "Lolo Pass (Continental Divide, ID–MT)",
+        "lat": 46.6350,
+        "lon": -114.5800
+      },
+      "distanceMiles": 120,
+      "distanceKm": 193,
+      "difficulty": "Difficult (steep ridges, high elevation trail)",
+      "jurisdiction": ["ID", "MT"],
+      "gpxStub": "NPNHT-section3-LoloTrail.gpx",
+      "boundingBox": {
+        "minLat": 46.3,
+        "minLon": -115.95,
+        "maxLat": 46.7,
+        "maxLon": -114.5
+      }
+    },
+    {
+      "id": 4,
+      "name": "Gibbons Pass to Big Hole (Montana)",
+      "description": "Descending from Lolo Pass into Montana’s Bitterroot Valley, then over Gibbons Pass into the Big Hole Valley. This segment includes the Big Hole National Battlefield (battle in August 1877). Marks a critical turning point where the Nez Perce changed course after a U.S. attack.",
+      "start": {
+        "name": "Lolo Pass, MT",
+        "lat": 46.6350,
+        "lon": -114.5800
+      },
+      "end": {
+        "name": "Big Hole (Gibbons Pass), MT",
+        "lat": 45.7470,
+        "lon": -113.9140
+      },
+      "distanceMiles": 100,
+      "distanceKm": 161,
+      "difficulty": "Moderate (valley travel, then mountain pass crossing)",
+      "jurisdiction": ["MT"],
+      "gpxStub": "NPNHT-section4-BigHole.gpx",
+      "boundingBox": {
+        "minLat": 45.7,
+        "minLon": -114.6,
+        "maxLat": 46.7,
+        "maxLon": -113.9
+      }
+    },
+    {
+      "id": 5,
+      "name": "Overland Trail (Idaho & Yellowstone Route)",
+      "description": "From the Big Hole area, the Nez Perce moved south and east. They crossed back into Idaho at Bannock Pass, traveled through the Birch Creek/Lemhi valleys, then turned east at Dubois, ID to enter Yellowstone (near West Yellowstone). This long segment covers their overland journey toward the park, August–September 1877.",
+      "start": {
+        "name": "Big Hole Valley, MT",
+        "lat": 45.7469,
+        "lon": -113.9140
+      },
+      "end": {
+        "name": "West Yellowstone (Targhee Pass), MT/ID",
+        "lat": 44.6758,
+        "lon": -111.2750
+      },
+      "distanceMiles": 250,
+      "distanceKm": 402,
+      "difficulty": "Moderate (mix of open valleys and mountain terrain)",
+      "jurisdiction": ["MT", "ID", "WY"],
+      "gpxStub": "NPNHT-section5-Overland.gpx",
+      "boundingBox": {
+        "minLat": 44.6,
+        "minLon": -113.5,
+        "maxLat": 45.8,
+        "maxLon": -111.2
+      }
+    },
+    {
+      "id": 6,
+      "name": "Yellowstone Segment",
+      "description": "The trail segment through Yellowstone National Park. The Nez Perce entered the park in September 1877, traversing from the west side (Madison/Firehole area) through the park and exiting over Sylvan Pass to the east. Encounters with tourists occurred here as the Nez Perce sought to elude the Army in the difficult terrain of Yellowstone.",
+      "start": {
+        "name": "West Yellowstone (Madison Junction area)",
+        "lat": 44.6570,
+        "lon": -110.9570
+      },
+      "end": {
+        "name": "Sylvan Pass (East Yellowstone exit)",
+        "lat": 44.4650,
+        "lon": -110.1283
+      },
+      "distanceMiles": 120,
+      "distanceKm": 193,
+      "difficulty": "Difficult (geothermal terrain, mountain passes)",
+      "jurisdiction": ["WY (Yellowstone NP)"],
+      "gpxStub": "NPNHT-section6-Yellowstone.gpx",
+      "boundingBox": {
+        "minLat": 44.4,
+        "minLon": -111.0,
+        "maxLat": 44.8,
+        "maxLon": -110.1
+      }
+    },
+    {
+      "id": 7,
+      "name": "Missouri River Breaks to Bear Paw",
+      "description": "The final stretch from the Absaroka foothills in Wyoming into the open plains of Montana. After exiting Yellowstone, the Nez Perce followed the Clarks Fork River northward, skirted past Billings (crossing the Missouri River Breaks region), and headed for Canada. This segment ends at the Bear Paw Mountains in northern Montana, where the Nez Perce were finally surrounded and surrendered on October 5, 1877 – just 40 miles shy of the Canadian border.",
+      "start": {
+        "name": "Clark Fork / Yellowstone River area, MT",
+        "lat": 45.0000,
+        "lon": -109.5000
+      },
+      "end": {
+        "name": "Bear Paw Battlefield, MT",
+        "lat": 48.3772,
+        "lon": -109.2104
+      },
+      "distanceMiles": 300,
+      "distanceKm": 483,
+      "difficulty": "Moderate (open plains, extreme fatigue and attrition)",
+      "jurisdiction": ["MT"],
+      "gpxStub": "NPNHT-section7-BearPaw.gpx",
+      "boundingBox": {
+        "minLat": 44.4,
+        "minLon": -110.2,
+        "maxLat": 48.5,
+        "maxLon": -109.2
+      }
+    }
+  ]
+}

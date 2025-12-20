@@ -1,0 +1,320 @@
+{
+  "id": 102,
+  "slug": "great-divide-trail",
+  "name": "Great Divide Trail (Canada)",
+  "shortName": "Great Divide Trail",
+  "type": "long-distance hiking trail",
+  "classification": "unofficial trail (maintained by association)",
+  "continuity": "continuous",
+  "maintenance_level": "mixed (parts well-maintained, parts unmaintained)",
+  "region": "Rocky Mountains (Canadian Rockies)",
+  "countryCodes": ["CA"],
+  "stats": {
+    "total_length": {
+      "miles": 680,
+      "kilometers": 1095
+    },
+    "highest_elevation": {
+      "location": "Unnamed pass above Michele Lakes, AB",
+      "feet": 8500,
+      "meters": 2590
+    },
+    "lowest_elevation": {
+      "location": "Old Fort Point trailhead, Jasper, AB",
+      "feet": 3461,
+      "meters": 1055
+    },
+    "start_coordinates": {
+      "lat": 48.99858,
+      "lon": -113.90555,
+      "elevation_ft": 4200
+    },
+    "end_coordinates": {
+      "lat": 54.01700,
+      "lon": -120.16700,
+      "elevation_ft": 4800
+    }
+  },
+  "map": {
+    "defaultCenter": [51.5, -117.0],
+    "defaultZoom": 6,
+    "bounds": [[48.9, -120.4], [54.2, -113.5]]
+  },
+  "routing": {
+    "mileSystem": "metric",
+    "gpxCrsHint": "WGS84",
+    "sectioning": "official sections A–G (south to north)",
+    "routeVariantPolicy": "main route with official alternates allowed"
+  },
+  "sources": [
+    {
+      "name": "Great Divide Trail Association – Official Site",
+      "url": "https://greatdividetrail.com"
+    },
+    {
+      "name": "Wikipedia – Great Divide Trail",
+      "url": "https://en.wikipedia.org/wiki/Great_Divide_Trail"
+    }
+  ],
+  "sections": [
+    {
+      "id": "gdt-section-a",
+      "order": 1,
+      "name": "Section A: Waterton Lakes (International Boundary) to Coleman",
+      "slug": "section-a",
+      "distance": {
+        "miles": 90.1,
+        "kilometers": 145
+      },
+      "mileRange": {
+        "start": 0.0,
+        "end": 90.1
+      },
+      "startPoint": {
+        "name": "Waterton Lake, US-Canada Border (AB)",
+        "lat": 48.99858,
+        "lon": -113.90555
+      },
+      "endPoint": {
+        "name": "Coleman (Crowsnest Pass, AB)",
+        "lat": 49.64300,
+        "lon": -114.50000
+      },
+      "jurisdictions": ["Alberta"],
+      "tags": ["National Park", "burn areas", "steep ridge"],
+      "difficulty": {
+        "rating": 8,
+        "label": "Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "available"
+      },
+      "geometry": {
+        "bounds": [[48.99, -114.5], [49.60, -113.5]]
+      }
+    },
+    {
+      "id": "gdt-section-b",
+      "order": 2,
+      "name": "Section B: Coleman to Kananaskis (Elk Pass)",
+      "slug": "section-b",
+      "distance": {
+        "miles": 121.2,
+        "kilometers": 195
+      },
+      "mileRange": {
+        "start": 90.1,
+        "end": 211.3
+      },
+      "startPoint": {
+        "name": "Coleman (Crowsnest Pass, AB)",
+        "lat": 49.64300,
+        "lon": -114.50000
+      },
+      "endPoint": {
+        "name": "Elk Pass Trailhead (Kananaskis, AB)",
+        "lat": 50.61600,
+        "lon": -115.12100
+      },
+      "jurisdictions": ["Alberta"],
+      "tags": ["OHV trails", "High Rock Trail"],
+      "difficulty": {
+        "rating": 7,
+        "label": "Moderate-Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "available"
+      },
+      "geometry": {
+        "bounds": [[49.6, -115.0], [50.4, -114.3]]
+      }
+    },
+    {
+      "id": "gdt-section-c",
+      "order": 3,
+      "name": "Section C: Kananaskis to Field",
+      "slug": "section-c",
+      "distance": {
+        "miles": 128.6,
+        "kilometers": 207
+      },
+      "mileRange": {
+        "start": 211.3,
+        "end": 339.9
+      },
+      "startPoint": {
+        "name": "Peter Lougheed Prov Park (Kananaskis, AB)",
+        "lat": 50.61600,
+        "lon": -115.12100
+      },
+      "endPoint": {
+        "name": "Field (Yoho National Park, BC)",
+        "lat": 51.42600,
+        "lon": -116.48900
+      },
+      "jurisdictions": ["Alberta", "British Columbia"],
+      "tags": ["Banff NP", "Yoho NP", "scenic"],
+      "difficulty": {
+        "rating": 6,
+        "label": "Moderate"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "available"
+      },
+      "geometry": {
+        "bounds": [[50.4, -116.5], [51.5, -114.8]]
+      }
+    },
+    {
+      "id": "gdt-section-d",
+      "order": 4,
+      "name": "Section D: Field to Saskatchewan River Crossing",
+      "slug": "section-d",
+      "distance": {
+        "miles": 65.9,
+        "kilometers": 106
+      },
+      "mileRange": {
+        "start": 339.9,
+        "end": 405.8
+      },
+      "startPoint": {
+        "name": "Field (Yoho National Park, BC)",
+        "lat": 51.42600,
+        "lon": -116.48900
+      },
+      "endPoint": {
+        "name": "Saskatchewan River Crossing (AB)",
+        "lat": 52.15000,
+        "lon": -116.98500
+      },
+      "jurisdictions": ["British Columbia", "Alberta"],
+      "tags": ["wilderness", "bushwhacking"],
+      "difficulty": {
+        "rating": 10,
+        "label": "Very Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "available"
+      },
+      "geometry": {
+        "bounds": [[51.4, -117.5], [52.2, -116.0]]
+      }
+    },
+    {
+      "id": "gdt-section-e",
+      "order": 5,
+      "name": "Section E: Saskatchewan Crossing to Jasper",
+      "slug": "section-e",
+      "distance": {
+        "miles": 118.1,
+        "kilometers": 190
+      },
+      "mileRange": {
+        "start": 405.8,
+        "end": 523.9
+      },
+      "startPoint": {
+        "name": "Saskatchewan River Crossing (AB)",
+        "lat": 52.15000,
+        "lon": -116.98500
+      },
+      "endPoint": {
+        "name": "Jasper (Jasper National Park, AB)",
+        "lat": 52.87300,
+        "lon": -118.08000
+      },
+      "jurisdictions": ["Alberta"],
+      "tags": ["highest point", "remote valleys"],
+      "difficulty": {
+        "rating": 9,
+        "label": "Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "available"
+      },
+      "geometry": {
+        "bounds": [[52.1, -118.5], [52.9, -116.5]]
+      }
+    },
+    {
+      "id": "gdt-section-f",
+      "order": 6,
+      "name": "Section F: Jasper to Mount Robson",
+      "slug": "section-f",
+      "distance": {
+        "miles": 62.1,
+        "kilometers": 100
+      },
+      "mileRange": {
+        "start": 523.9,
+        "end": 586.0
+      },
+      "startPoint": {
+        "name": "Jasper (Jasper National Park, AB)",
+        "lat": 52.87300,
+        "lon": -118.08000
+      },
+      "endPoint": {
+        "name": "Berg Lake Trailhead (Mt. Robson, BC)",
+        "lat": 53.10000,
+        "lon": -119.25000
+      },
+      "jurisdictions": ["Alberta", "British Columbia"],
+      "tags": ["remote", "route-finding"],
+      "difficulty": {
+        "rating": 8,
+        "label": "Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "available"
+      },
+      "geometry": {
+        "bounds": [[52.8, -119.5], [53.2, -117.5]]
+      }
+    },
+    {
+      "id": "gdt-section-g",
+      "order": 7,
+      "name": "Section G: Mount Robson to Kakwa Lake",
+      "slug": "section-g",
+      "distance": {
+        "miles": 95.7,
+        "kilometers": 154
+      },
+      "mileRange": {
+        "start": 586.0,
+        "end": 681.7
+      },
+      "startPoint": {
+        "name": "Blueberry Lake / Mount Robson area (BC)",
+        "lat": 53.21600,
+        "lon": -119.43300
+      },
+      "endPoint": {
+        "name": "Kakwa Lake (Kakwa Provincial Park, BC)",
+        "lat": 54.01700,
+        "lon": -120.16700
+      },
+      "jurisdictions": ["British Columbia", "Alberta"],
+      "tags": ["very remote", "high routes"],
+      "difficulty": {
+        "rating": 10,
+        "label": "Very Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "available"
+      },
+      "geometry": {
+        "bounds": [[53.1, -120.5], [54.1, -118.0]]
+      }
+    }
+  ]
+}

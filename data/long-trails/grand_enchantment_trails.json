@@ -1,0 +1,931 @@
+{
+  "id": "grand-enchantment-trail",
+  "slug": "grand-enchantment-trail",
+  "name": "Grand Enchantment Trail",
+  "shortName": "GET",
+  "type": "Backcountry Route",
+  "classification": "Long-distance trail (unofficial)",
+  "continuity": "Continuous",
+  "maintenance_level": "Minimal (unofficial route)",
+  "region": "Southwest (Arizona & New Mexico)",
+  "countryCodes": ["US"],
+  "stats": {
+    "distance": {
+      "miles": 770.0,
+      "kilometers": 1240.0
+    },
+    "sections": 39
+  },
+  "map": {
+    "bbox": [-111.442564, 32.9, -106.448650, 35.21]
+  },
+  "routing": {
+    "foot": true,
+    "bike": false,
+    "horse": false,
+    "motor": false
+  },
+  "sources": [
+    "GrandEnchantmentTrail.org (Official GET site by Simblissity)",
+    "HikeArizona.com (Trail segment data)"
+  ],
+  "sections": [
+    {
+      "id": "get-1",
+      "order": 1,
+      "name": "Superstition Wilderness",
+      "slug": "superstition-wilderness",
+      "distance": 30.3,
+      "mileRange": [0.0, 30.3],
+      "start": {
+        "name": "First Water Trailhead (Phoenix, AZ)",
+        "coords": [ -111.442564, 33.479399 ]
+      },
+      "end": {
+        "name": "Rogers Trough Trailhead (Superstitions)",
+        "coords": [ -111.173250, 33.422230 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["desert", "wilderness"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -111.442, 33.422, -111.173, 33.479 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-2",
+      "order": 2,
+      "name": "Reavis Canyon",
+      "slug": "reavis-canyon",
+      "distance": 18.0,
+      "mileRange": [30.3, 48.3],
+      "start": {
+        "name": "Rogers Trough Trailhead",
+        "coords": [ -111.173250, 33.422230 ]
+      },
+      "end": {
+        "name": "Near Superior (Hwy 60 Crossing)",
+        "coords": [ -111.158330, 33.279170 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["mountains", "desert"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -111.173, 33.279, -111.158, 33.422 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-3",
+      "order": 3,
+      "name": "White Canyon Wilderness",
+      "slug": "white-canyon-wilderness",
+      "distance": 29.2,
+      "mileRange": [48.3, 77.5],
+      "start": {
+        "name": "Hwy 60 (West of Superior)",
+        "coords": [ -111.158330, 33.279170 ]
+      },
+      "end": {
+        "name": "White Canyon Wilderness (AZ)",
+        "coords": [ -111.000000, 33.100000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["canyon", "desert"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -111.16, 33.100, -111.00, 33.279 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-4",
+      "order": 4,
+      "name": "Tortilla Mountains",
+      "slug": "tortilla-mountains",
+      "distance": 27.6,
+      "mileRange": [77.5, 105.1],
+      "start": {
+        "name": "White Canyon area",
+        "coords": [ -111.000000, 33.100000 ]
+      },
+      "end": {
+        "name": "Tortilla Mountains (AZ)",
+        "coords": [ -110.800000, 32.950000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["desert", "canyon"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -111.0, 32.950, -110.80, 33.10 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-5",
+      "order": 5,
+      "name": "Antelope Peak",
+      "slug": "antelope-peak",
+      "distance": 16.3,
+      "mileRange": [105.1, 121.4],
+      "start": {
+        "name": "Tortilla Mountains",
+        "coords": [ -110.800000, 32.950000 ]
+      },
+      "end": {
+        "name": "Antelope Peak area (AZ)",
+        "coords": [ -110.600000, 32.850000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["desert", "rangeland"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -110.80, 32.850, -110.60, 32.950 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-6",
+      "order": 6,
+      "name": "Brandenburg Mountain",
+      "slug": "brandenburg-mountain",
+      "distance": 11.9,
+      "mileRange": [121.4, 133.3],
+      "start": {
+        "name": "Antelope Peak area",
+        "coords": [ -110.600000, 32.850000 ]
+      },
+      "end": {
+        "name": "Brandenburg Mountain area",
+        "coords": [ -110.500000, 32.770000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["desert", "canyon"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -110.60, 32.770, -110.50, 32.850 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-7",
+      "order": 7,
+      "name": "Aravaipa Canyon Wilderness",
+      "slug": "aravaipa-canyon-wilderness",
+      "distance": 12.8,
+      "mileRange": [133.3, 146.1],
+      "start": {
+        "name": "West Aravaipa Canyon TH",
+        "coords": [ -110.550000, 32.875000 ]
+      },
+      "end": {
+        "name": "East Aravaipa Canyon TH",
+        "coords": [ -110.320000, 32.872000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["canyon", "river"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -110.55, 32.872, -110.32, 32.875 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-8",
+      "order": 8,
+      "name": "Santa Teresa Wilderness",
+      "slug": "santa-teresa-wilderness",
+      "distance": 37.9,
+      "mileRange": [146.1, 184.0],
+      "start": {
+        "name": "East Aravaipa Canyon",
+        "coords": [ -110.320000, 32.872000 ]
+      },
+      "end": {
+        "name": "Santa Teresa Mountains area",
+        "coords": [ -110.100000, 32.900000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["mountains", "wilderness"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -110.32, 32.872, -110.10, 32.900 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-9",
+      "order": 9,
+      "name": "Underwood Canyon",
+      "slug": "underwood-canyon",
+      "distance": 9.8,
+      "mileRange": [184.0, 193.8],
+      "start": {
+        "name": "Santa Teresa foothills",
+        "coords": [ -110.100000, 32.900000 ]
+      },
+      "end": {
+        "name": "Underwood Canyon area",
+        "coords": [ -109.950000, 32.950000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["canyon"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -110.10, 32.900, -109.95, 32.950 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-10",
+      "order": 10,
+      "name": "Pinaleno Mountains",
+      "slug": "pinaleno-mountains",
+      "distance": 25.9,
+      "mileRange": [193.8, 219.7],
+      "start": {
+        "name": "Gila Valley (near Safford)",
+        "coords": [ -109.950000, 32.950000 ]
+      },
+      "end": {
+        "name": "Pinaleno Mtns (Mt. Graham area)",
+        "coords": [ -109.875000, 32.700000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["mountains", "forest"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -109.95, 32.700, -109.875, 32.950 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-11",
+      "order": 11,
+      "name": "Gila Valley South",
+      "slug": "gila-valley-south",
+      "distance": 12.8,
+      "mileRange": [219.7, 232.5],
+      "start": {
+        "name": "South flank Pinaleno Mtns",
+        "coords": [ -109.875000, 32.700000 ]
+      },
+      "end": {
+        "name": "Gila River (vicinity, south side)",
+        "coords": [ -109.750000, 32.700000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["river valley"],
+      "difficulty": "Moderate",
+      "geometry": {
+        "bbox": [ -109.875, 32.700, -109.75, 32.700 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-12",
+      "order": 12,
+      "name": "Gila Valley North",
+      "slug": "gila-valley-north",
+      "distance": 21.9,
+      "mileRange": [232.5, 254.4],
+      "start": {
+        "name": "Gila River (south side)",
+        "coords": [ -109.750000, 32.700000 ]
+      },
+      "end": {
+        "name": "North of Gila River (near Safford)",
+        "coords": [ -109.700000, 32.850000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["river valley"],
+      "difficulty": "Moderate",
+      "geometry": {
+        "bbox": [ -109.75, 32.700, -109.70, 32.850 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-13",
+      "order": 13,
+      "name": "Old Safford-Morenci Trail",
+      "slug": "old-safford-morenci-trail",
+      "distance": 15.7,
+      "mileRange": [254.4, 270.1],
+      "start": {
+        "name": "Gila Valley (north side)",
+        "coords": [ -109.700000, 32.850000 ]
+      },
+      "end": {
+        "name": "Approach to Eagle Creek",
+        "coords": [ -109.600000, 33.000000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["historic trail"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -109.70, 32.850, -109.60, 33.000 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-14",
+      "order": 14,
+      "name": "Eagle Creek - Painted Bluffs",
+      "slug": "eagle-creek-painted-bluffs",
+      "distance": 23.9,
+      "mileRange": [270.1, 294.0],
+      "start": {
+        "name": "Eagle Creek area",
+        "coords": [ -109.600000, 33.000000 ]
+      },
+      "end": {
+        "name": "Painted Bluffs (near Blue Range)",
+        "coords": [ -109.400000, 33.100000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["canyon", "river"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -109.60, 33.000, -109.40, 33.100 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-15",
+      "order": 15,
+      "name": "Coronado Trail",
+      "slug": "coronado-trail",
+      "distance": 11.6,
+      "mileRange": [294.0, 305.6],
+      "start": {
+        "name": "Painted Bluffs / US-191 area",
+        "coords": [ -109.400000, 33.100000 ]
+      },
+      "end": {
+        "name": "Blue River junction",
+        "coords": [ -109.300000, 33.200000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["roadwalk"],
+      "difficulty": "Moderate",
+      "geometry": {
+        "bbox": [ -109.40, 33.100, -109.30, 33.200 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-16",
+      "order": 16,
+      "name": "Blue River",
+      "slug": "blue-river",
+      "distance": 12.6,
+      "mileRange": [305.6, 318.2],
+      "start": {
+        "name": "Blue River area (AZ)",
+        "coords": [ -109.300000, 33.200000 ]
+      },
+      "end": {
+        "name": "Blue River headwaters region",
+        "coords": [ -109.150000, 33.300000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["river", "canyon"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -109.30, 33.200, -109.15, 33.300 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-17",
+      "order": 17,
+      "name": "Maple Peak",
+      "slug": "maple-peak",
+      "distance": 13.5,
+      "mileRange": [318.2, 331.7],
+      "start": {
+        "name": "Blue Range (AZ/NM border)",
+        "coords": [ -109.150000, 33.300000 ]
+      },
+      "end": {
+        "name": "Maple Peak area (NM)",
+        "coords": [ -109.050000, 33.400000 ]
+      },
+      "jurisdictions": ["AZ", "NM"],
+      "tags": ["mountains", "forest"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -109.15, 33.300, -109.05, 33.400 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-18",
+      "order": 18,
+      "name": "Sunflower Mesa",
+      "slug": "sunflower-mesa",
+      "distance": 9.7,
+      "mileRange": [331.7, 341.4],
+      "start": {
+        "name": "Maple Peak area",
+        "coords": [ -109.050000, 33.400000 ]
+      },
+      "end": {
+        "name": "Sunflower Mesa (Gila NF, NM)",
+        "coords": [ -108.950000, 33.450000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["mesa", "forest"],
+      "difficulty": "Moderate",
+      "geometry": {
+        "bbox": [ -109.05, 33.400, -108.95, 33.450 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-19",
+      "order": 19,
+      "name": "Whitewater Mesa",
+      "slug": "whitewater-mesa",
+      "distance": 4.8,
+      "mileRange": [341.4, 346.2],
+      "start": {
+        "name": "Sunflower Mesa area",
+        "coords": [ -108.950000, 33.450000 ]
+      },
+      "end": {
+        "name": "Whitewater Mesa (near Glenwood, NM)",
+        "coords": [ -108.900000, 33.500000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["mesa", "desert"],
+      "difficulty": "Moderate",
+      "geometry": {
+        "bbox": [ -108.95, 33.450, -108.90, 33.500 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-20",
+      "order": 20,
+      "name": "Mogollon Mountains",
+      "slug": "mogollon-mountains",
+      "distance": 32.1,
+      "mileRange": [346.2, 378.3],
+      "start": {
+        "name": "Whitewater Mesa (NM)",
+        "coords": [ -108.900000, 33.500000 ]
+      },
+      "end": {
+        "name": "Mogollon Mountains crest (Gila Wilderness)",
+        "coords": [ -108.550000, 33.300000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["mountains", "wilderness"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -108.90, 33.300, -108.55, 33.500 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-21",
+      "order": 21,
+      "name": "West Fork Gila River",
+      "slug": "west-fork-gila-river",
+      "distance": 18.0,
+      "mileRange": [378.3, 396.3],
+      "start": {
+        "name": "Mogollon Mtns (west side)",
+        "coords": [ -108.550000, 33.300000 ]
+      },
+      "end": {
+        "name": "West Fork Gila River area",
+        "coords": [ -108.400000, 33.200000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["river", "canyon"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -108.55, 33.200, -108.40, 33.300 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-22",
+      "order": 22,
+      "name": "Middle and East Fork Gila River",
+      "slug": "middle-east-fork-gila",
+      "distance": 23.9,
+      "mileRange": [396.3, 420.2],
+      "start": {
+        "name": "West Fork Gila confluence",
+        "coords": [ -108.400000, 33.200000 ]
+      },
+      "end": {
+        "name": "East Fork Gila River area",
+        "coords": [ -108.250000, 33.150000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["river", "canyon"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -108.40, 33.150, -108.25, 33.200 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-23",
+      "order": 23,
+      "name": "South Diamond Creek",
+      "slug": "south-diamond-creek",
+      "distance": 10.8,
+      "mileRange": [420.2, 431.0],
+      "start": {
+        "name": "East Fork Gila River vicinity",
+        "coords": [ -108.250000, 33.150000 ]
+      },
+      "end": {
+        "name": "South Diamond Creek (Black Range)",
+        "coords": [ -108.200000, 33.050000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["canyon"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -108.25, 33.050, -108.20, 33.150 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-24",
+      "order": 24,
+      "name": "Black Range Crest",
+      "slug": "black-range-crest",
+      "distance": 15.5,
+      "mileRange": [431.0, 446.5],
+      "start": {
+        "name": "South Diamond Creek (Gila NF)",
+        "coords": [ -108.200000, 33.050000 ]
+      },
+      "end": {
+        "name": "Black Range crest (near Lookout Mtn)",
+        "coords": [ -107.950000, 33.150000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["mountains"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -108.20, 33.050, -107.95, 33.150 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-25",
+      "order": 25,
+      "name": "Lookout Mountain",
+      "slug": "lookout-mountain",
+      "distance": 11.0,
+      "mileRange": [446.5, 457.5],
+      "start": {
+        "name": "Black Range crest",
+        "coords": [ -107.950000, 33.150000 ]
+      },
+      "end": {
+        "name": "Lookout Mountain area",
+        "coords": [ -107.850000, 33.200000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["mountains"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -107.95, 33.150, -107.85, 33.200 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-26",
+      "order": 26,
+      "name": "Dolan Peak",
+      "slug": "dolan-peak",
+      "distance": 19.1,
+      "mileRange": [457.5, 476.6],
+      "start": {
+        "name": "Lookout Mountain area",
+        "coords": [ -107.850000, 33.200000 ]
+      },
+      "end": {
+        "name": "Dolan Peak area (San Mateo Mtns)",
+        "coords": [ -107.600000, 33.450000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["mountains"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -107.85, 33.200, -107.60, 33.450 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-27",
+      "order": 27,
+      "name": "Monticello Box",
+      "slug": "monticello-box",
+      "distance": 25.8,
+      "mileRange": [476.6, 502.4],
+      "start": {
+        "name": "Dolan Peak area",
+        "coords": [ -107.600000, 33.450000 ]
+      },
+      "end": {
+        "name": "Monticello Box (Rio Grande tributary)",
+        "coords": [ -107.300000, 33.550000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["canyon"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -107.60, 33.450, -107.30, 33.550 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-28",
+      "order": 28,
+      "name": "Apache Kid Wilderness",
+      "slug": "apache-kid-wilderness",
+      "distance": 20.3,
+      "mileRange": [502.4, 522.7],
+      "start": {
+        "name": "Monticello Box area",
+        "coords": [ -107.300000, 33.550000 ]
+      },
+      "end": {
+        "name": "Apache Kid Wilderness (San Mateo Mtns)",
+        "coords": [ -107.150000, 33.650000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["wilderness", "mountains"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -107.30, 33.550, -107.15, 33.650 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-29",
+      "order": 29,
+      "name": "Withington Wilderness",
+      "slug": "withington-wilderness",
+      "distance": 19.8,
+      "mileRange": [522.7, 542.5],
+      "start": {
+        "name": "Apache Kid Wilderness",
+        "coords": [ -107.150000, 33.650000 ]
+      },
+      "end": {
+        "name": "Withington Wilderness (San Mateo Mtns)",
+        "coords": [ -107.050000, 33.800000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["wilderness", "mountains"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -107.15, 33.650, -107.05, 33.800 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-30",
+      "order": 30,
+      "name": "Milligan Gulch",
+      "slug": "milligan-gulch",
+      "distance": 16.3,
+      "mileRange": [542.5, 558.8],
+      "start": {
+        "name": "Withington Wilderness edge",
+        "coords": [ -107.050000, 33.800000 ]
+      },
+      "end": {
+        "name": "Milligan Gulch area",
+        "coords": [ -106.900000, 33.900000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["canyon"],
+      "difficulty": "Moderate",
+      "geometry": {
+        "bbox": [ -107.05, 33.800, -106.90, 33.900 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-31",
+      "order": 31,
+      "name": "Magdalena Mountains",
+      "slug": "magdalena-mountains",
+      "distance": 23.3,
+      "mileRange": [558.8, 582.1],
+      "start": {
+        "name": "Plains west of Magdalena Mtns",
+        "coords": [ -106.900000, 33.900000 ]
+      },
+      "end": {
+        "name": "Magdalena Mountains (near South Baldy)",
+        "coords": [ -107.150000, 34.100000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["mountains"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -107.15, 33.900, -106.90, 34.100 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-32",
+      "order": 32,
+      "name": "San Lorenzo Canyon",
+      "slug": "san-lorenzo-canyon",
+      "distance": 28.2,
+      "mileRange": [582.1, 610.3],
+      "start": {
+        "name": "Magdalena Mountains foothills",
+        "coords": [ -107.150000, 34.100000 ]
+      },
+      "end": {
+        "name": "San Lorenzo Canyon area",
+        "coords": [ -106.900000, 34.300000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["canyon", "desert"],
+      "difficulty": "Moderate",
+      "geometry": {
+        "bbox": [ -107.15, 34.100, -106.90, 34.300 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-33",
+      "order": 33,
+      "name": "Sevilleta Trace",
+      "slug": "sevilleta-trace",
+      "distance": 44.3,
+      "mileRange": [610.3, 654.6],
+      "start": {
+        "name": "San Lorenzo Canyon area",
+        "coords": [ -106.900000, 34.300000 ]
+      },
+      "end": {
+        "name": "Sevilleta National Wildlife Refuge",
+        "coords": [ -106.650000, 34.500000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["desert", "grassland"],
+      "difficulty": "Moderate",
+      "geometry": {
+        "bbox": [ -106.90, 34.300, -106.65, 34.500 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-34",
+      "order": 34,
+      "name": "Manzano Mountains South",
+      "slug": "manzano-mountains-south",
+      "distance": 15.4,
+      "mileRange": [654.6, 670.0],
+      "start": {
+        "name": "Sevilleta NWR edge",
+        "coords": [ -106.650000, 34.500000 ]
+      },
+      "end": {
+        "name": "Southern Manzano Mountains",
+        "coords": [ -106.450000, 34.600000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["mountains", "forest"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -106.65, 34.500, -106.45, 34.600 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-35",
+      "order": 35,
+      "name": "Manzano Mountain Wilderness",
+      "slug": "manzano-mountain-wilderness",
+      "distance": 27.1,
+      "mileRange": [670.0, 697.1],
+      "start": {
+        "name": "Southern Manzano Mountains",
+        "coords": [ -106.450000, 34.600000 ]
+      },
+      "end": {
+        "name": "Northern Manzano Mountains",
+        "coords": [ -106.350000, 34.750000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["wilderness", "forest"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -106.45, 34.600, -106.35, 34.750 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-36",
+      "order": 36,
+      "name": "Manzanita Mountains South",
+      "slug": "manzanita-mountains-south",
+      "distance": 33.0,
+      "mileRange": [697.1, 730.1],
+      "start": {
+        "name": "North Manzano Mtns (near Capilla Peak)",
+        "coords": [ -106.350000, 34.750000 ]
+      },
+      "end": {
+        "name": "Southern Manzanita Mountains",
+        "coords": [ -106.400000, 34.950000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["mountains", "forest"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -106.40, 34.750, -106.35, 34.950 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-37",
+      "order": 37,
+      "name": "Manzanita Mountains North",
+      "slug": "manzanita-mountains-north",
+      "distance": 14.1,
+      "mileRange": [730.1, 744.2],
+      "start": {
+        "name": "Southern Manzanita Mountains",
+        "coords": [ -106.400000, 34.950000 ]
+      },
+      "end": {
+        "name": "Northern Manzanita Mountains (near I-40)",
+        "coords": [ -106.350000, 35.050000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["mountains", "forest"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -106.40, 34.950, -106.35, 35.050 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-38",
+      "order": 38,
+      "name": "Sandia Mountain Wilderness",
+      "slug": "sandia-mountain-wilderness",
+      "distance": 14.0,
+      "mileRange": [744.2, 758.2],
+      "start": {
+        "name": "Manzanita Mountains (north end)",
+        "coords": [ -106.350000, 35.050000 ]
+      },
+      "end": {
+        "name": "Sandia Mountain Wilderness",
+        "coords": [ -106.450000, 35.150000 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["wilderness", "mountains"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -106.45, 35.050, -106.35, 35.150 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "get-39",
+      "order": 39,
+      "name": "Sandia Crest",
+      "slug": "sandia-crest",
+      "distance": 9.3,
+      "mileRange": [758.2, 767.5],
+      "start": {
+        "name": "Sandia Mountain Wilderness",
+        "coords": [ -106.450000, 35.150000 ]
+      },
+      "end": {
+        "name": "Sandia Crest (Eastern Terminus near Albuquerque)",
+        "coords": [ -106.448650, 35.210114 ]
+      },
+      "jurisdictions": ["NM"],
+      "tags": ["mountains"],
+      "difficulty": "Strenuous",
+      "geometry": {
+        "bbox": [ -106.45, 35.150, -106.448, 35.210 ]
+      },
+      "gpx": null
+    }
+  ]
+}

@@ -1,0 +1,379 @@
+{
+  "id": "trans-canada-trail",
+  "type": "trail",
+  "name": "Trans Canada Trail",
+  "shortName": "TCT",
+  "slug": "trans-canada-trail",
+  "region": "north-america",
+  "countryCodes": ["CA"],
+
+  "classification": "national_multi_use",
+  "continuity": "continuous",
+  "maintenance_level": "maintained",
+
+  "stats": {
+    "officialLength": { "miles": 17000.0, "km": 28000.0 }, /* The trail extends over 28,000 km (17,000 mi):contentReference[oaicite:2]{index=2} */
+    "elevation": {
+      "highestPoint": { "name": "Kananaskis Country (AB)", "elevationFt": 7169 },   /* Highest point 7,169 ft (2,185 m) along the Kananaskis Trail in Alberta:contentReference[oaicite:3]{index=3}:contentReference[oaicite:4]{index=4} */
+      "lowestPoint": { "name": "Sea level (coastal sections)", "elevationFt": 0 }    /* Lowest point is at sea level (trail reaches the Atlantic, Pacific & Arctic):contentReference[oaicite:5]{index=5} */
+    },
+    "endpoints": {
+      "east":  { "name": "Cape Spear", "lat": 47.5236, "lon": -52.6194, "elevationFt": 246 },
+      "west":  { "name": "Clover Point (Victoria)", "lat": 48.4034, "lon": -123.3491, "elevationFt": 20 }
+    }
+  },
+
+  "map": {
+    "defaultZoom": 5,
+    "defaultCenter": { "lat": 56.0, "lon": -96.0 },
+    "bbox": { "minLat": 45.0, "minLon": -140.0, "maxLat": 70.0, "maxLon": -52.0 }
+  },
+
+  "routing": {
+    "mileSystem": "westbound_from_cape_spear",
+    "gpxCrsHint": "WGS84",
+    "sectioningMethod": "app_defined",
+    "routeVariantPolicy": "single_primary"
+  },
+
+  "sources": [
+    {
+      "id": "tct",
+      "name": "Trans Canada Trail (Official)",
+      "type": "organization",
+      "url": "https://tctrail.ca"
+    }
+  ],
+
+  "sections": [
+    {
+      "id": "tct-001-newfoundland-and-labrador",
+      "order": 1,
+      "name": "Newfoundland and Labrador",
+      "slug": "newfoundland-and-labrador",
+
+      "distance": { "miles": 729.0, "km": 1173.0 },
+      "mileRange": { "start": 0.0, "end": 729.0 },
+
+      "start": { "name": "Cape Spear, NL", "lat": 47.5236, "lon": -52.6194 },
+      "end":   { "name": "Port aux Basques, NL", "lat": 47.5694, "lon": -59.1361 },
+
+      "jurisdictions": [{ "type": "province", "code": "NL", "name": "Newfoundland and Labrador" }],
+      "tags": ["atlantic", "coastal", "rail-trail"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/tct/tct-001-newfoundland-and-labrador.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 47.0, "minLon": -60.0, "maxLat": 49.5, "maxLon": -52.0 }
+      }
+    },
+
+    {
+      "id": "tct-002-nova-scotia",
+      "order": 2,
+      "name": "Nova Scotia",
+      "slug": "nova-scotia",
+
+      "distance": { "miles": 358.0, "km": 576.0 },
+      "mileRange": { "start": 729.0, "end": 1087.0 },
+
+      "start": { "name": "North Sydney, NS", "lat": 46.2194, "lon": -60.2581 },
+      "end":   { "name": "Caribou, NS", "lat": 45.7366, "lon": -62.6898 },
+
+      "jurisdictions": [{ "type": "province", "code": "NS", "name": "Nova Scotia" }],
+      "tags": ["atlantic", "coastal"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/tct/tct-002-nova-scotia.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 45.5, "minLon": -62.8, "maxLat": 46.3, "maxLon": -60.0 }
+      }
+    },
+
+    {
+      "id": "tct-003-prince-edward-island",
+      "order": 3,
+      "name": "Prince Edward Island",
+      "slug": "prince-edward-island",
+
+      "distance": { "miles": 297.0, "km": 478.0 },
+      "mileRange": { "start": 1087.0, "end": 1384.0 },
+
+      "start": { "name": "Wood Islands, PE", "lat": 45.9661, "lon": -62.7511 },
+      "end":   { "name": "Borden-Carleton, PE", "lat": 46.2538, "lon": -63.6922 },
+
+      "jurisdictions": [{ "type": "province", "code": "PE", "name": "Prince Edward Island" }],
+      "tags": ["atlantic", "rail-trail"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/tct/tct-003-prince-edward-island.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 45.9, "minLon": -63.9, "maxLat": 46.5, "maxLon": -62.7 }
+      }
+    },
+
+    {
+      "id": "tct-004-new-brunswick",
+      "order": 4,
+      "name": "New Brunswick",
+      "slug": "new-brunswick",
+
+      "distance": { "miles": 612.0, "km": 985.0 },
+      "mileRange": { "start": 1384.0, "end": 1996.0 },
+
+      "start": { "name": "Cape Jourimain, NB", "lat": 46.1575, "lon": -63.8066 },
+      "end":   { "name": "Edmundston, NB", "lat": 47.3765, "lon": -68.3253 },
+
+      "jurisdictions": [{ "type": "province", "code": "NB", "name": "New Brunswick" }],
+      "tags": ["atlantic", "rivers"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/tct/tct-004-new-brunswick.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 45.0, "minLon": -68.5, "maxLat": 47.5, "maxLon": -63.5 }
+      }
+    },
+
+    {
+      "id": "tct-005-quebec",
+      "order": 5,
+      "name": "Québec",
+      "slug": "quebec",
+
+      "distance": { "miles": 848.0, "km": 1365.0 },
+      "mileRange": { "start": 1996.0, "end": 2844.0 },
+
+      "start": { "name": "Edmundston/Gatineau, QC", "lat": 45.4830, "lon": -75.6500 },
+      "end":   { "name": "Gatineau/Ottawa River, QC", "lat": 47.3765, "lon": -68.3253 },
+
+      "jurisdictions": [{ "type": "province", "code": "QC", "name": "Quebec" }],
+      "tags": ["quebec"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/tct/tct-005-quebec.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 45.0, "minLon": -79.0, "maxLat": 47.5, "maxLon": -68.0 }
+      }
+    },
+
+    {
+      "id": "tct-006-ontario",
+      "order": 6,
+      "name": "Ontario",
+      "slug": "ontario",
+
+      "distance": { "miles": 2460.0, "km": 3959.0 },
+      "mileRange": { "start": 2844.0, "end": 5304.0 },
+
+      "start": { "name": "Ottawa, ON", "lat": 45.4215, "lon": -75.6972 },
+      "end":   { "name": "Kenora, ON", "lat": 49.7670, "lon": -94.4833 },
+
+      "jurisdictions": [{ "type": "province", "code": "ON", "name": "Ontario" }],
+      "tags": ["ontario", "shield"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/tct/tct-006-ontario.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 45.0, "minLon": -94.5, "maxLat": 50.0, "maxLon": -75.0 }
+      }
+    },
+
+    {
+      "id": "tct-007-manitoba",
+      "order": 7,
+      "name": "Manitoba",
+      "slug": "manitoba",
+
+      "distance": { "miles": 891.0, "km": 1434.0 },
+      "mileRange": { "start": 5304.0, "end": 6195.0 },
+
+      "start": { "name": "Kenora border, MB", "lat": 49.7670, "lon": -94.4833 },
+      "end":   { "name": "Russell, MB", "lat": 50.7808, "lon": -101.2839 },
+
+      "jurisdictions": [{ "type": "province", "code": "MB", "name": "Manitoba" }],
+      "tags": ["prairies"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/tct/tct-007-manitoba.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 49.0, "minLon": -102.0, "maxLat": 52.0, "maxLon": -94.0 }
+      }
+    },
+
+    {
+      "id": "tct-008-saskatchewan",
+      "order": 8,
+      "name": "Saskatchewan",
+      "slug": "saskatchewan",
+
+      "distance": { "miles": 887.0, "km": 1427.0 },
+      "mileRange": { "start": 6195.0, "end": 7082.0 },
+
+      "start": { "name": "Russell border, SK", "lat": 50.7830, "lon": -101.2839 },
+      "end":   { "name": "Lloydminster, SK/AB", "lat": 53.2781, "lon": -110.0000 },
+
+      "jurisdictions": [{ "type": "province", "code": "SK", "name": "Saskatchewan" }],
+      "tags": ["prairies"],
+      "difficulty": { "rating": 2, "label": "Easy" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/tct/tct-008-saskatchewan.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 49.0, "minLon": -110.0, "maxLat": 53.5, "maxLon": -102.0 }
+      }
+    },
+
+    {
+      "id": "tct-009-alberta",
+      "order": 9,
+      "name": "Alberta",
+      "slug": "alberta",
+
+      "distance": { "miles": 1952.0, "km": 3141.0 },
+      "mileRange": { "start": 7082.0, "end": 9034.0 },
+
+      "start": { "name": "Lloydminster, AB", "lat": 53.2781, "lon": -110.0000 },
+      "end":   { "name": "Lake Louise border, AB", "lat": 51.4117, "lon": -116.2281 },
+
+      "jurisdictions": [{ "type": "province", "code": "AB", "name": "Alberta" }],
+      "tags": ["rockies"],
+      "difficulty": { "rating": 4, "label": "Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/tct/tct-009-alberta.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 51.0, "minLon": -120.0, "maxLat": 54.0, "maxLon": -110.0 }
+      }
+    },
+
+    {
+      "id": "tct-010-british-columbia",
+      "order": 10,
+      "name": "British Columbia",
+      "slug": "british-columbia",
+
+      "distance": { "miles": 1689.0, "km": 2718.0 },
+      "mileRange": { "start": 9034.0, "end": 10723.0 },
+
+      "start": { "name": "Kicking Horse Pass, BC", "lat": 51.4528, "lon": -116.2833 },
+      "end":   { "name": "Clover Point, Victoria, BC", "lat": 48.4034, "lon": -123.3491 },
+
+      "jurisdictions": [{ "type": "province", "code": "BC", "name": "British Columbia" }],
+      "tags": ["pacific", "mountains"],
+      "difficulty": { "rating": 4, "label": "Hard" },
+
+      "gpx": {
+        "primary": {
+          "uri": "gpx/tct/tct-010-british-columbia.gpx",
+          "format": "gpx",
+          "kind": "track",
+          "bytes": 0,
+          "sha256": "",
+          "updatedAt": "2025-12-16T00:00:00-05:00"
+        },
+        "alternates": []
+      },
+
+      "geometry": {
+        "bbox": { "minLat": 48.0, "minLon": -126.0, "maxLat": 51.5, "maxLon": -114.0 }
+      }
+    }
+  ]
+}

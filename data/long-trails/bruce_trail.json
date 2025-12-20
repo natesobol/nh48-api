@@ -1,0 +1,327 @@
+[
+  {
+    "id": 3,
+    "slug": "bruce-trail",
+    "name": "Bruce Trail",
+    "shortName": "Bruce",
+    "type": "Hiking Trail",
+    "classification": "Long-distance footpath",
+    "continuity": "Continuous",
+    "maintenanceLevel": "Volunteer-managed",
+    "region": "Southern Ontario (Niagara Escarpment)",
+    "countryCodes": ["CA"],
+    "stats": {
+      "totalLengthMi": 561.9,
+      "totalLengthKm": 904.2,
+      "highestPoint": {
+        "name": "\"High Point\" (Blue Mountains, ON)",
+        "elevationFt": 1772
+      },
+      "lowestPoint": {
+        "name": "Niagara River at Queenston, ON",
+        "elevationFt": 295
+      },
+      "endpoints": {
+        "northern": {
+          "name": "Tobermory, ON (Northern Terminus)",
+          "lat": 45.2552,
+          "lon": -81.6630,
+          "elevationFt": 580
+        },
+        "southern": {
+          "name": "Queenston, ON (Southern Terminus)",
+          "lat": 43.1583,
+          "lon": -79.0522,
+          "elevationFt": 588
+        }
+      }
+    },
+    "map": {
+      "defaultCenter": { "lat": 44.206, "lon": -80.357 },
+      "defaultZoom": 7,
+      "boundingBox": {
+        "minLat": 43.1583,
+        "maxLat": 45.2552,
+        "minLon": -81.6630,
+        "maxLon": -79.0522
+      }
+    },
+    "routing": {
+      "mileSystem": "metric",
+      "gpxCrsHint": "EPSG:4326",
+      "sectioningMethod": "By regional club sections (9)",
+      "routeVariantPolicy": "Single main route (side trails not included)"
+    },
+    "sources": [
+      { "name": "Bruce Trail Conservancy", "url": "https://brucetrail.org" },
+      { "name": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Bruce_Trail" }
+    ],
+    "sections": [
+      {
+        "id": 1,
+        "order": 1,
+        "name": "Niagara",
+        "slug": "niagara-section",
+        "distanceMi": 51.6,
+        "distanceKm": 83.0,
+        "mileRange": [0.0, 51.6],
+        "start": { "name": "Queenston (Southern Terminus)", "lat": 43.1583, "lon": -79.0522 },
+        "end": { "name": "Grimsby", "lat": 43.2000, "lon": -79.5500 },
+        "jurisdictions": ["Ontario"],
+        "tags": ["Niagara Escarpment"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 43.1583,
+            "maxLat": 43.2000,
+            "minLon": -79.5500,
+            "maxLon": -79.0522
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 2,
+        "order": 2,
+        "name": "Iroquoia",
+        "slug": "iroquoia-section",
+        "distanceMi": 76.1,
+        "distanceKm": 122.5,
+        "mileRange": [51.6, 127.7],
+        "start": { "name": "Grimsby", "lat": 43.2000, "lon": -79.5500 },
+        "end": { "name": "Kelso (Milton)", "lat": 43.5000, "lon": -79.9500 },
+        "jurisdictions": ["Ontario"],
+        "tags": ["Niagara Escarpment"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 43.2000,
+            "maxLat": 43.5000,
+            "minLon": -79.9500,
+            "maxLon": -79.5500
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 3,
+        "order": 3,
+        "name": "Toronto",
+        "slug": "toronto-section",
+        "distanceMi": 31.1,
+        "distanceKm": 50.0,
+        "mileRange": [127.7, 158.8],
+        "start": { "name": "Kelso (Milton)", "lat": 43.5000, "lon": -79.9500 },
+        "end": { "name": "Cheltenham", "lat": 43.7515, "lon": -79.9203 },
+        "jurisdictions": ["Ontario"],
+        "tags": ["Niagara Escarpment"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 43.5000,
+            "maxLat": 43.7515,
+            "minLon": -79.9500,
+            "maxLon": -79.9203
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 4,
+        "order": 4,
+        "name": "Caledon Hills",
+        "slug": "caledon-hills-section",
+        "distanceMi": 45.0,
+        "distanceKm": 72.4,
+        "mileRange": [158.8, 203.8],
+        "start": { "name": "Cheltenham", "lat": 43.7515, "lon": -79.9203 },
+        "end": { "name": "Mono Centre", "lat": 44.0280, "lon": -80.0720 },
+        "jurisdictions": ["Ontario"],
+        "tags": ["Niagara Escarpment"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 43.7515,
+            "maxLat": 44.0280,
+            "minLon": -80.0720,
+            "maxLon": -79.9203
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 5,
+        "order": 5,
+        "name": "Dufferin Hi-Land",
+        "slug": "dufferin-hi-land-section",
+        "distanceMi": 35.0,
+        "distanceKm": 56.3,
+        "mileRange": [203.8, 238.8],
+        "start": { "name": "Mono Centre", "lat": 44.0280, "lon": -80.0720 },
+        "end": { "name": "Lavender", "lat": 44.2700, "lon": -80.1640 },
+        "jurisdictions": ["Ontario"],
+        "tags": ["Niagara Escarpment"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 44.0280,
+            "maxLat": 44.2700,
+            "minLon": -80.1640,
+            "maxLon": -80.0720
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 6,
+        "order": 6,
+        "name": "Blue Mountains",
+        "slug": "blue-mountains-section",
+        "distanceMi": 43.5,
+        "distanceKm": 70.0,
+        "mileRange": [238.8, 282.3],
+        "start": { "name": "Lavender", "lat": 44.2700, "lon": -80.1640 },
+        "end": { "name": "Craigleith", "lat": 44.5367, "lon": -80.3486 },
+        "jurisdictions": ["Ontario"],
+        "tags": ["Niagara Escarpment"],
+        "difficulty": { "rating": 3, "label": "Difficult" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 44.2700,
+            "maxLat": 44.5367,
+            "minLon": -80.3486,
+            "maxLon": -80.1640
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 7,
+        "order": 7,
+        "name": "Beaver Valley",
+        "slug": "beaver-valley-section",
+        "distanceMi": 74.6,
+        "distanceKm": 120.0,
+        "mileRange": [282.3, 356.9],
+        "start": { "name": "Craigleith", "lat": 44.5367, "lon": -80.3486 },
+        "end": { "name": "Blantyre", "lat": 44.5008, "lon": -80.6342 },
+        "jurisdictions": ["Ontario"],
+        "tags": ["Niagara Escarpment"],
+        "difficulty": { "rating": 4, "label": "Strenuous" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 44.5008,
+            "maxLat": 44.5367,
+            "minLon": -80.6342,
+            "maxLon": -80.3486
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 8,
+        "order": 8,
+        "name": "Sydenham",
+        "slug": "sydenham-section",
+        "distanceMi": 105.6,
+        "distanceKm": 170.0,
+        "mileRange": [356.9, 462.5],
+        "start": { "name": "Blantyre", "lat": 44.5008, "lon": -80.6342 },
+        "end": { "name": "Wiarton", "lat": 44.7436, "lon": -81.1408 },
+        "jurisdictions": ["Ontario"],
+        "tags": ["Niagara Escarpment"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 44.5008,
+            "maxLat": 44.7436,
+            "minLon": -81.1408,
+            "maxLon": -80.6342
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 9,
+        "order": 9,
+        "name": "Peninsula",
+        "slug": "peninsula-section",
+        "distanceMi": 99.4,
+        "distanceKm": 160.0,
+        "mileRange": [462.5, 561.9],
+        "start": { "name": "Wiarton", "lat": 44.7436, "lon": -81.1408 },
+        "end": { "name": "Tobermory (Northern Terminus)", "lat": 45.2552, "lon": -81.6630 },
+        "jurisdictions": ["Ontario"],
+        "tags": ["Niagara Escarpment"],
+        "difficulty": { "rating": 4, "label": "Strenuous" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 44.7436,
+            "maxLat": 45.2552,
+            "minLon": -81.6630,
+            "maxLon": -81.1408
+          },
+          "gpx": null
+        }
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "slug": "east-coast-trail",
+    "name": "East Coast Trail",
+    "shortName": "ECT",
+    "type": "Hiking Trail",
+    "classification": "Long-distance coastal trail",
+    "continuity": "Continuous (with community road links)",
+    "maintenanceLevel": "Volunteer-managed",
+    "region": "Avalon Peninsula, Newfoundland",
+    "countryCodes": ["CA"],
+    "stats": {
+      "totalLengthMi": 209.0,
+      "totalLengthKm": 336.0,
+      "highestPoint": {
+        "name": "High point near Cape St. Francis",
+        "elevationFt": 885
+      },
+      "lowestPoint": {
+        "name": "Atlantic Ocean coast (sea level)",
+        "elevationFt": 0
+      },
+      "endpoints": {
+        "northern": {
+          "name": "Topsail Beach, NL (North Terminus)",
+          "lat": 47.5425,
+          "lon": -52.9204,
+          "elevationFt": 0
+        },
+        "southern": {
+          "name": "Cappahayden, NL (South Terminus)",
+          "lat": 46.8600,
+          "lon": -52.9436,
+          "elevationFt": 0
+        }
+      }
+    },
+    "map": {
+      "defaultCenter": { "lat": 47.2010, "lon": -52.7845 },
+      "defaultZoom": 8,
+      "boundingBox": {
+        "minLat": 46.8600,
+        "maxLat": 47.5425,
+        "minLon": -52.9436,
+        "maxLon": -52.6260
+      }
+    },
+    "routing": {
+      "mileSystem": "metric",
+      "gpxCrsHint": "EPSG:4326",
+      "sectioningMethod": "25 official wilderness paths",
+      "routeVariantPolicy": "Single main route (no major alternates)"
+    },
+    "sources": [
+      { "name": "East Coast Trail Association", "url": "https://eastcoasttrail.com" },
+      { "name": "Wikipedia", "url": "https://en.wikipedia.org/wiki/East_Coast_Trail" }
+    ]
+  }
+]

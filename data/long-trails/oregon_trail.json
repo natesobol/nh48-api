@@ -1,0 +1,96 @@
+{
+  "id": "OT",
+  "type": "Trail",
+  "name": "Oregon Trail",
+  "shortName": "OT",
+  "slug": "oregon-trail",
+  "region": "Western United States",
+  "countryCodes": ["US"],
+  "classification": "National Historic Trail",
+  "continuity": "Continuous",
+  "maintenance_level": "Historic trail (NPS & partners; trail remnants and auto tours)",
+  "stats": {
+    "officialLength": {
+      "mi": 2170,
+      "km": 3490
+    },
+    "elevation": {
+      "highest": {
+        "point": "South Pass, WY",
+        "value_ft": 7412,
+        "value_m": 2259,
+        "lat": 42.3700,
+        "lon": -108.9136
+      },
+      "lowest": {
+        "point": "Oregon City, OR",
+        "value_ft": 125,
+        "value_m": 38,
+        "lat": 45.3573,
+        "lon": -122.6068
+      }
+    },
+    "endPoints": {
+      "start": {
+        "name": "Independence, Missouri",
+        "lat": 39.0911,
+        "lon": -94.4155
+      },
+      "end": {
+        "name": "Oregon City, Oregon",
+        "lat": 45.3573,
+        "lon": -122.6068
+      }
+    }
+  },
+  "map": {
+    "defaultZoom": 5,
+    "defaultCenter": [-108.5, 42.2],
+    "bbox": [-122.6, 38.5, -94.0, 45.5]
+  },
+  "routing": {
+    "mileSystem": "Continuous",
+    "gpx": {
+      "uri": "oregon_trail.gpx",
+      "format": "GPX",
+      "kind": "route"
+    }
+  },
+  "source": {
+    "officialDesignation": "National Historic Trail (1978)",
+    "managedBy": ["National Park Service", "Bureau of Land Management"],
+    "trailAssociation": "Oregon-California Trails Association (OCTA)"
+  },
+  "sections": [
+    {
+      "name": "Missouri / Kansas",
+      "start": {"name": "Independence, MO", "lat": 39.0911, "lon": -94.4155},
+      "end": {"name": "Fort Kearny, NE", "lat": 40.6500, "lon": -99.0000},
+      "distance": {"mi": 317, "km": 510}
+    },
+    {
+      "name": "Nebraska",
+      "start": {"name": "Fort Kearny, NE", "lat": 40.6500, "lon": -99.0000},
+      "end": {"name": "Fort Laramie, WY", "lat": 42.2092, "lon": -104.5359},
+      "distance": {"mi": 333, "km": 536}
+    },
+    {
+      "name": "Wyoming",
+      "start": {"name": "Fort Laramie, WY", "lat": 42.2092, "lon": -104.5359},
+      "end": {"name": "South Pass, WY", "lat": 42.3700, "lon": -108.9136},
+      "distance": {"mi": 435, "km": 700}
+    },
+    {
+      "name": "Idaho (Snake River Plain)",
+      "start": {"name": "South Pass, WY", "lat": 42.3700, "lon": -108.9136},
+      "end": {"name": "Fort Boise, ID", "lat": 43.8291, "lon": -117.0132},
+      "distance": {"mi": 415, "km": 668}
+    },
+    {
+      "name": "Oregon",
+      "start": {"name": "Fort Boise, ID", "lat": 43.8291, "lon": -117.0132},
+      "end": {"name": "Oregon City, OR", "lat": 45.3573, "lon": -122.6068},
+      "distance": {"mi": 670, "km": 1078}
+    }
+  ]
+}

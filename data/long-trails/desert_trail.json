@@ -1,0 +1,227 @@
+{
+  "id": 14,
+  "slug": "desert-trail",
+  "name": "Desert Trail",
+  "shortName": "Desert Trail",
+  "type": "Long-distance hiking route",
+  "classification": "Backpacking route (largely off-trail)",
+  "continuity": "Continuous (planned route from Mexico to Canada)",
+  "maintenance_level": "None (no constructed trail; navigation via maps/GPS)",
+  "region": "North America",
+  "countryCodes": ["US"],
+  "stats": {
+    "distance": {
+      "miles": 2223,
+      "kilometers": 3577
+    },
+    "highestElevation": {
+      "point": "Steens Mountain, OR",
+      "ft": 9733,
+      "m": 2967
+    },
+    "lowestElevation": {
+      "point": "Death Valley (Badwater Basin), CA",
+      "ft": -282,
+      "m": -86
+    },
+    "endPoints": {
+      "start": {
+        "name": "Jacumba, California (Mexican border)",
+        "lat": 32.6167,
+        "lon": -116.1588,
+        "elev_ft": 2829,
+        "elev_m": 862
+      },
+      "end": {
+        "name": "Upper Priest River Falls, Idaho (Canadian border)",
+        "lat": 48.8958,
+        "lon": -116.9642,
+        "elev_ft": 3380,
+        "elev_m": 1030
+      }
+    }
+  },
+  "map": {
+    "defaultCenter": {
+      "lat": 40.0,
+      "lon": -117.0
+    },
+    "defaultZoom": 6,
+    "boundingBox": {
+      "minLat": 32.5,
+      "maxLat": 49.0,
+      "minLon": -124.0,
+      "maxLon": -116.0
+    }
+  },
+  "routing": {
+    "mileSystem": "imperial",
+    "gpxCrs": "EPSG:4326",
+    "sectioning": "by state/region",
+    "routeVariantPolicy": "single route (point-to-point navigation)"
+  },
+  "sources": [
+    {
+      "name": "Buck Nelson (bucktrack.com) - Desert Trail Thru-Hike Information",
+      "url": "https://bucktrack.com/Desert_Trail_Thru-Hike.html"
+    },
+    {
+      "name": "Fastest Known Time - Desert Trail Route",
+      "url": "https://fastestknowntime.com/route/desert-trail-ca-nv-or-wa"
+    }
+  ],
+  "sections": [
+    {
+      "id": 1,
+      "order": 1,
+      "name": "California",
+      "slug": "california",
+      "distance": 600,
+      "mileRange": {
+        "start": 0,
+        "end": 600
+      },
+      "start": {
+        "name": "Jacumba, CA (Mexico border)",
+        "lat": 32.6167,
+        "lon": -116.1588
+      },
+      "end": {
+        "name": "California/Nevada border (Death Valley area)",
+        "lat": 36.0000,
+        "lon": -116.4000
+      },
+      "jurisdictions": ["California"],
+      "tags": ["Mojave Desert", "Sonoran Desert"],
+      "difficulty": {
+        "rating": 5,
+        "label": "Very Hard"
+      },
+      "geometry": {
+        "bbox": {
+          "minLat": 32.6,
+          "maxLat": 36.5,
+          "minLon": -117.0,
+          "maxLon": -114.0
+        }
+      },
+      "gpx": {
+        "status": "available"
+      }
+    },
+    {
+      "id": 2,
+      "order": 2,
+      "name": "Nevada",
+      "slug": "nevada",
+      "distance": 800,
+      "mileRange": {
+        "start": 600,
+        "end": 1400
+      },
+      "start": {
+        "name": "California/Nevada border (near Death Valley)",
+        "lat": 36.0000,
+        "lon": -116.4000
+      },
+      "end": {
+        "name": "Nevada/Oregon border (near Denio, NV)",
+        "lat": 41.9980,
+        "lon": -118.6430
+      },
+      "jurisdictions": ["Nevada"],
+      "tags": ["Great Basin Desert"],
+      "difficulty": {
+        "rating": 5,
+        "label": "Very Hard"
+      },
+      "geometry": {
+        "bbox": {
+          "minLat": 36.5,
+          "maxLat": 42.0,
+          "minLon": -120.0,
+          "maxLon": -114.0
+        }
+      },
+      "gpx": {
+        "status": "available"
+      }
+    },
+    {
+      "id": 3,
+      "order": 3,
+      "name": "Oregon",
+      "slug": "oregon",
+      "distance": 600,
+      "mileRange": {
+        "start": 1400,
+        "end": 2000
+      },
+      "start": {
+        "name": "Oregon/Nevada border (near Denio, OR)",
+        "lat": 41.9980,
+        "lon": -118.6430
+      },
+      "end": {
+        "name": "Oregon/Washington border (Blue Mountains)",
+        "lat": 46.0000,
+        "lon": -117.2000
+      },
+      "jurisdictions": ["Oregon"],
+      "tags": ["High Desert", "Great Basin"],
+      "difficulty": {
+        "rating": 4,
+        "label": "Hard"
+      },
+      "geometry": {
+        "bbox": {
+          "minLat": 42.0,
+          "maxLat": 46.5,
+          "minLon": -120.0,
+          "maxLon": -117.0
+        }
+      },
+      "gpx": {
+        "status": "available"
+      }
+    },
+    {
+      "id": 4,
+      "order": 4,
+      "name": "Idaho & Washington",
+      "slug": "idaho-washington",
+      "distance": 223,
+      "mileRange": {
+        "start": 2000,
+        "end": 2223
+      },
+      "start": {
+        "name": "Oregon/Washington border (entering WA)",
+        "lat": 46.0000,
+        "lon": -117.2000
+      },
+      "end": {
+        "name": "Idaho/Canada border (Selkirk Mountains)",
+        "lat": 49.0000,
+        "lon": -116.9640
+      },
+      "jurisdictions": ["Washington", "Idaho"],
+      "tags": ["Selkirk Mountains", "wilderness"],
+      "difficulty": {
+        "rating": 4,
+        "label": "Hard"
+      },
+      "geometry": {
+        "bbox": {
+          "minLat": 46.0,
+          "maxLat": 49.0,
+          "minLon": -118.5,
+          "maxLon": -116.0
+        }
+      },
+      "gpx": {
+        "status": "available"
+      }
+    }
+  ]
+}

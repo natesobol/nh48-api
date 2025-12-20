@@ -1,0 +1,395 @@
+{
+  "id": "adt",
+  "slug": "american-discovery-trail",
+  "name": "American Discovery Trail",
+  "shortName": "American Discovery Trail",
+  "type": "Long-distance hiking trail network",
+  "classification": "Transcontinental trail (coast-to-coast, with northern & southern routes)",
+  "continuity": "Linear (with two alternate branches)",
+  "maintenance_level": "Varies (local trails, roads; coordinated by ADT Society)",
+  "region": "Coast-to-Coast (U.S.)",
+  "countryCodes": ["US"],
+  "stats": {
+    "distance": {
+      "miles": 6800,
+      "kilometers": 10944
+    },
+    "highestElevation": {
+      "point": "Argentine Pass, CO",
+      "elevation_ft": 13207,
+      "elevation_m": 4024
+    },
+    "lowestElevation": {
+      "point": "Sea level (Atlantic & Pacific Ocean termini)",
+      "elevation_ft": 0,
+      "elevation_m": 0
+    },
+    "endPoints": [
+      {
+        "name": "Cape Henlopen State Park, DE (Atlantic Ocean)",
+        "lat": 38.803,
+        "lon": -75.094,
+        "elevation_ft": 5,
+        "elevation_m": 2
+      },
+      {
+        "name": "Limantour Beach, Point Reyes NS, CA (Pacific Ocean)",
+        "lat": 38.0283,
+        "lon": -122.8986,
+        "elevation_ft": 16,
+        "elevation_m": 5
+      }
+    ]
+  },
+  "map": {
+    "defaultCenter": { "lat": 39.0, "lon": -95.0 },
+    "defaultZoom": 4,
+    "boundingBox": {
+      "minLat": 31.0,
+      "maxLat": 49.0,
+      "minLon": -124.0,
+      "maxLon": -75.0
+    }
+  },
+  "routing": {
+    "mileSystem": "Eastbound (mile 0 at Delaware coast)",
+    "gpxCrs": "EPSG:4326",
+    "sectioning": "By state (with separate sections for north/south routes)",
+    "routeVariantPolicy": "Two official route options (Northern and Southern) in mid-country; routes rejoin out west"
+  },
+  "sources": [
+    {
+      "name": "American Discovery Trail Society",
+      "url": "https://discoverytrail.org"
+    },
+    {
+      "name": "American Discovery Trail – Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/American_Discovery_Trail"
+    }
+  ],
+  "sections": [
+    {
+      "id": 1,
+      "order": 1,
+      "name": "Delaware",
+      "slug": "delaware",
+      "distance": { "miles": 45, "kilometers": 72 },
+      "mileRange": { "start": 0, "end": 45 },
+      "start": { "name": "Cape Henlopen, DE (eastern terminus)", "lat": 38.787, "lon": -75.105 },
+      "end":   { "name": "Delaware–Maryland state line", "lat": 38.780, "lon": -75.700 },
+      "jurisdictions": ["DE"],
+      "tags": ["Atlantic coast", "beaches", "coastal plain"],
+      "difficulty": { "rating": 1, "label": "Easy" },
+      "geometry": {
+        "bbox": { "minLat": 38.70, "maxLat": 38.80, "minLon": -75.70, "maxLon": -75.09 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 2,
+      "order": 2,
+      "name": "Maryland & Washington, D.C.",
+      "slug": "maryland-dc",
+      "distance": { "miles": 271, "kilometers": 436 },
+      "mileRange": { "start": 45, "end": 316 },
+      "start": { "name": "Maryland state line (from DE)", "lat": 38.780, "lon": -75.700 },
+      "end":   { "name": "Potomac River at Harpers Ferry, WV", "lat": 39.323, "lon": -77.731 },
+      "jurisdictions": ["MD", "DC"],
+      "tags": ["Chesapeake Bay", "urban areas", "historic sites"],
+      "difficulty": { "rating": 2, "label": "Moderate" },
+      "geometry": {
+        "bbox": { "minLat": 38.70, "maxLat": 39.33, "minLon": -77.73, "maxLon": -75.70 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 3,
+      "order": 3,
+      "name": "West Virginia",
+      "slug": "west-virginia",
+      "distance": { "miles": 281, "kilometers": 452 },
+      "mileRange": { "start": 316, "end": 597 },
+      "start": { "name": "Harpers Ferry, WV", "lat": 39.323, "lon": -77.731 },
+      "end":   { "name": "Ohio River (WV–OH border)", "lat": 39.267, "lon": -81.571 },
+      "jurisdictions": ["WV"],
+      "tags": ["Appalachian Mountains", "forests", "wilderness"],
+      "difficulty": { "rating": 3, "label": "Challenging" },
+      "geometry": {
+        "bbox": { "minLat": 38.80, "maxLat": 39.50, "minLon": -82.00, "maxLon": -77.70 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 4,
+      "order": 4,
+      "name": "Ohio & Kentucky",
+      "slug": "ohio-kentucky",
+      "distance": { "miles": 465, "kilometers": 748 },
+      "mileRange": { "start": 597, "end": 1062 },
+      "start": { "name": "Ohio (from WV border)", "lat": 39.267, "lon": -81.571 },
+      "end":   { "name": "Ohio–Indiana state line (route split)", "lat": 39.100, "lon": -84.820 },
+      "jurisdictions": ["OH", "KY"],
+      "tags": ["Ohio Valley", "farmland", "rolling hills"],
+      "difficulty": { "rating": 2, "label": "Moderate" },
+      "geometry": {
+        "bbox": { "minLat": 38.60, "maxLat": 40.00, "minLon": -84.82, "maxLon": -81.50 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 5,
+      "order": 5,
+      "name": "Western Ohio (Northern Route)",
+      "slug": "western-ohio-north",
+      "distance": { "miles": 59, "kilometers": 95 },
+      "mileRange": { "start": 1062, "end": 1121 },
+      "start": { "name": "Elizabethtown, OH (north/south split)", "lat": 39.100, "lon": -84.820 },
+      "end":   { "name": "Ohio–Indiana state line (north route)", "lat": 39.600, "lon": -84.820 },
+      "jurisdictions": ["OH"],
+      "tags": ["Midwest", "farmland"],
+      "difficulty": { "rating": 1, "label": "Easy" },
+      "geometry": {
+        "bbox": { "minLat": 39.10, "maxLat": 39.60, "minLon": -84.82, "maxLon": -84.50 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 6,
+      "order": 6,
+      "name": "Indiana (Northern Route)",
+      "slug": "indiana-north",
+      "distance": { "miles": 248, "kilometers": 399 },
+      "mileRange": { "start": 1121, "end": 1369 },
+      "start": { "name": "Indiana (from OH north route)", "lat": 39.600, "lon": -84.820 },
+      "end":   { "name": "Indiana–Illinois state line (north route)", "lat": 41.700, "lon": -87.530 },
+      "jurisdictions": ["IN"],
+      "tags": ["Midwest", "farmland"],
+      "difficulty": { "rating": 2, "label": "Moderate" },
+      "geometry": {
+        "bbox": { "minLat": 39.50, "maxLat": 41.80, "minLon": -87.53, "maxLon": -84.80 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 7,
+      "order": 7,
+      "name": "Illinois (Northern Route)",
+      "slug": "illinois-north",
+      "distance": { "miles": 195, "kilometers": 314 },
+      "mileRange": { "start": 1369, "end": 1564 },
+      "start": { "name": "Illinois (from IN north route)", "lat": 41.700, "lon": -87.530 },
+      "end":   { "name": "Mississippi River (IL–IA, north route)", "lat": 41.460, "lon": -90.550 },
+      "jurisdictions": ["IL"],
+      "tags": ["Illinois prairies", "farmland"],
+      "difficulty": { "rating": 2, "label": "Moderate" },
+      "geometry": {
+        "bbox": { "minLat": 41.40, "maxLat": 42.10, "minLon": -91.00, "maxLon": -87.50 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 8,
+      "order": 8,
+      "name": "Iowa (Northern Route)",
+      "slug": "iowa",
+      "distance": { "miles": 512, "kilometers": 824 },
+      "mileRange": { "start": 1564, "end": 2076 },
+      "start": { "name": "Iowa (from IL, Mississippi River)", "lat": 41.460, "lon": -90.550 },
+      "end":   { "name": "Missouri River (IA–NE border)", "lat": 41.260, "lon": -95.910 },
+      "jurisdictions": ["IA"],
+      "tags": ["Great Plains", "agriculture"],
+      "difficulty": { "rating": 2, "label": "Moderate" },
+      "geometry": {
+        "bbox": { "minLat": 40.00, "maxLat": 43.50, "minLon": -96.00, "maxLon": -90.00 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 9,
+      "order": 9,
+      "name": "Nebraska (Northern Route)",
+      "slug": "nebraska",
+      "distance": { "miles": 543, "kilometers": 874 },
+      "mileRange": { "start": 2076, "end": 2619 },
+      "start": { "name": "Nebraska (from IA, Missouri River)", "lat": 41.260, "lon": -95.910 },
+      "end":   { "name": "Nebraska–Colorado state line (north route)", "lat": 40.900, "lon": -102.050 },
+      "jurisdictions": ["NE"],
+      "tags": ["Great Plains", "prairies"],
+      "difficulty": { "rating": 2, "label": "Moderate" },
+      "geometry": {
+        "bbox": { "minLat": 40.00, "maxLat": 42.00, "minLon": -104.00, "maxLon": -95.00 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 10,
+      "order": 10,
+      "name": "Northeastern Colorado (Northern Route)",
+      "slug": "colorado-north",
+      "distance": { "miles": 241, "kilometers": 388 },
+      "mileRange": { "start": 2619, "end": 2860 },
+      "start": { "name": "Colorado (from NE north route)", "lat": 40.900, "lon": -102.050 },
+      "end":   { "name": "Denver, CO (routes rejoin)", "lat": 39.742, "lon": -104.990 },
+      "jurisdictions": ["CO"],
+      "tags": ["High plains", "plains"],
+      "difficulty": { "rating": 2, "label": "Moderate" },
+      "geometry": {
+        "bbox": { "minLat": 39.50, "maxLat": 41.00, "minLon": -105.00, "maxLon": -102.30 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 11,
+      "order": 11,
+      "name": "Indiana (Southern Route)",
+      "slug": "indiana-south",
+      "distance": { "miles": 361, "kilometers": 581 },
+      "mileRange": { "start": 1062, "end": 1423 },
+      "start": { "name": "Elizabethtown, OH (north/south split)", "lat": 39.100, "lon": -84.820 },
+      "end":   { "name": "Indiana–Illinois state line (south route)", "lat": 38.500, "lon": -87.530 },
+      "jurisdictions": ["IN"],
+      "tags": ["Ohio River", "hills", "forests"],
+      "difficulty": { "rating": 2, "label": "Moderate" },
+      "geometry": {
+        "bbox": { "minLat": 37.80, "maxLat": 39.00, "minLon": -88.00, "maxLon": -84.80 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 12,
+      "order": 12,
+      "name": "Illinois (Southern Route)",
+      "slug": "illinois-south",
+      "distance": { "miles": 295, "kilometers": 475 },
+      "mileRange": { "start": 1423, "end": 1718 },
+      "start": { "name": "Illinois (from IN south route)", "lat": 38.500, "lon": -87.530 },
+      "end":   { "name": "Mississippi River (IL–MO, south route)", "lat": 38.670, "lon": -90.170 },
+      "jurisdictions": ["IL"],
+      "tags": ["Shawnee Forest", "prairies"],
+      "difficulty": { "rating": 2, "label": "Moderate" },
+      "geometry": {
+        "bbox": { "minLat": 37.00, "maxLat": 39.00, "minLon": -91.00, "maxLon": -88.00 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 13,
+      "order": 13,
+      "name": "Missouri (Southern Route)",
+      "slug": "missouri",
+      "distance": { "miles": 339, "kilometers": 546 },
+      "mileRange": { "start": 1718, "end": 2057 },
+      "start": { "name": "Missouri (from IL, Mississippi River)", "lat": 38.670, "lon": -90.170 },
+      "end":   { "name": "Kansas state line (Kansas City, MO)", "lat": 39.085, "lon": -94.610 },
+      "jurisdictions": ["MO"],
+      "tags": ["Missouri River", "rolling hills"],
+      "difficulty": { "rating": 3, "label": "Challenging" },
+      "geometry": {
+        "bbox": { "minLat": 38.00, "maxLat": 40.00, "minLon": -95.00, "maxLon": -90.20 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 14,
+      "order": 14,
+      "name": "Kansas (Southern Route)",
+      "slug": "kansas",
+      "distance": { "miles": 575, "kilometers": 925 },
+      "mileRange": { "start": 2057, "end": 2632 },
+      "start": { "name": "Kansas (from MO, Kansas City area)", "lat": 39.085, "lon": -94.610 },
+      "end":   { "name": "Kansas–Colorado state line (south route)", "lat": 38.000, "lon": -102.040 },
+      "jurisdictions": ["KS"],
+      "tags": ["Great Plains", "prairies", "open range"],
+      "difficulty": { "rating": 2, "label": "Moderate" },
+      "geometry": {
+        "bbox": { "minLat": 37.50, "maxLat": 39.50, "minLon": -102.00, "maxLon": -94.60 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 15,
+      "order": 15,
+      "name": "Southeastern Colorado (Southern Route)",
+      "slug": "colorado-south",
+      "distance": { "miles": 384, "kilometers": 618 },
+      "mileRange": { "start": 2632, "end": 3016 },
+      "start": { "name": "Colorado (from KS south route)", "lat": 38.000, "lon": -102.040 },
+      "end":   { "name": "Denver, CO (routes rejoin)", "lat": 39.742, "lon": -104.990 },
+      "jurisdictions": ["CO"],
+      "tags": ["High plains", "Great Plains"],
+      "difficulty": { "rating": 2, "label": "Moderate" },
+      "geometry": {
+        "bbox": { "minLat": 37.50, "maxLat": 40.00, "minLon": -105.00, "maxLon": -102.00 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 16,
+      "order": 16,
+      "name": "Western Colorado",
+      "slug": "western-colorado",
+      "distance": { "miles": 495, "kilometers": 797 },
+      "mileRange": { "start": 3016, "end": 3511 },
+      "start": { "name": "Denver, CO (after routes merge)", "lat": 39.742, "lon": -104.990 },
+      "end":   { "name": "Colorado–Utah state line", "lat": 38.800, "lon": -109.050 },
+      "jurisdictions": ["CO"],
+      "tags": ["Rocky Mountains", "high passes"],
+      "difficulty": { "rating": 5, "label": "Strenuous" },
+      "geometry": {
+        "bbox": { "minLat": 37.50, "maxLat": 40.00, "minLon": -109.10, "maxLon": -105.00 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 17,
+      "order": 17,
+      "name": "Utah",
+      "slug": "utah",
+      "distance": { "miles": 593, "kilometers": 954 },
+      "mileRange": { "start": 3511, "end": 4104 },
+      "start": { "name": "Utah (from CO)", "lat": 38.800, "lon": -109.050 },
+      "end":   { "name": "Utah–Nevada state line", "lat": 39.000, "lon": -114.030 },
+      "jurisdictions": ["UT"],
+      "tags": ["Colorado Plateau", "canyons", "desert"],
+      "difficulty": { "rating": 5, "label": "Strenuous" },
+      "geometry": {
+        "bbox": { "minLat": 37.50, "maxLat": 40.00, "minLon": -114.00, "maxLon": -109.10 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 18,
+      "order": 18,
+      "name": "Nevada",
+      "slug": "nevada",
+      "distance": { "miles": 515, "kilometers": 829 },
+      "mileRange": { "start": 4104, "end": 4619 },
+      "start": { "name": "Nevada (from UT)", "lat": 39.000, "lon": -114.030 },
+      "end":   { "name": "California state line (Lake Tahoe, NV/CA)", "lat": 39.110, "lon": -120.050 },
+      "jurisdictions": ["NV"],
+      "tags": ["Great Basin", "desert", "mountains"],
+      "difficulty": { "rating": 4, "label": "Difficult" },
+      "geometry": {
+        "bbox": { "minLat": 38.00, "maxLat": 41.00, "minLon": -120.00, "maxLon": -114.00 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 19,
+      "order": 19,
+      "name": "California",
+      "slug": "california",
+      "distance": { "miles": 387, "kilometers": 623 },
+      "mileRange": { "start": 4619, "end": 5008 },
+      "start": { "name": "California (from NV, Lake Tahoe)", "lat": 39.110, "lon": -120.050 },
+      "end":   { "name": "Point Reyes, CA (western terminus)", "lat": 38.0283, "lon": -122.8986 },
+      "jurisdictions": ["CA"],
+      "tags": ["Sierra Nevada", "Pacific coast"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "geometry": {
+        "bbox": { "minLat": 37.50, "maxLat": 39.50, "minLon": -123.00, "maxLon": -119.50 }
+      },
+      "gpx": { "status": "placeholder" }
+    }
+  ]
+}

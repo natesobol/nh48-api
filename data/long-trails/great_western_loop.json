@@ -1,0 +1,174 @@
+{
+  "id": "gwl",
+  "slug": "great-western-loop",
+  "name": "Great Western Loop",
+  "shortName": "Great Western Loop",
+  "type": "Hiking Route",
+  "classification": "Long-distance loop route (unofficial)",
+  "continuity": "Loop",
+  "maintenance_level": "Varies (mix of maintained trails & cross-country)",
+  "region": "Western United States",
+  "countryCodes": ["US", "CA"],
+  "stats": {
+    "distance": {
+      "miles": 6875,
+      "kilometers": 11064
+    },
+    "highestElevation": {
+      "point": "Forester Pass (Pacific Crest Trail)",
+      "elevation_ft": 13180,
+      "elevation_m": 4017
+    },
+    "lowestElevation": {
+      "point": "Colorado River near Parker, AZ",
+      "elevation_ft": 420,
+      "elevation_m": 128
+    },
+    "endPoints": [
+      {
+        "name": "Grandview Point, Grand Canyon NP (South Rim)",
+        "lat": 36.10584,
+        "lon": -112.09466,
+        "elevation_ft": 7400,
+        "elevation_m": 2256
+      },
+      {
+        "name": "Grandview Point, Grand Canyon NP (South Rim)",
+        "lat": 36.10584,
+        "lon": -112.09466,
+        "elevation_ft": 7400,
+        "elevation_m": 2256
+      }
+    ]
+  },
+  "map": {
+    "defaultCenter": { "lat": 40.0, "lon": -115.0 },
+    "defaultZoom": 5,
+    "boundingBox": {
+      "minLat": 31.5,
+      "maxLat": 49.1,
+      "minLon": -124.7,
+      "maxLon": -105.0
+    }
+  },
+  "routing": {
+    "mileSystem": "Loop (clockwise convention, mile 0 at Grand Canyon)",
+    "gpxCrs": "EPSG:4326",
+    "sectioning": "By constituent trails and connector",
+    "routeVariantPolicy": "Single defined loop; can be hiked in either direction"
+  },
+  "sources": [
+    {
+      "name": "Andrew Skurka – GWL Overview",
+      "url": "https://andrewskurka.com/adventures/great-western-loop/overview/"
+    },
+    {
+      "name": "Fastest Known Time – Great Western Loop",
+      "url": "https://fastestknowntime.com/route/great-western-loop"
+    }
+  ],
+  "sections": [
+    {
+      "id": 1,
+      "order": 1,
+      "name": "Mojave and Sonoran Desert Connector",
+      "slug": "mojave-sonoran-connector",
+      "distance": { "miles": 700, "kilometers": 1127 },
+      "mileRange": { "start": 0, "end": 700 },
+      "start": { "name": "Grand Canyon (South Rim, AZ)", "lat": 36.10584, "lon": -112.09466 },
+      "end":   { "name": "Mission Creek Junction (San Bernardino, CA)", "lat": 34.099, "lon": -116.680 },
+      "jurisdictions": ["AZ", "CA"],
+      "tags": ["desert", "Sonoran Desert", "Mojave Desert", "cross-country"],
+      "difficulty": { "rating": 5, "label": "Extremely Difficult" },
+      "geometry": {
+        "bbox": { "minLat": 34.0, "maxLat": 36.2, "minLon": -116.7, "maxLon": -112.1 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 2,
+      "order": 2,
+      "name": "Pacific Crest Trail Section",
+      "slug": "gwl-pacific-crest-trail",
+      "distance": { "miles": 2650, "kilometers": 4265 },
+      "mileRange": { "start": 700, "end": 3350 },
+      "start": { "name": "Mission Creek (joins PCT)", "lat": 34.099, "lon": -116.680 },
+      "end":   { "name": "PCT Northern Terminus (Manning Park, BC)", "lat": 49.000, "lon": -120.782 },
+      "jurisdictions": ["CA", "OR", "WA", "BC"],
+      "tags": ["Sierra Nevada", "Cascade Range", "National Scenic Trail"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "geometry": {
+        "bbox": { "minLat": 34.1, "maxLat": 49.1, "minLon": -121.8, "maxLon": -115.0 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 3,
+      "order": 3,
+      "name": "Pacific Northwest Trail Section",
+      "slug": "gwl-pacific-northwest-trail",
+      "distance": { "miles": 1200, "kilometers": 1931 },
+      "mileRange": { "start": 3350, "end": 4550 },
+      "start": { "name": "Pacific Ocean Terminus (Cape Alava, WA)", "lat": 48.152, "lon": -124.733 },
+      "end":   { "name": "Continental Divide (Glacier NP, MT)", "lat": 48.884, "lon": -114.060 },
+      "jurisdictions": ["WA", "ID", "MT"],
+      "tags": ["Pacific Northwest", "wilderness", "mountains"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "geometry": {
+        "bbox": { "minLat": 48.1, "maxLat": 49.0, "minLon": -124.7, "maxLon": -114.0 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 4,
+      "order": 4,
+      "name": "Continental Divide Trail Section",
+      "slug": "gwl-continental-divide-trail",
+      "distance": { "miles": 3100, "kilometers": 4989 },
+      "mileRange": { "start": 4550, "end": 7650 },
+      "start": { "name": "Glacier NP (MT, CDT junction)", "lat": 48.884, "lon": -114.060 },
+      "end":   { "name": "Chama, NM (near CDT/GET link)", "lat": 36.903, "lon": -106.579 },
+      "jurisdictions": ["MT", "ID", "WY", "CO", "NM"],
+      "tags": ["Rocky Mountains", "Continental Divide", "high altitude"],
+      "difficulty": { "rating": 5, "label": "Extremely Difficult" },
+      "geometry": {
+        "bbox": { "minLat": 31.3, "maxLat": 49.0, "minLon": -114.0, "maxLon": -105.0 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 5,
+      "order": 5,
+      "name": "Grand Enchantment Trail Section",
+      "slug": "gwl-grand-enchantment-trail",
+      "distance": { "miles": 770, "kilometers": 1240 },
+      "mileRange": { "start": 7650, "end": 8420 },
+      "start": { "name": "Albuquerque (Sandia Crest, NM)", "lat": 35.208, "lon": -106.447 },
+      "end":   { "name": "Arizona Trail junction (Superior, AZ)", "lat": 33.293, "lon": -111.096 },
+      "jurisdictions": ["NM", "AZ"],
+      "tags": ["Southwest desert", "Superstition Wilderness"],
+      "difficulty": { "rating": 4, "label": "Difficult" },
+      "geometry": {
+        "bbox": { "minLat": 33.2, "maxLat": 35.3, "minLon": -111.1, "maxLon": -106.3 }
+      },
+      "gpx": { "status": "placeholder" }
+    },
+    {
+      "id": 6,
+      "order": 6,
+      "name": "Arizona Trail Section",
+      "slug": "gwl-arizona-trail",
+      "distance": { "miles": 800, "kilometers": 1287 },
+      "mileRange": { "start": 8420, "end": 9220 },
+      "start": { "name": "Superior, AZ (AZT junction)", "lat": 33.293, "lon": -111.096 },
+      "end":   { "name": "Grand Canyon (South Rim, AZ)", "lat": 36.10584, "lon": -112.09466 },
+      "jurisdictions": ["AZ"],
+      "tags": ["Arizona mountains", "Grand Canyon"],
+      "difficulty": { "rating": 4, "label": "Difficult" },
+      "geometry": {
+        "bbox": { "minLat": 31.5, "maxLat": 37.0, "minLon": -114.0, "maxLon": -109.0 }
+      },
+      "gpx": { "status": "placeholder" }
+    }
+  ]
+}

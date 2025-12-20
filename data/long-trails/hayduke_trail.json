@@ -1,0 +1,356 @@
+{
+  "id": "hayduke-trail",
+  "slug": "hayduke-trail",
+  "name": "Hayduke Trail",
+  "shortName": "Hayduke",
+  "type": "Backcountry Route",
+  "classification": "Long-distance trail (unofficial)",
+  "continuity": "Continuous",
+  "maintenance_level": "None (unofficial route)",
+  "region": "Colorado Plateau (Southwestern US)",
+  "countryCodes": ["US"],
+  "stats": {
+    "distance": {
+      "miles": 808.0,
+      "kilometers": 1300.9
+    },
+    "sections": 14
+  },
+  "map": {
+    "bbox": [-112.94, 36.0, -109.7, 38.78]
+  },
+  "routing": {
+    "foot": true,
+    "bike": false,
+    "horse": false,
+    "motor": false
+  },
+  "sources": [
+    "HaydukeTrail.org (Official site of the Hayduke Trail)",
+    "National Park Service (park resources and maps)"
+  ],
+  "sections": [
+    {
+      "id": "hayduke-1",
+      "order": 1,
+      "name": "Arches NP (Salt Valley) to Hurrah Pass",
+      "slug": "arches-to-hurrah-pass",
+      "distance": 39.7,
+      "mileRange": [0.0, 39.7],
+      "start": {
+        "name": "Northern Arches NP (Salt Valley)",
+        "coords": [ -109.712529, 38.773922 ]
+      },
+      "end": {
+        "name": "Hurrah Pass, UT",
+        "coords": [ -109.625117, 38.482483 ]
+      },
+      "jurisdictions": ["UT"],
+      "tags": ["desert", "canyon", "off-trail"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -109.712529, 38.482, -109.625117, 38.774 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-2",
+      "order": 2,
+      "name": "Hurrah Pass to Big Spring TH (Canyonlands)",
+      "slug": "hurrah-pass-to-big-spring",
+      "distance": 47.1,
+      "mileRange": [39.7, 86.8],
+      "start": {
+        "name": "Hurrah Pass, UT",
+        "coords": [ -109.625117, 38.482483 ]
+      },
+      "end": {
+        "name": "Big Spring Trailhead, Canyonlands NP",
+        "coords": [ -109.803336, 38.143406 ]
+      },
+      "jurisdictions": ["UT"],
+      "tags": ["canyon", "wilderness"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -109.85, 38.143, -109.62, 38.482 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-3",
+      "order": 3,
+      "name": "Big Spring TH to Hite, UT",
+      "slug": "big-spring-to-hite",
+      "distance": 67.9,
+      "mileRange": [86.8, 154.7],
+      "start": {
+        "name": "Big Spring Trailhead, Canyonlands NP",
+        "coords": [ -109.803336, 38.143406 ]
+      },
+      "end": {
+        "name": "Hite, UT (Colorado River crossing)",
+        "coords": [ -110.368751, 37.890544 ]
+      },
+      "jurisdictions": ["UT"],
+      "tags": ["canyon", "desert"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -110.37, 37.890, -109.80, 38.143 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-4",
+      "order": 4,
+      "name": "Hite to Poison Springs Canyon",
+      "slug": "hite-to-poison-spring",
+      "distance": 35.8,
+      "mileRange": [154.7, 190.5],
+      "start": {
+        "name": "Hite, UT",
+        "coords": [ -110.368751, 37.890544 ]
+      },
+      "end": {
+        "name": "Poison Spring Canyon (UT-95 crossing)",
+        "coords": [ -110.589053, 38.136531 ]
+      },
+      "jurisdictions": ["UT"],
+      "tags": ["river", "canyon"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -110.59, 37.890, -110.36, 38.137 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-5",
+      "order": 5,
+      "name": "Poison Springs Canyon to Burr Trail (Capitol Reef)",
+      "slug": "poison-spring-to-burr-trail",
+      "distance": 48.9,
+      "mileRange": [190.5, 239.4],
+      "start": {
+        "name": "Poison Spring Canyon (UT-95)",
+        "coords": [ -110.589053, 38.136531 ]
+      },
+      "end": {
+        "name": "Burr Trail (Waterpocket Fold, Capitol Reef NP)",
+        "coords": [ -111.023810, 37.849590 ]
+      },
+      "jurisdictions": ["UT"],
+      "tags": ["mountain", "desert"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -111.03, 37.849, -110.589, 38.137 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-6",
+      "order": 6,
+      "name": "Burr Trail to Hole-in-the-Rock Road",
+      "slug": "burr-trail-to-hole-in-the-rock",
+      "distance": 72.5,
+      "mileRange": [239.4, 311.9],
+      "start": {
+        "name": "Burr Trail (Top of Switchbacks)",
+        "coords": [ -111.023810, 37.849590 ]
+      },
+      "end": {
+        "name": "Hole-in-the-Rock Road (Hurricane Wash TH)",
+        "coords": [ -111.143300, 37.393300 ]
+      },
+      "jurisdictions": ["UT"],
+      "tags": ["canyon", "river"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -111.15, 37.393, -111.0, 37.85 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-7",
+      "order": 7,
+      "name": "Hole-in-the-Rock Road to Round Valley Draw",
+      "slug": "hole-in-rock-to-round-valley",
+      "distance": 80.8,
+      "mileRange": [311.9, 392.7],
+      "start": {
+        "name": "Hole-in-the-Rock Road",
+        "coords": [ -111.143300, 37.393300 ]
+      },
+      "end": {
+        "name": "Round Valley Draw (GSENM)",
+        "coords": [ -111.900767, 37.456350 ]
+      },
+      "jurisdictions": ["UT"],
+      "tags": ["plateau", "wilderness"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -111.90, 37.393, -111.14, 37.456 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-8",
+      "order": 8,
+      "name": "Round Valley Draw to Willis Creek",
+      "slug": "round-valley-to-willis-creek",
+      "distance": 49.0,
+      "mileRange": [392.7, 441.7],
+      "start": {
+        "name": "Round Valley Draw",
+        "coords": [ -111.900767, 37.456350 ]
+      },
+      "end": {
+        "name": "Willis Creek, UT",
+        "coords": [ -112.096760, 37.483062 ]
+      },
+      "jurisdictions": ["UT"],
+      "tags": ["slot canyon", "desert"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -112.10, 37.456, -111.90, 37.483 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-9",
+      "order": 9,
+      "name": "Willis Creek to AZ Trail Stateline TH",
+      "slug": "willis-creek-to-stateline",
+      "distance": 66.3,
+      "mileRange": [441.7, 508.0],
+      "start": {
+        "name": "Willis Creek, UT",
+        "coords": [ -112.096760, 37.483062 ]
+      },
+      "end": {
+        "name": "Arizona Trail Stateline Trailhead",
+        "coords": [ -112.034990, 37.001120 ]
+      },
+      "jurisdictions": ["UT"],
+      "tags": ["mountains", "plateau"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -112.10, 37.001, -112.03, 37.483 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-10",
+      "order": 10,
+      "name": "Stateline Trailhead to Nankoweap Trailhead (GCNP)",
+      "slug": "stateline-to-nankoweap",
+      "distance": 60.9,
+      "mileRange": [508.0, 568.9],
+      "start": {
+        "name": "AZ/UT Stateline Trailhead",
+        "coords": [ -112.034990, 37.001120 ]
+      },
+      "end": {
+        "name": "Nankoweap Trailhead (North Rim GCNP)",
+        "coords": [ -111.960000, 36.211000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["forest", "rim"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -112.04, 36.211, -111.96, 37.001 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-11",
+      "order": 11,
+      "name": "Nankoweap Trailhead to Horseshoe Mesa (Grand Canyon)",
+      "slug": "nankoweap-to-horseshoe-mesa",
+      "distance": 47.1,
+      "mileRange": [568.9, 616.0],
+      "start": {
+        "name": "Nankoweap Trailhead, North Rim",
+        "coords": [ -111.960000, 36.211000 ]
+      },
+      "end": {
+        "name": "Horseshoe Mesa (Grand Canyon)",
+        "coords": [ -111.974000, 36.040000 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["canyon", "river"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -111.98, 36.040, -111.96, 36.211 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-12",
+      "order": 12,
+      "name": "Horseshoe Mesa to North Rim (Grand Canyon)",
+      "slug": "horseshoe-mesa-to-north-rim",
+      "distance": 34.9,
+      "mileRange": [616.0, 650.9],
+      "start": {
+        "name": "Horseshoe Mesa, Grand Canyon",
+        "coords": [ -111.974000, 36.040000 ]
+      },
+      "end": {
+        "name": "North Kaibab Trailhead (North Rim GCNP)",
+        "coords": [ -112.056660, 36.216990 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["canyon", "corridor"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -112.056, 36.040, -111.974, 36.217 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-13",
+      "order": 13,
+      "name": "North Rim (GCNP) to Hack Canyon, AZ",
+      "slug": "north-rim-to-hack-canyon",
+      "distance": 87.2,
+      "mileRange": [650.9, 738.1],
+      "start": {
+        "name": "North Rim, Grand Canyon NP",
+        "coords": [ -112.056660, 36.216990 ]
+      },
+      "end": {
+        "name": "Hack Canyon, AZ",
+        "coords": [ -112.652137, 36.550262 ]
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["canyon", "wilderness"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -112.65, 36.217, -112.056, 36.550 ]
+      },
+      "gpx": null
+    },
+    {
+      "id": "hayduke-14",
+      "order": 14,
+      "name": "Hack Canyon to Weeping Wall (Zion NP)",
+      "slug": "hack-canyon-to-zion",
+      "distance": 69.9,
+      "mileRange": [738.1, 808.0],
+      "start": {
+        "name": "Hack Canyon, AZ",
+        "coords": [ -112.652137, 36.550262 ]
+      },
+      "end": {
+        "name": "Weeping Wall, Zion NP",
+        "coords": [ -112.938498, 37.270880 ]
+      },
+      "jurisdictions": ["AZ", "UT"],
+      "tags": ["desert", "canyon", "mountains"],
+      "difficulty": "Extremely Strenuous",
+      "geometry": {
+        "bbox": [ -112.94, 36.550, -112.65, 37.271 ]
+      },
+      "gpx": null
+    }
+  ]
+}

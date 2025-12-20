@@ -1,0 +1,579 @@
+{
+  "sections": [
+      {
+        "id": 1,
+        "order": 1,
+        "name": "Long Shore Path",
+        "slug": "long-shore-path",
+        "distanceMi": 10.7,
+        "distanceKm": 17.2,
+        "mileRange": [0.0, 10.7],
+        "start": { "name": "Topsail Beach", "lat": 47.5425, "lon": -52.9204 },
+        "end": { "name": "Portugal Cove", "lat": 47.6294, "lon": -52.8681 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 3, "label": "Moderate to Difficult" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.5425,
+            "maxLat": 47.6294,
+            "minLon": -52.9204,
+            "maxLon": -52.8681
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 2,
+        "order": 2,
+        "name": "Piccos Ridge Path",
+        "slug": "piccos-ridge-path",
+        "distanceMi": 9.0,
+        "distanceKm": 14.5,
+        "mileRange": [10.7, 19.7],
+        "start": { "name": "Portugal Cove", "lat": 47.6294, "lon": -52.8681 },
+        "end": { "name": "Bauline", "lat": 47.6919, "lon": -52.8080 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 4, "label": "Strenuous" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.6294,
+            "maxLat": 47.6919,
+            "minLon": -52.8681,
+            "maxLon": -52.8080
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 3,
+        "order": 3,
+        "name": "White Horse Path",
+        "slug": "white-horse-path",
+        "distanceMi": 10.9,
+        "distanceKm": 17.5,
+        "mileRange": [19.7, 30.6],
+        "start": { "name": "Bauline", "lat": 47.6919, "lon": -52.8080 },
+        "end": { "name": "Cape St. Francis", "lat": 47.8028, "lon": -52.7990 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 4, "label": "Strenuous" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.6919,
+            "maxLat": 47.8028,
+            "minLon": -52.8080,
+            "maxLon": -52.7990
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 4,
+        "order": 4,
+        "name": "Biscan Cove Path",
+        "slug": "biscan-cove-path",
+        "distanceMi": 4.5,
+        "distanceKm": 7.3,
+        "mileRange": [30.6, 35.1],
+        "start": { "name": "Cape St. Francis", "lat": 47.8028, "lon": -52.7990 },
+        "end": { "name": "Pouch Cove", "lat": 47.7438, "lon": -52.7680 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.7438,
+            "maxLat": 47.8028,
+            "minLon": -52.7990,
+            "maxLon": -52.7680
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 5,
+        "order": 5,
+        "name": "Stiles Cove Path",
+        "slug": "stiles-cove-path",
+        "distanceMi": 9.4,
+        "distanceKm": 15.1,
+        "mileRange": [35.1, 44.5],
+        "start": { "name": "Pouch Cove", "lat": 47.7438, "lon": -52.7680 },
+        "end": { "name": "Flatrock", "lat": 47.6690, "lon": -52.7310 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.6690,
+            "maxLat": 47.7438,
+            "minLon": -52.7680,
+            "maxLon": -52.7310
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 6,
+        "order": 6,
+        "name": "Father Troy's Trail",
+        "slug": "father-troys-trail",
+        "distanceMi": 5.4,
+        "distanceKm": 8.7,
+        "mileRange": [44.5, 49.9],
+        "start": { "name": "Flatrock", "lat": 47.6690, "lon": -52.7310 },
+        "end": { "name": "Torbay", "lat": 47.6580, "lon": -52.7310 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 1, "label": "Easy" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.6580,
+            "maxLat": 47.6690,
+            "minLon": -52.7310,
+            "maxLon": -52.7310
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 7,
+        "order": 7,
+        "name": "Silver Mine Head Path",
+        "slug": "silver-mine-head-path",
+        "distanceMi": 2.4,
+        "distanceKm": 3.8,
+        "mileRange": [49.9, 52.3],
+        "start": { "name": "Torbay", "lat": 47.6580, "lon": -52.7310 },
+        "end": { "name": "Outer Cove", "lat": 47.6480, "lon": -52.6940 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 1, "label": "Easy" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.6480,
+            "maxLat": 47.6580,
+            "minLon": -52.7310,
+            "maxLon": -52.6940
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 8,
+        "order": 8,
+        "name": "Cobblers Path",
+        "slug": "cobblers-path",
+        "distanceMi": 5.1,
+        "distanceKm": 8.2,
+        "mileRange": [52.3, 57.4],
+        "start": { "name": "Outer Cove", "lat": 47.6480, "lon": -52.6940 },
+        "end": { "name": "Logy Bay", "lat": 47.6380, "lon": -52.6730 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.6380,
+            "maxLat": 47.6480,
+            "minLon": -52.6940,
+            "maxLon": -52.6730
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 9,
+        "order": 9,
+        "name": "Sugarloaf Path",
+        "slug": "sugarloaf-path",
+        "distanceMi": 5.5,
+        "distanceKm": 8.9,
+        "mileRange": [57.4, 62.9],
+        "start": { "name": "Logy Bay", "lat": 47.6380, "lon": -52.6730 },
+        "end": { "name": "Quidi Vidi (St. John's)", "lat": 47.5860, "lon": -52.6810 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 3, "label": "Difficult" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.5860,
+            "maxLat": 47.6380,
+            "minLon": -52.6810,
+            "maxLon": -52.6730
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 10,
+        "order": 10,
+        "name": "Deadmans Bay Path",
+        "slug": "deadmans-bay-path",
+        "distanceMi": 6.6,
+        "distanceKm": 10.6,
+        "mileRange": [62.9, 69.5],
+        "start": { "name": "Fort Amherst (St. John's)", "lat": 47.5600, "lon": -52.6820 },
+        "end": { "name": "Blackhead", "lat": 47.5210, "lon": -52.7080 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 3, "label": "Moderate to Difficult" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.5210,
+            "maxLat": 47.5600,
+            "minLon": -52.7080,
+            "maxLon": -52.6820
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 11,
+        "order": 11,
+        "name": "Cape Spear Path",
+        "slug": "cape-spear-path",
+        "distanceMi": 5.8,
+        "distanceKm": 9.3,
+        "mileRange": [69.5, 75.3],
+        "start": { "name": "Blackhead", "lat": 47.5210, "lon": -52.7080 },
+        "end": { "name": "Maddox Cove", "lat": 47.4730, "lon": -52.7390 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.4730,
+            "maxLat": 47.5210,
+            "minLon": -52.7390,
+            "maxLon": -52.7080
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 12,
+        "order": 12,
+        "name": "Motion Path",
+        "slug": "motion-path",
+        "distanceMi": 8.4,
+        "distanceKm": 13.5,
+        "mileRange": [75.3, 83.7],
+        "start": { "name": "Petty Harbour", "lat": 47.4730, "lon": -52.7390 },
+        "end": { "name": "Shoal Bay Road", "lat": 47.3600, "lon": -52.8200 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 3, "label": "Moderate to Difficult" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.3600,
+            "maxLat": 47.4730,
+            "minLon": -52.8200,
+            "maxLon": -52.7390
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 13,
+        "order": 13,
+        "name": "Spout Path",
+        "slug": "spout-path",
+        "distanceMi": 10.1,
+        "distanceKm": 16.3,
+        "mileRange": [83.7, 93.8],
+        "start": { "name": "Shoal Bay Road", "lat": 47.3600, "lon": -52.8200 },
+        "end": { "name": "Bay Bulls", "lat": 47.3160, "lon": -52.8110 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 4, "label": "Difficult to Strenuous" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.3160,
+            "maxLat": 47.3600,
+            "minLon": -52.8200,
+            "maxLon": -52.8110
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 14,
+        "order": 14,
+        "name": "Mickeleens Path",
+        "slug": "mickeleens-path",
+        "distanceMi": 4.5,
+        "distanceKm": 7.3,
+        "mileRange": [93.8, 98.3],
+        "start": { "name": "Bay Bulls", "lat": 47.3160, "lon": -52.8110 },
+        "end": { "name": "Witless Bay", "lat": 47.2810, "lon": -52.8320 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 2, "label": "Easy to Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.2810,
+            "maxLat": 47.3160,
+            "minLon": -52.8320,
+            "maxLon": -52.8110
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 15,
+        "order": 15,
+        "name": "Beaches Path",
+        "slug": "beaches-path",
+        "distanceMi": 4.3,
+        "distanceKm": 7.0,
+        "mileRange": [98.3, 102.6],
+        "start": { "name": "Witless Bay", "lat": 47.2810, "lon": -52.8320 },
+        "end": { "name": "Mobile", "lat": 47.2480, "lon": -52.8400 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 1, "label": "Easy" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.2480,
+            "maxLat": 47.2810,
+            "minLon": -52.8400,
+            "maxLon": -52.8320
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 16,
+        "order": 16,
+        "name": "Tinkers Point Path",
+        "slug": "tinkers-point-path",
+        "distanceMi": 3.2,
+        "distanceKm": 5.1,
+        "mileRange": [102.6, 105.8],
+        "start": { "name": "Mobile", "lat": 47.2480, "lon": -52.8400 },
+        "end": { "name": "Tors Cove", "lat": 47.2240, "lon": -52.8810 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 1, "label": "Easy" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.2240,
+            "maxLat": 47.2480,
+            "minLon": -52.8810,
+            "maxLon": -52.8400
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 17,
+        "order": 17,
+        "name": "La Manche Village Path",
+        "slug": "la-manche-village-path",
+        "distanceMi": 4.0,
+        "distanceKm": 6.4,
+        "mileRange": [105.8, 109.8],
+        "start": { "name": "Tors Cove", "lat": 47.2240, "lon": -52.8810 },
+        "end": { "name": "La Manche Village", "lat": 47.1720, "lon": -52.8870 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 1, "label": "Easy" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.1720,
+            "maxLat": 47.2240,
+            "minLon": -52.8870,
+            "maxLon": -52.8810
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 18,
+        "order": 18,
+        "name": "Flamber Head Path",
+        "slug": "flamber-head-path",
+        "distanceMi": 7.1,
+        "distanceKm": 11.5,
+        "mileRange": [109.8, 116.9],
+        "start": { "name": "La Manche Village", "lat": 47.1720, "lon": -52.8870 },
+        "end": { "name": "Brigus South", "lat": 47.1110, "lon": -52.9000 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 3, "label": "Moderate to Difficult" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.1110,
+            "maxLat": 47.1720,
+            "minLon": -52.9000,
+            "maxLon": -52.8870
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 19,
+        "order": 19,
+        "name": "Brigus Head Path",
+        "slug": "brigus-head-path",
+        "distanceMi": 4.0,
+        "distanceKm": 6.5,
+        "mileRange": [116.9, 120.9],
+        "start": { "name": "Brigus South", "lat": 47.1110, "lon": -52.9000 },
+        "end": { "name": "Admirals Cove", "lat": 47.0700, "lon": -52.9070 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.0700,
+            "maxLat": 47.1110,
+            "minLon": -52.9070,
+            "maxLon": -52.9000
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 20,
+        "order": 20,
+        "name": "Cape Broyle Head Path",
+        "slug": "cape-broyle-head-path",
+        "distanceMi": 11.4,
+        "distanceKm": 18.3,
+        "mileRange": [120.9, 132.3],
+        "start": { "name": "Cape Broyle", "lat": 47.0450, "lon": -52.9390 },
+        "end": { "name": "Calvert", "lat": 47.0340, "lon": -52.9530 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 4, "label": "Strenuous" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.0340,
+            "maxLat": 47.0450,
+            "minLon": -52.9530,
+            "maxLon": -52.9390
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 21,
+        "order": 21,
+        "name": "Caplin Bay Path",
+        "slug": "caplin-bay-path",
+        "distanceMi": 3.2,
+        "distanceKm": 5.2,
+        "mileRange": [132.3, 135.5],
+        "start": { "name": "Calvert", "lat": 47.0340, "lon": -52.9530 },
+        "end": { "name": "Ferryland", "lat": 47.0290, "lon": -52.8850 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 1, "label": "Easy" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.0290,
+            "maxLat": 47.0340,
+            "minLon": -52.9530,
+            "maxLon": -52.8850
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 22,
+        "order": 22,
+        "name": "Sounding Hills Path",
+        "slug": "sounding-hills-path",
+        "distanceMi": 3.4,
+        "distanceKm": 5.5,
+        "mileRange": [135.5, 138.9],
+        "start": { "name": "Ferryland", "lat": 47.0290, "lon": -52.8850 },
+        "end": { "name": "Aquaforte", "lat": 47.0000, "lon": -52.9040 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 2, "label": "Easy to Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 47.0000,
+            "maxLat": 47.0290,
+            "minLon": -52.9040,
+            "maxLon": -52.8850
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 23,
+        "order": 23,
+        "name": "Spurwink Island Path",
+        "slug": "spurwink-island-path",
+        "distanceMi": 10.6,
+        "distanceKm": 17.1,
+        "mileRange": [138.9, 149.5],
+        "start": { "name": "Aquaforte", "lat": 47.0000, "lon": -52.9040 },
+        "end": { "name": "Port Kirwan", "lat": 46.9500, "lon": -52.9380 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 4, "label": "Strenuous" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 46.9500,
+            "maxLat": 47.0000,
+            "minLon": -52.9380,
+            "maxLon": -52.9040
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 24,
+        "order": 24,
+        "name": "Bear Cove Path",
+        "slug": "bear-cove-path",
+        "distanceMi": 7.2,
+        "distanceKm": 11.6,
+        "mileRange": [149.5, 156.7],
+        "start": { "name": "Kingman's Cove", "lat": 46.9480, "lon": -52.9440 },
+        "end": { "name": "Renews", "lat": 46.9360, "lon": -52.9480 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 46.9360,
+            "maxLat": 46.9480,
+            "minLon": -52.9480,
+            "maxLon": -52.9440
+          },
+          "gpx": null
+        }
+      },
+      {
+        "id": 25,
+        "order": 25,
+        "name": "Island Meadow Path",
+        "slug": "island-meadow-path",
+        "distanceMi": 6.3,
+        "distanceKm": 10.1,
+        "mileRange": [156.7, 163.0],
+        "start": { "name": "Renews", "lat": 46.9360, "lon": -52.9480 },
+        "end": { "name": "Cappahayden", "lat": 46.8600, "lon": -52.9436 },
+        "jurisdictions": ["Newfoundland and Labrador"],
+        "tags": ["Coastal"],
+        "difficulty": { "rating": 2, "label": "Moderate" },
+        "geometry": {
+          "boundingBox": {
+            "minLat": 46.8600,
+            "maxLat": 46.9360,
+            "minLon": -52.9480,
+            "maxLon": -52.9436
+          },
+          "gpx": null
+        }
+      }
+    ]
+  }

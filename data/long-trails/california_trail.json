@@ -1,0 +1,102 @@
+{
+  "id": "CT",
+  "type": "Trail",
+  "name": "California Trail",
+  "shortName": "CT",
+  "slug": "california-trail",
+  "region": "Western United States",
+  "countryCodes": ["US"],
+  "classification": "National Historic Trail",
+  "continuity": "Continuous",
+  "maintenance_level": "Historic trail (NPS & partners; trail remnants and auto tours)",
+  "stats": {
+    "officialLength": {
+      "mi": 1600,
+      "km": 2600
+    },
+    "elevation": {
+      "highest": {
+        "point": "Carson Pass, CA",
+        "value_ft": 8574,
+        "value_m": 2613,
+        "lat": 38.6939,
+        "lon": -119.9875
+      },
+      "lowest": {
+        "point": "Sacramento, CA",
+        "value_ft": 26,
+        "value_m": 8,
+        "lat": 38.5723,
+        "lon": -121.4701
+      }
+    },
+    "endPoints": {
+      "start": {
+        "name": "Independence, Missouri",
+        "lat": 39.0911,
+        "lon": -94.4155
+      },
+      "end": {
+        "name": "Sutter's Fort (Sacramento, California)",
+        "lat": 38.5723,
+        "lon": -121.4701
+      }
+    }
+  },
+  "map": {
+    "defaultZoom": 5,
+    "defaultCenter": [-110.0, 41.0],
+    "bbox": [-121.5, 38.5, -94.0, 43.0]
+  },
+  "routing": {
+    "mileSystem": "Continuous",
+    "gpx": {
+      "uri": "california_trail.gpx",
+      "format": "GPX",
+      "kind": "route"
+    }
+  },
+  "source": {
+    "officialDesignation": "National Historic Trail (1992)",
+    "managedBy": ["National Park Service", "Bureau of Land Management"],
+    "trailAssociation": "Oregon-California Trails Association (OCTA)"
+  },
+  "sections": [
+    {
+      "name": "Missouri / Kansas",
+      "start": {"name": "Independence, MO", "lat": 39.0911, "lon": -94.4155},
+      "end": {"name": "Fort Kearny, NE", "lat": 40.6500, "lon": -99.0000},
+      "distance": {"mi": 317, "km": 510}
+    },
+    {
+      "name": "Nebraska",
+      "start": {"name": "Fort Kearny, NE", "lat": 40.6500, "lon": -99.0000},
+      "end": {"name": "Fort Laramie, WY", "lat": 42.2092, "lon": -104.5359},
+      "distance": {"mi": 333, "km": 536}
+    },
+    {
+      "name": "Wyoming",
+      "start": {"name": "Fort Laramie, WY", "lat": 42.2092, "lon": -104.5359},
+      "end": {"name": "Fort Bridger, WY", "lat": 41.3178, "lon": -110.3919},
+      "distance": {"mi": 300, "km": 483}
+    },
+    {
+      "name": "Idaho / Utah",
+      "start": {"name": "Fort Bridger, WY", "lat": 41.3178, "lon": -110.3919},
+      "end": {"name": "Wells, NV", "lat": 41.1200, "lon": -114.9672},
+      "distance": {"mi": 300, "km": 483}
+    },
+    {
+      "name": "Nevada",
+      "start": {"name": "Wells, NV", "lat": 41.1200, "lon": -114.9672},
+      "end": {"name": "Carson City area, NV", "lat": 39.1644, "lon": -119.7669},
+      "distance": {"mi": 400, "km": 644}
+    },
+    {
+      "name": "California",
+      "start": {"name": "Carson Pass, CA", "lat": 38.6939, "lon": -119.9875},
+      "end": {"name": "Sutter's Fort, CA", "lat": 38.5723, "lon": -121.4701},
+      "distance": {"mi": 250, "km": 402}
+    }
+  ]
+}

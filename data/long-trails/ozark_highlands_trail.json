@@ -1,0 +1,305 @@
+{
+  "id": "ozark-highlands-trail",
+  "type": "Trail",
+  "slug": "ozark-highlands-trail",
+  "name": "Ozark Highlands Trail",
+  "shortName": "OHT",
+  "region": "Ozark Mountains (Arkansas)",
+  "countryCodes": ["US"],
+  "classification": "National Recreation Trail",
+  "continuity": "Incomplete (continuous from Lake Fort Smith to AR-14, then gap bushwhack to Sylamore):contentReference[oaicite:5]{index=5}",
+  "maintenance_level": "Moderate (volunteer maintained)",
+  "stats": {
+    "distance": { "mi": 253.0, "km": 407.2 },  /* Official route ~253 miles:contentReference[oaicite:6]{index=6} */
+    "elevationHigh": { "value": 2350, "unit": "ft" },  /* Highest point ~2350 ft:contentReference[oaicite:7]{index=7} */
+    "elevationLow":  { "value": 648,  "unit": "ft" },  /* Lowest point ~648 ft (Buffalo River):contentReference[oaicite:8]{index=8} */
+    "start": {
+      "name": "Lake Fort Smith State Park (Western Terminus)",
+      "lat": 35.694624, "lon": -94.118490,
+      "elev": 820  /* ~820 ft, Lake Fort Smith SP (approximate) */
+    },
+    "end": {
+      "name": "Matney Knob Trailhead (Eastern Terminus)",
+      "lat": 36.214230, "lon": -92.308190,
+      "elev": 1200  /* ~1200 ft, Matney Knob TH (approximate) */
+    }
+  },
+  "map": {
+    "center": { "lat": 35.95, "lon": -93.21 },
+    "zoom": 8,
+    "bounds": {
+      "minLat": 35.69, "minLon": -94.12,
+      "maxLat": 36.22, "maxLon": -92.30
+    }
+  },
+  "routing": {
+    "mileSystem": "Mileposts eastbound from Lake Fort Smith (mile 0):contentReference[oaicite:9]{index=9}",
+    "crs": "EPSG:4326 (WGS84 lat/long)",
+    "sectioning": "8 sections in Boston Mountains segment (per OHTA):contentReference[oaicite:10]{index=10}; separate Buffalo River and Sylamore sections",
+    "routeVariants": "One 15-mile wilderness gap (Lower Buffalo) with no built trail:contentReference[oaicite:11]{index=11}; roadwalks around Norfork Lake gaps (trail will eventually connect to Ozark Trail in MO)"
+  },
+  "sources": [
+    {
+      "name": "Ozark Highlands Trail Association",
+      "url": "https://ozarkhighlandstrail.com/trail/",
+      "type": "trail organization"
+    },
+    {
+      "name": "The Trek OHT Trail Profile",
+      "url": "https://thetrek.co/ozark-highlands-trail-profile/",
+      "type": "guide article"
+    }
+  ],
+  "sections": [
+    {
+      "id": "oht-sec-1",
+      "order": 1,
+      "name": "Lake Fort Smith to White Rock Mountain",
+      "slug": "oht-section-1",
+      "distance": { "mi": 17.4, "km": 28.0 },
+      "mileRange": { "start": 0.0, "end": 17.4 },
+      "start": { "name": "Lake Fort Smith SP", "lat": 35.694624, "lon": -94.118490 },
+      "end":   { "name": "White Rock Mountain", "lat": 35.689530, "lon": -93.954470 },
+      "jurisdictions": ["Arkansas"],
+      "tags": ["Boston Mountains", "Ozark National Forest"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/oht/section1.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 35.68, "minLon": -94.12,
+          "maxLat": 35.70, "maxLon": -93.95
+        }
+      }
+    },
+    {
+      "id": "oht-sec-2",
+      "order": 2,
+      "name": "White Rock Mountain to Cherry Bend",
+      "slug": "oht-section-2",
+      "distance": { "mi": 17.9, "km": 28.8 },
+      "mileRange": { "start": 17.4, "end": 35.3 },
+      "start": { "name": "White Rock Mountain", "lat": 35.689530, "lon": -93.954470 },
+      "end":   { "name": "Cherry Bend Trailhead", "lat": 35.743316, "lon": -93.811553 },
+      "jurisdictions": ["Arkansas"],
+      "tags": ["Boston Mountains", "Ozark National Forest"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/oht/section2.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 35.68, "minLon": -93.95,
+          "maxLat": 35.75, "maxLon": -93.81
+        }
+      }
+    },
+    {
+      "id": "oht-sec-3",
+      "order": 3,
+      "name": "Cherry Bend to Lick Branch",
+      "slug": "oht-section-3",
+      "distance": { "mi": 19.8, "km": 31.8 },
+      "mileRange": { "start": 35.3, "end": 55.1 },
+      "start": { "name": "Cherry Bend Trailhead", "lat": 35.743316, "lon": -93.811553 },
+      "end":   { "name": "Lick Branch Trailhead", "lat": 35.710000, "lon": -93.661570 },
+      "jurisdictions": ["Arkansas"],
+      "tags": ["Boston Mountains", "Ozark National Forest"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/oht/section3.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 35.71, "minLon": -93.81,
+          "maxLat": 35.75, "maxLon": -93.66
+        }
+      }
+    },
+    {
+      "id": "oht-sec-4",
+      "order": 4,
+      "name": "Lick Branch to Ozone Campground",
+      "slug": "oht-section-4",
+      "distance": { "mi": 29.6, "km": 47.6 },
+      "mileRange": { "start": 55.1, "end": 84.7 },
+      "start": { "name": "Lick Branch Trailhead", "lat": 35.710000, "lon": -93.661570 },
+      "end":   { "name": "Ozone Campground", "lat": 35.672979, "lon": -93.450776 },
+      "jurisdictions": ["Arkansas"],
+      "tags": ["Boston Mountains", "Ozark National Forest"],
+      "difficulty": { "rating": 4, "label": "Strenuous" },
+      "gpx": {
+        "uri": "https://example.com/oht/section4.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 35.67, "minLon": -93.66,
+          "maxLat": 35.76, "maxLon": -93.45
+        }
+      }
+    },
+    {
+      "id": "oht-sec-5",
+      "order": 5,
+      "name": "Ozone Campground to Big Piney (Fort Douglas)",
+      "slug": "oht-section-5",
+      "distance": { "mi": 19.1, "km": 30.7 },
+      "mileRange": { "start": 84.7, "end": 103.8 },
+      "start": { "name": "Ozone Campground", "lat": 35.672979, "lon": -93.450776 },
+      "end":   { "name": "Big Piney Creek / Fort Douglas", "lat": 35.677945, "lon": -93.238073 },
+      "jurisdictions": ["Arkansas"],
+      "tags": ["Boston Mountains", "Ozark National Forest"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/oht/section5.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 35.67, "minLon": -93.45,
+          "maxLat": 35.78, "maxLon": -93.23
+        }
+      }
+    },
+    {
+      "id": "oht-sec-6",
+      "order": 6,
+      "name": "Big Piney (Fort Douglas) to Fairview Campground",
+      "slug": "oht-section-6",
+      "distance": { "mi": 20.0, "km": 32.2 },
+      "mileRange": { "start": 103.8, "end": 123.8 },
+      "start": { "name": "Big Piney Creek / Fort Douglas", "lat": 35.677945, "lon": -93.238073 },
+      "end":   { "name": "Fairview Campground (Hurricane Creek)", "lat": 35.738750, "lon": -93.093760 },
+      "jurisdictions": ["Arkansas"],
+      "tags": ["Boston Mountains", "Ozark National Forest"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/oht/section6.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 35.67, "minLon": -93.24,
+          "maxLat": 35.74, "maxLon": -93.09
+        }
+      }
+    },
+    {
+      "id": "oht-sec-7",
+      "order": 7,
+      "name": "Fairview Campground to Richland Creek",
+      "slug": "oht-section-7",
+      "distance": { "mi": 19.4, "km": 31.2 },
+      "mileRange": { "start": 123.8, "end": 143.2 },
+      "start": { "name": "Fairview Campground", "lat": 35.738750, "lon": -93.093760 },
+      "end":   { "name": "Richland Creek Campground", "lat": 35.796400, "lon": -92.930300 },
+      "jurisdictions": ["Arkansas"],
+      "tags": ["Boston Mountains", "Ozark National Forest"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/oht/section7.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 35.73, "minLon": -93.10,
+          "maxLat": 35.80, "maxLon": -92.93
+        }
+      }
+    },
+    {
+      "id": "oht-sec-8",
+      "order": 8,
+      "name": "Richland Creek to Woolum (Buffalo River)",
+      "slug": "oht-section-8",
+      "distance": { "mi": 20.8, "km": 33.5 },
+      "mileRange": { "start": 143.2, "end": 164.0 },
+      "start": { "name": "Richland Creek Campground", "lat": 35.796400, "lon": -92.930300 },
+      "end":   { "name": "Woolum Ford (Buffalo River)", "lat": 35.971941, "lon": -92.886213 },
+      "jurisdictions": ["Arkansas"],
+      "tags": ["Boston Mountains", "Buffalo National River"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/oht/section8.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 35.79, "minLon": -92.93,
+          "maxLat": 35.98, "maxLon": -92.88
+        }
+      }
+    },
+    {
+      "id": "oht-sec-9",
+      "order": 9,
+      "name": "Buffalo River: Woolum to AR-14 (Dillard’s Ferry)",
+      "slug": "oht-buffalo-river",
+      "distance": { "mi": 43.0, "km": 69.2 },
+      "mileRange": { "start": 164.0, "end": 207.0 },
+      "start": { "name": "Woolum Ford, Buffalo River", "lat": 35.971941, "lon": -92.886213 },
+      "end":   { "name": "AR-14 at Dillard’s Ferry", "lat": 36.065200, "lon": -92.578300 },
+      "jurisdictions": ["Arkansas"],
+      "tags": ["Buffalo National River"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/oht/buffalo_segment.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 35.96, "minLon": -92.89,
+          "maxLat": 36.07, "maxLon": -92.58
+        }
+      }
+    },
+    {
+      "id": "oht-sec-10",
+      "order": 10,
+      "name": "Sylamore Section: Spring Creek to Matney Knob",
+      "slug": "oht-sylamore",
+      "distance": { "mi": 32.0, "km": 51.5 },
+      "mileRange": { "start": 222.0, "end": 253.0 },
+      "start": { "name": "Spring Creek Trailhead (Sylamore)", "lat": 36.053010, "lon": -92.445010 },
+      "end":   { "name": "Matney Knob Trailhead", "lat": 36.214230, "lon": -92.308190 },
+      "jurisdictions": ["Arkansas"],
+      "tags": ["Ozark National Forest", "Sylamore"],
+      "difficulty": { "rating": 3, "label": "Moderate" },
+      "gpx": {
+        "uri": "https://example.com/oht/sylamore_section.gpx",
+        "format": "GPX",
+        "kind": "track",
+        "metadata": {}
+      },
+      "geometry": {
+        "bounds": {
+          "minLat": 36.05, "minLon": -92.45,
+          "maxLat": 36.22, "maxLon": -92.31
+        }
+      }
+    }
+  ]
+}

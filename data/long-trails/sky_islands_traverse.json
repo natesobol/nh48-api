@@ -1,0 +1,431 @@
+{
+  "id": 101,
+  "slug": "sky-islands-traverse",
+  "name": "Sky Islands Traverse",
+  "shortName": "Sky Islands Traverse",
+  "type": "hiking route",
+  "classification": "unofficial route",
+  "continuity": "continuous",
+  "maintenance_level": "minimal (largely unmaintained)",
+  "region": "Southwestern United States (Arizona)",
+  "countryCodes": ["US"],
+  "stats": {
+    "total_length": {
+      "miles": 520,
+      "kilometers": 837
+    },
+    "highest_elevation": {
+      "location": "Pinaleno Mountains (Mount Graham area)",
+      "feet": 10500,
+      "meters": 3200
+    },
+    "lowest_elevation": {
+      "location": "San Pedro River Valley, AZ",
+      "feet": 3000,
+      "meters": 914
+    },
+    "start_coordinates": {
+      "lat": 31.92194,
+      "lon": -109.96722,
+      "elevation_ft": 5000
+    },
+    "end_coordinates": {
+      "lat": 31.90573,
+      "lon": -109.19916,
+      "elevation_ft": 8001
+    }
+  },
+  "map": {
+    "defaultCenter": [32.4, -110.0],
+    "defaultZoom": 7,
+    "bounds": [[31.7, -111.0], [33.0, -109.0]]
+  },
+  "routing": {
+    "mileSystem": "imperial",
+    "gpxCrsHint": "WGS84",
+    "sectioning": "by major mountain range",
+    "routeVariantPolicy": "single defined route (variations possible, not official)"
+  },
+  "sources": [
+    {
+      "name": "Simblissity (Brett Tucker) - Sky Islands Traverse",
+      "url": "https://www.simblissity.net/skit.shtml"
+    },
+    {
+      "name": "dirtmonger (Freedirtmonger) blog - Sky Islands Traverse overview",
+      "url": "http://www.freedirtmonger.com/2016/04/sky-island-traverse.html"
+    }
+  ],
+  "sections": [
+    {
+      "id": "skit-section-1",
+      "order": 1,
+      "name": "Dragoon Mountains",
+      "slug": "section-1",
+      "distance": {
+        "miles": 40,
+        "kilometers": 64
+      },
+      "mileRange": {
+        "start": 0.0,
+        "end": 40.0
+      },
+      "startPoint": {
+        "name": "Cochise Stronghold (Dragoon Mts, AZ)",
+        "lat": 31.92194,
+        "lon": -109.96722
+      },
+      "endPoint": {
+        "name": "San Pedro River (Fairbank, AZ)",
+        "lat": 31.72200,
+        "lon": -110.18833
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["desert valley", "rock formations", "historical"],
+      "difficulty": {
+        "rating": 6,
+        "label": "Moderate-Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "N/A"
+      },
+      "geometry": {
+        "bounds": [[31.7, -110.3], [31.95, -109.8]]
+      }
+    },
+    {
+      "id": "skit-section-2",
+      "order": 2,
+      "name": "Huachuca Mountains",
+      "slug": "section-2",
+      "distance": {
+        "miles": 60,
+        "kilometers": 97
+      },
+      "mileRange": {
+        "start": 40.0,
+        "end": 100.0
+      },
+      "startPoint": {
+        "name": "San Pedro Valley (Fairbank, AZ)",
+        "lat": 31.72200,
+        "lon": -110.18833
+      },
+      "endPoint": {
+        "name": "Canelo Pass (Canelo Hills, AZ)",
+        "lat": 31.51291,
+        "lon": -110.55819
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["Arizona Trail", "high elevation", "wilderness"],
+      "difficulty": {
+        "rating": 8,
+        "label": "Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "N/A"
+      },
+      "geometry": {
+        "bounds": [[31.5, -110.6], [31.72, -110.18]]
+      }
+    },
+    {
+      "id": "skit-section-3",
+      "order": 3,
+      "name": "Santa Rita Mountains",
+      "slug": "section-3",
+      "distance": {
+        "miles": 50,
+        "kilometers": 80
+      },
+      "mileRange": {
+        "start": 100.0,
+        "end": 150.0
+      },
+      "startPoint": {
+        "name": "Canelo Pass (Santa Cruz County, AZ)",
+        "lat": 31.51291,
+        "lon": -110.55819
+      },
+      "endPoint": {
+        "name": "Colossal Cave area (Rincon Valley, AZ)",
+        "lat": 32.05000,
+        "lon": -110.64100
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["Arizona Trail", "scenic", "National Forest"],
+      "difficulty": {
+        "rating": 7,
+        "label": "Moderate-Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "N/A"
+      },
+      "geometry": {
+        "bounds": [[31.5, -110.7], [32.1, -110.3]]
+      }
+    },
+    {
+      "id": "skit-section-4",
+      "order": 4,
+      "name": "Rincon Mountains",
+      "slug": "section-4",
+      "distance": {
+        "miles": 50,
+        "kilometers": 80
+      },
+      "mileRange": {
+        "start": 150.0,
+        "end": 200.0
+      },
+      "startPoint": {
+        "name": "Colossal Cave / Saguaro NP (Rincon Unit)",
+        "lat": 32.05000,
+        "lon": -110.64100
+      },
+      "endPoint": {
+        "name": "Mount Lemmon (Summerhaven, AZ)",
+        "lat": 32.44750,
+        "lon": -110.78870
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["National Park", "wilderness", "Sky Island"],
+      "difficulty": {
+        "rating": 7,
+        "label": "Moderate-Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "N/A"
+      },
+      "geometry": {
+        "bounds": [[32.1, -110.8], [32.5, -110.5]]
+      }
+    },
+    {
+      "id": "skit-section-5",
+      "order": 5,
+      "name": "Santa Catalina Mountains",
+      "slug": "section-5",
+      "distance": {
+        "miles": 60,
+        "kilometers": 97
+      },
+      "mileRange": {
+        "start": 200.0,
+        "end": 260.0
+      },
+      "startPoint": {
+        "name": "Mount Lemmon (Summerhaven, AZ)",
+        "lat": 32.44750,
+        "lon": -110.78870
+      },
+      "endPoint": {
+        "name": "Redfield Canyon (NW Galiuro foothills)",
+        "lat": 32.55000,
+        "lon": -110.10000
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["Arizona Trail", "wilderness", "off-trail"],
+      "difficulty": {
+        "rating": 9,
+        "label": "Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "N/A"
+      },
+      "geometry": {
+        "bounds": [[32.3, -110.8], [32.6, -110.1]]
+      }
+    },
+    {
+      "id": "skit-section-6",
+      "order": 6,
+      "name": "Galiuro Mountains",
+      "slug": "section-6",
+      "distance": {
+        "miles": 70,
+        "kilometers": 113
+      },
+      "mileRange": {
+        "start": 260.0,
+        "end": 330.0
+      },
+      "startPoint": {
+        "name": "Redfield Canyon junction (Galiuro Mts)",
+        "lat": 32.55000,
+        "lon": -110.10000
+      },
+      "endPoint": {
+        "name": "Klondyke (Aravaipa Valley, AZ)",
+        "lat": 32.83528,
+        "lon": -110.33222
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["wilderness", "remote", "bushwhack"],
+      "difficulty": {
+        "rating": 9,
+        "label": "Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "N/A"
+      },
+      "geometry": {
+        "bounds": [[32.5, -110.6], [32.85, -110.1]]
+      }
+    },
+    {
+      "id": "skit-section-7",
+      "order": 7,
+      "name": "Santa Teresa Mountains",
+      "slug": "section-7",
+      "distance": {
+        "miles": 30,
+        "kilometers": 48
+      },
+      "mileRange": {
+        "start": 330.0,
+        "end": 360.0
+      },
+      "startPoint": {
+        "name": "Klondyke (Graham County, AZ)",
+        "lat": 32.83528,
+        "lon": -110.33222
+      },
+      "endPoint": {
+        "name": "Gila River near Solomon, AZ",
+        "lat": 32.81361,
+        "lon": -109.62583
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["remote", "Grand Enchantment Trail"],
+      "difficulty": {
+        "rating": 8,
+        "label": "Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "N/A"
+      },
+      "geometry": {
+        "bounds": [[32.7, -110.4], [32.9, -109.8]]
+      }
+    },
+    {
+      "id": "skit-section-8",
+      "order": 8,
+      "name": "Pinaleno Mountains (Mt. Graham)",
+      "slug": "section-8",
+      "distance": {
+        "miles": 70,
+        "kilometers": 113
+      },
+      "mileRange": {
+        "start": 360.0,
+        "end": 430.0
+      },
+      "startPoint": {
+        "name": "Solomon (Gila Valley, AZ)",
+        "lat": 32.81361,
+        "lon": -109.62583
+      },
+      "endPoint": {
+        "name": "Apache Pass (Fort Bowie, AZ)",
+        "lat": 32.15670,
+        "lon": -109.45290
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["alpine", "Grand Enchantment Trail", "remote"],
+      "difficulty": {
+        "rating": 9,
+        "label": "Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "N/A"
+      },
+      "geometry": {
+        "bounds": [[32.1, -109.8], [32.8, -109.3]]
+      }
+    },
+    {
+      "id": "skit-section-9",
+      "order": 9,
+      "name": "Dos Cabezas Mountains",
+      "slug": "section-9",
+      "distance": {
+        "miles": 40,
+        "kilometers": 64
+      },
+      "mileRange": {
+        "start": 430.0,
+        "end": 470.0
+      },
+      "startPoint": {
+        "name": "Apache Pass (Fort Bowie NHS, AZ)",
+        "lat": 32.15670,
+        "lon": -109.45290
+      },
+      "endPoint": {
+        "name": "Chiricahua NM (Bonita Canyon, AZ)",
+        "lat": 32.00569,
+        "lon": -109.35672
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["wilderness", "cross-country"],
+      "difficulty": {
+        "rating": 10,
+        "label": "Very Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "N/A"
+      },
+      "geometry": {
+        "bounds": [[32.0, -109.6], [32.2, -109.3]]
+      }
+    },
+    {
+      "id": "skit-section-10",
+      "order": 10,
+      "name": "Chiricahua Mountains",
+      "slug": "section-10",
+      "distance": {
+        "miles": 50,
+        "kilometers": 80
+      },
+      "mileRange": {
+        "start": 470.0,
+        "end": 520.0
+      },
+      "startPoint": {
+        "name": "Chiricahua National Monument, AZ",
+        "lat": 32.00569,
+        "lon": -109.35672
+      },
+      "endPoint": {
+        "name": "Silver Peak Lookout (Portal, AZ)",
+        "lat": 31.90573,
+        "lon": -109.19916
+      },
+      "jurisdictions": ["AZ"],
+      "tags": ["National Monument", "wilderness", "scenic"],
+      "difficulty": {
+        "rating": 9,
+        "label": "Strenuous"
+      },
+      "gpxStatus": {
+        "uri": "",
+        "status": "N/A"
+      },
+      "geometry": {
+        "bounds": [[31.9, -109.4], [32.1, -109.1]]
+      }
+    }
+  ]
+}
