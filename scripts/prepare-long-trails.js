@@ -49,6 +49,26 @@ function slugify(value){
     .trim();
 }
 
+function normalizeSections(input){
+  if(Array.isArray(input)){
+    return input;
+  }
+  if(input && typeof input === 'object'){
+    return Object.entries(input)
+      .sort(([a], [b]) => {
+        const aNum = Number(a);
+        const bNum = Number(b);
+        if(Number.isFinite(aNum) && Number.isFinite(bNum)){
+          return aNum - bNum;
+        }
+        return String(a).localeCompare(String(b));
+      })
+      .map(([, value]) => value)
+      .filter(Boolean);
+  }
+  return [];
+}
+
 function normalizeBounds(input){
   if(!input){
     return null;
@@ -179,7 +199,12 @@ function normalizeSection(section, index, trailSlug){
   ].filter(Boolean));
   const mergedBounds = mergeBounds(bounds, pointBounds);
   const center = sectionCenter({ start, end });
-  const slug = section.slug || slugify(section.name || `${start?.name || 'start'}-${end?.name || 'end'}`) || `${trailSlug}-section-${index + 1}`;
+  const rawSlug = section.slug
+    || section.sectionSlug
+    || section.section_id
+    || section.sectionId
+    || (typeof section.id === 'string' ? section.id : null);
+  const slug = slugify(rawSlug || section.name || `${start?.name || 'start'}-${end?.name || 'end'}`) || `${trailSlug}-section-${index + 1}`;
 
   return {
     ...section,
@@ -215,7 +240,7 @@ function buildIndex(){
     const color = resolveColor(slug, usedColors, index);
     colors[slug] = color;
     const trailEndpoints = normalizeEndpoints({ endpoints: trail.endpoints || trail.stats?.endpoints });
-    const normalizedSections = (trail.sections || []).map((section, sectionIndex) => {
+    const normalizedSections = normalizeSections(trail.sections).map((section, sectionIndex) => {
       return normalizeSection(section, sectionIndex, slug);
     }).sort((a, b) => {
       return (a.order ?? 0) - (b.order ?? 0);

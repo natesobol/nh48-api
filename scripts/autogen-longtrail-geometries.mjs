@@ -17,6 +17,46 @@ function toNumber(value){
   return Number.isFinite(num) ? num : null;
 }
 
+function slugify(value){
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+    .trim();
+}
+
+function normalizeSections(input){
+  if(Array.isArray(input)){
+    return input;
+  }
+  if(input && typeof input === 'object'){
+    return Object.entries(input)
+      .sort(([a], [b]) => {
+        const aNum = Number(a);
+        const bNum = Number(b);
+        if(Number.isFinite(aNum) && Number.isFinite(bNum)){
+          return aNum - bNum;
+        }
+        return String(a).localeCompare(String(b));
+      })
+      .map(([, value]) => value)
+      .filter(Boolean);
+  }
+  return [];
+}
+
+function ensureSectionSlug(section, index, trailSlug){
+  if(section.slug){
+    return section;
+  }
+  const rawSlug = section.sectionSlug
+    || section.section_id
+    || section.sectionId
+    || (typeof section.id === 'string' ? section.id : null);
+  const fallback = slugify(rawSlug || section.name) || `${trailSlug}-section-${index + 1}`;
+  return { ...section, slug: fallback };
+}
+
 function normalizePoint(point){
   if(!point){
     return null;
@@ -99,6 +139,21 @@ function buildShape(section){
   return { points: points.map(point => ({ lat: point.lat, lon: point.lon })), error: null };
 }
 
+function buildCostingOptions(section){
+  const base = section.routing?.costing_options && typeof section.routing.costing_options === 'object'
+    ? section.routing.costing_options
+    : {};
+  return {
+    pedestrian: {
+      use_roads: 0.0,
+      use_highways: 0.0,
+      use_ferry: 0.0,
+      ...base.pedestrian
+    },
+    ...base
+  };
+}
+
 function buildSectionOutput({ trailSlug, sectionSlug, provider, result, status, error, geometryOverride }){
   const generatedAt = new Date().toISOString();
   const geometry = geometryOverride ?? result?.geometry ?? null;
@@ -158,6 +213,7 @@ async function generateSection({ trailSlug, section, outputDir, force }){
 
   const routing = section.routing || {};
   const costing = routing.costing || 'pedestrian';
+  const costingOptions = buildCostingOptions(section);
   const useTraceRoute = routing.useTraceRoute !== false;
   const shapeResult = buildShape(section);
   const sectionGeometry = fallbackGeometryFromSection(section);
@@ -197,7 +253,7 @@ async function generateSection({ trailSlug, section, outputDir, force }){
   try{
     if(useTraceRoute){
       didRequest = true;
-      result = await withRetries(() => traceRoute(shape, { costing }));
+      result = await withRetries(() => traceRoute(shape, { costing, costing_options: costingOptions }));
     }
   }catch(error){
     errorMessage = error.message;
@@ -206,7 +262,7 @@ async function generateSection({ trailSlug, section, outputDir, force }){
   if(!result){
     try{
       didRequest = true;
-      result = await withRetries(() => routeFallback(shape, { costing }));
+      result = await withRetries(() => routeFallback(shape, { costing, costing_options: costingOptions }));
     }catch(error){
       errorMessage = error.message;
     }
@@ -283,7 +339,9 @@ async function generateTrail({ trail, trailFile, options, state }){
     return null;
   }
 
-  const sections = Array.isArray(trail.sections) ? trail.sections : [];
+  const sections = normalizeSections(trail.sections).map((section, index) =>
+    ensureSectionSlug(section, index, trailSlug)
+  );
   const generatedSections = [];
   const sectionsWithSlug = sections.filter(section => section.slug);
   logTrailStart({ trailSlug, sectionCount: sectionsWithSlug.length });
@@ -349,7 +407,9 @@ async function main(){
   }
 
   const totalSections = loadedTrails.reduce((total, { trail }) => {
-    const sections = Array.isArray(trail.sections) ? trail.sections : [];
+    const sections = normalizeSections(trail.sections).map((section, index) =>
+      ensureSectionSlug(section, index, trail.slug || trail.id || '')
+    );
     return total + sections.filter(section => section.slug).length;
   }, 0);
 

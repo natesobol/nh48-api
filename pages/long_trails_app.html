@@ -1102,9 +1102,24 @@
           const response = await fetch(url);
           if(!response.ok) continue;
           const data = await response.json();
+          const trails = Array.isArray(data.trails) ? data.trails : [];
+          const totalSections = trails.reduce((sum, trail) => {
+            if(!Array.isArray(trail.sections)) return sum;
+            return sum + trail.sections.length;
+          }, 0);
+          if(!trails.length || totalSections === 0){
+            console.warn('Loaded trail data missing sections, trying fallback source:', url);
+            trackEvent('long_trails_sections_empty', {
+              source: url,
+              trailCount: trails.length,
+              sectionCount: totalSections
+            });
+            continue;
+          }
           trackEvent('long_trails_data_loaded', {
             source: url,
-            trailCount: Array.isArray(data.trails) ? data.trails.length : 0
+            trailCount: trails.length,
+            sectionCount: totalSections
           });
           return data;
         }catch(error){
@@ -1121,6 +1136,50 @@
       '/data/long-trails/generated'
     ];
 
+    const SECTIONS_FALLBACK_BASE_URLS = [
+      '../data/long-trails',
+      '/data/long-trails'
+    ];
+
+    const getTrailFallbackFiles = (trail) => {
+      const slug = trail.slug || '';
+      if(!slug) return [];
+      const candidates = [slug.replace(/-/g, '_'), slug];
+      if(slug === 'appalachian-trail'){
+        candidates.push('appalachain_trail');
+      }
+      return Array.from(new Set(candidates)).map((name) => `${name}.json`);
+    };
+
+    async function loadTrailFallbackSections(trail){
+      const files = getTrailFallbackFiles(trail);
+      for(const baseUrl of SECTIONS_FALLBACK_BASE_URLS){
+        for(const fileName of files){
+          const url = `${baseUrl}/${fileName}`;
+          try{
+            const response = await fetch(url);
+            if(!response.ok) continue;
+            const data = await response.json();
+            if(Array.isArray(data.sections) && data.sections.length){
+              trackEvent('long_trails_sections_fallback_loaded', {
+                trail: trail.slug,
+                source: url,
+                sectionCount: data.sections.length
+              });
+              return data.sections;
+            }
+          }catch(error){
+            console.warn('Unable to load fallback sections:', error);
+            trackEvent('long_trails_sections_fallback_error', {
+              trail: trail.slug,
+              source: url
+            });
+          }
+        }
+      }
+      return null;
+    }
+
     async function loadGeneratedTrail(trail){
       for(const baseUrl of GENERATED_BASE_URLS){
         const url = `${baseUrl}/${trail.slug}.sections.generated.json`;
@@ -1136,6 +1195,26 @@
         }
       }
       return null;
+    }
+
+    async function hydrateTrailSections(trails){
+      const trailsWithMissingSections = trails.filter((trail) => !Array.isArray(trail.sections) || !trail.sections.length);
+      const updates = trailsWithMissingSections.map(async (trail) => {
+        const fallbackSections = await loadTrailFallbackSections(trail);
+        if(fallbackSections){
+          trail.sections = fallbackSections;
+        }
+      });
+      await Promise.all(updates);
+      const totalSections = trails.reduce((sum, trail) => {
+        if(!Array.isArray(trail.sections)) return sum;
+        return sum + trail.sections.length;
+      }, 0);
+      return {
+        trailCount: trails.length,
+        missingSectionTrails: trailsWithMissingSections.length,
+        sectionCount: totalSections
+      };
     }
 
     async function mergeGeneratedTrails(trails){
@@ -1162,6 +1241,9 @@
       const data = await loadTrails();
       trailData = data.trails || [];
       globalBounds = data.bounds || null;
+
+      const sectionStats = await hydrateTrailSections(trailData);
+      trackEvent('long_trails_sections_checked', sectionStats);
 
       await mergeGeneratedTrails(trailData);
 
