@@ -35,8 +35,9 @@ jobs:
             --exclude=site \
             --exclude=.git \
             --exclude=.github \
-            --exclude=photos \
             --exclude=.venv \
+            --exclude=old \
+            --exclude=scripts \
             -cf - . | tar -xf - -C site
           du -sh site
 
