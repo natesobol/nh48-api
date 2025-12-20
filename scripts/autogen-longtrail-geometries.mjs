@@ -209,8 +209,25 @@ async function generateSection({ trailSlug, section, outputDir, force }){
   return output;
 }
 
-async function generateTrail(trailFile, options){
-  const trail = await readJson(path.join(DATA_DIR, trailFile));
+function buildProgressLabel(state){
+  const percent = state.totalSections > 0
+    ? ((state.processed / state.totalSections) * 100).toFixed(1)
+    : '0.0';
+  const attempted = state.ok + state.failed;
+  const ratio = attempted > 0 ? ((state.ok / attempted) * 100).toFixed(1) : '0.0';
+  return `${percent}% complete | accept ${state.ok} / reject ${state.failed} (${ratio}%)`;
+}
+
+function logSectionStatus({ trailSlug, sectionSlug, status, state }){
+  const label = buildProgressLabel(state);
+  console.log(`[${trailSlug}] ${sectionSlug}: ${status.toUpperCase()} | ${label}`);
+}
+
+function logTrailStart({ trailSlug, sectionCount }){
+  console.log(`\n==> Processing ${trailSlug} (${sectionCount} sections)`);
+}
+
+async function generateTrail({ trail, trailFile, options, state }){
   const trailSlug = trail.slug || trail.id || path.basename(trailFile, '.json');
   if(options.trail && options.trail !== trailSlug){
     return null;
@@ -218,9 +235,12 @@ async function generateTrail(trailFile, options){
 
   const sections = Array.isArray(trail.sections) ? trail.sections : [];
   const generatedSections = [];
+  const sectionsWithSlug = sections.filter(section => section.slug);
+  logTrailStart({ trailSlug, sectionCount: sectionsWithSlug.length });
 
   for(const section of sections){
     if(!section.slug){
+      state.skipped += 1;
       continue;
     }
     const output = await generateSection({
@@ -230,6 +250,18 @@ async function generateTrail(trailFile, options){
       force: options.force
     });
     generatedSections.push(output);
+    state.processed += 1;
+    if(output.status === 'ok'){
+      state.ok += 1;
+    }else{
+      state.failed += 1;
+    }
+    logSectionStatus({
+      trailSlug,
+      sectionSlug: section.slug,
+      status: output.status || 'unknown',
+      state
+    });
   }
 
   const combinedPath = path.join(OUTPUT_DIR, `${trailSlug}.sections.generated.json`);
@@ -256,9 +288,37 @@ async function main(){
   const files = await fs.readdir(DATA_DIR);
   const trails = files.filter(file => file.endsWith('.json'));
 
+  const loadedTrails = [];
   for(const file of trails){
-    await generateTrail(file, options);
+    const trail = await readJson(path.join(DATA_DIR, file));
+    const trailSlug = trail.slug || trail.id || path.basename(file, '.json');
+    if(options.trail && options.trail !== trailSlug){
+      continue;
+    }
+    loadedTrails.push({ trail, trailFile: file });
   }
+
+  const totalSections = loadedTrails.reduce((total, { trail }) => {
+    const sections = Array.isArray(trail.sections) ? trail.sections : [];
+    return total + sections.filter(section => section.slug).length;
+  }, 0);
+
+  const state = {
+    totalSections,
+    processed: 0,
+    ok: 0,
+    failed: 0,
+    skipped: 0
+  };
+
+  console.log(`Starting geometry generation for ${loadedTrails.length} trails (${totalSections} sections).`);
+
+  for(const entry of loadedTrails){
+    await generateTrail({ ...entry, options, state });
+  }
+
+  console.log(`\nDone. ${state.processed}/${state.totalSections} sections processed. Skipped: ${state.skipped}.`);
+  console.log(buildProgressLabel(state));
 }
 
 main().catch(error => {
