@@ -401,18 +401,8 @@
         <div class="filter-group">
           <label class="filter-label" for="trailSelect">Trail</label>
           <select id="trailSelect" class="filter-select"></select>
-        </div>
-        <div class="filter-group">
-          <label class="filter-label" for="minMiles">Min miles</label>
-          <input id="minMiles" class="filter-input" type="number" min="0" step="0.1" placeholder="0" />
-        </div>
-        <div class="filter-group">
-          <label class="filter-label" for="maxMiles">Max miles</label>
-          <input id="maxMiles" class="filter-input" type="number" min="0" step="0.1" placeholder="Any" />
-        </div>
-        <div class="filter-group">
-          <label class="filter-label" for="difficultySelect">Difficulty</label>
-          <select id="difficultySelect" class="filter-select" multiple></select>
+        <link rel="stylesheet" href="../css/long_trails_app.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
         </div>
         <div class="filter-group">
           <label class="filter-label" for="stateSelect">State / jurisdiction</label>
@@ -579,23 +569,13 @@
     function renderMap(trails){
       activeLayers.clearLayers();
       labelLayers.clearLayers();
-      trails.forEach(trail => {
+      // Always plot all start/endpoints for all trails
+      (trailData || []).forEach(trail => {
         const color = trail.color || '#4a9eff';
-        const trailBounds = trail.bounds;
-        const center = boundsCenter(trailBounds);
-        if(center){
-          const labelIcon = L.divIcon({
-            className: 'trail-label',
-            html: `<span>${trail.name}</span>`,
-            iconSize: null
-          });
-          L.marker([center.lat, center.lon], { icon: labelIcon }).addTo(labelLayers);
-        }
-
-        const endpoints = trail.endpoints || (trail.stats && trail.stats.endpoints) || null;
-        if(endpoints){
-          const start = normalizePoint(endpoints.start);
-          const end = normalizePoint(endpoints.end);
+        const endpoints = trail.endpoints || (trail.stats && trail.stats.endpoints);
+        if(endpoints && endpoints.start && endpoints.end){
+          const start = endpoints.start;
+          const end = endpoints.end;
           if(start && start.lat != null && start.lon != null){
             L.circleMarker([start.lat, start.lon], {
               radius: 8,
@@ -603,7 +583,7 @@
               fillColor: color,
               fillOpacity: 1,
               weight: 2
-            }).bindTooltip(`Start: ${endpoints.start?.name || trail.name}`).addTo(activeLayers);
+            }).bindTooltip(`Start: ${start.name || trail.name}`).addTo(activeLayers);
           }
           if(end && end.lat != null && end.lon != null){
             L.circleMarker([end.lat, end.lon], {
@@ -612,9 +592,13 @@
               fillColor: color,
               fillOpacity: 1,
               weight: 2
-            }).bindTooltip(`End: ${endpoints.end?.name || trail.name}`).addTo(activeLayers);
+            }).bindTooltip(`End: ${end.name || trail.name}`).addTo(activeLayers);
           }
         }
+      });
+      // Plot filtered trails' sections as before
+      trails.forEach(trail => {
+        const color = trail.color || '#4a9eff';
         trail.sections.forEach(section => {
           if(section.start && section.start.lat != null && section.start.lon != null){
             L.circleMarker([section.start.lat, section.start.lon], {
@@ -779,8 +763,8 @@
           // Pan to center between start and end points
           const endpoints = trail.endpoints || (trail.stats && trail.stats.endpoints);
           if(endpoints && endpoints.start && endpoints.end){
-            const start = normalizePoint(endpoints.start);
-            const end = normalizePoint(endpoints.end);
+            const start = endpoints.start;
+            const end = endpoints.end;
             if(start && end && start.lat != null && start.lon != null && end.lat != null && end.lon != null){
               const centerLat = (start.lat + end.lat) / 2;
               const centerLon = (start.lon + end.lon) / 2;

@@ -1,0 +1,302 @@
+/* Modern, robust, responsive styles for Long Trails App */
+:root {
+  --bg-primary: #1a1d23;
+  --bg-secondary: #25282f;
+  --bg-tertiary: #2d3039;
+  --border-color: #3d4048;
+  --text-primary: #ffffff;
+  --text-secondary: #d9dde5;
+  --accent: #4a9eff;
+  --page-padding: clamp(16px, 4vw, 48px);
+}
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.page-header {
+  margin: 1.5rem auto 0;
+  padding: 0 var(--page-padding);
+  width: 100%;
+}
+.page-header h1 {
+  margin: 0 0 0.35rem;
+  font-size: 2rem;
+}
+.page-header p {
+  margin: 0.2rem 0;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+#app {
+  width: 100%;
+  margin: 1.5rem auto 2rem;
+  padding: 0 var(--page-padding) 2rem;
+  display: grid;
+  grid-template-columns: minmax(280px, 400px) minmax(0, 1fr);
+  gap: clamp(16px, 2.5vw, 24px);
+  flex: 1 1 auto;
+  min-height: 0;
+  align-items: stretch;
+}
+.sidebar {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  overflow-y: auto;
+  min-height: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+.map-panel {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  min-height: 420px;
+}
+#map {
+  height: 100%;
+  width: 100%;
+  min-height: 360px;
+}
+.filter-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  margin-bottom: 16px;
+}
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.filter-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+.filter-input,
+.filter-select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: #20242b;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+.filter-select[multiple] {
+  min-height: 80px;
+}
+.filter-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.filter-button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: #20242b;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.section-details {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  margin-bottom: 16px;
+}
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.trail-details {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+.trail-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+.trail-summary span {
+  flex: 1;
+}
+.color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.trail-meta {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0 14px 12px;
+}
+.section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 14px 14px;
+}
+.section-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: #20242b;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+.section-item:hover {
+  border-color: var(--accent);
+  background: #242833;
+}
+.section-title {
+  font-weight: 600;
+}
+.section-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.section-actions {
+  margin-top: 6px;
+}
+.section-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.legend {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+.legend h2 {
+  font-size: 1rem;
+  margin: 0 0 8px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+.empty-state {
+  padding: 16px;
+  border-radius: 8px;
+  background: #20242b;
+  border: 1px dashed var(--border-color);
+  color: var(--text-secondary);
+  margin-top: 12px;
+}
+.trail-label {
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.2);
+  white-space: nowrap;
+}
+.trail-label span {
+  display: inline-block;
+  padding-left: 6px;
+}
+.trail-endpoint {
+  font-size: 0.7rem;
+  background: rgba(15, 23, 42, 0.85);
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 6px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  white-space: nowrap;
+}
+@media (max-width: 1100px){
+  #app {
+    grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+  }
+}
+@media (max-width: 900px){
+  #app {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .map-panel {
+    height: 60vh;
+  }
+  .filter-panel {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 700px){
+  .page-header {
+    margin-top: 1rem;
+  }
+  .filter-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .map-panel {
+    min-height: 360px;
+  }
+}
+@media (max-width: 520px){
+  :root {
+    --page-padding: 14px;
+  }
+  .page-header h1 {
+    font-size: 1.6rem;
+  }
+  .sidebar {
+    padding: 12px;
+  }
+  .filter-panel,
+  .section-details,
+  .trail-details {
+    padding: 10px;
+  }
+  .section-item {
+    padding: 10px;
+  }
+  .map-panel {
+    min-height: 320px;
+  }
+}
