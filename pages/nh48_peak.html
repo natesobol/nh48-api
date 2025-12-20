@@ -11,14 +11,14 @@
     <meta id="dynamicOgUrl" property="og:url" content="https://nh48.info/peak.html">
     <meta id="dynamicOgTitle" property="og:title" content="NH48 API – Peak details, routes &amp; photos">
     <meta id="dynamicOgDescription" property="og:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
-    <meta id="dynamicOgImage" property="og:image" content="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48-preview.png">
+    <meta id="dynamicOgImage" property="og:image" content="https://nh48.info/nh48-preview.png">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://nh48.info/peak.html">
     <meta id="dynamicTwitterTitle" name="twitter:title" content="NH48 API – Peak details, routes &amp; photos">
     <meta id="dynamicTwitterDescription" name="twitter:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
-    <meta id="dynamicTwitterImage" name="twitter:image" content="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48-preview.png">
+    <meta id="dynamicTwitterImage" name="twitter:image" content="https://nh48.info/nh48-preview.png">
     <script id="peakJsonLd" type="application/ld+json"></script>
     
     <title id="dynamicTitle">NH48 API – Peak details, routes &amp; photos</title>
@@ -624,7 +624,26 @@
       }
 
       const BASE_CANONICAL = 'https://nh48.info/pages/nh48_peak.html';
-      const DEFAULT_OG_IMAGE = 'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48API_logo.png';
+      const DEFAULT_OG_IMAGE = 'https://nh48.info/nh48API_logo.png';
+      const PHOTO_BASE_URL = 'https://nh48-photos.17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com';
+      const PHOTO_PATH_PREFIX = '/nh48-photos/';
+
+      function normalizePhotoUrl(url){
+        if(!url) return url;
+        if(url.startsWith(PHOTO_BASE_URL)) return url;
+        const isJsdelivrPhoto = url.includes('cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/');
+        const isGithubRawPhoto = url.includes('raw.githubusercontent.com/natesobol/nh48-api/main/photos/');
+        const isR2PathStyle = url.includes('r2.cloudflarestorage.com/nh48-photos/');
+        if(isR2PathStyle){
+          const [, tail] = url.split(PHOTO_PATH_PREFIX);
+          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+        }
+        if(isJsdelivrPhoto || isGithubRawPhoto){
+          const [, tail] = url.split('/photos/');
+          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+        }
+        return url;
+      }
 
       function setMeta(name, content){
         let el = document.querySelector(`meta[name="${name}"]`);
@@ -634,6 +653,15 @@
           document.head.appendChild(el);
         }
         el.setAttribute('content', content);
+      }
+
+      function updatePeakTitle(name){
+        const peakTitle = document.getElementById('peakTitle');
+        if(!peakTitle) return;
+        peakTitle.textContent = name;
+        if(peakTitle.hasAttribute('data-i18n')){
+          peakTitle.removeAttribute('data-i18n');
+        }
       }
 
       function parseCoordinates(coordStr){
@@ -1441,13 +1469,6 @@
       /* INIT ----------------------------------------------------------------- */
       async function init(){
         const slug = new URLSearchParams(window.location.search).get('slug');
-        const peakTitle = document.getElementById('peakTitle');
-        
-        if (!peakTitle) {
-          console.error('Peak title element not found');
-          return;
-        }
-        
         if(!slug){
           trackEvent('peak_missing_slug');
           window.location.replace('/not-found.html');
@@ -1465,7 +1486,7 @@
           }
 
           const name = p.peakName || p['Peak Name'] || p.name || p['Name'] || p.peak || p['Peak'] || p['PeakName'] || slug;
-          peakTitle.textContent = name;
+          updatePeakTitle(name);
           currentPeak = p;
           currentSlug = slug;
 
@@ -1487,11 +1508,13 @@
           if(Array.isArray(p.photos) && p.photos.length > 0){
             p.photos.forEach(item => {
               if(typeof item === 'string'){
-                imgs.push(item);
-                meta.push({ url: item });
+                const normalizedUrl = normalizePhotoUrl(item);
+                imgs.push(normalizedUrl);
+                meta.push({ url: normalizedUrl });
               }else if(item && item.url){
-                imgs.push(item.url);
-                meta.push(item);
+                const normalizedUrl = normalizePhotoUrl(item.url);
+                imgs.push(normalizedUrl);
+                meta.push({ ...item, url: normalizedUrl });
               }
             });
           }
@@ -1520,10 +1543,7 @@
         }catch(err){
           console.error('Error loading peak data:', err);
           trackEvent('peak_load_failed', { slug, message: err.message });
-          const peakTitle = document.getElementById('peakTitle');
-          if (peakTitle) {
-            peakTitle.textContent = t('peak.errorLoading');
-          }
+          updatePeakTitle(t('peak.errorLoading'));
         }
       }
 
@@ -1534,6 +1554,7 @@
           syncUnitsWithLanguage(lang);
           if (!currentPeak) return;
           const name = currentPeak.peakName || currentPeak['Peak Name'] || currentSlug;
+          updatePeakTitle(name);
           updateHeadMeta(currentPeak, currentSlug, name);
           buildGeneralInfo(currentPeak);
           const routes = currentPeak['Standard Routes'] || [];

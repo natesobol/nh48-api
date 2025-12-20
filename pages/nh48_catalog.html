@@ -11,14 +11,14 @@
     <meta property="og:url" content="https://nh48.info/catalog.html">
     <meta property="og:title" content="NH48 Peak Catalog – Data &amp; photos for New Hampshire’s 4000-footers">
     <meta property="og:description" content="Browse the NH48 Peak Catalog with elevation, prominence, range, difficulty and photo thumbnails for all 48 four-thousand-foot peaks in New Hampshire. Search, filter and sort using this open dataset. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
-    <meta property="og:image" content="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48-preview.png">
+    <meta property="og:image" content="https://nh48.info/nh48-preview.png">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://nh48.info/catalog.html">
     <meta name="twitter:title" content="NH48 Peak Catalog – Data &amp; photos for New Hampshire's 4000-footers">
     <meta name="twitter:description" content="Browse the NH48 Peak Catalog with elevation, prominence, range, difficulty and photo thumbnails for all 48 four-thousand-foot peaks in New Hampshire. Search, filter and sort using this open dataset. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
-    <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/nh48-preview.png">
+    <meta name="twitter:image" content="https://nh48.info/nh48-preview.png">
     
     <title>NH48 Peak Catalog – Data &amp; photos for New Hampshire’s 4000-footers</title>
     <link rel="icon" type="image/png" href="../nh48API_logo.png">
@@ -166,6 +166,8 @@
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
+      const PHOTO_BASE_URL = 'https://nh48-photos.17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com';
+      const PHOTO_PATH_PREFIX = '/nh48-photos/';
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
 
@@ -183,6 +185,23 @@
         return 'data:image/svg+xml;utf8,' + encodeURIComponent(
           `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">${t('common.noImage')}</text></svg>`
         );
+      }
+
+      function normalizePhotoUrl(url){
+        if(!url) return url;
+        if(url.startsWith(PHOTO_BASE_URL)) return url;
+        const isJsdelivrPhoto = url.includes('cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/');
+        const isGithubRawPhoto = url.includes('raw.githubusercontent.com/natesobol/nh48-api/main/photos/');
+        const isR2PathStyle = url.includes('r2.cloudflarestorage.com/nh48-photos/');
+        if(isR2PathStyle){
+          const [, tail] = url.split(PHOTO_PATH_PREFIX);
+          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+        }
+        if(isJsdelivrPhoto || isGithubRawPhoto){
+          const [, tail] = url.split('/photos/');
+          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+        }
+        return url;
       }
 
       // Pagination
@@ -400,9 +419,9 @@
           const first = p.photos[0];
           thumbAlt = buildPhotoAlt(p, first);
           if (typeof first === 'string') {
-            thumbSrc = first;
+            thumbSrc = normalizePhotoUrl(first);
           } else if (first && first.url) {
-            thumbSrc = first.url;
+            thumbSrc = normalizePhotoUrl(first.url);
           }
         }
 
