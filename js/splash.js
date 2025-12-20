@@ -1,6 +1,9 @@
 const SPLASH_ICON_PATH = "/UI-Elements/";
 const MAX_SPLASH_ICONS = 40;
-const SPLASH_LIFETIME_MS = 6000;
+const SPLASH_MIN_DURATION_S = 10;
+const SPLASH_MAX_DURATION_S = 20;
+const SPLASH_MIN_SIZE_MULTIPLIER = 1;
+const SPLASH_MAX_SIZE_MULTIPLIER = 4;
 const SPLASH_ICON_EXCLUSIONS = [
   "og-cover.png",
   "nh48-preview.png",
@@ -129,23 +132,24 @@ const initSplash = async () => {
     imgEl.className = "splash-icon";
     imgEl.alt = "";
     imgEl.setAttribute("aria-hidden", "true");
-    const size = 24 + Math.random() * 32;
+    const baseSize = 24 + Math.random() * 32;
+    const sizeMultiplier =
+      SPLASH_MIN_SIZE_MULTIPLIER +
+      Math.random() * (SPLASH_MAX_SIZE_MULTIPLIER - SPLASH_MIN_SIZE_MULTIPLIER);
+    const size = baseSize * sizeMultiplier;
     const x = Math.random() * viewportW;
     const y = Math.random() * viewportH;
     imgEl.style.width = `${size}px`;
     imgEl.style.left = `${x}px`;
     imgEl.style.top = `${y}px`;
+    const duration =
+      SPLASH_MIN_DURATION_S +
+      Math.random() * (SPLASH_MAX_DURATION_S - SPLASH_MIN_DURATION_S);
+    const delay = Math.random() * SPLASH_MAX_DURATION_S;
+    imgEl.style.animationDuration = `${duration}s`;
+    imgEl.style.animationDelay = `-${delay}s`;
     container.appendChild(imgEl);
-
-    const delay = Math.random() * 3;
-    imgEl.style.transition = `opacity 1s ease ${delay}s, transform 5s linear ${delay}s`;
-    imgEl.style.opacity = "1";
-    imgEl.style.transform = `translateY(-20px) rotate(${Math.random() * 360}deg)`;
   });
-
-  setTimeout(() => {
-    container.style.display = "none";
-  }, SPLASH_LIFETIME_MS);
 };
 
 window.addEventListener("load", initSplash);
