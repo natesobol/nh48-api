@@ -93,10 +93,10 @@ function buildShape(section){
   const end = normalizePoint(section.end);
   const vias = Array.isArray(section.routing?.vias) ? section.routing.vias.map(normalizePoint).filter(Boolean) : [];
   const points = [start, ...vias, end].filter(Boolean);
-  if(points.length < 2){
-    throw new Error('Section is missing start/end coordinates.');
+  if(points.length < 2 || !start || !end){
+    return { points: null, error: 'Section is missing start/end coordinates.' };
   }
-  return points.map(point => ({ lat: point.lat, lon: point.lon }));
+  return { points: points.map(point => ({ lat: point.lat, lon: point.lon })), error: null };
 }
 
 function buildSectionOutput({ trailSlug, sectionSlug, provider, result, status, error }){
@@ -124,20 +124,37 @@ function buildSectionOutput({ trailSlug, sectionSlug, provider, result, status, 
 async function generateSection({ trailSlug, section, outputDir, force }){
   const sectionSlug = section.slug;
   const outputPath = path.join(outputDir, trailSlug, `${sectionSlug}.json`);
+  let existingOutput = null;
 
-  if(!force){
-    try{
-      const existing = await readJson(outputPath);
-      return existing;
-    }catch(error){
-      // Continue to generate if the file does not exist or is unreadable.
+  try{
+    existingOutput = await readJson(outputPath);
+    if(!force){
+      return existingOutput;
     }
+  }catch(error){
+    // Continue to generate if the file does not exist or is unreadable.
   }
 
   const routing = section.routing || {};
   const costing = routing.costing || 'pedestrian';
   const useTraceRoute = routing.useTraceRoute !== false;
-  const shape = buildShape(section);
+  const shapeResult = buildShape(section);
+  if(!shapeResult.points){
+    if(existingOutput){
+      return existingOutput;
+    }
+    const output = buildSectionOutput({
+      trailSlug,
+      sectionSlug,
+      provider: 'valhalla',
+      result: null,
+      status: 'failed',
+      error: shapeResult.error
+    });
+    await writeJson(outputPath, output);
+    return output;
+  }
+  const shape = shapeResult.points;
   let result = null;
   let errorMessage = null;
   let didRequest = false;
@@ -177,6 +194,9 @@ async function generateSection({ trailSlug, section, outputDir, force }){
     return output;
   }
 
+  if(existingOutput){
+    return existingOutput;
+  }
   const output = buildSectionOutput({
     trailSlug,
     sectionSlug,
