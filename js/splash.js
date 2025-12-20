@@ -1,6 +1,18 @@
-const SPLASH_ICON_PATH = "/UI-Elements/splash-icons/";
+const SPLASH_ICON_PATH = "/UI-Elements/";
 const MAX_SPLASH_ICONS = 40;
 const SPLASH_LIFETIME_MS = 6000;
+const SPLASH_ICON_EXCLUSIONS = [
+  "og-cover.png",
+  "nh48-preview.png",
+  "nh48API_logo.png",
+  "WMNF_Trails_API_logo.png",
+  "nh48API_logo.png",
+  "nh48API_logo.svg",
+  "nh48API_logo.webp",
+  "nh48API_logo.jpeg",
+  "nh48API_logo.jpg",
+  "logo.png"
+];
 
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -20,7 +32,7 @@ const parseIconListFromHtml = (htmlText) => {
 };
 
 const buildJsdelivrApiUrl = () =>
-  "https://data.jsdelivr.com/v1/package/gh/natesobol/nh48-api@main?path=/UI-Elements/splash-icons";
+  "https://data.jsdelivr.com/v1/package/gh/natesobol/nh48-api@main?path=/UI-Elements";
 
 const loadSplashIcons = async () => {
   try {
@@ -62,6 +74,7 @@ const loadSplashIcons = async () => {
       .map((entry) => entry.name)
       .filter((path) => typeof path === "string")
       .filter((path) => path.toLowerCase().endsWith(".png"))
+      .filter((path) => !SPLASH_ICON_EXCLUSIONS.includes(path))
       .map((path) => `${SPLASH_ICON_PATH}${path}`);
   } catch (error) {
     console.warn("Splash icons unavailable.", error);
