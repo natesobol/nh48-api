@@ -19,27 +19,50 @@ const parseIconListFromHtml = (htmlText) => {
   return Array.from(new Set(icons));
 };
 
+const buildGithubApiUrl = () =>
+  "https://api.github.com/repos/natesobol/nh48-api/contents/UI-Elements/splash-icons";
+
 const loadSplashIcons = async () => {
   try {
-    const response = await fetch(SPLASH_ICON_PATH, { cache: "no-store" });
+    const isLocalhost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+    if (isLocalhost) {
+      const response = await fetch(SPLASH_ICON_PATH, { cache: "no-store" });
+      if (!response.ok) {
+        return [];
+      }
+      const contentType = response.headers.get("content-type") || "";
+      const text = await response.text();
+      if (contentType.includes("text/html")) {
+        return parseIconListFromHtml(text);
+      }
+      if (contentType.includes("application/json")) {
+        const payload = JSON.parse(text);
+        if (Array.isArray(payload)) {
+          return payload
+            .filter((entry) => typeof entry === "string")
+            .map((entry) =>
+              new URL(entry, `${window.location.origin}${SPLASH_ICON_PATH}`)
+            )
+            .map((url) => url.pathname);
+        }
+      }
+      return parseIconListFromHtml(text);
+    }
+
+    const response = await fetch(buildGithubApiUrl(), { cache: "no-store" });
     if (!response.ok) {
       return [];
     }
-    const contentType = response.headers.get("content-type") || "";
-    const text = await response.text();
-    if (contentType.includes("text/html")) {
-      return parseIconListFromHtml(text);
+    const payload = await response.json();
+    if (!Array.isArray(payload)) {
+      return [];
     }
-    if (contentType.includes("application/json")) {
-      const payload = JSON.parse(text);
-      if (Array.isArray(payload)) {
-        return payload
-          .filter((entry) => typeof entry === "string")
-          .map((entry) => new URL(entry, `${window.location.origin}${SPLASH_ICON_PATH}`))
-          .map((url) => url.pathname);
-      }
-    }
-    return parseIconListFromHtml(text);
+    return payload
+      .filter((entry) => entry && entry.type === "file")
+      .map((entry) => entry.path)
+      .filter((path) => typeof path === "string")
+      .filter((path) => path.toLowerCase().endsWith(".png"))
+      .map((path) => `/${path}`);
   } catch (error) {
     console.warn("Splash icons unavailable.", error);
     return [];
