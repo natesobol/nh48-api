@@ -5,8 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="landing.title">NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails</title>
   <meta name="description" data-i18n="landing.metaDescription" data-i18n-attr="content" content="NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Explore the catalog, routes, and White Mountain trails.">
+  <meta name="keywords" content="NH48, New Hampshire 48, White Mountains, hiking trails, peak data, trail data, long trails, four-thousand-foot peaks, outdoor adventure, hiking catalog">
+  <meta name="author" content="Nathan Sobol">
+  <meta name="creator" content="Nathan Sobol">
+  <meta name="publisher" content="NH48 API">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="application-name" content="NH48 API">
+  <meta name="theme-color" content="#0a0a0a">
   <link rel="icon" type="image/png" href="nh48API_logo.png">
   <link rel="canonical" href="https://nh48.info/">
+  <link rel="alternate" type="application/json" title="NH48 UI Elements Alt Text" href="https://nh48.info/UI-Elements/alt-text.json">
   <link rel="alternate" hreflang="en" href="https://nh48.info/">
   <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
   <link rel="alternate" hreflang="fr" href="https://nh48.info/i18n/fr.html">
@@ -14,11 +23,24 @@
   <link rel="alternate" hreflang="zh" href="https://nh48.info/i18n/zh.html">
   <link rel="alternate" hreflang="ja" href="https://nh48.info/i18n/ja.html">
   <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NH48 API">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="es_ES">
+  <meta property="og:locale:alternate" content="fr_FR">
+  <meta property="og:locale:alternate" content="de_DE">
+  <meta property="og:locale:alternate" content="zh_CN">
+  <meta property="og:locale:alternate" content="ja_JP">
   <meta property="og:title" data-i18n="landing.ogTitle" data-i18n-attr="content" content="NH48 API – Open Trails and Peaks Data">
   <meta property="og:description" data-i18n="landing.ogDescription" data-i18n-attr="content" content="Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains.">
   <meta property="og:image" content="https://nh48.info/UI-Elements/og-cover.png">
+  <meta property="og:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
   <meta property="og:url" content="https://nh48.info/">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="NH48 API – Open Trails and Peaks Data">
+  <meta name="twitter:description" content="Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains.">
+  <meta name="twitter:image" content="https://nh48.info/UI-Elements/og-cover.png">
+  <meta name="twitter:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -27,6 +49,7 @@
           "@type": "Organization",
           "@id": "https://nh48.info/#org",
           "name": "NH48 API",
+          "description": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks and White Mountain trails.",
           "url": "https://nh48.info",
           "logo": "https://nh48.info/UI-Elements/logo.png"
         },
@@ -35,11 +58,26 @@
           "@id": "https://nh48.info/#website",
           "url": "https://nh48.info",
           "name": "NH48 API",
+          "description": "Open data and trail resources for New Hampshire’s White Mountains and long-distance routes.",
           "publisher": { "@id": "https://nh48.info/#org" },
           "potentialAction": {
             "@type": "SearchAction",
             "target": "https://nh48.info/search?q={search_term_string}",
             "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://nh48.info/#homepage",
+          "url": "https://nh48.info/",
+          "name": "NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails",
+          "description": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on the dataset.",
+          "inLanguage": "en",
+          "isPartOf": { "@id": "https://nh48.info/#website" },
+          "primaryImageOfPage": {
+            "@type": "ImageObject",
+            "url": "https://nh48.info/UI-Elements/og-cover.png",
+            "description": "NH48 API cover illustration highlighting New Hampshire’s White Mountains"
           }
         }
       ]
