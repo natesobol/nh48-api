@@ -150,17 +150,24 @@
       content: '';
     }
 
-    .trail-summary span:not(.color-dot) {
-      flex: 1 1 0;
-      min-width: 0;
-    }
-
     .color-dot {
       width: 12px;
       height: 12px;
       border-radius: 50%;
       display: inline-block;
       flex: 0 0 12px;
+    }
+
+    .trail-name {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .trail-count {
+      flex: 0 0 auto;
+      color: var(--text-secondary);
+      font-weight: 500;
+      white-space: nowrap;
     }
 
     .trail-meta {
@@ -577,7 +584,7 @@
           return item;
         }
         if(item && typeof item === 'object'){
-          return item.name || item.code || item.id || null;
+          return item.name || item.code || item.abbrev || item.id || null;
         }
         return null;
       }).filter(Boolean);
@@ -720,7 +727,11 @@
 
         const summary = document.createElement('summary');
         summary.className = 'trail-summary';
-        summary.innerHTML = `<span class="color-dot" style="background:${trail.color}"></span><span>${trail.name}</span><span>${trail.sections.length} sections</span>`;
+        summary.innerHTML = `
+          <span class="color-dot" style="background:${trail.color}"></span>
+          <span class="trail-name">${trail.name}</span>
+          <span class="trail-count">${trail.sections.length} sections</span>
+        `;
         summary.addEventListener('click', () => {
           // Pan to center between start and end points
           const endpoints = trail.endpoints || (trail.stats && trail.stats.endpoints);
