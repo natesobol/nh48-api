@@ -2,11 +2,1947 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0; url=/pages/long_trails_app.html">
-  <script>window.location.replace('/pages/long_trails_app.html');</script>
-  <title>Long-Distance Trails</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>White Mountain Trails – NH48</title>
+  <meta name="description" content="Browse trails in the White Mountain National Forest by distance, elevation gain, difficulty and more. Interactive maps, route descriptions and GPX downloads. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
+  <link rel="canonical" href="https://nh48.info/trails">
+  <script src="../js/i18n.js"></script>
+
+  <script id="trailsJsonLd" type="application/ld+json"></script>
+  <script>
+    const TRAILS_JSONLD_SCRIPT_ID = 'trailsJsonLd';
+    const TRAIL_LIST_PAGE = 'https://nh48.info/trails?trail=';
+    const TRAIL_ITEMLIST_LIMIT = 300;
+    const TRAIL_DATA_URLS = [
+      '../data/trails_with_osm.json',
+      '/data/trails_with_osm.json',
+      'https://cdn.jsdelivr.net/gh/natesobol/WMNF-Trails-API@main/trails_with_osm.json',
+      'https://raw.githubusercontent.com/natesobol/WMNF-Trails-API/main/trails_with_osm.json'
+    ];
+
+    function normalizeTrailNameForJsonLd(name){
+      return String(name || '').trim();
+    }
+
+    function buildTrailItemList(names){
+      const itemListElement = names.slice(0, TRAIL_ITEMLIST_LIMIT).map((name, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: `${TRAIL_LIST_PAGE}${encodeURIComponent(name)}`,
+        name
+      }));
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'White Mountain National Forest Trails',
+        itemListElement
+      };
+    }
+
+    async function loadTrailItemList(){
+      for(const url of TRAIL_DATA_URLS){
+        try{
+          const response = await fetch(url);
+          if(!response.ok) continue;
+          const data = await response.json();
+          const names = data
+            .map(record => normalizeTrailNameForJsonLd(record.trail_name || record.name))
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b));
+          if(names.length === 0) continue;
+          const scriptEl = document.getElementById(TRAILS_JSONLD_SCRIPT_ID);
+          if(scriptEl){
+            scriptEl.textContent = JSON.stringify(buildTrailItemList(names));
+          }
+          return;
+        }catch(err){
+          console.warn('Unable to load trail list data for JSON-LD:', err);
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadTrailItemList);
+  </script>
+
+<!--
+  WMNF Trail Explorer
+
+  This HTML document builds a simple, responsive web application that allows users to browse
+  hiking trails in New Hampshire's White Mountain National Forest (WMNF).  It displays a
+  searchable, sortable list of trails alongside an interactive Leaflet map.  When a user
+  selects a trail from the list, the map pans/zooms to the trail and highlights it.  The
+  layout adapts gracefully between desktop and mobile screen sizes using CSS flexbox and
+  media queries.
+
+  For Wix embedding: This version uses GitHub's raw content URL to load the GeoJSON file.
+  No DOCTYPE or full HTML structure is needed for Wix embeds. The Leaflet libraries are
+  loaded via CDN. This works across all deployment contexts (GitHub Pages, Wix, etc).
+-->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  crossorigin=""
+/>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Dark theme color palette */
+    :root {
+      --bg-primary: #1a1d23;
+      --bg-secondary: #25282f;
+      --bg-tertiary: #2d3039;
+      --border-color: #3d4048;
+      --text-primary: #ffffff;
+      --text-secondary: #ffffff;
+      --accent-blue: #4a9eff;
+      --accent-blue-dark: #2d7dd8;
+      --accent-red: #ff6b6b;
+      --success-green: #51cf66;
+      --hover-bg: #33373f;
+
+      /* Dark green used for primary action buttons (Export/Import) */
+      --button-green: #2f855a;
+      --button-green-dark: #276749;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .page-header {
+      max-width: 1100px;
+      margin: 1rem auto;
+      padding: 0 16px;
+    }
+
+    .page-header h1 {
+      margin: 0 0 0.35rem;
+      font-size: 1.8rem;
+    }
+
+    .page-header p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .page-header .page-subtitle {
+      margin: 0.35rem 0 0;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #d6f5df;
+    }
+    .nh48-lang {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .nh48-lang-label {
+      font-size: 0.75rem;
+      color: #d6f5df;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-right: 4px;
+    }
+    .nh48-flag {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    .nh48-flag .flag {
+      font-size: 18px;
+      line-height: 1;
+    }
+    .nh48-flag.active {
+      border-color: var(--success-green);
+      box-shadow: 0 0 0 2px rgba(81, 207, 102, 0.25);
+    }
+    .nh48-flag:focus-visible {
+      outline: 2px solid var(--success-green);
+      outline-offset: 2px;
+    }
+
+    /* Root container for the app */
+    #app {
+      /* Layout as a grid to support a draggable divider between the top and list panels */
+      --top-height: 55vh;
+      display: grid;
+      grid-template-rows: var(--top-height) 10px 1fr;
+      height: calc(100vh + 2000px);
+      gap: 0;
+      max-width: 1100px;
+      margin: 0 auto 1rem;
+      /* Pure white border around the entire application similar to peakbagger */
+      border: 1px solid #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    }
+
+    /* Top section holds the sidebar and the map side by side */
+    #topSection {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      min-height: 320px;
+      align-items: stretch;
+    }
+
+    /* Draggable divider between the map panel and the trail list */
+    #panelResizer {
+      height: 10px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.25) 25%,
+        rgba(255, 255, 255, 0.35) 50%,
+        rgba(255, 255, 255, 0.25) 75%,
+        transparent 100%
+      );
+      cursor: row-resize;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      user-select: none;
+      touch-action: none;
+    }
+
+    /* Adjust the sidebar dimensions; allow vertical scrolling for long content */
+    /* Map occupies the left side of the top section */
+    /* Container wrapping the map. Provides padding and its own border to avoid
+       the map touching other edges. */
+    #mapContainer {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+
+    /* Map itself fills its container */
+    #map {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background-color: #2d2d2d;
+      border-radius: 6px;
+    }
+
+    /* Bottom container holds the trail list and the info/settings panel */
+    #bottomSection {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 280px;
+    }
+
+    /* List section below the map; spans most of the width */
+    #listSection {
+      width: 100%;
+      /* Allow the list section to grow and fill the remaining height */
+      flex: 2;
+      height: 100%;
+      min-height: 280px;
+      /* Light grey panel similar to WMNF trails app */
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 1.5rem;
+      overflow-y: auto;
+    }
+
+    .about-panel {
+      flex: 1;
+      min-width: 300px;
+      max-width: 420px;
+      margin: 0;
+      overflow-y: auto;
+    }
+
+    /* Sidebar (settings) styles defined above.  Old definitions removed to avoid conflicts. */
+
+    /* Header section with title */
+    .sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--bg-primary);
+    }
+
+    .sidebar-header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sidebar-header p {
+      margin: 0.5rem 0 0 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Controls container */
+    .controls {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      background-color: var(--bg-secondary);
+    }
+
+    .controls input[type="text"],
+    .controls select {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      transition: all 0.2s ease;
+    }
+
+    .controls input[type="text"]::placeholder {
+      color: var(--text-secondary);
+    }
+
+    /* Wrapper for the letter navigation bar and its label */
+    .letter-nav-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.5rem 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .jump-label {
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      user-select: none;
+    }
+    .letter-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.15rem;
+    }
+    .letter-nav span {
+      cursor: pointer;
+      color: var(--text-primary);
+      font-size: 0.75rem;
+      margin: 0.15rem 0.2rem;
+      padding: 0.25rem 0.4rem;
+      border-radius: 4px;
+      flex: none;
+      user-select: none;
+    }
+    .letter-nav span:hover {
+      background-color: var(--hover-bg);
+      color: var(--accent-blue);
+    }
+
+    /* List header styling */
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 1rem;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .header-name {
+      flex: 1;
+    }
+    .header-completed {
+      flex: 0;
+      margin-left: 0.5rem;
+    }
+
+    .controls input[type="text"]:focus,
+    .controls select:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      background-color: var(--bg-tertiary);
+      box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+    }
+
+    .controls select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23a0a3a8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      padding-right: 2.5rem;
+    }
+
+    /* Trail list container */
+    .trail-list-container {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .trail-info-panel {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+      min-width: 280px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .trail-info-panel h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      text-align: center;
+    }
+
+    .trail-info-panel p {
+      margin: 0.15rem 0 0.6rem;
+      color: var(--text-secondary);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .trail-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.65rem;
+    }
+
+    @media (max-width: 720px) {
+      .trail-info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .trail-info-item {
+      padding: 0.75rem;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .trail-info-item span {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .trail-info-item strong {
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      word-break: break-word;
+    }
+
+    .trail-info-empty {
+      text-align: center;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .peakbagger-panel .cta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .peakbagger-panel a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.6rem 1rem;
+      background: linear-gradient(135deg, var(--button-green) 0%, var(--button-green-dark) 100%);
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    .peakbagger-panel a:hover {
+      filter: brightness(1.05);
+    }
+
+    @media (max-width: 900px) {
+      .info-panels {
+        flex-direction: column;
+      }
+    }
+
+    .trail-list-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .trail-list-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .trail-list-container::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    .trail-list-container::-webkit-scrollbar-thumb:hover {
+      background: var(--text-secondary);
+    }
+
+    /* Trail list styles */
+    #trailList {
+      list-style: none;
+      padding: 0.5rem;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    #trailList li {
+      padding: 1rem;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      user-select: none;
+    }
+
+    #trailList li:hover {
+      background-color: var(--hover-bg);
+      border-color: var(--accent-blue);
+      transform: translateX(4px);
+    }
+
+    #trailList li.active {
+      background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-dark) 100%);
+      border-color: var(--accent-blue);
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(74, 158, 255, 0.25);
+      color: white;
+    }
+
+    /* Empty state message */
+    .empty-state {
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    /* Loading state message */
+    .loading-state {
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .loading-state p {
+      margin: 0;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    /* Map container */
+    #map {
+      flex: 1;
+      background-color: #2d2d2d;
+    }
+
+    /* Leaflet customization */
+    .leaflet-control-container {
+      font-family: inherit;
+    }
+
+    .leaflet-control {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .leaflet-control-zoom-in,
+    .leaflet-control-zoom-out {
+      color: var(--text-primary);
+      background-color: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .leaflet-control-zoom-in:hover,
+    .leaflet-control-zoom-out:hover {
+      background-color: var(--hover-bg);
+      color: var(--accent-blue);
+    }
+
+    @media (max-width: 900px) {
+      #topSection {
+        flex-direction: column;
+      }
+
+      #mapContainer {
+        margin: 0;
+      }
+
+      .trail-info-panel {
+        margin: 0;
+        width: 100%;
+      }
+
+      #bottomSection {
+        flex-direction: column;
+      }
+
+      .about-panel {
+        max-width: 100%;
+      }
+    }
+
+    .leaflet-popup-content-wrapper {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .leaflet-popup-content {
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .leaflet-popup-tip {
+      background-color: var(--bg-secondary);
+      border-color: var(--border-color);
+    }
+
+    /* Information panel at the top of the sidebar.  This panel provides
+       instructions about using the site and buttons for exporting/importing
+       completion status.  It borrows styling cues from peakbagger: dark
+       background, rounded borders, and subtle borders. */
+    .info-panel {
+      margin: 0;
+      padding: 1rem;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    .info-panel strong {
+      color: var(--accent-blue);
+    }
+    .export-import {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .export-import button,
+    .export-import label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.4rem 0.75rem;
+      background-color: var(--button-green);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      text-decoration: none;
+    }
+    .export-import button:hover,
+    .export-import label:hover {
+      background-color: var(--button-green-dark);
+    }
+    /* Hide file input element */
+    .export-import input[type="file"] {
+      display: none;
+    }
+
+    /* Style for the link to view the GitHub API repository */
+    .view-api-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.4rem 0.75rem;
+      background-color: var(--button-green);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+    }
+    .view-api-link:hover {
+      background-color: var(--button-green-dark);
+    }
+
+    /* Trail list styling adjustments for completed status */
+    #trailList li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .status-circle {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--border-color);
+      margin-left: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .status-circle.completed {
+      background-color: var(--success-green);
+      border-color: var(--success-green);
+    }
+
+    /* Allow the trail name span to grow, pushing controls to the right */
+    .trail-name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Date display and input styling */
+    .date-container {
+      margin-left: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    .date-container .date-icon {
+      font-size: 1rem;
+      margin-left: 0.25rem;
+    }
+    .date-input {
+      display: none;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      color: var(--text-primary);
+      padding: 0.2rem;
+      margin-left: 0.25rem;
+      font-size: 0.85rem;
+    }
+    /* invert calendar picker icon colors in date input */
+    .date-input::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+
+    /* Styling for collapsible instructions */
+    details summary {
+      color: var(--text-primary);
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+    details summary::-webkit-details-marker {
+      color: var(--accent-blue);
+    }
+    details summary::marker {
+      color: var(--accent-blue);
+    }
+    details p {
+      margin: 0.5rem 0 0;
+    }
+
+    /* Button for launching virtual hike page */
+    .hike-btn {
+      width: 24px;
+      height: 24px;
+      margin-left: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--button-green); /* reuse existing button color */
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .hike-btn:hover {
+      background-color: var(--button-green-dark);
+    }
+</style>
 </head>
-<body>
-  <p>Redirecting to Long-Distance Trails...</p>
+
+<body data-page="trails">
+  <div id="nav-placeholder"></div>
+  <script>
+    // Load shared navigation
+    const navPlaceholder = document.getElementById('nav-placeholder');
+    fetch('../pages/nav.html')
+      .then(response => response.text())
+      .then(html => {
+        navPlaceholder.innerHTML = html;
+        const activeRoute = document.body.dataset.page;
+        const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
+        if (activeLink) {
+          activeLink.classList.add('active');
+        }
+      })
+      .catch(err => console.error('Failed to load navigation:', err));
+  </script>
+  <header class="page-header">
+    <h1 data-i18n="trails.title">🏔️ WMNF Trails API Map Tool</h1>
+    <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
+    <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
+    <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
+      <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
+      <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
+        <span class="flag flag-en" aria-hidden="true">🇺🇸</span>
+      </button>
+      <button class="nh48-flag" data-lang="es" aria-label="Español" title="Español">
+        <span class="flag flag-es" aria-hidden="true">🇪🇸</span>
+      </button>
+      <button class="nh48-flag" data-lang="fr" aria-label="Français" title="Français">
+        <span class="flag flag-fr" aria-hidden="true">🇫🇷</span>
+      </button>
+      <button class="nh48-flag" data-lang="de" aria-label="Deutsch" title="Deutsch">
+        <span class="flag flag-de" aria-hidden="true">🇩🇪</span>
+      </button>
+      <button class="nh48-flag" data-lang="zh" aria-label="中文" title="中文">
+        <span class="flag flag-zh" aria-hidden="true">🇨🇳</span>
+      </button>
+      <button class="nh48-flag" data-lang="ja" aria-label="日本語" title="日本語">
+        <span class="flag flag-ja" aria-hidden="true">🇯🇵</span>
+      </button>
+    </div>
+  </header>
+  <div id="app">
+    <!-- Top section containing the map and trail details -->
+    <div id="topSection">
+      <!-- Map container wrapped in its own panel to provide padding and border -->
+      <div id="mapContainer">
+        <div id="map"></div>
+      </div>
+      <div id="trailInfoPanel" class="trail-info-panel">
+        <h2 data-i18n="trails.details.title">Trail details</h2>
+        <p data-i18n="trails.details.empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
+      </div>
+    </div>
+    <div id="panelResizer" role="separator" data-i18n="trails.resizePanels" data-i18n-attr="aria-label" aria-label="Resize panels"></div>
+    <!-- List section below the map, spanning full width -->
+    <div id="bottomSection">
+      <div id="listSection">
+        <!-- Search and sort controls -->
+        <div class="controls">
+          <!-- Search input with autocomplete support using datalist -->
+          <input type="text" id="searchInput" data-i18n="trails.search" data-i18n-attr="placeholder" placeholder="Search trails…" list="trailSuggestions" autocomplete="off" />
+          <!-- Datalist providing autocomplete suggestions for trail names sans suffixes -->
+        <datalist id="trailSuggestions"></datalist>
+        <select id="sortSelect">
+          <option value="az" data-i18n="trails.sort.az">Sort A → Z</option>
+          <option value="za" data-i18n="trails.sort.za">Sort Z → A</option>
+        </select>
+      </div>
+      <!-- A‑Z letter navigation bar with label -->
+      <div class="letter-nav-wrapper">
+        <span class="jump-label" data-i18n="trails.jumpTo">Jump To:</span>
+        <div id="letterNav" class="letter-nav"></div>
+      </div>
+      <!-- Header row for the trail list -->
+      <div class="list-header">
+        <span class="header-name" data-i18n="trails.list.headerName">Trail Name</span>
+        <span class="header-completed" data-i18n="trails.list.headerCompleted">Completed</span>
+      </div>
+      <!-- Trail list container -->
+      <div class="trail-list-container">
+        <ul id="trailList"></ul>
+        <div id="loadingState" class="loading-state" style="display: none;">
+          <p data-i18n="trails.loading">Loading trails...</p>
+        </div>
+      </div>
+    </div>
+      <div class="info-panel about-panel">
+        <details open>
+          <summary data-i18n="trails.about.title">About this list</summary>
+          <p data-i18n="trails.about.body">NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths.</p>
+        </details>
+        <details open>
+          <summary data-i18n="trails.disclaimer.title">Disclaimer</summary>
+          <p data-i18n-html="trails.disclaimer.body">This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry.</p>
+        </details>
+        <details open>
+          <summary data-i18n="trails.howto.title">How to use</summary>
+          <p data-i18n="trails.howto.body">Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below.</p>
+        </details>
+        <!-- Settings collapsible section for additional options -->
+        <details>
+          <summary data-i18n="trails.settings.title">Settings</summary>
+          <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="checkbox" id="hideCompleted" style="accent-color: var(--button-green);">
+              <span data-i18n="trails.settings.hideCompleted">Hide completed trails</span>
+            </label>
+            <button id="clearProgress" type="button" style="padding: 0.4rem 0.75rem; background-color: var(--button-green); color: white; border: none; border-radius: 5px; font-size: 0.8rem; cursor: pointer; width: fit-content;" data-i18n="trails.settings.clearProgress">Clear all progress</button>
+          </div>
+        </details>
+        <div class="export-import">
+          <button id="exportBtn" type="button" data-i18n="trails.export">Export CSV</button>
+          <label for="importFile" class="import-label">
+            <span data-i18n="trails.import">Import</span>
+            <input type="file" id="importFile" accept=".csv,.xlsx,.json" />
+          </label>
+        </div>
+        <!-- Link to view the GitHub API repository -->
+        <div class="api-link-container" style="margin-top: 0.75rem;">
+          <a href="https://github.com/natesobol/WMNF-Trails-API/tree/main" target="_blank" rel="noopener noreferrer" class="view-api-link">
+            <!-- GitHub logo SVG -->
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" style="fill: currentColor; margin-right: 0.4rem;">
+              <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.62 7.62 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+            <span data-i18n="trails.viewApi">View API</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Include Leaflet JS library.  Leaflet provides map rendering and helper
+       functions for working with GeoJSON.  The integrity hash ensures the
+       downloaded script hasn't been tampered with. -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    crossorigin=""
+  ></script>
+  <!-- Include SheetJS library for XLSX import/export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    (async function() {
+      const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
+
+      const trackEvent = (name, params = {}) => {
+        const analytics = window.NH48_INFO_ANALYTICS;
+        if (analytics && analytics.logEvent && analytics.analytics) {
+          analytics.logEvent(analytics.analytics, name, {
+            page: location.pathname,
+            ...params
+          });
+        }
+      };
+
+      // Set an improved center and zoom over the White Mountain National Forest.
+      // These coordinates zoom closer to the core of the WMNF while showing most trails.
+      const defaultCenter = [44.15, -71.5];
+      const defaultZoom = 9;
+
+      // Create the map.  The `L.map` function takes the id of the map container.
+      const map = L.map('map').setView(defaultCenter, defaultZoom);
+
+      // Use a detailed topographic map tile layer (OpenTopoMap) which includes contour lines
+      // and hiking paths.  Attribution is required to credit data sources.
+      const baseLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution:
+          t('trails.map.attribution'),
+        maxZoom: 17
+      }).addTo(map);
+
+      map.on('zoomend', () => {
+        trackEvent('trails_map_zoom', { zoom: map.getZoom() });
+      });
+      map.on('moveend', () => {
+        const center = map.getCenter();
+        trackEvent('trails_map_move', { lat: center.lat, lng: center.lng });
+      });
+
+      // Allow the user to resize the split between the map/top content and the list below.
+      const appContainer = document.getElementById('app');
+      const panelResizer = document.getElementById('panelResizer');
+      const minimumTopHeight = 260;
+      const minimumListHeight = 240;
+
+      function setPanelHeight(clientY) {
+        if (!appContainer) return;
+        const rect = appContainer.getBoundingClientRect();
+        const rawHeight = clientY - rect.top;
+        const maxTop = rect.height - minimumListHeight;
+        const clampedHeight = Math.min(Math.max(rawHeight, minimumTopHeight), maxTop);
+        appContainer.style.setProperty('--top-height', `${clampedHeight}px`);
+        requestAnimationFrame(() => map.invalidateSize());
+      }
+
+      if (panelResizer) {
+        panelResizer.addEventListener('pointerdown', event => {
+          event.preventDefault();
+          trackEvent('trails_panel_resize_start');
+          const handleMove = moveEvent => setPanelHeight(moveEvent.clientY);
+          const handleUp = () => {
+            window.removeEventListener('pointermove', handleMove);
+            window.removeEventListener('pointerup', handleUp);
+            trackEvent('trails_panel_resize_end');
+          };
+          window.addEventListener('pointermove', handleMove);
+          window.addEventListener('pointerup', handleUp);
+        });
+      }
+
+      // Containers for the trail data.  `trailLayers` maps trail names to their
+      // Leaflet layer and feature information.  `trailNames` holds just the names
+      // for easy sorting and filtering.  `completedTrails` tracks user‑marked
+      // completion status for each trail, persisted in localStorage.
+      const trailLayers = {};
+      const trailNames = [];
+      const completionKey = 'wmnfTrailCompletion';
+      let completedTrails = {};
+      // A‑Z navigation helpers
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+      let letterPositions = {};
+      // Create the letter navigation bar elements once
+      const letterNavContainer = document.getElementById('letterNav');
+      letters.forEach(letter => {
+        const span = document.createElement('span');
+        span.textContent = letter;
+        span.setAttribute('data-letter', letter);
+        span.addEventListener('click', function(e) {
+          const targetLetter = this.getAttribute('data-letter');
+          trackEvent('trails_letter_nav_click', { letter: targetLetter });
+          const idx = letterPositions[targetLetter];
+          if (idx != null && idx !== undefined && idx >= 0) {
+            const li = document.querySelectorAll('#trailList li')[idx];
+            if (li) {
+              li.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }
+        });
+        letterNavContainer.appendChild(span);
+      });
+      // Retrieve success (completed) color from CSS variables.  Fallback to
+      // a hardcoded green if not found.
+      const successColor = getComputedStyle(document.documentElement).getPropertyValue('--success-green').trim() || '#51cf66';
+
+      // Track whether completed trails should be hidden in the list. This is toggled
+      // via the settings panel checkbox. Defaults to false (show all).
+      let hideCompleted = false;
+
+      // Trail info lookup and UI state for the details panel beneath the map.
+      const trailInfoPanel = document.getElementById('trailInfoPanel');
+      let trailInfoLookup = new Map();
+      let trailInfoLoaded = false;
+      let currentTrailSelection = null;
+
+      // Normalize trail names for matching (case-insensitive, trimmed, collapses spaces).
+      function normalizeTrailName(name) {
+        return (name || '')
+          .toString()
+          .trim()
+          .replace(/\s+/g, ' ')
+          .toLowerCase();
+      }
+
+      function matchTrailName(query, names) {
+        if (!query) return null;
+        const normalizedQuery = normalizeTrailName(query);
+        const strippedQuery = normalizedQuery.replace(/\btrail\b/g, '').trim();
+        return names.find(name => normalizeTrailName(name) === normalizedQuery)
+          || names.find(name => normalizeTrailName(name) === strippedQuery)
+          || names.find(name => normalizeTrailName(name).replace(/\btrail\b/g, '').trim() === strippedQuery);
+      }
+
+      // Register a record in the lookup map using a few common name variants.
+      function registerTrailRecord(record) {
+        if (!record || !record.trail_name) return;
+        const base = normalizeTrailName(record.trail_name);
+        const variants = new Set([base]);
+        const stripped = base.replace(/\btrail\b/gi, '').trim();
+        if (stripped) {
+          variants.add(stripped);
+          variants.add(`${stripped} trail`);
+        }
+        variants.forEach(key => {
+          if (key && !trailInfoLookup.has(key)) {
+            trailInfoLookup.set(key, record);
+          }
+        });
+      }
+
+      // Fetch supplemental trail info (distance, elevation, OSM properties).
+      async function loadTrailInfoData() {
+        const urls = [
+          '../data/trails_with_osm.json',
+          '/data/trails_with_osm.json',
+          'https://cdn.jsdelivr.net/gh/natesobol/WMNF-Trails-API@main/trails_with_osm.json',
+          'https://raw.githubusercontent.com/natesobol/WMNF-Trails-API/main/trails_with_osm.json',
+          'https://unpkg.com/natesobol/WMNF-Trails-API@main/trails_with_osm.json'
+        ];
+
+        for (const url of urls) {
+          try {
+            const response = await fetch(url, { cache: 'no-cache' });
+            if (response.ok) {
+              const records = await response.json();
+              if (Array.isArray(records)) {
+                records.forEach(registerTrailRecord);
+                trailInfoLoaded = true;
+                trackEvent('trails_info_loaded', { source: url, count: records.length });
+                break;
+              }
+            }
+          } catch (err) {
+            console.warn(`Failed to load trail info from ${url}:`, err.message);
+            trackEvent('trails_info_fetch_error', { source: url });
+          }
+        }
+
+        if (!trailInfoLoaded) {
+          trailInfoLoaded = true;
+          console.warn('Trail info data could not be loaded; showing fallback messaging.');
+          trackEvent('trails_info_load_failed');
+        }
+
+        if (currentTrailSelection) {
+          renderTrailInfo(currentTrailSelection);
+        }
+      }
+
+      function formatFeet(value) {
+        return value == null ? '—' : `${value.toLocaleString()} ft`;
+      }
+
+      function formatDistance(value) {
+        if (value == null) return '—';
+        const rounded = Math.round(value * 100) / 100;
+        return `${rounded} miles`;
+      }
+
+      function renderTrailInfo(name) {
+        if (!trailInfoPanel) return;
+        currentTrailSelection = name || null;
+
+        if (!name) {
+          trailInfoPanel.innerHTML = `
+            <h2>${t('trails.details.title')}</h2>
+            <p class="trail-info-empty">${t('trails.details.empty')}</p>
+          `;
+          return;
+        }
+
+        const record = trailInfoLookup.get(normalizeTrailName(name));
+        if (!record) {
+          const message = trailInfoLoaded
+            ? t('trails.info.noProperties')
+            : t('trails.info.loadingProperties');
+          trailInfoPanel.innerHTML = `
+            <h2>${name}</h2>
+            <p class="trail-info-empty">${message}</p>
+          `;
+          return;
+        }
+
+        const props = record.osm_properties || {};
+        const allowedUses = Array.isArray(props.allowed_uses)
+          ? props.allowed_uses.join(', ')
+          : (props.allowed_uses ?? '—');
+
+        const fields = [
+          { label: t('trails.info.distance'), value: formatDistance(record.distance_miles) },
+          { label: t('trails.info.elevationGain'), value: formatFeet(props.elevation_gain_ft) },
+          { label: t('trails.info.minElevation'), value: formatFeet(props.min_elevation_ft) },
+          { label: t('trails.info.maxElevation'), value: formatFeet(props.max_elevation_ft) },
+          { label: t('trails.info.surface'), value: props.surface ?? '—' },
+          { label: t('trails.info.trailType'), value: props.trail_type ?? '—' },
+          { label: t('trails.info.difficulty'), value: props.difficulty ?? '—' },
+          { label: t('trails.info.visibility'), value: props.trail_visibility ?? '—' },
+          { label: t('trails.info.width'), value: props.width ?? '—' },
+          { label: t('trails.info.allowedUses'), value: allowedUses },
+          { label: t('trails.info.season'), value: props.season ?? '—' },
+          { label: t('trails.info.maintainer'), value: props.maintainer ?? '—' },
+          { label: t('trails.info.source'), value: props.source ?? '—' }
+        ];
+
+        const items = fields.map(field => `
+          <div class="trail-info-item">
+            <span>${field.label}</span>
+            <strong>${field.value}</strong>
+          </div>
+        `).join('');
+
+        trailInfoPanel.innerHTML = `
+          <h2>${record.trail_name || name}</h2>
+          <p>${t('trails.info.sourceNote')}</p>
+          <div class="trail-info-grid">${items}</div>
+        `;
+      }
+
+      /**
+       * Load completion data from localStorage.  If no data exists, an empty
+       * object is used.  Parsing errors are silently ignored.
+       */
+      function loadCompletion() {
+        try {
+          const stored = localStorage.getItem(completionKey);
+          const parsed = stored ? JSON.parse(stored) : {};
+          // If the old format used a boolean for completed trails, convert to object
+          Object.keys(parsed).forEach(key => {
+            const val = parsed[key];
+            if (typeof val === 'boolean') {
+              parsed[key] = { completed: val, date: '' };
+            } else if (val && typeof val === 'object') {
+              // Ensure both properties exist
+              parsed[key] = {
+                completed: !!val.completed,
+                date: val.date || ''
+              };
+            } else {
+              // Unknown format, treat as incomplete
+              parsed[key] = { completed: false, date: '' };
+            }
+          });
+          completedTrails = parsed;
+        } catch (e) {
+          completedTrails = {};
+        }
+      }
+
+      /**
+       * Persist completion data back to localStorage.  Always stringify the
+       * object to ensure consistent storage.
+       */
+      function saveCompletion() {
+        try {
+          localStorage.setItem(completionKey, JSON.stringify(completedTrails));
+        } catch (e) {
+          console.warn('Failed to save completion state:', e);
+        }
+      }
+
+      /**
+       * Toggle completion status for a given trail.  After toggling, persist
+       * the change and reapply styles to both the map and list.
+       *
+       * @param {string} name The trail name
+       */
+      function toggleCompletion(name) {
+        // Ensure entry exists
+        if (!completedTrails[name]) {
+          completedTrails[name] = { completed: false, date: '' };
+        }
+        const currentStatus = completedTrails[name].completed;
+        completedTrails[name].completed = !currentStatus;
+        // When marking incomplete, clear the date
+        if (!completedTrails[name].completed) {
+          completedTrails[name].date = '';
+        }
+        saveCompletion();
+        applyCompletionStyles();
+        renderTrailList();
+      }
+
+      /**
+       * Apply completion styles to all trail layers.  Completed trails are
+       * colored green, while incomplete trails retain the default blue.
+       */
+      function applyCompletionStyles() {
+        Object.entries(trailLayers).forEach(([name, info]) => {
+          const status = completedTrails[name];
+          const completed = status && status.completed;
+          const color = completed ? successColor : '#3388ff';
+          const weight = completed ? 5 : 3;
+          info.layer.setStyle({ color: color, weight: weight });
+        });
+      }
+
+      /**
+       * Apply a visibility filter based on the current search results.  This
+       * function hides trails not present in the filtered list by setting
+       * their opacity to zero while preserving their original colors and
+       * weights.  Visible trails remain at full opacity.
+       *
+       * @param {string[]} filteredNames The list of trail names that should be visible
+       */
+      function applyFilterStyles(filteredNames) {
+        Object.entries(trailLayers).forEach(([name, info]) => {
+          const status = completedTrails[name];
+          const completed = status && status.completed;
+          const isVisible = filteredNames.includes(name);
+          // Determine color and weight as in applyCompletionStyles
+          const color = completed ? successColor : '#3388ff';
+          const weight = completed ? 5 : 3;
+          const opacity = isVisible ? 1 : 0;
+          info.layer.setStyle({ color: color, weight: weight, opacity: opacity });
+        });
+      }
+
+      /**
+       * Export progress as a CSV file.  Each row contains the trail name and
+       * whether it is completed (true/false).
+       */
+      function exportCSV() {
+        const headers = [
+          t('trails.csv.headerTrail'),
+          t('trails.csv.headerCompleted'),
+          t('trails.csv.headerDate')
+        ];
+        let csv = `${headers.join(',')}\n`;
+        trailNames.forEach(name => {
+          const status = completedTrails[name] || { completed: false, date: '' };
+          const completed = status.completed ? 'true' : 'false';
+          const date = status.date || '';
+          // Escape double quotes in names
+          const safeName = name.replace(/"/g, '""');
+          csv += `"${safeName}",${completed},${date}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = t('trails.csv.filename');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      /**
+       * Parse CSV text and update completion data accordingly.  Assumes
+       * first row contains headers and subsequent rows contain name and
+       * completed flag.  Ignores unknown trails.
+       *
+       * @param {string} text Raw CSV content
+       */
+      function parseCSV(text) {
+        const lines = text.split(/\r?\n/).filter(l => l.trim());
+        const imported = {};
+        lines.slice(1).forEach(line => {
+          const parts = line.split(',');
+          if (parts.length >= 2) {
+            const name = parts[0].replace(/^"|"$/g, '').replace(/""/g, '"').trim();
+            const val = (parts[1] || '').trim().toLowerCase();
+            const date = (parts[2] || '').trim();
+            imported[name] = {
+              completed: val === 'true' || val === '1' || val === 'yes',
+              date: date
+            };
+          }
+        });
+        completedTrails = imported;
+        saveCompletion();
+        applyCompletionStyles();
+        renderTrailList();
+        trackEvent('trails_import_complete', { count: Object.keys(imported).length, source: 'csv' });
+      }
+
+      /**
+       * Parse rows from an XLSX worksheet and update completion data.
+       * Accepts an array of arrays where the first row is a header.
+       *
+       * @param {Array<Array<any>>} rows Parsed rows from sheetjs
+       */
+      function parseRows(rows) {
+        const imported = {};
+        rows.slice(1).forEach(row => {
+          const name = row[0];
+          const val = String(row[1] || '').toLowerCase();
+          const date = row.length >= 3 ? String(row[2] || '').trim() : '';
+          imported[name] = {
+            completed: val === 'true' || val === '1' || val === 'yes',
+            date: date
+          };
+        });
+        completedTrails = imported;
+        saveCompletion();
+        applyCompletionStyles();
+        renderTrailList();
+        trackEvent('trails_import_complete', { count: Object.keys(imported).length, source: 'xlsx' });
+      }
+
+      // Hook up export button click
+      document.getElementById('exportBtn').addEventListener('click', () => {
+        trackEvent('trails_export_csv');
+        exportCSV();
+      });
+      // Hook up import file change
+      document.getElementById('importFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        trackEvent('trails_import_start', { extension: file.name.split('.').pop().toLowerCase() });
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (ext === 'csv') {
+          const reader = new FileReader();
+          reader.onload = function(ev) {
+            parseCSV(ev.target.result);
+          };
+          reader.readAsText(file);
+        } else if (ext === 'xlsx' || ext === 'xls') {
+          const reader = new FileReader();
+          reader.onload = function(ev) {
+            const data = new Uint8Array(ev.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            parseRows(rows);
+          };
+          reader.readAsArrayBuffer(file);
+        }
+        // reset input to allow re-import of same file
+        this.value = '';
+      });
+
+      /**
+       * Fetch the GeoJSON file from the server.  For Wix embedding, we use multiple
+       * fallback strategies to ensure the file loads reliably:
+       * 1. Try GitHub raw content with no-cache headers
+       * 2. Try jsdelivr CDN (faster, more reliable)
+       * 3. Try unpkg CDN as backup
+       */
+      async function loadGeoJSON() {
+        const urls = [
+          'https://cdn.jsdelivr.net/gh/natesobol/WMNF-Trails-API@main/merged_trails.geojson',
+          'https://raw.githubusercontent.com/natesobol/WMNF-Trails-API/main/merged_trails.geojson',
+          'https://unpkg.com/natesobol/WMNF-Trails-API@main/merged_trails.geojson'
+        ];
+
+        for (const url of urls) {
+          try {
+            console.log(`Attempting to fetch from: ${url}`);
+            const response = await fetch(url, {
+              method: 'GET',
+              headers: {
+                'Accept': 'application/json',
+              },
+              cache: 'no-cache'
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              console.log(`Successfully loaded GeoJSON from ${url}`);
+              trackEvent('trails_geojson_loaded', { source: url, featureCount: data.features ? data.features.length : 0 });
+              return data;
+            }
+          } catch (err) {
+            console.warn(`Failed to load from ${url}:`, err.message);
+            trackEvent('trails_geojson_fetch_error', { source: url });
+            continue;
+          }
+        }
+
+        // If all URLs fail, show helpful error message
+        console.error('Failed to load GeoJSON from all sources');
+        trackEvent('trails_geojson_load_failed');
+        alert(t('trails.alertLoadFail'));
+        return null;
+      }
+
+      // Helper function to highlight a single trail layer.  Resets all others
+      // back to the default style before applying a highlighted style to the
+      // selected trail.
+      function highlightLayer(targetLayer) {
+        // Reset all trails to their completion or default color
+        applyCompletionStyles();
+        // Highlight the selected trail in red
+        targetLayer.setStyle({ color: '#e74c3c', weight: 5 });
+      }
+
+      /**
+       * Populate the datalist for autocomplete suggestions.  Creates a set of
+       * simplified trail names with common suffix words removed (e.g., "Trail",
+       * "Loop", "Cutoff", etc.) and inserts them as options into the datalist.
+       */
+      function populateSuggestions() {
+        const suffixes = ['trail','loop','cutoff','road','path','connector','summit','route'];
+        const suggestions = new Set();
+        trailNames.forEach(name => {
+          // Remove trailing suffix words
+          let parts = name.split(' ');
+          while (parts.length > 1 && suffixes.includes(parts[parts.length - 1].toLowerCase())) {
+            parts.pop();
+          }
+          const suggestion = parts.join(' ');
+          suggestions.add(suggestion);
+        });
+        const datalist = document.getElementById('trailSuggestions');
+        if (!datalist) return;
+        datalist.innerHTML = '';
+        suggestions.forEach(s => {
+          const option = document.createElement('option');
+          option.value = s;
+          datalist.appendChild(option);
+        });
+      }
+
+      /**
+       * Populate the map with GeoJSON features.  Each feature becomes a
+       * clickable polyline on the map.  When clicked, the trail is highlighted
+       * and the map view zooms to its bounds.  The trail name is used
+       * as a key in the `trailLayers` object for quick lookup later.
+       *
+       * @param {Object} geoData The GeoJSON FeatureCollection to display
+       */
+      function addTrailsToMap(geoData) {
+        const geoLayer = L.geoJSON(geoData, {
+          style: function(feature) {
+            // Default line styling.  You can change the color or weight here.
+            return { color: '#3388ff', weight: 3 };
+          },
+          onEachFeature: function(feature, layer) {
+            const name = feature.properties && feature.properties.name
+              ? feature.properties.name
+              : t('trails.unnamedTrail');
+            // Store reference to this layer and its original feature
+            trailLayers[name] = { layer: layer, feature: feature };
+            trailNames.push(name);
+            // Bind a popup showing the trail name.  When the line is clicked
+            // the popup appears.  You can add more content here (length, notes, etc.).
+            layer.bindPopup(`<strong>${name}</strong>`);
+            // Handle click on the map line.  Highlight and zoom.
+            layer.on('click', function() {
+              highlightLayer(layer);
+              map.fitBounds(layer.getBounds(), { maxZoom: 14, animate: true });
+              layer.openPopup();
+              renderTrailInfo(name);
+              trackEvent('trails_map_trail_click', { trail: name });
+            });
+          }
+        }).addTo(map);
+        // After adding all features, apply completion styles to set initial colors
+        applyCompletionStyles();
+      }
+
+      /**
+       * Render the list of trails in the sidebar.  The list is filtered by
+       * the search input and sorted according to the dropdown.  Each item
+       * becomes clickable; clicking will highlight and pan to the trail.
+       */
+      function renderTrailList() {
+        const listElement  = document.getElementById('trailList');
+        const container    = listElement.parentElement;
+        const searchQuery  = document.getElementById('searchInput').value.trim().toLowerCase();
+        const sortOrder    = document.getElementById('sortSelect').value;
+
+        // 1. Filter names by search query and hide‑completed flag.
+        let names = trailNames.filter(name => filterBySearch(name, searchQuery));
+        if (hideCompleted) {
+          names = names.filter(name => !isTrailCompleted(name));
+        }
+
+        // 2. Sort names alphabetically (ascending by default, descending if 'za').
+        names.sort((a, b) => (sortOrder === 'za' ? b.localeCompare(a) : a.localeCompare(b)));
+
+        // 3. Clear any previous empty‑state messages and existing list items.
+        container.querySelectorAll('.empty-state').forEach(el => el.remove());
+        listElement.innerHTML = '';
+
+        // 4. If no names match, show an appropriate empty message and return early.
+        if (names.length === 0) {
+          showEmptyState(container, searchQuery);
+          return;
+        }
+
+        // 5. Populate list items for each trail.
+        names.forEach(name => {
+          const li = createTrailListItem(name);
+          listElement.appendChild(li);
+        });
+
+        // 6. Update A‑Z navigation positions and apply map filter styles.
+        updateLetterPositions(names);
+        applyFilterStyles(names);
+      }
+
+      /**
+       * Return true if a trail name matches the search query.  It checks both the
+       * full name and a simplified version with common suffixes removed.
+       */
+      function filterBySearch(name, query) {
+        if (!query) return true;
+        const nameLower = name.toLowerCase();
+        const simple    = nameLower
+          .replace(/\b(trail|loop|cutoff|road|path|connector|summit|route)\b/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+        return nameLower.includes(query) || simple.includes(query);
+      }
+
+      /** Returns true if a trail is marked as completed in the global state. */
+      function isTrailCompleted(name) {
+        const status = completedTrails[name];
+        return status && status.completed;
+      }
+
+      /** Show a message when the filtered list is empty. */
+      function showEmptyState(container, query) {
+        const emptyMsg    = document.createElement('div');
+        emptyMsg.className = 'empty-state';
+        emptyMsg.textContent = query
+          ? t('trails.list.noMatches')
+          : t('trails.list.noTrails');
+        container.appendChild(emptyMsg);
+      }
+
+      /**
+       * Create a fully wired list item for a given trail.  It includes the name,
+       * date display/input, status indicator, and optional virtual hike button.
+       */
+      function createTrailListItem(name) {
+        const li       = document.createElement('li');
+        const nameSpan = document.createElement('span');
+        nameSpan.className  = 'trail-name';
+        nameSpan.textContent = name;
+
+        // Build status circle and date controls.
+        const { statusSpan, dateContainer, dateInput } = createStatusAndDateControls(name);
+
+        // Optional: button to launch virtual hike (remove if not needed).
+        const hikeBtn = document.createElement('button');
+        hikeBtn.className = 'hike-btn';
+        hikeBtn.title     = t('trails.virtualHike');
+        hikeBtn.setAttribute('aria-label', t('trails.virtualHike'));
+        hikeBtn.innerHTML = '🌄';
+        hikeBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          const encoded = encodeURIComponent(name);
+          window.open(`virtual_hike.html?trail=${encoded}`, '_blank');
+          trackEvent('trails_virtual_hike_open', { trail: name });
+        });
+
+        // When clicking the list item, highlight the trail on the map.
+        li.addEventListener('click', () => {
+          const info = trailLayers[name];
+          if (info) {
+            highlightLayer(info.layer);
+            map.fitBounds(info.layer.getBounds(), { maxZoom: 14, animate: true });
+            info.layer.openPopup();
+            document.querySelectorAll('#trailList li').forEach(el => el.classList.remove('active'));
+            li.classList.add('active');
+            renderTrailInfo(name);
+            trackEvent('trails_list_trail_click', { trail: name });
+          }
+        });
+
+        // Assemble the list item.
+        li.appendChild(nameSpan);
+        li.appendChild(dateContainer);
+        li.appendChild(dateInput);
+        li.appendChild(hikeBtn);   // comment out if not using virtual hike
+        li.appendChild(statusSpan);
+        return li;
+      }
+
+      /**
+       * Create and wire up the status circle and date picker/input for a trail.
+       * Returns the status span, date container span, and date input element.
+       */
+      function createStatusAndDateControls(name) {
+        // Status circle for toggling completion.
+        const statusSpan = document.createElement('span');
+        statusSpan.className = 'status-circle';
+        const statusData = completedTrails[name];
+        if (statusData && statusData.completed) {
+          statusSpan.classList.add('completed');
+        }
+        statusSpan.addEventListener('click', e => {
+          e.stopPropagation();
+          toggleCompletion(name);
+          trackEvent('trails_completion_toggle', {
+            trail: name,
+            completed: !(completedTrails[name] && completedTrails[name].completed)
+          });
+        });
+
+        // Date display.
+        const dateContainer = document.createElement('span');
+        dateContainer.className = 'date-container';
+        if (statusData && statusData.completed) {
+          if (statusData.date) {
+            dateContainer.textContent = statusData.date;
+          } else {
+            dateContainer.innerHTML   = '<span class="date-icon">📅</span>';
+          }
+        } else {
+          dateContainer.style.display = 'none';
+        }
+
+        // Date input for editing.
+        const dateInput  = document.createElement('input');
+        dateInput.type   = 'date';
+        dateInput.className = 'date-input';
+        dateInput.value  = (statusData && statusData.date) ? statusData.date : '';
+
+        // Show the date picker when clicking the display.
+        dateContainer.addEventListener('click', e => {
+          e.stopPropagation();
+          dateContainer.style.display = 'none';
+          dateInput.style.display     = 'inline-flex';
+          dateInput.focus();
+          trackEvent('trails_date_edit_open', { trail: name });
+        });
+
+        // Prevent date input click from selecting the trail.
+        dateInput.addEventListener('click', e => e.stopPropagation());
+
+        // Update the stored date when it changes.
+        dateInput.addEventListener('change', () => {
+          const newDate = dateInput.value;
+          if (!completedTrails[name]) {
+            completedTrails[name] = { completed: true, date: newDate };
+          } else {
+            completedTrails[name].completed = true;
+            completedTrails[name].date      = newDate;
+          }
+          saveCompletion();
+          if (newDate) {
+            dateContainer.textContent = newDate;
+          } else {
+            dateContainer.innerHTML   = '<span class="date-icon">📅</span>';
+          }
+          trackEvent('trails_date_updated', { trail: name, date: newDate });
+        });
+
+        // Hide the picker and restore the display on blur.
+        dateInput.addEventListener('blur', () => {
+          dateInput.style.display = 'none';
+          const data = completedTrails[name];
+          if (data && data.completed) {
+            if (data.date) {
+              dateContainer.textContent = data.date;
+            } else {
+              dateContainer.innerHTML   = '<span class="date-icon">📅</span>';
+            }
+            dateContainer.style.display = 'flex';
+          } else {
+            dateContainer.style.display = 'none';
+          }
+        });
+
+        return { statusSpan, dateContainer, dateInput };
+      }
+
+      /**
+       * Update `letterPositions` for A‑Z navigation.  For each letter, record
+       * the index of the first trail starting with that letter in the current list.
+       */
+      function updateLetterPositions(names) {
+        letterPositions = {};
+        letters.forEach(l => { letterPositions[l] = null; });
+        names.forEach((name, idx) => {
+          const initial = name.charAt(0).toUpperCase();
+          if (letterPositions[initial] === null) {
+            letterPositions[initial] = idx;
+          }
+        });
+      }
+
+      // ------------------------
+      // Initialization logic
+      // ------------------------
+      // Load completion state, fetch GeoJSON, then populate map and list.
+      loadCompletion();
+      renderTrailInfo(null);
+      loadTrailInfoData();
+      const geoData = await loadGeoJSON();
+      if (geoData) {
+        addTrailsToMap(geoData);
+        populateSuggestions();
+        renderTrailList();
+        trackEvent('trails_app_ready', { trailCount: trailNames.length });
+        const trailQuery = new URLSearchParams(window.location.search).get('trail');
+        if (trailQuery) {
+          const matched = matchTrailName(trailQuery, trailNames);
+          if (!matched) {
+            window.location.replace('/not-found.html');
+            return;
+          }
+          renderTrailInfo(matched);
+          trackEvent('trails_query_select', { trail: matched });
+        }
+      }
+      // Attach event listeners for search, sort, hide completed, and clear progress.
+      const searchInput = document.getElementById('searchInput');
+      let searchDebounce;
+      searchInput.addEventListener('input', () => {
+        renderTrailList();
+        clearTimeout(searchDebounce);
+        searchDebounce = setTimeout(() => {
+          trackEvent('trails_search', { query: searchInput.value.trim().toLowerCase() });
+        }, 400);
+      });
+      document.getElementById('sortSelect').addEventListener('change', (event) => {
+        renderTrailList();
+        trackEvent('trails_sort_change', { sort: event.target.value });
+      });
+      document.getElementById('hideCompleted').addEventListener('change', function() {
+        hideCompleted = this.checked;
+        renderTrailList();
+        trackEvent('trails_hide_completed_toggle', { enabled: hideCompleted });
+      });
+      document.getElementById('clearProgress').addEventListener('click', function() {
+        if (confirm(t('trails.confirmClear'))) {
+          completedTrails = {};
+          saveCompletion();
+          applyCompletionStyles();
+          renderTrailList();
+          trackEvent('trails_clear_progress');
+        }
+      });
+
+      if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
+        window.NH48_I18N.onLangChange(() => {
+          baseLayer.setAttribution(t('trails.map.attribution'));
+          renderTrailInfo(currentTrailSelection);
+          renderTrailList();
+          trackEvent('trails_language_change', { language: window.NH48_I18N.getLang() });
+        });
+      }
+
+      // ------------------------
+      // Mobile scroll optimization
+      // ------------------------
+      // Prevent competing scroll wheels on mobile by managing touch events
+      // This ensures smooth scrolling within Wix embeds and prevents body scroll conflicts
+      function setupMobileScroll() {
+        const isMobile = window.innerWidth <= 768;
+        if (!isMobile) return;
+        
+        const scrollableContainers = [
+          document.getElementById('sidebar'),
+          document.getElementById('listSection'),
+          document.querySelector('.trail-list-container')
+        ];
+        
+        // Remove all touch event listeners that might interfere
+        scrollableContainers.forEach(container => {
+          if (!container) return;
+          
+          // Simple approach: just prevent scroll propagation at boundaries
+          container.addEventListener('touchstart', function(e) {
+            const scrollTop = this.scrollTop;
+            const scrollHeight = this.scrollHeight;
+            const height = this.clientHeight;
+            const clientY = e.touches[0].clientY;
+            
+            // Store the initial touch position on the container
+            this.setAttribute('data-start-y', clientY);
+            this.setAttribute('data-start-scroll', scrollTop);
+          }, { passive: true });
+          
+          container.addEventListener('touchmove', function(e) {
+            const startY = parseFloat(this.getAttribute('data-start-y') || 0);
+            const startScroll = parseFloat(this.getAttribute('data-start-scroll') || 0);
+            const currentY = e.touches[0].clientY;
+            const deltaY = currentY - startY;
+            
+            const scrollTop = this.scrollTop;
+            const scrollHeight = this.scrollHeight;
+            const height = this.clientHeight;
+            const isAtTop = scrollTop === 0;
+            const isAtBottom = scrollTop + height >= scrollHeight - 1;
+            
+            // Prevent overscroll: if at boundary and trying to scroll further, stop it
+            if ((isAtTop && deltaY > 0) || (isAtBottom && deltaY < 0)) {
+              e.preventDefault();
+              return false;
+            }
+          }, { passive: false });
+        });
+        
+        // For the map, allow all touch events without interference
+        const mapElement = document.getElementById('map');
+        if (mapElement) {
+          map.touchZoom.enable();
+          map.dragging.enable();
+          map.tap && map.tap.enable();
+          map.doubleClickZoom.disable();
+        }
+      }
+      
+      // Initialize mobile scroll handling
+      setupMobileScroll();
+      
+      // Re-initialize on window resize
+      let resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(setupMobileScroll, 250);
+      });
+
+    })();
+  </script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUShYXwxGVEDNzMeIwSFPmDaYeXSqRK4A",
+      authDomain: "nh48-info.firebaseapp.com",
+      projectId: "nh48-info",
+      storageBucket: "nh48-info.firebasestorage.app",
+      messagingSenderId: "732743288228",
+      appId: "1:732743288228:web:d82d62cae0c3999ee5ad31",
+      measurementId: "G-Q9F2W8YB7D"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    window.NH48_INFO_ANALYTICS = {
+      analytics,
+      logEvent
+    };
+
+    logEvent(analytics, "page_loaded", {
+      site: "nh48-info",
+      page: location.pathname
+    });
+  </script>
 </body>
 </html>
