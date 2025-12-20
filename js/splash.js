@@ -32,7 +32,7 @@ const parseIconListFromHtml = (htmlText) => {
 };
 
 const buildJsdelivrApiUrl = () =>
-  "https://data.jsdelivr.com/v1/package/gh/natesobol/nh48-api@main?path=/UI-Elements";
+  "https://data.jsdelivr.com/v1/packages/gh/natesobol/nh48-api@main?path=/UI-Elements";
 
 const loadSplashIcons = async () => {
   try {
