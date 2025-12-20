@@ -19,8 +19,8 @@ const parseIconListFromHtml = (htmlText) => {
   return Array.from(new Set(icons));
 };
 
-const buildGithubApiUrl = () =>
-  "https://api.github.com/repos/natesobol/nh48-api/contents/UI-Elements/splash-icons";
+const buildJsdelivrApiUrl = () =>
+  "https://data.jsdelivr.com/v1/package/gh/natesobol/nh48-api@main?path=/UI-Elements/splash-icons";
 
 const loadSplashIcons = async () => {
   try {
@@ -49,20 +49,20 @@ const loadSplashIcons = async () => {
       return parseIconListFromHtml(text);
     }
 
-    const response = await fetch(buildGithubApiUrl(), { cache: "no-store" });
+    const response = await fetch(buildJsdelivrApiUrl(), { cache: "no-store" });
     if (!response.ok) {
       return [];
     }
     const payload = await response.json();
-    if (!Array.isArray(payload)) {
+    if (!payload || !Array.isArray(payload.files)) {
       return [];
     }
-    return payload
+    return payload.files
       .filter((entry) => entry && entry.type === "file")
-      .map((entry) => entry.path)
+      .map((entry) => entry.name)
       .filter((path) => typeof path === "string")
       .filter((path) => path.toLowerCase().endsWith(".png"))
-      .map((path) => `/${path}`);
+      .map((path) => `${SPLASH_ICON_PATH}${path}`);
   } catch (error) {
     console.warn("Splash icons unavailable.", error);
     return [];
