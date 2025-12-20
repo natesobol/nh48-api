@@ -11,6 +11,7 @@
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     crossorigin=""
   />
+  <link rel="stylesheet" href="../css/long_trails_app.css" />
   <style>
     * {
       box-sizing: border-box;
@@ -401,8 +402,18 @@
         <div class="filter-group">
           <label class="filter-label" for="trailSelect">Trail</label>
           <select id="trailSelect" class="filter-select"></select>
-        <link rel="stylesheet" href="../css/long_trails_app.css" />
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="minMiles">Min miles</label>
+          <input id="minMiles" class="filter-input" type="number" min="0" step="0.1" placeholder="0">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="maxMiles">Max miles</label>
+          <input id="maxMiles" class="filter-input" type="number" min="0" step="0.1" placeholder="Any">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="difficultySelect">Difficulty</label>
+          <select id="difficultySelect" class="filter-select" multiple></select>
         </div>
         <div class="filter-group">
           <label class="filter-label" for="stateSelect">State / jurisdiction</label>
@@ -475,6 +486,22 @@
       const start = section.start && section.start.name ? section.start.name : 'Start';
       const end = section.end && section.end.name ? section.end.name : 'End';
       return `${start} → ${end}`;
+    }
+
+    function buildEndpointLabel(trail, point, kind){
+      const name = point && point.name ? ` — ${point.name}` : '';
+      return `${trail.name} ${kind}${name}`;
+    }
+
+    function addEndpointLabel(lat, lon, color, label){
+      const dot = `<span style="width:8px;height:8px;border-radius:999px;background:${color};display:inline-block;"></span>`;
+      const html = `<span style="display:inline-flex;align-items:center;gap:6px;">${dot}<span>${label}</span></span>`;
+      L.marker([lat, lon], {
+        icon: L.divIcon({
+          className: 'trail-endpoint',
+          html
+        })
+      }).addTo(labelLayers);
     }
 
     function getSectionBounds(section){
@@ -584,6 +611,7 @@
               fillOpacity: 1,
               weight: 2
             }).bindTooltip(`Start: ${start.name || trail.name}`).addTo(activeLayers);
+            addEndpointLabel(start.lat, start.lon, color, buildEndpointLabel(trail, start, 'Start'));
           }
           if(end && end.lat != null && end.lon != null){
             L.circleMarker([end.lat, end.lon], {
@@ -593,6 +621,7 @@
               fillOpacity: 1,
               weight: 2
             }).bindTooltip(`End: ${end.name || trail.name}`).addTo(activeLayers);
+            addEndpointLabel(end.lat, end.lon, color, buildEndpointLabel(trail, end, 'End'));
           }
         }
       });
