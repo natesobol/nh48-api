@@ -3,42 +3,42 @@
   "name": "Baja Divide",
   "shortName": "Baja Divide",
   "slug": "baja-divide",
-  "type": "Bikepacking Route",  /* 1,730-mile off-pavement bikepacking route:contentReference[oaicite:0]{index=0} */
+  "type": "Bikepacking Route",  
   "classification": "Long-distance bikepacking route (unofficial)",
   "continuity": "Continuous (single route, some optional alternates)",
   "maintenance_level": "Community-updated (route information maintained via updates, not an official agency):contentReference[oaicite:1]{index=1}",
   "region": "North America",
-  "countryCodes": ["US", "MX"],  /* Spans USA (California) and Mexico (Baja California & Baja California Sur):contentReference[oaicite:2]{index=2} */
+  "countryCodes": ["US", "MX"],  
   "stats": {
     "officialLength": {
       "miles": 1730,
       "kilometers": 2784
-    }  /* Official distance is 1,730 mi (2,784 km):contentReference[oaicite:3]{index=3} */,
+    }  ,
     "highestPoint": {
       "name": "Nejí–Ojos Negros High Point (Baja California)",
       "elevation_ft": 4675,
       "elevation_m": 1425,
       "latitude": 32.0433,
       "longitude": -116.4083
-    }  /* Highest point ~4,675′ (1,425 m) between Nejí and Ojos Negros:contentReference[oaicite:4]{index=4}:contentReference[oaicite:5]{index=5} */,
+    }  ,
     "lowestPoint": {
       "name": "Sea Level (Pacific Ocean & Sea of Cortez)",
       "elevation_ft": 0,
       "elevation_m": 0,
       "latitude": 28.9465,
       "longitude": -113.5605
-    }  /* Route reaches sea level on both Pacific and Gulf of California coasts:contentReference[oaicite:6]{index=6} */,
+    }  ,
     "endPoints": {
       "start": {
         "name": "San Diego International Airport, CA, USA",
         "latitude": 32.732346,
         "longitude": -117.196053
-      },  /* Northern terminus at San Diego International Airport:contentReference[oaicite:7]{index=7}:contentReference[oaicite:8]{index=8} */
+      },  
       "end": {
         "name": "La Paz, Baja California Sur, Mexico",
         "latitude": 24.14222,
         "longitude": -110.31083
-      }  /* Southern terminus at La Paz (via Cape loop):contentReference[oaicite:9]{index=9}:contentReference[oaicite:10]{index=10} */
+      }  
     }
   },
   "map": {
@@ -77,7 +77,7 @@
       "tags": ["urban start", "border crossing", "mountain ascent"],
       "gpx": "baja_divide_section1.gpx",
       "boundingBox": { "minLat": 32.5, "maxLat": 32.8, "minLon": -117.3, "maxLon": -116.6 },
-      "difficulty_rating": 6  /* Steep Otay Mountain climb (3,000’ gain) but resupply available:contentReference[oaicite:15]{index=15} */
+      "difficulty_rating": 6  
     },
     {
       "id": 2,
@@ -90,7 +90,7 @@
       "tags": ["Sierra Juárez", "highest point"],
       "gpx": "baja_divide_section2.gpx",
       "boundingBox": { "minLat": 31.9, "maxLat": 32.6, "minLon": -116.7, "maxLon": -116.3 },
-      "difficulty_rating": 7  /* Shorter section but reaches route’s high point (~4,700′):contentReference[oaicite:16]{index=16} */
+      "difficulty_rating": 7  
     },
     {
       "id": 3,
