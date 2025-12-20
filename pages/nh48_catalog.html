@@ -169,6 +169,16 @@
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
 
+      const trackEvent = (name, params = {}) => {
+        const analytics = window.NH48_INFO_ANALYTICS;
+        if (analytics && analytics.logEvent && analytics.analytics) {
+          analytics.logEvent(analytics.analytics, name, {
+            page: location.pathname,
+            ...params
+          });
+        }
+      };
+
       function getPlaceholder() {
         return 'data:image/svg+xml;utf8,' + encodeURIComponent(
           `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">${t('common.noImage')}</text></svg>`
@@ -220,9 +230,11 @@
               return p;
             });
             console.log(`Loaded ${arr.length} peaks from ${url}`);
+            trackEvent('catalog_data_loaded', { source: url, count: arr.length });
             return arr;
           }catch(err){
             console.error(`Fetch error: ${err.message || err}`);
+            trackEvent('catalog_data_fetch_error', { source: url });
           }
         }
         throw new Error('All API endpoints failed');
@@ -418,6 +430,7 @@
           </div>`;
 
         card.addEventListener('click', () => {
+          trackEvent('catalog_peak_open', { slug: p.slug, name: p.peakName });
           window.location.href = `/pages/nh48_peak.html?slug=${encodeURIComponent(p.slug)}`;
         });
 
@@ -515,6 +528,7 @@
           }
           btn.addEventListener('click', () => {
             currentPage = page;
+            trackEvent('catalog_pagination_click', { label, page });
             updateDisplay();
           });
           return btn;
@@ -564,8 +578,10 @@
           peaks = await fetchPeaks();
           updateSuggestions();
           updateDisplay();
+          trackEvent('catalog_render_complete', { peakCount: peaks.length });
         }catch(err){
           console.error('Error loading peaks:', err);
+          trackEvent('catalog_data_failed', { message: err.message });
           const emptyMessage = document.getElementById('emptyMessage');
           if (emptyMessage) {
             emptyMessage.textContent = t('catalog.error');
@@ -577,9 +593,14 @@
 
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
+          let searchDebounce;
           searchInput.addEventListener('input', () => {
             currentPage = 1;
             updateDisplay();
+            clearTimeout(searchDebounce);
+            searchDebounce = setTimeout(() => {
+              trackEvent('catalog_search', { query: searchInput.value.trim().toLowerCase() });
+            }, 400);
           });
         }
 
@@ -589,6 +610,7 @@
             activeSort = e.target.value;
             currentPage = 1;
             updateDisplay();
+            trackEvent('catalog_sort_change', { sort: activeSort });
           });
         }
         const unitsSelect = document.getElementById('unitsSelect');
@@ -596,6 +618,7 @@
           unitsSelect.addEventListener('change', (e) => {
             setUnits(e.target.value);
             updateDisplay();
+            trackEvent('catalog_units_change', { units: e.target.value });
           });
         }
       }
@@ -606,6 +629,7 @@
         window.NH48_I18N.onLangChange((lang) => {
           syncUnitsWithLanguage(lang);
           updateDisplay();
+          trackEvent('catalog_language_change', { language: lang });
         });
       }
 
@@ -628,6 +652,7 @@
         const columns = this.value;
         grid.setAttribute('data-columns', columns);
         localStorage.setItem('nh48-catalog-columns', columns);
+        trackEvent('catalog_columns_change', { columns });
       });
     </script>
     <script type="module">
@@ -635,7 +660,7 @@
       import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
 
       const firebaseConfig = {
-        apiKey: "AIzaSyCUSHYxwXVGEDNzMeIwSFmDaYeXSqRK4A",
+        apiKey: "AIzaSyCUShYXwxGVEDNzMeIwSFPmDaYeXSqRK4A",
         authDomain: "nh48-info.firebaseapp.com",
         projectId: "nh48-info",
         storageBucket: "nh48-info.firebasestorage.app",

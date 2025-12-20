@@ -430,6 +430,16 @@
       '/data/long-trails-full.json'
     ];
 
+    const trackEvent = (name, params = {}) => {
+      const analytics = window.NH48_INFO_ANALYTICS;
+      if (analytics && analytics.logEvent && analytics.analytics) {
+        analytics.logEvent(analytics.analytics, name, {
+          page: location.pathname,
+          ...params
+        });
+      }
+    };
+
     let map;
     let trailData = [];
     let globalBounds = null;
@@ -447,6 +457,13 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
       activeLayers.addTo(map);
+      map.on('zoomend', () => {
+        trackEvent('long_trails_map_zoom', { zoom: map.getZoom() });
+      });
+      map.on('moveend', () => {
+        const center = map.getCenter();
+        trackEvent('long_trails_map_move', { lat: center.lat, lng: center.lng });
+      });
     }
 
     function toNumber(value){
@@ -849,10 +866,12 @@
           if(bounds){
             fitBounds(bounds);
           }
+          trackEvent('long_trails_hash_select', { trail: trail.slug, section: section.slug });
           return;
         }
       }
       fitBounds(trail.bounds || globalBounds);
+      trackEvent('long_trails_hash_select', { trail: trail.slug });
     }
 
     function renderMap(trails){
@@ -995,6 +1014,7 @@
           }else{
             fitBounds(trail.bounds || globalBounds);
           }
+          trackEvent('long_trails_trail_toggle', { trail: trail.slug || trail.name });
         });
 
         const meta = document.createElement('div');
@@ -1034,6 +1054,10 @@
               event.stopPropagation();
             }
             renderSectionDetails(section);
+            trackEvent('long_trails_section_select', {
+              trail: trail.slug || trail.name,
+              section: section.slug || section.name
+            });
           });
 
           const panButton = item.querySelector('.section-pan');
@@ -1044,7 +1068,21 @@
               fitBounds(bounds);
             }
             renderSectionDetails(section);
+            trackEvent('long_trails_section_pan', {
+              trail: trail.slug || trail.name,
+              section: section.slug || section.name
+            });
           });
+
+          const sectionLink = item.querySelector('.section-link');
+          if (sectionLink) {
+            sectionLink.addEventListener('click', () => {
+              trackEvent('long_trails_section_view', {
+                trail: trail.slug || trail.name,
+                section: section.slug || section.name
+              });
+            });
+          }
 
           sectionList.appendChild(item);
         });
@@ -1062,11 +1100,17 @@
           const response = await fetch(url);
           if(!response.ok) continue;
           const data = await response.json();
+          trackEvent('long_trails_data_loaded', {
+            source: url,
+            trailCount: Array.isArray(data.trails) ? data.trails.length : 0
+          });
           return data;
         }catch(error){
           console.warn('Unable to load long trail data:', error);
+          trackEvent('long_trails_data_fetch_error', { source: url });
         }
       }
+      trackEvent('long_trails_data_load_failed');
       return { trails: [], bounds: null };
     }
 
@@ -1081,9 +1125,12 @@
         try{
           const response = await fetch(url);
           if(!response.ok) continue;
-          return await response.json();
+          const data = await response.json();
+          trackEvent('long_trails_generated_loaded', { trail: trail.slug, source: url });
+          return data;
         }catch(error){
           console.warn('Unable to load generated geometry:', error);
+          trackEvent('long_trails_generated_fetch_error', { trail: trail.slug, source: url });
         }
       }
       return null;
@@ -1121,9 +1168,37 @@
       buildStructuredData(trailData);
       applyHashSelection();
       window.addEventListener('hashchange', applyHashSelection);
+      trackEvent('long_trails_app_ready', { trailCount: trailData.length });
     }
 
     window.addEventListener('DOMContentLoaded', init);
+  </script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUShYXwxGVEDNzMeIwSFPmDaYeXSqRK4A",
+      authDomain: "nh48-info.firebaseapp.com",
+      projectId: "nh48-info",
+      storageBucket: "nh48-info.firebasestorage.app",
+      messagingSenderId: "732743288228",
+      appId: "1:732743288228:web:d82d62cae0c3999ee5ad31",
+      measurementId: "G-Q9F2W8YB7D"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    window.NH48_INFO_ANALYTICS = {
+      analytics,
+      logEvent
+    };
+
+    logEvent(analytics, "page_loaded", {
+      site: "nh48-info",
+      page: location.pathname
+    });
   </script>
 </body>
 </html>

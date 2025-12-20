@@ -972,6 +972,16 @@
     (async function() {
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
 
+      const trackEvent = (name, params = {}) => {
+        const analytics = window.NH48_INFO_ANALYTICS;
+        if (analytics && analytics.logEvent && analytics.analytics) {
+          analytics.logEvent(analytics.analytics, name, {
+            page: location.pathname,
+            ...params
+          });
+        }
+      };
+
       // Set an improved center and zoom over the White Mountain National Forest.
       // These coordinates zoom closer to the core of the WMNF while showing most trails.
       const defaultCenter = [44.15, -71.5];
@@ -987,6 +997,14 @@
           t('trails.map.attribution'),
         maxZoom: 17
       }).addTo(map);
+
+      map.on('zoomend', () => {
+        trackEvent('trails_map_zoom', { zoom: map.getZoom() });
+      });
+      map.on('moveend', () => {
+        const center = map.getCenter();
+        trackEvent('trails_map_move', { lat: center.lat, lng: center.lng });
+      });
 
       // Allow the user to resize the split between the map/top content and the list below.
       const appContainer = document.getElementById('app');
@@ -1007,10 +1025,12 @@
       if (panelResizer) {
         panelResizer.addEventListener('pointerdown', event => {
           event.preventDefault();
+          trackEvent('trails_panel_resize_start');
           const handleMove = moveEvent => setPanelHeight(moveEvent.clientY);
           const handleUp = () => {
             window.removeEventListener('pointermove', handleMove);
             window.removeEventListener('pointerup', handleUp);
+            trackEvent('trails_panel_resize_end');
           };
           window.addEventListener('pointermove', handleMove);
           window.addEventListener('pointerup', handleUp);
@@ -1036,6 +1056,7 @@
         span.setAttribute('data-letter', letter);
         span.addEventListener('click', function(e) {
           const targetLetter = this.getAttribute('data-letter');
+          trackEvent('trails_letter_nav_click', { letter: targetLetter });
           const idx = letterPositions[targetLetter];
           if (idx != null && idx !== undefined && idx >= 0) {
             const li = document.querySelectorAll('#trailList li')[idx];
@@ -1113,17 +1134,20 @@
               if (Array.isArray(records)) {
                 records.forEach(registerTrailRecord);
                 trailInfoLoaded = true;
+                trackEvent('trails_info_loaded', { source: url, count: records.length });
                 break;
               }
             }
           } catch (err) {
             console.warn(`Failed to load trail info from ${url}:`, err.message);
+            trackEvent('trails_info_fetch_error', { source: url });
           }
         }
 
         if (!trailInfoLoaded) {
           trailInfoLoaded = true;
           console.warn('Trail info data could not be loaded; showing fallback messaging.');
+          trackEvent('trails_info_load_failed');
         }
 
         if (currentTrailSelection) {
@@ -1355,6 +1379,7 @@
         saveCompletion();
         applyCompletionStyles();
         renderTrailList();
+        trackEvent('trails_import_complete', { count: Object.keys(imported).length, source: 'csv' });
       }
 
       /**
@@ -1378,14 +1403,19 @@
         saveCompletion();
         applyCompletionStyles();
         renderTrailList();
+        trackEvent('trails_import_complete', { count: Object.keys(imported).length, source: 'xlsx' });
       }
 
       // Hook up export button click
-      document.getElementById('exportBtn').addEventListener('click', exportCSV);
+      document.getElementById('exportBtn').addEventListener('click', () => {
+        trackEvent('trails_export_csv');
+        exportCSV();
+      });
       // Hook up import file change
       document.getElementById('importFile').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
+        trackEvent('trails_import_start', { extension: file.name.split('.').pop().toLowerCase() });
         const ext = file.name.split('.').pop().toLowerCase();
         if (ext === 'csv') {
           const reader = new FileReader();
@@ -1436,16 +1466,19 @@
             if (response.ok) {
               const data = await response.json();
               console.log(`Successfully loaded GeoJSON from ${url}`);
+              trackEvent('trails_geojson_loaded', { source: url, featureCount: data.features ? data.features.length : 0 });
               return data;
             }
           } catch (err) {
             console.warn(`Failed to load from ${url}:`, err.message);
+            trackEvent('trails_geojson_fetch_error', { source: url });
             continue;
           }
         }
 
         // If all URLs fail, show helpful error message
         console.error('Failed to load GeoJSON from all sources');
+        trackEvent('trails_geojson_load_failed');
         alert(t('trails.alertLoadFail'));
         return null;
       }
@@ -1517,6 +1550,7 @@
               map.fitBounds(layer.getBounds(), { maxZoom: 14, animate: true });
               layer.openPopup();
               renderTrailInfo(name);
+              trackEvent('trails_map_trail_click', { trail: name });
             });
           }
         }).addTo(map);
@@ -1618,6 +1652,7 @@
           e.stopPropagation();
           const encoded = encodeURIComponent(name);
           window.open(`virtual_hike.html?trail=${encoded}`, '_blank');
+          trackEvent('trails_virtual_hike_open', { trail: name });
         });
 
         // When clicking the list item, highlight the trail on the map.
@@ -1630,6 +1665,7 @@
             document.querySelectorAll('#trailList li').forEach(el => el.classList.remove('active'));
             li.classList.add('active');
             renderTrailInfo(name);
+            trackEvent('trails_list_trail_click', { trail: name });
           }
         });
 
@@ -1657,6 +1693,10 @@
         statusSpan.addEventListener('click', e => {
           e.stopPropagation();
           toggleCompletion(name);
+          trackEvent('trails_completion_toggle', {
+            trail: name,
+            completed: !(completedTrails[name] && completedTrails[name].completed)
+          });
         });
 
         // Date display.
@@ -1684,6 +1724,7 @@
           dateContainer.style.display = 'none';
           dateInput.style.display     = 'inline-flex';
           dateInput.focus();
+          trackEvent('trails_date_edit_open', { trail: name });
         });
 
         // Prevent date input click from selecting the trail.
@@ -1704,6 +1745,7 @@
           } else {
             dateContainer.innerHTML   = '<span class="date-icon">📅</span>';
           }
+          trackEvent('trails_date_updated', { trail: name, date: newDate });
         });
 
         // Hide the picker and restore the display on blur.
@@ -1752,6 +1794,7 @@
         addTrailsToMap(geoData);
         populateSuggestions();
         renderTrailList();
+        trackEvent('trails_app_ready', { trailCount: trailNames.length });
         const trailQuery = new URLSearchParams(window.location.search).get('trail');
         if (trailQuery) {
           const matched = matchTrailName(trailQuery, trailNames);
@@ -1760,14 +1803,27 @@
             return;
           }
           renderTrailInfo(matched);
+          trackEvent('trails_query_select', { trail: matched });
         }
       }
       // Attach event listeners for search, sort, hide completed, and clear progress.
-      document.getElementById('searchInput').addEventListener('input', renderTrailList);
-      document.getElementById('sortSelect').addEventListener('change', renderTrailList);
+      const searchInput = document.getElementById('searchInput');
+      let searchDebounce;
+      searchInput.addEventListener('input', () => {
+        renderTrailList();
+        clearTimeout(searchDebounce);
+        searchDebounce = setTimeout(() => {
+          trackEvent('trails_search', { query: searchInput.value.trim().toLowerCase() });
+        }, 400);
+      });
+      document.getElementById('sortSelect').addEventListener('change', (event) => {
+        renderTrailList();
+        trackEvent('trails_sort_change', { sort: event.target.value });
+      });
       document.getElementById('hideCompleted').addEventListener('change', function() {
         hideCompleted = this.checked;
         renderTrailList();
+        trackEvent('trails_hide_completed_toggle', { enabled: hideCompleted });
       });
       document.getElementById('clearProgress').addEventListener('click', function() {
         if (confirm(t('trails.confirmClear'))) {
@@ -1775,6 +1831,7 @@
           saveCompletion();
           applyCompletionStyles();
           renderTrailList();
+          trackEvent('trails_clear_progress');
         }
       });
 
@@ -1783,6 +1840,7 @@
           baseLayer.setAttribution(t('trails.map.attribution'));
           renderTrailInfo(currentTrailSelection);
           renderTrailList();
+          trackEvent('trails_language_change', { language: window.NH48_I18N.getLang() });
         });
       }
 
@@ -1858,6 +1916,33 @@
       });
 
     })();
+  </script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUShYXwxGVEDNzMeIwSFPmDaYeXSqRK4A",
+      authDomain: "nh48-info.firebaseapp.com",
+      projectId: "nh48-info",
+      storageBucket: "nh48-info.firebasestorage.app",
+      messagingSenderId: "732743288228",
+      appId: "1:732743288228:web:d82d62cae0c3999ee5ad31",
+      measurementId: "G-Q9F2W8YB7D"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    window.NH48_INFO_ANALYTICS = {
+      analytics,
+      logEvent
+    };
+
+    logEvent(analytics, "page_loaded", {
+      site: "nh48-info",
+      page: location.pathname
+    });
   </script>
 </body>
 </html>

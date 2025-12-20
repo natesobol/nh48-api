@@ -599,6 +599,16 @@
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
 
+      const trackEvent = (name, params = {}) => {
+        const analytics = window.NH48_INFO_ANALYTICS;
+        if (analytics && analytics.logEvent && analytics.analytics) {
+          analytics.logEvent(analytics.analytics, name, {
+            page: location.pathname,
+            ...params
+          });
+        }
+      };
+
       const UNIT_STORAGE_KEY = 'nh48_units';
       const UNITS = {
         FEET: 'feet',
@@ -880,9 +890,11 @@
               continue;
             }
             console.log(`Loaded peak data from ${url}`);
+            trackEvent('peak_data_loaded', { source: url });
             return data;
           }catch(err){
             console.error(`Fetch error: ${err.message || err}`);
+            trackEvent('peak_data_fetch_error', { source: url });
           }
         }
         throw new Error('All API endpoints failed');
@@ -1030,6 +1042,7 @@
           toggleBtn.addEventListener('click', () => {
             const open = extraWrap.classList.toggle('open');
             toggleBtn.textContent = open ? t('peak.metadata.lessDetails') : t('peak.metadata.moreDetails');
+            trackEvent('peak_metadata_toggle', { open });
           });
         }
 
@@ -1066,6 +1079,7 @@
         body.appendChild(makeRow(t('peak.generalInfo.exposure'), translateExposure(p['Exposure Level'] || p['Weather Exposure Rating']) || '—'));
 
         panel.hidden = false;
+        trackEvent('peak_general_info_rendered', { slug: currentSlug });
       }
 
       function renderRoutes(routes){
@@ -1074,6 +1088,7 @@
         routesGrid.innerHTML = '';
         if(!Array.isArray(routes) || routes.length === 0){
           routesGrid.hidden = true;
+          trackEvent('peak_routes_empty', { slug: currentSlug });
           return;
         }
         routes.forEach(r => {
@@ -1092,6 +1107,7 @@
           routesGrid.appendChild(div);
         });
         routesGrid.hidden = false;
+        trackEvent('peak_routes_rendered', { slug: currentSlug, count: routes.length });
       }
 
       function renderTrailNames(trailNames){
@@ -1100,6 +1116,7 @@
         trailNamesGrid.innerHTML = '';
         if(!Array.isArray(trailNames) || trailNames.length === 0){
           trailNamesGrid.hidden = true;
+          trackEvent('peak_trail_names_empty', { slug: currentSlug });
           return;
         }
         const div = document.createElement('div');
@@ -1111,6 +1128,7 @@
           </ul>`;
         trailNamesGrid.appendChild(div);
         trailNamesGrid.hidden = false;
+        trackEvent('peak_trail_names_rendered', { slug: currentSlug, count: trailNames.length });
       }
 
       function renderTerrain(p){
@@ -1136,6 +1154,7 @@
           terrainGrid.appendChild(div);
         });
         terrainGrid.hidden = false;
+        trackEvent('peak_terrain_rendered', { slug: currentSlug, count: terrainItems.length });
       }
 
       function renderConditions(p){
@@ -1165,6 +1184,7 @@
           conditionsGrid.appendChild(div);
         });
         conditionsGrid.hidden = false;
+        trackEvent('peak_conditions_rendered', { slug: currentSlug, count: conditionItems.length });
       }
 
       function updateHeadMeta(p, slug, name){
@@ -1256,6 +1276,7 @@
             if(firstImageResolved) return;
             firstImageResolved = true;
             setMediaLoading(false);
+            trackEvent('peak_carousel_first_image_loaded', { index: 0 });
           };
           img.addEventListener('load', resolveFirstImage, { once: true });
           img.onerror = () => {
@@ -1270,7 +1291,10 @@
 
           const dot = document.createElement('div');
           dot.className = 'dot' + (i === 0 ? ' active' : '');
-          dot.addEventListener('click', () => goTo(i, true));
+          dot.addEventListener('click', () => {
+            trackEvent('peak_carousel_dot_click', { index: i });
+            goTo(i, true);
+          });
           dotsEl.appendChild(dot);
         });
 
@@ -1309,21 +1333,30 @@
         carouselIdx = (carouselIdx + 1) % carouselImgs.length;
         ensureImgLoaded(carouselIdx);
         updateSlides();
-        if(manual){ startCarousel(); }
+        if(manual){
+          trackEvent('peak_carousel_next', { index: carouselIdx });
+          startCarousel();
+        }
       }
 
       function prev(manual=false){
         carouselIdx = (carouselIdx - 1 + carouselImgs.length) % carouselImgs.length;
         ensureImgLoaded(carouselIdx);
         updateSlides();
-        if(manual){ startCarousel(); }
+        if(manual){
+          trackEvent('peak_carousel_prev', { index: carouselIdx });
+          startCarousel();
+        }
       }
 
       function goTo(i, manual=false){
         carouselIdx = i % carouselImgs.length;
         ensureImgLoaded(carouselIdx);
         updateSlides();
-        if(manual){ startCarousel(); }
+        if(manual){
+          trackEvent('peak_carousel_go_to', { index: carouselIdx });
+          startCarousel();
+        }
       }
 
       function startCarousel(){
@@ -1416,6 +1449,7 @@
         }
         
         if(!slug){
+          trackEvent('peak_missing_slug');
           window.location.replace('/not-found.html');
           return;
         }
@@ -1425,6 +1459,7 @@
           const p = data && data[slug];
 
           if(!p){
+            trackEvent('peak_not_found', { slug });
             window.location.replace('/not-found.html');
             return;
           }
@@ -1480,9 +1515,11 @@
 
           buildMountainSchema(p, name, canonicalUrl, primaryImage, descriptionText);
           buildCarousel(imgs, meta, name);
+          trackEvent('peak_loaded', { slug, name, photoCount: imgs.length });
 
         }catch(err){
           console.error('Error loading peak data:', err);
+          trackEvent('peak_load_failed', { slug, message: err.message });
           const peakTitle = document.getElementById('peakTitle');
           if (peakTitle) {
             peakTitle.textContent = t('peak.errorLoading');
@@ -1508,6 +1545,7 @@
           if (currentImages.length) {
             buildCarousel(currentImages, currentMeta, name);
           }
+          trackEvent('peak_language_change', { language: lang, slug: currentSlug });
         });
       }
 
@@ -1519,6 +1557,7 @@
           buildGeneralInfo(currentPeak);
           const routes = currentPeak['Standard Routes'] || [];
           renderRoutes(routes);
+          trackEvent('peak_units_change', { units: e.target.value, slug: currentSlug });
         });
       }
 
@@ -1529,7 +1568,7 @@
       import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
 
       const firebaseConfig = {
-        apiKey: "AIzaSyCUSHYxwXVGEDNzMeIwSFmDaYeXSqRK4A",
+        apiKey: "AIzaSyCUShYXwxGVEDNzMeIwSFPmDaYeXSqRK4A",
         authDomain: "nh48-info.firebaseapp.com",
         projectId: "nh48-info",
         storageBucket: "nh48-info.firebasestorage.app",
