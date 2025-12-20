@@ -181,23 +181,31 @@
       position: absolute;
       opacity: 0;
       will-change: transform, opacity;
-      animation: splashFade 16s ease-in-out infinite;
+      animation: splashFade 16s ease-in-out infinite, splashDrift 16s linear infinite;
     }
     @keyframes splashFade {
       0% {
         opacity: 0;
       }
-      20% {
+      60% {
+        opacity: 0;
+      }
+      72% {
         opacity: 0.85;
       }
-      50% {
-        opacity: 0.15;
-      }
-      80% {
-        opacity: 0.9;
+      82% {
+        opacity: 0.2;
       }
       100% {
         opacity: 0;
+      }
+    }
+    @keyframes splashDrift {
+      0% {
+        transform: translate(0, 0);
+      }
+      100% {
+        transform: translate(60px, 60px);
       }
     }
     @media (prefers-reduced-motion: reduce) {

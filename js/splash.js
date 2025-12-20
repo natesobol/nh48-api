@@ -146,8 +146,8 @@ const initSplash = async () => {
       SPLASH_MIN_DURATION_S +
       Math.random() * (SPLASH_MAX_DURATION_S - SPLASH_MIN_DURATION_S);
     const delay = Math.random() * SPLASH_MAX_DURATION_S;
-    imgEl.style.animationDuration = `${duration}s`;
-    imgEl.style.animationDelay = `-${delay}s`;
+    imgEl.style.animationDuration = `${duration}s, ${duration}s`;
+    imgEl.style.animationDelay = `-${delay}s, -${delay}s`;
     container.appendChild(imgEl);
   });
 };
