@@ -55,7 +55,7 @@ Metadata is automatically extracted using a custom **Manifest Generator** script
  │         ├── adams_002.jpg
  │         └── ...
  │
- ├── manifest_generator.py     # EXIF → JSON metadata builder
+ ├── scripts/manifest_generator.py     # EXIF → JSON metadata builder
  ├── nh48_catalog.html         # Full catalog grid UI
  └── nh48_peak.html            # Per-peak detail view UI
 ```
@@ -117,7 +117,7 @@ The dataset is **highly granular**, making it useful for developers, photographe
 
 # 🔧 **Manifest Generator**
 
-`manifest_generator.py` automates:
+`scripts/manifest_generator.py` automates:
 
 ### **1. Photo Discovery**
 

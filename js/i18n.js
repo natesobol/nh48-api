@@ -12,8 +12,15 @@
 
   function getLangFromPath() {
     const path = window.location.pathname || '';
-    const match = SUPPORTED_LANGS.find(lang => lang !== 'en' && path.startsWith(`/${lang}/`));
-    return match || DEFAULT_LANG;
+    if (path.startsWith('/i18n/')) {
+      const parts = path.split('/');
+      if (parts.length >= 3) {
+        const file = parts[2]; // e.g., de.html
+        const lang = file.split('.')[0];
+        if (SUPPORTED_LANGS.includes(lang)) return lang;
+      }
+    }
+    return DEFAULT_LANG;
   }
 
   function getLang() {
