@@ -150,16 +150,24 @@
       content: '';
     }
 
-    .trail-summary span {
-      flex: 1 1 0;
+    .color-dot {
+      width: 36px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+      flex: 0 0 36px;
+    }
+
+    .trail-name {
+      flex: 1 1 auto;
       min-width: 0;
     }
 
-    .color-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      display: inline-block;
+    .trail-count {
+      flex: 0 0 auto;
+      color: var(--text-secondary);
+      font-weight: 500;
+      white-space: nowrap;
     }
 
     .trail-meta {
@@ -204,6 +212,21 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+    }
+
+    .geometry-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #5c5f69;
+      background: rgba(250, 204, 21, 0.15);
+      color: #fcd34d;
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
 
     .section-actions {
@@ -263,6 +286,18 @@
       padding-left: 6px;
     }
 
+    .trail-tooltip {
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.2);
+      white-space: nowrap;
+    }
+
     .trail-endpoint {
       font-size: 0.7rem;
       background: rgba(15, 23, 42, 0.85);
@@ -283,6 +318,11 @@
       #app {
         grid-template-columns: 1fr;
         height: auto;
+      }
+
+      .sidebar {
+        max-height: 220px;
+        overflow-y: auto;
       }
 
       .map-panel {
@@ -348,7 +388,7 @@
   <header class="page-header">
     <h1>Long-Distance Trails</h1>
     <p>Explore multi-day trail campaigns with interactive maps, filters, and section details.</p>
-    <p>Hover a section to zoom the map, then click “View section” for the full section page.</p>
+    <p>Click a section to view details, then click “View section” for the full section page.</p>
   </header>
 
   <main id="app">
@@ -373,7 +413,12 @@
     let trailData = [];
     let globalBounds = null;
     let activeLayers = L.layerGroup();
-    let labelLayers = L.layerGroup();
+    const DEFAULT_BOUNDS = {
+      minLat: 24.5,
+      minLon: -124.8,
+      maxLat: 49.5,
+      maxLon: -66.9
+    };
 
     function createMap(){
       map = L.map('map', { zoomControl: true });
@@ -381,7 +426,6 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
       activeLayers.addTo(map);
-      labelLayers.addTo(map);
     }
 
     function toNumber(value){
@@ -391,7 +435,10 @@
 
     function fitBounds(bounds){
       if(!bounds){
-        map.setView([44.0, -71.4], 7);
+        map.fitBounds([
+          [DEFAULT_BOUNDS.minLat, DEFAULT_BOUNDS.minLon],
+          [DEFAULT_BOUNDS.maxLat, DEFAULT_BOUNDS.maxLon]
+        ]);
         return;
       }
       const southWest = [bounds.minLat, bounds.minLon];
@@ -413,15 +460,12 @@
       return `${trail.name} ${kind}${name}`;
     }
 
-    function addEndpointLabel(lat, lon, color, label){
-      const dot = `<span style="width:8px;height:8px;border-radius:999px;background:${color};display:inline-block;"></span>`;
-      const html = `<span style="display:inline-flex;align-items:center;gap:6px;">${dot}<span>${label}</span></span>`;
-      L.marker([lat, lon], {
-        icon: L.divIcon({
-          className: 'trail-endpoint',
-          html
-        })
-      }).addTo(labelLayers);
+    function attachEndpointTooltip(marker, label){
+      marker.bindTooltip(label, {
+        direction: 'top',
+        className: 'trail-tooltip',
+        opacity: 0.95
+      });
     }
 
     function getSectionBounds(section){
@@ -483,6 +527,25 @@
       return null;
     }
 
+    function hasGeneratedGeometry(section){
+      const geometry = section && section.generated && section.generated.geometry;
+      return Boolean(geometry && Array.isArray(geometry.coordinates) && geometry.coordinates.length > 1);
+    }
+
+    function getSectionGeometry(section){
+      return hasGeneratedGeometry(section) ? section.generated.geometry : null;
+    }
+
+    function getGeometryBadgeLabel(section){
+      if(hasGeneratedGeometry(section)){
+        return null;
+      }
+      if(section && section.generated && section.generated.status === 'failed'){
+        return 'Geometry failed';
+      }
+      return 'Geometry pending';
+    }
+
     function boundsCenter(bounds){
       if(!bounds){
         return null;
@@ -521,19 +584,53 @@
       const distanceLabel = distance != null ? `${distance} mi` : null;
       const difficultyValue = typeof section.difficulty === 'string' ? section.difficulty : section.difficulty && section.difficulty.rating;
       const difficulty = difficultyValue ? `Difficulty: ${difficultyValue}` : null;
-      const jurisdictions = section.jurisdictions && section.jurisdictions.length ? section.jurisdictions.join(', ') : null;
+      const jurisdictions = formatJurisdictions(section.jurisdictions);
       const tags = section.tags && section.tags.length ? section.tags.join(', ') : null;
+      const geometryBadge = getGeometryBadgeLabel(section);
       container.innerHTML = `
         <div class="section-title">${buildSectionLabel(section)}</div>
         <div class="section-subtitle">
           ${[distanceLabel, difficulty, jurisdictions, tags].filter(Boolean).map(item => `<span>${item}</span>`).join('')}
+          ${geometryBadge ? `<span class=\"geometry-badge\">${geometryBadge}</span>` : ''}
         </div>
       `;
     }
 
+    function formatJurisdictions(jurisdictions){
+      if(!Array.isArray(jurisdictions) || !jurisdictions.length){
+        return null;
+      }
+      const labels = jurisdictions.map(item => {
+        if(typeof item === 'string'){
+          return item;
+        }
+        if(item && typeof item === 'object'){
+          return item.name || item.code || item.abbrev || item.id || null;
+        }
+        return null;
+      }).filter(Boolean);
+      return labels.length ? labels.join(', ') : null;
+    }
+
+    function formatTrailLength(stats){
+      if(!stats){
+        return null;
+      }
+      const official = stats.officialLength ?? stats.length ?? stats.length_mi ?? stats.distance;
+      if(!official){
+        return null;
+      }
+      if(typeof official === 'number' || typeof official === 'string'){
+        return official;
+      }
+      if(typeof official === 'object'){
+        return official.miles ?? official.mi ?? official.km ?? official.value ?? null;
+      }
+      return null;
+    }
+
     function renderMap(trails){
       activeLayers.clearLayers();
-      labelLayers.clearLayers();
       const sourceTrails = trails && trails.length ? trails : trailData;
       // Always plot all start/endpoints for all trails
       (sourceTrails || []).forEach(trail => {
@@ -543,24 +640,24 @@
           const start = normalizePoint(endpoints.start);
           const end = normalizePoint(endpoints.end);
           if(start && start.lat != null && start.lon != null){
-            L.circleMarker([start.lat, start.lon], {
+            const marker = L.circleMarker([start.lat, start.lon], {
               radius: 8,
               color,
               fillColor: color,
               fillOpacity: 1,
               weight: 2
-            }).bindTooltip(`Start: ${start.name || trail.name}`).addTo(activeLayers);
-            addEndpointLabel(start.lat, start.lon, color, buildEndpointLabel(trail, start, 'Start'));
+            }).addTo(activeLayers);
+            attachEndpointTooltip(marker, buildEndpointLabel(trail, start, 'Start'));
           }
           if(end && end.lat != null && end.lon != null){
-            L.circleMarker([end.lat, end.lon], {
+            const marker = L.circleMarker([end.lat, end.lon], {
               radius: 8,
               color,
               fillColor: color,
               fillOpacity: 1,
               weight: 2
-            }).bindTooltip(`End: ${end.name || trail.name}`).addTo(activeLayers);
-            addEndpointLabel(end.lat, end.lon, color, buildEndpointLabel(trail, end, 'End'));
+            }).addTo(activeLayers);
+            attachEndpointTooltip(marker, buildEndpointLabel(trail, end, 'End'));
           }
         }
       });
@@ -568,8 +665,25 @@
       (sourceTrails || []).forEach(trail => {
         const color = trail.color || '#4a9eff';
         (trail.sections || []).forEach(section => {
+          const geometry = getSectionGeometry(section);
+          if(geometry){
+            const latLngs = geometry.coordinates.map(([lon, lat]) => [lat, lon]);
+            L.polyline(latLngs, {
+              color,
+              weight: 3,
+              opacity: 0.9
+            }).addTo(activeLayers);
+          }
           const start = normalizePoint(section.start);
           const end = normalizePoint(section.end);
+          if(!geometry && start && end && start.lat != null && start.lon != null && end.lat != null && end.lon != null){
+            L.polyline([[start.lat, start.lon], [end.lat, end.lon]], {
+              color,
+              weight: 2,
+              opacity: 0.4,
+              dashArray: '4 6'
+            }).addTo(activeLayers);
+          }
           if(start && start.lat != null && start.lon != null){
             L.circleMarker([start.lat, start.lon], {
               radius: 5,
@@ -629,11 +743,15 @@
         const details = document.createElement('details');
         details.className = 'trail-details';
         details.style.setProperty('--trail-color', trail.color || '#4a9eff');
-        details.open = true;
+        details.open = false;
 
         const summary = document.createElement('summary');
         summary.className = 'trail-summary';
-        summary.innerHTML = `<span class="color-dot" style="background:${trail.color}"></span><span>${trail.name}</span><span>${trail.sections.length} sections</span>`;
+        summary.innerHTML = `
+          <span class="color-dot" style="background:${trail.color}"></span>
+          <span class="trail-name">${trail.name}</span>
+          <span class="trail-count">${trail.sections.length} sections</span>
+        `;
         summary.addEventListener('click', () => {
           // Pan to center between start and end points
           const endpoints = trail.endpoints || (trail.stats && trail.stats.endpoints);
@@ -654,7 +772,7 @@
 
         const meta = document.createElement('div');
         meta.className = 'trail-meta';
-        const distance = trail.stats && (trail.stats.officialLength || trail.stats.distance || trail.stats.length_mi);
+        const distance = formatTrailLength(trail.stats);
         meta.textContent = distance ? `Official length: ${distance}` : 'Sections available';
 
         const sectionList = document.createElement('div');
@@ -666,12 +784,14 @@
           const distanceLabel = getSectionDistance(section) != null ? `${getSectionDistance(section)} mi` : '';
           const difficultyValue = typeof section.difficulty === 'string' ? section.difficulty : section.difficulty && section.difficulty.rating;
           const difficultyLabel = difficultyValue ? `Difficulty: ${difficultyValue}` : '';
-          const jurisdictions = section.jurisdictions && section.jurisdictions.length ? section.jurisdictions.join(', ') : '';
+          const jurisdictions = formatJurisdictions(section.jurisdictions) || '';
+          const geometryBadge = getGeometryBadgeLabel(section);
 
           item.innerHTML = `
             <div class="section-title">${buildSectionLabel(section)}</div>
             <div class="section-subtitle">
               ${[distanceLabel, difficultyLabel, jurisdictions].filter(Boolean).map(item => `<span>${item}</span>`).join('')}
+              ${geometryBadge ? `<span class=\"geometry-badge\">${geometryBadge}</span>` : ''}
             </div>
             <div class="section-actions">
               <button class="section-pan" type="button">Pan to segment</button>
@@ -679,24 +799,12 @@
             </div>
           `;
 
-          item.addEventListener('mouseenter', () => {
-            const bounds = getSectionBounds(section);
-            if(bounds){
-              fitBounds(bounds);
-            }
-            renderSectionDetails(section);
-          });
-
           item.addEventListener('click', (event) => {
             if(event.target && event.target.matches('a')){
               return;
             }
             if(event.target && event.target.matches('button')){
               event.stopPropagation();
-            }
-            const bounds = getSectionBounds(section);
-            if(bounds){
-              fitBounds(bounds);
             }
             renderSectionDetails(section);
           });
@@ -735,11 +843,51 @@
       return { trails: [], bounds: null };
     }
 
+    const GENERATED_BASE_URLS = [
+      '../data/long-trails/generated',
+      '/data/long-trails/generated'
+    ];
+
+    async function loadGeneratedTrail(trail){
+      for(const baseUrl of GENERATED_BASE_URLS){
+        const url = `${baseUrl}/${trail.slug}.sections.generated.json`;
+        try{
+          const response = await fetch(url);
+          if(!response.ok) continue;
+          return await response.json();
+        }catch(error){
+          console.warn('Unable to load generated geometry:', error);
+        }
+      }
+      return null;
+    }
+
+    async function mergeGeneratedTrails(trails){
+      const updates = trails.map(async (trail) => {
+        const generated = await loadGeneratedTrail(trail);
+        if(!generated || !Array.isArray(generated.sections)){
+          return;
+        }
+        const sectionMap = new Map(
+          generated.sections.map(section => [section.sectionSlug || section.slug, section])
+        );
+        (trail.sections || []).forEach(section => {
+          const generatedSection = sectionMap.get(section.slug);
+          if(generatedSection){
+            section.generated = generatedSection;
+          }
+        });
+      });
+      await Promise.all(updates);
+    }
+
     async function init(){
       createMap();
       const data = await loadTrails();
       trailData = data.trails || [];
       globalBounds = data.bounds || null;
+
+      await mergeGeneratedTrails(trailData);
 
       renderAllTrails();
     }
