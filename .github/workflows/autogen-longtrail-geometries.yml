@@ -28,6 +28,9 @@ jobs:
         with:
           node-version: 18
 
+      - name: Sync with main
+        run: git pull --rebase origin main
+
       - name: Generate long trail geometries
         run: node scripts/autogen-longtrail-geometries.mjs
 
