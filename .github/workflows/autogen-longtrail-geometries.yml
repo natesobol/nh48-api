@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -36,6 +38,7 @@ jobs:
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add data/long-trails/generated
             git commit -m "chore: update long trail geometries"
+            git pull --rebase origin main
             git push
           else
             echo "No geometry updates to commit."
