@@ -1,0 +1,323 @@
+{
+  "common": {
+    "language": "语言",
+    "languagePicker": "语言选择器",
+    "loading": "加载中…",
+    "errorLoading": "加载数据出错",
+    "noResults": "未找到结果。",
+    "noImage": "无图片",
+    "unknown": "未知",
+    "notAvailable": "暂无",
+    "units": {
+      "ariaLabel": "选择单位"
+    },
+    "unitsLabel": "单位",
+    "unitsFeet": "英尺",
+    "unitsMeters": "米"
+  },
+  "landing": {
+    "title": "NH48 API：新罕布什尔州 4,000 英尺山峰与长距离步道的开放数据",
+    "metaDescription": {
+      "content": "NH48 API 提供新罕布什尔州 48 座 4,000 英尺山峰的开放结构化数据与照片。探索目录、路线和 White Mountain 步道。"
+    },
+    "ogTitle": {
+      "content": "NH48 API – 开放的步道与山峰数据"
+    },
+    "ogDescription": {
+      "content": "浏览山峰目录，探索 White Mountain 步道，并获取新罕布什尔州山脉的长距离路线数据。"
+    },
+    "heroTitle": "NH48 API",
+    "heroBody": "面向新罕布什尔州 48 座 4,000 英尺山峰的开放数据、路线与照片元数据。浏览目录，探索 White Mountain 步道，并基于数据集构建应用。",
+    "cta": {
+      "catalog": "打开山峰目录",
+      "trails": "白山步道",
+      "campaigns": "步道活动"
+    },
+    "notesTitle": "数据集说明",
+    "notes": {
+      "versioned": "版本化发布，包含变更记录与可引用的元数据。",
+      "methodology": "为山峰、路线与步道段落记录来源与采集方法。",
+      "validation": "对海拔范围、里程与几何一致性进行校验。",
+      "reproducible": "可复现的流程，配套源脚本与 QA 产物。"
+    },
+    "author": "作者：Nathan Sobol"
+  },
+  "nav": {
+    "logoAlt": "NH48 API 标志",
+    "tagline": "面向新罕布什尔州 4,000 英尺山峰的开放数据与结构化元数据。",
+    "catalog": "目录",
+    "trails": "WMNF 步道",
+    "longTrails": "长距离步道",
+    "pics": "NH48 Pics",
+    "peakBagger": "Peak Bagger",
+    "latestPhotos": "最新 WMNF 照片",
+    "login": "登录",
+    "viewProfile": "查看个人资料"
+  },
+  "catalog": {
+    "title": "NH48 山峰目录",
+    "intro": "浏览新罕布什尔州 48 座 4,000 英尺山峰。点击山峰可查看更多详情。如发生错误，详情将显示在下方。适用于新罕布什尔州 4,000 英尺山峰的开放 API 与数据集。",
+    "search": {
+      "placeholder": "按名称搜索山峰…",
+      "ariaLabel": "按名称搜索山峰"
+    },
+    "sort": {
+      "label": "排序方式：",
+      "ariaLabel": "按属性排序山峰",
+      "name": "名称 (A–Z)",
+      "elevAsc": "海拔 ↑",
+      "elevDesc": "海拔 ↓",
+      "promAsc": "相对高度 ↑",
+      "promDesc": "相对高度 ↓",
+      "diffAsc": "难度 A–Z",
+      "diffDesc": "难度 Z–A",
+      "rangeAsc": "山脉 A–Z",
+      "trailAsc": "步道类型 A–Z",
+      "exposureAsc": "暴露度 A–Z"
+    },
+    "filter": {
+      "label": "筛选：",
+      "ariaLabel": "选择筛选字段",
+      "none": "无",
+      "range": "山脉",
+      "difficulty": "难度",
+      "trail": "步道类型",
+      "exposure": "暴露度"
+    },
+    "value": {
+      "label": "值：",
+      "ariaLabel": "选择筛选值",
+      "all": "全部"
+    },
+    "columns": {
+      "label": "列数：",
+      "ariaLabel": "选择目录列数"
+    },
+    "empty": "未找到山峰。",
+    "error": "加载山峰出错",
+    "card": {
+      "elevation": "海拔",
+      "prominence": "相对高度",
+      "range": "山脉",
+      "trailType": "步道类型",
+      "difficulty": "难度",
+      "exposure": "暴露度"
+    }
+  },
+  "photo": {
+    "altTemplate": "{peak} 照片 — {season}{timeOfDay}"
+  },
+  "season": {
+    "spring": "春",
+    "summer": "夏",
+    "fall": "秋",
+    "autumn": "秋",
+    "winter": "冬"
+  },
+  "time": {
+    "sunrise": "日出",
+    "sunset": "日落",
+    "morning": "上午",
+    "afternoon": "下午",
+    "evening": "傍晚",
+    "night": "夜晚",
+    "day": "白天",
+    "dawn": "黎明",
+    "dusk": "黄昏"
+  },
+  "values": {
+    "trailType": {
+      "loop": "环线",
+      "loop_or_out_back": "环线或往返",
+      "loop_or_traverse": "环线或穿越",
+      "loop_or_traverse_along_ridge": "沿山脊环线或穿越",
+      "out_back": "往返",
+      "out_back_common": "往返 - 常见",
+      "out_back_common_or_long_traverse": "往返 - 常见或长距离穿越",
+      "out_back_common_or_loop_with_connector_trails": "往返 - 常见或含连接步道的环线",
+      "out_back_common_or_small_loop_including_mt_webster": "往返 - 常见或包含韦伯斯特山的小环线",
+      "out_back_commonly": "往返 - 通常",
+      "out_back_or_loop": "往返或环线",
+      "out_back_or_loop_with_tom_and_willey": "往返或环线 - 包含 Tom 和 Willey",
+      "out_back_or_loop_combining_trails": "往返或组合步道的环线",
+      "out_back_or_loop_options": "往返或环线选项",
+      "out_back_or_point_to_point_traverse": "往返或点对点穿越",
+      "out_back_or_traverse": "往返或穿越"
+    },
+    "difficulty": {
+      "moderate": "中等",
+      "moderate_difficult": "中等/困难",
+      "difficult": "困难",
+      "very_difficult": "非常困难",
+      "extremely_difficult": "极其困难"
+    },
+    "exposure": {
+      "high": "高",
+      "medium": "中",
+      "low": "低",
+      "low_to_medium": "低到中等"
+    }
+  },
+  "peak": {
+    "back": "返回 NH48 山峰目录",
+    "loading": "加载中…",
+    "relatedTrails": {
+      "title": "相关步道与路线",
+      "none": "暂无相关步道。",
+      "link": "{name} 路线"
+    },
+    "section": {
+      "routes": "徒步路线",
+      "trails": "相关步道",
+      "terrain": "步道与地形",
+      "conditions": "状况与通行"
+    },
+    "carousel": {
+      "prev": "上一张",
+      "next": "下一张"
+    },
+    "metadata": {
+      "title": "当前照片元数据",
+      "notAvailable": "暂无",
+      "moreDetails": "更多详情 ▾",
+      "lessDetails": "收起详情 ▴",
+      "labels": {
+        "season": "季节",
+        "timeOfDay": "时间段",
+        "orientation": "方向",
+        "captureDate": "拍摄日期",
+        "cameraMaker": "相机厂商",
+        "cameraModel": "相机型号",
+        "camera": "相机",
+        "lens": "镜头",
+        "fStop": "光圈",
+        "shutterSpeed": "快门速度",
+        "iso": "ISO",
+        "exposureBias": "曝光补偿",
+        "focalLength": "焦距",
+        "flashMode": "闪光模式",
+        "meteringMode": "测光模式",
+        "maxAperture": "最大光圈",
+        "author": "作者",
+        "dimensions": "尺寸",
+        "fileSize": "文件大小",
+        "fileCreateDate": "创建时间",
+        "fileModifiedDate": "修改时间",
+        "rating": "评分",
+        "metadata": "元数据"
+      }
+    },
+    "generalInfo": {
+      "title": "山峰概览",
+      "elevation": "海拔",
+      "prominence": "相对高度",
+      "range": "山脉",
+      "trailType": "步道类型",
+      "difficulty": "难度",
+      "exposure": "暴露度"
+    },
+    "routes": {
+      "distance": "距离",
+      "gain": "爬升",
+      "difficulty": "难度"
+    },
+    "trailList": {
+      "title": "步道列表"
+    },
+    "terrain": {
+      "terrain": "地形",
+      "scramble": "攀爬",
+      "view": "景观"
+    },
+    "conditions": {
+      "bestSeasons": "最佳季节",
+      "waterAvailability": "水源情况",
+      "cellReception": "手机信号",
+      "weatherExposure": "天气暴露",
+      "emergencyBailout": "紧急撤离",
+      "dogFriendly": "适合携犬",
+      "nearbyFeatures": "附近亮点"
+    },
+    "errorLoading": "加载山峰出错",
+    "meta": {
+      "titleTemplate": "{name}（{elevation} ft）– NH48",
+      "descriptionTemplate": "{name} —— 海拔 {elevation} ft、相对高度 {prominence} ft，位于 {range}。包含路线、难度和照片信息。"
+    }
+  },
+  "trails": {
+    "title": "🏔️ WMNF Trails API 地图工具",
+    "subtitle": "White Mountains 的山峰、步道与路线开放数据结构。",
+    "intro": "White Mountain National Forest — 由 Nate Sobol 汇编。可作为快速步道查找与完成度追踪工具。适用于新罕布什尔州 4,000 英尺山峰的开放 API 与数据集。",
+    "details": {
+      "title": "步道详情",
+      "empty": "选择一条步道查看距离、海拔和 OpenStreetMap 详情。"
+    },
+    "search": {
+      "placeholder": "搜索步道…"
+    },
+    "sort": {
+      "az": "按 A → Z 排序",
+      "za": "按 Z → A 排序"
+    },
+    "jumpTo": "跳转到：",
+    "list": {
+      "headerName": "步道名称",
+      "headerCompleted": "已完成",
+      "noMatches": "未找到步道。请尝试其他搜索词。",
+      "noTrails": "暂无步道。"
+    },
+    "loading": "正在加载步道...",
+    "about": {
+      "title": "关于此列表",
+      "body": "NH Tracing、Redlining 和 White Mountain Trails 指的是指南中同一组步道。不论使用哪个名称，目标都是体验这些路线。"
+    },
+    "disclaimer": {
+      "title": "免责声明",
+      "body": "本网站<strong>不用于规划或导航</strong>。步道数据可能包含细微错误或不准确之处，该集合也并非官方名单（但包含大多数已知步道）。请参考官方来源并在野外谨慎行动。"
+    },
+    "howto": {
+      "title": "使用说明",
+      "body": "使用绿色圆点将步道标记为已完成。标记后点击日历图标添加完成日期——日期会替代图标，并可再次点击进行编辑。进度保存在本地浏览器中。可通过下方按钮导出或导入进度。"
+    },
+    "settings": {
+      "title": "设置",
+      "hideCompleted": "隐藏已完成步道",
+      "clearProgress": "清除所有进度"
+    },
+    "export": "导出 CSV",
+    "import": "导入",
+    "viewApi": "查看 API",
+    "resizePanels": "调整面板大小",
+    "info": {
+      "noProperties": "暂时没有额外的步道属性，将从 OpenStreetMap 数据补充。",
+      "loadingProperties": "正在从 OpenStreetMap 加载额外属性...",
+      "sourceNote": "信息在可用时来自 OpenStreetMap。",
+      "distance": "距离",
+      "elevationGain": "累计爬升",
+      "minElevation": "最低海拔",
+      "maxElevation": "最高海拔",
+      "surface": "路面",
+      "trailType": "步道类型",
+      "difficulty": "难度",
+      "visibility": "可见性",
+      "width": "宽度",
+      "allowedUses": "允许用途",
+      "season": "季节",
+      "maintainer": "维护方",
+      "source": "来源"
+    },
+    "virtualHike": "虚拟徒步",
+    "unnamedTrail": "未命名步道",
+    "confirmClear": "确定要清除所有进度吗？",
+    "alertLoadFail": "无法加载步道数据。请检查网络连接并刷新页面。",
+    "csv": {
+      "headerTrail": "步道",
+      "headerCompleted": "已完成",
+      "headerDate": "日期",
+      "filename": "步道进度.csv"
+    },
+    "map": {
+      "attribution": "地图数据：&copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> 贡献者，SRTM | 地图样式：&copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    }
+  }
+}

@@ -1,0 +1,323 @@
+{
+  "common": {
+    "language": "Ngôn ngữ",
+    "languagePicker": "Bộ chọn ngôn ngữ",
+    "loading": "Đang tải…",
+    "errorLoading": "Lỗi tải dữ liệu",
+    "noResults": "Không tìm thấy kết quả.",
+    "noImage": "không có ảnh",
+    "unknown": "Không rõ",
+    "notAvailable": "Không có sẵn",
+    "units": {
+      "ariaLabel": "Chọn đơn vị"
+    },
+    "unitsLabel": "Đơn vị",
+    "unitsFeet": "Feet",
+    "unitsMeters": "Mét"
+  },
+  "landing": {
+    "title": "NH48 API: Dữ liệu mở cho các đỉnh 4.000 feet và các tuyến đường dài ở New Hampshire",
+    "metaDescription": {
+      "content": "NH48 API cung cấp dữ liệu mở, có cấu trúc và ảnh cho 48 đỉnh 4.000 feet của New Hampshire. Khám phá danh mục, tuyến đường và đường mòn White Mountain."
+    },
+    "ogTitle": {
+      "content": "NH48 API – Dữ liệu mở về đường mòn và đỉnh núi"
+    },
+    "ogDescription": {
+      "content": "Duyệt danh mục đỉnh núi, khám phá đường mòn White Mountain và truy cập dữ liệu tuyến đường dài của các ngọn núi New Hampshire."
+    },
+    "heroTitle": "NH48 API",
+    "heroBody": "Dữ liệu mở, tuyến đường và metadata ảnh cho 48 đỉnh 4.000 feet của New Hampshire. Duyệt danh mục, khám phá đường mòn White Mountain và xây dựng trên bộ dữ liệu.",
+    "cta": {
+      "catalog": "Mở danh mục đỉnh núi",
+      "trails": "Đường mòn White Mountain",
+      "campaigns": "Chiến dịch đường mòn"
+    },
+    "notesTitle": "Ghi chú bộ dữ liệu",
+    "notes": {
+      "versioned": "Bản phát hành có phiên bản với changelog và metadata sẵn sàng trích dẫn.",
+      "methodology": "Nguồn gốc + phương pháp thu thập được ghi lại cho đỉnh, tuyến và đoạn đường mòn.",
+      "validation": "Kiểm tra xác thực cho phạm vi độ cao, khoảng cách và tính nhất quán hình học.",
+      "reproducible": "Pipeline có thể tái tạo được hỗ trợ bởi các script nguồn và artefact QA."
+    },
+    "author": "Tác giả: Nathan Sobol"
+  },
+  "nav": {
+    "logoAlt": "Logo NH48 API",
+    "tagline": "Dữ liệu mở & metadata có cấu trúc cho các đỉnh 4.000 feet của New Hampshire.",
+    "catalog": "Danh mục",
+    "trails": "Đường mòn WMNF",
+    "longTrails": "Đường mòn dài",
+    "pics": "Ảnh NH48",
+    "peakBagger": "Peak Bagger",
+    "latestPhotos": "Ảnh WMNF mới nhất",
+    "login": "Đăng nhập",
+    "viewProfile": "Xem hồ sơ"
+  },
+  "catalog": {
+    "title": "Danh mục đỉnh NH48",
+    "intro": "Duyệt 48 đỉnh 4.000 feet của New Hampshire. Nhấp vào một đỉnh để xem chi tiết hơn. Nếu xảy ra lỗi, chi tiết sẽ hiện bên dưới. API mở và bộ dữ liệu cho các núi 4.000 feet của New Hampshire.",
+    "search": {
+      "placeholder": "Tìm đỉnh theo tên…",
+      "ariaLabel": "Tìm đỉnh theo tên"
+    },
+    "sort": {
+      "label": "Sắp xếp theo:",
+      "ariaLabel": "Sắp xếp đỉnh theo thuộc tính",
+      "name": "Tên (A–Z)",
+      "elevAsc": "Độ cao ↑",
+      "elevDesc": "Độ cao ↓",
+      "promAsc": "Độ nổi bật ↑",
+      "promDesc": "Độ nổi bật ↓",
+      "diffAsc": "Độ khó A–Z",
+      "diffDesc": "Độ khó Z–A",
+      "rangeAsc": "Dãy núi A–Z",
+      "trailAsc": "Loại đường mòn A–Z",
+      "exposureAsc": "Mức độ lộ thiên A–Z"
+    },
+    "filter": {
+      "label": "Lọc theo:",
+      "ariaLabel": "Chọn trường để lọc đỉnh",
+      "none": "Không",
+      "range": "Dãy núi",
+      "difficulty": "Độ khó",
+      "trail": "Loại đường mòn",
+      "exposure": "Mức độ lộ thiên"
+    },
+    "value": {
+      "label": "Giá trị:",
+      "ariaLabel": "Chọn giá trị cho bộ lọc",
+      "all": "Tất cả"
+    },
+    "columns": {
+      "label": "Cột:",
+      "ariaLabel": "Chọn số cột của danh mục"
+    },
+    "empty": "Không tìm thấy đỉnh.",
+    "error": "Lỗi tải đỉnh",
+    "card": {
+      "elevation": "Độ cao",
+      "prominence": "Độ nổi bật",
+      "range": "Dãy núi",
+      "trailType": "Loại đường mòn",
+      "difficulty": "Độ khó",
+      "exposure": "Mức độ lộ thiên"
+    }
+  },
+  "photo": {
+    "altTemplate": "Ảnh {peak} — {season} {timeOfDay}"
+  },
+  "season": {
+    "spring": "mùa xuân",
+    "summer": "mùa hè",
+    "fall": "mùa thu",
+    "autumn": "mùa thu",
+    "winter": "mùa đông"
+  },
+  "time": {
+    "sunrise": "bình minh",
+    "sunset": "hoàng hôn",
+    "morning": "buổi sáng",
+    "afternoon": "buổi chiều",
+    "evening": "buổi tối",
+    "night": "ban đêm",
+    "day": "ban ngày",
+    "dawn": "rạng đông",
+    "dusk": "chập tối"
+  },
+  "values": {
+    "trailType": {
+      "loop": "Vòng lặp",
+      "loop_or_out_back": "Vòng lặp hoặc đi-về",
+      "loop_or_traverse": "Vòng lặp hoặc băng qua",
+      "loop_or_traverse_along_ridge": "Vòng lặp hoặc băng qua theo sống núi",
+      "out_back": "Đi-về",
+      "out_back_common": "Đi-về - phổ biến",
+      "out_back_common_or_long_traverse": "Đi-về - phổ biến hoặc băng qua dài",
+      "out_back_common_or_loop_with_connector_trails": "Đi-về - phổ biến hoặc vòng lặp có đường nối",
+      "out_back_common_or_small_loop_including_mt_webster": "Đi-về - phổ biến hoặc vòng nhỏ gồm Mt Webster",
+      "out_back_commonly": "Đi-về - thường",
+      "out_back_or_loop": "Đi-về hoặc vòng lặp",
+      "out_back_or_loop_with_tom_and_willey": "Đi-về hoặc vòng lặp - với Tom và Willey",
+      "out_back_or_loop_combining_trails": "Đi-về hoặc vòng lặp kết hợp đường mòn",
+      "out_back_or_loop_options": "Đi-về hoặc các tùy chọn vòng",
+      "out_back_or_point_to_point_traverse": "Đi-về hoặc băng qua điểm‑điểm",
+      "out_back_or_traverse": "Đi-về hoặc băng qua"
+    },
+    "difficulty": {
+      "moderate": "Trung bình",
+      "moderate_difficult": "Trung bình/Khó",
+      "difficult": "Khó",
+      "very_difficult": "Rất khó",
+      "extremely_difficult": "Cực kỳ khó"
+    },
+    "exposure": {
+      "high": "Cao",
+      "medium": "Trung bình",
+      "low": "Thấp",
+      "low_to_medium": "Thấp đến trung bình"
+    }
+  },
+  "peak": {
+    "back": "Quay lại danh mục đỉnh NH48",
+    "loading": "Đang tải…",
+    "relatedTrails": {
+      "title": "Đường mòn & tuyến liên quan",
+      "none": "Chưa có đường mòn liên quan.",
+      "link": "tuyến {name}"
+    },
+    "section": {
+      "routes": "Tuyến leo núi",
+      "trails": "Đường mòn liên quan",
+      "terrain": "Đường mòn & địa hình",
+      "conditions": "Điều kiện & tiếp cận"
+    },
+    "carousel": {
+      "prev": "Ảnh trước",
+      "next": "Ảnh tiếp"
+    },
+    "metadata": {
+      "title": "Metadata ảnh hiện tại",
+      "notAvailable": "Không có sẵn",
+      "moreDetails": "Thêm chi tiết ▾",
+      "lessDetails": "Ít chi tiết ▴",
+      "labels": {
+        "season": "Mùa",
+        "timeOfDay": "Thời điểm",
+        "orientation": "Hướng",
+        "captureDate": "Ngày chụp",
+        "cameraMaker": "Hãng máy ảnh",
+        "cameraModel": "Mẫu máy ảnh",
+        "camera": "Máy ảnh",
+        "lens": "Ống kính",
+        "fStop": "Khẩu độ",
+        "shutterSpeed": "Tốc độ màn trập",
+        "iso": "ISO",
+        "exposureBias": "Bù phơi sáng",
+        "focalLength": "Tiêu cự",
+        "flashMode": "Chế độ flash",
+        "meteringMode": "Chế độ đo sáng",
+        "maxAperture": "Khẩu độ tối đa",
+        "author": "Tác giả",
+        "dimensions": "Kích thước",
+        "fileSize": "Kích thước tệp",
+        "fileCreateDate": "Ngày tạo tệp",
+        "fileModifiedDate": "Ngày sửa tệp",
+        "rating": "Đánh giá",
+        "metadata": "Metadata"
+      }
+    },
+    "generalInfo": {
+      "title": "Thông tin chung về đỉnh",
+      "elevation": "Độ cao",
+      "prominence": "Độ nổi bật",
+      "range": "Dãy núi",
+      "trailType": "Loại đường mòn",
+      "difficulty": "Độ khó",
+      "exposure": "Mức độ lộ thiên"
+    },
+    "routes": {
+      "distance": "Khoảng cách",
+      "gain": "Độ tăng",
+      "difficulty": "Độ khó"
+    },
+    "trailList": {
+      "title": "Danh sách đường mòn"
+    },
+    "terrain": {
+      "terrain": "Địa hình",
+      "scramble": "Leo đá",
+      "view": "Tầm nhìn"
+    },
+    "conditions": {
+      "bestSeasons": "Mùa đẹp nhất",
+      "waterAvailability": "Nguồn nước",
+      "cellReception": "Sóng di động",
+      "weatherExposure": "Phơi lộ thời tiết",
+      "emergencyBailout": "Lối thoát khẩn cấp",
+      "dogFriendly": "Thân thiện với chó",
+      "nearbyFeatures": "Đặc điểm gần đó"
+    },
+    "errorLoading": "Lỗi tải đỉnh",
+    "meta": {
+      "titleTemplate": "{name} ({elevation} ft) – NH48",
+      "descriptionTemplate": "{name} — cao {elevation} ft, độ nổi bật {prominence} ft, thuộc {range}. Tuyến, độ khó và ảnh cho đỉnh 4.000 ft này."
+    }
+  },
+  "trails": {
+    "title": "🏔️ Công cụ bản đồ API WMNF Trails",
+    "subtitle": "Cấu trúc dữ liệu mở cho đỉnh, đường mòn và tuyến ở White Mountains.",
+    "intro": "White Mountain National Forest — do Nate Sobol tổng hợp. Dùng như công cụ tìm nhanh đường mòn và theo dõi hoàn thành. API mở và bộ dữ liệu cho các núi 4.000 ft của New Hampshire.",
+    "details": {
+      "title": "Chi tiết đường mòn",
+      "empty": "Chọn đường mòn để xem khoảng cách, độ cao và chi tiết OpenStreetMap."
+    },
+    "search": {
+      "placeholder": "Tìm đường mòn…"
+    },
+    "sort": {
+      "az": "Sắp xếp A → Z",
+      "za": "Sắp xếp Z → A"
+    },
+    "jumpTo": "Chuyển tới:",
+    "list": {
+      "headerName": "Tên đường mòn",
+      "headerCompleted": "Hoàn thành",
+      "noMatches": "Không tìm thấy đường mòn. Thử tìm kiếm khác.",
+      "noTrails": "Không có đường mòn nào."
+    },
+    "loading": "Đang tải đường mòn...",
+    "about": {
+      "title": "Về danh sách này",
+      "body": "NH Tracing, Redlining và White Mountain Trails đều nói về cùng một tập hợp đường mòn được mô tả trong sách hướng dẫn. Dù dùng tên nào, bạn vẫn hướng tới mục tiêu trải nghiệm những con đường này."
+    },
+    "disclaimer": {
+      "title": "Tuyên bố miễn trừ",
+      "body": "Trang web này <strong>không dùng để lập kế hoạch hoặc điều hướng</strong>. Dữ liệu đường mòn có thể có sai sót nhỏ và bộ sưu tập này không phải danh sách chính thức (dù bao gồm hầu hết các đường mòn đã biết). Vui lòng tham khảo nguồn chính thức và sử dụng phán đoán tốt ngoài thiên nhiên."
+    },
+    "howto": {
+      "title": "Cách sử dụng",
+      "body": "Dùng các vòng tròn màu xanh để đánh dấu đường mòn đã hoàn thành. Sau khi đánh dấu, chạm vào biểu tượng lịch để thêm ngày hoàn thành — ngày sẽ thay thế biểu tượng và có thể chỉnh sửa bằng cách chạm lại. Tiến độ của bạn được lưu cục bộ trong trình duyệt. Bạn có thể xuất hoặc nhập tiến độ bằng các nút bên dưới."
+    },
+    "settings": {
+      "title": "Cài đặt",
+      "hideCompleted": "Ẩn đường mòn đã hoàn thành",
+      "clearProgress": "Xóa toàn bộ tiến độ"
+    },
+    "export": "Xuất CSV",
+    "import": "Nhập",
+    "viewApi": "Xem API",
+    "resizePanels": "Thay đổi kích thước bảng",
+    "info": {
+      "noProperties": "Chưa có thuộc tính đường mòn bổ sung. Thuộc tính sẽ được điền từ dữ liệu OpenStreetMap.",
+      "loadingProperties": "Đang tải thuộc tính đường mòn bổ sung từ OpenStreetMap...",
+      "sourceNote": "Thông tin lấy từ OpenStreetMap khi có sẵn.",
+      "distance": "Khoảng cách",
+      "elevationGain": "Độ tăng độ cao",
+      "minElevation": "Độ cao tối thiểu",
+      "maxElevation": "Độ cao tối đa",
+      "surface": "Bề mặt",
+      "trailType": "Loại đường mòn",
+      "difficulty": "Độ khó",
+      "visibility": "Khả năng nhìn thấy",
+      "width": "Chiều rộng",
+      "allowedUses": "Mục đích được phép",
+      "season": "Mùa",
+      "maintainer": "Đơn vị bảo trì",
+      "source": "Nguồn"
+    },
+    "virtualHike": "Đi bộ ảo",
+    "unnamedTrail": "Đường mòn không tên",
+    "confirmClear": "Bạn có chắc muốn xóa toàn bộ tiến độ?",
+    "alertLoadFail": "Không thể tải dữ liệu đường mòn. Vui lòng kiểm tra kết nối internet và làm mới trang.",
+    "csv": {
+      "headerTrail": "Đường mòn",
+      "headerCompleted": "Hoàn thành",
+      "headerDate": "Ngày",
+      "filename": "trail-progress.csv"
+    },
+    "map": {
+      "attribution": "Dữ liệu bản đồ: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Kiểu bản đồ: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    }
+  }
+}
