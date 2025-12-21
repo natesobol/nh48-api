@@ -148,6 +148,7 @@
       cursor: pointer;
       font-weight: 600;
       flex-wrap: wrap;
+      min-height: 68px;
     }
 
     .trail-summary::marker {
@@ -155,16 +156,22 @@
     }
 
     .color-dot {
-      width: 36px;
-      height: 10px;
-      border-radius: 999px;
+      width: 8px;
+      height: 100%;
+      border-radius: 6px;
       display: inline-block;
-      flex: 0 0 36px;
+      flex: 0 0 8px;
+      align-self: stretch;
     }
 
     .trail-name {
       flex: 1 1 auto;
       min-width: 0;
+      line-height: 1.2;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .trail-count {
@@ -308,7 +315,7 @@
       color: #fff;
       border-radius: 6px;
       padding: 4px 6px;
-      border: 1px solid rgba(148, 163, 184, 0.5);
+      border: 1px solid #fff;
       white-space: nowrap;
     }
 
@@ -444,6 +451,10 @@
     let trailData = [];
     let globalBounds = null;
     let activeLayers = L.layerGroup();
+    const MAP_BOUNDS = L.latLngBounds(
+      [14.0, -170.0],
+      [72.0, -50.0]
+    );
     const DEFAULT_BOUNDS = {
       minLat: 24.5,
       minLon: -124.8,
@@ -452,9 +463,18 @@
     };
 
     function createMap(){
-      map = L.map('map', { zoomControl: true });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      map = L.map('map', {
+        zoomControl: true,
+        maxBounds: MAP_BOUNDS,
+        maxBoundsViscosity: 1.0
+      });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd'
+      }).addTo(map);
+      L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
+        opacity: 0.35
       }).addTo(map);
       activeLayers.addTo(map);
       map.on('zoomend', () => {
@@ -887,7 +907,7 @@
           if(start && start.lat != null && start.lon != null){
             const marker = L.circleMarker([start.lat, start.lon], {
               radius: 8,
-              color,
+              color: '#ffffff',
               fillColor: color,
               fillOpacity: 1,
               weight: 2
@@ -897,7 +917,7 @@
           if(end && end.lat != null && end.lon != null){
             const marker = L.circleMarker([end.lat, end.lon], {
               radius: 8,
-              color,
+              color: '#ffffff',
               fillColor: color,
               fillOpacity: 1,
               weight: 2
@@ -932,17 +952,19 @@
           if(start && start.lat != null && start.lon != null){
             L.circleMarker([start.lat, start.lon], {
               radius: 5,
-              color,
+              color: '#ffffff',
               fillColor: color,
-              fillOpacity: 0.8
+              fillOpacity: 0.8,
+              weight: 2
             }).bindTooltip(`Start: ${start.name || ''}`.trim()).addTo(activeLayers);
           }
           if(end && end.lat != null && end.lon != null){
             L.circleMarker([end.lat, end.lon], {
               radius: 5,
-              color,
+              color: '#ffffff',
               fillColor: color,
-              fillOpacity: 0.8
+              fillOpacity: 0.8,
+              weight: 2
             }).bindTooltip(`End: ${end.name || ''}`.trim()).addTo(activeLayers);
           }
         });
