@@ -31,11 +31,11 @@ jobs:
 
       - name: Commit generated geometries
         run: |
-          if git status --porcelain | grep -q "^ M data/long-trails/generated\|^?? data/long-trails/generated"; then
+          if git status --porcelain | grep -q "^ M data/long-trails/generated\|^?? data/long-trails/generated\|^ M data/long-trails-full.json\|^ M data/long-trails-index.json\|^ M data/long-trails-manifest.json\|^?? data/long-trails-full.json\|^?? data/long-trails-index.json\|^?? data/long-trails-manifest.json\|^ M trails/\|^?? trails/"; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add data/long-trails/generated
-            git commit -m "chore: update long trail geometries"
+            git add data/long-trails/generated data/long-trails-full.json data/long-trails-index.json data/long-trails-manifest.json trails
+            git commit -m "chore: update long trail outputs"
             git push
           else
             echo "No geometry updates to commit."
