@@ -104,7 +104,7 @@
 
     .section-details {
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 6px;
       border: 1px solid var(--border-color);
       background: var(--bg-tertiary);
       margin-bottom: 16px;
@@ -134,34 +134,33 @@
 
     .trail-details {
       border: 1px solid var(--border-color);
-      border-radius: 10px;
+      border-radius: 6px;
       background: var(--bg-tertiary);
       overflow: hidden;
-      border-left: 4px solid var(--trail-color, var(--border-color));
     }
 
     .trail-summary {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       padding: 12px 14px;
       cursor: pointer;
       font-weight: 600;
       flex-wrap: wrap;
-      min-height: 68px;
+      min-height: 64px;
     }
 
     .trail-summary::marker {
       content: '';
     }
 
-    .color-dot {
-      width: 8px;
-      height: 100%;
+    .color-bar {
+      width: 26px;
+      height: 12px;
       border-radius: 6px;
       display: inline-block;
-      flex: 0 0 8px;
-      align-self: stretch;
+      flex: 0 0 auto;
+      align-self: center;
     }
 
     .trail-name {
@@ -187,6 +186,19 @@
       margin: 0 14px 12px;
     }
 
+    .telemetry-note {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+      background: rgba(148, 163, 184, 0.2);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      border-radius: 999px;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+
     .section-list {
       display: flex;
       flex-direction: column;
@@ -196,7 +208,7 @@
 
     .section-item {
       padding: 10px 12px;
-      border-radius: 8px;
+      border-radius: 6px;
       border: 1px solid transparent;
       background: #20242b;
       cursor: pointer;
@@ -468,13 +480,9 @@
         maxBounds: MAP_BOUNDS,
         maxBoundsViscosity: 1.0
       });
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd'
-      }).addTo(map);
-      L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
-        opacity: 0.35
       }).addTo(map);
       activeLayers.addTo(map);
       map.on('zoomend', () => {
@@ -588,6 +596,17 @@
     function hasGeneratedGeometry(section){
       const geometry = section && section.generated && section.generated.geometry;
       return Boolean(geometry && Array.isArray(geometry.coordinates) && geometry.coordinates.length > 1);
+    }
+
+    function trailHasTelemetry(trail){
+      return (trail.sections || []).some(section => hasGeneratedGeometry(section));
+    }
+
+    function trailDisplayColor(trail){
+      if(trailHasTelemetry(trail)){
+        return trail.color || '#4a9eff';
+      }
+      return '#9ca3af';
     }
 
     function getSectionGeometry(section){
@@ -899,7 +918,7 @@
       const sourceTrails = trails && trails.length ? trails : trailData;
       // Always plot all start/endpoints for all trails
       (sourceTrails || []).forEach(trail => {
-        const color = trail.color || '#4a9eff';
+        const color = trailDisplayColor(trail);
         const endpoints = trail.endpoints || (trail.stats && trail.stats.endpoints);
         if(endpoints && endpoints.start && endpoints.end){
           const start = normalizePoint(endpoints.start);
@@ -928,7 +947,7 @@
       });
       // Plot filtered trails' sections as before
       (sourceTrails || []).forEach(trail => {
-        const color = trail.color || '#4a9eff';
+        const color = trailDisplayColor(trail);
         (trail.sections || []).forEach(section => {
           const geometry = getSectionGeometry(section);
           if(geometry){
@@ -1009,15 +1028,18 @@
       trails.forEach(trail => {
         const details = document.createElement('details');
         details.className = 'trail-details';
-        details.style.setProperty('--trail-color', trail.color || '#4a9eff');
+        const displayColor = trailDisplayColor(trail);
+        const hasTelemetry = trailHasTelemetry(trail);
+        details.style.setProperty('--trail-color', displayColor);
         details.open = false;
         details.dataset.trailSlug = trail.slug;
 
         const summary = document.createElement('summary');
         summary.className = 'trail-summary';
         summary.innerHTML = `
-          <span class="color-dot" style="background:${trail.color}"></span>
+          <span class="color-bar" style="background:${displayColor}"></span>
           <span class="trail-name">${trail.name}</span>
+          ${hasTelemetry ? '' : '<span class="telemetry-note">Telemetry Incomplete</span>'}
           <span class="trail-count">${trail.sections.length} sections</span>
         `;
         summary.addEventListener('click', () => {
