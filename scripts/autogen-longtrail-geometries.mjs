@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
 import { traceRoute, route as routeFallback } from './routing/providers/valhalla.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -11,6 +12,8 @@ const RATE_LIMIT_MS = 250;
 const RETRIES = 2;
 const BASE_DELAY_MS = 500;
 const MILES_PER_KM = 0.621371;
+const PREPARE_SCRIPT = path.join(__dirname, 'prepare-long-trails.js');
+const PRERENDER_SCRIPT = path.join(__dirname, 'prerender-long-trails.js');
 
 function toNumber(value){
   const num = Number(value);
@@ -126,6 +129,23 @@ async function readJson(filePath){
 async function writeJson(filePath, payload){
   await fs.mkdir(path.dirname(filePath), { recursive: true });
   await fs.writeFile(filePath, JSON.stringify(payload, null, 2));
+}
+
+function runNodeScript(scriptPath, args = []){
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [scriptPath, ...args], {
+      stdio: 'inherit'
+    });
+
+    child.on('error', reject);
+    child.on('close', code => {
+      if(code === 0){
+        resolve();
+        return;
+      }
+      reject(new Error(`Script failed (${path.basename(scriptPath)}), exit code ${code}`));
+    });
+  });
 }
 
 function buildShape(section){
@@ -429,6 +449,12 @@ async function main(){
 
   console.log(`\nDone. ${state.processed}/${state.totalSections} sections processed. Skipped: ${state.skipped}.`);
   console.log(buildProgressLabel(state));
+
+  console.log('\nRefreshing long-trails data outputs...');
+  await runNodeScript(PREPARE_SCRIPT);
+  console.log('Preparing prerendered long-trails pages...');
+  await runNodeScript(PRERENDER_SCRIPT);
+  console.log('Long-trails data and prerendered pages refreshed.');
 }
 
 main().catch(error => {
