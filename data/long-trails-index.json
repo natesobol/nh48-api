@@ -1,24 +1,43 @@
 {
-  "generatedAt": "2025-12-19T23:39:44.680Z",
+  "generatedAt": "2025-12-21T02:17:18.943Z",
   "bounds": {
-    "minLat": 0,
-    "minLon": -124.75,
-    "maxLat": 49.2,
-    "maxLon": 0
+    "minLat": -122.6,
+    "minLon": -140,
+    "maxLat": 70,
+    "maxLon": 45.5
   },
   "colors": {
     "allegheny-trail": "#8b5cf6",
+    "american-discovery-trail": "#1f77b4",
     "appalachian-trail": "#008A5E",
-    "arizona-trail": "#9467bd",
-    "benton-mackaye-trail": "#ff7f0e",
-    "buckeye-trail": "#2ca02c",
-    "continental-divide-trail": "#d62728",
+    "arizona-trail": "#1f77b4",
+    "baja-divide": "#2ca02c",
+    "benton-mackaye-trail": "#d62728",
+    "bruce_trail": "#9467bd",
+    "buckeye-trail": "#8c564b",
+    "california-trail": "#e377c2",
+    "camino-real-de-tierra-adentro": "#7f7f7f",
+    "continental-divide-trail": "#bcbd22",
+    "desert-trail": "#17becf",
+    "east_coast_trail": "#1f77b4",
+    "grand-enchantment-trail": "#1f77b4",
+    "great-divide-trail": "#1f77b4",
+    "great-western-loop": "#1f77b4",
+    "hayduke-trail": "#1f77b4",
     "long-trail": "#16a34a",
+    "mormon-pioneer-trail": "#1f77b4",
+    "nez-perce-national-historic-trail": "#1f77b4",
     "north-country-trail": "#f97316",
-    "pacific-crest-trail": "#8c564b",
-    "pacific-northwest-trail": "#e377c2",
-    "pinhoti-trail": "#7f7f7f",
-    "superior-hiking-trail": "#bcbd22",
+    "oregon-trail": "#1f77b4",
+    "ozark-highlands-trail": "#1f77b4",
+    "pacific-crest-trail": "#1f77b4",
+    "pacific-northwest-trail": "#1f77b4",
+    "pinhoti-trail": "#1f77b4",
+    "sky-islands-traverse": "#1f77b4",
+    "superior-hiking-trail": "#1f77b4",
+    "colorado-trail": "#1f77b4",
+    "trans-canada-trail": "#1f77b4",
+    "transamerica_trail": "#1f77b4",
     "tuscarora-trail": "#0065A4"
   },
   "trails": [
@@ -27,6 +46,18 @@
       "name": "Allegheny Trail",
       "shortName": "ALT",
       "sectionCount": 4
+    },
+    {
+      "slug": "american-discovery-trail",
+      "name": "American Discovery Trail",
+      "shortName": "American Discovery Trail",
+      "sectionCount": 19
+    },
+    {
+      "slug": "appalachian-trail",
+      "name": "Appalachian Trail",
+      "shortName": "AT",
+      "sectionCount": 42
     },
     {
       "slug": "appalachian-trail",
@@ -41,10 +72,21 @@
       "sectionCount": 42
     },
     {
+      "slug": "baja-divide",
+      "name": "Baja Divide",
+      "shortName": "Baja Divide",
+      "sectionCount": 20
+    },
+    {
       "slug": "benton-mackaye-trail",
       "name": "Benton MacKaye Trail",
       "shortName": "BMT",
       "sectionCount": 93
+    },
+    {
+      "slug": "bruce_trail",
+      "shortName": null,
+      "sectionCount": 0
     },
     {
       "slug": "buckeye-trail",
@@ -53,16 +95,63 @@
       "sectionCount": 26
     },
     {
+      "slug": "california-trail",
+      "name": "California Trail",
+      "shortName": "CT",
+      "sectionCount": 6
+    },
+    {
+      "slug": "camino-real-de-tierra-adentro",
+      "name": "Camino Real de Tierra Adentro",
+      "shortName": "Camino Real de Tierra Adentro",
+      "sectionCount": 0
+    },
+    {
       "slug": "continental-divide-trail",
       "name": "Continental Divide Trail",
       "shortName": "CDT",
       "sectionCount": 5
     },
     {
+      "slug": "desert-trail",
+      "name": "Desert Trail",
+      "shortName": "Desert Trail",
+      "sectionCount": 4
+    },
+    {
+      "slug": "east_coast_trail",
+      "shortName": null,
+      "sectionCount": 25
+    },
+    {
       "slug": "arizona-trail",
       "name": "Arizona Trail",
       "shortName": "AZT",
       "sectionCount": 42
+    },
+    {
+      "slug": "grand-enchantment-trail",
+      "name": "Grand Enchantment Trail",
+      "shortName": "GET",
+      "sectionCount": 39
+    },
+    {
+      "slug": "great-divide-trail",
+      "name": "Great Divide Trail (Canada)",
+      "shortName": "Great Divide Trail",
+      "sectionCount": 7
+    },
+    {
+      "slug": "great-western-loop",
+      "name": "Great Western Loop",
+      "shortName": "Great Western Loop",
+      "sectionCount": 6
+    },
+    {
+      "slug": "hayduke-trail",
+      "name": "Hayduke Trail",
+      "shortName": "Hayduke",
+      "sectionCount": 14
     },
     {
       "slug": "appalachian-trail",
@@ -77,10 +166,34 @@
       "sectionCount": 6
     },
     {
+      "slug": "mormon-pioneer-trail",
+      "name": "Mormon Pioneer Trail",
+      "shortName": "Mormon Pioneer Trail",
+      "sectionCount": 0
+    },
+    {
+      "slug": "nez-perce-national-historic-trail",
+      "name": "Nez Perce (Nee-Me-Poo) National Historic Trail",
+      "shortName": "Nez Perce Trail",
+      "sectionCount": 7
+    },
+    {
       "slug": "north-country-trail",
       "name": "North Country National Scenic Trail",
       "shortName": "NCT",
       "sectionCount": 11
+    },
+    {
+      "slug": "oregon-trail",
+      "name": "Oregon Trail",
+      "shortName": "OT",
+      "sectionCount": 5
+    },
+    {
+      "slug": "ozark-highlands-trail",
+      "name": "Ozark Highlands Trail",
+      "shortName": "OHT",
+      "sectionCount": 10
     },
     {
       "slug": "pacific-crest-trail",
@@ -101,10 +214,33 @@
       "sectionCount": 31
     },
     {
+      "slug": "sky-islands-traverse",
+      "name": "Sky Islands Traverse",
+      "shortName": "Sky Islands Traverse",
+      "sectionCount": 10
+    },
+    {
       "slug": "superior-hiking-trail",
       "name": "Superior Hiking Trail",
       "shortName": "SHT",
       "sectionCount": 7
+    },
+    {
+      "slug": "colorado-trail",
+      "name": "Colorado Trail",
+      "shortName": "CT",
+      "sectionCount": 28
+    },
+    {
+      "slug": "trans-canada-trail",
+      "name": "Trans Canada Trail",
+      "shortName": "TCT",
+      "sectionCount": 10
+    },
+    {
+      "slug": "transamerica_trail",
+      "shortName": null,
+      "sectionCount": 0
     },
     {
       "slug": "tuscarora-trail",

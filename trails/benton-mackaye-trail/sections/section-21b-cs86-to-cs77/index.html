@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campsite 86 to Campsite 77 (Hazel–Forney) – Benton MacKaye Trail – NH48</title>
+  <meta name="description" content="Campsite 86 to Campsite 77 (Hazel–Forney) on the Benton MacKaye Trail (7.6 miles, difficulty 2).">
+  <link rel="canonical" href="https://nh48.info/trails/benton-mackaye-trail/sections/section-21b-cs86-to-cs77/">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #1a1d23;
+      color: #ffffff;
+    }
+    header {
+      padding: 24px 20px 12px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
+    p {
+      margin: 0;
+      color: #d9dde5;
+    }
+    .content {
+      max-width: 960px;
+      margin: 0 auto 32px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .stats {
+      background: #25282f;
+      border-radius: 12px;
+      border: 1px solid #3d4048;
+      padding: 16px;
+      display: grid;
+      gap: 8px;
+    }
+    .stats div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .map {
+      height: 320px;
+      border-radius: 12px;
+      border: 1px solid #3d4048;
+      overflow: hidden;
+    }
+    .nav-links {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .nav-links a {
+      color: #4a9eff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Campsite 86 to Campsite 77 (Hazel–Forney)</h1>
+    <p>Benton MacKaye Trail</p>
+  </header>
+  <div class="content">
+    <div class="stats">
+      <div><strong>Distance</strong><span>7.6 mi</span></div>
+      <div><strong>Difficulty</strong><span>2</span></div>
+      <div><strong>Mile range</strong><span>204.5–212.1</span></div>
+      <div><strong>Jurisdictions</strong><span>NC (Swain) – GSMNP</span></div>
+      <div><strong>Tags</strong><span>Great Smoky Mountains NP, Hazel Creek, Forney Creek</span></div>
+    </div>
+    <div id="map" class="map"></div>
+    <div class="nav-links">
+      <a href="/trails/benton-mackaye-trail/sections/section-21a-eagle-creek-to-cs86/">← Eagle Creek Trail to Campsite 86 (Hazel Creek)</a>
+      <a href="/trails/benton-mackaye-trail/sections/section-21c-cs77-to-cs98/">Campsite 77 to Campsite 98 (Lakeshore–Forney) →</a>
+    </div>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    const map = L.map('map', { zoomControl: true });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    
+    const bounds = L.latLngBounds([
+      [0, -83.694],
+      [35.518, 0]
+    ]);
+    map.fitBounds(bounds, { padding: [20, 20] });
+  
+  </script>
+</body>
+</html>
