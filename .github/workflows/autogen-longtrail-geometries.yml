@@ -40,6 +40,7 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add data/long-trails/generated
+            git add data/long-trails-full.json data/long-trails-index.json data/long-trails-manifest.json trails
             git commit -m "chore: update long trail geometries"
             for attempt in 1 2 3; do
               if git push; then
@@ -49,6 +50,7 @@ jobs:
                 echo "Push failed after ${attempt} attempts."
                 exit 1
               fi
+              git pull --rebase origin main
             done
           else
             echo "No geometry updates to commit."
