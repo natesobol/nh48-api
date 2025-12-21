@@ -36,10 +36,19 @@ jobs:
           if git status --porcelain | grep -q "^ M data/long-trails/generated\|^?? data/long-trails/generated\|^ M data/long-trails-full.json\|^ M data/long-trails-index.json\|^ M data/long-trails-manifest.json\|^?? data/long-trails-full.json\|^?? data/long-trails-index.json\|^?? data/long-trails-manifest.json\|^ M trails/\|^?? trails/"; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
+            git pull --rebase origin main
             git add data/long-trails/generated
             git commit -m "chore: update long trail geometries"
-            git pull --rebase origin main
-            git push
+            for attempt in 1 2 3; do
+              if git push; then
+                break
+              fi
+              if [ "$attempt" -eq 3 ]; then
+                echo "Push failed after ${attempt} attempts."
+                exit 1
+              fi
+              git pull --rebase origin main
+            done
           else
             echo "No geometry updates to commit."
           fi
