@@ -7,6 +7,7 @@ export const LANGS = [
   { code: 'zh-Hans', label: '简体中文', flag: '🇨🇳', hreflang: 'zh-Hans', rtl: false },
   { code: 'ja', label: '日本語', flag: '🇯🇵', hreflang: 'ja', rtl: false },
   { code: 'ar', label: 'العربية', flag: '🇸🇦', hreflang: 'ar', rtl: true },
+  { code: 'fa', label: 'فارسی', flag: '🇮🇷', hreflang: 'fa', rtl: true },
   { code: 'hi', label: 'हिन्दी', flag: '🇮🇳', hreflang: 'hi-IN', rtl: false },
   { code: 'pt', label: 'Português', flag: '🇧🇷', hreflang: 'pt', rtl: false },
   { code: 'ru', label: 'Русский', flag: '🇷🇺', hreflang: 'ru', rtl: false },
@@ -15,5 +16,6 @@ export const LANGS = [
   { code: 'ko', label: '한국어', flag: '🇰🇷', hreflang: 'ko', rtl: false },
   { code: 'tr', label: 'Türkçe', flag: '🇹🇷', hreflang: 'tr', rtl: false },
   { code: 'vi', label: 'Tiếng Việt', flag: '🇻🇳', hreflang: 'vi', rtl: false },
-  { code: 'pl', label: 'Polski', flag: '🇵🇱', hreflang: 'pl', rtl: false }
+  { code: 'pl', label: 'Polski', flag: '🇵🇱', hreflang: 'pl', rtl: false },
+  { code: 'fil', label: 'Filipino', flag: '🇵🇭', hreflang: 'fil', rtl: false }
 ];
