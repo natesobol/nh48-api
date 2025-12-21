@@ -1,0 +1,323 @@
+{
+  "common": {
+    "language": "Dil",
+    "languagePicker": "Dil seçici",
+    "loading": "Yükleniyor…",
+    "errorLoading": "Veri yükleme hatası",
+    "noResults": "Sonuç bulunamadı.",
+    "noImage": "görsel yok",
+    "unknown": "Bilinmiyor",
+    "notAvailable": "Mevcut değil",
+    "units": {
+      "ariaLabel": "Birimleri seçin"
+    },
+    "unitsLabel": "Birimler",
+    "unitsFeet": "Fit",
+    "unitsMeters": "Metre"
+  },
+  "landing": {
+    "title": "NH48 API: New Hampshire'ın 4.000 fitlik zirveleri ve uzun parkurları için açık veri",
+    "metaDescription": {
+      "content": "NH48 API, New Hampshire'ın 4.000 fitlik 48 zirvesi için açık ve yapılandırılmış veri ve fotoğraflar sağlar. Kataloğu, rotaları ve White Mountain parkurlarını keşfedin."
+    },
+    "ogTitle": {
+      "content": "NH48 API – Açık parkur ve zirve verisi"
+    },
+    "ogDescription": {
+      "content": "Zirve kataloğunu inceleyin, White Mountain parkurlarını keşfedin ve New Hampshire dağları için uzun rota verilerine erişin."
+    },
+    "heroTitle": "NH48 API",
+    "heroBody": "New Hampshire'ın 4.000 fitlik 48 zirvesi için açık veri, rotalar ve fotoğraf meta verileri. Kataloğu gezin, White Mountain parkurlarını keşfedin ve veri seti üzerine inşa edin.",
+    "cta": {
+      "catalog": "Zirve Kataloğunu Aç",
+      "trails": "White Mountain Parkurları",
+      "campaigns": "Parkur Kampanyaları"
+    },
+    "notesTitle": "Veri seti notları",
+    "notes": {
+      "versioned": "Değişiklik günlüğü ve atıf için hazır meta verilerle sürümlü yayınlar.",
+      "methodology": "Zirveler, rotalar ve parkur segmentleri için kaynak ve toplama yöntemi notları.",
+      "validation": "Yükseklik aralıkları, mesafe ve geometri tutarlılığı için doğrulama kontrolleri.",
+      "reproducible": "Kaynak betikler ve QA çıktılarıyla desteklenen tekrarlanabilir hatlar."
+    },
+    "author": "Yazar: Nathan Sobol"
+  },
+  "nav": {
+    "logoAlt": "NH48 API logosu",
+    "tagline": "New Hampshire'ın 4.000 fitlik zirveleri için açık veri ve yapılandırılmış meta veriler.",
+    "catalog": "Katalog",
+    "trails": "WMNF Parkurları",
+    "longTrails": "Uzun Parkurlar",
+    "pics": "NH48 Fotoğrafları",
+    "peakBagger": "Peak Bagger",
+    "latestPhotos": "En yeni WMNF fotoğrafları",
+    "login": "Giriş yap",
+    "viewProfile": "Profili görüntüle"
+  },
+  "catalog": {
+    "title": "NH48 Zirve Kataloğu",
+    "intro": "New Hampshire'ın 4.000 fitlik kırk sekiz zirvesini inceleyin. Daha fazla ayrıntı için bir zirveye tıklayın. Hata olursa ayrıntılar aşağıda görünür. New Hampshire'ın 4.000 fitlik dağları için açık API ve veri setleri.",
+    "search": {
+      "placeholder": "Zirveleri ada göre ara…",
+      "ariaLabel": "Zirveleri ada göre ara"
+    },
+    "sort": {
+      "label": "Şuna göre sırala:",
+      "ariaLabel": "Zirveleri özniteliğe göre sırala",
+      "name": "Ad (A–Z)",
+      "elevAsc": "Yükseklik ↑",
+      "elevDesc": "Yükseklik ↓",
+      "promAsc": "Çıkıntı ↑",
+      "promDesc": "Çıkıntı ↓",
+      "diffAsc": "Zorluk A–Z",
+      "diffDesc": "Zorluk Z–A",
+      "rangeAsc": "Sıra A–Z",
+      "trailAsc": "Parkur türü A–Z",
+      "exposureAsc": "Maruziyet A–Z"
+    },
+    "filter": {
+      "label": "Filtrele:",
+      "ariaLabel": "Zirveleri filtrelemek için alan seçin",
+      "none": "Yok",
+      "range": "Sıra",
+      "difficulty": "Zorluk",
+      "trail": "Parkur türü",
+      "exposure": "Maruziyet"
+    },
+    "value": {
+      "label": "Değer:",
+      "ariaLabel": "Seçilen filtre için değer seçin",
+      "all": "Tümü"
+    },
+    "columns": {
+      "label": "Sütunlar:",
+      "ariaLabel": "Katalog sütun sayısını seçin"
+    },
+    "empty": "Zirve bulunamadı.",
+    "error": "Zirveler yüklenirken hata",
+    "card": {
+      "elevation": "Yükseklik",
+      "prominence": "Çıkıntı",
+      "range": "Sıra",
+      "trailType": "Parkur türü",
+      "difficulty": "Zorluk",
+      "exposure": "Maruziyet"
+    }
+  },
+  "photo": {
+    "altTemplate": "{peak} fotoğrafı — {season} {timeOfDay}"
+  },
+  "season": {
+    "spring": "ilkbahar",
+    "summer": "yaz",
+    "fall": "sonbahar",
+    "autumn": "sonbahar",
+    "winter": "kış"
+  },
+  "time": {
+    "sunrise": "gün doğumu",
+    "sunset": "gün batımı",
+    "morning": "sabah",
+    "afternoon": "öğleden sonra",
+    "evening": "akşam",
+    "night": "gece",
+    "day": "gündüz",
+    "dawn": "şafak",
+    "dusk": "alacakaranlık"
+  },
+  "values": {
+    "trailType": {
+      "loop": "Döngü",
+      "loop_or_out_back": "Döngü veya gidiş‑dönüş",
+      "loop_or_traverse": "Döngü veya travers",
+      "loop_or_traverse_along_ridge": "Döngü veya sırt boyunca travers",
+      "out_back": "Gidiş‑dönüş",
+      "out_back_common": "Gidiş‑dönüş - yaygın",
+      "out_back_common_or_long_traverse": "Gidiş‑dönüş - yaygın veya uzun travers",
+      "out_back_common_or_loop_with_connector_trails": "Gidiş‑dönüş - yaygın veya bağlantı parkurlu döngü",
+      "out_back_common_or_small_loop_including_mt_webster": "Gidiş‑dönüş - yaygın veya Mt Webster içeren küçük döngü",
+      "out_back_commonly": "Gidiş‑dönüş - genellikle",
+      "out_back_or_loop": "Gidiş‑dönüş veya döngü",
+      "out_back_or_loop_with_tom_and_willey": "Gidiş‑dönüş veya döngü - Tom ve Willey ile",
+      "out_back_or_loop_combining_trails": "Gidiş‑dönüş veya parkurları birleştiren döngü",
+      "out_back_or_loop_options": "Gidiş‑dönüş veya döngü seçenekleri",
+      "out_back_or_point_to_point_traverse": "Gidiş‑dönüş veya nokta‑nokta travers",
+      "out_back_or_traverse": "Gidiş‑dönüş veya travers"
+    },
+    "difficulty": {
+      "moderate": "Orta",
+      "moderate_difficult": "Orta/Zor",
+      "difficult": "Zor",
+      "very_difficult": "Çok zor",
+      "extremely_difficult": "Aşırı zor"
+    },
+    "exposure": {
+      "high": "Yüksek",
+      "medium": "Orta",
+      "low": "Düşük",
+      "low_to_medium": "Düşük‑Orta"
+    }
+  },
+  "peak": {
+    "back": "NH48 Zirve Kataloğuna Dön",
+    "loading": "Yükleniyor…",
+    "relatedTrails": {
+      "title": "İlgili Parkurlar ve Rotalar",
+      "none": "Henüz ilgili parkur listelenmedi.",
+      "link": "{name} rotası"
+    },
+    "section": {
+      "routes": "Yürüyüş Rotaları",
+      "trails": "İlişkili Parkurlar",
+      "terrain": "Parkur ve Arazi",
+      "conditions": "Koşullar ve Erişim"
+    },
+    "carousel": {
+      "prev": "Önceki görüntü",
+      "next": "Sonraki görüntü"
+    },
+    "metadata": {
+      "title": "Mevcut Fotoğraf Meta Verileri",
+      "notAvailable": "Mevcut değil",
+      "moreDetails": "Daha fazla ayrıntı ▾",
+      "lessDetails": "Daha az ayrıntı ▴",
+      "labels": {
+        "season": "Mevsim",
+        "timeOfDay": "Günün saati",
+        "orientation": "Yönelim",
+        "captureDate": "Çekim tarihi",
+        "cameraMaker": "Kamera üreticisi",
+        "cameraModel": "Kamera modeli",
+        "camera": "Kamera",
+        "lens": "Lens",
+        "fStop": "Diyafram",
+        "shutterSpeed": "Enstantane",
+        "iso": "ISO",
+        "exposureBias": "Pozlama telafisi",
+        "focalLength": "Odak uzaklığı",
+        "flashMode": "Flaş modu",
+        "meteringMode": "Ölçüm modu",
+        "maxAperture": "Maks. diyafram",
+        "author": "Yazar",
+        "dimensions": "Boyutlar",
+        "fileSize": "Dosya boyutu",
+        "fileCreateDate": "Dosya oluşturma tarihi",
+        "fileModifiedDate": "Dosya değiştirme tarihi",
+        "rating": "Değerlendirme",
+        "metadata": "Meta veriler"
+      }
+    },
+    "generalInfo": {
+      "title": "Genel Zirve Bilgisi",
+      "elevation": "Yükseklik",
+      "prominence": "Çıkıntı",
+      "range": "Sıra",
+      "trailType": "Parkur türü",
+      "difficulty": "Zorluk",
+      "exposure": "Maruziyet"
+    },
+    "routes": {
+      "distance": "Mesafe",
+      "gain": "Kazanç",
+      "difficulty": "Zorluk"
+    },
+    "trailList": {
+      "title": "Parkur Listesi"
+    },
+    "terrain": {
+      "terrain": "Arazi",
+      "scramble": "Tırmanış",
+      "view": "Manzara"
+    },
+    "conditions": {
+      "bestSeasons": "En iyi mevsimler",
+      "waterAvailability": "Su bulunabilirliği",
+      "cellReception": "Cep telefonu çekimi",
+      "weatherExposure": "Hava maruziyeti",
+      "emergencyBailout": "Acil çıkış",
+      "dogFriendly": "Köpek dostu",
+      "nearbyFeatures": "Yakın özellikler"
+    },
+    "errorLoading": "Zirve yükleme hatası",
+    "meta": {
+      "titleTemplate": "{name} ({elevation} ft) – NH48",
+      "descriptionTemplate": "{name} – {elevation} ft yüksekliğinde, {prominence} ft çıkıntıya sahip, {range} içinde. Bu 4.000 fitlik zirve için rotalar, zorluk ve fotoğraflar."
+    }
+  },
+  "trails": {
+    "title": "🏔️ WMNF Trails API Harita Aracı",
+    "subtitle": "White Mountains için açık zirve, parkur ve rota veri yapısı.",
+    "intro": "White Mountain National Forest — Nate Sobol tarafından derlendi. Hızlı parkur bulucu ve tamamlama izleyici olarak kullanın. New Hampshire'ın 4.000 fitlik dağları için açık API ve veri setleri.",
+    "details": {
+      "title": "Parkur ayrıntıları",
+      "empty": "Mesafe, yükseklik ve OpenStreetMap ayrıntılarını görmek için bir parkur seçin."
+    },
+    "search": {
+      "placeholder": "Parkur ara…"
+    },
+    "sort": {
+      "az": "A → Z sırala",
+      "za": "Z → A sırala"
+    },
+    "jumpTo": "Şuraya git:",
+    "list": {
+      "headerName": "Parkur adı",
+      "headerCompleted": "Tamamlandı",
+      "noMatches": "Parkur bulunamadı. Farklı bir arama deneyin.",
+      "noTrails": "Parkur yok."
+    },
+    "loading": "Parkurlar yükleniyor...",
+    "about": {
+      "title": "Bu liste hakkında",
+      "body": "NH Tracing, Redlining ve White Mountain Trails, rehberde açıklanan aynı parkur koleksiyonunu ifade eder. Hangi adı kullanırsanız kullanın, hedef aynı: bu parkurları deneyimlemek."
+    },
+    "disclaimer": {
+      "title": "Uyarı",
+      "body": "Bu site <strong>planlama veya navigasyon için değildir</strong>. Parkur verileri küçük hatalar içerebilir ve bu koleksiyon resmi liste değildir (çoğu bilinen parkuru içerir). Lütfen resmi kaynaklara başvurun ve doğada sağduyulu olun."
+    },
+    "howto": {
+      "title": "Nasıl kullanılır",
+      "body": "Yeşil daireleri kullanarak bir parkuru tamamlandı olarak işaretleyin. İşaretledikten sonra takvim simgesine dokunarak tamamlanma tarihi ekleyin — tarih simgenin yerini alır ve tekrar dokunarak düzenlenebilir. İlerlemeniz tarayıcınızda yerel olarak saklanır. Aşağıdaki düğmelerle ilerlemenizi dışa aktarabilir veya içe aktarabilirsiniz."
+    },
+    "settings": {
+      "title": "Ayarlar",
+      "hideCompleted": "Tamamlanan parkurları gizle",
+      "clearProgress": "Tüm ilerlemeyi temizle"
+    },
+    "export": "CSV dışa aktar",
+    "import": "İçe aktar",
+    "viewApi": "API'yi görüntüle",
+    "resizePanels": "Panelleri yeniden boyutlandır",
+    "info": {
+      "noProperties": "Henüz ek parkur özellikleri yok. Özellikler OpenStreetMap verilerinden doldurulacak.",
+      "loadingProperties": "OpenStreetMap'ten ek parkur özellikleri yükleniyor...",
+      "sourceNote": "Bilgiler mevcut olduğunda OpenStreetMap'ten alınmıştır.",
+      "distance": "Mesafe",
+      "elevationGain": "Yükseklik kazanımı",
+      "minElevation": "Min yükseklik",
+      "maxElevation": "Maks yükseklik",
+      "surface": "Yüzey",
+      "trailType": "Parkur türü",
+      "difficulty": "Zorluk",
+      "visibility": "Görünürlük",
+      "width": "Genişlik",
+      "allowedUses": "İzin verilen kullanımlar",
+      "season": "Mevsim",
+      "maintainer": "Bakımcı",
+      "source": "Kaynak"
+    },
+    "virtualHike": "Sanal yürüyüş",
+    "unnamedTrail": "Adsız parkur",
+    "confirmClear": "Tüm ilerlemeyi temizlemek istediğinize emin misiniz?",
+    "alertLoadFail": "Parkur verileri yüklenemedi. İnternet bağlantınızı kontrol edip sayfayı yenileyin.",
+    "csv": {
+      "headerTrail": "Parkur",
+      "headerCompleted": "Tamamlandı",
+      "headerDate": "Tarih",
+      "filename": "trail-progress.csv"
+    },
+    "map": {
+      "attribution": "Harita verisi: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Harita stili: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    }
+  }
+}

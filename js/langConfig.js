@@ -1,0 +1,19 @@
+export const LANGS = [
+  { code: 'en', label: 'English', flag: '🇺🇸', hreflang: 'en', rtl: false },
+  { code: 'es', label: 'Español', flag: '🇪🇸', hreflang: 'es', rtl: false },
+  { code: 'fr', label: 'Français', flag: '🇫🇷', hreflang: 'fr', rtl: false },
+  { code: 'de', label: 'Deutsch', flag: '🇩🇪', hreflang: 'de', rtl: false },
+  { code: 'zh', label: '繁體中文', flag: '🇹🇼', hreflang: 'zh', rtl: false },
+  { code: 'zh-Hans', label: '简体中文', flag: '🇨🇳', hreflang: 'zh-Hans', rtl: false },
+  { code: 'ja', label: '日本語', flag: '🇯🇵', hreflang: 'ja', rtl: false },
+  { code: 'ar', label: 'العربية', flag: '🇸🇦', hreflang: 'ar', rtl: true },
+  { code: 'hi', label: 'हिन्दी', flag: '🇮🇳', hreflang: 'hi-IN', rtl: false },
+  { code: 'pt', label: 'Português', flag: '🇧🇷', hreflang: 'pt', rtl: false },
+  { code: 'ru', label: 'Русский', flag: '🇷🇺', hreflang: 'ru', rtl: false },
+  { code: 'id', label: 'Bahasa Indonesia', flag: '🇮🇩', hreflang: 'id', rtl: false },
+  { code: 'it', label: 'Italiano', flag: '🇮🇹', hreflang: 'it', rtl: false },
+  { code: 'ko', label: '한국어', flag: '🇰🇷', hreflang: 'ko', rtl: false },
+  { code: 'tr', label: 'Türkçe', flag: '🇹🇷', hreflang: 'tr', rtl: false },
+  { code: 'vi', label: 'Tiếng Việt', flag: '🇻🇳', hreflang: 'vi', rtl: false },
+  { code: 'pl', label: 'Polski', flag: '🇵🇱', hreflang: 'pl', rtl: false }
+];

@@ -1,5 +1,7 @@
+import { LANGS } from './langConfig.js';
+
 (() => {
-  const SUPPORTED_LANGS = ['en', 'es', 'fr', 'de', 'zh', 'ja'];
+  const SUPPORTED_LANGS = LANGS.map(({ code }) => code);
   const STORAGE_KEY = 'nh48_lang';
   const DEFAULT_LANG = 'en';
   const callbacks = new Set();
@@ -27,9 +29,25 @@
     return localStorage.getItem(STORAGE_KEY) || getLangFromPath();
   }
 
+  function getLangConfig(lang) {
+    return LANGS.find(item => item.code === lang);
+  }
+
   function setHtmlLang(lang) {
+    const config = getLangConfig(lang);
     if (document.documentElement) {
-      document.documentElement.lang = lang;
+      document.documentElement.lang = config && config.hreflang ? config.hreflang : lang;
+    }
+  }
+
+  function setDirection(lang) {
+    const config = getLangConfig(lang);
+    const isRtl = Boolean(config && config.rtl);
+    if (document.documentElement) {
+      document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+    }
+    if (document.body) {
+      document.body.classList.toggle('rtl', isRtl);
     }
   }
 
@@ -150,6 +168,22 @@
     updateFlagButtons(currentLang);
   }
 
+  function renderLangPicker() {
+    const container = document.getElementById('langPicker');
+    if (!container) return;
+    container.innerHTML = '<span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>';
+    LANGS.forEach(({ code, label, flag }) => {
+      const btn = document.createElement('button');
+      btn.className = 'nh48-flag';
+      btn.setAttribute('data-lang', code);
+      btn.setAttribute('aria-label', label);
+      btn.setAttribute('title', label);
+      btn.innerHTML = `<span class="flag flag-${code}" aria-hidden="true">${flag}</span>`;
+      container.appendChild(btn);
+    });
+    initLangPicker();
+  }
+
   async function setLang(lang) {
     if (!SUPPORTED_LANGS.includes(lang)) {
       lang = DEFAULT_LANG;
@@ -161,6 +195,7 @@
       await loadLang(DEFAULT_LANG);
     }
     setHtmlLang(lang);
+    setDirection(lang);
     applyTranslations(document);
     initLangPicker();
     callbacks.forEach(cb => cb(lang));
@@ -174,6 +209,7 @@
 
   function init() {
     const initialLang = getLang();
+    renderLangPicker();
     setLang(initialLang);
     initObserver();
   }
