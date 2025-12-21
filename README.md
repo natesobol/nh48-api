@@ -217,6 +217,7 @@ The long-distance trails experience lives in `pages/long_trails_app.html` with s
   * `renderSectionDetails()` updates the detail panel when a section is selected.
 * **Deep-linking:** hash URLs like `#trail=appalachian-trail&section=franconia-notch-to-crawford-notch` are parsed in `applyHashSelection()` and keep the single-page app shareable without new routes.
 * **Generated geometry merge:** `mergeGeneratedTrails()` pulls optional segment geometry from `data/long-trails/generated/<trail>.sections.generated.json`.
+* **Post-generation refresh:** `scripts/autogen-longtrail-geometries.mjs` now runs `scripts/prepare-long-trails.js` and `scripts/prerender-long-trails.js` after geometry generation to keep aggregate data and prerendered pages in sync.
 
 ### **Trail JSON Dataset**
 
