@@ -281,6 +281,41 @@
     .rtl .dataset-notes {
       text-align: right;
     }
+    @media (max-width: 640px) {
+      body {
+        padding-top: 120px;
+      }
+      .lang-bar {
+        left: 0;
+        right: 0;
+        width: 100%;
+        padding: 0 12px;
+        top: 12px;
+      }
+      .nh48-lang {
+        justify-content: center;
+        max-width: none;
+        width: 100%;
+      }
+      .nh48-lang-label {
+        flex-basis: 100%;
+        text-align: center;
+        margin-right: 0;
+      }
+      main {
+        max-width: 640px;
+        padding: 24px 20px;
+      }
+      h1 {
+        font-size: clamp(24px, 6vw, 34px);
+      }
+      p {
+        font-size: 0.95rem;
+      }
+      .cta a {
+        padding: 8px 14px;
+      }
+    }
     #splash-background {
       position: fixed;
       top: 0;
