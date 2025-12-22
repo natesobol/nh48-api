@@ -9,6 +9,24 @@
     <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak catalog, White Mountains data, hiking database, open hiking API, peak metadata, mountain photos, NH 48 peaks dataset, White Mountain peak list, open source hiking API">
     <meta name="robots" content="index,follow">
     <link rel="canonical" href="https://nh48.info/catalog">
+    <link rel="alternate" hreflang="en" href="https://nh48.info/">
+    <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
+    <link rel="alternate" hreflang="fr" href="https://nh48.info/i18n/fr.html">
+    <link rel="alternate" hreflang="de" href="https://nh48.info/i18n/de.html">
+    <link rel="alternate" hreflang="zh" href="https://nh48.info/i18n/zh.html">
+    <link rel="alternate" hreflang="zh-Hans" href="https://nh48.info/i18n/zh-Hans.html">
+    <link rel="alternate" hreflang="ja" href="https://nh48.info/i18n/ja.html">
+    <link rel="alternate" hreflang="ar" href="https://nh48.info/i18n/ar.html">
+    <link rel="alternate" hreflang="hi-IN" href="https://nh48.info/i18n/hi.html">
+    <link rel="alternate" hreflang="pt" href="https://nh48.info/i18n/pt.html">
+    <link rel="alternate" hreflang="ru" href="https://nh48.info/i18n/ru.html">
+    <link rel="alternate" hreflang="id" href="https://nh48.info/i18n/id.html">
+    <link rel="alternate" hreflang="it" href="https://nh48.info/i18n/it.html">
+    <link rel="alternate" hreflang="ko" href="https://nh48.info/i18n/ko.html">
+    <link rel="alternate" hreflang="tr" href="https://nh48.info/i18n/tr.html">
+    <link rel="alternate" hreflang="vi" href="https://nh48.info/i18n/vi.html">
+    <link rel="alternate" hreflang="pl" href="https://nh48.info/i18n/pl.html">
+    <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://nh48.info/catalog">
     <meta property="og:title" content="NH48 Peak Catalog – Data &amp; photos for New Hampshire’s 4000-footers">
@@ -25,7 +43,7 @@
     <title>NH48 Peak Catalog – Data &amp; photos for New Hampshire’s 4000-footers</title>
     <link rel="icon" type="image/png" href="../nh48API_logo.png">
     <link rel="stylesheet" href="../css/nh48_catalog.css">
-    <script src="../js/i18n.js"></script>
+    <script type="module" src="../js/i18n.js"></script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -126,6 +144,13 @@
             <option value="3" selected>3</option>
             <option value="4">4</option>
             <option value="5">5</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="viewSelect">View:</label>
+          <select id="viewSelect" aria-label="Select catalog view">
+            <option value="grid" selected>Grid</option>
+            <option value="list">List</option>
           </select>
         </div>
         <div class="control nh48-lang-control">
@@ -466,6 +491,56 @@
         return card;
       }
 
+      function createListItem(p){
+        const item = document.createElement('article');
+        item.className = 'list-item';
+
+        let thumbSrc = getPlaceholder();
+        let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
+        if (Array.isArray(p.photos) && p.photos.length > 0) {
+          const first = p.photos[0];
+          thumbAlt = buildPhotoAlt(p, first);
+          if (typeof first === 'string') {
+            thumbSrc = normalizePhotoUrl(first);
+          } else if (first && first.url) {
+            thumbSrc = normalizePhotoUrl(first.url);
+          }
+        }
+
+        const elev = p['Elevation (ft)'];
+        const range = p['Range / Subrange'] || '—';
+        const href = `/pages/nh48_peak.html?slug=${encodeURIComponent(p.slug)}`;
+
+        item.innerHTML = `
+          <div class="list-thumb">
+            <img src="${thumbSrc}" alt="${thumbAlt}" loading="lazy" decoding="async">
+          </div>
+          <div class="list-content">
+            <div class="list-main">
+              <h3>${p.peakName}</h3>
+              <div class="list-meta">
+                <div>
+                  <span class="list-label">${t('catalog.card.elevation')}</span>
+                  <span>${formatElevation(elev)}</span>
+                </div>
+                <div>
+                  <span class="list-label">${t('catalog.card.range')}</span>
+                  <span>${range}</span>
+                </div>
+              </div>
+            </div>
+            <a class="list-link" href="${href}">View details →</a>
+          </div>
+        `;
+
+        item.addEventListener('click', () => {
+          trackEvent('catalog_peak_open', { slug: p.slug, name: p.peakName });
+          window.location.href = href;
+        });
+
+        return item;
+      }
+
       function setupLazyLoading(){
         if (!('IntersectionObserver' in window)) return;
         const observer = new IntersectionObserver((entries, obs) => {
@@ -491,6 +566,19 @@
         }
         empty.hidden = true;
         list.forEach(p => grid.appendChild(createCard(p)));
+        setupLazyLoading();
+      }
+
+      function renderList(list){
+        const grid = document.getElementById('grid');
+        const empty = document.getElementById('emptyMessage');
+        grid.innerHTML = '';
+        if(!list || list.length === 0){
+          empty.hidden = false;
+          return;
+        }
+        empty.hidden = true;
+        list.forEach(p => grid.appendChild(createListItem(p)));
         setupLazyLoading();
       }
 
@@ -597,7 +685,11 @@
         const endIdx = startIdx + ITEMS_PER_PAGE;
         const pageItems = list.slice(startIdx, endIdx);
 
-        renderGrid(pageItems);
+        if(currentView === 'list'){
+          renderList(pageItems);
+        }else{
+          renderGrid(pageItems);
+        }
         renderPagination(totalPages);
       }
 
@@ -664,7 +756,30 @@
 
       // Column selector handler
       const columnSelect = document.getElementById('columnSelect');
+      const viewSelect = document.getElementById('viewSelect');
       const grid = document.getElementById('grid');
+      const columnControl = columnSelect ? columnSelect.closest('.control') : null;
+      let currentView = 'grid';
+
+      const applyView = (view, { persist = true } = {}) => {
+        currentView = view === 'list' ? 'list' : 'grid';
+        if(viewSelect){
+          viewSelect.value = currentView;
+        }
+        if(grid){
+          grid.setAttribute('data-view', currentView);
+        }
+        if(columnSelect){
+          const disableColumns = currentView === 'list';
+          columnSelect.disabled = disableColumns;
+          if(columnControl){
+            columnControl.classList.toggle('is-disabled', disableColumns);
+          }
+        }
+        if(persist){
+          localStorage.setItem('nh48-catalog-view', currentView);
+        }
+      };
       
       // Load saved column preference
       const savedColumns = localStorage.getItem('nh48-catalog-columns');
@@ -675,6 +790,9 @@
         grid.setAttribute('data-columns', '3');
       }
 
+      const savedView = localStorage.getItem('nh48-catalog-view');
+      applyView(savedView || 'grid', { persist: false });
+
       syncUnitsWithLanguage(window.NH48_I18N ? window.NH48_I18N.getLang() : 'en');
       
       columnSelect.addEventListener('change', function() {
@@ -682,6 +800,13 @@
         grid.setAttribute('data-columns', columns);
         localStorage.setItem('nh48-catalog-columns', columns);
         trackEvent('catalog_columns_change', { columns });
+      });
+
+      viewSelect.addEventListener('change', function() {
+        applyView(this.value);
+        currentPage = 1;
+        updateDisplay();
+        trackEvent('catalog_view_change', { view: currentView });
       });
     </script>
     <script type="module">

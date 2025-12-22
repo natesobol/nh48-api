@@ -1,0 +1,323 @@
+{
+  "common": {
+    "language": "Język",
+    "languagePicker": "Wybór języka",
+    "loading": "Ładowanie…",
+    "errorLoading": "Błąd ładowania danych",
+    "noResults": "Brak wyników.",
+    "noImage": "brak obrazu",
+    "unknown": "Nieznane",
+    "notAvailable": "Niedostępne",
+    "units": {
+      "ariaLabel": "Wybierz jednostki"
+    },
+    "unitsLabel": "Jednostki",
+    "unitsFeet": "Stopy",
+    "unitsMeters": "Metry"
+  },
+  "landing": {
+    "title": "NH48 API: Otwarte dane o szczytach 4 000 stóp i długich szlakach w New Hampshire",
+    "metaDescription": {
+      "content": "NH48 API dostarcza otwarte, ustrukturyzowane dane i zdjęcia 48 czterotysięczników New Hampshire. Przeglądaj katalog, trasy i szlaki White Mountain."
+    },
+    "ogTitle": {
+      "content": "NH48 API – Otwarte dane o szlakach i szczytach"
+    },
+    "ogDescription": {
+      "content": "Przeglądaj katalog szczytów, odkrywaj szlaki White Mountain i uzyskaj dane o długich trasach w górach New Hampshire."
+    },
+    "heroTitle": "NH48 API",
+    "heroBody": "Otwarte dane, trasy i metadane zdjęć dla 48 czterotysięczników New Hampshire. Przeglądaj katalog, odkrywaj szlaki White Mountain i buduj na tym zbiorze danych.",
+    "cta": {
+      "catalog": "Otwórz katalog szczytów",
+      "trails": "Szlaki White Mountain",
+      "campaigns": "Kampanie szlakowe"
+    },
+    "notesTitle": "Uwagi do zbioru danych",
+    "notes": {
+      "versioned": "Wersjonowane wydania z dziennikiem zmian i metadanymi gotowymi do cytowania.",
+      "methodology": "Pochodzenie i metodologia zbierania danych dla szczytów, tras i odcinków szlaków.",
+      "validation": "Kontrole walidacyjne dla zakresów wysokości, dystansu i spójności geometrii.",
+      "reproducible": "Reprodukowane pipeline'y wspierane przez skrypty źródłowe i artefakty QA."
+    },
+    "author": "Autor: Nathan Sobol"
+  },
+  "nav": {
+    "logoAlt": "Logo NH48 API",
+    "tagline": "Otwarte dane i ustrukturyzowane metadane dla szczytów 4 000 stóp w New Hampshire.",
+    "catalog": "Katalog",
+    "trails": "Szlaki WMNF",
+    "longTrails": "Długie szlaki",
+    "pics": "Zdjęcia NH48",
+    "peakBagger": "Peak Bagger",
+    "latestPhotos": "Najnowsze zdjęcia WMNF",
+    "login": "Zaloguj się",
+    "viewProfile": "Zobacz profil"
+  },
+  "catalog": {
+    "title": "Katalog szczytów NH48",
+    "intro": "Przeglądaj 48 czterotysięczników New Hampshire. Kliknij szczyt, aby zobaczyć więcej szczegółów. Jeśli wystąpią błędy, szczegóły pojawią się poniżej. Otwarty API i zestawy danych dla gór 4 000 stóp w New Hampshire.",
+    "search": {
+      "placeholder": "Szukaj szczytów po nazwie…",
+      "ariaLabel": "Szukaj szczytów po nazwie"
+    },
+    "sort": {
+      "label": "Sortuj według:",
+      "ariaLabel": "Sortuj szczyty według atrybutu",
+      "name": "Nazwa (A–Z)",
+      "elevAsc": "Wysokość ↑",
+      "elevDesc": "Wysokość ↓",
+      "promAsc": "Wybitność ↑",
+      "promDesc": "Wybitność ↓",
+      "diffAsc": "Trudność A–Z",
+      "diffDesc": "Trudność Z–A",
+      "rangeAsc": "Pasmo A–Z",
+      "trailAsc": "Typ szlaku A–Z",
+      "exposureAsc": "Ekspozycja A–Z"
+    },
+    "filter": {
+      "label": "Filtruj według:",
+      "ariaLabel": "Wybierz pole do filtrowania szczytów",
+      "none": "Brak",
+      "range": "Pasmo",
+      "difficulty": "Trudność",
+      "trail": "Typ szlaku",
+      "exposure": "Ekspozycja"
+    },
+    "value": {
+      "label": "Wartość:",
+      "ariaLabel": "Wybierz wartość dla wybranego filtra",
+      "all": "Wszystkie"
+    },
+    "columns": {
+      "label": "Kolumny:",
+      "ariaLabel": "Wybierz liczbę kolumn katalogu"
+    },
+    "empty": "Nie znaleziono szczytów.",
+    "error": "Błąd ładowania szczytów",
+    "card": {
+      "elevation": "Wysokość",
+      "prominence": "Wybitność",
+      "range": "Pasmo",
+      "trailType": "Typ szlaku",
+      "difficulty": "Trudność",
+      "exposure": "Ekspozycja"
+    }
+  },
+  "photo": {
+    "altTemplate": "Zdjęcie {peak} — {season} {timeOfDay}"
+  },
+  "season": {
+    "spring": "wiosna",
+    "summer": "lato",
+    "fall": "jesień",
+    "autumn": "jesień",
+    "winter": "zima"
+  },
+  "time": {
+    "sunrise": "wschód słońca",
+    "sunset": "zachód słońca",
+    "morning": "rano",
+    "afternoon": "popołudnie",
+    "evening": "wieczór",
+    "night": "noc",
+    "day": "dzień",
+    "dawn": "świt",
+    "dusk": "zmierzch"
+  },
+  "values": {
+    "trailType": {
+      "loop": "Pętla",
+      "loop_or_out_back": "Pętla lub tam i z powrotem",
+      "loop_or_traverse": "Pętla lub trawers",
+      "loop_or_traverse_along_ridge": "Pętla lub trawers grzbietem",
+      "out_back": "Tam i z powrotem",
+      "out_back_common": "Tam i z powrotem - często",
+      "out_back_common_or_long_traverse": "Tam i z powrotem - często lub długi trawers",
+      "out_back_common_or_loop_with_connector_trails": "Tam i z powrotem - często lub pętla z łącznikami",
+      "out_back_common_or_small_loop_including_mt_webster": "Tam i z powrotem - często lub mała pętla z Mt Webster",
+      "out_back_commonly": "Tam i z powrotem - zwykle",
+      "out_back_or_loop": "Tam i z powrotem lub pętla",
+      "out_back_or_loop_with_tom_and_willey": "Tam i z powrotem lub pętla - z Tom i Willey",
+      "out_back_or_loop_combining_trails": "Tam i z powrotem lub pętla łącząca szlaki",
+      "out_back_or_loop_options": "Tam i z powrotem lub opcje pętli",
+      "out_back_or_point_to_point_traverse": "Tam i z powrotem lub trawers punkt‑punkt",
+      "out_back_or_traverse": "Tam i z powrotem lub trawers"
+    },
+    "difficulty": {
+      "moderate": "Umiarkowana",
+      "moderate_difficult": "Umiarkowana/Trudna",
+      "difficult": "Trudna",
+      "very_difficult": "Bardzo trudna",
+      "extremely_difficult": "Ekstremalnie trudna"
+    },
+    "exposure": {
+      "high": "Wysoka",
+      "medium": "Średnia",
+      "low": "Niska",
+      "low_to_medium": "Niska‑Średnia"
+    }
+  },
+  "peak": {
+    "back": "Wróć do katalogu szczytów NH48",
+    "loading": "Ładowanie…",
+    "relatedTrails": {
+      "title": "Powiązane szlaki i trasy",
+      "none": "Brak powiązanych szlaków.",
+      "link": "trasa {name}"
+    },
+    "section": {
+      "routes": "Trasy piesze",
+      "trails": "Powiązane szlaki",
+      "terrain": "Szlak i teren",
+      "conditions": "Warunki i dostęp"
+    },
+    "carousel": {
+      "prev": "Poprzedni obraz",
+      "next": "Następny obraz"
+    },
+    "metadata": {
+      "title": "Metadane bieżącego zdjęcia",
+      "notAvailable": "Niedostępne",
+      "moreDetails": "Więcej szczegółów ▾",
+      "lessDetails": "Mniej szczegółów ▴",
+      "labels": {
+        "season": "Sezon",
+        "timeOfDay": "Pora dnia",
+        "orientation": "Orientacja",
+        "captureDate": "Data wykonania",
+        "cameraMaker": "Producent aparatu",
+        "cameraModel": "Model aparatu",
+        "camera": "Aparat",
+        "lens": "Obiektyw",
+        "fStop": "Przysłona",
+        "shutterSpeed": "Czas naświetlania",
+        "iso": "ISO",
+        "exposureBias": "Korekta ekspozycji",
+        "focalLength": "Ogniskowa",
+        "flashMode": "Tryb lampy",
+        "meteringMode": "Tryb pomiaru",
+        "maxAperture": "Maks. przysłona",
+        "author": "Autor",
+        "dimensions": "Wymiary",
+        "fileSize": "Rozmiar pliku",
+        "fileCreateDate": "Data utworzenia pliku",
+        "fileModifiedDate": "Data modyfikacji pliku",
+        "rating": "Ocena",
+        "metadata": "Metadane"
+      }
+    },
+    "generalInfo": {
+      "title": "Ogólne informacje o szczycie",
+      "elevation": "Wysokość",
+      "prominence": "Wybitność",
+      "range": "Pasmo",
+      "trailType": "Typ szlaku",
+      "difficulty": "Trudność",
+      "exposure": "Ekspozycja"
+    },
+    "routes": {
+      "distance": "Dystans",
+      "gain": "Przewyższenie",
+      "difficulty": "Trudność"
+    },
+    "trailList": {
+      "title": "Lista szlaków"
+    },
+    "terrain": {
+      "terrain": "Teren",
+      "scramble": "Scramble",
+      "view": "Widok"
+    },
+    "conditions": {
+      "bestSeasons": "Najlepsze sezony",
+      "waterAvailability": "Dostępność wody",
+      "cellReception": "Zasięg komórkowy",
+      "weatherExposure": "Ekspozycja na pogodę",
+      "emergencyBailout": "Awaryjne wyjście",
+      "dogFriendly": "Przyjazne psom",
+      "nearbyFeatures": "Pobliskie atrakcje"
+    },
+    "errorLoading": "Błąd ładowania szczytu",
+    "meta": {
+      "titleTemplate": "{name} ({elevation} ft) – NH48",
+      "descriptionTemplate": "{name} — {elevation} ft wysokości, {prominence} ft wybitności, w paśmie {range}. Trasy, trudność i zdjęcia dla tego 4‑tysięcznika."
+    }
+  },
+  "trails": {
+    "title": "🏔️ Narzędzie mapy WMNF Trails API",
+    "subtitle": "Otwarta struktura danych o szczytach, szlakach i trasach dla White Mountains.",
+    "intro": "White Mountain National Forest — opracowane przez Nate Sobol. Używaj jako szybkiej wyszukiwarki szlaków i narzędzia śledzenia postępów. Otwarty API i zestawy danych dla gór 4 000 stóp w New Hampshire.",
+    "details": {
+      "title": "Szczegóły szlaku",
+      "empty": "Wybierz szlak, aby zobaczyć dystans, przewyższenie i szczegóły OpenStreetMap."
+    },
+    "search": {
+      "placeholder": "Szukaj szlaków…"
+    },
+    "sort": {
+      "az": "Sortuj A → Z",
+      "za": "Sortuj Z → A"
+    },
+    "jumpTo": "Przejdź do:",
+    "list": {
+      "headerName": "Nazwa szlaku",
+      "headerCompleted": "Ukończone",
+      "noMatches": "Nie znaleziono szlaków. Spróbuj innego wyszukiwania.",
+      "noTrails": "Brak dostępnych szlaków."
+    },
+    "loading": "Ładowanie szlaków...",
+    "about": {
+      "title": "O tej liście",
+      "body": "NH Tracing, Redlining i White Mountain Trails odnoszą się do tego samego zestawu szlaków opisanego w przewodniku. Niezależnie od nazwy, pracujesz nad tym samym celem — doświadczeniem tych tras."
+    },
+    "disclaimer": {
+      "title": "Zastrzeżenie",
+      "body": "Ta strona <strong>nie jest przeznaczona do planowania lub nawigacji</strong>. Dane o szlakach mogą zawierać drobne błędy, a ta kolekcja nie jest listą oficjalną (choć zawiera większość znanych szlaków). Prosimy korzystać z oficjalnych źródeł i zachować ostrożność w terenie."
+    },
+    "howto": {
+      "title": "Jak używać",
+      "body": "Użyj zielonych kółek, aby oznaczyć szlak jako ukończony. Po oznaczeniu dotknij ikony kalendarza, aby dodać datę ukończenia — data zastąpi ikonę i może być edytowana po ponownym dotknięciu. Postęp jest przechowywany lokalnie w przeglądarce. Możesz eksportować lub importować postęp za pomocą przycisków poniżej."
+    },
+    "settings": {
+      "title": "Ustawienia",
+      "hideCompleted": "Ukryj ukończone szlaki",
+      "clearProgress": "Wyczyść cały postęp"
+    },
+    "export": "Eksportuj CSV",
+    "import": "Importuj",
+    "viewApi": "Zobacz API",
+    "resizePanels": "Zmień rozmiar paneli",
+    "info": {
+      "noProperties": "Brak dodatkowych właściwości szlaku. Zostaną uzupełnione z danych OpenStreetMap.",
+      "loadingProperties": "Ładowanie dodatkowych właściwości szlaku z OpenStreetMap...",
+      "sourceNote": "Informacje pochodzą z OpenStreetMap, gdy są dostępne.",
+      "distance": "Dystans",
+      "elevationGain": "Przewyższenie",
+      "minElevation": "Min. wysokość",
+      "maxElevation": "Maks. wysokość",
+      "surface": "Nawierzchnia",
+      "trailType": "Typ szlaku",
+      "difficulty": "Trudność",
+      "visibility": "Widoczność",
+      "width": "Szerokość",
+      "allowedUses": "Dozwolone użycia",
+      "season": "Sezon",
+      "maintainer": "Opiekun",
+      "source": "Źródło"
+    },
+    "virtualHike": "Wirtualna wędrówka",
+    "unnamedTrail": "Nienazwany szlak",
+    "confirmClear": "Czy na pewno chcesz wyczyścić cały postęp?",
+    "alertLoadFail": "Nie udało się załadować danych o szlakach. Upewnij się, że masz połączenie z internetem i odśwież stronę.",
+    "csv": {
+      "headerTrail": "Szlak",
+      "headerCompleted": "Ukończone",
+      "headerDate": "Data",
+      "filename": "trail-progress.csv"
+    },
+    "map": {
+      "attribution": "Dane mapy: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Styl mapy: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    }
+  }
+}

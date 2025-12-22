@@ -6,13 +6,30 @@
   <title data-i18n="landing.title">NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails</title>
   <meta name="description" data-i18n="landing.metaDescription" data-i18n-attr="content" content="NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Explore the catalog, routes, and White Mountain trails.">
   <link rel="icon" type="image/png" href="/nh48API_logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="canonical" href="https://nh48.info/i18n/fr.html">
   <link rel="alternate" hreflang="en" href="https://nh48.info/">
   <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
   <link rel="alternate" hreflang="fr" href="https://nh48.info/i18n/fr.html">
   <link rel="alternate" hreflang="de" href="https://nh48.info/i18n/de.html">
   <link rel="alternate" hreflang="zh" href="https://nh48.info/i18n/zh.html">
+  <link rel="alternate" hreflang="zh-Hans" href="https://nh48.info/i18n/zh-Hans.html">
   <link rel="alternate" hreflang="ja" href="https://nh48.info/i18n/ja.html">
+  <link rel="alternate" hreflang="ar" href="https://nh48.info/i18n/ar.html">
+  <link rel="alternate" hreflang="hi-IN" href="https://nh48.info/i18n/hi.html">
+  <link rel="alternate" hreflang="pt" href="https://nh48.info/i18n/pt.html">
+  <link rel="alternate" hreflang="ru" href="https://nh48.info/i18n/ru.html">
+  <link rel="alternate" hreflang="id" href="https://nh48.info/i18n/id.html">
+  <link rel="alternate" hreflang="it" href="https://nh48.info/i18n/it.html">
+  <link rel="alternate" hreflang="ko" href="https://nh48.info/i18n/ko.html">
+  <link rel="alternate" hreflang="tr" href="https://nh48.info/i18n/tr.html">
+  <link rel="alternate" hreflang="vi" href="https://nh48.info/i18n/vi.html">
+  <link rel="alternate" hreflang="pl" href="https://nh48.info/i18n/pl.html">
+  <link rel="alternate" hreflang="fa" href="https://nh48.info/i18n/fa.html">
+  <link rel="alternate" hreflang="fil" href="https://nh48.info/i18n/fil.html">
+
   <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
   <meta property="og:title" data-i18n="landing.ogTitle" data-i18n-attr="content" content="NH48 API – Open Trails and Peaks Data">
   <meta property="og:description" data-i18n="landing.ogDescription" data-i18n-attr="content" content="Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains.">
@@ -24,7 +41,7 @@
       margin: 0;
       background: #0a0a0a;
       color: #ffffff;
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
       min-height: 100vh;
       position: relative;
       display: flex;
@@ -65,7 +82,7 @@
       align-items: center;
       justify-content: center;
       padding: 10px 18px;
-      border-radius: 8px;
+      border-radius: 6px;
       text-decoration: none;
       font-weight: 600;
       border: 1px solid #22c55e;
@@ -115,6 +132,7 @@
       gap: 6px;
       flex-wrap: wrap;
       justify-content: flex-end;
+      max-width: 200px;
     }
     .nh48-lang-label {
       font-size: 0.75rem;
@@ -124,9 +142,9 @@
       margin-right: 4px;
     }
     .nh48-flag {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
       border: 1px solid rgba(148, 163, 184, 0.5);
       background: rgba(15, 23, 42, 0.6);
       color: #ffffff;
@@ -135,9 +153,10 @@
       justify-content: center;
       cursor: pointer;
       transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      margin-bottom: 4px;
     }
     .nh48-flag .flag {
-      font-size: 18px;
+      font-size: 16px;
       line-height: 1;
     }
     .nh48-flag.active {
@@ -147,6 +166,16 @@
     .nh48-flag:focus-visible {
       outline: 2px solid #22c55e;
       outline-offset: 2px;
+    }
+    .rtl .nh48-lang {
+      flex-direction: row-reverse;
+      justify-content: flex-start;
+    }
+    .rtl main {
+      text-align: right;
+    }
+    .rtl .dataset-notes {
+      text-align: right;
     }
     #splash-background {
       position: fixed;
@@ -205,27 +234,7 @@
   <div id="splash-background" aria-hidden="true"></div>
   <div id="splash-mask" aria-hidden="true"></div>
   <div class="lang-bar">
-    <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
-      <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
-      <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
-        <span class="flag flag-en" aria-hidden="true">🇺🇸</span>
-      </button>
-      <button class="nh48-flag" data-lang="es" aria-label="Español" title="Español">
-        <span class="flag flag-es" aria-hidden="true">🇪🇸</span>
-      </button>
-      <button class="nh48-flag" data-lang="fr" aria-label="Français" title="Français">
-        <span class="flag flag-fr" aria-hidden="true">🇫🇷</span>
-      </button>
-      <button class="nh48-flag" data-lang="de" aria-label="Deutsch" title="Deutsch">
-        <span class="flag flag-de" aria-hidden="true">🇩🇪</span>
-      </button>
-      <button class="nh48-flag" data-lang="zh" aria-label="中文" title="中文">
-        <span class="flag flag-zh" aria-hidden="true">🇨🇳</span>
-      </button>
-      <button class="nh48-flag" data-lang="ja" aria-label="日本語" title="日本語">
-        <span class="flag flag-ja" aria-hidden="true">🇯🇵</span>
-      </button>
-    </div>
+    <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
   </div>
   <main>
     <h1 data-i18n="landing.heroTitle">NH48 API</h1>
@@ -249,7 +258,7 @@
   <script>
     localStorage.setItem('nh48_lang', 'fr');
   </script>
-  <script src="/js/i18n.js" defer></script>
+  <script type="module" src="/js/i18n.js"></script>
   <script src="/js/splash.js" defer></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
