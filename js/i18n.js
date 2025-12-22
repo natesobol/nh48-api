@@ -134,8 +134,15 @@ import { LANGS } from './langConfig.js';
     if (observer || !document.body) return;
     observer = new MutationObserver(mutations => {
       if (isApplying) return;
-      const hasAddedNodes = mutations.some(mutation => mutation.addedNodes && mutation.addedNodes.length > 0);
-      if (hasAddedNodes) {
+      const hasTranslatableNodes = mutations.some(mutation => {
+        if (!mutation.addedNodes || mutation.addedNodes.length === 0) return false;
+        return Array.from(mutation.addedNodes).some(node => {
+          if (node.nodeType !== 1) return false;
+          if (node.matches && node.matches('[data-i18n], [data-i18n-html], [data-i18n-attr]')) return true;
+          return node.querySelector && node.querySelector('[data-i18n], [data-i18n-html], [data-i18n-attr]');
+        });
+      });
+      if (hasTranslatableNodes) {
         scheduleApply();
       }
     });
