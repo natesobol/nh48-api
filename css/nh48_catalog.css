@@ -3,7 +3,7 @@
   --panel:#12121a;
   --card:#171a22;
   --ink:#ffffff;
-  --muted:#a5b4c3;
+  --muted:#ffffff;
   --stroke:#ffffff33;
   --accent:#22c55e;
   --gap:10px;
@@ -149,6 +149,9 @@ input[list]::-webkit-list-button {
   margin-bottom:14px;
   align-items:center;
 }
+.controls .control.is-disabled{
+  opacity:0.65;
+}
 .controls label{
   font-size:0.85rem;
   color:#ffffff;
@@ -237,6 +240,11 @@ input[list]::-webkit-list-button {
   gap:16px;
   grid-template-columns:repeat(3,minmax(0,1fr));
 }
+.grid[data-view="list"]{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
 
 /* Dynamic column layouts (desktop only) - all within 1130px container */
 @media(min-width:801px){
@@ -321,11 +329,92 @@ input[list]::-webkit-list-button {
   white-space:normal;
 }
 
+.list-item{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:10px 14px;
+  border-radius:12px;
+  border:2px solid #ffffff;
+  background:var(--card);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.list-item:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px #0005;
+}
+.list-thumb{
+  width:160px;
+  height:96px;
+  border-radius:10px;
+  overflow:hidden;
+  background:var(--panel);
+  flex:0 0 auto;
+}
+.list-thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.list-content{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex:1 1 auto;
+}
+.list-main h3{
+  margin:0 0 4px;
+  font-size:1.05rem;
+}
+.list-meta{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  font-size:0.85rem;
+}
+.list-meta span{
+  display:block;
+}
+.list-label{
+  text-transform:uppercase;
+  letter-spacing:0.4px;
+  font-size:0.72rem;
+  color:var(--muted);
+}
+.list-link{
+  color:var(--ink);
+  text-decoration:none;
+  font-weight:600;
+  white-space:nowrap;
+  border-bottom:1px solid transparent;
+}
+.list-link:hover{
+  border-bottom-color:var(--ink);
+}
+
 @media(max-width:640px){
   .body{ padding:12px; }
   .body h3{ font-size:0.98rem; }
   .meta-row{ font-size:0.8rem; }
   .meta-label{ font-size:0.72rem; }
+  .list-item{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .list-thumb{
+    width:100%;
+    height:160px;
+  }
+  .list-content{
+    width:100%;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .list-link{
+    margin-top:4px;
+  }
 }
 
 .empty{
