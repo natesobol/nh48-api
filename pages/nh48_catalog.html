@@ -146,6 +146,13 @@
             <option value="5">5</option>
           </select>
         </div>
+        <div class="control">
+          <label for="viewSelect">View:</label>
+          <select id="viewSelect" aria-label="Select catalog view">
+            <option value="grid" selected>Grid</option>
+            <option value="list">List</option>
+          </select>
+        </div>
         <div class="control nh48-lang-control">
           <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
             <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
@@ -484,6 +491,56 @@
         return card;
       }
 
+      function createListItem(p){
+        const item = document.createElement('article');
+        item.className = 'list-item';
+
+        let thumbSrc = getPlaceholder();
+        let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
+        if (Array.isArray(p.photos) && p.photos.length > 0) {
+          const first = p.photos[0];
+          thumbAlt = buildPhotoAlt(p, first);
+          if (typeof first === 'string') {
+            thumbSrc = normalizePhotoUrl(first);
+          } else if (first && first.url) {
+            thumbSrc = normalizePhotoUrl(first.url);
+          }
+        }
+
+        const elev = p['Elevation (ft)'];
+        const range = p['Range / Subrange'] || '—';
+        const href = `/pages/nh48_peak.html?slug=${encodeURIComponent(p.slug)}`;
+
+        item.innerHTML = `
+          <div class="list-thumb">
+            <img src="${thumbSrc}" alt="${thumbAlt}" loading="lazy" decoding="async">
+          </div>
+          <div class="list-content">
+            <div class="list-main">
+              <h3>${p.peakName}</h3>
+              <div class="list-meta">
+                <div>
+                  <span class="list-label">${t('catalog.card.elevation')}</span>
+                  <span>${formatElevation(elev)}</span>
+                </div>
+                <div>
+                  <span class="list-label">${t('catalog.card.range')}</span>
+                  <span>${range}</span>
+                </div>
+              </div>
+            </div>
+            <a class="list-link" href="${href}">View details →</a>
+          </div>
+        `;
+
+        item.addEventListener('click', () => {
+          trackEvent('catalog_peak_open', { slug: p.slug, name: p.peakName });
+          window.location.href = href;
+        });
+
+        return item;
+      }
+
       function setupLazyLoading(){
         if (!('IntersectionObserver' in window)) return;
         const observer = new IntersectionObserver((entries, obs) => {
@@ -509,6 +566,19 @@
         }
         empty.hidden = true;
         list.forEach(p => grid.appendChild(createCard(p)));
+        setupLazyLoading();
+      }
+
+      function renderList(list){
+        const grid = document.getElementById('grid');
+        const empty = document.getElementById('emptyMessage');
+        grid.innerHTML = '';
+        if(!list || list.length === 0){
+          empty.hidden = false;
+          return;
+        }
+        empty.hidden = true;
+        list.forEach(p => grid.appendChild(createListItem(p)));
         setupLazyLoading();
       }
 
@@ -615,7 +685,11 @@
         const endIdx = startIdx + ITEMS_PER_PAGE;
         const pageItems = list.slice(startIdx, endIdx);
 
-        renderGrid(pageItems);
+        if(currentView === 'list'){
+          renderList(pageItems);
+        }else{
+          renderGrid(pageItems);
+        }
         renderPagination(totalPages);
       }
 
@@ -682,7 +756,30 @@
 
       // Column selector handler
       const columnSelect = document.getElementById('columnSelect');
+      const viewSelect = document.getElementById('viewSelect');
       const grid = document.getElementById('grid');
+      const columnControl = columnSelect ? columnSelect.closest('.control') : null;
+      let currentView = 'grid';
+
+      const applyView = (view, { persist = true } = {}) => {
+        currentView = view === 'list' ? 'list' : 'grid';
+        if(viewSelect){
+          viewSelect.value = currentView;
+        }
+        if(grid){
+          grid.setAttribute('data-view', currentView);
+        }
+        if(columnSelect){
+          const disableColumns = currentView === 'list';
+          columnSelect.disabled = disableColumns;
+          if(columnControl){
+            columnControl.classList.toggle('is-disabled', disableColumns);
+          }
+        }
+        if(persist){
+          localStorage.setItem('nh48-catalog-view', currentView);
+        }
+      };
       
       // Load saved column preference
       const savedColumns = localStorage.getItem('nh48-catalog-columns');
@@ -693,6 +790,9 @@
         grid.setAttribute('data-columns', '3');
       }
 
+      const savedView = localStorage.getItem('nh48-catalog-view');
+      applyView(savedView || 'grid', { persist: false });
+
       syncUnitsWithLanguage(window.NH48_I18N ? window.NH48_I18N.getLang() : 'en');
       
       columnSelect.addEventListener('change', function() {
@@ -700,6 +800,13 @@
         grid.setAttribute('data-columns', columns);
         localStorage.setItem('nh48-catalog-columns', columns);
         trackEvent('catalog_columns_change', { columns });
+      });
+
+      viewSelect.addEventListener('change', function() {
+        applyView(this.value);
+        currentPage = 1;
+        updateDisplay();
+        trackEvent('catalog_view_change', { view: currentView });
       });
     </script>
     <script type="module">
