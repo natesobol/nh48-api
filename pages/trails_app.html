@@ -167,6 +167,59 @@
       flex-wrap: wrap;
       margin-top: 12px;
     }
+    .nh48-lang-menu {
+      position: relative;
+    }
+    .nh48-lang-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 4px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .nh48-lang-toggle .flag {
+      font-size: 18px;
+    }
+    .nh48-lang-toggle-text {
+      white-space: nowrap;
+    }
+    .nh48-lang-caret {
+      font-size: 0.65rem;
+      margin-left: 2px;
+      opacity: 0.8;
+    }
+    .nh48-lang-options {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 8px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      min-width: 220px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 4;
+    }
+    .nh48-lang-menu.open .nh48-lang-options {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
     .nh48-lang-label {
       font-size: 0.75rem;
       color: #d6f5df;

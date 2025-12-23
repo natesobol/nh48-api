@@ -161,6 +161,29 @@ import { LANGS } from './langConfig.js';
     });
   }
 
+  function updateLangToggle(lang) {
+    const config = getLangConfig(lang);
+    if (!config) return;
+    document.querySelectorAll('.nh48-lang-toggle').forEach(toggle => {
+      toggle.innerHTML = `
+        <span class="flag flag-${config.code}" aria-hidden="true">${config.flag}</span>
+        <span class="nh48-lang-toggle-text">${config.label}</span>
+        <span class="nh48-lang-caret" aria-hidden="true">▾</span>
+      `;
+      toggle.setAttribute('aria-label', `${t('common.language')}: ${config.label}`);
+    });
+  }
+
+  function closeLangMenus() {
+    document.querySelectorAll('.nh48-lang-menu').forEach(menu => {
+      menu.classList.remove('open');
+      const toggle = menu.querySelector('.nh48-lang-toggle');
+      if (toggle) {
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
   function initLangPicker() {
     document.querySelectorAll('.nh48-flag').forEach(btn => {
       if (btn.dataset.i18nBound) return;
@@ -169,25 +192,100 @@ import { LANGS } from './langConfig.js';
         const lang = btn.getAttribute('data-lang');
         if (lang) {
           setLang(lang);
+          closeLangMenus();
         }
       });
     });
+
+    document.querySelectorAll('.nh48-lang-menu').forEach(menu => {
+      if (menu.dataset.dropdownBound) return;
+      menu.dataset.dropdownBound = 'true';
+      const toggle = menu.querySelector('.nh48-lang-toggle');
+      const options = menu.querySelector('.nh48-lang-options');
+      if (!toggle) return;
+
+      toggle.addEventListener('click', event => {
+        event.stopPropagation();
+        const isOpen = menu.classList.contains('open');
+        closeLangMenus();
+        if (!isOpen) {
+          menu.classList.add('open');
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      toggle.addEventListener('keydown', event => {
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          menu.classList.add('open');
+          toggle.setAttribute('aria-expanded', 'true');
+          const firstOption = options && options.querySelector('.nh48-flag');
+          if (firstOption) firstOption.focus();
+        }
+        if (event.key === 'Escape') {
+          closeLangMenus();
+        }
+      });
+
+      if (options) {
+        options.addEventListener('keydown', event => {
+          if (event.key === 'Escape') {
+            closeLangMenus();
+            toggle.focus();
+          }
+        });
+      }
+    });
+
+    if (!document.body.dataset.langMenuBound) {
+      document.body.dataset.langMenuBound = 'true';
+      document.addEventListener('click', event => {
+        if (event.target.closest('.nh48-lang-menu')) return;
+        closeLangMenus();
+      });
+      window.addEventListener('resize', closeLangMenus);
+    }
+
     updateFlagButtons(currentLang);
+    updateLangToggle(currentLang);
   }
 
   function renderLangPicker() {
     const container = document.getElementById('langPicker');
     if (!container) return;
-    container.innerHTML = '<span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>';
-    LANGS.forEach(({ code, label, flag }) => {
+    container.innerHTML = '';
+
+    const label = document.createElement('span');
+    label.className = 'nh48-lang-label';
+    label.setAttribute('data-i18n', 'common.language');
+    label.textContent = 'LANGUAGE';
+    container.appendChild(label);
+
+    const menu = document.createElement('div');
+    menu.className = 'nh48-lang-menu';
+    const toggle = document.createElement('button');
+    toggle.className = 'nh48-lang-toggle';
+    toggle.type = 'button';
+    toggle.setAttribute('aria-haspopup', 'listbox');
+    toggle.setAttribute('aria-expanded', 'false');
+    menu.appendChild(toggle);
+
+    const options = document.createElement('div');
+    options.className = 'nh48-lang-options';
+    options.setAttribute('role', 'listbox');
+    LANGS.forEach(({ code, label: langLabel, flag }) => {
       const btn = document.createElement('button');
       btn.className = 'nh48-flag';
+      btn.type = 'button';
       btn.setAttribute('data-lang', code);
-      btn.setAttribute('aria-label', label);
-      btn.setAttribute('title', label);
+      btn.setAttribute('aria-label', langLabel);
+      btn.setAttribute('title', langLabel);
       btn.innerHTML = `<span class="flag flag-${code}" aria-hidden="true">${flag}</span>`;
-      container.appendChild(btn);
+      options.appendChild(btn);
     });
+    menu.appendChild(options);
+    container.appendChild(menu);
+
     initLangPicker();
   }
 
