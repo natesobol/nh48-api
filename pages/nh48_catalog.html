@@ -153,6 +153,10 @@
             <option value="list">List</option>
           </select>
         </div>
+        <div class="control api-variables-control">
+          <label for="apiVariablesToggle">API Variables</label>
+          <input type="checkbox" id="apiVariablesToggle" aria-label="Toggle API variable labels">
+        </div>
         <div class="control nh48-lang-control">
           <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
         </div>
@@ -227,11 +231,54 @@
       let activeSort = 'name';
 
       const UNIT_STORAGE_KEY = 'nh48_units';
+      const API_VARIABLES_STORAGE_KEY = 'nh48-catalog-api-variables';
       const UNITS = {
         FEET: 'feet',
         METERS: 'meters'
       };
       let currentUnits = UNITS.FEET;
+      let showApiVariables = false;
+
+      const FRIENDLY_LABELS = {
+        elevation: 'catalog.card.elevation',
+        prominence: 'catalog.card.prominence',
+        range: 'catalog.card.range',
+        trailType: 'catalog.card.trailType',
+        difficulty: 'catalog.card.difficulty',
+        exposure: 'catalog.card.exposure'
+      };
+
+      const FRIENDLY_LABEL_TEXT = {
+        elevation: 'Elevation',
+        prominence: 'Prominence',
+        range: 'Range',
+        trailType: 'Trail Type',
+        difficulty: 'Difficulty',
+        exposure: 'Exposure'
+      };
+
+      const API_LABELS = {
+        elevation: 'Elevation (ft)',
+        prominence: 'Prominence (ft)',
+        range: 'Range / Subrange',
+        trailType: 'Trail Type',
+        difficulty: 'Difficulty',
+        exposure: 'Exposure Level'
+      };
+
+      function getCatalogLabel(key){
+        if(showApiVariables){
+          return API_LABELS[key] || key;
+        }
+        const i18nKey = FRIENDLY_LABELS[key];
+        if(i18nKey){
+          const translated = t(i18nKey);
+          if(translated && !translated.startsWith('catalog.')){
+            return translated;
+          }
+        }
+        return FRIENDLY_LABEL_TEXT[key] || key;
+      }
 
       function cleanJSON(raw){
         let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
@@ -335,19 +382,23 @@
       };
 
       function translateTrailType(value){
-        if(!value) return value;
+        if(!value || showApiVariables) return value;
         const key = TRAIL_TYPE_TRANSLATIONS[value];
-        return key ? t(key) : value;
+        if(!key) return value;
+        const translated = t(key);
+        return translated && !translated.startsWith('values.') ? translated : value;
       }
 
       function translateDifficulty(value){
-        if(!value) return value;
+        if(!value || showApiVariables) return value;
         const key = DIFFICULTY_TRANSLATIONS[value];
-        return key ? t(key) : value;
+        if(!key) return value;
+        const translated = t(key);
+        return translated && !translated.startsWith('values.') ? translated : value;
       }
 
       function translateExposure(value){
-        if(!value) return value;
+        if(!value || showApiVariables) return value;
         const trimmed = String(value).trim();
         const match = trimmed.match(/^(Low to Medium|Low|Medium|High)/i);
         if(!match) return value;
@@ -382,6 +433,17 @@
         }
         if(persist){
           localStorage.setItem(UNIT_STORAGE_KEY, units);
+        }
+      }
+
+      function setApiVariableLabels(enabled, { persist = true } = {}){
+        showApiVariables = Boolean(enabled);
+        const toggle = document.getElementById('apiVariablesToggle');
+        if(toggle){
+          toggle.checked = showApiVariables;
+        }
+        if(persist){
+          localStorage.setItem(API_VARIABLES_STORAGE_KEY, showApiVariables ? 'true' : 'false');
         }
       }
 
@@ -453,12 +515,12 @@
           <div class="body">
             <h3>${p.peakName}</h3>
             <div class="card-meta">
-              <div class="meta-row"><span class="meta-label">${t('catalog.card.elevation')}</span><span class="meta-value">${formatElevation(elev)}</span></div>
-              <div class="meta-row"><span class="meta-label">${t('catalog.card.prominence')}</span><span class="meta-value">${formatProminence(prom)}</span></div>
-              <div class="meta-row"><span class="meta-label">${t('catalog.card.range')}</span><span class="meta-value">${range}</span></div>
-              <div class="meta-row"><span class="meta-label">${t('catalog.card.trailType')}</span><span class="meta-value">${trail}</span></div>
-              <div class="meta-row"><span class="meta-label">${t('catalog.card.difficulty')}</span><span class="meta-value">${difficulty}</span></div>
-              <div class="meta-row"><span class="meta-label">${t('catalog.card.exposure')}</span><span class="meta-value">${exposure}</span></div>
+              <div class="meta-row"><span class="meta-label">${getCatalogLabel('elevation')}</span><span class="meta-value">${formatElevation(elev)}</span></div>
+              <div class="meta-row"><span class="meta-label">${getCatalogLabel('prominence')}</span><span class="meta-value">${formatProminence(prom)}</span></div>
+              <div class="meta-row"><span class="meta-label">${getCatalogLabel('range')}</span><span class="meta-value">${range}</span></div>
+              <div class="meta-row"><span class="meta-label">${getCatalogLabel('trailType')}</span><span class="meta-value">${trail}</span></div>
+              <div class="meta-row"><span class="meta-label">${getCatalogLabel('difficulty')}</span><span class="meta-value">${difficulty}</span></div>
+              <div class="meta-row"><span class="meta-label">${getCatalogLabel('exposure')}</span><span class="meta-value">${exposure}</span></div>
             </div>
           </div>`;
 
@@ -499,11 +561,11 @@
               <h3>${p.peakName}</h3>
               <div class="list-meta">
                 <div>
-                  <span class="list-label">${t('catalog.card.elevation')}</span>
+                  <span class="list-label">${getCatalogLabel('elevation')}</span>
                   <span>${formatElevation(elev)}</span>
                 </div>
                 <div>
-                  <span class="list-label">${t('catalog.card.range')}</span>
+                  <span class="list-label">${getCatalogLabel('range')}</span>
                   <span>${range}</span>
                 </div>
               </div>
@@ -721,6 +783,14 @@
             trackEvent('catalog_units_change', { units: e.target.value });
           });
         }
+        const apiVariablesToggle = document.getElementById('apiVariablesToggle');
+        if(apiVariablesToggle){
+          apiVariablesToggle.addEventListener('change', (e) => {
+            setApiVariableLabels(e.target.checked);
+            updateDisplay();
+            trackEvent('catalog_api_variables_toggle', { enabled: e.target.checked });
+          });
+        }
       }
 
       window.addEventListener('load', init);
@@ -773,6 +843,11 @@
       applyView(savedView || 'grid', { persist: false });
 
       syncUnitsWithLanguage(window.NH48_I18N ? window.NH48_I18N.getLang() : 'en');
+
+      const savedApiVariables = localStorage.getItem(API_VARIABLES_STORAGE_KEY);
+      if(savedApiVariables === 'true'){
+        setApiVariableLabels(true, { persist: false });
+      }
       
       columnSelect.addEventListener('change', function() {
         const columns = this.value;
