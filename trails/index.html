@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>White Mountain Trails – NH48</title>
+  <title>White Mountains Trails Map &amp; List – NH48</title>
   <meta name="description" content="Browse trails in the White Mountain National Forest by distance, elevation gain, difficulty and more. Interactive maps, route descriptions and GPX downloads. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
   <link rel="canonical" href="https://nh48.info/trails">
     <link rel="alternate" hreflang="en" href="https://nh48.info/">
@@ -143,6 +143,9 @@
     .page-header h1 {
       margin: 0 0 0.35rem;
       font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
     }
 
     .page-header p {
@@ -157,6 +160,26 @@
       font-weight: 600;
       font-size: 1.1rem;
       color: #d6f5df;
+    }
+
+    .page-logo {
+      width: 34px;
+      height: 34px;
+      display: inline-block;
+    }
+
+    .map-telemetry {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.7rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      background: var(--bg-tertiary);
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      width: fit-content;
     }
     .nh48-lang {
       display: flex;
@@ -915,9 +938,12 @@
       .catch(err => console.error('Failed to load navigation:', err));
   </script>
   <header class="page-header">
-    <h1 data-i18n="trails.title">🏔️ WMNF Trails API Map Tool</h1>
-    <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
-    <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
+    <h1>
+      <img class="page-logo" src="/WMNF_Trails_API_logo.png" alt="WMNF Trails logo" loading="lazy" decoding="async" />
+      <span data-i18n="trails.title">White Mountains Trails Map &amp; List</span>
+    </h1>
+    <h2 class="page-subtitle" data-i18n="trails.subtitle">Interactive WMNF trail map with GPX-backed route details.</h2>
+    <p data-i18n="trails.intro">Use this as a quick trail finder and completion tracker for the White Mountain National Forest. Open datasets and telemetry for New Hampshire’s 4,000-foot mountains.</p>
     <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
       <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
       <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
@@ -945,6 +971,7 @@
     <div id="topSection">
       <!-- Map container wrapped in its own panel to provide padding and border -->
       <div id="mapContainer">
+        <div class="map-telemetry" id="telemetrySummary" data-i18n="trails.telemetry.loading">Loading GPX telemetry coverage…</div>
         <div id="map"></div>
       </div>
       <div id="trailInfoPanel" class="trail-info-panel">
@@ -1148,9 +1175,24 @@
 
       // Trail info lookup and UI state for the details panel beneath the map.
       const trailInfoPanel = document.getElementById('trailInfoPanel');
+      const telemetrySummary = document.getElementById('telemetrySummary');
       let trailInfoLookup = new Map();
       let trailInfoLoaded = false;
       let currentTrailSelection = null;
+      let totalTrailCount = null;
+      let telemetryTrailCount = null;
+
+      function updateTelemetrySummary() {
+        if (!telemetrySummary) return;
+        if (totalTrailCount != null && telemetryTrailCount != null) {
+          telemetrySummary.textContent = t('trails.telemetry.label', {
+            mapped: telemetryTrailCount.toLocaleString(),
+            total: totalTrailCount.toLocaleString()
+          });
+          return;
+        }
+        telemetrySummary.textContent = t('trails.telemetry.loading');
+      }
 
       // Normalize trail names for matching (case-insensitive, trimmed, collapses spaces).
       function normalizeTrailName(name) {
@@ -1204,6 +1246,8 @@
               const records = await response.json();
               if (Array.isArray(records)) {
                 records.forEach(registerTrailRecord);
+                totalTrailCount = records.length;
+                updateTelemetrySummary();
                 trailInfoLoaded = true;
                 trackEvent('trails_info_loaded', { source: url, count: records.length });
                 break;
@@ -1537,6 +1581,8 @@
             if (response.ok) {
               const data = await response.json();
               console.log(`Successfully loaded GeoJSON from ${url}`);
+              telemetryTrailCount = Array.isArray(data.features) ? data.features.length : 0;
+              updateTelemetrySummary();
               trackEvent('trails_geojson_loaded', { source: url, featureCount: data.features ? data.features.length : 0 });
               return data;
             }

@@ -245,9 +245,9 @@
     }
   },
   "trails": {
-    "title": "🏔️ WMNF Trails API Map Tool",
-    "subtitle": "Open peak, trail, and route data structure for the White Mountains.",
-    "intro": "White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.",
+    "title": "White Mountains Trails Map & List",
+    "subtitle": "Interactive WMNF trail map with GPX-backed route details.",
+    "intro": "Use this as a quick trail finder and completion tracker for the White Mountain National Forest. Open datasets and telemetry for New Hampshire’s 4,000-foot mountains.",
     "details": {
       "title": "Trail details",
       "empty": "Select a trail to view distance, elevation, and OpenStreetMap details."
@@ -318,6 +318,10 @@
     },
     "map": {
       "attribution": "Map data: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    },
+    "telemetry": {
+      "label": "{mapped}/{total} trails with GPX telemetry",
+      "loading": "Loading GPX telemetry coverage…"
     }
   }
 }
