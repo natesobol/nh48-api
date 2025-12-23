@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>WMNF Trails Editor</title>
+  <!-- Leaflet styles -->
+  <!-- Note: removed integrity and crossorigin attributes to avoid SRI mismatch errors. -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  />
+  <style>
+    /* Basic reset and layout */
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: #333;
+      color: #fff;
+      gap: 10px;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Sidebar list */
+    #list {
+      width: 25%;
+      max-width: 350px;
+      background: #f9f9f9;
+      border-right: 1px solid #ccc;
+      overflow-y: auto;
+    }
+
+    .list-item {
+      padding: 6px 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .list-item.selected {
+      background: #e0e0e0;
+    }
+
+    /* Map container */
+    #map {
+      flex: 1;
+      position: relative;
+    }
+
+    #mapid {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    /* Details panel */
+    #details {
+      width: 30%;
+      max-width: 450px;
+      background: #fdfdfd;
+      border-left: 1px solid #ccc;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .field-group {
+      margin-bottom: 10px;
+    }
+
+    .field-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+
+    .field-group input[type="text"],
+    .field-group input[type="number"],
+    .field-group textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 4px;
+    }
+
+    .field-group textarea {
+      resize: vertical;
+    }
+
+    button {
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    /* Status indicator */
+    #status {
+      margin-left: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <label>
+      GeoJSON:
+      <input type="file" id="geojsonFile" accept=".geojson,application/json" />
+    </label>
+    <label>
+      JSON:
+      <input type="file" id="jsonFile" accept=".json" />
+    </label>
+    <button id="importBtn">Import</button>
+    <!-- First time Excel import: load names/regions/abandoned flags from a spreadsheet -->
+    <label>
+      Excel:
+      <input type="file" id="excelFile" accept=".xlsx,.xls,.csv,.ods" />
+    </label>
+    <button id="excelImportBtn">Excel Import</button>
+    <!-- OSM fetch: allow manual fetch from an OSM relation URL -->
+    <input type="text" id="osmUrl" placeholder="OSM relation URL" style="flex:1; min-width:220px;" />
+    <button id="fetchOsmBtn">Fetch OSM</button>
+    <!-- Filter dropdown -->
+    <select id="filterSelect">
+      <option value="all">Show All</option>
+      <option value="missingGpx">Missing GPX</option>
+      <option value="missingMeta">Missing Metadata</option>
+    </select>
+    <button id="exportJsonBtn" disabled>Export JSON</button>
+    <button id="exportGeoBtn" disabled>Export GeoJSON</button>
+    <div id="status"></div>
+  </header>
+  <main>
+    <div id="list"></div>
+    <div id="map">
+      <div id="mapid"></div>
+    </div>
+    <div id="details"></div>
+  </main>
+
+  <!-- Leaflet script -->
+  <!-- Note: removed integrity and crossorigin attributes to avoid loading failures that cause 'L is not defined'. -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+  ></script>
+  <!-- SheetJS for Excel parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    // Global variables
+    let trails = [];
+    let selected = null;
+    let map;
+    let geoLayer;
+    let statusEl;
+
+    // Utility: simple slugify function
+    function slugify(str) {
+      return str
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    // Haversine distance helper (meters)
+    function distance(lat1, lon1, lat2, lon2) {
+      const R = 6371000;
+      const phi1 = (lat1 * Math.PI) / 180;
+      const phi2 = (lat2 * Math.PI) / 180;
+      const dphi = ((lat2 - lat1) * Math.PI) / 180;
+      const dlambda = ((lon2 - lon1) * Math.PI) / 180;
+      const a =
+        Math.sin(dphi / 2) * Math.sin(dphi / 2) +
+        Math.cos(phi1) *
+          Math.cos(phi2) *
+          Math.sin(dlambda / 2) *
+          Math.sin(dlambda / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    // Compute total length in miles from coordinates array
+    function computeLength(coords) {
+      let total = 0;
+      for (let i = 1; i < coords.length; i++) {
+        total += distance(
+          coords[i - 1][1],
+          coords[i - 1][0],
+          coords[i][1],
+          coords[i][0]
+        );
+      }
+      return parseFloat((total / 1609.34).toFixed(2));
+    }
+
+    // Initialize the Leaflet map and attach event handlers
+    function init() {
+      map = L.map('mapid').setView([44, -71], 8);
+      L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+          maxZoom: 18,
+          attribution: '© OpenStreetMap'
+        }
+      ).addTo(map);
+      statusEl = document.getElementById('status');
+      document.getElementById('importBtn').onclick = handleImport;
+      document.getElementById('exportJsonBtn').onclick = exportJson;
+      document.getElementById('exportGeoBtn').onclick = exportGeo;
+      document.getElementById('excelImportBtn').onclick = handleExcelImport;
+      document.getElementById('filterSelect').onchange = drawList;
+      document.getElementById('fetchOsmBtn').onclick = fetchFromOsm;
+    }
+
+    // Handle file import when clicking the Import button
+    function handleImport() {
+      const geoFile = document.getElementById('geojsonFile').files[0];
+      const jsonFile = document.getElementById('jsonFile').files[0];
+      if (!geoFile) {
+        alert('Please select a GeoJSON file');
+        return;
+      }
+      statusEl.textContent = 'Reading files...';
+      const reader1 = new FileReader();
+      reader1.onload = function (e) {
+        let geo;
+        try {
+          geo = JSON.parse(e.target.result);
+        } catch (err) {
+          alert('Invalid GeoJSON file');
+          statusEl.textContent = '';
+          return;
+        }
+        loadGeojson(geo, function () {
+          if (jsonFile) {
+            const reader2 = new FileReader();
+            reader2.onload = function (ev) {
+              let j;
+              try {
+                j = JSON.parse(ev.target.result);
+              } catch (err) {
+                alert('Invalid JSON file');
+                statusEl.textContent = '';
+                return;
+              }
+              loadJson(j);
+            };
+            reader2.readAsText(jsonFile);
+          }
+        });
+      };
+      reader1.readAsText(geoFile);
+    }
+
+    // Handle Excel import: reads a spreadsheet with columns like 'Trail Name', 'Location', 'Abandoned'
+    function handleExcelImport() {
+      const file = document.getElementById('excelFile').files[0];
+      if (!file) {
+        alert('Please select an Excel file to import');
+        return;
+      }
+      statusEl.textContent = 'Reading Excel...';
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[sheetName];
+          const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+          let updated = 0;
+          rows.forEach((row) => {
+            // Normalize keys in case of different header names
+            const trailName = row['Trail Name'] || row['Name'] || row['trail name'] || row['Trail'];
+            if (!trailName) return;
+            const slug = slugify(String(trailName));
+            let t = trails.find((x) => x.id === slug);
+            if (!t) {
+              // Create a new trail skeleton if not present
+              t = {
+                id: slug,
+                name: trailName,
+                alternate_names: [],
+                region: '',
+                area: 'White Mountains',
+                state: 'NH',
+                status: {
+                  is_abandoned: false,
+                  is_maintained: true,
+                  seasonal_closure: false
+                },
+                trail_type: ['hiking'],
+                stats: {
+                  length_miles: null,
+                  elevation_gain_ft: null,
+                  highest_elevation_ft: null,
+                  difficulty: ''
+                },
+                route: {
+                  start_point: { lat: null, lon: null, description: '' },
+                  end_point: { lat: null, lon: null, description: '' },
+                  one_way: false
+                },
+                features: {
+                  views: false,
+                  waterfalls: false,
+                  ponds: false,
+                  scramble: false,
+                  exposed_ledge: false
+                },
+                connections: [],
+                land_management: { owner: '', wilderness_area: false },
+                references: { amc_guide: false, osm_relation_id: null, usfs_id: null },
+                notes: '',
+                last_verified: new Date().toISOString().split('T')[0],
+                geometry: null
+              };
+              trails.push(t);
+            }
+            // Update name from spreadsheet (assume authoritative)
+            t.name = String(trailName);
+            // Update region/location if provided
+            const loc = row['Location'] || row['location'] || row['Region'] || row['range'] || '';
+            if (loc) {
+              t.region = String(loc);
+            }
+            // Update abandoned status if provided
+            const aband = row['Abandoned'] || row['abandoned'] || row['Status'] || '';
+            if (aband) {
+              const val = String(aband).toLowerCase().trim();
+              t.status.is_abandoned = val === 'yes' || val === 'abandoned' || val === 'y' || val === 'true';
+            }
+            updated++;
+          });
+          statusEl.textContent = `Excel imported ${rows.length} rows, updated/added ${updated} trails.`;
+          console.log('Excel import complete, rows:', rows.length);
+          drawList();
+        } catch (err) {
+          console.error('Excel import error', err);
+          alert('Failed to parse Excel file');
+          statusEl.textContent = '';
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // Fetch trail data from an OSM relation URL and populate/update a trail
+    async function fetchFromOsm() {
+      const url = document.getElementById('osmUrl').value.trim();
+      if (!url) {
+        alert('Please enter an OSM relation URL');
+        return;
+      }
+      const match = url.match(/relation\/(\d+)/);
+      if (!match) {
+        alert('Unable to parse relation ID from URL');
+        return;
+      }
+      const relId = match[1];
+      statusEl.textContent = `Fetching OSM relation ${relId}...`;
+      console.log(`Fetching OSM relation ${relId}`);
+      // Build Overpass query to fetch relation geometry and tags
+      const query = `[out:json][timeout:60];relation(${relId});out tags geom;`;
+      try {
+        const resp = await fetch(
+          'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query)
+        );
+        if (!resp.ok) {
+          throw new Error('HTTP error ' + resp.status);
+        }
+        const data = await resp.json();
+        if (!data.elements || data.elements.length === 0) {
+          alert('No relation found');
+          statusEl.textContent = '';
+          return;
+        }
+        const rel = data.elements[0];
+        const name = rel.tags && rel.tags.name ? rel.tags.name : '';
+        const slug = slugify(name);
+        // Convert geometry to [lon,lat] array
+        let coords = [];
+        if (rel.geometry && Array.isArray(rel.geometry)) {
+          coords = rel.geometry.map((pt) => [pt.lon, pt.lat]);
+        }
+        const lengthMiles = coords.length > 1 ? computeLength(coords) : null;
+        const start = coords.length > 0 ? coords[0] : [null, null];
+        const end = coords.length > 0 ? coords[coords.length - 1] : [null, null];
+        // Find or create trail
+        let t = trails.find((x) => x.id === slug);
+        if (!t) {
+          t = {
+            id: slug,
+            name: name,
+            alternate_names: [],
+            region: '',
+            area: 'White Mountains',
+            state: 'NH',
+            status: {
+              is_abandoned: false,
+              is_maintained: true,
+              seasonal_closure: false
+            },
+            trail_type: ['hiking'],
+            stats: {
+              length_miles: lengthMiles,
+              elevation_gain_ft: null,
+              highest_elevation_ft: null,
+              difficulty: ''
+            },
+            route: {
+              start_point: { lat: start[1], lon: start[0], description: '' },
+              end_point: { lat: end[1], lon: end[0], description: '' },
+              one_way: false
+            },
+            features: {
+              views: false,
+              waterfalls: false,
+              ponds: false,
+              scramble: false,
+              exposed_ledge: false
+            },
+            connections: [],
+            land_management: { owner: '', wilderness_area: false },
+            references: { amc_guide: false, osm_relation_id: null, usfs_id: null },
+            notes: '',
+            last_verified: new Date().toISOString().split('T')[0],
+            geometry: coords.length > 1
+              ? { type: 'LineString', coordinates: coords }
+              : null
+          };
+          trails.push(t);
+        } else {
+          // update name if different
+          if (name) t.name = name;
+          // update geometry if we have coords
+          if (coords.length > 1) {
+            t.geometry = { type: 'LineString', coordinates: coords };
+            t.stats.length_miles = lengthMiles;
+            t.route.start_point = { lat: start[1], lon: start[0], description: '' };
+            t.route.end_point = { lat: end[1], lon: end[0], description: '' };
+          }
+          t.references.osm_relation_id = parseInt(relId);
+        }
+        statusEl.textContent = `OSM relation ${relId} fetched`;
+        console.log('OSM fetch completed', t);
+        drawMap();
+        drawList();
+        selectTrail(t.id);
+      } catch (err) {
+        console.error('OSM fetch error', err);
+        alert('Failed to fetch from OSM: ' + err.message);
+        statusEl.textContent = '';
+      }
+    }
+
+    // Load GeoJSON data into internal structures
+    function loadGeojson(geo, callback) {
+      trails = [];
+      const startTime = Date.now();
+      geo.features.forEach((f) => {
+        const name = f.properties.name || '';
+        const slug = slugify(name);
+        const coords = f.geometry.coordinates;
+        const lengthMiles = computeLength(coords);
+        const start = coords[0];
+        const end = coords[coords.length - 1];
+        const obj = {
+          id: slug,
+          name: name,
+          alternate_names: [],
+          region: '',
+          area: 'White Mountains',
+          state: 'NH',
+          status: {
+            is_abandoned: false,
+            is_maintained: true,
+            seasonal_closure: false
+          },
+          trail_type: ['hiking'],
+          stats: {
+            length_miles: lengthMiles,
+            elevation_gain_ft: null,
+            highest_elevation_ft: null,
+            difficulty: ''
+          },
+          route: {
+            start_point: {
+              lat: start[1],
+              lon: start[0],
+              description: ''
+            },
+            end_point: {
+              lat: end[1],
+              lon: end[0],
+              description: ''
+            },
+            one_way: false
+          },
+          features: {
+            views: false,
+            waterfalls: false,
+            ponds: false,
+            scramble: false,
+            exposed_ledge: false
+          },
+          connections: [],
+          land_management: {
+            owner: '',
+            wilderness_area: false
+          },
+          references: {
+            amc_guide: false,
+            osm_relation_id: null,
+            usfs_id: null
+          },
+          notes: '',
+          last_verified: new Date().toISOString().split('T')[0],
+          geometry: f.geometry
+        };
+        trails.push(obj);
+      });
+      statusEl.textContent = `Loaded ${trails.length} trails`;
+      drawList();
+      drawMap();
+      document.getElementById('exportJsonBtn').disabled = false;
+      document.getElementById('exportGeoBtn').disabled = false;
+      if (callback) callback();
+    }
+
+    // Apply metadata from a previously exported JSON
+    function loadJson(j) {
+      // Accept array or dictionary keyed by slug/id
+      function findTrail(slug) {
+        return trails.find((t) => t.id === slug);
+      }
+      // Preserve original geometry per slug so metadata import does not overwrite geometry
+      const geometryMap = {};
+      trails.forEach((t) => {
+        geometryMap[t.id] = t.geometry;
+      });
+      if (Array.isArray(j)) {
+        j.forEach((r) => {
+          const t = findTrail(r.id);
+          if (t) {
+            Object.assign(t, r);
+            // Restore geometry from saved map
+            if (geometryMap[t.id]) {
+              t.geometry = geometryMap[t.id];
+            }
+          }
+        });
+      } else {
+        Object.keys(j).forEach((slug) => {
+          const t = findTrail(slug);
+          if (t) {
+            Object.assign(t, j[slug]);
+            if (geometryMap[slug]) {
+              t.geometry = geometryMap[slug];
+            }
+          }
+        });
+      }
+      statusEl.textContent += ' (metadata applied)';
+      drawList();
+    }
+
+    // Render the list of trails in the sidebar
+    function drawList() {
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+      // Determine filter type
+      const filter = document.getElementById('filterSelect')
+        ? document.getElementById('filterSelect').value
+        : 'all';
+      // Sort by name for consistent display
+      const sorted = [...trails].sort((a, b) => a.name.localeCompare(b.name));
+      sorted.forEach((t) => {
+        // Apply filter conditions
+        let include = true;
+        if (filter === 'missingGpx') {
+          include = !t.geometry || !t.geometry.coordinates || t.geometry.coordinates.length === 0;
+        } else if (filter === 'missingMeta') {
+          include =
+            !t.region ||
+            t.region.trim() === '' ||
+            (t.stats && (t.stats.length_miles == null || isNaN(t.stats.length_miles))) ||
+            !t.name ||
+            t.name.trim() === '';
+        }
+        if (!include) return;
+        const div = document.createElement('div');
+        div.className =
+          'list-item' + (selected && selected.id === t.id ? ' selected' : '');
+        div.textContent = t.name;
+        div.onclick = () => {
+          selectTrail(t.id);
+        };
+        list.appendChild(div);
+      });
+    }
+
+    // Render the map and overlay the trail geometries
+    function drawMap() {
+      if (geoLayer) geoLayer.remove();
+      const features = trails.map((t) => {
+        return {
+          type: 'Feature',
+          properties: { id: t.id, name: t.name },
+          geometry: t.geometry
+        };
+      });
+      geoLayer = L.geoJSON(
+        { type: 'FeatureCollection', features: features },
+        {
+          style: function (feature) {
+            return { color: '#0074D9', weight: 3 };
+          },
+          onEachFeature: function (feature, layer) {
+            layer.on('click', function () {
+              selectTrail(feature.properties.id);
+            });
+          }
+        }
+      ).addTo(map);
+      if (geoLayer.getBounds().isValid()) {
+        map.fitBounds(geoLayer.getBounds());
+      }
+    }
+
+    // Handle selection of a trail from the list or map
+    function selectTrail(id) {
+      const t = trails.find((x) => x.id === id);
+      if (!t) return;
+      selected = t;
+      drawList();
+      geoLayer.eachLayer((l) => {
+        if (l.feature.properties.id === id) {
+          l.setStyle({ color: '#FF4136', weight: 4 });
+          map.fitBounds(l.getBounds());
+        } else {
+          l.setStyle({ color: '#0074D9', weight: 3 });
+        }
+      });
+      showDetails();
+    }
+
+    // Build the details panel form for editing
+    function showDetails() {
+      const det = document.getElementById('details');
+      if (!selected) {
+        det.innerHTML = '';
+        return;
+      }
+      det.innerHTML = '';
+      const form = document.createElement('div');
+      // Helpers for building fields
+      function addField(labelText, value, path, type = 'text') {
+        const group = document.createElement('div');
+        group.className = 'field-group';
+        const label = document.createElement('label');
+        label.textContent = labelText;
+        const input = document.createElement('input');
+        input.type = type;
+        input.value = value != null ? value : '';
+        input.onchange = function () {
+          setValue(path, type === 'number' ? parseFloat(input.value) || null : input.value);
+        };
+        group.appendChild(label);
+        group.appendChild(input);
+        form.appendChild(group);
+      }
+      function addCheck(labelText, value, path) {
+        const group = document.createElement('div');
+        group.className = 'field-group';
+        const label = document.createElement('label');
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = !!value;
+        input.onchange = function () {
+          setValue(path, input.checked);
+        };
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(' ' + labelText));
+        group.appendChild(label);
+        form.appendChild(group);
+      }
+      function addNumber(labelText, value, path) {
+        addField(labelText, value, path, 'number');
+      }
+      function addTextarea(labelText, value, path) {
+        const group = document.createElement('div');
+        group.className = 'field-group';
+        const label = document.createElement('label');
+        label.textContent = labelText;
+        const textarea = document.createElement('textarea');
+        textarea.rows = 4;
+        textarea.value = value || '';
+        textarea.onchange = function () {
+          setValue(path, textarea.value);
+        };
+        group.appendChild(label);
+        group.appendChild(textarea);
+        form.appendChild(group);
+      }
+      // Setter helper: walk path and assign
+      function setValue(path, val) {
+        const keys = path.split('.');
+        let obj = selected;
+        for (let i = 0; i < keys.length - 1; i++) {
+          obj = obj[keys[i]];
+        }
+        obj[keys[keys.length - 1]] = val;
+      }
+      // Basic info
+      addField('Name', selected.name, 'name');
+      addField(
+        'Alternate Names (comma-separated)',
+        Array.isArray(selected.alternate_names)
+          ? selected.alternate_names.join(', ')
+          : selected.alternate_names,
+        'alternate_names'
+      );
+      addField('Region', selected.region, 'region');
+      addField('Area', selected.area, 'area');
+      addField('State', selected.state, 'state');
+      // Status flags
+      addCheck('Abandoned', selected.status.is_abandoned, 'status.is_abandoned');
+      addCheck('Maintained', selected.status.is_maintained, 'status.is_maintained');
+      addCheck(
+        'Seasonal Closure',
+        selected.status.seasonal_closure,
+        'status.seasonal_closure'
+      );
+      // Trail types
+      addField(
+        'Trail Types (comma-separated)',
+        Array.isArray(selected.trail_type)
+          ? selected.trail_type.join(', ')
+          : selected.trail_type,
+        'trail_type'
+      );
+      // Stats
+      addNumber('Length (miles)', selected.stats.length_miles, 'stats.length_miles');
+      addNumber('Elevation Gain (ft)', selected.stats.elevation_gain_ft, 'stats.elevation_gain_ft');
+      addNumber(
+        'Highest Elevation (ft)',
+        selected.stats.highest_elevation_ft,
+        'stats.highest_elevation_ft'
+      );
+      addField('Difficulty', selected.stats.difficulty, 'stats.difficulty');
+      // Route points
+      addNumber('Start Latitude', selected.route.start_point.lat, 'route.start_point.lat');
+      addNumber('Start Longitude', selected.route.start_point.lon, 'route.start_point.lon');
+      addField(
+        'Start Description',
+        selected.route.start_point.description,
+        'route.start_point.description'
+      );
+      addNumber('End Latitude', selected.route.end_point.lat, 'route.end_point.lat');
+      addNumber('End Longitude', selected.route.end_point.lon, 'route.end_point.lon');
+      addField(
+        'End Description',
+        selected.route.end_point.description,
+        'route.end_point.description'
+      );
+      addCheck('One Way', selected.route.one_way, 'route.one_way');
+      // Features flags
+      addCheck('Views', selected.features.views, 'features.views');
+      addCheck('Waterfalls', selected.features.waterfalls, 'features.waterfalls');
+      addCheck('Ponds', selected.features.ponds, 'features.ponds');
+      addCheck('Scramble', selected.features.scramble, 'features.scramble');
+      addCheck('Exposed Ledge', selected.features.exposed_ledge, 'features.exposed_ledge');
+      // Connections
+      addField(
+        'Connections (comma-separated slugs)',
+        Array.isArray(selected.connections)
+          ? selected.connections.join(', ')
+          : selected.connections,
+        'connections'
+      );
+      // Land management
+      addField('Owner', selected.land_management.owner, 'land_management.owner');
+      addCheck(
+        'Wilderness Area',
+        selected.land_management.wilderness_area,
+        'land_management.wilderness_area'
+      );
+      // References
+      addCheck('AMC Guide', selected.references.amc_guide, 'references.amc_guide');
+      addField(
+        'OSM Relation ID',
+        selected.references.osm_relation_id || '',
+        'references.osm_relation_id'
+      );
+      addField('USFS ID', selected.references.usfs_id || '', 'references.usfs_id');
+      // Notes and last verified
+      addTextarea('Notes', selected.notes, 'notes');
+      addField('Last Verified (YYYY-MM-DD)', selected.last_verified, 'last_verified');
+      det.appendChild(form);
+    }
+
+    // Export the metadata as JSON
+    function exportJson() {
+      const output = {};
+      trails.forEach((t) => {
+        // Convert comma-separated strings back to arrays where appropriate
+        if (typeof t.alternate_names === 'string') {
+          t.alternate_names = t.alternate_names
+            .split(',')
+            .map((x) => x.trim())
+            .filter((x) => x);
+        }
+        if (typeof t.trail_type === 'string') {
+          t.trail_type = t.trail_type
+            .split(',')
+            .map((x) => x.trim())
+            .filter((x) => x);
+        }
+        if (typeof t.connections === 'string') {
+          t.connections = t.connections
+            .split(',')
+            .map((x) => slugify(x.trim()))
+            .filter((x) => x);
+        }
+        // Create a copy without geometry for JSON export
+        const copy = JSON.parse(JSON.stringify(t));
+        delete copy.geometry;
+        output[t.id] = copy;
+      });
+      const content = JSON.stringify(output, null, 2);
+      downloadFile(content, 'wmnf-trails.json', 'application/json');
+    }
+
+    // Export the geojson with slug property and geometry
+    function exportGeo() {
+      const geo = {
+        type: 'FeatureCollection',
+        features: trails.map((t) => {
+          return {
+            type: 'Feature',
+            properties: { slug: t.id, name: t.name },
+            geometry: t.geometry
+          };
+        })
+      };
+      const content = JSON.stringify(geo, null, 2);
+      downloadFile(content, 'wmnf-trails.geojson', 'application/geo+json');
+    }
+
+    // Trigger a download of a given file
+    function downloadFile(content, filename, type) {
+      const blob = new Blob([content], { type: type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Use DOMContentLoaded or load event to ensure Leaflet script is available before init runs.
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>
