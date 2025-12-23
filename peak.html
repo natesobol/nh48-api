@@ -3,11 +3,16 @@
 <head>
   <meta charset="utf-8">
   <script>
-    // Preserve query parameters during redirect
-    const params = window.location.search;
-    window.location.replace('/pages/nh48_peak.html' + params);
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug');
+    const lang = params.get('lang');
+    const isFrench = lang && lang.toLowerCase().startsWith('fr');
+    const target = slug
+      ? `${isFrench ? '/fr/peaks' : '/peaks'}/${encodeURIComponent(slug)}/`
+      : '/catalog';
+    window.location.replace(target);
   </script>
-  <meta http-equiv="refresh" content="0; url=/pages/nh48_peak.html">
+  <meta http-equiv="refresh" content="0; url=/catalog">
   <title>Peak Details</title>
 </head>
 <body>

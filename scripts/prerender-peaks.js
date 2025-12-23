@@ -9,7 +9,87 @@ const DATA_PATH = path.join(ROOT, "data", "nh48.json");
 const OUTPUT_DIR = path.join(ROOT, "peaks");
 const CANONICAL_BASE = "https://nh48.info/peaks";
 const APP_BASE = "https://nh48.info/pages/nh48_peak.html";
+const DEFAULT_CATALOG_URL = "https://nh48.info/catalog";
 const FALLBACK_IMAGE = "https://nh48.info/nh48-preview.png";
+
+const LANGUAGE_CONFIGS = [
+  {
+    code: "en",
+    hreflang: "en",
+    outputDir: OUTPUT_DIR,
+    canonicalBase: CANONICAL_BASE,
+    catalogUrl: DEFAULT_CATALOG_URL,
+    titleSuffix: "NH 48 Peak Guide",
+    descriptionTemplate: (name) => `${name} guide with route details, elevation, and photos.`,
+    summaryFallback: (name) => `${name} is one of the classic New Hampshire 4,000-footers.`,
+    defaults: {
+      range: "White Mountains",
+      difficulty: "Unknown",
+      trailType: "Unknown",
+      time: "Varies",
+      unknown: "Unknown",
+      coordinates: "Coordinates coming soon.",
+    },
+    labels: {
+      elevation: "Elevation",
+      prominence: "Prominence",
+      range: "Range",
+      difficulty: "Difficulty",
+      trailType: "Trail Type",
+      time: "Typical Time",
+      cta: "View interactive page",
+      backToCatalog: "Back to NH48 Peak Catalog",
+      overview: "Overview",
+      location: "Location",
+      standardRoutes: "Standard Routes",
+      relatedTrails: "Related Trails & Routes",
+      gallery: "Photo gallery",
+      footer: "NH48 pre-rendered guide page.",
+      noRoutes: "No standard routes are listed for this peak.",
+      noRelated: "No related trails listed yet.",
+      routeSuffix: " route",
+    },
+    appUrl: (slug) => `${APP_BASE}?slug=${slug}`,
+  },
+  {
+    code: "fr",
+    hreflang: "fr",
+    outputDir: path.join(ROOT, "fr", "peaks"),
+    canonicalBase: "https://nh48.info/fr/peaks",
+    catalogUrl: DEFAULT_CATALOG_URL,
+    titleSuffix: "Guide des sommets NH48",
+    descriptionTemplate: (name) => `${name} : guide avec itinéraires, altitude et photos.`,
+    summaryFallback: (name) => `${name} est l’un des sommets classiques de 4 000 pieds du New Hampshire.`,
+    defaults: {
+      range: "Montagnes Blanches",
+      difficulty: "Inconnu",
+      trailType: "Inconnu",
+      time: "Variable",
+      unknown: "Inconnu",
+      coordinates: "Coordonnées bientôt disponibles.",
+    },
+    labels: {
+      elevation: "Altitude",
+      prominence: "Proéminence",
+      range: "Chaîne",
+      difficulty: "Difficulté",
+      trailType: "Type de sentier",
+      time: "Durée typique",
+      cta: "Voir la page interactive",
+      backToCatalog: "Retour au catalogue des sommets NH48",
+      overview: "Aperçu",
+      location: "Emplacement",
+      standardRoutes: "Itinéraires standards",
+      relatedTrails: "Sentiers et itinéraires associés",
+      gallery: "Galerie photo",
+      footer: "Page de guide NH48 pré-rendue.",
+      noRoutes: "Aucun itinéraire standard n’est listé pour ce sommet.",
+      noRelated: "Aucun sentier associé pour le moment.",
+      routeSuffix: " itinéraire",
+    },
+    appUrl: (slug) => `${APP_BASE}?slug=${slug}&lang=fr`,
+  },
+];
 
 process.on("uncaughtException", (err) => {
   console.error("Unhandled error during prerender:", err);
@@ -76,9 +156,9 @@ const buildPhotoAlt = (photo, peakName) => {
   return `${peakName} photo`;
 };
 
-const buildRoutesList = (routes) => {
+const buildRoutesList = (routes, labels) => {
   if (!Array.isArray(routes) || routes.length === 0) {
-    return "<li>No standard routes are listed for this peak.</li>";
+    return `<li>${escapeHtml(labels.noRoutes)}</li>`;
   }
   return routes
     .map((route) => {
@@ -219,15 +299,15 @@ const extractRelatedTrailNames = (routes) => {
   return Array.from(names);
 };
 
-const buildRelatedTrailsList = (routes) => {
+const buildRelatedTrailsList = (routes, labels) => {
   const relatedNames = extractRelatedTrailNames(routes);
   if (!relatedNames.length) {
-    return "<li>No related trails listed yet.</li>";
+    return `<li>${escapeHtml(labels.noRelated)}</li>`;
   }
   return relatedNames
     .map((name) => {
       const href = `https://nh48.info/trails?trail=${encodeURIComponent(name)}`;
-      const text = `${name} route`;
+      const text = `${name}${labels.routeSuffix}`;
       return `<li><a href="${href}">${escapeHtml(text)}</a></li>`;
     })
     .join("\n");
@@ -263,62 +343,85 @@ const main = () => {
     console.log(`Rendering ${slugs.length} peak pages...`);
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-slugs.forEach((slug) => {
-  const peak = data[slug];
-  const name = cleanText(peak["Peak Name"] || peak.peakName || slug);
-  const elevation = cleanText(peak["Elevation (ft)"] || "Unknown");
-  const prominence = cleanText(peak["Prominence (ft)"] || "Unknown");
-  const rangeValue = cleanText(peak["Range / Subrange"] || "");
-  const difficultyValue = cleanText(peak["Difficulty"] || "");
-  const trailTypeValue = cleanText(peak["Trail Type"] || "");
-  const range = rangeValue || "White Mountains";
-  const difficulty = difficultyValue || "Unknown";
-  const trailType = trailTypeValue || "Unknown";
-  const time = cleanText(peak["Typical Completion Time"] || "Varies");
-  const summary = cleanText(peak["Terrain Character"] || peak["View Type"] || "");
-  const coordinates = parseCoordinates(peak["Coordinates"]);
-  const primaryPhoto = pickPrimaryPhoto(peak.photos, name);
-  const canonicalUrl = `${CANONICAL_BASE}/${slug}/`;
-  const appUrl = `${APP_BASE}?slug=${slug}`;
-  const descriptionText = summary || `${name} guide with route details, elevation, and photos.`;
-  const description = `${name} guide with route details, elevation, and photos.`;
+    slugs.forEach((slug) => {
+      const peak = data[slug];
+      const name = cleanText(peak["Peak Name"] || peak.peakName || slug);
+      const elevation = cleanText(peak["Elevation (ft)"] || "");
+      const prominence = cleanText(peak["Prominence (ft)"] || "");
+      const rangeValue = cleanText(peak["Range / Subrange"] || "");
+      const difficultyValue = cleanText(peak["Difficulty"] || "");
+      const trailTypeValue = cleanText(peak["Trail Type"] || "");
+      const timeValue = cleanText(peak["Typical Completion Time"] || "");
+      const summary = cleanText(peak["Terrain Character"] || peak["View Type"] || "");
+      const coordinates = parseCoordinates(peak["Coordinates"]);
+      const primaryPhoto = pickPrimaryPhoto(peak.photos, name);
 
-  const values = {
-    TITLE: escapeHtml(`${name} | NH 48 Peak Guide`),
-    DESCRIPTION: escapeHtml(description),
-    CANONICAL_URL: canonicalUrl,
-    OG_IMAGE: primaryPhoto.url,
-    PEAK_NAME: escapeHtml(name),
-    ELEVATION: escapeHtml(`${elevation} ft`),
-    PROMINENCE: escapeHtml(`${prominence} ft`),
-    RANGE: escapeHtml(range),
-    DIFFICULTY: escapeHtml(difficulty),
-    TRAIL_TYPE: escapeHtml(trailType),
-    TIME: escapeHtml(time),
-    SUMMARY: escapeHtml(summary || `${name} is one of the classic New Hampshire 4,000-footers.`),
-    COORDINATES: escapeHtml(coordinates.text || "Coordinates coming soon."),
-    ROUTES_LIST: buildRoutesList(peak["Standard Routes"]),
-    RELATED_TRAILS_LI: buildRelatedTrailsList(peak["Standard Routes"]),
-    GALLERY_IMAGES: buildGallery(peak.photos, name),
-    APP_URL: appUrl,
-    HERO_IMAGE: primaryPhoto.url,
-    HERO_ALT: escapeHtml(primaryPhoto.alt),
-    JSON_LD: escapeScriptJson(
-      buildJsonLd(
-        peak,
-        canonicalUrl,
-        coordinates,
-        primaryPhoto.url,
-        descriptionText,
-        rangeValue || null
-      )
-    ),
-  };
+      LANGUAGE_CONFIGS.forEach((lang) => {
+        const canonicalUrl = `${lang.canonicalBase}/${slug}/`;
+        const description = lang.descriptionTemplate(name);
+        const descriptionText = summary || description;
+        const range = rangeValue || lang.defaults.range;
+        const difficulty = difficultyValue || lang.defaults.difficulty;
+        const trailType = trailTypeValue || lang.defaults.trailType;
+        const time = timeValue || lang.defaults.time;
+        const elevationText = elevation ? `${elevation} ft` : lang.defaults.unknown;
+        const prominenceText = prominence ? `${prominence} ft` : lang.defaults.unknown;
 
-  const outputDir = path.join(OUTPUT_DIR, slug);
-      fs.mkdirSync(outputDir, { recursive: true });
-      fs.writeFileSync(path.join(outputDir, "index.html"), renderTemplate(template, values));
-      console.log(`Rendered ${slug}`);
+        const values = {
+          LANG: lang.hreflang,
+          TITLE: escapeHtml(`${name} | ${lang.titleSuffix}`),
+          DESCRIPTION: escapeHtml(description),
+          CANONICAL_URL: canonicalUrl,
+          CANONICAL_EN_URL: `${CANONICAL_BASE}/${slug}/`,
+          CANONICAL_FR_URL: `https://nh48.info/fr/peaks/${slug}/`,
+          OG_IMAGE: primaryPhoto.url,
+          PEAK_NAME: escapeHtml(name),
+          ELEVATION: escapeHtml(elevationText),
+          PROMINENCE: escapeHtml(prominenceText),
+          RANGE: escapeHtml(range),
+          DIFFICULTY: escapeHtml(difficulty),
+          TRAIL_TYPE: escapeHtml(trailType),
+          TIME: escapeHtml(time),
+          SUMMARY: escapeHtml(summary || lang.summaryFallback(name)),
+          COORDINATES: escapeHtml(coordinates.text || lang.defaults.coordinates),
+          ROUTES_LIST: buildRoutesList(peak["Standard Routes"], lang.labels),
+          RELATED_TRAILS_LI: buildRelatedTrailsList(peak["Standard Routes"], lang.labels),
+          GALLERY_IMAGES: buildGallery(peak.photos, name),
+          APP_URL: lang.appUrl(slug),
+          CATALOG_URL: lang.catalogUrl,
+          HERO_IMAGE: primaryPhoto.url,
+          HERO_ALT: escapeHtml(primaryPhoto.alt),
+          LABEL_ELEVATION: escapeHtml(lang.labels.elevation),
+          LABEL_PROMINENCE: escapeHtml(lang.labels.prominence),
+          LABEL_RANGE: escapeHtml(lang.labels.range),
+          LABEL_DIFFICULTY: escapeHtml(lang.labels.difficulty),
+          LABEL_TRAIL_TYPE: escapeHtml(lang.labels.trailType),
+          LABEL_TIME: escapeHtml(lang.labels.time),
+          LABEL_CTA: escapeHtml(lang.labels.cta),
+          LABEL_BACK_TO_CATALOG: escapeHtml(lang.labels.backToCatalog),
+          LABEL_OVERVIEW: escapeHtml(lang.labels.overview),
+          LABEL_LOCATION: escapeHtml(lang.labels.location),
+          LABEL_STANDARD_ROUTES: escapeHtml(lang.labels.standardRoutes),
+          LABEL_RELATED_TRAILS: escapeHtml(lang.labels.relatedTrails),
+          LABEL_GALLERY: escapeHtml(lang.labels.gallery),
+          LABEL_FOOTER: escapeHtml(lang.labels.footer),
+          JSON_LD: escapeScriptJson(
+            buildJsonLd(
+              peak,
+              canonicalUrl,
+              coordinates,
+              primaryPhoto.url,
+              descriptionText,
+              rangeValue || null
+            )
+          ),
+        };
+
+        const outputDir = path.join(lang.outputDir, slug);
+        fs.mkdirSync(outputDir, { recursive: true });
+        fs.writeFileSync(path.join(outputDir, "index.html"), renderTemplate(template, values));
+        console.log(`Rendered ${slug} (${lang.code})`);
+      });
     });
   } catch (err) {
     console.error("Error during prerender:", err);
