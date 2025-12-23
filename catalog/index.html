@@ -246,6 +246,15 @@
         exposure: 'catalog.card.exposure'
       };
 
+      const FRIENDLY_LABEL_TEXT = {
+        elevation: 'Elevation',
+        prominence: 'Prominence',
+        range: 'Range',
+        trailType: 'Trail Type',
+        difficulty: 'Difficulty',
+        exposure: 'Exposure'
+      };
+
       const API_LABELS = {
         elevation: 'Elevation (ft)',
         prominence: 'Prominence (ft)',
@@ -260,7 +269,13 @@
           return API_LABELS[key] || key;
         }
         const i18nKey = FRIENDLY_LABELS[key];
-        return i18nKey ? t(i18nKey) : key;
+        if(i18nKey){
+          const translated = t(i18nKey);
+          if(translated && !translated.startsWith('catalog.')){
+            return translated;
+          }
+        }
+        return FRIENDLY_LABEL_TEXT[key] || key;
       }
 
       function cleanJSON(raw){
@@ -365,19 +380,23 @@
       };
 
       function translateTrailType(value){
-        if(!value) return value;
+        if(!value || showApiVariables) return value;
         const key = TRAIL_TYPE_TRANSLATIONS[value];
-        return key ? t(key) : value;
+        if(!key) return value;
+        const translated = t(key);
+        return translated && !translated.startsWith('values.') ? translated : value;
       }
 
       function translateDifficulty(value){
-        if(!value) return value;
+        if(!value || showApiVariables) return value;
         const key = DIFFICULTY_TRANSLATIONS[value];
-        return key ? t(key) : value;
+        if(!key) return value;
+        const translated = t(key);
+        return translated && !translated.startsWith('values.') ? translated : value;
       }
 
       function translateExposure(value){
-        if(!value) return value;
+        if(!value || showApiVariables) return value;
         const trimmed = String(value).trim();
         const match = trimmed.match(/^(Low to Medium|Low|Medium|High)/i);
         if(!match) return value;
