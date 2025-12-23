@@ -165,6 +165,19 @@ input[list]::-webkit-list-button {
   padding:6px 10px;
   font-size:0.9rem;
 }
+.control.api-variables-control{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.control.api-variables-control label{
+  margin-right:0;
+}
+.controls input[type="checkbox"]{
+  width:16px;
+  height:16px;
+  accent-color:var(--accent);
+}
 .loading-indicator{
   display:flex;
   align-items:center;
