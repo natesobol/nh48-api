@@ -14,9 +14,9 @@
   "description": "Interactive virtual hike across all 48 of New Hampshire’s 4,000‑foot mountains."
 }
 </script>
-<link rel="icon" type="image/png" href="../WMNF_Trails_API_logo.png">
+<link rel="icon" type="image/png" href="WMNF_Trails_API_logo.png">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.109/Widgets/widgets.min.css" rel="stylesheet">
-<link rel="stylesheet" href="../css/virtual_hike.css">
+<link rel="stylesheet" href="css/virtual_hike.css">
 </head>
 <body>
 <div id="toolbar">
@@ -84,7 +84,7 @@ async function init() {
 
   // Load the GeoJSON trail data from the bundled copy first, then fall back to mirrors
   const geoUrls = [
-    '../data/merged_trails.geojson',
+    'data/merged_trails.geojson',
     'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/merged_trails.geojson',
     'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/merged_trails.geojson',
     'https://unpkg.com/natesobol/nh48-api@main/data/merged_trails.geojson'
