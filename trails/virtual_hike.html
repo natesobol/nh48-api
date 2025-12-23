@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Virtual Hike Redirect – NH48</title>
+  <meta name="robots" content="noindex">
+  <meta http-equiv="refresh" content="0; url=../virtual_hike.html">
+  <script>
+    const redirectUrl = new URL('../virtual_hike.html', window.location.href);
+    redirectUrl.search = window.location.search;
+    window.location.replace(redirectUrl.toString());
+  </script>
+</head>
+<body>
+  <p>Redirecting to the virtual hike…</p>
+</body>
+</html>
