@@ -44,9 +44,24 @@
       "@type": "Dataset",
       "name": "White Mountain National Forest Trails & 2,000-Foot Peaks (WMNF Trails API)",
       "description": "Independent WMNF dataset containing normalized trail geometry and 2,000-foot peak records used by the WMNF Trails App.",
+      "identifier": "wmnf-trails",
       "url": "https://nh48.info/trails",
-      "sameAs": "https://github.com/natesobol/WMNF-Trails-API",
-      "keywords": ["White Mountain National Forest", "WMNF", "trails", "New Hampshire", "hiking", "open data", "geojson", "2000 foot peaks"],
+      "sameAs": [
+        "https://github.com/natesobol/WMNF-Trails-API",
+        "https://nh48.info/data/wmnf-trails/White_Mountains_Trails.txt"
+      ],
+      "keywords": [
+        "White Mountain National Forest",
+        "WMNF",
+        "trails",
+        "New Hampshire",
+        "Maine",
+        "hiking",
+        "open data",
+        "geojson",
+        "2000 foot peaks",
+        "White Mountain trails dataset"
+      ],
       "isAccessibleForFree": true,
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "creator": {
@@ -54,6 +69,11 @@
         "name": "NH48 / WMNF Trails",
         "url": "https://nh48.info"
       },
+      "spatialCoverage": {
+        "@type": "AdministrativeArea",
+        "name": "White Mountain National Forest in New Hampshire and Maine"
+      },
+      "temporalCoverage": "2020-01-01/2025-12-31",
       "distribution": [
         {
           "@type": "DataDownload",
@@ -76,14 +96,22 @@
         {
           "@type": "DataDownload",
           "encodingFormat": "application/json",
-          "name": "White Mountain 2,000-Foot Peaks",
+          "name": "WMNF 2,000-Foot Peaks",
           "contentUrl": "https://nh48.info/data/wmnf-trails/NH2000ftpeaks.json"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "text/plain",
+          "name": "WMNF Trails (tabular export)",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/White_Mountains_Trails.txt"
         }
       ],
       "includedInDataCatalog": {
         "@type": "DataCatalog",
         "name": "WMNF Trails App",
-        "url": "https://nh48.info/trails"
+        "url": "https://nh48.info/trails",
+        "description": "Trail network, peak overlays, and derived files powering the WMNF Trails App and embeddable map widgets.",
+        "license": "https://creativecommons.org/licenses/by/4.0/"
       }
     }
   </script>

@@ -50,24 +50,61 @@
         "@type": "Dataset",
         "name": "NH48 API – New Hampshire 4000-Footers Data",
         "description": "Structured data and photos for the 48 four-thousand-foot peaks of the White Mountain National Forest, including elevation, prominence, difficulty, routes and rich photo metadata.",
-        "url": "https://nh48.info/",
+        "identifier": "nh48.json",
+        "url": "https://nh48.info/catalog",
+        "sameAs": [
+          "https://github.com/natesobol/nh48-api",
+          "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json"
+        ],
+        "isAccessibleForFree": true,
         "license": "https://opensource.org/licenses/MIT",
         "creator": {
           "@type": "Person",
           "name": "Nathan Sobol",
           "url": "https://www.nh48pics.com/"
         },
-        "keywords": ["NH48", "White Mountains", "4000 footers", "hiking data", "peak metadata", "photo metadata", "open dataset"],
-        "distribution": {
-          "@type": "DataDownload",
-          "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json",
-          "encodingFormat": "application/json"
-        },
-        "temporalCoverage": "2025-12-06/2025-12-06",
+        "keywords": [
+          "NH48",
+          "White Mountains",
+          "4000 footers",
+          "hiking data",
+          "peak metadata",
+          "photo metadata",
+          "open dataset",
+          "New Hampshire 4,000-footers API"
+        ],
         "spatialCoverage": {
           "@type": "Place",
           "name": "White Mountain National Forest",
           "geo": {"@type": "GeoShape", "circle": "44.15 -71.34 50km"}
+        },
+        "temporalCoverage": "2020-01-01/2025-12-31",
+        "distribution": [
+          {
+            "@type": "DataDownload",
+            "name": "NH48 API (cdn.jsdelivr)",
+            "encodingFormat": "application/json",
+            "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json"
+          },
+          {
+            "@type": "DataDownload",
+            "name": "NH48 API (raw GitHub)",
+            "encodingFormat": "application/json",
+            "contentUrl": "https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json"
+          },
+          {
+            "@type": "DataDownload",
+            "name": "NH48 API (site mirror)",
+            "encodingFormat": "application/json",
+            "contentUrl": "https://nh48.info/data/nh48.json"
+          }
+        ],
+        "includedInDataCatalog": {
+          "@type": "DataCatalog",
+          "name": "NH48 Open Hiking APIs",
+          "url": "https://nh48.info/catalog",
+          "description": "Public datasets for the New Hampshire 4000-footers including photo metadata, peak attributes, and API utilities for map clients.",
+          "license": "https://opensource.org/licenses/MIT"
         }
       }
     </script>
