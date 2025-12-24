@@ -71,6 +71,24 @@ hosts the photo originals via the S3-compatible endpoint.
 
 ---
 
+# 🗺️ **White Mountain National Forest (WMNF) Trails Dataset**
+
+In addition to the NH48 material, the project now ships a standalone open-data
+package for the **White Mountain National Forest**. The WMNF dataset is the
+canonical source for the **WMNF Trails App** and lives in `data/wmnf-trails/`:
+
+* `wmnf-main.json` — normalized WMNF trail network (core New Hampshire coverage)
+* `wmnf-pliney.json` — Pliney region trails
+* `wmnf-maine.json` — Maine-side WMNF trails
+* `NH2000ftpeaks.json` — White Mountain 2,000-foot peak list
+
+These JSON files are the heart of the current WMNF API and are designed to be
+directly consumed by mapping tools, Google Dataset Search, or the `/trails`
+application. They are maintained independently from the NH48 peaks data so
+external consumers can recognize and ingest WMNF as its own dataset.
+
+---
+
 # 📦 **The NH48 JSON Schema**
 
 Each peak entry in `nh48.json` has the following structure:
