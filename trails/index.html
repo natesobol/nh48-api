@@ -183,6 +183,23 @@
       border: 1px solid var(--border-color);
       width: fit-content;
     }
+
+    .peak-icon {
+      color: #f6be5f;
+      font-size: 18px;
+      font-weight: 800;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .peak-label {
+      color: #f1f3f5;
+      font-weight: 700;
+      background: rgba(37, 40, 47, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 2px 6px;
+      box-shadow: 0 8px 14px rgba(0, 0, 0, 0.35);
+    }
     .nh48-lang {
       display: flex;
       align-items: center;
@@ -541,14 +558,9 @@
 
     .trail-info-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 0.65rem;
-    }
-
-    @media (max-width: 720px) {
-      .trail-info-grid {
-        grid-template-columns: 1fr;
-      }
+      width: 100%;
     }
 
     .trail-info-item {
@@ -1110,6 +1122,19 @@
         trackEvent('trails_map_move', { lat: center.lat, lng: center.lng });
       });
 
+      const peakLayerGroup = L.layerGroup().addTo(map);
+      const peakLookup = new Map();
+      const peakLabelZoomThreshold = 12;
+      const peakIcon = L.divIcon({
+        className: 'peak-icon',
+        html: '▲',
+        iconSize: [18, 18],
+        iconAnchor: [9, 12]
+      });
+      let peakMarkers = [];
+      let currentPeakSelectionId = null;
+      let peakLabelsHooked = false;
+
       // Allow the user to resize the split between the map/top content and the list below.
       const appContainer = document.getElementById('app');
       const panelResizer = document.getElementById('panelResizer');
@@ -1148,6 +1173,7 @@
       const trailLayers = {};
       const trailNames = [];
       const completionKey = 'wmnfTrailCompletion';
+      const defaultTrailName = 'Howker Ridge Trail';
       let completedTrails = {};
       // A‑Z navigation helpers
       const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -1277,6 +1303,21 @@
         return distance;
       }
 
+      function normalizeCoordinates(geometry) {
+        if (!Array.isArray(geometry) || geometry.length < 2) return [];
+        if (typeof geometry[0].lat === 'number' && typeof geometry[0].lon === 'number') {
+          return geometry
+            .map(point => [point.lon, point.lat])
+            .filter(coord => coord.every(value => Number.isFinite(value)));
+        }
+        if (Array.isArray(geometry[0]) && geometry[0].length >= 2) {
+          return geometry
+            .map(point => [point[0], point[1]])
+            .filter(coord => coord.every(value => Number.isFinite(value)));
+        }
+        return [];
+      }
+
       function formatTagLabel(key) {
         if (!key) return '';
         if (key.toLowerCase() === 'sac_scale') return 'SAC scale';
@@ -1392,36 +1433,38 @@
       async function loadOsmTrailData() {
         const sources = [
           [
-            '../data/wmnf-trails/wmnf-main.json',
-            '/data/wmnf-trails/wmnf-main.json',
-            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-main.json'
+            '../data/wmnf-trails/wmnf-normalized.json',
+            '/data/wmnf-trails/wmnf-normalized.json',
+            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-normalized.json'
           ],
           [
-            '../data/wmnf-trails/wmnf-maine.json',
-            '/data/wmnf-trails/wmnf-maine.json',
-            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-maine.json'
+            '../data/wmnf-trails/maine-normalized.json',
+            '/data/wmnf-trails/maine-normalized.json',
+            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/maine-normalized.json'
           ],
           [
-            '../data/wmnf-trails/wmnf-pliney.json',
-            '/data/wmnf-trails/wmnf-pliney.json',
-            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-pliney.json'
+            '../data/wmnf-trails/pliney-normalized.json',
+            '/data/wmnf-trails/pliney-normalized.json',
+            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/pliney-normalized.json'
           ]
         ];
 
         const officialNames = await loadOfficialTrailNames();
         const allowedNames = officialNames?.normalized || null;
 
-        const allElements = [];
+        const allRecords = [];
         for (const urls of sources) {
           const data = await fetchJsonWithFallback(urls);
-          if (data && Array.isArray(data.elements)) {
-            allElements.push(...data.elements);
+          if (Array.isArray(data)) {
+            allRecords.push(...data);
+          } else if (data && Array.isArray(data.elements)) {
+            allRecords.push(...data.elements);
           }
         }
 
         trailInfoLookup = new Map();
 
-        if (!allElements.length) {
+        if (!allRecords.length) {
           trailInfoLoaded = true;
           console.warn('No OSM trail data could be loaded.');
           trackEvent('trails_osm_load_failed');
@@ -1430,15 +1473,20 @@
 
         const grouped = new Map();
 
-        allElements.forEach(element => {
-          const tags = element.tags || {};
-          const name = tags.name || tags.ref || `OSM ${element.type} ${element.id}`;
+        allRecords.forEach(record => {
+          const tags = record.tags || record.rawTags || {};
+          const name = record.name || record.trail_name || tags.name || tags.ref || `OSM ${record.type || 'way'} ${record.id}`;
           const nameVariants = buildTrailNameVariants(name);
           if (allowedNames && !nameVariants.some(variant => allowedNames.has(variant))) {
             return;
           }
-          const coords = (element.geometry || []).map(point => [point.lon, point.lat]);
+          const coords = normalizeCoordinates(record.geometry || []);
           if (coords.length < 2) return;
+          const distanceMiles = Number.isFinite(record.distance_miles)
+            ? record.distance_miles
+            : Number.isFinite(record.distance_meters)
+              ? record.distance_meters / 1609.344
+              : computeDistanceMiles(coords);
 
           if (!grouped.has(name)) {
             grouped.set(name, {
@@ -1452,9 +1500,11 @@
 
           const group = grouped.get(name);
           group.segments.push(coords);
-          group.osm_ids.push(element.id);
+          if (record.id != null) {
+            group.osm_ids.push(record.id);
+          }
           group.tags = { ...group.tags, ...tags };
-          group.distance_miles += computeDistanceMiles(coords);
+          group.distance_miles += Number.isFinite(distanceMiles) ? distanceMiles : 0;
         });
 
         if (!grouped.size) {
@@ -1487,16 +1537,104 @@
 
         telemetryTrailCount = features.length;
         trailInfoLoaded = true;
-        trackEvent('trails_osm_loaded', { features: features.length, elements: allElements.length });
+        trackEvent('trails_osm_loaded', { features: features.length, elements: allRecords.length });
 
         if (currentTrailSelection) {
-          renderTrailInfo(currentTrailSelection);
+          renderCurrentSelection();
         }
 
         return { type: 'FeatureCollection', features };
       }
 
+      function normalizePeakRecord(element) {
+        const tags = element.tags || {};
+        const rawEle = tags.ele;
+        const numericElevation = Number.parseFloat(String(rawEle || '').replace(/,/g, ''));
+        let elevationFeet = parseElevationFeet(rawEle);
+        if ((elevationFeet == null || elevationFeet < 2000) && Number.isFinite(numericElevation)) {
+          const metersToFeet = Math.round(numericElevation * 3.28084);
+          elevationFeet = elevationFeet == null ? metersToFeet : Math.max(elevationFeet, metersToFeet);
+        }
+
+        return {
+          id: element.id,
+          name: tags.name || `Peak ${element.id}`,
+          lat: element.lat,
+          lon: element.lon,
+          elevationFeet,
+          tags
+        };
+      }
+
+      async function loadNh2000Peaks() {
+        const urls = [
+          '../data/wmnf-trails/NH2000ftpeaks.json',
+          '/data/wmnf-trails/NH2000ftpeaks.json',
+          'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/NH2000ftpeaks.json'
+        ];
+
+        const data = await fetchJsonWithFallback(urls);
+        if (!data || !Array.isArray(data.elements)) {
+          console.warn('No NH 2000 ft peak data could be loaded.');
+          trackEvent('trails_peaks_load_failed');
+          return [];
+        }
+
+        const peaks = data.elements
+          .filter(el => el.type === 'node' && Number.isFinite(el.lat) && Number.isFinite(el.lon))
+          .map(normalizePeakRecord);
+
+        trackEvent('trails_peaks_loaded', { count: peaks.length });
+        return peaks;
+      }
+
+      function updatePeakLabelVisibility() {
+        const showLabels = map.getZoom() >= peakLabelZoomThreshold;
+        peakMarkers.forEach(marker => {
+          const tooltip = marker.getTooltip();
+          if (tooltip) {
+            tooltip.setOpacity(showLabels ? 0.92 : 0);
+          }
+        });
+      }
+
+      function addPeaksToMap(peaks) {
+        peakLayerGroup.clearLayers();
+        peakLookup.clear();
+        peakMarkers = [];
+
+        peaks.forEach(peak => {
+          peakLookup.set(peak.id, peak);
+          const marker = L.marker([peak.lat, peak.lon], { icon: peakIcon, title: peak.name });
+          marker.addTo(peakLayerGroup);
+          marker.bindTooltip(peak.name, {
+            permanent: true,
+            direction: 'top',
+            offset: [0, -6],
+            className: 'peak-label'
+          });
+          marker.on('click', () => {
+            currentPeakSelectionId = peak.id;
+            setActiveListItem(null);
+            renderPeakInfo(peak.id);
+            map.flyTo([peak.lat, peak.lon], Math.max(map.getZoom(), 12), { animate: true });
+            trackEvent('trails_peak_click', { peak: peak.name });
+          });
+          peakMarkers.push(marker);
+        });
+
+        if (!peakLabelsHooked) {
+          map.on('zoomend', updatePeakLabelVisibility);
+          peakLabelsHooked = true;
+        }
+        updatePeakLabelVisibility();
+      }
+
       function formatFeet(value) {
+        return value == null ? '—' : `${value.toLocaleString()} ft`;
+      }
+
+      function formatPeakElevation(value) {
         return value == null ? '—' : `${value.toLocaleString()} ft`;
       }
 
@@ -1506,9 +1644,50 @@
         return `${rounded} miles`;
       }
 
+      function renderPeakInfo(peakId) {
+        if (!trailInfoPanel) return;
+        const peak = peakLookup.get(peakId);
+        currentPeakSelectionId = peak ? peakId : null;
+
+        if (!peak) {
+          trailInfoPanel.innerHTML = `
+            <h2>${t('trails.details.title')}</h2>
+            <p class="trail-info-empty">${t('trails.details.empty')}</p>
+          `;
+          return;
+        }
+
+        const tags = peak.tags || {};
+        const extraTags = Object.entries(tags)
+          .filter(([key]) => key !== 'name' && key !== 'ele')
+          .map(([key, value]) => `
+            <div class="trail-info-item">
+              <span>${formatTagLabel(key)}</span>
+              <strong>${formatTagValue(key, value)}</strong>
+            </div>
+          `);
+
+        trailInfoPanel.innerHTML = `
+          <h2>${peak.name}</h2>
+          <p>${t('trails.info.sourceNote')}</p>
+          <div class="trail-info-grid">
+            <div class="trail-info-item">
+              <span>Elevation</span>
+              <strong>${formatPeakElevation(peak.elevationFeet)}</strong>
+            </div>
+            <div class="trail-info-item">
+              <span>Coordinates</span>
+              <strong>${peak.lat.toFixed(5)}, ${peak.lon.toFixed(5)}</strong>
+            </div>
+            ${extraTags.join('')}
+          </div>
+        `;
+      }
+
       function renderTrailInfo(name) {
         if (!trailInfoPanel) return;
         currentTrailSelection = name || null;
+        currentPeakSelectionId = null;
 
         if (!name) {
           trailInfoPanel.innerHTML = `
@@ -1594,6 +1773,14 @@
           <p>${t('trails.info.sourceNote')}</p>
           <div class="trail-info-grid">${primaryItems.concat(extraTags).join('')}</div>
         `;
+      }
+
+      function renderCurrentSelection() {
+        if (currentPeakSelectionId != null) {
+          renderPeakInfo(currentPeakSelectionId);
+        } else {
+          renderTrailInfo(currentTrailSelection);
+        }
       }
 
       /**
@@ -1820,6 +2007,35 @@
         targetLayer.setStyle({ color: '#e74c3c', weight: 5 });
       }
 
+      function setActiveListItem(name) {
+        document.querySelectorAll('#trailList li').forEach(el => {
+          if (el.dataset.trailName === name) {
+            el.classList.add('active');
+          } else {
+            el.classList.remove('active');
+          }
+        });
+      }
+
+      function selectTrail(name, { flyTo = true, trackSource = null } = {}) {
+        const info = trailLayers[name];
+        if (!info) return false;
+
+        highlightLayer(info.layer);
+        if (flyTo) {
+          map.fitBounds(info.layer.getBounds(), { maxZoom: 14, animate: true });
+        }
+        info.layer.openPopup();
+        setActiveListItem(name);
+        renderTrailInfo(name);
+
+        if (trackSource) {
+          trackEvent(trackSource, { trail: name });
+        }
+
+        return true;
+      }
+
       /**
        * Populate the datalist for autocomplete suggestions.  Creates a set of
        * simplified trail names with common suffix words removed (e.g., "Trail",
@@ -1873,11 +2089,7 @@
             layer.bindPopup(`<strong>${name}</strong>`);
             // Handle click on the map line.  Highlight and zoom.
             layer.on('click', function() {
-              highlightLayer(layer);
-              map.fitBounds(layer.getBounds(), { maxZoom: 14, animate: true });
-              layer.openPopup();
-              renderTrailInfo(name);
-              trackEvent('trails_map_trail_click', { trail: name });
+              selectTrail(name, { trackSource: 'trails_map_trail_click' });
             });
           }
         }).addTo(map);
@@ -1962,6 +2174,7 @@
        */
       function createTrailListItem(name) {
         const li       = document.createElement('li');
+        li.dataset.trailName = name;
         const nameSpan = document.createElement('span');
         nameSpan.className  = 'trail-name';
         nameSpan.textContent = name;
@@ -1984,16 +2197,7 @@
 
         // When clicking the list item, highlight the trail on the map.
         li.addEventListener('click', () => {
-          const info = trailLayers[name];
-          if (info) {
-            highlightLayer(info.layer);
-            map.fitBounds(info.layer.getBounds(), { maxZoom: 14, animate: true });
-            info.layer.openPopup();
-            document.querySelectorAll('#trailList li').forEach(el => el.classList.remove('active'));
-            li.classList.add('active');
-            renderTrailInfo(name);
-            trackEvent('trails_list_trail_click', { trail: name });
-          }
+          selectTrail(name, { trackSource: 'trails_list_trail_click' });
         });
 
         // Assemble the list item.
@@ -2115,6 +2319,10 @@
       // Load completion state, fetch GeoJSON, then populate map and list.
       loadCompletion();
       renderTrailInfo(null);
+      const peaks = await loadNh2000Peaks();
+      if (peaks.length) {
+        addPeaksToMap(peaks);
+      }
       const geoData = await loadOsmTrailData();
       if (geoData) {
         addTrailsToMap(geoData);
@@ -2122,14 +2330,21 @@
         renderTrailList();
         trackEvent('trails_app_ready', { trailCount: trailNames.length });
         const trailQuery = new URLSearchParams(window.location.search).get('trail');
+        let initialTrail = null;
         if (trailQuery) {
           const matched = matchTrailName(trailQuery, trailNames);
           if (!matched) {
             window.location.replace('/not-found.html');
             return;
           }
-          renderTrailInfo(matched);
+          initialTrail = matched;
           trackEvent('trails_query_select', { trail: matched });
+        } else {
+          initialTrail = matchTrailName(defaultTrailName, trailNames) || trailNames[0] || null;
+        }
+
+        if (initialTrail) {
+          selectTrail(initialTrail, { flyTo: true });
         }
       }
       // Attach event listeners for search, sort, hide completed, and clear progress.
@@ -2161,14 +2376,14 @@
         }
       });
 
-      if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
-        window.NH48_I18N.onLangChange(() => {
-          baseLayer.setAttribution(t('trails.map.attribution'));
-          renderTrailInfo(currentTrailSelection);
-          renderTrailList();
-          trackEvent('trails_language_change', { language: window.NH48_I18N.getLang() });
-        });
-      }
+        if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
+          window.NH48_I18N.onLangChange(() => {
+            baseLayer.setAttribution(t('trails.map.attribution'));
+            renderCurrentSelection();
+            renderTrailList();
+            trackEvent('trails_language_change', { language: window.NH48_I18N.getLang() });
+          });
+        }
 
       // ------------------------
       // Mobile scroll optimization
