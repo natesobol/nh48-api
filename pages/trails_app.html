@@ -1153,6 +1153,7 @@
       let trailInfoLookup = new Map();
       let trailInfoLoaded = false;
       let currentTrailSelection = null;
+      let telemetryTrailCount = null;
 
       // Normalize trail names for matching (case-insensitive, trimmed, collapses spaces).
       function normalizeTrailName(name) {
@@ -1161,6 +1162,20 @@
           .trim()
           .replace(/\s+/g, ' ')
           .toLowerCase();
+      }
+
+      function normalizeTrailNameLoose(name) {
+        return (name || '')
+          .toString()
+          .toLowerCase()
+          .normalize('NFKD')
+          .replace(/[^a-z0-9]/g, '');
+      }
+
+      function buildTrailNameVariants(name) {
+        const collapsed = normalizeTrailNameLoose(name);
+        const withoutTrail = collapsed.replace(/trail$/, '').replace(/trail/g, '');
+        return [collapsed, withoutTrail].filter(Boolean);
       }
 
       function matchTrailName(query, names) {
@@ -1189,43 +1204,224 @@
         });
       }
 
-      // Fetch supplemental trail info (distance, elevation, OSM properties).
-      async function loadTrailInfoData() {
-        const urls = [
-          '../data/trails_with_osm.json',
-          '/data/trails_with_osm.json',
-          'https://cdn.jsdelivr.net/gh/natesobol/WMNF-Trails-API@main/trails_with_osm.json',
-          'https://raw.githubusercontent.com/natesobol/WMNF-Trails-API/main/trails_with_osm.json',
-          'https://unpkg.com/natesobol/WMNF-Trails-API@main/trails_with_osm.json'
-        ];
+      function toRadians(deg) {
+        return (deg * Math.PI) / 180;
+      }
 
+      function haversineMiles(a, b) {
+        const R = 3958.8; // Earth radius in miles
+        const dLat = toRadians(b.lat - a.lat);
+        const dLon = toRadians(b.lon - a.lon);
+        const lat1 = toRadians(a.lat);
+        const lat2 = toRadians(b.lat);
+        const sinDLat = Math.sin(dLat / 2);
+        const sinDLon = Math.sin(dLon / 2);
+        const aa = sinDLat * sinDLat + Math.cos(lat1) * Math.cos(lat2) * sinDLon * sinDLon;
+        const c = 2 * Math.atan2(Math.sqrt(aa), Math.sqrt(1 - aa));
+        return R * c;
+      }
+
+      function computeDistanceMiles(coords) {
+        if (!Array.isArray(coords) || coords.length < 2) return 0;
+        let distance = 0;
+        for (let i = 1; i < coords.length; i++) {
+          const prev = { lat: coords[i - 1][1], lon: coords[i - 1][0] };
+          const curr = { lat: coords[i][1], lon: coords[i][0] };
+          distance += haversineMiles(prev, curr);
+        }
+        return distance;
+      }
+
+      function formatTagLabel(key) {
+        if (!key) return '';
+        if (key.toLowerCase() === 'sac_scale') return 'SAC scale';
+        return key
+          .replace(/_/g, ' ')
+          .replace(/:/g, ': ')
+          .replace(/\b\w/g, char => char.toUpperCase());
+      }
+
+      function escapeHtml(input) {
+        return String(input)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function formatTagValue(key, value) {
+        if (value == null) return '—';
+        if (Array.isArray(value)) return value.map(v => escapeHtml(v)).join(', ');
+        if (typeof value === 'boolean') return value ? 'yes' : 'no';
+        const str = escapeHtml(value);
+        if (key && (key.toLowerCase().includes('website') || key.toLowerCase().includes('url'))) {
+          return `<a href="${str}" target="_blank" rel="noopener noreferrer">${str}</a>`;
+        }
+        return str;
+      }
+
+      async function fetchJsonWithFallback(urls) {
         for (const url of urls) {
           try {
             const response = await fetch(url, { cache: 'no-cache' });
             if (response.ok) {
-              const records = await response.json();
-              if (Array.isArray(records)) {
-                records.forEach(registerTrailRecord);
-                trailInfoLoaded = true;
-                trackEvent('trails_info_loaded', { source: url, count: records.length });
-                break;
-              }
+              const data = await response.json();
+              trackEvent('trails_osm_fetch_success', { source: url });
+              return data;
             }
           } catch (err) {
-            console.warn(`Failed to load trail info from ${url}:`, err.message);
-            trackEvent('trails_info_fetch_error', { source: url });
+            console.warn(`Failed to fetch ${url}:`, err.message);
+            trackEvent('trails_osm_fetch_error', { source: url });
+          }
+        }
+        return null;
+      }
+
+      async function fetchTextWithFallback(urls) {
+        for (const url of urls) {
+          try {
+            const response = await fetch(url, { cache: 'no-cache' });
+            if (response.ok) {
+              const text = await response.text();
+              trackEvent('trails_osm_fetch_success', { source: url });
+              return text;
+            }
+          } catch (err) {
+            console.warn(`Failed to fetch ${url}:`, err.message);
+            trackEvent('trails_osm_fetch_error', { source: url });
+          }
+        }
+        return null;
+      }
+
+      async function loadOfficialTrailNames() {
+        const urls = [
+          '../data/wmnf-trails/White_Mountains_Trails.txt',
+          '/data/wmnf-trails/White_Mountains_Trails.txt',
+          'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/White_Mountains_Trails.txt'
+        ];
+        const text = await fetchTextWithFallback(urls);
+        if (!text) return null;
+
+        const names = text
+          .split(/\r?\n/)
+          .map(line => line.trim())
+          .filter(Boolean);
+
+        const normalized = new Set();
+        names.forEach(name => {
+          buildTrailNameVariants(name).forEach(variant => normalized.add(variant));
+        });
+
+        return { names, normalized };
+      }
+
+      async function loadOsmTrailData() {
+        const sources = [
+          [
+            '../data/wmnf-trails/wmnf-main.json',
+            '/data/wmnf-trails/wmnf-main.json',
+            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-main.json'
+          ],
+          [
+            '../data/wmnf-trails/wmnf-maine.json',
+            '/data/wmnf-trails/wmnf-maine.json',
+            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-maine.json'
+          ],
+          [
+            '../data/wmnf-trails/wmnf-pliney.json',
+            '/data/wmnf-trails/wmnf-pliney.json',
+            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-pliney.json'
+          ]
+        ];
+
+        const officialNames = await loadOfficialTrailNames();
+        const allowedNames = officialNames?.normalized || null;
+
+        const allElements = [];
+        for (const urls of sources) {
+          const data = await fetchJsonWithFallback(urls);
+          if (data && Array.isArray(data.elements)) {
+            allElements.push(...data.elements);
           }
         }
 
-        if (!trailInfoLoaded) {
+        trailInfoLookup = new Map();
+
+        if (!allElements.length) {
           trailInfoLoaded = true;
-          console.warn('Trail info data could not be loaded; showing fallback messaging.');
-          trackEvent('trails_info_load_failed');
+          console.warn('No OSM trail data could be loaded.');
+          trackEvent('trails_osm_load_failed');
+          return null;
         }
+
+        const grouped = new Map();
+
+        allElements.forEach(element => {
+          const tags = element.tags || {};
+          const name = tags.name || tags.ref || `OSM ${element.type} ${element.id}`;
+          const nameVariants = buildTrailNameVariants(name);
+          if (allowedNames && !nameVariants.some(variant => allowedNames.has(variant))) {
+            return;
+          }
+          const coords = (element.geometry || []).map(point => [point.lon, point.lat]);
+          if (coords.length < 2) return;
+
+          if (!grouped.has(name)) {
+            grouped.set(name, {
+              name,
+              segments: [],
+              tags: {},
+              osm_ids: [],
+              distance_miles: 0
+            });
+          }
+
+          const group = grouped.get(name);
+          group.segments.push(coords);
+          group.osm_ids.push(element.id);
+          group.tags = { ...group.tags, ...tags };
+          group.distance_miles += computeDistanceMiles(coords);
+        });
+
+        if (!grouped.size) {
+          telemetryTrailCount = 0;
+          trailInfoLoaded = true;
+          console.warn('No OSM trail data matched the official trail list.');
+          trackEvent('trails_osm_load_filtered_out');
+          return { type: 'FeatureCollection', features: [] };
+        }
+
+        const features = [];
+        grouped.forEach(group => {
+          const geometry = group.segments.length === 1
+            ? { type: 'LineString', coordinates: group.segments[0] }
+            : { type: 'MultiLineString', coordinates: group.segments };
+          const properties = {
+            name: group.name,
+            osm_ids: group.osm_ids,
+            tags: group.tags,
+            distance_miles: group.distance_miles
+          };
+          features.push({ type: 'Feature', properties, geometry });
+          registerTrailRecord({
+            trail_name: group.name,
+            osm_ids: group.osm_ids,
+            tags: group.tags,
+            distance_miles: group.distance_miles
+          });
+        });
+
+        telemetryTrailCount = features.length;
+        trailInfoLoaded = true;
+        trackEvent('trails_osm_loaded', { features: features.length, elements: allElements.length });
 
         if (currentTrailSelection) {
           renderTrailInfo(currentTrailSelection);
         }
+
+        return { type: 'FeatureCollection', features };
       }
 
       function formatFeet(value) {
@@ -1262,38 +1458,56 @@
           return;
         }
 
-        const props = record.osm_properties || {};
-        const allowedUses = Array.isArray(props.allowed_uses)
-          ? props.allowed_uses.join(', ')
-          : (props.allowed_uses ?? '—');
+        const tags = record.tags || {};
+        const displayedKeys = new Set();
+
+        const allowedUses = ['foot', 'bicycle', 'horse', 'ski', 'snowmobile', 'atv']
+          .map(key => tags[key] ? `${key}: ${tags[key]}` : null)
+          .filter(Boolean);
 
         const fields = [
           { label: t('trails.info.distance'), value: formatDistance(record.distance_miles) },
-          { label: t('trails.info.elevationGain'), value: formatFeet(props.elevation_gain_ft) },
-          { label: t('trails.info.minElevation'), value: formatFeet(props.min_elevation_ft) },
-          { label: t('trails.info.maxElevation'), value: formatFeet(props.max_elevation_ft) },
-          { label: t('trails.info.surface'), value: props.surface ?? '—' },
-          { label: t('trails.info.trailType'), value: props.trail_type ?? '—' },
-          { label: t('trails.info.difficulty'), value: props.difficulty ?? '—' },
-          { label: t('trails.info.visibility'), value: props.trail_visibility ?? '—' },
-          { label: t('trails.info.width'), value: props.width ?? '—' },
-          { label: t('trails.info.allowedUses'), value: allowedUses },
-          { label: t('trails.info.season'), value: props.season ?? '—' },
-          { label: t('trails.info.maintainer'), value: props.maintainer ?? '—' },
-          { label: t('trails.info.source'), value: props.source ?? '—' }
+          { label: 'OSM IDs', value: Array.isArray(record.osm_ids) ? record.osm_ids.join(', ') : '—' },
+          { label: t('trails.info.surface'), value: tags.surface ?? '—', key: 'surface' },
+          { label: t('trails.info.trailType'), value: tags.highway || tags.route || tags.trail_type || '—', key: 'highway' },
+          { label: t('trails.info.difficulty'), value: tags.sac_scale || tags.smoothness || tags.difficulty || '—', key: 'sac_scale' },
+          { label: t('trails.info.visibility'), value: tags.trail_visibility ?? '—', key: 'trail_visibility' },
+          { label: t('trails.info.width'), value: tags.width ?? '—', key: 'width' },
+          { label: t('trails.info.allowedUses'), value: allowedUses.length ? allowedUses.join(', ') : (tags.access ?? '—'), key: 'access' },
+          { label: t('trails.info.season'), value: tags.season || tags.seasonal || '—', key: 'season' },
+          { label: t('trails.info.maintainer'), value: tags.operator || tags.maintainer || '—', key: 'operator' },
+          { label: t('trails.info.source'), value: tags.source || tags['source:date'] || '—', key: 'source' },
+          { label: 'Network', value: tags.network || '—', key: 'network' },
+          { label: 'Reference', value: tags.ref || '—', key: 'ref' },
+          { label: 'Website', value: formatTagValue('website', tags.website), key: 'website' },
+          { label: 'Description', value: tags.description || tags.note || '—', key: 'description' }
         ];
 
-        const items = fields.map(field => `
-          <div class="trail-info-item">
-            <span>${field.label}</span>
-            <strong>${field.value}</strong>
-          </div>
-        `).join('');
+        const primaryItems = fields
+          .filter(field => field.value && field.value !== '—')
+          .map(field => {
+            if (field.key) displayedKeys.add(field.key);
+            return `
+              <div class="trail-info-item">
+                <span>${field.label}</span>
+                <strong>${field.value}</strong>
+              </div>
+            `;
+          });
+
+        const extraTags = Object.entries(tags)
+          .filter(([key, value]) => key !== 'name' && value && !displayedKeys.has(key))
+          .map(([key, value]) => `
+            <div class="trail-info-item">
+              <span>${formatTagLabel(key)}</span>
+              <strong>${formatTagValue(key, value)}</strong>
+            </div>
+          `);
 
         trailInfoPanel.innerHTML = `
           <h2>${record.trail_name || name}</h2>
           <p>${t('trails.info.sourceNote')}</p>
-          <div class="trail-info-grid">${items}</div>
+          <div class="trail-info-grid">${primaryItems.concat(extraTags).join('')}</div>
         `;
       }
 
@@ -1510,51 +1724,6 @@
         // reset input to allow re-import of same file
         this.value = '';
       });
-
-      /**
-       * Fetch the GeoJSON file from the server.  For Wix embedding, we use multiple
-       * fallback strategies to ensure the file loads reliably:
-       * 1. Try GitHub raw content with no-cache headers
-       * 2. Try jsdelivr CDN (faster, more reliable)
-       * 3. Try unpkg CDN as backup
-       */
-      async function loadGeoJSON() {
-        const urls = [
-          'https://cdn.jsdelivr.net/gh/natesobol/WMNF-Trails-API@main/merged_trails.geojson',
-          'https://raw.githubusercontent.com/natesobol/WMNF-Trails-API/main/merged_trails.geojson',
-          'https://unpkg.com/natesobol/WMNF-Trails-API@main/merged_trails.geojson'
-        ];
-
-        for (const url of urls) {
-          try {
-            console.log(`Attempting to fetch from: ${url}`);
-            const response = await fetch(url, {
-              method: 'GET',
-              headers: {
-                'Accept': 'application/json',
-              },
-              cache: 'no-cache'
-            });
-            
-            if (response.ok) {
-              const data = await response.json();
-              console.log(`Successfully loaded GeoJSON from ${url}`);
-              trackEvent('trails_geojson_loaded', { source: url, featureCount: data.features ? data.features.length : 0 });
-              return data;
-            }
-          } catch (err) {
-            console.warn(`Failed to load from ${url}:`, err.message);
-            trackEvent('trails_geojson_fetch_error', { source: url });
-            continue;
-          }
-        }
-
-        // If all URLs fail, show helpful error message
-        console.error('Failed to load GeoJSON from all sources');
-        trackEvent('trails_geojson_load_failed');
-        alert(t('trails.alertLoadFail'));
-        return null;
-      }
 
       // Helper function to highlight a single trail layer.  Resets all others
       // back to the default style before applying a highlighted style to the
@@ -1861,8 +2030,7 @@
       // Load completion state, fetch GeoJSON, then populate map and list.
       loadCompletion();
       renderTrailInfo(null);
-      loadTrailInfoData();
-      const geoData = await loadGeoJSON();
+      const geoData = await loadOsmTrailData();
       if (geoData) {
         addTrailsToMap(geoData);
         populateSuggestions();
