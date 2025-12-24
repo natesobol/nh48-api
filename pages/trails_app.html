@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="0; url=/trails/">
-  <script>window.location.replace('/trails/');</script>
+  <meta http-equiv="refresh" content="0; url=/trails">
+  <script>window.location.replace('/trails');</script>
   <title>WMNF Trails Map &amp; Open Data – White Mountain National Forest</title>
   <meta name="description" content="Explore White Mountain National Forest trails with an interactive map and open datasets for WMNF routes and 2,000-foot peaks. Download normalized JSON for your own apps.">
   <meta name="keywords" content="WMNF trails,White Mountain National Forest,New Hampshire hiking trails,open trail data,WMNF dataset,2000 foot peaks">
@@ -996,7 +996,7 @@
       const navPlaceholder = document.getElementById('nav-placeholder');
       if (!navPlaceholder) return;
 
-      fetch('nav.html')
+      fetch('/pages/nav.html')
         .then(response => response.text())
         .then(html => {
           navPlaceholder.innerHTML = html;
