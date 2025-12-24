@@ -1464,6 +1464,57 @@
         updateTelemetrySummary();
         trackEvent('trails_osm_loaded', { features: features.length, elements: allElements.length });
 
+        const grouped = new Map();
+
+        allElements.forEach(element => {
+          const tags = element.tags || {};
+          const name = tags.name || tags.ref || `OSM ${element.type} ${element.id}`;
+          const coords = (element.geometry || []).map(point => [point.lon, point.lat]);
+          if (coords.length < 2) return;
+
+          if (!grouped.has(name)) {
+            grouped.set(name, {
+              name,
+              segments: [],
+              tags: {},
+              osm_ids: [],
+              distance_miles: 0
+            });
+          }
+
+          const group = grouped.get(name);
+          group.segments.push(coords);
+          group.osm_ids.push(element.id);
+          group.tags = { ...group.tags, ...tags };
+          group.distance_miles += computeDistanceMiles(coords);
+        });
+
+        const features = [];
+        grouped.forEach(group => {
+          const geometry = group.segments.length === 1
+            ? { type: 'LineString', coordinates: group.segments[0] }
+            : { type: 'MultiLineString', coordinates: group.segments };
+          const properties = {
+            name: group.name,
+            osm_ids: group.osm_ids,
+            tags: group.tags,
+            distance_miles: group.distance_miles
+          };
+          features.push({ type: 'Feature', properties, geometry });
+          registerTrailRecord({
+            trail_name: group.name,
+            osm_ids: group.osm_ids,
+            tags: group.tags,
+            distance_miles: group.distance_miles
+          });
+        });
+
+        totalTrailCount = grouped.size;
+        telemetryTrailCount = features.length;
+        trailInfoLoaded = true;
+        updateTelemetrySummary();
+        trackEvent('trails_osm_loaded', { features: features.length, elements: allElements.length });
+
         if (currentTrailSelection) {
           renderTrailInfo(currentTrailSelection);
         }
