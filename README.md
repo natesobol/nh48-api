@@ -109,6 +109,12 @@ directly consumed by mapping tools, Google Dataset Search, or the `/trails`
 application. They are maintained independently from the NH48 peaks data so
 external consumers can recognize and ingest WMNF as its own dataset.
 
+To help crawlers discover the WMNF data, the `/long-trails/` page now publishes
+a `Dataset` JSON-LD block that advertises each WMNF JSON download (core, Pliney,
+Maine, normalized variants, and the 2,000-foot peaks list) as canonical data
+downloads. This mirrors the SEO intent noted here and surfaces the trail files
+in Google Dataset Search.
+
 ---
 
 # 📦 **The NH48 JSON Schema**
