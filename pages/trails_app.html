@@ -1164,6 +1164,20 @@
           .toLowerCase();
       }
 
+      function normalizeTrailNameLoose(name) {
+        return (name || '')
+          .toString()
+          .toLowerCase()
+          .normalize('NFKD')
+          .replace(/[^a-z0-9]/g, '');
+      }
+
+      function buildTrailNameVariants(name) {
+        const collapsed = normalizeTrailNameLoose(name);
+        const withoutTrail = collapsed.replace(/trail$/, '').replace(/trail/g, '');
+        return [collapsed, withoutTrail].filter(Boolean);
+      }
+
       function matchTrailName(query, names) {
         if (!query) return null;
         const normalizedQuery = normalizeTrailName(query);
@@ -1264,6 +1278,45 @@
         return null;
       }
 
+      async function fetchTextWithFallback(urls) {
+        for (const url of urls) {
+          try {
+            const response = await fetch(url, { cache: 'no-cache' });
+            if (response.ok) {
+              const text = await response.text();
+              trackEvent('trails_osm_fetch_success', { source: url });
+              return text;
+            }
+          } catch (err) {
+            console.warn(`Failed to fetch ${url}:`, err.message);
+            trackEvent('trails_osm_fetch_error', { source: url });
+          }
+        }
+        return null;
+      }
+
+      async function loadOfficialTrailNames() {
+        const urls = [
+          '../data/wmnf-trails/White_Mountains_Trails.txt',
+          '/data/wmnf-trails/White_Mountains_Trails.txt',
+          'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/White_Mountains_Trails.txt'
+        ];
+        const text = await fetchTextWithFallback(urls);
+        if (!text) return null;
+
+        const names = text
+          .split(/\r?\n/)
+          .map(line => line.trim())
+          .filter(Boolean);
+
+        const normalized = new Set();
+        names.forEach(name => {
+          buildTrailNameVariants(name).forEach(variant => normalized.add(variant));
+        });
+
+        return { names, normalized };
+      }
+
       async function loadOsmTrailData() {
         const sources = [
           [
@@ -1283,6 +1336,9 @@
           ]
         ];
 
+        const officialNames = await loadOfficialTrailNames();
+        const allowedNames = officialNames?.normalized || null;
+
         const allElements = [];
         for (const urls of sources) {
           const data = await fetchJsonWithFallback(urls);
@@ -1290,6 +1346,8 @@
             allElements.push(...data.elements);
           }
         }
+        return null;
+      }
 
         trailInfoLookup = new Map();
 
@@ -1305,6 +1363,10 @@
         allElements.forEach(element => {
           const tags = element.tags || {};
           const name = tags.name || tags.ref || `OSM ${element.type} ${element.id}`;
+          const nameVariants = buildTrailNameVariants(name);
+          if (allowedNames && !nameVariants.some(variant => allowedNames.has(variant))) {
+            return;
+          }
           const coords = (element.geometry || []).map(point => [point.lon, point.lat]);
           if (coords.length < 2) return;
 
@@ -1324,6 +1386,14 @@
           group.tags = { ...group.tags, ...tags };
           group.distance_miles += computeDistanceMiles(coords);
         });
+
+        if (!grouped.size) {
+          telemetryTrailCount = 0;
+          trailInfoLoaded = true;
+          console.warn('No OSM trail data matched the official trail list.');
+          trackEvent('trails_osm_load_filtered_out');
+          return { type: 'FeatureCollection', features: [] };
+        }
 
         const features = [];
         grouped.forEach(group => {
