@@ -28,58 +28,60 @@
 
   <script id="trailsJsonLd" type="application/ld+json"></script>
   <script>
-    const TRAILS_JSONLD_SCRIPT_ID = 'trailsJsonLd';
-    const TRAIL_LIST_PAGE = 'https://nh48.info/trails?trail=';
-    const TRAIL_ITEMLIST_LIMIT = 300;
-    const TRAIL_DATA_URLS = [
-      '../data/trails_with_osm.json',
-      '/data/trails_with_osm.json',
-      'https://cdn.jsdelivr.net/gh/natesobol/WMNF-Trails-API@main/trails_with_osm.json',
-      'https://raw.githubusercontent.com/natesobol/WMNF-Trails-API/main/trails_with_osm.json'
-    ];
+    (() => {
+      const TRAILS_JSONLD_SCRIPT_ID = 'trailsJsonLd';
+      const TRAIL_LIST_PAGE = 'https://nh48.info/trails?trail=';
+      const TRAIL_ITEMLIST_LIMIT = 300;
+      const TRAIL_DATA_URLS = [
+        '../data/trails_with_osm.json',
+        '/data/trails_with_osm.json',
+        'https://cdn.jsdelivr.net/gh/natesobol/WMNF-Trails-API@main/trails_with_osm.json',
+        'https://raw.githubusercontent.com/natesobol/WMNF-Trails-API/main/trails_with_osm.json'
+      ];
 
-    function normalizeTrailNameForJsonLd(name){
-      return String(name || '').trim();
-    }
+      function normalizeTrailNameForJsonLd(name){
+        return String(name || '').trim();
+      }
 
-    function buildTrailItemList(names){
-      const itemListElement = names.slice(0, TRAIL_ITEMLIST_LIMIT).map((name, index) => ({
-        '@type': 'ListItem',
-        position: index + 1,
-        url: `${TRAIL_LIST_PAGE}${encodeURIComponent(name)}`,
-        name
-      }));
-      return {
-        '@context': 'https://schema.org',
-        '@type': 'ItemList',
-        name: 'White Mountain National Forest Trails',
-        itemListElement
-      };
-    }
+      function buildTrailItemList(names){
+        const itemListElement = names.slice(0, TRAIL_ITEMLIST_LIMIT).map((name, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          url: `${TRAIL_LIST_PAGE}${encodeURIComponent(name)}`,
+          name
+        }));
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: 'White Mountain National Forest Trails',
+          itemListElement
+        };
+      }
 
-    async function loadTrailItemList(){
-      for(const url of TRAIL_DATA_URLS){
-        try{
-          const response = await fetch(url);
-          if(!response.ok) continue;
-          const data = await response.json();
-          const names = data
-            .map(record => normalizeTrailNameForJsonLd(record.trail_name || record.name))
-            .filter(Boolean)
-            .sort((a, b) => a.localeCompare(b));
-          if(names.length === 0) continue;
-          const scriptEl = document.getElementById(TRAILS_JSONLD_SCRIPT_ID);
-          if(scriptEl){
-            scriptEl.textContent = JSON.stringify(buildTrailItemList(names));
+      async function loadTrailItemList(){
+        for(const url of TRAIL_DATA_URLS){
+          try{
+            const response = await fetch(url);
+            if(!response.ok) continue;
+            const data = await response.json();
+            const names = data
+              .map(record => normalizeTrailNameForJsonLd(record.trail_name || record.name))
+              .filter(Boolean)
+              .sort((a, b) => a.localeCompare(b));
+            if(names.length === 0) continue;
+            const scriptEl = document.getElementById(TRAILS_JSONLD_SCRIPT_ID);
+            if(scriptEl){
+              scriptEl.textContent = JSON.stringify(buildTrailItemList(names));
+            }
+            return;
+          }catch(err){
+            console.warn('Unable to load trail list data for JSON-LD:', err);
           }
-          return;
-        }catch(err){
-          console.warn('Unable to load trail list data for JSON-LD:', err);
         }
       }
-    }
 
-    window.addEventListener('DOMContentLoaded', loadTrailItemList);
+      window.addEventListener('DOMContentLoaded', loadTrailItemList);
+    })();
   </script>
 
 <!--
@@ -1300,6 +1302,33 @@
         return str;
       }
 
+      function firstTagValue(tags, keys) {
+        for (const key of keys) {
+          if (tags[key] != null) {
+            return { key, value: tags[key] };
+          }
+        }
+        return { key: null, value: null };
+      }
+
+      function parseElevationFeet(value) {
+        if (value == null) return null;
+        const raw = String(value).trim();
+        const num = parseFloat(raw.replace(/,/g, ''));
+        if (!Number.isFinite(num)) return null;
+        const isMeters = /\b(m|meter|metre)\b/i.test(raw);
+        const feet = isMeters ? num * 3.28084 : num;
+        return Math.round(feet);
+      }
+
+      function formatElevation(value) {
+        const feet = parseElevationFeet(value);
+        if (feet == null) {
+          return value ? escapeHtml(value) : '—';
+        }
+        return `${feet.toLocaleString()} ft`;
+      }
+
       async function fetchJsonWithFallback(urls) {
         for (const url of urls) {
           try {
@@ -1395,6 +1424,60 @@
           trackEvent('trails_osm_load_failed');
           return null;
         }
+        trailInfoLoaded = true;
+        updateTelemetrySummary();
+        trackEvent('trails_osm_loaded', { features: features.length, elements: allElements.length });
+
+        const grouped = new Map();
+
+        allElements.forEach(element => {
+          const tags = element.tags || {};
+          const name = tags.name || tags.ref || `OSM ${element.type} ${element.id}`;
+          const coords = (element.geometry || []).map(point => [point.lon, point.lat]);
+          if (coords.length < 2) return;
+
+          if (!grouped.has(name)) {
+            grouped.set(name, {
+              name,
+              segments: [],
+              tags: {},
+              osm_ids: [],
+              distance_miles: 0
+            });
+          }
+
+          const group = grouped.get(name);
+          group.segments.push(coords);
+          group.osm_ids.push(element.id);
+          group.tags = { ...group.tags, ...tags };
+          group.distance_miles += computeDistanceMiles(coords);
+        });
+
+        const features = [];
+        grouped.forEach(group => {
+          const geometry = group.segments.length === 1
+            ? { type: 'LineString', coordinates: group.segments[0] }
+            : { type: 'MultiLineString', coordinates: group.segments };
+          const properties = {
+            name: group.name,
+            osm_ids: group.osm_ids,
+            tags: group.tags,
+            distance_miles: group.distance_miles
+          };
+          features.push({ type: 'Feature', properties, geometry });
+          registerTrailRecord({
+            trail_name: group.name,
+            osm_ids: group.osm_ids,
+            tags: group.tags,
+            distance_miles: group.distance_miles
+          });
+        });
+
+        totalTrailCount = grouped.size;
+        telemetryTrailCount = features.length;
+        trailInfoLoaded = true;
+        updateTelemetrySummary();
+        trackEvent('trails_osm_loaded', { features: features.length, elements: allElements.length });
 
         const grouped = new Map();
 
@@ -1464,57 +1547,6 @@
         updateTelemetrySummary();
         trackEvent('trails_osm_loaded', { features: features.length, elements: allElements.length });
 
-        const grouped = new Map();
-
-        allElements.forEach(element => {
-          const tags = element.tags || {};
-          const name = tags.name || tags.ref || `OSM ${element.type} ${element.id}`;
-          const coords = (element.geometry || []).map(point => [point.lon, point.lat]);
-          if (coords.length < 2) return;
-
-          if (!grouped.has(name)) {
-            grouped.set(name, {
-              name,
-              segments: [],
-              tags: {},
-              osm_ids: [],
-              distance_miles: 0
-            });
-          }
-
-          const group = grouped.get(name);
-          group.segments.push(coords);
-          group.osm_ids.push(element.id);
-          group.tags = { ...group.tags, ...tags };
-          group.distance_miles += computeDistanceMiles(coords);
-        });
-
-        const features = [];
-        grouped.forEach(group => {
-          const geometry = group.segments.length === 1
-            ? { type: 'LineString', coordinates: group.segments[0] }
-            : { type: 'MultiLineString', coordinates: group.segments };
-          const properties = {
-            name: group.name,
-            osm_ids: group.osm_ids,
-            tags: group.tags,
-            distance_miles: group.distance_miles
-          };
-          features.push({ type: 'Feature', properties, geometry });
-          registerTrailRecord({
-            trail_name: group.name,
-            osm_ids: group.osm_ids,
-            tags: group.tags,
-            distance_miles: group.distance_miles
-          });
-        });
-
-        totalTrailCount = grouped.size;
-        telemetryTrailCount = features.length;
-        trailInfoLoaded = true;
-        updateTelemetrySummary();
-        trackEvent('trails_osm_loaded', { features: features.length, elements: allElements.length });
-
         if (currentTrailSelection) {
           renderTrailInfo(currentTrailSelection);
         }
@@ -1563,22 +1595,35 @@
           .map(key => tags[key] ? `${key}: ${tags[key]}` : null)
           .filter(Boolean);
 
+        const elevationGain = firstTagValue(tags, ['elevation_gain', 'ascent', 'ascent:gain', 'ele:gain']);
+        const elevationLoss = firstTagValue(tags, ['descent', 'descent:loss', 'ele:loss']);
+        const highPoint = firstTagValue(tags, ['ele:max', 'max_ele', 'ele_highest', 'ele']);
+        const lowPoint = firstTagValue(tags, ['ele:min', 'min_ele', 'ele_lowest']);
+        const accessFee = [tags.access, tags.fee].filter(Boolean).join(' · ');
+        const season = tags.season || tags.seasonal || tags['season:conditional'];
+        const maintainer = tags.operator || tags.maintainer || tags.owner;
+        const description = firstTagValue(tags, ['description', 'note', 'comment', 'history', 'historic']);
+        const condition = firstTagValue(tags, ['trail_visibility', 'smoothness', 'mtb:scale:imba', 'mtb:scale', 'ski:rating']);
+
         const fields = [
           { label: t('trails.info.distance'), value: formatDistance(record.distance_miles) },
-          { label: 'OSM IDs', value: Array.isArray(record.osm_ids) ? record.osm_ids.join(', ') : '—' },
-          { label: t('trails.info.surface'), value: tags.surface ?? '—', key: 'surface' },
+          { label: 'Elevation gain', value: formatElevation(elevationGain.value), key: elevationGain.key },
+          { label: 'Elevation loss', value: formatElevation(elevationLoss.value), key: elevationLoss.key },
+          { label: 'High point', value: formatElevation(highPoint.value), key: highPoint.key },
+          { label: 'Low point', value: formatElevation(lowPoint.value), key: lowPoint.key },
           { label: t('trails.info.trailType'), value: tags.highway || tags.route || tags.trail_type || '—', key: 'highway' },
+          { label: t('trails.info.surface'), value: tags.surface ?? '—', key: 'surface' },
           { label: t('trails.info.difficulty'), value: tags.sac_scale || tags.smoothness || tags.difficulty || '—', key: 'sac_scale' },
-          { label: t('trails.info.visibility'), value: tags.trail_visibility ?? '—', key: 'trail_visibility' },
-          { label: t('trails.info.width'), value: tags.width ?? '—', key: 'width' },
+          { label: t('trails.info.visibility'), value: condition.value || tags.trail_visibility || '—', key: condition.key || 'trail_visibility' },
           { label: t('trails.info.allowedUses'), value: allowedUses.length ? allowedUses.join(', ') : (tags.access ?? '—'), key: 'access' },
-          { label: t('trails.info.season'), value: tags.season || tags.seasonal || '—', key: 'season' },
-          { label: t('trails.info.maintainer'), value: tags.operator || tags.maintainer || '—', key: 'operator' },
-          { label: t('trails.info.source'), value: tags.source || tags['source:date'] || '—', key: 'source' },
+          { label: t('trails.info.season'), value: season || '—', key: 'season' },
+          { label: t('trails.info.maintainer'), value: maintainer || '—', key: 'operator' },
+          { label: 'Access / fees', value: accessFee || tags.permit || '—', key: accessFee ? 'access' : 'permit' },
           { label: 'Network', value: tags.network || '—', key: 'network' },
           { label: 'Reference', value: tags.ref || '—', key: 'ref' },
           { label: 'Website', value: formatTagValue('website', tags.website), key: 'website' },
-          { label: 'Description', value: tags.description || tags.note || '—', key: 'description' }
+          { label: 'Notes & history', value: formatTagValue(description.key, description.value) },
+          { label: 'Source / last update', value: [tags.source, tags['source:date']].filter(Boolean).join(' · ') || '—', key: 'source' }
         ];
 
         const primaryItems = fields
