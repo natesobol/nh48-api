@@ -541,14 +541,9 @@
 
     .trail-info-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 0.65rem;
-    }
-
-    @media (max-width: 720px) {
-      .trail-info-grid {
-        grid-template-columns: 1fr;
-      }
+      width: 100%;
     }
 
     .trail-info-item {
@@ -1148,6 +1143,7 @@
       const trailLayers = {};
       const trailNames = [];
       const completionKey = 'wmnfTrailCompletion';
+      const defaultTrailName = 'Howker Ridge Trail';
       let completedTrails = {};
       // A‑Z navigation helpers
       const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -1277,6 +1273,21 @@
         return distance;
       }
 
+      function normalizeCoordinates(geometry) {
+        if (!Array.isArray(geometry) || geometry.length < 2) return [];
+        if (typeof geometry[0].lat === 'number' && typeof geometry[0].lon === 'number') {
+          return geometry
+            .map(point => [point.lon, point.lat])
+            .filter(coord => coord.every(value => Number.isFinite(value)));
+        }
+        if (Array.isArray(geometry[0]) && geometry[0].length >= 2) {
+          return geometry
+            .map(point => [point[0], point[1]])
+            .filter(coord => coord.every(value => Number.isFinite(value)));
+        }
+        return [];
+      }
+
       function formatTagLabel(key) {
         if (!key) return '';
         if (key.toLowerCase() === 'sac_scale') return 'SAC scale';
@@ -1392,36 +1403,38 @@
       async function loadOsmTrailData() {
         const sources = [
           [
-            '../data/wmnf-trails/wmnf-main.json',
-            '/data/wmnf-trails/wmnf-main.json',
-            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-main.json'
+            '../data/wmnf-trails/wmnf-normalized.json',
+            '/data/wmnf-trails/wmnf-normalized.json',
+            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-normalized.json'
           ],
           [
-            '../data/wmnf-trails/wmnf-maine.json',
-            '/data/wmnf-trails/wmnf-maine.json',
-            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-maine.json'
+            '../data/wmnf-trails/maine-normalized.json',
+            '/data/wmnf-trails/maine-normalized.json',
+            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/maine-normalized.json'
           ],
           [
-            '../data/wmnf-trails/wmnf-pliney.json',
-            '/data/wmnf-trails/wmnf-pliney.json',
-            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-pliney.json'
+            '../data/wmnf-trails/pliney-normalized.json',
+            '/data/wmnf-trails/pliney-normalized.json',
+            'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/pliney-normalized.json'
           ]
         ];
 
         const officialNames = await loadOfficialTrailNames();
         const allowedNames = officialNames?.normalized || null;
 
-        const allElements = [];
+        const allRecords = [];
         for (const urls of sources) {
           const data = await fetchJsonWithFallback(urls);
-          if (data && Array.isArray(data.elements)) {
-            allElements.push(...data.elements);
+          if (Array.isArray(data)) {
+            allRecords.push(...data);
+          } else if (data && Array.isArray(data.elements)) {
+            allRecords.push(...data.elements);
           }
         }
 
         trailInfoLookup = new Map();
 
-        if (!allElements.length) {
+        if (!allRecords.length) {
           trailInfoLoaded = true;
           console.warn('No OSM trail data could be loaded.');
           trackEvent('trails_osm_load_failed');
@@ -1430,15 +1443,20 @@
 
         const grouped = new Map();
 
-        allElements.forEach(element => {
-          const tags = element.tags || {};
-          const name = tags.name || tags.ref || `OSM ${element.type} ${element.id}`;
+        allRecords.forEach(record => {
+          const tags = record.tags || record.rawTags || {};
+          const name = record.name || record.trail_name || tags.name || tags.ref || `OSM ${record.type || 'way'} ${record.id}`;
           const nameVariants = buildTrailNameVariants(name);
           if (allowedNames && !nameVariants.some(variant => allowedNames.has(variant))) {
             return;
           }
-          const coords = (element.geometry || []).map(point => [point.lon, point.lat]);
+          const coords = normalizeCoordinates(record.geometry || []);
           if (coords.length < 2) return;
+          const distanceMiles = Number.isFinite(record.distance_miles)
+            ? record.distance_miles
+            : Number.isFinite(record.distance_meters)
+              ? record.distance_meters / 1609.344
+              : computeDistanceMiles(coords);
 
           if (!grouped.has(name)) {
             grouped.set(name, {
@@ -1452,9 +1470,11 @@
 
           const group = grouped.get(name);
           group.segments.push(coords);
-          group.osm_ids.push(element.id);
+          if (record.id != null) {
+            group.osm_ids.push(record.id);
+          }
           group.tags = { ...group.tags, ...tags };
-          group.distance_miles += computeDistanceMiles(coords);
+          group.distance_miles += Number.isFinite(distanceMiles) ? distanceMiles : 0;
         });
 
         if (!grouped.size) {
@@ -1487,7 +1507,7 @@
 
         telemetryTrailCount = features.length;
         trailInfoLoaded = true;
-        trackEvent('trails_osm_loaded', { features: features.length, elements: allElements.length });
+        trackEvent('trails_osm_loaded', { features: features.length, elements: allRecords.length });
 
         if (currentTrailSelection) {
           renderTrailInfo(currentTrailSelection);
@@ -1820,6 +1840,35 @@
         targetLayer.setStyle({ color: '#e74c3c', weight: 5 });
       }
 
+      function setActiveListItem(name) {
+        document.querySelectorAll('#trailList li').forEach(el => {
+          if (el.dataset.trailName === name) {
+            el.classList.add('active');
+          } else {
+            el.classList.remove('active');
+          }
+        });
+      }
+
+      function selectTrail(name, { flyTo = true, trackSource = null } = {}) {
+        const info = trailLayers[name];
+        if (!info) return false;
+
+        highlightLayer(info.layer);
+        if (flyTo) {
+          map.fitBounds(info.layer.getBounds(), { maxZoom: 14, animate: true });
+        }
+        info.layer.openPopup();
+        setActiveListItem(name);
+        renderTrailInfo(name);
+
+        if (trackSource) {
+          trackEvent(trackSource, { trail: name });
+        }
+
+        return true;
+      }
+
       /**
        * Populate the datalist for autocomplete suggestions.  Creates a set of
        * simplified trail names with common suffix words removed (e.g., "Trail",
@@ -1873,11 +1922,7 @@
             layer.bindPopup(`<strong>${name}</strong>`);
             // Handle click on the map line.  Highlight and zoom.
             layer.on('click', function() {
-              highlightLayer(layer);
-              map.fitBounds(layer.getBounds(), { maxZoom: 14, animate: true });
-              layer.openPopup();
-              renderTrailInfo(name);
-              trackEvent('trails_map_trail_click', { trail: name });
+              selectTrail(name, { trackSource: 'trails_map_trail_click' });
             });
           }
         }).addTo(map);
@@ -1962,6 +2007,7 @@
        */
       function createTrailListItem(name) {
         const li       = document.createElement('li');
+        li.dataset.trailName = name;
         const nameSpan = document.createElement('span');
         nameSpan.className  = 'trail-name';
         nameSpan.textContent = name;
@@ -1984,16 +2030,7 @@
 
         // When clicking the list item, highlight the trail on the map.
         li.addEventListener('click', () => {
-          const info = trailLayers[name];
-          if (info) {
-            highlightLayer(info.layer);
-            map.fitBounds(info.layer.getBounds(), { maxZoom: 14, animate: true });
-            info.layer.openPopup();
-            document.querySelectorAll('#trailList li').forEach(el => el.classList.remove('active'));
-            li.classList.add('active');
-            renderTrailInfo(name);
-            trackEvent('trails_list_trail_click', { trail: name });
-          }
+          selectTrail(name, { trackSource: 'trails_list_trail_click' });
         });
 
         // Assemble the list item.
@@ -2122,14 +2159,21 @@
         renderTrailList();
         trackEvent('trails_app_ready', { trailCount: trailNames.length });
         const trailQuery = new URLSearchParams(window.location.search).get('trail');
+        let initialTrail = null;
         if (trailQuery) {
           const matched = matchTrailName(trailQuery, trailNames);
           if (!matched) {
             window.location.replace('/not-found.html');
             return;
           }
-          renderTrailInfo(matched);
+          initialTrail = matched;
           trackEvent('trails_query_select', { trail: matched });
+        } else {
+          initialTrail = matchTrailName(defaultTrailName, trailNames) || trailNames[0] || null;
+        }
+
+        if (initialTrail) {
+          selectTrail(initialTrail, { flyTo: true });
         }
       }
       // Attach event listeners for search, sort, hide completed, and clear progress.
