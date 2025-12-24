@@ -271,7 +271,7 @@
         const i18nKey = FRIENDLY_LABELS[key];
         if(i18nKey){
           const translated = t(i18nKey);
-          if(translated && !translated.startsWith('catalog.')){
+          if(translated && !translated.startsWith('catalog.') && !translated.includes('card.')){
             return translated;
           }
         }
@@ -487,7 +487,8 @@
         card.className = 'card';
 
         // Thumbnail
-        let thumbSrc = getPlaceholder();
+        const placeholder = getPlaceholder();
+        let thumbSrc = placeholder;
         let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
           const first = p.photos[0];
@@ -506,9 +507,10 @@
         const difficulty = translateDifficulty(p['Difficulty']) || '—';
         const exposure = translateExposure(p['Exposure Level'] || p['Weather Exposure Rating']) || '—';
 
+        const dataSrc = thumbSrc !== placeholder ? thumbSrc : '';
         card.innerHTML = `
           <div class="thumb">
-            <img src="${thumbSrc}" alt="${thumbAlt}" loading="lazy" decoding="async">
+            <img src="${placeholder}" ${dataSrc ? `data-src="${dataSrc}"` : ''} alt="${thumbAlt}" loading="lazy" decoding="async">
           </div>
           <div class="body">
             <h3>${p.peakName}</h3>
@@ -534,7 +536,8 @@
         const item = document.createElement('article');
         item.className = 'list-item';
 
-        let thumbSrc = getPlaceholder();
+        const placeholder = getPlaceholder();
+        let thumbSrc = placeholder;
         let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
           const first = p.photos[0];
@@ -550,9 +553,10 @@
         const range = p['Range / Subrange'] || '—';
         const href = `/peaks/${encodeURIComponent(p.slug)}/`;
 
+        const dataSrc = thumbSrc !== placeholder ? thumbSrc : '';
         item.innerHTML = `
           <div class="list-thumb">
-            <img src="${thumbSrc}" alt="${thumbAlt}" loading="lazy" decoding="async">
+            <img src="${placeholder}" ${dataSrc ? `data-src="${dataSrc}"` : ''} alt="${thumbAlt}" loading="lazy" decoding="async">
           </div>
           <div class="list-content">
             <div class="list-main">
@@ -581,7 +585,17 @@
       }
 
       function setupLazyLoading(){
-        if (!('IntersectionObserver' in window)) return;
+        const imgs = Array.from(document.querySelectorAll('img[data-src]'));
+        if(imgs.length === 0) return;
+
+        if (!('IntersectionObserver' in window)) {
+          imgs.forEach(img => {
+            const real = img.getAttribute('data-src');
+            if(real){ img.src = real; img.removeAttribute('data-src'); }
+          });
+          return;
+        }
+
         const observer = new IntersectionObserver((entries, obs) => {
           entries.forEach(entry => {
             if(entry.isIntersecting){
@@ -592,7 +606,15 @@
             }
           });
         }, { rootMargin: '200px' });
-        document.querySelectorAll('img[data-src]').forEach(img => observer.observe(img));
+        imgs.forEach(img => observer.observe(img));
+      }
+
+      function deferInitialImageLoads(){
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setupLazyLoading();
+          });
+        });
       }
 
       function renderGrid(list){
@@ -605,7 +627,7 @@
         }
         empty.hidden = true;
         list.forEach(p => grid.appendChild(createCard(p)));
-        setupLazyLoading();
+        deferInitialImageLoads();
       }
 
       function renderList(list){
@@ -618,7 +640,7 @@
         }
         empty.hidden = true;
         list.forEach(p => grid.appendChild(createListItem(p)));
-        setupLazyLoading();
+        deferInitialImageLoads();
       }
 
       // Build suggestions list, stripping common words
