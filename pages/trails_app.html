@@ -904,19 +904,23 @@
 <body data-page="trails">
   <div id="nav-placeholder"></div>
   <script>
-    // Load shared navigation
-    const navPlaceholder = document.getElementById('nav-placeholder');
-    fetch('nav.html')
-      .then(response => response.text())
-      .then(html => {
-        navPlaceholder.innerHTML = html;
-        const activeRoute = document.body.dataset.page;
-        const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
-        if (activeLink) {
-          activeLink.classList.add('active');
-        }
-      })
-      .catch(err => console.error('Failed to load navigation:', err));
+    (() => {
+      // Load shared navigation without leaking globals so repeated embeds don't redeclare consts
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      if (!navPlaceholder) return;
+
+      fetch('nav.html')
+        .then(response => response.text())
+        .then(html => {
+          navPlaceholder.innerHTML = html;
+          const activeRoute = document.body.dataset.page;
+          const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
+          if (activeLink) {
+            activeLink.classList.add('active');
+          }
+        })
+        .catch(err => console.error('Failed to load navigation:', err));
+    })();
   </script>
   <header class="page-header">
     <h1 data-i18n="trails.title">🏔️ WMNF Trails API Map Tool</h1>
@@ -1320,6 +1324,21 @@
             console.warn(`Failed to fetch ${url}:`, err.message);
             trackEvent('trails_osm_fetch_error', { source: url });
           }
+
+          const group = grouped.get(name);
+          group.segments.push(coords);
+          group.osm_ids.push(element.id);
+          group.tags = { ...group.tags, ...tags };
+          group.distance_miles += computeDistanceMiles(coords);
+        });
+
+        trailInfoLookup = new Map();
+
+        if (!allElements.length) {
+          trailInfoLoaded = true;
+          console.warn('No OSM trail data could be loaded.');
+          trackEvent('trails_osm_load_failed');
+          return null;
         }
         return null;
       }
@@ -1375,46 +1394,6 @@
             allElements.push(...data.elements);
           }
         }
-        return null;
-      }
-
-        trailInfoLookup = new Map();
-
-        if (!allElements.length) {
-          trailInfoLoaded = true;
-          console.warn('No OSM trail data could be loaded.');
-          trackEvent('trails_osm_load_failed');
-          return null;
-        }
-
-        const grouped = new Map();
-
-        allElements.forEach(element => {
-          const tags = element.tags || {};
-          const name = tags.name || tags.ref || `OSM ${element.type} ${element.id}`;
-          const nameVariants = buildTrailNameVariants(name);
-          if (allowedNames && !nameVariants.some(variant => allowedNames.has(variant))) {
-            return;
-          }
-          const coords = (element.geometry || []).map(point => [point.lon, point.lat]);
-          if (coords.length < 2) return;
-
-          if (!grouped.has(name)) {
-            grouped.set(name, {
-              name,
-              segments: [],
-              tags: {},
-              osm_ids: [],
-              distance_miles: 0
-            });
-          }
-
-          const group = grouped.get(name);
-          group.segments.push(coords);
-          group.osm_ids.push(element.id);
-          group.tags = { ...group.tags, ...tags };
-          group.distance_miles += computeDistanceMiles(coords);
-        });
 
         trailInfoLookup = new Map();
 

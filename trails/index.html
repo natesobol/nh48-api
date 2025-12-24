@@ -925,19 +925,23 @@
 <body data-page="trails">
   <div id="nav-placeholder"></div>
   <script>
-    // Load shared navigation
-    const navPlaceholder = document.getElementById('nav-placeholder');
-    fetch('../pages/nav.html')
-      .then(response => response.text())
-      .then(html => {
-        navPlaceholder.innerHTML = html;
-        const activeRoute = document.body.dataset.page;
-        const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
-        if (activeLink) {
-          activeLink.classList.add('active');
-        }
-      })
-      .catch(err => console.error('Failed to load navigation:', err));
+    (() => {
+      // Load shared navigation without leaking globals so repeated embeds don't redeclare consts
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      if (!navPlaceholder) return;
+
+      fetch('../pages/nav.html')
+        .then(response => response.text())
+        .then(html => {
+          navPlaceholder.innerHTML = html;
+          const activeRoute = document.body.dataset.page;
+          const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
+          if (activeLink) {
+            activeLink.classList.add('active');
+          }
+        })
+        .catch(err => console.error('Failed to load navigation:', err));
+    })();
   </script>
   <header class="page-header">
     <h1>
@@ -1475,6 +1479,74 @@
 
         totalTrailCount = grouped.size;
         telemetryTrailCount = features.length;
+        trailInfoLoaded = true;
+        updateTelemetrySummary();
+        trackEvent('trails_osm_loaded', { features: features.length, elements: allElements.length });
+
+        const grouped = new Map();
+
+        allElements.forEach(element => {
+          const tags = element.tags || {};
+          const name = tags.name || tags.ref || `OSM ${element.type} ${element.id}`;
+          const nameVariants = buildTrailNameVariants(name);
+          if (allowedNames && !nameVariants.some(variant => allowedNames.has(variant))) {
+            return;
+          }
+          const coords = (element.geometry || []).map(point => [point.lon, point.lat]);
+          if (coords.length < 2) return;
+
+          if (!grouped.has(name)) {
+            grouped.set(name, {
+              name,
+              segments: [],
+              tags: {},
+              osm_ids: [],
+              distance_miles: 0
+            });
+          }
+
+          const group = grouped.get(name);
+          group.segments.push(coords);
+          group.osm_ids.push(element.id);
+          group.tags = { ...group.tags, ...tags };
+          group.distance_miles += computeDistanceMiles(coords);
+        });
+
+        if (!grouped.size) {
+          totalTrailCount = officialNames?.names?.length ?? 0;
+          telemetryTrailCount = 0;
+          trailInfoLoaded = true;
+          updateTelemetrySummary();
+          console.warn('No OSM trail data matched the official trail list.');
+          trackEvent('trails_osm_load_filtered_out');
+          return { type: 'FeatureCollection', features: [] };
+        }
+
+        const features = [];
+        grouped.forEach(group => {
+          const geometry = group.segments.length === 1
+            ? { type: 'LineString', coordinates: group.segments[0] }
+            : { type: 'MultiLineString', coordinates: group.segments };
+          const properties = {
+            name: group.name,
+            osm_ids: group.osm_ids,
+            tags: group.tags,
+            distance_miles: group.distance_miles
+          };
+          features.push({ type: 'Feature', properties, geometry });
+          registerTrailRecord({
+            trail_name: group.name,
+            osm_ids: group.osm_ids,
+            tags: group.tags,
+            distance_miles: group.distance_miles
+          });
+        });
+
+        totalTrailCount = grouped.size;
+        telemetryTrailCount = features.length;
+        if (officialNames && officialNames.names) {
+          totalTrailCount = officialNames.names.length;
+        }
         trailInfoLoaded = true;
         updateTelemetrySummary();
         trackEvent('trails_osm_loaded', { features: features.length, elements: allElements.length });
