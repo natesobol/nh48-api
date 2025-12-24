@@ -1375,6 +1375,46 @@
             allElements.push(...data.elements);
           }
         }
+        return null;
+      }
+
+        trailInfoLookup = new Map();
+
+        if (!allElements.length) {
+          trailInfoLoaded = true;
+          console.warn('No OSM trail data could be loaded.');
+          trackEvent('trails_osm_load_failed');
+          return null;
+        }
+
+        const grouped = new Map();
+
+        allElements.forEach(element => {
+          const tags = element.tags || {};
+          const name = tags.name || tags.ref || `OSM ${element.type} ${element.id}`;
+          const nameVariants = buildTrailNameVariants(name);
+          if (allowedNames && !nameVariants.some(variant => allowedNames.has(variant))) {
+            return;
+          }
+          const coords = (element.geometry || []).map(point => [point.lon, point.lat]);
+          if (coords.length < 2) return;
+
+          if (!grouped.has(name)) {
+            grouped.set(name, {
+              name,
+              segments: [],
+              tags: {},
+              osm_ids: [],
+              distance_miles: 0
+            });
+          }
+
+          const group = grouped.get(name);
+          group.segments.push(coords);
+          group.osm_ids.push(element.id);
+          group.tags = { ...group.tags, ...tags };
+          group.distance_miles += computeDistanceMiles(coords);
+        });
 
         trailInfoLookup = new Map();
 
