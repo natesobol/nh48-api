@@ -5,9 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="refresh" content="0; url=/trails/">
   <script>window.location.replace('/trails/');</script>
-  <title>White Mountain Trails – NH48</title>
-  <meta name="description" content="Browse trails in the White Mountain National Forest by distance, elevation gain, difficulty and more. Interactive maps, route descriptions and GPX downloads. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
+  <title>WMNF Trails Map &amp; Open Data – White Mountain National Forest</title>
+  <meta name="description" content="Explore White Mountain National Forest trails with an interactive map and open datasets for WMNF routes and 2,000-foot peaks. Download normalized JSON for your own apps.">
+  <meta name="keywords" content="WMNF trails,White Mountain National Forest,New Hampshire hiking trails,open trail data,WMNF dataset,2000 foot peaks">
   <link rel="canonical" href="https://nh48.info/trails">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="WMNF Trails Map &amp; Open Data – White Mountain National Forest">
+  <meta property="og:description" content="Interactive WMNF trail explorer plus downloadable JSON datasets for White Mountain routes and 2,000-foot peaks.">
+  <meta property="og:url" content="https://nh48.info/trails">
+  <meta property="og:image" content="https://nh48.info/WMNF_Trails_API_logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="WMNF Trails Map &amp; Open Data – White Mountain National Forest">
+  <meta name="twitter:description" content="Open WMNF trail and 2,000-foot peak datasets with an interactive planning map.">
+  <meta name="twitter:image" content="https://nh48.info/WMNF_Trails_API_logo.png">
     <link rel="alternate" hreflang="en" href="https://nh48.info/">
     <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
     <link rel="alternate" hreflang="fr" href="https://nh48.info/i18n/fr.html">
@@ -28,6 +38,55 @@
     <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
   <script type="module" src="../js/i18n.js"></script>
 
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "White Mountain National Forest Trails & 2,000-Foot Peaks (WMNF Trails API)",
+      "description": "Independent WMNF dataset containing normalized trail geometry and 2,000-foot peak records used by the WMNF Trails App.",
+      "url": "https://nh48.info/trails",
+      "sameAs": "https://github.com/natesobol/WMNF-Trails-API",
+      "keywords": ["White Mountain National Forest", "WMNF", "trails", "New Hampshire", "hiking", "open data", "geojson", "2000 foot peaks"],
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "creator": {
+        "@type": "Organization",
+        "name": "NH48 / WMNF Trails",
+        "url": "https://nh48.info"
+      },
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "name": "WMNF Trail Network (Main)",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/wmnf-main.json"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "name": "WMNF Trail Network (Pliney)",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/wmnf-pliney.json"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "name": "WMNF Trail Network (Maine Segment)",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/wmnf-maine.json"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "name": "White Mountain 2,000-Foot Peaks",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/NH2000ftpeaks.json"
+        }
+      ],
+      "includedInDataCatalog": {
+        "@type": "DataCatalog",
+        "name": "WMNF Trails App",
+        "url": "https://nh48.info/trails"
+      }
+    }
+  </script>
   <script id="trailsJsonLd" type="application/ld+json"></script>
   <script>
     (() => {
