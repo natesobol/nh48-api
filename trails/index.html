@@ -183,6 +183,23 @@
       border: 1px solid var(--border-color);
       width: fit-content;
     }
+
+    .peak-icon {
+      color: #f6be5f;
+      font-size: 18px;
+      font-weight: 800;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .peak-label {
+      color: #f1f3f5;
+      font-weight: 700;
+      background: rgba(37, 40, 47, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 2px 6px;
+      box-shadow: 0 8px 14px rgba(0, 0, 0, 0.35);
+    }
     .nh48-lang {
       display: flex;
       align-items: center;
@@ -1105,6 +1122,19 @@
         trackEvent('trails_map_move', { lat: center.lat, lng: center.lng });
       });
 
+      const peakLayerGroup = L.layerGroup().addTo(map);
+      const peakLookup = new Map();
+      const peakLabelZoomThreshold = 12;
+      const peakIcon = L.divIcon({
+        className: 'peak-icon',
+        html: '▲',
+        iconSize: [18, 18],
+        iconAnchor: [9, 12]
+      });
+      let peakMarkers = [];
+      let currentPeakSelectionId = null;
+      let peakLabelsHooked = false;
+
       // Allow the user to resize the split between the map/top content and the list below.
       const appContainer = document.getElementById('app');
       const panelResizer = document.getElementById('panelResizer');
@@ -1510,13 +1540,101 @@
         trackEvent('trails_osm_loaded', { features: features.length, elements: allRecords.length });
 
         if (currentTrailSelection) {
-          renderTrailInfo(currentTrailSelection);
+          renderCurrentSelection();
         }
 
         return { type: 'FeatureCollection', features };
       }
 
+      function normalizePeakRecord(element) {
+        const tags = element.tags || {};
+        const rawEle = tags.ele;
+        const numericElevation = Number.parseFloat(String(rawEle || '').replace(/,/g, ''));
+        let elevationFeet = parseElevationFeet(rawEle);
+        if ((elevationFeet == null || elevationFeet < 2000) && Number.isFinite(numericElevation)) {
+          const metersToFeet = Math.round(numericElevation * 3.28084);
+          elevationFeet = elevationFeet == null ? metersToFeet : Math.max(elevationFeet, metersToFeet);
+        }
+
+        return {
+          id: element.id,
+          name: tags.name || `Peak ${element.id}`,
+          lat: element.lat,
+          lon: element.lon,
+          elevationFeet,
+          tags
+        };
+      }
+
+      async function loadNh2000Peaks() {
+        const urls = [
+          '../data/wmnf-trails/NH2000ftpeaks.json',
+          '/data/wmnf-trails/NH2000ftpeaks.json',
+          'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/NH2000ftpeaks.json'
+        ];
+
+        const data = await fetchJsonWithFallback(urls);
+        if (!data || !Array.isArray(data.elements)) {
+          console.warn('No NH 2000 ft peak data could be loaded.');
+          trackEvent('trails_peaks_load_failed');
+          return [];
+        }
+
+        const peaks = data.elements
+          .filter(el => el.type === 'node' && Number.isFinite(el.lat) && Number.isFinite(el.lon))
+          .map(normalizePeakRecord);
+
+        trackEvent('trails_peaks_loaded', { count: peaks.length });
+        return peaks;
+      }
+
+      function updatePeakLabelVisibility() {
+        const showLabels = map.getZoom() >= peakLabelZoomThreshold;
+        peakMarkers.forEach(marker => {
+          const tooltip = marker.getTooltip();
+          if (tooltip) {
+            tooltip.setOpacity(showLabels ? 0.92 : 0);
+          }
+        });
+      }
+
+      function addPeaksToMap(peaks) {
+        peakLayerGroup.clearLayers();
+        peakLookup.clear();
+        peakMarkers = [];
+
+        peaks.forEach(peak => {
+          peakLookup.set(peak.id, peak);
+          const marker = L.marker([peak.lat, peak.lon], { icon: peakIcon, title: peak.name });
+          marker.addTo(peakLayerGroup);
+          marker.bindTooltip(peak.name, {
+            permanent: true,
+            direction: 'top',
+            offset: [0, -6],
+            className: 'peak-label'
+          });
+          marker.on('click', () => {
+            currentPeakSelectionId = peak.id;
+            setActiveListItem(null);
+            renderPeakInfo(peak.id);
+            map.flyTo([peak.lat, peak.lon], Math.max(map.getZoom(), 12), { animate: true });
+            trackEvent('trails_peak_click', { peak: peak.name });
+          });
+          peakMarkers.push(marker);
+        });
+
+        if (!peakLabelsHooked) {
+          map.on('zoomend', updatePeakLabelVisibility);
+          peakLabelsHooked = true;
+        }
+        updatePeakLabelVisibility();
+      }
+
       function formatFeet(value) {
+        return value == null ? '—' : `${value.toLocaleString()} ft`;
+      }
+
+      function formatPeakElevation(value) {
         return value == null ? '—' : `${value.toLocaleString()} ft`;
       }
 
@@ -1526,9 +1644,50 @@
         return `${rounded} miles`;
       }
 
+      function renderPeakInfo(peakId) {
+        if (!trailInfoPanel) return;
+        const peak = peakLookup.get(peakId);
+        currentPeakSelectionId = peak ? peakId : null;
+
+        if (!peak) {
+          trailInfoPanel.innerHTML = `
+            <h2>${t('trails.details.title')}</h2>
+            <p class="trail-info-empty">${t('trails.details.empty')}</p>
+          `;
+          return;
+        }
+
+        const tags = peak.tags || {};
+        const extraTags = Object.entries(tags)
+          .filter(([key]) => key !== 'name' && key !== 'ele')
+          .map(([key, value]) => `
+            <div class="trail-info-item">
+              <span>${formatTagLabel(key)}</span>
+              <strong>${formatTagValue(key, value)}</strong>
+            </div>
+          `);
+
+        trailInfoPanel.innerHTML = `
+          <h2>${peak.name}</h2>
+          <p>${t('trails.info.sourceNote')}</p>
+          <div class="trail-info-grid">
+            <div class="trail-info-item">
+              <span>Elevation</span>
+              <strong>${formatPeakElevation(peak.elevationFeet)}</strong>
+            </div>
+            <div class="trail-info-item">
+              <span>Coordinates</span>
+              <strong>${peak.lat.toFixed(5)}, ${peak.lon.toFixed(5)}</strong>
+            </div>
+            ${extraTags.join('')}
+          </div>
+        `;
+      }
+
       function renderTrailInfo(name) {
         if (!trailInfoPanel) return;
         currentTrailSelection = name || null;
+        currentPeakSelectionId = null;
 
         if (!name) {
           trailInfoPanel.innerHTML = `
@@ -1614,6 +1773,14 @@
           <p>${t('trails.info.sourceNote')}</p>
           <div class="trail-info-grid">${primaryItems.concat(extraTags).join('')}</div>
         `;
+      }
+
+      function renderCurrentSelection() {
+        if (currentPeakSelectionId != null) {
+          renderPeakInfo(currentPeakSelectionId);
+        } else {
+          renderTrailInfo(currentTrailSelection);
+        }
       }
 
       /**
@@ -2152,6 +2319,10 @@
       // Load completion state, fetch GeoJSON, then populate map and list.
       loadCompletion();
       renderTrailInfo(null);
+      const peaks = await loadNh2000Peaks();
+      if (peaks.length) {
+        addPeaksToMap(peaks);
+      }
       const geoData = await loadOsmTrailData();
       if (geoData) {
         addTrailsToMap(geoData);
@@ -2205,14 +2376,14 @@
         }
       });
 
-      if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
-        window.NH48_I18N.onLangChange(() => {
-          baseLayer.setAttribution(t('trails.map.attribution'));
-          renderTrailInfo(currentTrailSelection);
-          renderTrailList();
-          trackEvent('trails_language_change', { language: window.NH48_I18N.getLang() });
-        });
-      }
+        if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
+          window.NH48_I18N.onLangChange(() => {
+            baseLayer.setAttribution(t('trails.map.attribution'));
+            renderCurrentSelection();
+            renderTrailList();
+            trackEvent('trails_language_change', { language: window.NH48_I18N.getLang() });
+          });
+        }
 
       // ------------------------
       // Mobile scroll optimization
