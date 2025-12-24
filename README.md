@@ -16,6 +16,7 @@ We actively structure the project so search engines can surface **New Hampshire 
 * **Semantic HTML + ARIA** in every public page, prioritizing accessible, crawlable content.
 * **JSON-LD** schemas for datasets, trails, and image objects to improve **Google Dataset Search** visibility.
 * **Canonical URLs, OpenGraph, and Twitter cards** on every landing page to prevent duplicate indexing while boosting share previews for hiking keywords.
+* **Per-peak redirect pages** under `/peaks/` and `/fr/peaks/` now use `index, follow` robots directives, OpenGraph/Twitter cards, and the primary summit photo for rich share previews, keeping each mountain indexable even though the interactive UI handles the content.
 * **Media hygiene:** descriptive filenames, **ALT text**, captions, and `sr-only` SEO sections that pair keywords like *“White Mountain hiking trails”*, *“NH48 summit photos”*, and *“Appalachian alpine routes”* with internal links.
 * **Performance + CDN delivery** (jsDelivr + Cloudflare R2) to keep **Largest Contentful Paint** and **Core Web Vitals** in ranking-safe ranges for map-heavy pages.
 
