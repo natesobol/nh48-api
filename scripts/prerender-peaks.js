@@ -233,6 +233,29 @@ const buildGallery = (photos, peakName) => {
 
 const escapeScriptJson = (value) => String(value).replace(/<\/script/gi, "<\\/script");
 
+const buildBreadcrumbJson = (pageName, canonicalUrl) => JSON.stringify(
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "NH48 Peak Catalog",
+        item: "https://nh48.info/catalog",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: pageName,
+        item: canonicalUrl,
+      },
+    ],
+  },
+  null,
+  2
+);
+
 const buildJsonLd = (
   peak,
   canonicalUrl,
@@ -249,6 +272,11 @@ const buildJsonLd = (
   const prominenceFt = numberFrom(peak["Prominence (ft)"]);
   const difficulty = cleanText(peak["Difficulty"]);
   const trailType = cleanText(peak["Trail Type"]);
+  const sameAsLinks = Array.isArray(peak.sameAs)
+    ? peak.sameAs.filter(Boolean)
+    : peak.sameAs
+      ? [peak.sameAs]
+      : [];
   const additionalProperty = [
     prominenceFt != null
       ? {
@@ -313,6 +341,12 @@ const buildJsonLd = (
       : undefined,
     containedInPlace: { "@type": "Place", name: "White Mountain National Forest" },
     additionalProperty: additionalProperty.length ? additionalProperty : undefined,
+    isPartOf: {
+      "@type": "DataCatalog",
+      name: "NH48 Peak Dataset",
+      url: "https://nh48.info/catalog",
+    },
+    sameAs: sameAsLinks.length ? sameAsLinks : undefined,
   };
 
   Object.keys(jsonLd).forEach((key) => jsonLd[key] === undefined && delete jsonLd[key]);
@@ -489,6 +523,7 @@ const main = () => {
               localizedName
             )
           ),
+          BREADCRUMB_LD: escapeScriptJson(buildBreadcrumbJson(localizedName, canonicalUrl)),
         };
 
         const outputDir = path.join(lang.outputDir, slug);
