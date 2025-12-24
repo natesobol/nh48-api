@@ -9,6 +9,22 @@ The **NH48 API** is a comprehensive, self-contained dataset and media delivery s
 * A scalable static CDN-based distribution model
 …and can also be consumed by any external application, script, or map tool.
 
+## 🔎 **SEO Implementation & Goals**
+
+We actively structure the project so search engines can surface **New Hampshire 4000-footers**, **White Mountain National Forest trails**, and **hiking route planning data** to the right audiences. Core tactics include:
+
+* **Semantic HTML + ARIA** in every public page, prioritizing accessible, crawlable content.
+* **JSON-LD** schemas for datasets, trails, and image objects to improve **Google Dataset Search** visibility.
+* **Canonical URLs, OpenGraph, and Twitter cards** on every landing page to prevent duplicate indexing while boosting share previews for hiking keywords.
+* **Media hygiene:** descriptive filenames, **ALT text**, captions, and `sr-only` SEO sections that pair keywords like *“White Mountain hiking trails”*, *“NH48 summit photos”*, and *“Appalachian alpine routes”* with internal links.
+* **Performance + CDN delivery** (jsDelivr + Cloudflare R2) to keep **Largest Contentful Paint** and **Core Web Vitals** in ranking-safe ranges for map-heavy pages.
+
+### SEO Goals
+
+* Be the canonical open-data result for searches that include **“NH48 peaks dataset,” “White Mountain GPX,” “New Hampshire hiking API,”** and **“WMNF trail network JSON.”**
+* Drive long-tail discovery for individual summits (e.g., **“Mount Lafayette elevation prominence”**) and trail sections (e.g., **“Bondcliff traverse White Mountains”**).
+* Provide enough structured metadata that map clients, research projects, and hiking blogs can embed authoritative data while preserving backlinks to this repository.
+
 # 🌲 **Project Overview**
 
 This repository contains the authoritative machine-readable definitions for each NH48 peak, including:
@@ -68,6 +84,11 @@ The system is static — **no backend required**. Distribution is handled throug
 
 GitHub Pages and jsDelivr serve the JSON and UI assets, while Cloudflare R2
 hosts the photo originals via the S3-compatible endpoint.
+
+For dataset-specific details and SEO notes, see:
+
+* `data/nh48/README.md` for the NH48 peaks JSON
+* `data/wmnf-trails/readme.md` for the WMNF trail network JSONs
 
 ---
 
