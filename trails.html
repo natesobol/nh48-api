@@ -71,7 +71,13 @@
   <meta name="twitter:description" content="Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains.">
   <meta name="twitter:image" content="https://nh48.info/UI-Elements/og-cover.png">
   <meta name="twitter:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
-  <meta http-equiv="refresh" content="0; url=/trails">
+  <script>
+    const trailsPath = '/trails/';
+
+    if (window.location.pathname !== trailsPath) {
+      window.location.replace(trailsPath);
+    }
+  </script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -170,7 +176,6 @@
       ]
     }
   </script>
-  <script>window.location.replace('/trails');</script>
 </head>
 <body></body>
 </html>
