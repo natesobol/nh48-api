@@ -12,6 +12,11 @@ const APP_BASE = "https://nh48.info/pages/nh48_peak.html";
 const DEFAULT_CATALOG_URL = "https://nh48.info/catalog";
 const FALLBACK_IMAGE = "https://nh48.info/nh48-preview.png";
 
+const I18N = {
+  en: JSON.parse(fs.readFileSync(path.join(ROOT, "i18n", "en.json"), "utf8")),
+  fr: JSON.parse(fs.readFileSync(path.join(ROOT, "i18n", "fr.json"), "utf8")),
+};
+
 const LANGUAGE_CONFIGS = [
   {
     code: "en",
@@ -107,6 +112,44 @@ const cleanText = (value) => {
   return text.replace(/:contentReference\[[^\]]*\]\{[^}]*\}/g, "").trim();
 };
 
+const formatTemplate = (template, values) =>
+  template.replace(/\{(\w+)\}/g, (match, key) =>
+    Object.prototype.hasOwnProperty.call(values, key) ? values[key] : match
+  );
+
+const buildLocalizedDescription = (langCode, values, summaryText, fallbackBuilder) => {
+  const template = I18N[langCode]?.peak?.meta?.descriptionTemplate;
+  const baseDescription = template ? formatTemplate(template, values) : fallbackBuilder(values.name);
+  if (summaryText) {
+    return `${baseDescription} ${summaryText}`.trim();
+  }
+  return baseDescription;
+};
+
+const localizeFrenchName = (name) => {
+  const cleaned = cleanText(name);
+  if (!cleaned) return cleaned;
+  const prefixPattern = /^(?:Mt\.?|Mount)\s+/i;
+  if (prefixPattern.test(cleaned)) {
+    return cleaned.replace(prefixPattern, "Mont ");
+  }
+  if (/\s+Mountain$/i.test(cleaned)) {
+    const trimmed = cleaned.replace(/\s+Mountain$/i, "").trim();
+    return `Mont ${trimmed}`;
+  }
+  if (/^Mont\s+/i.test(cleaned)) {
+    return cleaned;
+  }
+  return `Mont ${cleaned}`;
+};
+
+const localizePeakName = (name, langCode) => {
+  if (langCode === "fr") {
+    return localizeFrenchName(name);
+  }
+  return cleanText(name);
+};
+
 const numberFrom = (value) => {
   const cleaned = cleanText(value);
   if (!cleaned) return null;
@@ -190,8 +233,18 @@ const buildGallery = (photos, peakName) => {
 
 const escapeScriptJson = (value) => String(value).replace(/<\/script/gi, "<\\/script");
 
-const buildJsonLd = (peak, canonicalUrl, coordinates, primaryImageUrl, descriptionText, range) => {
-  const peakName = cleanText(peak.peakName || peak["Peak Name"] || peak.slug);
+const buildJsonLd = (
+  peak,
+  canonicalUrl,
+  coordinates,
+  primaryImageUrl,
+  descriptionText,
+  range,
+  langConfig,
+  englishName,
+  localizedName
+) => {
+  const peakName = cleanText(localizedName || peak.peakName || peak["Peak Name"] || peak.slug);
   const elevationFt = numberFrom(peak["Elevation (ft)"]);
   const prominenceFt = numberFrom(peak["Prominence (ft)"]);
   const difficulty = cleanText(peak["Difficulty"]);
@@ -232,6 +285,8 @@ const buildJsonLd = (peak, canonicalUrl, coordinates, primaryImageUrl, descripti
     "@context": "https://schema.org",
     "@type": "Mountain",
     name: peakName,
+    alternateName:
+      langConfig.code !== "en" && englishName && englishName !== peakName ? englishName : undefined,
     description: descriptionText,
     url: canonicalUrl,
     image: primaryImageUrl ? [primaryImageUrl] : undefined,
@@ -249,9 +304,14 @@ const buildJsonLd = (peak, canonicalUrl, coordinates, primaryImageUrl, descripti
         unitText: "FT",
       }
       : undefined,
-    containedInPlace: range
-      ? { "@type": "Place", name: "White Mountain National Forest" }
+    prominence: prominenceFt != null
+      ? {
+        "@type": "QuantitativeValue",
+        value: prominenceFt,
+        unitText: "FT",
+      }
       : undefined,
+    containedInPlace: { "@type": "Place", name: "White Mountain National Forest" },
     additionalProperty: additionalProperty.length ? additionalProperty : undefined,
   };
 
@@ -354,12 +414,23 @@ const main = () => {
       const timeValue = cleanText(peak["Typical Completion Time"] || "");
       const summary = cleanText(peak["Terrain Character"] || peak["View Type"] || "");
       const coordinates = parseCoordinates(peak["Coordinates"]);
-      const primaryPhoto = pickPrimaryPhoto(peak.photos, name);
 
       LANGUAGE_CONFIGS.forEach((lang) => {
         const canonicalUrl = `${lang.canonicalBase}/${slug}/`;
-        const description = lang.descriptionTemplate(name);
-        const descriptionText = summary || description;
+        const localizedName = localizePeakName(name, lang.code);
+        const primaryPhoto = pickPrimaryPhoto(peak.photos, localizedName);
+        const descriptionValues = {
+          name: localizedName,
+          elevation: elevation || lang.defaults.unknown,
+          prominence: prominence || lang.defaults.unknown,
+          range: rangeValue || lang.defaults.range,
+        };
+        const descriptionText = buildLocalizedDescription(
+          lang.code,
+          descriptionValues,
+          summary,
+          (peakNameText) => lang.descriptionTemplate(peakNameText)
+        );
         const range = rangeValue || lang.defaults.range;
         const difficulty = difficultyValue || lang.defaults.difficulty;
         const trailType = trailTypeValue || lang.defaults.trailType;
@@ -369,24 +440,24 @@ const main = () => {
 
         const values = {
           LANG: lang.hreflang,
-          TITLE: escapeHtml(`${name} | ${lang.titleSuffix}`),
-          DESCRIPTION: escapeHtml(description),
+          TITLE: escapeHtml(`${localizedName} | ${lang.titleSuffix}`),
+          DESCRIPTION: escapeHtml(descriptionText),
           CANONICAL_URL: canonicalUrl,
           CANONICAL_EN_URL: `${CANONICAL_BASE}/${slug}/`,
           CANONICAL_FR_URL: `https://nh48.info/fr/peaks/${slug}/`,
           OG_IMAGE: primaryPhoto.url,
-          PEAK_NAME: escapeHtml(name),
+          PEAK_NAME: escapeHtml(localizedName),
           ELEVATION: escapeHtml(elevationText),
           PROMINENCE: escapeHtml(prominenceText),
           RANGE: escapeHtml(range),
           DIFFICULTY: escapeHtml(difficulty),
           TRAIL_TYPE: escapeHtml(trailType),
           TIME: escapeHtml(time),
-          SUMMARY: escapeHtml(summary || lang.summaryFallback(name)),
+          SUMMARY: escapeHtml(summary || lang.summaryFallback(localizedName)),
           COORDINATES: escapeHtml(coordinates.text || lang.defaults.coordinates),
           ROUTES_LIST: buildRoutesList(peak["Standard Routes"], lang.labels),
           RELATED_TRAILS_LI: buildRelatedTrailsList(peak["Standard Routes"], lang.labels),
-          GALLERY_IMAGES: buildGallery(peak.photos, name),
+          GALLERY_IMAGES: buildGallery(peak.photos, localizedName),
           APP_URL: lang.appUrl(slug),
           CATALOG_URL: lang.catalogUrl,
           HERO_IMAGE: primaryPhoto.url,
@@ -412,7 +483,10 @@ const main = () => {
               coordinates,
               primaryPhoto.url,
               descriptionText,
-              rangeValue || null
+              rangeValue || null,
+              lang,
+              name,
+              localizedName
             )
           ),
         };
