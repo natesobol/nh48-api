@@ -109,6 +109,62 @@
             "url": "https://nh48.info/UI-Elements/og-cover.png",
             "description": "NH48 API cover illustration highlighting New Hampshire’s White Mountains"
           }
+        },
+        {
+          "@type": "Dataset",
+          "@id": "https://nh48.info/#nh48-dataset",
+          "name": "NH48 API – New Hampshire 4,000-Footers Dataset",
+          "description": "Structured data for 48 New Hampshire four-thousand-foot peaks with 101 tagged photos, elevations, prominence, difficulty, and geo context in JSON format.",
+          "url": "https://nh48.info/data/nh48.json",
+          "license": "https://opensource.org/licenses/MIT",
+          "creator": {
+            "@type": "Person",
+            "name": "Nathan Sobol",
+            "url": "https://www.nh48pics.com/"
+          },
+          "keywords": [
+            "NH48",
+            "White Mountains",
+            "4000 footers",
+            "hiking data",
+            "peak metadata",
+            "photo metadata",
+            "open dataset",
+            "New Hampshire trails"
+          ],
+          "distribution": [
+            {
+              "@type": "DataDownload",
+              "contentUrl": "https://nh48.info/data/nh48.json",
+              "encodingFormat": "application/json"
+            },
+            {
+              "@type": "DataDownload",
+              "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json",
+              "encodingFormat": "application/json"
+            },
+            {
+              "@type": "DataDownload",
+              "contentUrl": "https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json",
+              "encodingFormat": "application/json"
+            }
+          ],
+          "temporalCoverage": "2025-12-06/2025-12-06",
+          "variableMeasured": [
+            "elevation",
+            "prominence",
+            "range",
+            "difficulty",
+            "trail type",
+            "photo metadata"
+          ],
+          "includedInDataCatalog": "NH48 API",
+          "isAccessibleForFree": true,
+          "spatialCoverage": {
+            "@type": "Place",
+            "name": "White Mountain National Forest",
+            "geo": { "@type": "GeoShape", "circle": "44.15 -71.34 50km" }
+          }
         }
       ]
     }
