@@ -530,66 +530,73 @@
 
     .trail-info-panel {
       flex: 1;
-      padding: 0.75rem 1rem;
-      background-color: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+      padding: 0.35rem 0.5rem 0.75rem;
+      background-color: transparent;
+      border: none;
+      box-shadow: none;
       min-width: 280px;
       margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .trail-info-panel h2 {
-      margin: 0 0 0.35rem;
-      font-size: 1.1rem;
-      color: var(--text-primary);
-      text-align: center;
-    }
-
-    .trail-info-panel p {
-      margin: 0.15rem 0 0.6rem;
-      color: var(--text-secondary);
-      text-align: center;
-      font-size: 0.9rem;
-    }
-
-    .trail-info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 0.65rem;
-      width: 100%;
-    }
-
-    .trail-info-item {
-      padding: 0.75rem;
-      background-color: var(--bg-tertiary);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
       display: flex;
       flex-direction: column;
       gap: 0.35rem;
     }
 
+    .trail-info-panel h2 {
+      margin: 0.1rem 0;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+      text-align: left;
+      letter-spacing: 0.01em;
+    }
+
+    .trail-info-panel p {
+      margin: 0 0 0.35rem;
+      color: var(--text-secondary);
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    .trail-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.35rem 0.9rem;
+      width: 100%;
+      align-items: start;
+    }
+
+    .trail-info-item {
+      padding: 0.35rem 0;
+      border-bottom: 1px dotted var(--border-color);
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      column-gap: 0.75rem;
+      row-gap: 0.15rem;
+      align-items: baseline;
+    }
+
+    .trail-info-item:last-child {
+      border-bottom: none;
+    }
+
     .trail-info-item span {
       font-size: 0.75rem;
       color: var(--text-secondary);
-      letter-spacing: 0.02em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .trail-info-item strong {
       color: var(--text-primary);
       font-size: 0.95rem;
       word-break: break-word;
+      line-height: 1.25;
     }
 
     .trail-info-empty {
-      text-align: center;
+      text-align: left;
       color: var(--text-secondary);
-      line-height: 1.5;
+      line-height: 1.4;
     }
 
     .peakbagger-panel .cta {
@@ -1102,9 +1109,18 @@
       // These coordinates zoom closer to the core of the WMNF while showing most trails.
       const defaultCenter = [44.15, -71.5];
       const defaultZoom = 9;
+      const mapBounds = L.latLngBounds(
+        [41.2, -75.6], // southwestern edge (captures Monadnock + Berkshires buffer)
+        [46.8, -66.0]  // northeastern edge (captures Baxter buffer)
+      );
 
       // Create the map.  The `L.map` function takes the id of the map container.
-      const map = L.map('map').setView(defaultCenter, defaultZoom);
+      const map = L.map('map', {
+        maxBounds: mapBounds,
+        maxBoundsViscosity: 0.7,
+        minZoom: 7
+      }).setView(defaultCenter, defaultZoom);
+      map.setMaxBounds(mapBounds);
 
       // Use a detailed topographic map tile layer (OpenTopoMap) which includes contour lines
       // and hiking paths.  Attribution is required to credit data sources.
@@ -1466,6 +1482,9 @@
 
         if (!allRecords.length) {
           trailInfoLoaded = true;
+          totalTrailCount = 0;
+          telemetryTrailCount = 0;
+          updateTelemetrySummary();
           console.warn('No OSM trail data could be loaded.');
           trackEvent('trails_osm_load_failed');
           return null;
@@ -1509,9 +1528,11 @@
 
         if (!grouped.size) {
           telemetryTrailCount = 0;
+          totalTrailCount = 0;
           trailInfoLoaded = true;
           console.warn('No OSM trail data matched the official trail list.');
           trackEvent('trails_osm_load_filtered_out');
+          updateTelemetrySummary();
           return { type: 'FeatureCollection', features: [] };
         }
 
@@ -1536,8 +1557,10 @@
         });
 
         telemetryTrailCount = features.length;
+        totalTrailCount = features.length;
         trailInfoLoaded = true;
         trackEvent('trails_osm_loaded', { features: features.length, elements: allRecords.length });
+        updateTelemetrySummary();
 
         if (currentTrailSelection) {
           renderCurrentSelection();
@@ -1644,6 +1667,68 @@
         return `${rounded} miles`;
       }
 
+      function deriveDifficulty(tags, distanceMiles, elevationGainValue) {
+        const usedKeys = new Set();
+        const sac = (tags.sac_scale || '').toLowerCase();
+        const sacMap = {
+          hiking: 'T1',
+          mountain_hiking: 'T2',
+          demanding_mountain_hiking: 'T3',
+          alpine_hiking: 'T3',
+          difficult_alpine_hiking: 'T3',
+          demanding_difficult_alpine_hiking: 'T3'
+        };
+
+        if (sacMap[sac]) {
+          usedKeys.add('sac_scale');
+          return { tier: sacMap[sac], hint: sac.replace(/_/g, ' '), keys: Array.from(usedKeys) };
+        }
+
+        const visibility = (tags.trail_visibility || '').toLowerCase();
+        if (visibility) {
+          usedKeys.add('trail_visibility');
+          if (visibility.includes('bad') || visibility.includes('horrible') || visibility.includes('very_bad')) {
+            return { tier: 'T3', hint: 'faint or unmarked tread', keys: Array.from(usedKeys) };
+          }
+          if (visibility.includes('intermediate')) {
+            return { tier: 'T2', hint: 'mixed signage', keys: Array.from(usedKeys) };
+          }
+        }
+
+        const smoothness = (tags.smoothness || '').toLowerCase();
+        if (smoothness) {
+          usedKeys.add('smoothness');
+          if (['excellent', 'good'].includes(smoothness)) {
+            return { tier: 'T1', hint: 'smooth footing', keys: Array.from(usedKeys) };
+          }
+          if (['intermediate', 'bad'].includes(smoothness)) {
+            return { tier: 'T2', hint: 'mixed footing', keys: Array.from(usedKeys) };
+          }
+          return { tier: 'T3', hint: 'rough footing', keys: Array.from(usedKeys) };
+        }
+
+        const gainFeet = parseElevationFeet(elevationGainValue);
+        const gainPerMile = distanceMiles && gainFeet ? gainFeet / Math.max(distanceMiles, 0.1) : null;
+        if (gainPerMile != null) {
+          const rounded = Math.round(gainPerMile);
+          let tier = 'T1';
+          if (gainPerMile >= 1100 || (distanceMiles || 0) > 10) {
+            tier = 'T3';
+          } else if (gainPerMile >= 750 || (distanceMiles || 0) > 6) {
+            tier = 'T2';
+          }
+          return { tier, hint: `${rounded} ft/mi gain`, keys: Array.from(usedKeys) };
+        }
+
+        const difficultyTag = tags.difficulty;
+        if (difficultyTag) {
+          usedKeys.add('difficulty');
+          return { tier: null, hint: String(difficultyTag), keys: Array.from(usedKeys) };
+        }
+
+        return { tier: null, hint: null, keys: Array.from(usedKeys) };
+      }
+
       function renderPeakInfo(peakId) {
         if (!trailInfoPanel) return;
         const peak = peakLookup.get(peakId);
@@ -1725,6 +1810,12 @@
         const maintainer = tags.operator || tags.maintainer || tags.owner;
         const description = firstTagValue(tags, ['description', 'note', 'comment', 'history', 'historic']);
         const condition = firstTagValue(tags, ['trail_visibility', 'smoothness', 'mtb:scale:imba', 'mtb:scale', 'ski:rating']);
+        const difficulty = deriveDifficulty(tags, record.distance_miles, elevationGain.value);
+        difficulty.keys.forEach(key => displayedKeys.add(key));
+
+        const difficultyDisplay = difficulty.tier
+          ? `${difficulty.tier}${difficulty.hint ? ` · ${difficulty.hint}` : ''}`
+          : (difficulty.hint || tags.sac_scale || tags.smoothness || tags.difficulty || '—');
 
         const fields = [
           { label: t('trails.info.distance'), value: formatDistance(record.distance_miles) },
@@ -1734,7 +1825,7 @@
           { label: 'Low point', value: formatElevation(lowPoint.value), key: lowPoint.key },
           { label: t('trails.info.trailType'), value: tags.highway || tags.route || tags.trail_type || '—', key: 'highway' },
           { label: t('trails.info.surface'), value: tags.surface ?? '—', key: 'surface' },
-          { label: t('trails.info.difficulty'), value: tags.sac_scale || tags.smoothness || tags.difficulty || '—', key: 'sac_scale' },
+          { label: t('trails.info.difficulty'), value: difficultyDisplay, key: 'difficulty_tier' },
           { label: t('trails.info.visibility'), value: condition.value || tags.trail_visibility || '—', key: condition.key || 'trail_visibility' },
           { label: t('trails.info.allowedUses'), value: allowedUses.length ? allowedUses.join(', ') : (tags.access ?? '—'), key: 'access' },
           { label: t('trails.info.season'), value: season || '—', key: 'season' },
@@ -2095,6 +2186,11 @@
         }).addTo(map);
         // After adding all features, apply completion styles to set initial colors
         applyCompletionStyles();
+
+        const addedCount = Array.isArray(geoData?.features) ? geoData.features.length : trailNames.length;
+        telemetryTrailCount = addedCount;
+        totalTrailCount = addedCount;
+        updateTelemetrySummary();
       }
 
       /**
