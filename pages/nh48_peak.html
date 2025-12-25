@@ -828,19 +828,32 @@
 
       function translateTrailType(value){
         if(!value) return value;
-        const key = TRAIL_TYPE_TRANSLATIONS[value];
-        return key ? t(key) : value;
+        const raw = String(value);
+        const key = raw.startsWith('values.trailType.') ? raw : TRAIL_TYPE_TRANSLATIONS[raw];
+        if(!key) return value;
+        const translated = t(key);
+        return translated && translated !== key && !translated.startsWith('values.') ? translated : value;
       }
 
       function translateDifficulty(value){
         if(!value) return value;
-        const key = DIFFICULTY_TRANSLATIONS[value];
-        return key ? t(key) : value;
+        const raw = String(value);
+        const key = raw.startsWith('values.difficulty.') ? raw : DIFFICULTY_TRANSLATIONS[raw];
+        if(!key) return value;
+        const translated = t(key);
+        return translated && translated !== key && !translated.startsWith('values.') ? translated : value;
       }
 
       function translateExposure(value){
         if(!value) return value;
         const trimmed = String(value).trim();
+        if(trimmed.startsWith('values.exposure.')){
+          const translated = t(trimmed);
+          if(translated && translated !== trimmed && !translated.startsWith('values.exposure')){
+            return translated;
+          }
+          return value;
+        }
         const match = trimmed.match(/^(Low to Medium|Low|Medium|High)/i);
         if(!match) return value;
         const normalized = match[1].toLowerCase().replace(/\s+/g, '_');
