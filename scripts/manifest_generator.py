@@ -149,6 +149,66 @@ def _read_bridge_xmp(file_path: str) -> Dict[str, object]:
     return {}
 
 
+def _write_photo_metadata(
+    file_path: str,
+    headline: str,
+    description: str,
+    alt_text: str,
+    extended_description: str,
+) -> None:
+    """
+    Persist the selected headline/description/alt/extendedDescription into the photo file.
+
+    Writes directly to the image using ExifTool so the metadata travels with the JPG when
+    downloaded. Missing ExifTool or write failures are logged but do not halt generation.
+    """
+
+    # Only write when at least one field is present
+    if not any([headline, description, alt_text, extended_description]):
+        return
+
+    args = ["exiftool", "-overwrite_original"]
+    if headline:
+        args.extend(
+            [
+                f"-XMP-iptcCore:Headline={headline}",
+                f"-IPTC:Headline={headline}",
+                f"-XMP-dc:Title={headline}",
+            ]
+        )
+    if description:
+        args.extend(
+            [
+                f"-XMP-iptcCore:Description={description}",
+                f"-XMP-dc:Description={description}",
+                f"-IPTC:Caption-Abstract={description}",
+            ]
+        )
+    if alt_text:
+        args.append(f"-XMP-iptcCore:AltTextAccessibility={alt_text}")
+    if extended_description:
+        args.append(f"-XMP-iptcCore:ExtDescrAccessibility={extended_description}")
+
+    args.append(file_path)
+
+    try:
+        result = subprocess.run(
+            args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:
+        print("ExifTool is not installed; skipping write-back of photo metadata.")
+        return
+
+    if result.returncode != 0:
+        print(
+            f"ExifTool failed to update {file_path}: {result.stderr.strip() or 'unknown error'}"
+        )
+
+
 def _curate_bridge_metadata(raw: Dict[str, object]) -> Dict[str, object]:
     """Normalize Bridge metadata into a stable structure for JSON storage."""
 
@@ -533,6 +593,7 @@ def generate_manifest(
     update_only_new: bool = False,
     include_iptc_raw: bool = False,
     bridge_only: bool = False,
+    write_photo_metadata: bool = False,
 ) -> Dict:
     """
     Generates or updates the 'photos' arrays for each peak in the API JSON.
@@ -664,6 +725,16 @@ def generate_manifest(
                     photo_entry["iptc"] = curated_iptc
                     if include_iptc_raw and raw_bridge:
                         photo_entry["iptcRaw"] = raw_bridge
+
+                    if write_photo_metadata:
+                        _write_photo_metadata(
+                            file_path,
+                            headline or "",
+                            description or "",
+                            alt_text or "",
+                            extended_description or "",
+                        )
+
                     found_entries.append(photo_entry)
         if update_only_new and 'photos' in peak:
             existing_ids = {p.get('photoId') for p in peak.get('photos', [])}
@@ -713,6 +784,14 @@ def main():
         action="store_true",
         help="Only use Bridge-supplied metadata without generating SEO fields.",
     )
+    parser.add_argument(
+        "--write-photo-metadata",
+        action="store_true",
+        help=(
+            "Write the resolved headline/description/alt/extendedDescription into the photo file "
+            "via ExifTool so downloads include the metadata."
+        ),
+    )
     args = parser.parse_args()
     updated = generate_manifest(
         args.api,
@@ -721,6 +800,7 @@ def main():
         update_only_new=args.append,
         include_iptc_raw=args.include_iptc_raw,
         bridge_only=args.bridge_only,
+        write_photo_metadata=args.write_photo_metadata,
     )
     with open(args.output, 'w') as out_file:
         json.dump(updated, out_file, indent=2)
