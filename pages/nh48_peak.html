@@ -26,7 +26,7 @@
     <script id="breadcrumbJsonLd" type="application/ld+json"></script>
     
     <title id="dynamicTitle">NH48 API – Peak details, routes &amp; photos</title>
-    <link rel="icon" type="image/png" href="../nh48API_logo.png">
+    <link rel="icon" type="image/png" href="/nh48API_logo.png">
     <script>
       const params = new URLSearchParams(window.location.search);
       const requestedLang = params.get('lang');
@@ -56,7 +56,7 @@
         hreflangDefaultEarly.setAttribute('href', slugParam ? `https://nh48.info/peaks/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/peaks/');
       }
     </script>
-    <script type="module" src="../js/i18n.js"></script>
+    <script type="module" src="/js/i18n.js"></script>
     <!--
       Standalone details view for a single NH48 peak with robust error handling.
       This version adds:
@@ -622,7 +622,7 @@
     <script>
       // Load shared navigation
       const navPlaceholder = document.getElementById('nav-placeholder');
-      fetch('nav.html')
+      fetch('/pages/nav.html')
         .then(response => response.text())
         .then(html => {
           navPlaceholder.innerHTML = html;
@@ -720,6 +720,11 @@
         <div class="info-grid" id="routesGrid" hidden></div>
       </section>
 
+      <section aria-labelledby="relatedTrailsHeading">
+        <h2 id="relatedTrailsHeading" class="section-title" data-i18n="peak.relatedTrails.title">Related Trails &amp; Routes</h2>
+        <div class="info-grid" id="relatedTrailsGrid" hidden></div>
+      </section>
+
       <section aria-labelledby="trailNamesHeading">
         <h2 id="trailNamesHeading" class="section-title" data-i18n="peak.section.trails">Associated Trails</h2>
         <div class="info-grid" id="trailNamesGrid" hidden></div>
@@ -760,6 +765,20 @@
         FEET: 'feet',
         METERS: 'meters'
       };
+      const TRAIL_KEYWORDS = [
+        'Trail',
+        'Path',
+        'Ridge',
+        'Brook',
+        'River',
+        'Notch',
+        'Road',
+        'Cutoff',
+        'Loop',
+        'Slide',
+        'Spur',
+        'Connector'
+      ];
       let currentUnits = UNITS.FEET;
 
       /* Fallback image */
@@ -1458,6 +1477,72 @@
         });
         routesGrid.hidden = false;
         trackEvent('peak_routes_rendered', { slug: currentSlug, count: routes.length });
+      }
+
+      function extractRelatedTrailNames(routes){
+        if(!Array.isArray(routes)) return [];
+        const keywords = TRAIL_KEYWORDS.join('|');
+        const endPattern = new RegExp(`\\b(?:${keywords})\\b$`, 'i');
+        const names = new Set();
+
+        routes.forEach(route => {
+          const raw = (route['Route Name'] || route.name || '').trim();
+          if(!raw) return;
+          const parts = raw
+            .replace(/[()]/g, ' ')
+            .split(/\s*(?:>|via|to|,|;|\/|&)\s*/i);
+          parts.forEach(part => {
+            const cleaned = part.replace(/[^\w\s'-]/g, ' ').replace(/\s+/g, ' ').trim();
+            if(!cleaned) return;
+            const words = cleaned.split(' ').filter(Boolean);
+            if(words.length < 2 || words.length > 4) return;
+            if(!endPattern.test(cleaned)) return;
+            const formatted = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            names.add(formatted);
+          });
+        });
+
+        return Array.from(names);
+      }
+
+      function renderRelatedTrails(routes){
+        const relatedGrid = document.getElementById('relatedTrailsGrid');
+        if(!relatedGrid) return;
+        relatedGrid.innerHTML = '';
+
+        const relatedNames = extractRelatedTrailNames(routes);
+
+        const panel = document.createElement('div');
+        panel.className = 'info-panel';
+
+        const label = document.createElement('div');
+        label.className = 'info-label';
+        label.textContent = t('peak.relatedTrails.title');
+        panel.appendChild(label);
+
+        const list = document.createElement('ul');
+        list.className = 'trail-list';
+
+        if(!relatedNames.length){
+          const emptyItem = document.createElement('li');
+          emptyItem.textContent = t('peak.relatedTrails.none');
+          list.appendChild(emptyItem);
+          trackEvent('peak_related_trails_empty', { slug: currentSlug });
+        }else{
+          relatedNames.forEach(name => {
+            const li = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = `https://nh48.info/trails?trail=${encodeURIComponent(name)}`;
+            link.textContent = t('peak.relatedTrails.link', { name });
+            li.appendChild(link);
+            list.appendChild(li);
+          });
+          trackEvent('peak_related_trails_rendered', { slug: currentSlug, count: relatedNames.length });
+        }
+
+        panel.appendChild(list);
+        relatedGrid.appendChild(panel);
+        relatedGrid.hidden = false;
       }
 
       function renderTrailNames(trailNames){
