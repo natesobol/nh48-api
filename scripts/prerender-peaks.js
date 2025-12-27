@@ -12,6 +12,8 @@ const HOME_URL = "https://nh48.info/";
 const APP_BASE = "https://nh48.info/pages/nh48_peak.html";
 const DEFAULT_CATALOG_URL = "https://nh48.info/catalog";
 const FALLBACK_IMAGE = "https://nh48.info/nh48-preview.png";
+const PHOTO_BASE_URL = "https://photos.nh48.info";
+const PHOTO_PATH_PREFIX = "/nh48-photos/";
 
 const I18N = {
   en: JSON.parse(fs.readFileSync(path.join(ROOT, "i18n", "en.json"), "utf8")),
@@ -193,9 +195,27 @@ const pickPrimaryPhoto = (photos, peakName) => {
       alt: `${peakName} in the White Mountains`,
     };
   }
-  const primary = photos.find((photo) => photo.isPrimary) || photos[0];
+  const primary = photos[0];
+  const normalizedUrl = normalizePhotoUrl(primary.url) || FALLBACK_IMAGE;
   const alt = cleanText(primary.alt) || buildPhotoAlt(primary, peakName);
-  return { url: primary.url || FALLBACK_IMAGE, alt };
+  return { url: normalizedUrl, alt };
+};
+
+const normalizePhotoUrl = (url) => {
+  if (!url) return url;
+  if (url.startsWith(PHOTO_BASE_URL)) return url;
+  if (url.includes("r2.cloudflarestorage.com/nh48-photos/")) {
+    const [, tail] = url.split(PHOTO_PATH_PREFIX);
+    return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+  }
+  if (
+    url.includes("cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/") ||
+    url.includes("raw.githubusercontent.com/natesobol/nh48-api/main/photos/")
+  ) {
+    const [, tail] = url.split("/photos/");
+    return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+  }
+  return url;
 };
 
 const buildPhotoAlt = (photo, peakName) => {
