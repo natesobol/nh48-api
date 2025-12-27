@@ -1,5 +1,4 @@
-"""
-Enhanced manifest generator for the NH48 photo API.
+"""Enhanced manifest generator for the NH48 photo API.
 
 This script extends the original manifest generator by automatically
 populating additional metadata fields based on the image file itself.
@@ -16,17 +15,365 @@ Usage:
         --base-url https://photos.example.com --output out.json
 """
 
-import os
-import json
 import argparse
-from typing import List, Dict, Optional
+import json
+import os
+import re
+import subprocess
+from typing import Dict, List, Optional
 
-from PIL import Image, ExifTags
+from PIL import ExifTags, Image
 
 DEFAULT_PHOTO_BASE_URL = os.getenv(
     "PHOTO_BASE_URL",
     "https://photos.nh48.info",
 )
+
+
+def _pick_first(raw: Dict[str, object], keys: List[str]) -> Optional[object]:
+    """Return the first non-empty value for the provided keys."""
+
+    for key in keys:
+        if key in raw and raw[key] not in (None, ""):
+            return raw[key]
+    return None
+
+
+def _normalize_keywords(value: object) -> List[str]:
+    """Normalize Bridge keywords into a list of unique, non-empty strings."""
+
+    keywords: List[str] = []
+    if isinstance(value, list):
+        for item in value:
+            if isinstance(item, str):
+                keywords.extend(re.split(r"[,;]", item))
+            else:
+                keywords.append(str(item))
+    elif isinstance(value, str):
+        keywords.extend(re.split(r"[,;]", value))
+    normalized = [kw.strip() for kw in keywords if kw and kw.strip()]
+    # Preserve order while removing duplicates
+    seen = set()
+    unique_keywords: List[str] = []
+    for kw in normalized:
+        if kw not in seen:
+            seen.add(kw)
+            unique_keywords.append(kw)
+    return unique_keywords
+
+
+def _collect_location(raw: Dict[str, object], prefixes: List[str]) -> Dict[str, str]:
+    """Collect location fields from Bridge metadata using namespace prefixes."""
+
+    location = {
+        "sublocation": "",
+        "city": "",
+        "provinceState": "",
+        "countryName": "",
+        "countryIsoCode": "",
+        "worldRegion": "",
+    }
+    suffix_map = {
+        "sublocation": "sublocation",
+        "city": "city",
+        "province": "provinceState",
+        "state": "provinceState",
+        "countryname": "countryName",
+        "countrycode": "countryIsoCode",
+        "worldregion": "worldRegion",
+    }
+
+    for key, value in raw.items():
+        key_lower = key.lower()
+        for prefix in prefixes:
+            if key_lower.startswith(prefix.lower()):
+                for suffix, target in suffix_map.items():
+                    if key_lower.endswith(suffix):
+                        if isinstance(value, list):
+                            value = value[0] if value else ""
+                        location[target] = str(value) if value is not None else ""
+                        break
+
+    # Fallback to Photoshop keys if still empty
+    if not location["city"]:
+        city = _pick_first(raw, ["XMP-photoshop:City"])
+        if city:
+            location["city"] = city
+    if not location["provinceState"]:
+        state_val = _pick_first(raw, ["XMP-photoshop:State"])
+        if state_val:
+            location["provinceState"] = state_val
+    if not location["countryName"]:
+        country = _pick_first(raw, ["XMP-photoshop:Country"])
+        if country:
+            location["countryName"] = country
+
+    for key in location:
+        if isinstance(location[key], list):
+            location[key] = location[key][0] if location[key] else ""
+        if location[key] is None:
+            location[key] = ""
+        else:
+            location[key] = str(location[key])
+    return location
+
+
+def _read_bridge_xmp(file_path: str) -> Dict[str, object]:
+    """Read Bridge IPTC/XMP metadata from sidecar or embedded XMP via ExifTool."""
+
+    targets = []
+    sidecar_path = f"{file_path}.xmp"
+    if os.path.exists(sidecar_path):
+        targets.append(sidecar_path)
+    targets.append(file_path)
+
+    for target in targets:
+        try:
+            result = subprocess.run(
+                ["exiftool", "-j", "-G1", "-a", "-s", target],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+                text=True,
+            )
+        except FileNotFoundError:
+            return {}
+        if result.stdout:
+            try:
+                data = json.loads(result.stdout)
+                if isinstance(data, list) and data:
+                    if isinstance(data[0], dict):
+                        return data[0]
+            except Exception:
+                return {}
+    return {}
+
+
+def _write_photo_metadata(
+    file_path: str,
+    headline: str,
+    description: str,
+    alt_text: str,
+    extended_description: str,
+) -> None:
+    """
+    Persist the selected headline/description/alt/extendedDescription into the photo file.
+
+    Writes directly to the image using ExifTool so the metadata travels with the JPG when
+    downloaded. Missing ExifTool or write failures are logged but do not halt generation.
+    """
+
+    # Only write when at least one field is present
+    if not any([headline, description, alt_text, extended_description]):
+        return
+
+    args = ["exiftool", "-overwrite_original"]
+    if headline:
+        args.extend(
+            [
+                f"-XMP-iptcCore:Headline={headline}",
+                f"-IPTC:Headline={headline}",
+                f"-XMP-dc:Title={headline}",
+            ]
+        )
+    if description:
+        args.extend(
+            [
+                f"-XMP-iptcCore:Description={description}",
+                f"-XMP-dc:Description={description}",
+                f"-IPTC:Caption-Abstract={description}",
+            ]
+        )
+    if alt_text:
+        args.append(f"-XMP-iptcCore:AltTextAccessibility={alt_text}")
+    if extended_description:
+        args.append(f"-XMP-iptcCore:ExtDescrAccessibility={extended_description}")
+
+    args.append(file_path)
+
+    try:
+        result = subprocess.run(
+            args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:
+        print("ExifTool is not installed; skipping write-back of photo metadata.")
+        return
+
+    if result.returncode != 0:
+        print(
+            f"ExifTool failed to update {file_path}: {result.stderr.strip() or 'unknown error'}"
+        )
+
+
+def _curate_bridge_metadata(raw: Dict[str, object]) -> Dict[str, object]:
+    """Normalize Bridge metadata into a stable structure for JSON storage."""
+
+    def _extract_alt_text(value: object) -> str:
+        if isinstance(value, dict):
+            if "en-US" in value:
+                return str(value.get("en-US") or "")
+            if value:
+                first_val = next(iter(value.values()))
+                return str(first_val) if first_val is not None else ""
+            return ""
+        if isinstance(value, list):
+            return str(value[0]) if value else ""
+        return str(value) if value is not None else ""
+
+    def _extract_extended_description(raw_dict: Dict[str, object]) -> str:
+        for key, value in raw_dict.items():
+            lower_key = key.lower()
+            if (
+                "extendeddescription" in lower_key
+                or "extdescr" in lower_key
+                or ("description" in lower_key and "accessibility" in lower_key)
+            ):
+                return _extract_alt_text(value)
+        return ""
+
+    curated: Dict[str, object] = {
+        "creator": "",
+        "creatorJobTitle": "",
+        "creatorEmail": "",
+        "creatorWebsite": "",
+        "headline": "",
+        "description": "",
+        "altText": "",
+        "extendedDescription": "",
+        "keywords": [],
+        "intellectualGenre": "",
+        "iptcSubjectCode": "",
+        "creditLine": "",
+        "source": "",
+        "copyrightNotice": "",
+        "copyrightStatus": "",
+        "rightsUsageTerms": "",
+        "locationCreated": {
+            "sublocation": "",
+            "city": "",
+            "provinceState": "",
+            "countryName": "",
+            "countryIsoCode": "",
+            "worldRegion": "",
+        },
+        "locationShown": {
+            "sublocation": "",
+            "city": "",
+            "provinceState": "",
+            "countryName": "",
+            "countryIsoCode": "",
+            "worldRegion": "",
+        },
+        "featuredOrgName": "",
+    }
+
+    creator = _pick_first(raw, ["XMP-dc:Creator", "IPTC:By-line"])
+    if isinstance(creator, list):
+        creator = creator[0] if creator else ""
+    curated["creator"] = creator or ""
+
+    curated["creatorJobTitle"] = _pick_first(raw, ["XMP-iptcCore:CreatorJobTitle"]) or ""
+    curated["creatorEmail"] = _pick_first(raw, ["XMP-iptcCore:CreatorContactInfoCiEmailWork"]) or ""
+    curated["creatorWebsite"] = _pick_first(
+        raw,
+        ["XMP-iptcCore:CreatorWorkURL", "XMP-iptcCore:CreatorContactInfoCiUrlWork"],
+    ) or ""
+
+    curated["headline"] = _pick_first(
+        raw,
+        ["XMP-iptcCore:Headline", "XMP-dc:Title", "IPTC:Headline"],
+    ) or ""
+
+    curated["description"] = _pick_first(
+        raw,
+        ["XMP-iptcCore:Description", "XMP-dc:Description", "IPTC:Caption-Abstract"],
+    ) or ""
+
+    curated["altText"] = _extract_alt_text(
+        _pick_first(raw, ["XMP-iptcCore:AltTextAccessibility"])
+    )
+
+    curated["extendedDescription"] = _extract_extended_description(raw)
+
+    keywords_candidates = []
+    kw1 = _pick_first(raw, ["IPTC:Keywords"])
+    kw2 = _pick_first(raw, ["XMP-dc:Subject"])
+    if kw1 is not None:
+        keywords_candidates.append(kw1)
+    if kw2 is not None:
+        keywords_candidates.append(kw2)
+    keywords: List[str] = []
+    for candidate in keywords_candidates:
+        keywords.extend(_normalize_keywords(candidate))
+    # Remove duplicates while preserving order
+    seen_kw = set()
+    deduped_keywords: List[str] = []
+    for kw in keywords:
+        if kw not in seen_kw:
+            seen_kw.add(kw)
+            deduped_keywords.append(kw)
+    curated["keywords"] = deduped_keywords
+
+    curated["intellectualGenre"] = _pick_first(
+        raw, ["IPTC:IntellectualGenre", "XMP-iptcCore:IntellectualGenre"]
+    ) or ""
+    curated["iptcSubjectCode"] = _pick_first(
+        raw, ["IPTC:SubjectReference", "XMP-iptcExt:SubjectCode"]
+    ) or ""
+    curated["creditLine"] = _pick_first(raw, ["XMP-photoshop:Credit", "IPTC:Credit"]) or ""
+    curated["source"] = _pick_first(raw, ["XMP-photoshop:Source", "IPTC:Source"]) or ""
+    curated["copyrightNotice"] = _pick_first(
+        raw, ["IPTC:CopyrightNotice", "XMP-dc:Rights"]
+    ) or ""
+    curated["copyrightStatus"] = _pick_first(raw, ["XMP-xmpRights:Marked"]) or ""
+    curated["rightsUsageTerms"] = _pick_first(raw, ["XMP-xmpRights:UsageTerms"]) or ""
+
+    curated["locationCreated"] = _collect_location(raw, ["XMP-iptcExt:LocationCreated"])
+    curated["locationShown"] = _collect_location(raw, ["XMP-iptcExt:LocationShown"])
+
+    curated["featuredOrgName"] = _pick_first(raw, ["XMP-iptcExt:OrganisationInImageName"]) or ""
+
+    for key, value in curated.items():
+        if key in {"locationCreated", "locationShown", "keywords"}:
+            continue
+        if isinstance(value, list):
+            curated[key] = value[0] if value else ""
+        elif value is None:
+            curated[key] = ""
+        else:
+            curated[key] = str(value)
+
+    return curated
+
+
+def _generate_seo_fields(ctx: Dict[str, str]) -> Dict[str, str]:
+    """Generate headline, description, altText, and extendedDescription."""
+
+    peak_name = ctx.get("peakName", "")
+    return {
+        "headline": f"{peak_name} — White Mountain National Forest (New Hampshire)",
+        "description": (
+            "A scenic mountain landscape in the White Mountain National Forest of New "
+            "Hampshire, featuring {peakName} and surrounding ridgelines. This photograph "
+            "highlights rugged terrain, forested slopes, and layered White Mountains "
+            "wilderness popular with hikers and peakbaggers."
+        ).format(peakName=peak_name),
+        "altText": (
+            "Forested mountain ridge and summit of {peakName} in the White Mountain "
+            "National Forest under a partly cloudy sky."
+        ).format(peakName=peak_name),
+        "extendedDescription": (
+            "This photograph features {peakName} in New Hampshire’s White Mountain "
+            "National Forest. The scene shows forested slopes, rocky ridgelines, and "
+            "distant mountain ranges fading into the horizon. It reflects the scale and "
+            "terrain hikers experience in the White Mountains, home to many of New "
+            "Hampshire’s 4,000-foot peaks and backcountry trails."
+        ).format(peakName=peak_name),
+    }
 
 
 def _convert_fraction(value) -> Optional[float]:
@@ -239,10 +586,15 @@ def _extract_photo_metadata(file_path: str) -> Dict[str, Optional[str]]:
     return meta
 
 
-def generate_manifest(api_json_path: str,
-                      photos_root: str,
-                      base_url: str,
-                      update_only_new: bool = False) -> Dict:
+def generate_manifest(
+    api_json_path: str,
+    photos_root: str,
+    base_url: str,
+    update_only_new: bool = False,
+    include_iptc_raw: bool = False,
+    bridge_only: bool = False,
+    write_photo_metadata: bool = False,
+) -> Dict:
     """
     Generates or updates the 'photos' arrays for each peak in the API JSON.
 
@@ -257,6 +609,10 @@ def generate_manifest(api_json_path: str,
     """
     with open(api_json_path, 'r') as f:
         data = json.load(f)
+    bridge_counts = {"headline": 0, "description": 0, "altText": 0, "extendedDescription": 0}
+    generated_counts = {"headline": 0, "description": 0, "altText": 0, "extendedDescription": 0}
+    total_photos = 0
+
     for slug, peak in data.items():
         photos_dir = os.path.join(photos_root, slug)
         found_entries: List[Dict] = []
@@ -268,6 +624,7 @@ def generate_manifest(api_json_path: str,
                     photo_id: str = f"{slug}__{os.path.splitext(entry)[0]}"
                     url: str = f"{base_url}/{slug}/{filename}"
                     file_path: str = os.path.join(photos_dir, filename)
+                    total_photos += 1
                     meta = _extract_photo_metadata(file_path)
                     orientation: str = meta.get('orientation', 'landscape')
                     name_lower = filename.lower()
@@ -286,6 +643,50 @@ def generate_manifest(api_json_path: str,
                         base_name = base_name[len(slug_prefix):].strip()
                     alt_candidate = meta.get('title') or meta.get('subject') or base_name
                     alt_candidate = alt_candidate.strip() if isinstance(alt_candidate, str) else ''
+
+                    raw_bridge = _read_bridge_xmp(file_path)
+                    curated_iptc = _curate_bridge_metadata(raw_bridge)
+
+                    ctx = {
+                        "peakName": peak.get('peakName') or slug.replace('-', ' ').title(),
+                        "season": season or "",
+                        "timeOfDay": time_of_day or "",
+                        "state": "New Hampshire",
+                        "viewHint": "",
+                    }
+                    generated_fields = {} if bridge_only else _generate_seo_fields(ctx)
+
+                    headline = curated_iptc.get("headline") or generated_fields.get("headline") or alt_candidate
+                    description = (
+                        curated_iptc.get("description")
+                        or generated_fields.get("description")
+                        or alt_candidate
+                    )
+                    alt_text = (
+                        curated_iptc.get("altText")
+                        or generated_fields.get("altText")
+                        or alt_candidate
+                    )
+                    extended_description = (
+                        curated_iptc.get("extendedDescription")
+                        or generated_fields.get("extendedDescription")
+                        or alt_candidate
+                    )
+
+                    for field_key, curated_value, generated_value in (
+                        ("headline", curated_iptc.get("headline"), generated_fields.get("headline") if generated_fields else None),
+                        ("description", curated_iptc.get("description"), generated_fields.get("description") if generated_fields else None),
+                        ("altText", curated_iptc.get("altText"), generated_fields.get("altText") if generated_fields else None),
+                        (
+                            "extendedDescription",
+                            curated_iptc.get("extendedDescription"),
+                            generated_fields.get("extendedDescription") if generated_fields else None,
+                        ),
+                    ):
+                        if curated_value:
+                            bridge_counts[field_key] += 1
+                        elif generated_value:
+                            generated_counts[field_key] += 1
                     # Build tags: include slug and derived descriptors
                     tags: List[str] = [slug]
                     if season:
@@ -298,8 +699,12 @@ def generate_manifest(api_json_path: str,
                         "photoId": photo_id,
                         "filename": filename,
                         "url": url,
-                        "alt": alt_candidate or "",
-                        "caption": alt_candidate or "",
+                        "alt": alt_text or "",
+                        "caption": headline or "",
+                        "headline": headline or "",
+                        "description": description or "",
+                        "altText": alt_text or "",
+                        "extendedDescription": extended_description or "",
                         "season": season,
                         "timeOfDay": time_of_day,
                         "orientation": orientation,
@@ -316,6 +721,20 @@ def generate_manifest(api_json_path: str,
                         value = meta.get(key)
                         if value is not None:
                             photo_entry[key] = value
+
+                    photo_entry["iptc"] = curated_iptc
+                    if include_iptc_raw and raw_bridge:
+                        photo_entry["iptcRaw"] = raw_bridge
+
+                    if write_photo_metadata:
+                        _write_photo_metadata(
+                            file_path,
+                            headline or "",
+                            description or "",
+                            alt_text or "",
+                            extended_description or "",
+                        )
+
                     found_entries.append(photo_entry)
         if update_only_new and 'photos' in peak:
             existing_ids = {p.get('photoId') for p in peak.get('photos', [])}
@@ -329,6 +748,15 @@ def generate_manifest(api_json_path: str,
         peak['slug'] = slug
         if 'peakName' not in peak and 'Peak Name' in peak:
             peak['peakName'] = peak['Peak Name']
+
+    if total_photos:
+        for field in ("headline", "description", "altText", "extendedDescription"):
+            bridge_pct = (bridge_counts[field] / total_photos) * 100
+            generated_pct = (generated_counts[field] / total_photos) * 100
+            print(
+                f"{field}: {bridge_counts[field]} Bridge ({bridge_pct:.1f}%), "
+                f"{generated_counts[field]} generated ({generated_pct:.1f}%)",
+            )
     return data
 
 
@@ -346,8 +774,34 @@ def main():
     )
     parser.add_argument("--output", required=True, help="Path to write the updated API JSON file.")
     parser.add_argument("--append", action="store_true", help="If set, existing photos arrays are preserved and new photo files are appended.")
+    parser.add_argument(
+        "--include-iptc-raw",
+        action="store_true",
+        help="Include raw ExifTool IPTC/XMP output in photo entries.",
+    )
+    parser.add_argument(
+        "--bridge-only",
+        action="store_true",
+        help="Only use Bridge-supplied metadata without generating SEO fields.",
+    )
+    parser.add_argument(
+        "--write-photo-metadata",
+        action="store_true",
+        help=(
+            "Write the resolved headline/description/alt/extendedDescription into the photo file "
+            "via ExifTool so downloads include the metadata."
+        ),
+    )
     args = parser.parse_args()
-    updated = generate_manifest(args.api, args.photos, args.base_url, update_only_new=args.append)
+    updated = generate_manifest(
+        args.api,
+        args.photos,
+        args.base_url,
+        update_only_new=args.append,
+        include_iptc_raw=args.include_iptc_raw,
+        bridge_only=args.bridge_only,
+        write_photo_metadata=args.write_photo_metadata,
+    )
     with open(args.output, 'w') as out_file:
         json.dump(updated, out_file, indent=2)
     print(f"Manifest updated successfully. Output written to {args.output}")
