@@ -188,17 +188,37 @@ const parseCoordinates = (value) => {
   };
 };
 
+const parseDimensions = (value) => {
+  if (!value) return { width: null, height: null };
+  const match = String(value)
+    .replace(/×/g, 'x')
+    .match(/(\d+)\s*x\s*(\d+)/i);
+  if (!match) return { width: null, height: null };
+  const [, w, h] = match;
+  return { width: Number(w), height: Number(h) };
+};
+
 const pickPrimaryPhoto = (photos, peakName) => {
   if (!Array.isArray(photos) || photos.length === 0) {
     return {
       url: FALLBACK_IMAGE,
       alt: `${peakName} in the White Mountains`,
+      headline: `${peakName} — White Mountain National Forest`,
+      description: '',
+      extendedDescription: '',
+      width: null,
+      height: null,
     };
   }
-  const primary = photos[0];
+  const primary =
+    photos.find((photo) => photo && typeof photo === 'object' && photo.isPrimary) || photos[0];
   const normalizedUrl = normalizePhotoUrl(primary.url) || FALLBACK_IMAGE;
-  const alt = cleanText(primary.alt) || buildPhotoAlt(primary, peakName);
-  return { url: normalizedUrl, alt };
+  const { width, height } = parseDimensions(primary.dimensions || primary.dimension || '');
+  const alt = cleanText(primary.altText || primary.alt) || buildPhotoAlt(primary, peakName);
+  const headline = cleanText(primary.headline) || `${peakName} — White Mountain National Forest`;
+  const description = cleanText(primary.description || primary.caption || '');
+  const extendedDescription = cleanText(primary.extendedDescription || '');
+  return { url: normalizedUrl, alt, headline, description, extendedDescription, width, height };
 };
 
 const normalizePhotoUrl = (url) => {
@@ -219,6 +239,8 @@ const normalizePhotoUrl = (url) => {
 };
 
 const buildPhotoAlt = (photo, peakName) => {
+  const explicit = cleanText(photo.altText || photo.alt);
+  if (explicit) return explicit;
   const tags = Array.isArray(photo.tags) ? photo.tags.filter(Boolean) : [];
   if (tags.length) {
     return `${peakName} - ${tags.join(", ")}`;
@@ -252,7 +274,7 @@ const buildGallery = (photos, peakName) => {
     )}" loading="lazy" />`;
   }
   return photos.slice(0, 4).map((photo) => {
-    const alt = cleanText(photo.alt) || buildPhotoAlt(photo, peakName);
+    const alt = cleanText(photo.altText || photo.alt) || buildPhotoAlt(photo, peakName);
     const url = photo.url || FALLBACK_IMAGE;
     return `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" loading="lazy" />`;
   }).join("\n");
@@ -293,7 +315,7 @@ const buildJsonLd = (
   peak,
   canonicalUrl,
   coordinates,
-  primaryImageUrl,
+  primaryPhoto,
   descriptionText,
   range,
   langConfig,
@@ -350,7 +372,17 @@ const buildJsonLd = (
       langConfig.code !== "en" && englishName && englishName !== peakName ? englishName : undefined,
     description: descriptionText,
     url: canonicalUrl,
-    image: primaryImageUrl ? [primaryImageUrl] : undefined,
+    image: primaryPhoto?.url
+      ? [
+          {
+            "@type": "ImageObject",
+            url: primaryPhoto.url,
+            name: primaryPhoto.headline || peakName,
+            caption: primaryPhoto.description || descriptionText,
+            creditText: "© Nathan Sobol",
+          },
+        ]
+      : undefined,
     geo: coordinates.latitude && coordinates.longitude
       ? {
         "@type": "GeoCoordinates",
@@ -492,12 +524,16 @@ const main = () => {
           prominence: prominence || lang.defaults.unknown,
           range: rangeValue || lang.defaults.range,
         };
-        const descriptionText = buildLocalizedDescription(
+        const generatedDescription = buildLocalizedDescription(
           lang.code,
           descriptionValues,
           summary,
           (peakNameText) => lang.descriptionTemplate(peakNameText)
         );
+        const descriptionText =
+          primaryPhoto.description ||
+          primaryPhoto.extendedDescription ||
+          generatedDescription;
         const range = rangeValue || lang.defaults.range;
         const difficulty = difficultyValue || lang.defaults.difficulty;
         const trailType = trailTypeValue || lang.defaults.trailType;
@@ -507,7 +543,7 @@ const main = () => {
 
         const values = {
           LANG: lang.hreflang,
-          TITLE: escapeHtml(`${localizedName} | ${lang.titleSuffix}`),
+          TITLE: escapeHtml(`${localizedName} — White Mountain National Forest`),
           DESCRIPTION: escapeHtml(descriptionText),
           CANONICAL_URL: canonicalUrl,
           CANONICAL_EN_URL: `${CANONICAL_BASE}/${slug}/`,
@@ -532,6 +568,10 @@ const main = () => {
           CATALOG_URL: lang.catalogUrl,
           HERO_IMAGE: primaryPhoto.url,
           HERO_ALT: escapeHtml(primaryPhoto.alt),
+          HERO_DIMENSIONS:
+            primaryPhoto.width && primaryPhoto.height
+              ? `width="${primaryPhoto.width}" height="${primaryPhoto.height}"`
+              : "",
           LABEL_ELEVATION: escapeHtml(lang.labels.elevation),
           LABEL_PROMINENCE: escapeHtml(lang.labels.prominence),
           LABEL_RANGE: escapeHtml(lang.labels.range),
@@ -551,7 +591,7 @@ const main = () => {
               peak,
               canonicalUrl,
               coordinates,
-              primaryPhoto.url,
+              primaryPhoto,
               descriptionText,
               rangeValue || null,
               lang,
