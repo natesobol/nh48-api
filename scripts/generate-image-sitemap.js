@@ -20,8 +20,8 @@ const escapeXml = (value) =>
 
 const buildPhotoCaption = (peakName, photo) => {
   if (photo && typeof photo === 'object') {
-    const explicit = (photo.alt || '').trim();
-    if (explicit) return explicit;
+    const explicitAlt = (photo.altText || photo.alt || '').trim();
+    if (explicitAlt) return explicitAlt;
     const details = [photo.season, photo.timeOfDay].filter(Boolean).join(' ');
     if (details) return `${peakName} – ${details} photo`;
   }
@@ -36,14 +36,12 @@ const buildImageEntries = (photos, peakName) => {
         return {
           url: photo,
           caption: buildPhotoCaption(peakName, {}),
-          license: null,
         };
       }
       if (photo && photo.url) {
         return {
           url: photo.url,
           caption: buildPhotoCaption(peakName, photo),
-          license: photo.license || null,
         };
       }
       return null;
@@ -76,12 +74,8 @@ urlEntries.forEach((entry) => {
   entry.images.forEach((image) => {
     xmlParts.push('    <image:image>');
     xmlParts.push(`      <image:loc>${escapeXml(image.url)}</image:loc>`);
-    if (image.caption) {
-      xmlParts.push(`      <image:caption>${escapeXml(image.caption)}</image:caption>`);
-    }
-    if (image.license) {
-      xmlParts.push(`      <image:license>${escapeXml(image.license)}</image:license>`);
-    }
+    const captionText = image.caption ? escapeXml(image.caption) : '';
+    xmlParts.push(`      <image:caption>${captionText}</image:caption>`);
     xmlParts.push('    </image:image>');
   });
   xmlParts.push('  </url>');
