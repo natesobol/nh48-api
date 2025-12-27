@@ -6,11 +6,15 @@
     <title>Zealand Mountain | NH 48 Peak Guide</title>
     <meta name="description" content="Zealand Mountain – 4260 ft high, 246 ft prominence, in the Twin Range. Routes, difficulty, and photos for this 4,000-footer. Easy grade to Zealand Hut, then moderate climb to Zeacliff  - rocky.; gentle, mossy ridge to summit sign" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta property="og:title" content="Zealand Mountain – NH 48 Peak Guide" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Zealand Mountain | NH 48 Peak Guide" />
     <meta property="og:description" content="Zealand Mountain – 4260 ft high, 246 ft prominence, in the Twin Range. Routes, difficulty, and photos for this 4,000-footer. Easy grade to Zealand Hut, then moderate climb to Zeacliff  - rocky.; gentle, mossy ridge to summit sign" />
     <meta property="og:image" content="https://17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com/nh48-photos/zealand-mountain/zealand-mountain__001.jpg" />
     <meta property="og:url" content="https://nh48.info/peaks/zealand-mountain/" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Zealand Mountain | NH 48 Peak Guide" />
+    <meta name="twitter:description" content="Zealand Mountain – 4260 ft high, 246 ft prominence, in the Twin Range. Routes, difficulty, and photos for this 4,000-footer. Easy grade to Zealand Hut, then moderate climb to Zeacliff  - rocky.; gentle, mossy ridge to summit sign" />
+    <meta name="twitter:image" content="https://17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com/nh48-photos/zealand-mountain/zealand-mountain__001.jpg" />
     <link rel="canonical" href="https://nh48.info/peaks/zealand-mountain/" />
     <link rel="alternate" hreflang="en" href="https://nh48.info/peaks/zealand-mountain/" />
     <link rel="alternate" hreflang="fr" href="https://nh48.info/fr/peaks/zealand-mountain/" />
@@ -75,29 +79,288 @@
     "url": "https://nh48.info/catalog"
   }
 }</script>
-    <script type="application/ld+json">
-{
+    <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "NH48 Peak Catalog",
-      "item": "https://nh48.info/catalog"
+      "name": "Home",
+      "item": "https://nh48.info/"
     },
     {
       "@type": "ListItem",
       "position": 2,
+      "name": "Peak Catalog",
+      "item": "https://nh48.info/catalog"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
       "name": "Zealand Mountain",
       "item": "https://nh48.info/peaks/zealand-mountain/"
     }
   ]
-}
-  </script>
-</head>
+}</script>
+    <style>
+      :root{
+        --bg:#0a0a0a;
+        --panel:#12121a;
+        --card:#171a22;
+        --ink:#ffffff;
+        --muted:#a5b4c3;
+        --stroke:#ffffff33;
+        --accent:#22c55e;
+      }
+      body{
+        margin:0;
+        background:var(--bg);
+        color:var(--ink);
+        font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        -webkit-font-smoothing:antialiased;
+      }
+      .wrap{
+        max-width:1000px;
+        margin:0 auto;
+        padding:20px 16px 32px;
+      }
+      a{ color:var(--accent); }
+      .breadcrumb-nav{
+        margin:0 0 16px 0;
+        color:var(--muted);
+        font-size:0.95rem;
+      }
+      .breadcrumb-nav ol{
+        list-style:none;
+        padding:0;
+        margin:0;
+        display:flex;
+        flex-wrap:wrap;
+        gap:6px;
+        align-items:center;
+      }
+      .breadcrumb-nav li{
+        display:flex;
+        align-items:center;
+        gap:6px;
+      }
+      .breadcrumb-nav li+li::before{
+        content:'›';
+        color:var(--muted);
+        opacity:0.6;
+      }
+      .breadcrumb-nav a{
+        color:var(--muted);
+        text-decoration:none;
+      }
+      .breadcrumb-nav a:hover{ color:var(--accent); }
+      header.hero{
+        display:grid;
+        grid-template-columns:1.1fr 0.9fr;
+        gap:18px;
+        align-items:center;
+        background:var(--panel);
+        border:1px solid var(--stroke);
+        border-radius:14px;
+        padding:18px;
+      }
+      @media(max-width:820px){
+        header.hero{ grid-template-columns:1fr; }
+      }
+      .hero-text h1{
+        margin:4px 0 8px 0;
+        font-size:2rem;
+      }
+      .hero-text .eyebrow{
+        color:var(--muted);
+        letter-spacing:0.6px;
+        text-transform:uppercase;
+        margin:0;
+        font-size:0.85rem;
+      }
+      .hero-text .summary{
+        margin:0 0 10px 0;
+        color:var(--muted);
+      }
+      .hero-meta{
+        display:flex;
+        flex-wrap:wrap;
+        gap:12px;
+        color:var(--ink);
+        font-weight:600;
+        margin-bottom:12px;
+      }
+      .hero-meta span{ display:inline-flex; gap:4px; align-items:center; }
+      .cta{
+        display:inline-block;
+        padding:10px 14px;
+        background:var(--accent);
+        color:#0a0a0a;
+        border-radius:10px;
+        text-decoration:none;
+        font-weight:700;
+        margin-right:10px;
+      }
+      .back-link{ color:var(--ink); }
+      .hero-image img{
+        width:100%;
+        border-radius:12px;
+        border:1px solid var(--stroke);
+        object-fit:cover;
+      }
+      .section-title{
+        margin:22px 0 10px 0;
+        font-size:1.1rem;
+        letter-spacing:0.5px;
+        text-transform:uppercase;
+        color:var(--accent);
+      }
+      .snapshot-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+        gap:12px;
+      }
+      .snapshot-grid dt{
+        font-weight:600;
+        color:var(--muted);
+      }
+      .snapshot-grid dd{
+        margin:4px 0 10px 0;
+      }
+      .info-card{
+        background:var(--panel);
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        padding:12px;
+      }
+      ul.routes-list{
+        list-style:disc;
+        padding-left:20px;
+        color:var(--ink);
+      }
+      ul.routes-list li{ margin-bottom:6px; }
+      .gallery-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+        gap:10px;
+      }
+      .gallery-grid img{
+        width:100%;
+        border-radius:10px;
+        border:1px solid var(--stroke);
+      }
+      .redirect-notice{
+        margin-top:22px;
+        color:var(--muted);
+      }
+    </style>
+  </head>
   <body>
-    <p>Redirecting to the interactive page for Zealand Mountain...</p>
-    <p>If you are not redirected, <a href="https://nh48.info/pages/nh48_peak.html?slug=zealand-mountain">open the interactive page</a>.</p>
+    <div class="wrap">
+      <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+        <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="https://nh48.info/"><span itemprop="name">Home</span></a>
+            <meta itemprop="position" content="1">
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="https://nh48.info/catalog"><span itemprop="name">Peak Catalog</span></a>
+            <meta itemprop="position" content="2">
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name">Zealand Mountain</span>
+            <meta itemprop="item" content="https://nh48.info/peaks/zealand-mountain/">
+            <meta itemprop="position" content="3">
+          </li>
+        </ol>
+      </nav>
+
+      <header class="hero">
+        <div class="hero-text">
+          <p class="eyebrow">Overview</p>
+          <h1 id="peakTitle">Zealand Mountain</h1>
+          <p class="summary">Easy grade to Zealand Hut, then moderate climb to Zeacliff  - rocky.; gentle, mossy ridge to summit sign</p>
+          <div class="hero-meta">
+            <span>Elevation: 4260 ft</span>
+            <span>Prominence: 246 ft</span>
+            <span>Range: Twin Range</span>
+          </div>
+          <a class="cta" href="https://nh48.info/pages/nh48_peak.html?slug=zealand-mountain">View interactive page</a>
+          <a class="back-link" href="https://nh48.info/catalog">Back to NH48 Peak Catalog</a>
+        </div>
+        <figure class="hero-image">
+          <img src="https://17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com/nh48-photos/zealand-mountain/zealand-mountain__001.jpg" alt="Zealand Mountain - zealand-mountain" loading="lazy" />
+        </figure>
+      </header>
+
+      <section aria-labelledby="quickFactsHeading">
+        <h2 class="section-title" id="quickFactsHeading">Location</h2>
+        <div class="info-card">
+          <dl class="snapshot-grid">
+            <div>
+              <dt>Elevation</dt>
+              <dd>4260 ft</dd>
+            </div>
+            <div>
+              <dt>Prominence</dt>
+              <dd>246 ft</dd>
+            </div>
+            <div>
+              <dt>Range</dt>
+              <dd>Twin Range</dd>
+            </div>
+            <div>
+              <dt>Difficulty</dt>
+              <dd>Difficult</dd>
+            </div>
+            <div>
+              <dt>Trail Type</dt>
+              <dd>Out &amp; back  - commonly.</dd>
+            </div>
+            <div>
+              <dt>Typical Time</dt>
+              <dd>6–8 hours  - round-trip to summit and Zeacliff.</dd>
+            </div>
+            <div>
+              <dt>Location</dt>
+              <dd>44.17967, -71.52133</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section aria-labelledby="routesHeading">
+        <h2 class="section-title" id="routesHeading">Standard Routes</h2>
+        <div class="info-card">
+          <ul class="routes-list">
+            <li><strong>Zealand Trail &gt; Twinway  - via Zealand Hut &amp; Zeacliff.</strong> — 11.0 mi • 2,300 ft gain • Out &amp; back  - or traverse over Bonds. • Difficult</li>
+          </ul>
+        </div>
+      </section>
+
+      <section aria-labelledby="relatedHeading">
+        <h2 class="section-title" id="relatedHeading">Related Trails &amp; Routes</h2>
+        <div class="info-card">
+          <ul class="routes-list">
+            <li><a href="https://nh48.info/trails?trail=Zealand%20Trail">Zealand Trail route</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section aria-labelledby="galleryHeading">
+        <h2 class="section-title" id="galleryHeading">Photo gallery</h2>
+        <div class="gallery-grid">
+          <img src="https://17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com/nh48-photos/zealand-mountain/zealand-mountain__001.jpg" alt="Zealand Mountain - zealand-mountain" loading="lazy" />
+<img src="https://17380df4e336fd7ae3e254240bba3119.r2.cloudflarestorage.com/nh48-photos/zealand-mountain/zealand-mountain__002.jpg" alt="Zealand Mountain - zealand-mountain" loading="lazy" />
+        </div>
+      </section>
+
+      <div class="redirect-notice">
+        <p>Redirecting to the interactive page for Zealand Mountain...</p>
+        <p>If you are not redirected, <a href="https://nh48.info/pages/nh48_peak.html?slug=zealand-mountain">open the interactive page</a>.</p>
+        <p>NH48 pre-rendered guide page.</p>
+      </div>
+    </div>
   </body>
 </html>
