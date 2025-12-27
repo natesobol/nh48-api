@@ -1416,21 +1416,6 @@
             console.warn(`Failed to fetch ${url}:`, err.message);
             trackEvent('trails_osm_fetch_error', { source: url });
           }
-
-          const group = grouped.get(name);
-          group.segments.push(coords);
-          group.osm_ids.push(element.id);
-          group.tags = { ...group.tags, ...tags };
-          group.distance_miles += computeDistanceMiles(coords);
-        });
-
-        trailInfoLookup = new Map();
-
-        if (!allElements.length) {
-          trailInfoLoaded = true;
-          console.warn('No OSM trail data could be loaded.');
-          trackEvent('trails_osm_load_failed');
-          return null;
         }
         return null;
       }
