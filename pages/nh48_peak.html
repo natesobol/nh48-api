@@ -831,6 +831,13 @@
         return null;
       }
 
+      function parseDimensions(value){
+        if(!value) return { width: null, height: null };
+        const match = String(value).replace(/×/g, 'x').match(/(\d+)\s*x\s*(\d+)/i);
+        if(!match) return { width: null, height: null };
+        return { width: Number(match[1]), height: Number(match[2]) };
+      }
+
       function numberFrom(value){
         if(value === undefined || value === null) return null;
         const match = String(value).match(/-?\d+(?:\.\d+)?/);
@@ -1086,7 +1093,7 @@
 
       function buildPhotoAltText(name, meta){
         if(meta && typeof meta === 'object'){
-          const explicit = meta.alt && meta.alt.trim();
+          const explicit = (meta.altText || meta.alt || '').trim();
           if(explicit){
             return explicit;
           }
@@ -1119,13 +1126,24 @@
         });
       }
 
-      function buildMountainSchema(p, name, canonicalUrl, primaryImageUrl, descriptionText){
+      function buildMountainSchema(p, name, canonicalUrl, primaryPhoto, descriptionText){
         const coords = parseCoordinates(p['Coordinates']);
         const elevationFt = numberFrom(p['Elevation (ft)']);
         const prominenceFt = numberFrom(p['Prominence (ft)']);
         const difficulty = p['Difficulty'];
         const range = p['Range / Subrange'];
         const trailType = p['Trail Type'];
+        const imageObject = primaryPhoto && primaryPhoto.url
+          ? {
+            '@type': 'ImageObject',
+            url: primaryPhoto.url,
+            name: primaryPhoto.headline || `${name} — White Mountain National Forest`,
+            caption: primaryPhoto.description || descriptionText,
+            creditText: '© Nathan Sobol',
+            width: primaryPhoto.width || undefined,
+            height: primaryPhoto.height || undefined
+          }
+          : null;
         const additionalProperty = [
           prominenceFt != null ? {
             '@type': 'PropertyValue',
@@ -1156,7 +1174,7 @@
           name,
           description: descriptionText,
           url: canonicalUrl,
-          image: primaryImageUrl ? [primaryImageUrl] : undefined,
+          image: imageObject ? [imageObject] : undefined,
           geo: coords ? { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon } : undefined,
           elevation: elevationFt != null ? {
             '@type': 'QuantitativeValue',
@@ -1230,6 +1248,8 @@
       let currentSlug = null;
       let currentImages = [];
       let currentMeta = [];
+      let currentPrimaryMeta = null;
+      let currentPrimaryPhoto = null;
 
       /* METADATA PANEL -------------------------------------------------------- */
       function makeRow(label, value){
@@ -1505,15 +1525,19 @@
         trackEvent('peak_conditions_rendered', { slug: currentSlug, count: conditionItems.length });
       }
 
-      function updateHeadMeta(p, slug, name){
+      function updateHeadMeta(p, slug, name, primaryMeta){
         const elevation = p['Elevation (ft)'] || t('common.unknown');
         const prominence = p['Prominence (ft)'] || t('common.unknown');
         const range = p['Range / Subrange'] || 'White Mountains';
 
         const langCode = getSeoLang();
         const canonicalUrl = buildCanonicalUrl(slug, langCode);
-        const titleText = t('peak.meta.titleTemplate', { name, elevation });
-        const descriptionText = t('peak.meta.descriptionTemplate', { name, elevation, prominence, range });
+        const generatedDescription = t('peak.meta.descriptionTemplate', { name, elevation, prominence, range });
+        const metaDescription = primaryMeta
+          ? (primaryMeta.description || primaryMeta.extendedDescription || primaryMeta.altText || primaryMeta.alt || primaryMeta.caption || '').trim()
+          : '';
+        const descriptionText = metaDescription || generatedDescription;
+        const titleText = `${name} — White Mountain National Forest`;
 
         const titleEl = document.getElementById('dynamicTitle');
         if(titleEl){
@@ -1798,46 +1822,58 @@
           currentPeak = p;
           currentSlug = slug;
 
-          const { canonicalUrl, descriptionText } = updateHeadMeta(p, slug, name);
-
-          // Build general info panel
-          buildGeneralInfo(p);
-
-          const routes = p['Standard Routes'] || [];
-          renderRoutes(routes);
-          const trailNames = p['Trail Names'] || [];
-          renderTrailNames(trailNames);
-          renderTerrain(p);
-          renderConditions(p);
-
           // Photos + per-photo metadata
           let imgs = [];
           let meta = [];
+          let primaryIndex = 0;
+          let primaryMarked = false;
           if(Array.isArray(p.photos) && p.photos.length > 0){
-            p.photos.forEach(item => {
+            p.photos.forEach((item, idx) => {
               if(typeof item === 'string'){
                 const normalizedUrl = normalizePhotoUrl(item);
                 imgs.push(normalizedUrl);
                 meta.push({ url: normalizedUrl });
+                if(item && typeof item === 'object' && item.isPrimary && !primaryMarked){
+                  primaryIndex = idx;
+                  primaryMarked = true;
+                }
               }else if(item && item.url){
                 const normalizedUrl = normalizePhotoUrl(item.url);
                 imgs.push(normalizedUrl);
                 meta.push({ ...item, url: normalizedUrl });
+                if(item.isPrimary && !primaryMarked){
+                  primaryIndex = idx;
+                  primaryMarked = true;
+                }
               }
             });
           }
           if(imgs.length === 0){
             imgs = [getPlaceholder()];
             meta = [{}];
+            primaryIndex = 0;
+            primaryMarked = false;
           }
           currentImages = imgs.slice();
           currentMeta = meta.slice();
 
-          const primaryImageCandidate = imgs[0];
+          const primaryMeta = meta[primaryIndex] || meta[0] || {};
+          const primaryImageCandidate = imgs[primaryIndex] || imgs[0];
           const primaryImage =
             primaryImageCandidate && !primaryImageCandidate.startsWith('data:')
               ? primaryImageCandidate
               : DEFAULT_OG_IMAGE;
+          const parsedDimensions = parseDimensions(primaryMeta.dimensions);
+          currentPrimaryMeta = primaryMeta;
+          currentPrimaryPhoto = {
+            ...primaryMeta,
+            url: primaryImage,
+            width: parsedDimensions.width,
+            height: parsedDimensions.height
+          };
+
+          const { canonicalUrl, descriptionText } = updateHeadMeta(p, slug, name, primaryMeta);
+
           const ogImageEl = document.getElementById('dynamicOgImage');
           if(ogImageEl){
             ogImageEl.setAttribute('content', primaryImage);
@@ -1847,7 +1883,18 @@
             twitterImageEl.setAttribute('content', primaryImage);
           }
 
-          buildMountainSchema(p, name, canonicalUrl, primaryImage, descriptionText);
+          // Build general info panel
+          buildGeneralInfo(p);
+
+          const routes = p['Standard Routes'] || [];
+          renderRoutes(routes);
+          renderRelatedTrails(routes);
+          const trailNames = p['Trail Names'] || [];
+          renderTrailNames(trailNames);
+          renderTerrain(p);
+          renderConditions(p);
+
+          buildMountainSchema(p, name, canonicalUrl, currentPrimaryPhoto, descriptionText);
           buildCarousel(imgs, meta, name);
           trackEvent('peak_loaded', { slug, name, photoCount: imgs.length });
 
@@ -1866,7 +1913,7 @@
           if (!currentPeak) return;
           const name = currentPeak.peakName || currentPeak['Peak Name'] || currentSlug;
           updatePeakTitle(name);
-          updateHeadMeta(currentPeak, currentSlug, name);
+          const { canonicalUrl, descriptionText } = updateHeadMeta(currentPeak, currentSlug, name, currentPrimaryMeta);
           buildGeneralInfo(currentPeak);
           const routes = currentPeak['Standard Routes'] || [];
           renderRoutes(routes);
@@ -1874,6 +1921,9 @@
           renderTrailNames(currentPeak['Trail Names'] || []);
           renderTerrain(currentPeak);
           renderConditions(currentPeak);
+          if (currentPrimaryPhoto) {
+            buildMountainSchema(currentPeak, name, canonicalUrl, currentPrimaryPhoto, descriptionText);
+          }
           if (currentImages.length) {
             buildCarousel(currentImages, currentMeta, name);
           }
