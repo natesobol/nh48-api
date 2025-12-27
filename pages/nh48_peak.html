@@ -1833,8 +1833,11 @@
           currentImages = imgs.slice();
           currentMeta = meta.slice();
 
-          const primaryPhotoIndex = meta.findIndex(item => item && item.isPrimary);
-          const primaryImage = (primaryPhotoIndex >= 0 ? imgs[primaryPhotoIndex] : imgs[0]) || DEFAULT_OG_IMAGE;
+          const primaryImageCandidate = imgs[0];
+          const primaryImage =
+            primaryImageCandidate && !primaryImageCandidate.startsWith('data:')
+              ? primaryImageCandidate
+              : DEFAULT_OG_IMAGE;
           const ogImageEl = document.getElementById('dynamicOgImage');
           if(ogImageEl){
             ogImageEl.setAttribute('content', primaryImage);
