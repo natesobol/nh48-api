@@ -831,6 +831,18 @@
         return null;
       }
 
+      function safeText(value){
+        if(value === undefined || value === null) return '';
+        if(typeof value === 'string' || typeof value === 'number') return String(value);
+        if(typeof value === 'object'){
+          const localized = value.en || value.fr || value.default || value.text;
+          if(typeof localized === 'string' || typeof localized === 'number'){
+            return String(localized);
+          }
+        }
+        return '';
+      }
+
       function parseDimensions(value){
         if(!value) return { width: null, height: null };
         const match = String(value).replace(/×/g, 'x').match(/(\d+)\s*x\s*(\d+)/i);
@@ -1093,7 +1105,7 @@
 
       function buildPhotoAltText(name, meta){
         if(meta && typeof meta === 'object'){
-          const explicit = (meta.altText || meta.alt || '').trim();
+          const explicit = (safeText(meta.altText) || safeText(meta.alt)).trim();
           if(explicit){
             return explicit;
           }
@@ -1534,7 +1546,11 @@
         const canonicalUrl = buildCanonicalUrl(slug, langCode);
         const generatedDescription = t('peak.meta.descriptionTemplate', { name, elevation, prominence, range });
         const metaDescription = primaryMeta
-          ? (primaryMeta.description || primaryMeta.extendedDescription || primaryMeta.altText || primaryMeta.alt || primaryMeta.caption || '').trim()
+          ? (safeText(primaryMeta.description)
+            || safeText(primaryMeta.extendedDescription)
+            || safeText(primaryMeta.altText)
+            || safeText(primaryMeta.alt)
+            || safeText(primaryMeta.caption)).trim()
           : '';
         const descriptionText = metaDescription || generatedDescription;
         const titleText = `${name} — White Mountain National Forest`;
