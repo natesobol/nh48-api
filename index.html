@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="landing.title">NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails</title>
-  <meta name="description" data-i18n="landing.metaDescription" data-i18n-attr="content" content="NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Explore the catalog, routes, and White Mountain trails.">
-  <meta name="keywords" content="NH48, New Hampshire 48, White Mountains, hiking trails, peak data, trail data, long trails, four-thousand-foot peaks, outdoor adventure, hiking catalog">
+  <meta name="description" data-i18n="landing.metaDescription" data-i18n-attr="content" content="NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Browse NH48 peaks of the White Mountains of New Hampshire, explore routes, and access trail details.">
+  <meta name="keywords" content="NH48, New Hampshire 48, White Mountains, hiking trails, peak data, trail data, long trails, four-thousand-foot peaks, outdoor adventure, hiking catalog, NH 48 peaks, White Mountain National Forest">
   <meta name="author" content="Nathan Sobol">
   <meta name="creator" content="Nathan Sobol">
   <meta name="publisher" content="NH48 API">
@@ -13,7 +13,13 @@
   <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <meta name="application-name" content="NH48 API">
   <meta name="theme-color" content="#0a0a0a">
-  <link rel="icon" type="image/png" href="nh48API_logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="mask-icon" href="/favicon.ico" color="#22c55e">
+  <link rel="icon" type="image/png" href="/nh48API_logo.png">
+  <link rel="manifest" href="/manifest_out.json">
   <link rel="canonical" href="https://nh48.info/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,13 +68,13 @@
   <meta property="og:locale:alternate" content="fa_IR">
   <meta property="og:locale:alternate" content="fil_PH">
   <meta property="og:title" data-i18n="landing.ogTitle" data-i18n-attr="content" content="NH48 API – Open Trails and Peaks Data">
-  <meta property="og:description" data-i18n="landing.ogDescription" data-i18n-attr="content" content="Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains.">
+  <meta property="og:description" data-i18n="landing.ogDescription" data-i18n-attr="content" content="Browse NH48 peaks of the White Mountains of New Hampshire, explore trail routes, and access long-distance data for every 4,000-footer.">
   <meta property="og:image" content="https://nh48.info/UI-Elements/og-cover.png">
   <meta property="og:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
   <meta property="og:url" content="https://nh48.info/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="NH48 API – Open Trails and Peaks Data">
-  <meta name="twitter:description" content="Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains.">
+  <meta name="twitter:description" content="Browse NH48 peaks of the White Mountains of New Hampshire, explore trail routes, and access long-distance data for every 4,000-footer.">
   <meta name="twitter:image" content="https://nh48.info/UI-Elements/og-cover.png">
   <meta name="twitter:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
   <script type="application/ld+json">
@@ -101,7 +107,7 @@
           "@id": "https://nh48.info/#homepage",
           "url": "https://nh48.info/",
           "name": "NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails",
-          "description": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on the dataset.",
+          "description": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse NH48 peaks of the White Mountains of New Hampshire, explore White Mountain trails, and build on the dataset.",
           "inLanguage": "en",
           "isPartOf": { "@id": "https://nh48.info/#website" },
           "primaryImageOfPage": {
@@ -178,8 +184,10 @@
       min-height: 100vh;
       position: relative;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 32px;
       padding: 32px 16px;
     }
     main {
@@ -393,6 +401,7 @@
     @media (max-width: 640px) {
       body {
         padding-top: 120px;
+        gap: 20px;
       }
       .lang-bar {
         left: 0;
@@ -491,6 +500,7 @@
         display: none;
       }
     }
+
   </style>
 </head>
 <body>
@@ -518,6 +528,7 @@
     </section>
     <p class="meta" data-i18n="landing.author">Author: Nathan Sobol</p>
   </main>
+
   <section class="seo-gallery" aria-label="NH48 UI element image descriptions">
     <h2 class="visually-hidden">NH48 UI element image descriptions</h2>
     <div class="seo-gallery-grid">
@@ -688,6 +699,7 @@
       localStorage.setItem('nh48_lang', 'en');
     }
   </script>
+  <script src="/js/quick-browse-footer.js" defer></script>
   <script type="module" src="/js/i18n.js"></script>
   <script src="/js/splash.js" defer></script>
   <script type="module">
