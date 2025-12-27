@@ -1,3 +1,6 @@
+def _is_numeric_only(value) -> bool:
+    """Return True if the value is a string and only contains digits (ignoring whitespace)."""
+    return isinstance(value, str) and value.strip().isdigit()
 """Enhanced manifest generator for the NH48 photo API.
 
 This script extends the original manifest generator by automatically
@@ -29,6 +32,30 @@ DEFAULT_PHOTO_BASE_URL = os.getenv(
     "https://photos.nh48.info",
 )
 
+# Fallback IPTC/XMP values used when metadata cannot be found in the image
+# These values come from the supplied screenshot and are applied when Bridge
+# metadata is absent or empty for a given field.
+FALLBACK_KEYWORDS = [
+    "White Mountain National Forest",
+    "WMNF",
+    "New Hampshire mountains",
+    "Maine mountains",
+    "White Mountains",
+    "Appalachian Trail",
+    "Franconia Range",
+    "Pemigewasset Wilderness",
+    "Franconia Notch",
+    "Kancamagus Highway",
+    "4,000-footers",
+    "hiking trails",
+    "landscape photography",
+    "mountain photography",
+    "scenic views",
+    "alpine peaks",
+]
+FALLBACK_IPTC_SUBJECT_CODE = "06007000"
+FALLBACK_INTELLECTUAL_GENRE = "Travel / Nature / Landscape"
+
 
 def _pick_first(raw: Dict[str, object], keys: List[str]) -> Optional[object]:
     """Return the first non-empty value for the provided keys."""
@@ -40,8 +67,7 @@ def _pick_first(raw: Dict[str, object], keys: List[str]) -> Optional[object]:
 
 
 def _normalize_keywords(value: object) -> List[str]:
-    """Normalize Bridge keywords into a list of unique, non-empty strings."""
-
+    """Normalize Bridge keywords into a list of unique, trimmed strings."""
     keywords: List[str] = []
     if isinstance(value, list):
         for item in value:
@@ -52,7 +78,6 @@ def _normalize_keywords(value: object) -> List[str]:
     elif isinstance(value, str):
         keywords.extend(re.split(r"[,;]", value))
     normalized = [kw.strip() for kw in keywords if kw and kw.strip()]
-    # Preserve order while removing duplicates
     seen = set()
     unique_keywords: List[str] = []
     for kw in normalized:
@@ -108,18 +133,31 @@ def _collect_location(raw: Dict[str, object], prefixes: List[str]) -> Dict[str, 
         if country:
             location["countryName"] = country
 
-    for key in location:
-        if isinstance(location[key], list):
-            location[key] = location[key][0] if location[key] else ""
-        if location[key] is None:
-            location[key] = ""
+    for k in location:
+        if isinstance(location[k], list):
+            location[k] = location[k][0] if location[k] else ""
+        if location[k] is None:
+            location[k] = ""
         else:
-            location[key] = str(location[key])
+            location[k] = str(location[k])
+
+    # Hard-code canonical region fields for these photos. Prefer Bridge values
+    # when present for other fields, but ensure these geographic fields are
+    # consistently set for the White Mountains corpus.
+    location["city"] = "White Mountain National Forest"
+    location["provinceState"] = "New Hampshire"
+    location["countryName"] = "United States"
+    location["countryIsoCode"] = "US"
+    location["worldRegion"] = "North America"
+
     return location
 
 
-def _read_bridge_xmp(file_path: str) -> Dict[str, object]:
-    """Read Bridge IPTC/XMP metadata from sidecar or embedded XMP via ExifTool."""
+def _read_bridge_xmp(file_path: str, debug: bool = False) -> Dict[str, object]:
+    """Read Bridge IPTC/XMP metadata from sidecar or embedded XMP via ExifTool.
+
+    If `debug` is True, the raw ExifTool JSON output will be printed for inspection.
+    """
 
     targets = []
     sidecar_path = f"{file_path}.xmp"
@@ -139,6 +177,12 @@ def _read_bridge_xmp(file_path: str) -> Dict[str, object]:
         except FileNotFoundError:
             return {}
         if result.stdout:
+            if debug:
+                try:
+                    print(f"[DEBUG] ExifTool output for {target}:")
+                    print(result.stdout)
+                except Exception:
+                    pass
             try:
                 data = json.loads(result.stdout)
                 if isinstance(data, list) and data:
@@ -271,10 +315,20 @@ def _curate_bridge_metadata(raw: Dict[str, object]) -> Dict[str, object]:
         "featuredOrgName": "",
     }
 
+    def _find_any_by_substr(keys_substrings: List[str]) -> Optional[object]:
+        for key, value in raw.items():
+            kl = key.lower()
+            for s in keys_substrings:
+                if s in kl and value not in (None, ""):
+                    return value
+        return None
+
+
     creator = _pick_first(raw, ["XMP-dc:Creator", "IPTC:By-line"])
     if isinstance(creator, list):
         creator = creator[0] if creator else ""
-    curated["creator"] = creator or ""
+    # Default to site photographer when Bridge/EXIF doesn't supply a creator
+    curated["creator"] = creator or "NATHAN SOBOL"
 
     curated["creatorJobTitle"] = _pick_first(raw, ["XMP-iptcCore:CreatorJobTitle"]) or ""
     curated["creatorEmail"] = _pick_first(raw, ["XMP-iptcCore:CreatorContactInfoCiEmailWork"]) or ""
@@ -283,21 +337,68 @@ def _curate_bridge_metadata(raw: Dict[str, object]) -> Dict[str, object]:
         ["XMP-iptcCore:CreatorWorkURL", "XMP-iptcCore:CreatorContactInfoCiUrlWork"],
     ) or ""
 
+    # Fallbacks using substring searches for fields that may be stored under
+    # different vendor namespaces (Lightroom, Adobe, other XMP schemas).
+    if not curated.get("creatorJobTitle"):
+        val = _find_any_by_substr(["by-linetitle", "creatorjobtitle", "jobtitle", "by-line-title"])
+        if val:
+            curated["creatorJobTitle"] = val
+    if not curated.get("creatorEmail"):
+        val = _find_any_by_substr(["email", "e-mail", "creatorcontactinfo", "creatorcontact"])
+        if val:
+            curated["creatorEmail"] = val
+    if not curated.get("creatorWebsite"):
+        val = _find_any_by_substr(["creatorworkurl", "creatorcontactinfo", "website", "url", "uri"])
+        if val:
+            curated["creatorWebsite"] = val
+
     curated["headline"] = _pick_first(
         raw,
-        ["XMP-iptcCore:Headline", "XMP-dc:Title", "IPTC:Headline"],
+        [
+            "XMP-iptcCore:Headline",
+            "XMP-dc:Title",
+            "IPTC:Headline",
+            "IPTC:ObjectName",
+            "XMP-photoshop:Headline",
+        ],
     ) or ""
 
     curated["description"] = _pick_first(
         raw,
-        ["XMP-iptcCore:Description", "XMP-dc:Description", "IPTC:Caption-Abstract"],
+        [
+            "XMP-iptcCore:Description",
+            "XMP-dc:Description",
+            "IPTC:Caption-Abstract",
+            "IPTC:Caption",
+            "XMP-photoshop:Caption",
+        ],
     ) or ""
 
     curated["altText"] = _extract_alt_text(
-        _pick_first(raw, ["XMP-iptcCore:AltTextAccessibility"])
+        _pick_first(
+            raw,
+            [
+                "XMP-iptcCore:AltTextAccessibility",
+                "XMP-dc:Title",
+                "IPTC:Headline",
+                "IPTC:ObjectName",
+            ],
+        )
     )
 
-    curated["extendedDescription"] = _extract_extended_description(raw)
+    # Prefer explicit extended description tags, then fall back to caption/description
+    curated["extendedDescription"] = _extract_extended_description(raw) or _pick_first(
+        raw, ["XMP-iptcCore:ExtDescrAccessibility", "XMP-iptcCore:ExtDescr", "IPTC:Caption-Abstract", "XMP-dc:Description"]
+    ) or ""
+
+    # Treat numeric-only or trivial numeric Bridge values as absent for SEO purposes.
+    for seo_key in ("headline", "description", "altText", "extendedDescription"):
+        val = curated.get(seo_key)
+        try:
+            if isinstance(val, str) and val.strip().isdigit():
+                curated[seo_key] = ""
+        except Exception:
+            pass
 
     keywords_candidates = []
     kw1 = _pick_first(raw, ["IPTC:Keywords"])
@@ -318,17 +419,64 @@ def _curate_bridge_metadata(raw: Dict[str, object]) -> Dict[str, object]:
             deduped_keywords.append(kw)
     curated["keywords"] = deduped_keywords
 
+    # Additional keyword sources used by Lightroom/Bridge
+    if not curated["keywords"]:
+        k = _pick_first(raw, ["XMP-lr:HierarchicalSubject", "XMP-lr:Keywords", "XMP-photoshop:Keywords", "XMP-iptcCore:Subject"])
+        if k is not None:
+            curated["keywords"] = _normalize_keywords(k)
+
     curated["intellectualGenre"] = _pick_first(
         raw, ["IPTC:IntellectualGenre", "XMP-iptcCore:IntellectualGenre"]
     ) or ""
     curated["iptcSubjectCode"] = _pick_first(
         raw, ["IPTC:SubjectReference", "XMP-iptcExt:SubjectCode"]
     ) or ""
+    # Try additional keys that sometimes carry subject codes
+    if not curated["iptcSubjectCode"]:
+        val = _find_any_by_substr(["subjectcode", "subjectreference", "subjectref", "subjectcode"]) 
+        if val:
+            curated["iptcSubjectCode"] = val
+
     curated["creditLine"] = _pick_first(raw, ["XMP-photoshop:Credit", "IPTC:Credit"]) or ""
+    # Fallback to artist/by-line if no explicit credit is set
+    if not curated["creditLine"]:
+        curated["creditLine"] = _pick_first(raw, ["IFD0:Artist", "IPTC:By-line"]) or ""
+
     curated["source"] = _pick_first(raw, ["XMP-photoshop:Source", "IPTC:Source"]) or ""
+    # Map provenance or derived-from fields to source when present
+    if not curated["source"]:
+        curated["source"] = _pick_first(raw, ["XMP-dcterms:Provenance", "XMP-dcterms:provenance"]) or _find_any_by_substr(["provenance", "derivedfrom", "origin"]) or ""
+    # Additional fallbacks using substring searches
+    if not curated["intellectualGenre"]:
+        val = _find_any_by_substr(["intellectualgenre", "genre"])
+        if val:
+            curated["intellectualGenre"] = val
+    if not curated["iptcSubjectCode"]:
+        val = _find_any_by_substr(["subjectcode", "subjectreference", "subjectref"])
+        if val:
+            curated["iptcSubjectCode"] = val
+    if not curated["creditLine"]:
+        val = _find_any_by_substr(["credit", "creditline", "by-line", "by-line"])
+        if val:
+            curated["creditLine"] = val
+    if not curated["source"]:
+        val = _find_any_by_substr(["provenance", "source", "derivedfrom", "origin"])
+        if val:
+            curated["source"] = val
+    # If keywords/intellectualGenre/subject code are missing, fill from
+    # screenshot-provided fallbacks to ensure manifests have sensible defaults.
+    if not curated.get("keywords"):
+        curated["keywords"] = FALLBACK_KEYWORDS.copy()
+    if not curated.get("iptcSubjectCode"):
+        curated["iptcSubjectCode"] = FALLBACK_IPTC_SUBJECT_CODE
+    if not curated.get("intellectualGenre"):
+        curated["intellectualGenre"] = FALLBACK_INTELLECTUAL_GENRE
     curated["copyrightNotice"] = _pick_first(
         raw, ["IPTC:CopyrightNotice", "XMP-dc:Rights"]
     ) or ""
+    # Default copyright notice when absent
+    if not curated["copyrightNotice"]:
+        curated["copyrightNotice"] = "NEW HAMPSHIRE PHOTOGRAPHY"
     curated["copyrightStatus"] = _pick_first(raw, ["XMP-xmpRights:Marked"]) or ""
     curated["rightsUsageTerms"] = _pick_first(raw, ["XMP-xmpRights:UsageTerms"]) or ""
 
@@ -336,6 +484,9 @@ def _curate_bridge_metadata(raw: Dict[str, object]) -> Dict[str, object]:
     curated["locationShown"] = _collect_location(raw, ["XMP-iptcExt:LocationShown"])
 
     curated["featuredOrgName"] = _pick_first(raw, ["XMP-iptcExt:OrganisationInImageName"]) or ""
+    # Force a canonical featured organization for all photos so downstream
+    # systems (and the web UI) can rely on a single account handle.
+    curated["featuredOrgName"] = "@nate_dumps_pics"
 
     for key, value in curated.items():
         if key in {"locationCreated", "locationShown", "keywords"}:
@@ -594,6 +745,7 @@ def generate_manifest(
     include_iptc_raw: bool = False,
     bridge_only: bool = False,
     write_photo_metadata: bool = False,
+    debug: bool = False,
 ) -> Dict:
     """
     Generates or updates the 'photos' arrays for each peak in the API JSON.
@@ -641,11 +793,35 @@ def generate_manifest(
                     slug_prefix = slug.replace('-', ' ').strip().lower()
                     if base_name.lower().startswith(slug_prefix):
                         base_name = base_name[len(slug_prefix):].strip()
-                    alt_candidate = meta.get('title') or meta.get('subject') or base_name
-                    alt_candidate = alt_candidate.strip() if isinstance(alt_candidate, str) else ''
 
-                    raw_bridge = _read_bridge_xmp(file_path)
+                    # If the candidate is a number (e.g. '001'), use the peakName or slug instead
+                    alt_candidate = meta.get('title') or meta.get('subject') or base_name
+                    if isinstance(alt_candidate, str):
+                        alt_candidate = alt_candidate.strip()
+                        # If it's all digits (or just a short number), replace with peakName or slug
+                        if alt_candidate.isdigit() or (len(alt_candidate) <= 3 and alt_candidate.replace(' ', '').isdigit()):
+                            alt_candidate = peak.get('peakName') or slug.replace('-', ' ').title()
+                    else:
+                        alt_candidate = peak.get('peakName') or slug.replace('-', ' ').title()
+
+                    raw_bridge = _read_bridge_xmp(file_path, debug=debug)
                     curated_iptc = _curate_bridge_metadata(raw_bridge)
+
+                    if debug:
+                        # If curated IPTC fields are empty but raw_bridge contains keys,
+                        # print a concise summary to help mapping issues.
+                        missing = (
+                            not curated_iptc.get("headline")
+                            and not curated_iptc.get("description")
+                            and not curated_iptc.get("altText")
+                            and not curated_iptc.get("extendedDescription")
+                        )
+                        if missing and raw_bridge:
+                            try:
+                                keys = list(raw_bridge.keys())
+                                print(f"[DEBUG] Raw IPTC/XMP keys for {file_path}: {keys[:40]}")
+                            except Exception:
+                                pass
 
                     ctx = {
                         "peakName": peak.get('peakName') or slug.replace('-', ' ').title(),
@@ -654,38 +830,35 @@ def generate_manifest(
                         "state": "New Hampshire",
                         "viewHint": "",
                     }
+                    # Prepare generated SEO fields unless explicitly disabled.
                     generated_fields = {} if bridge_only else _generate_seo_fields(ctx)
 
-                    headline = curated_iptc.get("headline") or generated_fields.get("headline") or alt_candidate
-                    description = (
-                        curated_iptc.get("description")
-                        or generated_fields.get("description")
-                        or alt_candidate
-                    )
-                    alt_text = (
-                        curated_iptc.get("altText")
-                        or generated_fields.get("altText")
-                        or alt_candidate
-                    )
-                    extended_description = (
-                        curated_iptc.get("extendedDescription")
-                        or generated_fields.get("extendedDescription")
-                        or alt_candidate
-                    )
+                    # For each SEO field, use Bridge value only if not missing, not empty, and not numeric-only
+                    def resolve_seo_field(field, alt_candidate):
+                        bridge_val = curated_iptc.get(field)
+                        template_val = generated_fields.get(field) if generated_fields else None
+                        if bridge_val is not None and str(bridge_val).strip() != "" and not _is_numeric_only(bridge_val):
+                            return bridge_val, 'bridge'
+                        elif template_val is not None and str(template_val).strip() != "":
+                            return template_val, 'generated'
+                        else:
+                            return alt_candidate, 'alt_candidate'
 
-                    for field_key, curated_value, generated_value in (
-                        ("headline", curated_iptc.get("headline"), generated_fields.get("headline") if generated_fields else None),
-                        ("description", curated_iptc.get("description"), generated_fields.get("description") if generated_fields else None),
-                        ("altText", curated_iptc.get("altText"), generated_fields.get("altText") if generated_fields else None),
-                        (
-                            "extendedDescription",
-                            curated_iptc.get("extendedDescription"),
-                            generated_fields.get("extendedDescription") if generated_fields else None,
-                        ),
+                    headline, headline_src = resolve_seo_field("headline", alt_candidate)
+                    description, description_src = resolve_seo_field("description", alt_candidate)
+                    alt_text, alt_text_src = resolve_seo_field("altText", alt_candidate)
+                    extended_description, extended_description_src = resolve_seo_field("extendedDescription", alt_candidate)
+
+                    # Update counts for reporting
+                    for field_key, src in (
+                        ("headline", headline_src),
+                        ("description", description_src),
+                        ("altText", alt_text_src),
+                        ("extendedDescription", extended_description_src),
                     ):
-                        if curated_value:
+                        if src == 'bridge':
                             bridge_counts[field_key] += 1
-                        elif generated_value:
+                        elif src == 'generated':
                             generated_counts[field_key] += 1
                     # Build tags: include slug and derived descriptors
                     tags: List[str] = [slug]
@@ -772,7 +945,7 @@ def main():
             "(defaults to PHOTO_BASE_URL env var)."
         ),
     )
-    parser.add_argument("--output", required=True, help="Path to write the updated API JSON file.")
+    parser.add_argument("--output", required=False, help="Path to write the updated API JSON file. Defaults to the input API file if omitted.")
     parser.add_argument("--append", action="store_true", help="If set, existing photos arrays are preserved and new photo files are appended.")
     parser.add_argument(
         "--include-iptc-raw",
@@ -792,6 +965,11 @@ def main():
             "via ExifTool so downloads include the metadata."
         ),
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Print debug information (raw ExifTool output and key summaries).",
+    )
     args = parser.parse_args()
     updated = generate_manifest(
         args.api,
@@ -801,10 +979,12 @@ def main():
         include_iptc_raw=args.include_iptc_raw,
         bridge_only=args.bridge_only,
         write_photo_metadata=args.write_photo_metadata,
+        debug=args.debug,
     )
-    with open(args.output, 'w') as out_file:
+    output_path = args.output or args.api
+    with open(output_path, 'w') as out_file:
         json.dump(updated, out_file, indent=2)
-    print(f"Manifest updated successfully. Output written to {args.output}")
+    print(f"Manifest updated successfully. Output written to {output_path}")
 
 
 if __name__ == "__main__":
