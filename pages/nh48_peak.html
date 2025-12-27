@@ -7,24 +7,9 @@
     <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak details, mountain routes, White Mountains data, hiking API, peak metadata, mountain photos">
     <meta name="robots" content="noindex,follow">
     <link id="dynamicCanonical" rel="canonical" href="https://nh48.info/peaks">
-    <link rel="alternate" hreflang="en" href="https://nh48.info/">
-    <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
-    <link rel="alternate" hreflang="fr" href="https://nh48.info/i18n/fr.html">
-    <link rel="alternate" hreflang="de" href="https://nh48.info/i18n/de.html">
-    <link rel="alternate" hreflang="zh" href="https://nh48.info/i18n/zh.html">
-    <link rel="alternate" hreflang="zh-Hans" href="https://nh48.info/i18n/zh-Hans.html">
-    <link rel="alternate" hreflang="ja" href="https://nh48.info/i18n/ja.html">
-    <link rel="alternate" hreflang="ar" href="https://nh48.info/i18n/ar.html">
-    <link rel="alternate" hreflang="hi-IN" href="https://nh48.info/i18n/hi.html">
-    <link rel="alternate" hreflang="pt" href="https://nh48.info/i18n/pt.html">
-    <link rel="alternate" hreflang="ru" href="https://nh48.info/i18n/ru.html">
-    <link rel="alternate" hreflang="id" href="https://nh48.info/i18n/id.html">
-    <link rel="alternate" hreflang="it" href="https://nh48.info/i18n/it.html">
-    <link rel="alternate" hreflang="ko" href="https://nh48.info/i18n/ko.html">
-    <link rel="alternate" hreflang="tr" href="https://nh48.info/i18n/tr.html">
-    <link rel="alternate" hreflang="vi" href="https://nh48.info/i18n/vi.html">
-    <link rel="alternate" hreflang="pl" href="https://nh48.info/i18n/pl.html">
-    <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
+    <link id="hreflangEn" rel="alternate" hreflang="en" href="https://nh48.info/peaks">
+    <link id="hreflangFr" rel="alternate" hreflang="fr" href="https://nh48.info/fr/peaks">
+    <link id="hreflangDefault" rel="alternate" hreflang="x-default" href="https://nh48.info/peaks">
     <meta property="og:type" content="website">
     <meta id="dynamicOgUrl" property="og:url" content="https://nh48.info/peaks">
     <meta id="dynamicOgTitle" property="og:title" content="NH48 API – Peak details, routes &amp; photos">
@@ -38,6 +23,7 @@
     <meta id="dynamicTwitterDescription" name="twitter:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta id="dynamicTwitterImage" name="twitter:image" content="https://nh48.info/nh48-preview.png">
     <script id="peakJsonLd" type="application/ld+json"></script>
+    <script id="breadcrumbJsonLd" type="application/ld+json"></script>
     
     <title id="dynamicTitle">NH48 API – Peak details, routes &amp; photos</title>
     <link rel="icon" type="image/png" href="../nh48API_logo.png">
@@ -46,6 +32,28 @@
       const requestedLang = params.get('lang');
       if (requestedLang) {
         localStorage.setItem('nh48_lang', requestedLang);
+      }
+
+      const slugParam = params.get('slug');
+      const langForCanonical = (requestedLang || localStorage.getItem('nh48_lang') || '').toLowerCase();
+      const isFrench = langForCanonical.startsWith('fr');
+      const canonicalBaseEarly = isFrench ? 'https://nh48.info/fr/peaks' : 'https://nh48.info/peaks';
+      const canonicalUrlEarly = slugParam ? `${canonicalBaseEarly}/${encodeURIComponent(slugParam)}/` : `${canonicalBaseEarly}/`;
+      const canonicalEl = document.getElementById('dynamicCanonical');
+      if (canonicalEl) {
+        canonicalEl.setAttribute('href', canonicalUrlEarly);
+      }
+      const hreflangEnEarly = document.getElementById('hreflangEn');
+      if (hreflangEnEarly) {
+        hreflangEnEarly.setAttribute('href', slugParam ? `https://nh48.info/peaks/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/peaks/');
+      }
+      const hreflangFrEarly = document.getElementById('hreflangFr');
+      if (hreflangFrEarly) {
+        hreflangFrEarly.setAttribute('href', slugParam ? `https://nh48.info/fr/peaks/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/fr/peaks/');
+      }
+      const hreflangDefaultEarly = document.getElementById('hreflangDefault');
+      if (hreflangDefaultEarly) {
+        hreflangDefaultEarly.setAttribute('href', slugParam ? `https://nh48.info/peaks/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/peaks/');
       }
     </script>
     <script type="module" src="../js/i18n.js"></script>
@@ -150,6 +158,37 @@
       }
       @media(max-width:640px){
         .wrap{ padding:12px; }
+      }
+      .breadcrumb-nav{
+        margin:0 0 12px 0;
+        color:var(--muted);
+        font-size:0.9rem;
+      }
+      .breadcrumb-nav ol{
+        list-style:none;
+        padding:0;
+        margin:0;
+        display:flex;
+        flex-wrap:wrap;
+        gap:6px;
+        align-items:center;
+      }
+      .breadcrumb-nav li{
+        display:flex;
+        align-items:center;
+        gap:6px;
+      }
+      .breadcrumb-nav li+li::before{
+        content:'›';
+        color:var(--muted);
+        opacity:0.5;
+      }
+      .breadcrumb-nav a{
+        color:var(--muted);
+        text-decoration:none;
+      }
+      .breadcrumb-nav a:hover{
+        color:var(--accent);
       }
       .controls-row{
         display:flex;
@@ -518,16 +557,20 @@
         word-break:break-word;
       }
 
+      h1#peakTitle{
+        margin:12px 0 6px 0;
+        font-size:1.75rem;
+      }
       .section-title{
         margin:20px 0 12px 0;
-        font-size:0.95rem;
-        font-weight:600;
+        font-size:1.05rem;
+        font-weight:700;
         color:var(--accent);
         text-transform:uppercase;
         letter-spacing:0.5px;
       }
       @media(max-width:640px){
-        .section-title{ margin:16px 0 10px 0; font-size:0.85rem; }
+        .section-title{ margin:16px 0 10px 0; font-size:0.95rem; }
       }
       .info-grid{
         display:grid;
@@ -621,10 +664,27 @@
           <label for="unitsSelect" data-i18n="common.unitsLabel">Units</label>
           <select id="unitsSelect" data-i18n="common.units" data-i18n-attr="aria-label" aria-label="Select units">
             <option value="feet" data-i18n="common.unitsFeet">Feet</option>
-            <option value="meters" data-i18n="common.unitsMeters">Meters</option>
+          <option value="meters" data-i18n="common.unitsMeters">Meters</option>
           </select>
         </div>
       </div>
+      <nav class="breadcrumb-nav" aria-label="Breadcrumb" id="breadcrumbNav">
+        <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="/" id="breadcrumbHomeLink"><span itemprop="name" data-i18n="common.home">Home</span></a>
+            <meta itemprop="position" content="1">
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="/catalog" id="breadcrumbCatalogLink"><span itemprop="name" data-i18n="peak.catalog">Peak Catalog</span></a>
+            <meta itemprop="position" content="2">
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name" id="breadcrumbCurrent" data-i18n="peak.loading">Loading…</span>
+            <meta id="breadcrumbCurrentUrl" itemprop="item" content="">
+            <meta itemprop="position" content="3">
+          </li>
+        </ol>
+      </nav>
       <h1 id="peakTitle" data-i18n="peak.loading">Loading…</h1>
 
       <!-- MEDIA / CAROUSEL ---------------------------------------------------->
@@ -655,17 +715,25 @@
       </div>
 
       <!-- OTHER SECTIONS ------------------------------------------------------>
-      <div class="section-title" data-i18n="peak.section.routes">Hiking Routes</div>
-      <div class="info-grid" id="routesGrid" hidden></div>
+      <section aria-labelledby="routesHeading">
+        <h2 id="routesHeading" class="section-title" data-i18n="peak.section.routes">Hiking Routes</h2>
+        <div class="info-grid" id="routesGrid" hidden></div>
+      </section>
 
-      <div class="section-title" data-i18n="peak.section.trails">Associated Trails</div>
-      <div class="info-grid" id="trailNamesGrid" hidden></div>
+      <section aria-labelledby="trailNamesHeading">
+        <h2 id="trailNamesHeading" class="section-title" data-i18n="peak.section.trails">Associated Trails</h2>
+        <div class="info-grid" id="trailNamesGrid" hidden></div>
+      </section>
 
-      <div class="section-title" data-i18n="peak.section.terrain">Trail &amp; Terrain</div>
-      <div class="info-grid" id="terrainGrid" hidden></div>
+      <section aria-labelledby="terrainHeading">
+        <h2 id="terrainHeading" class="section-title" data-i18n="peak.section.terrain">Trail &amp; Terrain</h2>
+        <div class="info-grid" id="terrainGrid" hidden></div>
+      </section>
 
-      <div class="section-title" data-i18n="peak.section.conditions">Conditions &amp; Access</div>
-      <div class="info-grid" id="conditionsGrid" hidden></div>
+      <section aria-labelledby="conditionsHeading">
+        <h2 id="conditionsHeading" class="section-title" data-i18n="peak.section.conditions">Conditions &amp; Access</h2>
+        <div class="info-grid" id="conditionsGrid" hidden></div>
+      </section>
     </div>
 
     <script>
@@ -702,6 +770,9 @@
       }
 
       const BASE_CANONICAL = 'https://nh48.info/peaks';
+      const BASE_CANONICAL_FR = 'https://nh48.info/fr/peaks';
+      const HOME_URL = 'https://nh48.info/';
+      const CATALOG_URL = 'https://nh48.info/catalog';
       const DEFAULT_OG_IMAGE = 'https://nh48.info/nh48API_logo.png';
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
       const PHOTO_PATH_PREFIX = '/nh48-photos/';
@@ -860,6 +931,109 @@
         const translated = t(`values.exposure.${normalized}`);
         if(!translated || translated.startsWith('values.exposure')) return value;
         return trimmed.replace(match[1], translated);
+      }
+
+      function getSeoLang(){
+        const params = new URLSearchParams(window.location.search);
+        const paramLang = params.get('lang');
+        const normalizedParam = paramLang ? paramLang.toLowerCase() : '';
+        if(normalizedParam.startsWith('fr')) return 'fr';
+
+        const storedLang = localStorage.getItem('nh48_lang');
+        if(storedLang && storedLang.toLowerCase().startsWith('fr')) return 'fr';
+
+        const currentLang = window.NH48_I18N && window.NH48_I18N.getLang ? window.NH48_I18N.getLang() : 'en';
+        if(currentLang && currentLang.toLowerCase().startsWith('fr')) return 'fr';
+        return 'en';
+      }
+
+      function buildCanonicalUrl(slug, langCode){
+        const base = langCode === 'fr' ? BASE_CANONICAL_FR : BASE_CANONICAL;
+        if(!slug){
+          return `${base}/`;
+        }
+        return `${base}/${encodeURIComponent(slug)}/`;
+      }
+
+      function updateHreflangLinks(slug){
+        const enLink = document.getElementById('hreflangEn');
+        const frLink = document.getElementById('hreflangFr');
+        const defaultLink = document.getElementById('hreflangDefault');
+        const enUrl = buildCanonicalUrl(slug, 'en');
+        const frUrl = buildCanonicalUrl(slug, 'fr');
+
+        if(enLink){
+          enLink.setAttribute('href', enUrl);
+        }
+        if(frLink){
+          frLink.setAttribute('href', frUrl);
+        }
+        if(defaultLink){
+          defaultLink.setAttribute('href', enUrl);
+        }
+      }
+
+      function updateBreadcrumbNav(name, canonicalUrl){
+        const current = document.getElementById('breadcrumbCurrent');
+        if(current){
+          current.textContent = name;
+          if(current.hasAttribute('data-i18n')){
+            current.removeAttribute('data-i18n');
+          }
+        }
+        const currentUrlMeta = document.getElementById('breadcrumbCurrentUrl');
+        if(currentUrlMeta && canonicalUrl){
+          currentUrlMeta.setAttribute('content', canonicalUrl);
+        }
+        const catalogLink = document.getElementById('breadcrumbCatalogLink');
+        if(catalogLink){
+          catalogLink.href = CATALOG_URL;
+        }
+        const homeLink = document.getElementById('breadcrumbHomeLink');
+        if(homeLink){
+          const langCode = getSeoLang();
+          homeLink.href = langCode === 'fr' ? `${HOME_URL}fr/` : HOME_URL;
+        }
+      }
+
+      function setBreadcrumbJsonLd(name, canonicalUrl){
+        const langCode = getSeoLang();
+        const homeUrl = langCode === 'fr' ? `${HOME_URL}fr/` : HOME_URL;
+        const homeLabel = window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t('common.home') : 'Home';
+        const catalogLabel = window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t('peak.catalog') : 'Peak Catalog';
+        const breadcrumbSchema = {
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: homeLabel,
+              item: homeUrl
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: catalogLabel,
+              item: CATALOG_URL
+            },
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name,
+              item: canonicalUrl
+            }
+          ]
+        };
+
+        let ld = document.getElementById('breadcrumbJsonLd');
+        if(!ld){
+          ld = document.createElement('script');
+          ld.type = 'application/ld+json';
+          ld.id = 'breadcrumbJsonLd';
+          document.head.appendChild(ld);
+        }
+        ld.textContent = JSON.stringify(breadcrumbSchema);
       }
 
       function formatFeetValue(value){
@@ -1336,7 +1510,8 @@
         const prominence = p['Prominence (ft)'] || t('common.unknown');
         const range = p['Range / Subrange'] || 'White Mountains';
 
-        const canonicalUrl = slug ? `${BASE_CANONICAL}/${encodeURIComponent(slug)}/` : BASE_CANONICAL;
+        const langCode = getSeoLang();
+        const canonicalUrl = buildCanonicalUrl(slug, langCode);
         const titleText = t('peak.meta.titleTemplate', { name, elevation });
         const descriptionText = t('peak.meta.descriptionTemplate', { name, elevation, prominence, range });
 
@@ -1377,6 +1552,10 @@
           twitterUrlEl.setAttribute('content', canonicalUrl);
         }
         setMeta('keywords', `NH48 API, ${name} peak details, New Hampshire 4000 footers, White Mountains routes, hiking data, peak metadata, mountain photos`);
+
+        updateHreflangLinks(slug);
+        updateBreadcrumbNav(name, canonicalUrl);
+        setBreadcrumbJsonLd(name, canonicalUrl);
 
         return { canonicalUrl, descriptionText };
       }

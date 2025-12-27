@@ -8,6 +8,7 @@ const TEMPLATE_PATH = path.join(ROOT, "templates", "peak-page-template.html");
 const DATA_PATH = path.join(ROOT, "data", "nh48.json");
 const OUTPUT_DIR = path.join(ROOT, "peaks");
 const CANONICAL_BASE = "https://nh48.info/peaks";
+const HOME_URL = "https://nh48.info/";
 const APP_BASE = "https://nh48.info/pages/nh48_peak.html";
 const DEFAULT_CATALOG_URL = "https://nh48.info/catalog";
 const FALLBACK_IMAGE = "https://nh48.info/nh48-preview.png";
@@ -23,6 +24,7 @@ const LANGUAGE_CONFIGS = [
     hreflang: "en",
     outputDir: OUTPUT_DIR,
     canonicalBase: CANONICAL_BASE,
+    homeUrl: "https://nh48.info/",
     catalogUrl: DEFAULT_CATALOG_URL,
     titleSuffix: "NH 48 Peak Guide",
     descriptionTemplate: (name) => `${name} guide with route details, elevation, and photos.`,
@@ -53,6 +55,8 @@ const LANGUAGE_CONFIGS = [
       noRoutes: "No standard routes are listed for this peak.",
       noRelated: "No related trails listed yet.",
       routeSuffix: " route",
+      breadcrumbHome: "Home",
+      breadcrumbCatalog: "Peak Catalog",
     },
     appUrl: (slug) => `${APP_BASE}?slug=${slug}`,
   },
@@ -61,6 +65,7 @@ const LANGUAGE_CONFIGS = [
     hreflang: "fr",
     outputDir: path.join(ROOT, "fr", "peaks"),
     canonicalBase: "https://nh48.info/fr/peaks",
+    homeUrl: "https://nh48.info/fr/",
     catalogUrl: DEFAULT_CATALOG_URL,
     titleSuffix: "Guide des sommets NH48",
     descriptionTemplate: (name) => `${name} : guide avec itinéraires, altitude et photos.`,
@@ -91,6 +96,8 @@ const LANGUAGE_CONFIGS = [
       noRoutes: "Aucun itinéraire standard n’est listé pour ce sommet.",
       noRelated: "Aucun sentier associé pour le moment.",
       routeSuffix: " itinéraire",
+      breadcrumbHome: "Accueil",
+      breadcrumbCatalog: "Catalogue des sommets",
     },
     appUrl: (slug) => `${APP_BASE}?slug=${slug}&lang=fr`,
   },
@@ -233,7 +240,7 @@ const buildGallery = (photos, peakName) => {
 
 const escapeScriptJson = (value) => String(value).replace(/<\/script/gi, "<\\/script");
 
-const buildBreadcrumbJson = (pageName, canonicalUrl) => JSON.stringify(
+const buildBreadcrumbJson = (pageName, canonicalUrl, catalogUrl, homeUrl, labels) => JSON.stringify(
   {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -241,12 +248,18 @@ const buildBreadcrumbJson = (pageName, canonicalUrl) => JSON.stringify(
       {
         "@type": "ListItem",
         position: 1,
-        name: "NH48 Peak Catalog",
-        item: "https://nh48.info/catalog",
+        name: labels?.breadcrumbHome || "Home",
+        item: homeUrl || HOME_URL,
       },
       {
         "@type": "ListItem",
         position: 2,
+        name: labels?.breadcrumbCatalog || "NH48 Peak Catalog",
+        item: catalogUrl || DEFAULT_CATALOG_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
         name: pageName,
         item: canonicalUrl,
       },
@@ -481,6 +494,9 @@ const main = () => {
           CANONICAL_FR_URL: `https://nh48.info/fr/peaks/${slug}/`,
           OG_IMAGE: primaryPhoto.url,
           PEAK_NAME: escapeHtml(localizedName),
+          HOME_URL: lang.homeUrl || HOME_URL,
+          BREADCRUMB_HOME: escapeHtml(lang.labels.breadcrumbHome || "Home"),
+          BREADCRUMB_CATALOG: escapeHtml(lang.labels.breadcrumbCatalog || "Peak Catalog"),
           ELEVATION: escapeHtml(elevationText),
           PROMINENCE: escapeHtml(prominenceText),
           RANGE: escapeHtml(range),
@@ -523,7 +539,9 @@ const main = () => {
               localizedName
             )
           ),
-          BREADCRUMB_LD: escapeScriptJson(buildBreadcrumbJson(localizedName, canonicalUrl)),
+          BREADCRUMB_LD: escapeScriptJson(
+            buildBreadcrumbJson(localizedName, canonicalUrl, lang.catalogUrl, lang.homeUrl, lang.labels)
+          ),
         };
 
         const outputDir = path.join(lang.outputDir, slug);

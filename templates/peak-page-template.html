@@ -6,6 +6,15 @@
     <title>{{TITLE}}</title>
     <meta name="description" content="{{DESCRIPTION}}" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{TITLE}}" />
+    <meta property="og:description" content="{{DESCRIPTION}}" />
+    <meta property="og:image" content="{{OG_IMAGE}}" />
+    <meta property="og:url" content="{{CANONICAL_URL}}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{TITLE}}" />
+    <meta name="twitter:description" content="{{DESCRIPTION}}" />
+    <meta name="twitter:image" content="{{OG_IMAGE}}" />
     <link rel="canonical" href="{{CANONICAL_URL}}" />
     <link rel="alternate" hreflang="en" href="{{CANONICAL_EN_URL}}" />
     <link rel="alternate" hreflang="fr" href="{{CANONICAL_FR_URL}}" />
@@ -15,9 +24,263 @@
     <meta http-equiv="refresh" content="0; url={{APP_URL}}" />
     <script type="application/ld+json">{{JSON_LD}}</script>
     <script type="application/ld+json">{{BREADCRUMB_LD}}</script>
+    <style>
+      :root{
+        --bg:#0a0a0a;
+        --panel:#12121a;
+        --card:#171a22;
+        --ink:#ffffff;
+        --muted:#a5b4c3;
+        --stroke:#ffffff33;
+        --accent:#22c55e;
+      }
+      body{
+        margin:0;
+        background:var(--bg);
+        color:var(--ink);
+        font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        -webkit-font-smoothing:antialiased;
+      }
+      .wrap{
+        max-width:1000px;
+        margin:0 auto;
+        padding:20px 16px 32px;
+      }
+      a{ color:var(--accent); }
+      .breadcrumb-nav{
+        margin:0 0 16px 0;
+        color:var(--muted);
+        font-size:0.95rem;
+      }
+      .breadcrumb-nav ol{
+        list-style:none;
+        padding:0;
+        margin:0;
+        display:flex;
+        flex-wrap:wrap;
+        gap:6px;
+        align-items:center;
+      }
+      .breadcrumb-nav li{
+        display:flex;
+        align-items:center;
+        gap:6px;
+      }
+      .breadcrumb-nav li+li::before{
+        content:'›';
+        color:var(--muted);
+        opacity:0.6;
+      }
+      .breadcrumb-nav a{
+        color:var(--muted);
+        text-decoration:none;
+      }
+      .breadcrumb-nav a:hover{ color:var(--accent); }
+      header.hero{
+        display:grid;
+        grid-template-columns:1.1fr 0.9fr;
+        gap:18px;
+        align-items:center;
+        background:var(--panel);
+        border:1px solid var(--stroke);
+        border-radius:14px;
+        padding:18px;
+      }
+      @media(max-width:820px){
+        header.hero{ grid-template-columns:1fr; }
+      }
+      .hero-text h1{
+        margin:4px 0 8px 0;
+        font-size:2rem;
+      }
+      .hero-text .eyebrow{
+        color:var(--muted);
+        letter-spacing:0.6px;
+        text-transform:uppercase;
+        margin:0;
+        font-size:0.85rem;
+      }
+      .hero-text .summary{
+        margin:0 0 10px 0;
+        color:var(--muted);
+      }
+      .hero-meta{
+        display:flex;
+        flex-wrap:wrap;
+        gap:12px;
+        color:var(--ink);
+        font-weight:600;
+        margin-bottom:12px;
+      }
+      .hero-meta span{ display:inline-flex; gap:4px; align-items:center; }
+      .cta{
+        display:inline-block;
+        padding:10px 14px;
+        background:var(--accent);
+        color:#0a0a0a;
+        border-radius:10px;
+        text-decoration:none;
+        font-weight:700;
+        margin-right:10px;
+      }
+      .back-link{ color:var(--ink); }
+      .hero-image img{
+        width:100%;
+        border-radius:12px;
+        border:1px solid var(--stroke);
+        object-fit:cover;
+      }
+      .section-title{
+        margin:22px 0 10px 0;
+        font-size:1.1rem;
+        letter-spacing:0.5px;
+        text-transform:uppercase;
+        color:var(--accent);
+      }
+      .snapshot-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+        gap:12px;
+      }
+      .snapshot-grid dt{
+        font-weight:600;
+        color:var(--muted);
+      }
+      .snapshot-grid dd{
+        margin:4px 0 10px 0;
+      }
+      .info-card{
+        background:var(--panel);
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        padding:12px;
+      }
+      ul.routes-list{
+        list-style:disc;
+        padding-left:20px;
+        color:var(--ink);
+      }
+      ul.routes-list li{ margin-bottom:6px; }
+      .gallery-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+        gap:10px;
+      }
+      .gallery-grid img{
+        width:100%;
+        border-radius:10px;
+        border:1px solid var(--stroke);
+      }
+      .redirect-notice{
+        margin-top:22px;
+        color:var(--muted);
+      }
+    </style>
   </head>
   <body>
-    <p>Redirecting to the interactive page for {{PEAK_NAME}}...</p>
-    <p>If you are not redirected, <a href="{{APP_URL}}">open the interactive page</a>.</p>
+    <div class="wrap">
+      <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+        <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="{{HOME_URL}}"><span itemprop="name">{{BREADCRUMB_HOME}}</span></a>
+            <meta itemprop="position" content="1">
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="{{CATALOG_URL}}"><span itemprop="name">{{BREADCRUMB_CATALOG}}</span></a>
+            <meta itemprop="position" content="2">
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name">{{PEAK_NAME}}</span>
+            <meta itemprop="item" content="{{CANONICAL_URL}}">
+            <meta itemprop="position" content="3">
+          </li>
+        </ol>
+      </nav>
+
+      <header class="hero">
+        <div class="hero-text">
+          <p class="eyebrow">{{LABEL_OVERVIEW}}</p>
+          <h1 id="peakTitle">{{PEAK_NAME}}</h1>
+          <p class="summary">{{SUMMARY}}</p>
+          <div class="hero-meta">
+            <span>{{LABEL_ELEVATION}}: {{ELEVATION}}</span>
+            <span>{{LABEL_PROMINENCE}}: {{PROMINENCE}}</span>
+            <span>{{LABEL_RANGE}}: {{RANGE}}</span>
+          </div>
+          <a class="cta" href="{{APP_URL}}">{{LABEL_CTA}}</a>
+          <a class="back-link" href="{{CATALOG_URL}}">{{LABEL_BACK_TO_CATALOG}}</a>
+        </div>
+        <figure class="hero-image">
+          <img src="{{HERO_IMAGE}}" alt="{{HERO_ALT}}" loading="lazy" />
+        </figure>
+      </header>
+
+      <section aria-labelledby="quickFactsHeading">
+        <h2 class="section-title" id="quickFactsHeading">{{LABEL_LOCATION}}</h2>
+        <div class="info-card">
+          <dl class="snapshot-grid">
+            <div>
+              <dt>{{LABEL_ELEVATION}}</dt>
+              <dd>{{ELEVATION}}</dd>
+            </div>
+            <div>
+              <dt>{{LABEL_PROMINENCE}}</dt>
+              <dd>{{PROMINENCE}}</dd>
+            </div>
+            <div>
+              <dt>{{LABEL_RANGE}}</dt>
+              <dd>{{RANGE}}</dd>
+            </div>
+            <div>
+              <dt>{{LABEL_DIFFICULTY}}</dt>
+              <dd>{{DIFFICULTY}}</dd>
+            </div>
+            <div>
+              <dt>{{LABEL_TRAIL_TYPE}}</dt>
+              <dd>{{TRAIL_TYPE}}</dd>
+            </div>
+            <div>
+              <dt>{{LABEL_TIME}}</dt>
+              <dd>{{TIME}}</dd>
+            </div>
+            <div>
+              <dt>{{LABEL_LOCATION}}</dt>
+              <dd>{{COORDINATES}}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section aria-labelledby="routesHeading">
+        <h2 class="section-title" id="routesHeading">{{LABEL_STANDARD_ROUTES}}</h2>
+        <div class="info-card">
+          <ul class="routes-list">
+            {{ROUTES_LIST}}
+          </ul>
+        </div>
+      </section>
+
+      <section aria-labelledby="relatedHeading">
+        <h2 class="section-title" id="relatedHeading">{{LABEL_RELATED_TRAILS}}</h2>
+        <div class="info-card">
+          <ul class="routes-list">
+            {{RELATED_TRAILS_LI}}
+          </ul>
+        </div>
+      </section>
+
+      <section aria-labelledby="galleryHeading">
+        <h2 class="section-title" id="galleryHeading">{{LABEL_GALLERY}}</h2>
+        <div class="gallery-grid">
+          {{GALLERY_IMAGES}}
+        </div>
+      </section>
+
+      <div class="redirect-notice">
+        <p>Redirecting to the interactive page for {{PEAK_NAME}}...</p>
+        <p>If you are not redirected, <a href="{{APP_URL}}">open the interactive page</a>.</p>
+        <p>{{LABEL_FOOTER}}</p>
+      </div>
+    </div>
   </body>
 </html>
