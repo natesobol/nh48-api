@@ -24,6 +24,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/quick-browse-footer.css">
   <link rel="alternate" type="application/json" title="NH48 UI Elements Alt Text" href="https://nh48.info/UI-Elements/alt-text.json">
   <link rel="alternate" hreflang="en" href="https://nh48.info/">
   <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
@@ -501,119 +502,6 @@
       }
     }
 
-    /* Browse All Peaks panel */
-    .peak-links-section {
-      width: min(92vw, 760px);
-      background: rgba(12, 12, 12, 0.9);
-      border: 1px solid #ffffff;
-      border-radius: 24px;
-      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5);
-      padding: 24px 28px 28px;
-      color: #ffffff;
-      margin: 0 auto;
-    }
-
-    .peak-links-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-
-    .peak-links-header h2 {
-      margin: 0;
-      font-size: clamp(20px, 3vw, 26px);
-      letter-spacing: 0.3px;
-    }
-
-    .peak-links-header p {
-      margin: 4px 0 0;
-      color: #cbd5f5;
-      font-size: 0.95rem;
-    }
-
-    .peak-banner {
-      width: 100%;
-      margin: 10px 0 18px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.82);
-      overflow: hidden;
-      background: rgba(15, 23, 42, 0.8);
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
-    }
-
-    .peak-banner img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    .peak-grid-wrapper {
-      max-height: 460px;
-      overflow: auto;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      border-radius: 16px;
-      padding: 14px;
-      background: rgba(15, 23, 42, 0.6);
-    }
-
-    .peak-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .peak-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 46px;
-      padding: 10px 10px;
-      border-radius: 10px;
-      border: 1px solid #ffffff;
-      color: #ffffff;
-      text-decoration: none;
-      background: rgba(30, 190, 92, 0.14);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
-      text-align: center;
-      white-space: normal;
-      line-height: 1.35;
-    }
-
-    .peak-link:hover,
-    .peak-link:focus-visible {
-      border-color: #22c55e;
-      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.28);
-      background: rgba(30, 190, 92, 0.2);
-      transform: translateY(-1px);
-      outline: none;
-    }
-
-    @media (max-width: 960px) {
-      .peak-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 720px) {
-      .peak-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 520px) {
-      .peak-links-section {
-        padding: 18px 16px 20px;
-      }
-      .peak-grid-wrapper {
-        max-height: 380px;
-      }
-      .peak-grid {
-        grid-template-columns: 1fr;
-      }
-    }
   </style>
 </head>
 <body>
@@ -642,67 +530,6 @@
     <p class="meta" data-i18n="landing.author">Author: Nathan Sobol</p>
   </main>
 
-  <section class="peak-links-section" aria-labelledby="quick-browse-peaks">
-    <div class="peak-links-header">
-      <h2 id="quick-browse-peaks">Quick Browse</h2>
-      <p>Browse NH48 peaks of the White Mountains of New Hampshire and jump directly into each 4,000-footer detail page.</p>
-    </div>
-    <div class="peak-banner" role="presentation" aria-hidden="true">
-      <img src="/nh48-preview.png" alt="Snowy White Mountain ridgelines representing the NH48 peak collection">
-    </div>
-    <div class="peak-grid-wrapper" aria-label="All NH48 peak links">
-      <div class="peak-grid">
-        <a href="/peaks/bondcliff.html" class="peak-link">Bondcliff</a>
-        <a href="/peaks/cannon-mountain.html" class="peak-link">Cannon Mountain</a>
-        <a href="/peaks/carter-dome.html" class="peak-link">Carter Dome</a>
-        <a href="/peaks/galehead-mountain.html" class="peak-link">Galehead Mountain</a>
-        <a href="/peaks/middle-carter-mountain.html" class="peak-link">Middle Carter Mountain</a>
-        <a href="/peaks/middle-tripyramid.html" class="peak-link">Middle Tripyramid</a>
-        <a href="/peaks/mount-adams.html" class="peak-link">Mount Adams</a>
-        <a href="/peaks/mount-bond.html" class="peak-link">Mount Bond</a>
-        <a href="/peaks/mount-cabot.html" class="peak-link">Mount Cabot</a>
-        <a href="/peaks/mount-carrigain.html" class="peak-link">Mount Carrigain</a>
-        <a href="/peaks/mount-eisenhower.html" class="peak-link">Mount Eisenhower</a>
-        <a href="/peaks/mount-field.html" class="peak-link">Mount Field</a>
-        <a href="/peaks/mount-flume.html" class="peak-link">Mount Flume</a>
-        <a href="/peaks/mount-garfield.html" class="peak-link">Mount Garfield</a>
-        <a href="/peaks/mount-hale.html" class="peak-link">Mount Hale</a>
-        <a href="/peaks/mount-hancock.html" class="peak-link">Mount Hancock – North Peak</a>
-        <a href="/peaks/mount-hancock-south.html" class="peak-link">Mount Hancock – South Peak</a>
-        <a href="/peaks/mount-isolation.html" class="peak-link">Mount Isolation</a>
-        <a href="/peaks/mount-jackson.html" class="peak-link">Mount Jackson</a>
-        <a href="/peaks/mount-jefferson.html" class="peak-link">Mount Jefferson</a>
-        <a href="/peaks/mount-lafayette.html" class="peak-link">Mount Lafayette</a>
-        <a href="/peaks/mount-liberty.html" class="peak-link">Mount Liberty</a>
-        <a href="/peaks/mount-lincoln.html" class="peak-link">Mount Lincoln</a>
-        <a href="/peaks/mount-madison.html" class="peak-link">Mount Madison</a>
-        <a href="/peaks/mount-monroe.html" class="peak-link">Mount Monroe</a>
-        <a href="/peaks/mount-moosilauke.html" class="peak-link">Mount Moosilauke</a>
-        <a href="/peaks/mount-moriah.html" class="peak-link">Mount Moriah</a>
-        <a href="/peaks/mount-osceola.html" class="peak-link">Mount Osceola</a>
-        <a href="/peaks/mount-osceola-east.html" class="peak-link">Mount Osceola – East Peak</a>
-        <a href="/peaks/mount-passaconaway.html" class="peak-link">Mount Passaconaway</a>
-        <a href="/peaks/mount-pierce.html" class="peak-link">Mount Pierce</a>
-        <a href="/peaks/mount-tecumseh.html" class="peak-link">Mount Tecumseh</a>
-        <a href="/peaks/mount-tom.html" class="peak-link">Mount Tom</a>
-        <a href="/peaks/mount-washington.html" class="peak-link">Mount Washington</a>
-        <a href="/peaks/mount-waumbek.html" class="peak-link">Mount Waumbek</a>
-        <a href="/peaks/mount-whiteface.html" class="peak-link">Mount Whiteface</a>
-        <a href="/peaks/mount-willey.html" class="peak-link">Mount Willey</a>
-        <a href="/peaks/north-kinsman-mountain.html" class="peak-link">North Kinsman Mountain</a>
-        <a href="/peaks/north-tripyramid.html" class="peak-link">North Tripyramid</a>
-        <a href="/peaks/north-twin-mountain.html" class="peak-link">North Twin Mountain</a>
-        <a href="/peaks/owls-head.html" class="peak-link">Owl's Head</a>
-        <a href="/peaks/south-carter-mountain.html" class="peak-link">South Carter Mountain</a>
-        <a href="/peaks/south-kinsman-mountain.html" class="peak-link">South Kinsman Mountain</a>
-        <a href="/peaks/south-twin-mountain.html" class="peak-link">South Twin Mountain</a>
-        <a href="/peaks/west-bond.html" class="peak-link">West Bond</a>
-        <a href="/peaks/wildcat-mountain-a.html" class="peak-link">Wildcat Mountain – A Peak</a>
-        <a href="/peaks/wildcat-mountain-d.html" class="peak-link">Wildcat Mountain – D Peak</a>
-        <a href="/peaks/zealand-mountain.html" class="peak-link">Zealand Mountain</a>
-      </div>
-    </div>
-  </section>
   <section class="seo-gallery" aria-label="NH48 UI element image descriptions">
     <h2 class="visually-hidden">NH48 UI element image descriptions</h2>
     <div class="seo-gallery-grid">
@@ -868,11 +695,69 @@
       </figure>
     </div>
   </section>
+  <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title">
+    <div class="nh48-quick-footer__header">
+      <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
+      <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>
+      <p>Jump directly into every New Hampshire 4,000-footer detail page to strengthen internal linking and keep crawlers flowing through the full NH48 set.</p>
+    </div>
+    <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
+      <a class="nh48-quick-footer__link" href="/peaks/mount-washington.html">Mount Washington</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-lafayette.html">Mount Lafayette</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-lincoln.html">Mount Lincoln</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh.html">Mount Tecumseh</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke.html">Mount Moosilauke</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-pierce.html">Mount Pierce</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-liberty.html">Mount Liberty</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-adams.html">Mount Adams</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower.html">Mount Eisenhower</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-osceola.html">Mount Osceola</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-jackson.html">Mount Jackson</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-monroe.html">Mount Monroe</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-jefferson.html">Mount Jefferson</a>
+      <a class="nh48-quick-footer__link" href="/peaks/cannon-mountain.html">Cannon Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-madison.html">Mount Madison</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-flume.html">Mount Flume</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-garfield.html">Mount Garfield</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-carrigain.html">Mount Carrigain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain.html">North Kinsman Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain.html">South Kinsman Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-whiteface.html">Mount Whiteface</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway.html">Mount Passaconaway</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-field.html">Mount Field</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-tom.html">Mount Tom</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-willey.html">Mount Willey</a>
+      <a class="nh48-quick-footer__link" href="/peaks/carter-dome.html">Carter Dome</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-moriah.html">Mount Moriah</a>
+      <a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain.html">South Carter Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain.html">Middle Carter Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-hale.html">Mount Hale</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-waumbek.html">Mount Waumbek</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-isolation.html">Mount Isolation</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-cabot.html">Mount Cabot</a>
+      <a class="nh48-quick-footer__link" href="/peaks/north-tripyramid.html">North Tripyramid</a>
+      <a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid.html">Middle Tripyramid</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east.html">Mount Osceola – East Peak</a>
+      <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d.html">Wildcat Mountain – D Peak</a>
+      <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a.html">Wildcat Mountain – A Peak</a>
+      <a class="nh48-quick-footer__link" href="/peaks/galehead-mountain.html">Galehead Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/zealand-mountain.html">Zealand Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/west-bond.html">West Bond</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-bond.html">Mount Bond</a>
+      <a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain.html">South Twin Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain.html">North Twin Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south.html">Mount Hancock – South Peak</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-hancock.html">Mount Hancock – North Peak</a>
+      <a class="nh48-quick-footer__link" href="/peaks/owls-head.html">Owl's Head</a>
+      <a class="nh48-quick-footer__link" href="/peaks/bondcliff.html">Bondcliff</a>
+    </div>
+  </footer>
   <script>
     if (!localStorage.getItem('nh48_lang')) {
       localStorage.setItem('nh48_lang', 'en');
     }
   </script>
+  <script src="/js/quick-browse-footer.js" defer></script>
   <script type="module" src="/js/i18n.js"></script>
   <script src="/js/splash.js" defer></script>
   <script type="module">

@@ -1,179 +1,185 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Virtual Hike of NH’s 4,000‑Footers – NH48</title>
-<meta name="description" content="Take a virtual hike across New Hampshire’s 4,000‑foot peaks.  Explore interactive 3D models, photos and route information without leaving home.">
-<meta name="robots" content="noindex,follow">
-<link rel="canonical" href="https://nh48.info/virtual_hike.html">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Virtual Hike of NH’s 4,000‑Footers",
-  "url": "https://nh48.info/virtual_hike.html",
-  "description": "Interactive virtual hike across all 48 of New Hampshire’s 4,000‑foot mountains."
-}
-</script>
-<link rel="icon" type="image/png" href="../WMNF_Trails_API_logo.png">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.109.0/Widgets/widgets.min.css" rel="stylesheet">
-<link rel="stylesheet" href="../css/virtual_hike.css">
-<link rel="stylesheet" href="/css/quick-browse-footer.css">
-</head>
-<body>
-<div id="toolbar">
-  <h2 id="trailName">Virtual Hike</h2>
-  <button id="playBtn">Fly Trail</button>
-  <button id="clearBtn">Clear Markers</button>
-</div>
-<div id="cesiumContainer"></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.109.0/Cesium.min.js"></script>
-<script>
-// Helper to get query parameters
-function getQueryParam(name) {
-  const params = new URLSearchParams(window.location.search);
-  return params.get(name);
-}
-
-// Main async function to initialize the virtual hike
-async function init() {
-  const trail = getQueryParam('trail');
-  const decoded = trail ? decodeURIComponent(trail) : '';
-  document.getElementById('trailName').textContent = decoded ? decoded + ' — Virtual Hike' : 'Virtual Hike';
-
-  // Create the Cesium viewer
-  const viewer = new Cesium.Viewer('cesiumContainer', {
-    terrainProvider: Cesium.createWorldTerrain(),
-    animation: false,
-    timeline: false,
-    sceneModePicker: false,
-    baseLayerPicker: false,
-    navigationHelpButton: false,
-    geocoder: false,
-    homeButton: false,
-    infoBox: false,
-    fullscreenButton: false,
-    selectionIndicator: false
-  });
-
-  // Store user-added markers
-  const userMarkers = [];
-
-  // Add click handler to add markers
-  const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-  handler.setInputAction(function(click) {
-    const cartesian = viewer.scene.pickPosition(click.position);
-    if (Cesium.defined(cartesian)) {
-      const marker = viewer.entities.add({
-        position: cartesian,
-        point: {
-          pixelSize: 8,
-          color: Cesium.Color.YELLOW,
-          outlineColor: Cesium.Color.BLACK,
-          outlineWidth: 1
-        }
-      });
-      userMarkers.push(marker);
-    }
-  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-  // Clear button to remove all markers
-  document.getElementById('clearBtn').addEventListener('click', function() {
-    userMarkers.forEach(entity => viewer.entities.remove(entity));
-    userMarkers.length = 0;
-  });
-
-  // Load the GeoJSON trail data from the bundled copy first, then fall back to mirrors
-  const geoUrls = [
-    '../data/merged_trails.geojson',
-    'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/merged_trails.geojson',
-    'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/merged_trails.geojson',
-    'https://unpkg.com/natesobol/nh48-api@main/data/merged_trails.geojson'
-  ];
-  let geoData;
-  for (const url of geoUrls) {
-    try {
-      const res = await fetch(url, {cache: 'no-cache'});
-      if (res.ok) {
-        geoData = await res.json();
-        break;
-      }
-    } catch {
-      continue;
-    }
-  }
-  if (!geoData) {
-    alert('Failed to load trail data.');
-    return;
+<style data-nh48-quick-footer-style>
+  .nh48-quick-footer {
+    margin: 42px auto 34px;
+    width: min(1100px, 94vw);
+    background: linear-gradient(135deg, rgba(10, 10, 10, 0.9), rgba(12, 20, 24, 0.92));
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 18px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+    padding: 24px 22px 14px;
+    color: #ffffff;
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: min(400px, 80vh);
+    max-height: 400px;
+    overflow: hidden;
   }
 
-  // Filter features by name
-  const features = geoData.features.filter(f => {
-    const name = f.properties && f.properties.name;
-    return name && name === decoded;
-  });
-  if (features.length === 0) {
-    alert('Trail not found: ' + decoded);
-    return;
+  .nh48-quick-footer__header {
+    text-align: center;
+    max-width: 960px;
+    margin: 0 auto 8px;
   }
 
-  // Create a GeoJsonDataSource for the selected trail
-  const dataSource = await Cesium.GeoJsonDataSource.load(
-    {type: 'FeatureCollection', features: features},
-    {
-      clampToGround: true,
-      stroke: Cesium.Color.ORANGERED,
-      strokeWidth: 4
-    }
-  );
-  viewer.dataSources.add(dataSource);
+  .nh48-quick-footer__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: rgba(34, 197, 94, 0.12);
+    color: #bbf7d0;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
 
-  // Fly to the trail when the page loads
-  viewer.flyTo(dataSource.entities, {duration: 3});
+  .nh48-quick-footer__header h2 {
+    margin: 12px 0 8px;
+    font-size: clamp(20px, 3vw, 28px);
+    letter-spacing: 0.3px;
+  }
 
-  // Play button: fly along the trail path
-  document.getElementById('playBtn').addEventListener('click', function() {
-    let positions;
-    const entity = dataSource.entities.values[0];
-    if (entity.polyline && entity.polyline.positions) {
-      positions = entity.polyline.positions.getValue(Cesium.JulianDate.now());
-    } else if (entity.polygon) {
-      positions = entity.polygon.hierarchy.getValue(Cesium.JulianDate.now()).positions;
-    }
-    if (!positions || positions.length === 0) {
-      alert('No positions found for this trail.');
-      return;
-    }
-    // Create a set of sampled positions to fly through
-    const total = positions.length;
-    const flyPositions = [];
-    for (let i = 0; i < total; i += Math.floor(total/100) || 1) {
-      flyPositions.push(positions[i]);
-    }
-    let index = 0;
-    function flyNext() {
-      if (index >= flyPositions.length) return;
-      viewer.camera.flyTo({
-        destination: flyPositions[index],
-        orientation: {
-          heading: viewer.camera.heading,
-          pitch: viewer.camera.pitch,
-          roll: viewer.camera.roll
-        },
-        duration: 1.0,
-        complete: function() {
-          index++;
-          flyNext();
-        }
-      });
-    }
-    flyNext();
-  });
-}
+  .nh48-quick-footer__header p {
+    margin: 0;
+    color: #d7e7db;
+    line-height: 1.55;
+    font-size: 0.98rem;
+  }
 
-init();
-</script>
+  .nh48-quick-footer__grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+    padding: 6px 4px 8px;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(43, 216, 121, 0.6) rgba(255, 255, 255, 0.08);
+  }
+
+  .nh48-quick-footer__grid::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .nh48-quick-footer__grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+  }
+
+  .nh48-quick-footer__grid::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #2bd879, #0b9e4c);
+    border-radius: 10px;
+  }
+
+  .nh48-quick-footer__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 10px;
+    min-height: 46px;
+    text-align: center;
+    border-radius: 12px;
+    border: 1px solid #ffffff;
+    color: #ffffff;
+    text-decoration: none;
+    background: rgba(34, 197, 94, 0.14);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    line-height: 1.35;
+    white-space: normal;
+  }
+
+  .nh48-quick-footer__link:hover,
+  .nh48-quick-footer__link:focus-visible {
+    border-color: #2bd879;
+    box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.28);
+    background: rgba(34, 197, 94, 0.2);
+    transform: translateY(-1px);
+    outline: none;
+  }
+
+  .nh48-quick-footer__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 12px 4px 4px;
+    font-size: 14px;
+  }
+
+  .nh48-quick-footer__meta-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .nh48-quick-footer__meta-links a {
+    color: #c9f3d7;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.08);
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .nh48-quick-footer__meta-links a:hover,
+  .nh48-quick-footer__meta-links a:focus-visible {
+    color: #22c55e;
+    border-color: rgba(34, 197, 94, 0.7);
+    background: rgba(34, 197, 94, 0.14);
+    outline: none;
+  }
+
+  .nh48-quick-footer__legal {
+    color: #a8cbb7;
+    font-weight: 600;
+  }
+
+  @media (max-width: 1180px) {
+    .nh48-quick-footer__grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 960px) {
+    .nh48-quick-footer__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 780px) {
+    .nh48-quick-footer {
+      padding: 20px 16px 14px;
+      height: min(400px, 78vh);
+    }
+    .nh48-quick-footer__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 600px) {
+    .nh48-quick-footer__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 440px) {
+    .nh48-quick-footer__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
   <div class="nh48-quick-footer__header">
     <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
@@ -242,5 +248,3 @@ init();
     </div>
   </div>
 </footer>
-</body>
-</html>
