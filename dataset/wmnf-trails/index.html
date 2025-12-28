@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WMNF Trails – White Mountain National Forest Trail Dataset | NH48 API</title>
+  <meta name="description" content="Dedicated landing page for the White Mountain National Forest trails dataset from the NH48 API. Explore normalized segments, trailheads, distances, elevations and open downloads for the WMNF network covering New Hampshire and Maine.">
+  <meta name="keywords" content="WMNF trails, White Mountain National Forest data, hiking dataset, New Hampshire trails, Maine trails, open geospatial data">
+  <link rel="canonical" href="https://nh48.info/dataset/wmnf-trails">
+  <link rel="stylesheet" href="/css/dataset-page.css">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "WMNF Trails – White Mountain National Forest Trail Dataset",
+      "description": "Comprehensive open dataset of trails in the White Mountain National Forest across New Hampshire and western Maine. The collection includes normalized trail segments, length and elevation metadata, connector networks, and trailhead references compiled by the NH48 API for use in maps, routing experiments, and research.",
+      "identifier": "https://nh48.info/dataset/wmnf-trails",
+      "url": "https://nh48.info/dataset/wmnf-trails",
+      "keywords": [
+        "White Mountain National Forest",
+        "WMNF trails",
+        "hiking data",
+        "New Hampshire",
+        "Maine",
+        "geospatial data",
+        "open dataset"
+      ],
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "isAccessibleForFree": true,
+      "creator": {
+        "@type": "Person",
+        "name": "Nathan Sobol",
+        "url": "https://nh48.info"
+      },
+      "includedInDataCatalog": {
+        "@type": "DataCatalog",
+        "name": "NH48 API Open Data",
+        "url": "https://nh48.info"
+      },
+      "sameAs": [
+        "https://github.com/natesobol/nh48-api/tree/main/data/wmnf-trails"
+      ],
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/wmnf-main.json",
+          "name": "WMNF Trails – New Hampshire core"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/wmnf-maine.json",
+          "name": "WMNF Trails – Maine coverage"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/wmnf-pliney.json",
+          "name": "WMNF Trails – Pliney region"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/wmnf-normalized.json",
+          "name": "WMNF Trails – Normalized network"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/maine-normalized.json",
+          "name": "WMNF Trails – Maine normalized network"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/pliney-normalized.json",
+          "name": "WMNF Trails – Pliney normalized network"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/White_Mountains_Trails.xlsx",
+          "name": "WMNF Trails spreadsheet"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "text/plain",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/White_Mountains_Trails.txt",
+          "name": "WMNF Trails plaintext export"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/wmnf-trails/NH2000ftpeaks.json",
+          "name": "White Mountain 2,000-foot peaks and trailheads"
+        }
+      ],
+      "hasPart": [
+        {
+          "@type": "Dataset",
+          "name": "WMNF Trail Segments",
+          "description": "Individual WMNF trail segments with names, distances, and associated hiking regions."
+        },
+        {
+          "@type": "Dataset",
+          "name": "WMNF Normalized Network",
+          "description": "Graph-friendly representation of the WMNF trail network for routing, snapping, and merging segments across the forest."
+        },
+        {
+          "@type": "Dataset",
+          "name": "WMNF Trailheads and 2,000-foot Peaks",
+          "description": "Trailhead coordinates and the 2,000-foot peak list for cross-referencing access points and nearby summits."
+        }
+      ]
+    }
+  </script>
+</head>
+<body>
+  <main class="dataset-page">
+    <header>
+      <p class="eyebrow">NH48 API Open Data</p>
+      <h1>WMNF Trails Dataset</h1>
+      <p class="lede">Download normalized trail data for the White Mountain National Forest, including New Hampshire core coverage, Maine extensions, connector graphs, and supporting peak references.</p>
+      <p class="lede">The dataset is published as static files so search engines and downstream apps can consume the metadata without relying on client-side rendering.</p>
+    </header>
+
+    <section class="panel">
+      <h2>What’s inside</h2>
+      <p>This collection focuses on open, machine-readable trail data for the White Mountain National Forest.</p>
+      <ul class="listed">
+        <li>Segment-level details: trail names, length, region grouping, and a normalized version for network analysis.</li>
+        <li>Coverage for the New Hampshire core, Pliney region, and Maine segments to ensure continuity across the forest boundary.</li>
+        <li>Trailhead and peak references to align the network with nearby parking, access points, and the 2,000-foot peak list.</li>
+      </ul>
+      <ul class="badge-list" aria-label="Key dataset attributes">
+        <li class="badge">JSON exports</li>
+        <li class="badge">Spreadsheet &amp; text extracts</li>
+        <li class="badge">Normalized graph</li>
+        <li class="badge">WMNF focus</li>
+        <li class="badge">No authentication required</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2>Download the data</h2>
+      <p>All files are hosted at stable URLs. You can link directly to the downloads below or reference them via <code>contentUrl</code> in the structured data above.</p>
+      <div class="download-grid">
+        <a class="download-card" href="https://nh48.info/data/wmnf-trails/wmnf-main.json">
+          <strong>WMNF trails &mdash; New Hampshire core</strong>
+          <span class="format">JSON</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/wmnf-trails/wmnf-maine.json">
+          <strong>WMNF trails &mdash; Maine coverage</strong>
+          <span class="format">JSON</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/wmnf-trails/wmnf-pliney.json">
+          <strong>WMNF trails &mdash; Pliney region</strong>
+          <span class="format">JSON</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/wmnf-trails/wmnf-normalized.json">
+          <strong>Normalized network (NH)</strong>
+          <span class="format">JSON</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/wmnf-trails/maine-normalized.json">
+          <strong>Normalized network (Maine)</strong>
+          <span class="format">JSON</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/wmnf-trails/pliney-normalized.json">
+          <strong>Normalized network (Pliney)</strong>
+          <span class="format">JSON</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/wmnf-trails/White_Mountains_Trails.xlsx">
+          <strong>Spreadsheet export</strong>
+          <span class="format">XLSX</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/wmnf-trails/White_Mountains_Trails.txt">
+          <strong>Plaintext export</strong>
+          <span class="format">TXT</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/wmnf-trails/NH2000ftpeaks.json">
+          <strong>2,000-foot peaks reference</strong>
+          <span class="format">JSON</span>
+        </a>
+      </div>
+      <p class="footer-note">Files are served statically and can be accessed without authentication. Add them to a GIS project, cache them with your API client, or mirror them for offline use.</p>
+    </section>
+
+    <section class="panel">
+      <h2>How to use this dataset</h2>
+      <ul class="listed">
+        <li>Render WMNF hiking routes on static or interactive maps using the normalized network.</li>
+        <li>Analyze mileage, coverage, or segment density for trip planning or routing experiments.</li>
+        <li>Join the trail data with peak references to support guidebook-style summaries or offline GPX exports.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

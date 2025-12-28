@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Long Trails Dataset – Appalachian Trail, PCT, CDT &amp; more | NH48 API</title>
+  <meta name="description" content="Landing page for the NH48 API long-distance trails dataset. Discover open JSON downloads covering the Appalachian Trail, Pacific Crest Trail, Continental Divide Trail and other thru-hiking routes with geometry and segment metadata.">
+  <meta name="keywords" content="long-distance trail data, Appalachian Trail dataset, Pacific Crest Trail dataset, Continental Divide Trail dataset, thru-hiking GPX, open hiking data">
+  <link rel="canonical" href="https://nh48.info/dataset/long-trails">
+  <link rel="stylesheet" href="/css/dataset-page.css">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Long Trails – Appalachian Trail, PCT, CDT and other thru-hikes",
+      "description": "Open dataset of long-distance hiking routes across North America, including the Appalachian Trail, Pacific Crest Trail, Continental Divide Trail, and regional thru-hikes. Each trail is stored as machine-readable GeoJSON-style features with segment metadata for mapping, analysis, and planning.",
+      "identifier": "https://nh48.info/dataset/long-trails",
+      "url": "https://nh48.info/dataset/long-trails",
+      "keywords": [
+        "long-distance trails",
+        "Appalachian Trail",
+        "Pacific Crest Trail",
+        "Continental Divide Trail",
+        "thru-hiking data",
+        "geospatial dataset",
+        "hiking routes"
+      ],
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "isAccessibleForFree": true,
+      "creator": {
+        "@type": "Person",
+        "name": "Nathan Sobol",
+        "url": "https://nh48.info"
+      },
+      "includedInDataCatalog": {
+        "@type": "DataCatalog",
+        "name": "NH48 API Open Data",
+        "url": "https://nh48.info"
+      },
+      "sameAs": [
+        "https://github.com/natesobol/nh48-api/tree/main/data/long-trails"
+      ],
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/long-trails-full.json",
+          "name": "Long trails &mdash; full collection"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/long-trails-index.json",
+          "name": "Long trails index"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/long-trails-manifest.json",
+          "name": "Long trails manifest"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/long-trails/appalachian_trail.json",
+          "name": "Appalachian Trail (full route)"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/long-trails/pacific_crest_trail.json",
+          "name": "Pacific Crest Trail"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/long-trails/continential_divide_trail.json",
+          "name": "Continental Divide Trail"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/long-trails/arizona_trail.json",
+          "name": "Arizona Trail"
+        }
+      ],
+      "hasPart": [
+        {
+          "@type": "Dataset",
+          "name": "Appalachian Trail",
+          "description": "Complete Appalachian Trail geometry and segment metadata suitable for New England or end-to-end planning."
+        },
+        {
+          "@type": "Dataset",
+          "name": "Pacific Crest Trail",
+          "description": "Pacific Crest Trail alignment with ordered segments for mapping and offline caching."
+        },
+        {
+          "@type": "Dataset",
+          "name": "Continental Divide Trail",
+          "description": "Continental Divide Trail routes spanning the Rockies with distance and location metadata."
+        },
+        {
+          "@type": "Dataset",
+          "name": "Arizona Trail",
+          "description": "State-length thru-hike geometry and supporting metadata for the Arizona Trail."
+        }
+      ]
+    }
+  </script>
+</head>
+<body>
+  <main class="dataset-page">
+    <header>
+      <p class="eyebrow">NH48 API Open Data</p>
+      <h1>Long Trails Dataset</h1>
+      <p class="lede">Structured data for major long-distance hiking routes, from the Appalachian Trail and Pacific Crest Trail to regional traverses like the Arizona Trail.</p>
+      <p class="lede">Each dataset is pre-rendered and downloadable so search engines and mapping tools can index and consume the files without client-side API calls.</p>
+    </header>
+
+    <section class="panel">
+      <h2>What’s inside</h2>
+      <p>The long-trails catalog brings together thru-hiking routes with consistent schema and stable URLs.</p>
+      <ul class="listed">
+        <li>GeoJSON-like trail geometries suitable for tiles, static maps, and GIS workflows.</li>
+        <li>Segment metadata including names, ordering, and distance summaries for popular thru-hikes.</li>
+        <li>Dedicated exports for marquee routes plus a combined collection for bulk ingestion.</li>
+      </ul>
+      <ul class="badge-list" aria-label="Key dataset attributes">
+        <li class="badge">Appalachian Trail</li>
+        <li class="badge">Pacific Crest Trail</li>
+        <li class="badge">Continental Divide Trail</li>
+        <li class="badge">Regional thru-hikes</li>
+        <li class="badge">JSON downloads</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2>Download the data</h2>
+      <p>Use the combined exports for a full catalog or link directly to individual trails.</p>
+      <div class="download-grid">
+        <a class="download-card" href="https://nh48.info/data/long-trails-full.json">
+          <strong>Long trails &mdash; full collection</strong>
+          <span class="format">JSON</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/long-trails-index.json">
+          <strong>Long trails index</strong>
+          <span class="format">JSON</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/long-trails-manifest.json">
+          <strong>Long trails manifest</strong>
+          <span class="format">JSON</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/long-trails/appalachian_trail.json">
+          <strong>Appalachian Trail</strong>
+          <span class="format">JSON</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/long-trails/pacific_crest_trail.json">
+          <strong>Pacific Crest Trail</strong>
+          <span class="format">JSON</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/long-trails/continential_divide_trail.json">
+          <strong>Continental Divide Trail</strong>
+          <span class="format">JSON</span>
+        </a>
+        <a class="download-card" href="https://nh48.info/data/long-trails/arizona_trail.json">
+          <strong>Arizona Trail</strong>
+          <span class="format">JSON</span>
+        </a>
+      </div>
+      <p class="footer-note">Downloads are static files with no authentication required. Mirror them, subset them per route, or load them directly into your map renderer.</p>
+    </section>
+
+    <section class="panel">
+      <h2>How to use this dataset</h2>
+      <ul class="listed">
+        <li>Display long-distance routes on maps, dashboards, or print materials using the combined export.</li>
+        <li>Perform route comparisons and mileage rollups by combining the manifest with individual trail files.</li>
+        <li>Cache the JSON locally to support offline section hikes or mobile navigation prototypes.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
