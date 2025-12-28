@@ -19,6 +19,7 @@ const cleanText = (value) => {
   if (value === null || value === undefined) return '';
   return String(value)
     .replace(/:contentReference\[[^\]]*\]\{[^}]*\}/g, '')
+    .replace(/\s+/g, ' ')
     .trim();
 };
 
