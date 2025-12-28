@@ -19,10 +19,12 @@
   <meta property="og:description" content="Interactive WMNF trail explorer plus downloadable JSON datasets for White Mountain routes and 2,000-foot peaks.">
   <meta property="og:url" content="https://nh48.info/trails">
   <meta property="og:image" content="https://nh48.info/WMNF_Trails_API_logo.png">
+  <meta property="og:image:alt" content="White Mountain National Forest trail data and map preview">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="WMNF Trails Map &amp; Open Data – White Mountain National Forest">
   <meta name="twitter:description" content="Open WMNF trail and 2,000-foot peak datasets with an interactive planning map.">
   <meta name="twitter:image" content="https://nh48.info/WMNF_Trails_API_logo.png">
+  <meta name="twitter:image:alt" content="White Mountain National Forest trail data and map preview">
     <link rel="alternate" hreflang="en" href="https://nh48.info/">
     <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
     <link rel="alternate" hreflang="fr" href="https://nh48.info/i18n/fr.html">
@@ -120,6 +122,16 @@
       }
     }
   </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://nh48.info/" },
+        { "@type": "ListItem", "position": 2, "name": "WMNF Trails" }
+      ]
+    }
+  </script>
   <script id="trailsJsonLd" type="application/ld+json"></script>
   <script>
     (() => {
@@ -200,6 +212,55 @@
   <style>
     * {
       box-sizing: border-box;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .breadcrumbs {
+      margin: 0.25rem 0 0.75rem;
+      padding: 0;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    .breadcrumbs ol {
+      list-style: none;
+      display: flex;
+      gap: 0.35rem;
+      padding: 0;
+      margin: 0;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .breadcrumbs a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover,
+    .breadcrumbs a:focus-visible {
+      text-decoration: underline;
+    }
+
+    .breadcrumbs li::after {
+      content: '/';
+      margin-left: 0.35rem;
+      color: var(--text-secondary);
+    }
+
+    .breadcrumbs li:last-child::after {
+      content: '';
     }
 
     /* Dark theme color palette */
@@ -1015,6 +1076,12 @@
     })();
   </script>
   <header class="page-header">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li aria-current="page">WMNF Trails</li>
+      </ol>
+    </nav>
     <h1 data-i18n="trails.title">🏔️ WMNF Trails API Map Tool</h1>
     <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
     <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
@@ -1044,8 +1111,9 @@
     <!-- Top section containing the map and trail details -->
     <div id="topSection">
       <!-- Map container wrapped in its own panel to provide padding and border -->
-      <div id="mapContainer">
-        <div id="map"></div>
+      <div id="mapContainer" aria-label="White Mountain National Forest trail map" aria-describedby="map-accessibility-note">
+        <div id="map" role="img" aria-label="Interactive map of White Mountain National Forest trails"></div>
+        <p id="map-accessibility-note" class="sr-only">High-contrast basemap with green trail lines, white selection outlines, and large circular markers for route highlights. Popups list trail length, elevation context, and OpenStreetMap details. Keyboard users can tab into the map to move focus to interactive controls.</p>
       </div>
       <div id="trailInfoPanel" class="trail-info-panel">
         <h2 data-i18n="trails.details.title">Trail details</h2>
