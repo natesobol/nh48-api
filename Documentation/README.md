@@ -97,7 +97,7 @@ For dataset-specific details and SEO notes, see:
 
 In addition to the NH48 material, the project now ships a standalone open-data
 package for the **White Mountain National Forest**. The WMNF dataset is the
-canonical source for the **WMNF Trails App** and lives in `data/wmnf-trails/`:
+canonical source for the **White Mountain Trails App** and lives in `data/wmnf-trails/`:
 
 * `wmnf-main.json` — normalized WMNF trail network (core New Hampshire coverage)
 * `wmnf-pliney.json` — Pliney region trails
