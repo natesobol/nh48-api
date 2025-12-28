@@ -9,6 +9,13 @@ The **NH48 API** is a comprehensive, self-contained dataset and media delivery s
 * A scalable static CDN-based distribution model
 …and can also be consumed by any external application, script, or map tool.
 
+## 🆕 **Latest Site Updates**
+
+* **Dataset schema markup:** Added sitewide JSON-LD for data-centric pages so search engines can reliably index NH48 and WMNF datasets alongside trail downloads.
+* **SEO & accessibility:** Improved landmark semantics, focus states, and skip links to keep navigation keyboard-friendly while preserving performance-focused markup.
+* **Footer UX:** Sorting controls now have contextual footer options and footer links drop `.html` suffixes for cleaner URLs and canonical consistency.
+* **Brand polish:** Updated logo wrapping and border styles to keep identity assets crisp on dark and light backgrounds across landing pages.
+
 ## 🔎 **SEO Implementation & Goals**
 
 We actively structure the project so search engines can surface **New Hampshire 4000-footers**, **White Mountain National Forest trails**, and **hiking route planning data** to the right audiences. Core tactics include:
