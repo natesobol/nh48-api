@@ -1317,6 +1317,41 @@
       let currentPrimaryPhoto = null;
       let metadataExpanded = false;
       let isCarouselPaused = false;
+      const LANGUAGE_READY_TIMEOUT = 2000;
+
+      async function waitForI18NReady(timeoutMs = LANGUAGE_READY_TIMEOUT){
+        return new Promise((resolve) => {
+          let resolved = false;
+          const finish = () => {
+            if(resolved) return;
+            resolved = true;
+            resolve();
+          };
+
+          const start = performance.now();
+          const check = () => {
+            const i18n = window.NH48_I18N;
+            if(i18n && typeof i18n.t === 'function'){
+              const sample = i18n.t('peak.generalInfo.title');
+              if(sample && sample !== 'peak.generalInfo.title'){
+                finish();
+                return;
+              }
+            }
+            if(performance.now() - start >= timeoutMs){
+              finish();
+              return;
+            }
+            requestAnimationFrame(check);
+          };
+
+          if(window.NH48_I18N && typeof window.NH48_I18N.onLangChange === 'function'){
+            window.NH48_I18N.onLangChange(() => finish());
+          }
+
+          check();
+        });
+      }
 
       /* METADATA PANEL -------------------------------------------------------- */
       function enrichMetadata(meta){
@@ -2255,7 +2290,10 @@
         }
 
         try{
-          const data = await fetchPeaks();
+          const [ , data ] = await Promise.all([
+            waitForI18NReady(),
+            fetchPeaks()
+          ]);
           const p = data && data[slug];
 
           if(!p){
@@ -2352,7 +2390,11 @@
         }
       }
 
-      window.addEventListener('load', init);
+      if(document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', init, { once: true });
+      }else{
+        init();
+      }
 
       if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
         window.NH48_I18N.onLangChange((lang) => {
