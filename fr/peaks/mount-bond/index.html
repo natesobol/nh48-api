@@ -639,6 +639,12 @@
         border:1px solid var(--stroke);
         object-fit:cover;
       }
+      .hero-image figcaption{
+        margin-top:8px;
+        color:var(--muted);
+        font-size:0.95rem;
+        line-height:1.4;
+      }
       .section-title{
         margin:22px 0 10px 0;
         font-size:1.1rem;
@@ -675,10 +681,30 @@
         grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
         gap:10px;
       }
+      .gallery-grid figure{
+        margin:0;
+      }
       .gallery-grid img{
         width:100%;
         border-radius:10px;
         border:1px solid var(--stroke);
+      }
+      .gallery-grid figcaption{
+        margin-top:6px;
+        color:var(--muted);
+        font-size:0.9rem;
+        line-height:1.4;
+      }
+      .sr-only{
+        position:absolute;
+        width:1px;
+        height:1px;
+        padding:0;
+        margin:-1px;
+        overflow:hidden;
+        clip:rect(0,0,0,0);
+        white-space:nowrap;
+        border:0;
       }
       .redirect-notice{
         margin-top:22px;
@@ -721,7 +747,8 @@
           <a class="back-link" href="https://nh48.info/catalog">Retour au catalogue des sommets NH48</a>
         </div>
         <figure class="hero-image">
-          <img src="https://photos.nh48.info/mount-bond/mount-bond__001.jpg" alt="This photograph features Mount Bond in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails." loading="eager" width="6720" height="4480" />
+          <img src="https://photos.nh48.info/mount-bond/mount-bond__001.jpg" alt="This photograph features Mount Bond in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails." loading="eager" width="6720" height="4480" lang="en" aria-describedby="hero-image-caption" />
+          <figcaption id="hero-image-caption" lang="en">This photograph features Mount Bond in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.</figcaption>
         </figure>
       </header>
 
@@ -783,9 +810,21 @@
       <section aria-labelledby="galleryHeading">
         <h2 class="section-title" id="galleryHeading">Galerie photo</h2>
         <div class="gallery-grid">
-          <img src="https://photos.nh48.info/mount-bond/mount-bond__001.jpg" alt="Forested mountain ridge and summit of Mount Bond in the White Mountain National Forest under a partly cloudy sky." loading="lazy" width="6720" height="4480" />
-<img src="https://photos.nh48.info/mount-bond/mount-bond__002.jpg" alt="Forested mountain ridge and summit of Mount Bond in the White Mountain National Forest under a partly cloudy sky." loading="lazy" width="8688" height="5792" />
-<img src="https://photos.nh48.info/mount-bond/mount-bond__005.jpg" alt="Forested mountain ridge and summit of Mount Bond in the White Mountain National Forest under a partly cloudy sky." loading="lazy" width="7147" height="4765" />
+          <figure class="gallery-figure">
+        <img src="https://photos.nh48.info/mount-bond/mount-bond__001.jpg" alt="Forested mountain ridge and summit of Mount Bond in the White Mountain National Forest under a partly cloudy sky." loading="lazy" width="6720" height="4480" lang="en" aria-describedby="photo-desc-0" />
+        <span id="photo-desc-0" class="sr-only" lang="en">This photograph features Mount Bond in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.</span>
+        <figcaption lang="en">This photograph features Mount Bond in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.</figcaption>
+      </figure>
+<figure class="gallery-figure">
+        <img src="https://photos.nh48.info/mount-bond/mount-bond__002.jpg" alt="Forested mountain ridge and summit of Mount Bond in the White Mountain National Forest under a partly cloudy sky." loading="lazy" width="8688" height="5792" lang="en" aria-describedby="photo-desc-1" />
+        <span id="photo-desc-1" class="sr-only" lang="en">This photograph features Mount Bond in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.</span>
+        <figcaption lang="en">This photograph features Mount Bond in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.</figcaption>
+      </figure>
+<figure class="gallery-figure">
+        <img src="https://photos.nh48.info/mount-bond/mount-bond__005.jpg" alt="Forested mountain ridge and summit of Mount Bond in the White Mountain National Forest under a partly cloudy sky." loading="lazy" width="7147" height="4765" lang="en" aria-describedby="photo-desc-2" />
+        <span id="photo-desc-2" class="sr-only" lang="en">This photograph features Mount Bond in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.</span>
+        <figcaption lang="en">This photograph features Mount Bond in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.</figcaption>
+      </figure>
         </div>
       </section>
 

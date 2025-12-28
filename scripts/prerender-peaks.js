@@ -265,15 +265,19 @@ const buildContentLocation = (photo) => {
   return Object.keys(place).length ? place : undefined;
 };
 
-const buildImageObject = (photo, peakName, isPrimary) => {
+const buildImageObject = (photo, peakName, isPrimary, langCode) => {
   const normalizedUrl = normalizePhotoUrl(photo.url) || FALLBACK_IMAGE;
   const { width: parsedWidth, height: parsedHeight } = parseDimensions(photo.dimensions || photo.dimension || '');
   const width = parsedWidth || undefined;
   const height = parsedHeight || undefined;
-  const alt = cleanText(photo.altText || photo.alt || photo.extendedDescription || photo.description)
-    || buildPhotoAlt(photo, peakName);
-  const headline = cleanText(photo.headline) || `${peakName} — White Mountain National Forest`;
-  const description = cleanText(photo.extendedDescription || photo.description || photo.caption || '');
+  const { alt, altLang, extendedDescription, extendedDescriptionLang } = buildPhotoTexts(
+    photo,
+    peakName,
+    langCode
+  );
+  const headline =
+    cleanText(photo[`headline_${langCode}`]) || cleanText(photo.headline) || `${peakName} — White Mountain National Forest`;
+  const description = cleanText(extendedDescription || photo.caption || '');
   const creator = cleanText(photo.author || photo.creator || photo.iptc?.creator || AUTHOR_NAME) || AUTHOR_NAME;
   const creditText = cleanText(photo.iptc?.creditLine || photo.creditText || creator || AUTHOR_NAME) || AUTHOR_NAME;
   const publisherName = cleanText(photo.iptc?.featuredOrgName) || TWITTER_HANDLE;
@@ -316,9 +320,11 @@ const buildImageObject = (photo, peakName, isPrimary) => {
   return {
     imageObject,
     alt,
+    altLang,
     headline,
     description,
-    extendedDescription: cleanText(photo.extendedDescription || ''),
+    extendedDescription: cleanText(extendedDescription || ''),
+    extendedDescriptionLang,
     width,
     height,
     creator,
@@ -329,7 +335,7 @@ const buildImageObject = (photo, peakName, isPrimary) => {
   };
 };
 
-const pickPrimaryPhoto = (photos, peakName) => {
+const pickPrimaryPhoto = (photos, peakName, langCode) => {
   if (!Array.isArray(photos) || photos.length === 0) {
     const fallbackImageObject = {
       '@type': 'ImageObject',
@@ -348,9 +354,11 @@ const pickPrimaryPhoto = (photos, peakName) => {
       primary: {
         url: FALLBACK_IMAGE,
         alt: `${peakName} in the White Mountains`,
+        altLang: langCode === 'en' ? undefined : 'en',
         headline: `${peakName} — White Mountain National Forest`,
         description: '',
         extendedDescription: '',
+        extendedDescriptionLang: langCode === 'en' ? undefined : 'en',
         width: null,
         height: null,
         creator: AUTHOR_NAME,
@@ -368,16 +376,20 @@ const pickPrimaryPhoto = (photos, peakName) => {
     photos.findIndex((photo) => photo && typeof photo === 'object' && photo.isPrimary)
   );
 
-  const imageEntries = photos.map((photo, index) => buildImageObject(photo, peakName, index === primaryIndex));
+  const imageEntries = photos.map((photo, index) =>
+    buildImageObject(photo, peakName, index === primaryIndex, langCode)
+  );
   const primary = imageEntries[primaryIndex];
 
   return {
     primary: {
       url: primary.imageObject.url,
       alt: primary.alt,
+      altLang: primary.altLang,
       headline: primary.headline,
       description: primary.description,
       extendedDescription: primary.extendedDescription,
+      extendedDescriptionLang: primary.extendedDescriptionLang,
       width: primary.width,
       height: primary.height,
       creator: primary.creator,
@@ -407,18 +419,63 @@ const normalizePhotoUrl = (url) => {
   return url;
 };
 
-const buildPhotoAlt = (photo, peakName) => {
-  const explicit = cleanText(photo.altText || photo.alt);
-  if (explicit) return explicit;
-  const descriptive = cleanText(
-    photo.description || photo.caption || photo.extendedDescription || photo.headline
-  );
-  if (descriptive) return `${peakName} — ${descriptive}`;
-  const tags = Array.isArray(photo.tags) ? photo.tags.filter(Boolean) : [];
-  if (tags.length) {
-    return `${peakName} - ${tags.join(", ")}`;
+const pickLocalizedField = (photo, langCode, keys) => {
+  if (!photo || typeof photo !== 'object') {
+    return { text: '', isLocalized: false };
   }
-  return `${peakName} photo`;
+
+  for (const key of keys) {
+    const localizedKey = `${key}_${langCode}`;
+    const localizedValue = cleanText(photo[localizedKey]);
+    if (localizedValue) {
+      return { text: localizedValue, isLocalized: true };
+    }
+  }
+
+  for (const key of keys) {
+    const value = cleanText(photo[key]);
+    if (value) {
+      return { text: value, isLocalized: false };
+    }
+  }
+
+  return { text: '', isLocalized: false };
+};
+
+const resolveLangAttr = (isLocalized, langCode) => {
+  if (isLocalized || langCode === 'en') return undefined;
+  return 'en';
+};
+
+const buildPhotoTexts = (photo, peakName, langCode) => {
+  const { text: altText, isLocalized: isAltLocalized } = pickLocalizedField(photo, langCode, [
+    'altText',
+    'alt',
+  ]);
+  const {
+    text: descriptionText,
+    isLocalized: isDescriptionLocalized,
+  } = pickLocalizedField(photo, langCode, ['extendedDescription', 'description', 'caption', 'headline']);
+
+  let alt = altText || descriptionText;
+  let altLang = resolveLangAttr(isAltLocalized || isDescriptionLocalized, langCode);
+
+  if (!alt) {
+    const tags = Array.isArray(photo?.tags) ? photo.tags.filter(Boolean) : [];
+    if (tags.length) {
+      alt = `${peakName} – ${tags.join(', ')}`;
+    } else {
+      alt = `${peakName} in the White Mountains`;
+    }
+    altLang = resolveLangAttr(false, langCode);
+  }
+
+  const extendedDescription = descriptionText;
+  const extendedDescriptionLang = extendedDescription
+    ? resolveLangAttr(isDescriptionLocalized, langCode)
+    : undefined;
+
+  return { alt, altLang, extendedDescription, extendedDescriptionLang };
 };
 
 const buildRoutesList = (routes, labels) => {
@@ -440,23 +497,39 @@ const buildRoutesList = (routes, labels) => {
     .join("\n");
 };
 
-const buildGallery = (photos, peakName, fallbackAlt) => {
+const buildGallery = (photos, peakName, fallbackAlt, langCode) => {
   if (!Array.isArray(photos) || photos.length === 0) {
-      return `<img src="${FALLBACK_IMAGE}" alt="${escapeHtml(
-      `${peakName} in the White Mountains`
-    )}" loading="lazy" />`;
+    const descriptionText = `${peakName} in the White Mountains`;
+    return `<figure class="gallery-figure">
+      <img src="${FALLBACK_IMAGE}" alt="${escapeHtml(descriptionText)}" loading="lazy" />
+      <figcaption>${escapeHtml(descriptionText)}</figcaption>
+    </figure>`;
   }
+
   return photos
     .slice(0, 4)
-    .map((photo) => {
-      const alt =
-        cleanText(photo.altText || photo.alt || photo.extendedDescription || photo.description) ||
-        cleanText(fallbackAlt) ||
-        buildPhotoAlt(photo, peakName);
+    .map((photo, index) => {
+      const { alt, altLang, extendedDescription, extendedDescriptionLang } = buildPhotoTexts(
+        photo,
+        peakName,
+        langCode
+      );
+      const descriptionText =
+        cleanText(extendedDescription) || cleanText(fallbackAlt) || alt || `${peakName} in the White Mountains`;
       const url = normalizePhotoUrl(photo.url) || FALLBACK_IMAGE;
       const { width, height } = parseDimensions(photo.dimensions || photo.dimension || '');
       const dimensionsAttr = width && height ? ` width="${width}" height="${height}"` : "";
-      return `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" loading="lazy"${dimensionsAttr} />`;
+      const langAttr = altLang ? ` lang="${altLang}"` : "";
+      const descriptionLangAttr = extendedDescriptionLang || altLang ? ` lang="${extendedDescriptionLang || altLang}"` : "";
+      const describedBy = descriptionText ? ` aria-describedby="photo-desc-${index}"` : "";
+
+      return `<figure class="gallery-figure">
+        <img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" loading="lazy"${dimensionsAttr}${langAttr}${describedBy} />
+        ${descriptionText
+          ? `<span id="photo-desc-${index}" class="sr-only"${descriptionLangAttr}>${escapeHtml(descriptionText)}</span>
+        <figcaption${descriptionLangAttr}>${escapeHtml(descriptionText)}</figcaption>`
+          : ''}
+      </figure>`;
     })
     .join("\n");
 };
@@ -722,7 +795,11 @@ const main = () => {
       LANGUAGE_CONFIGS.forEach((lang) => {
         const canonicalUrl = `${lang.canonicalBase}/${slug}/`;
         const localizedName = localizePeakName(name, lang.code);
-        const { primary: primaryPhoto, imageObjects } = pickPrimaryPhoto(peak.photos, localizedName);
+        const { primary: primaryPhoto, imageObjects } = pickPrimaryPhoto(
+          peak.photos,
+          localizedName,
+          lang.code
+        );
         const descriptionValues = {
           name: localizedName,
           elevation: elevation || lang.defaults.unknown,
@@ -749,6 +826,13 @@ const main = () => {
           cleanText(primaryPhoto.extendedDescription || primaryPhoto.description) ||
           descriptionText ||
           primaryPhoto.alt;
+        const heroLangAttr = primaryPhoto.altLang ? ` lang="${primaryPhoto.altLang}"` : '';
+        const heroCaptionText =
+          cleanText(primaryPhoto.extendedDescription) || descriptionText || cleanText(primaryPhoto.description || '');
+        const heroCaptionLangAttr =
+          primaryPhoto.extendedDescriptionLang || primaryPhoto.altLang
+            ? ` lang="${primaryPhoto.extendedDescriptionLang || primaryPhoto.altLang}"`
+            : '';
 
         const values = {
           LANG: lang.hreflang,
@@ -791,11 +875,14 @@ const main = () => {
           COORDINATES: escapeHtml(coordinates.text || lang.defaults.coordinates),
           ROUTES_LIST: buildRoutesList(peak["Standard Routes"], lang.labels),
           RELATED_TRAILS_LI: buildRelatedTrailsList(peak["Standard Routes"], lang.labels),
-          GALLERY_IMAGES: buildGallery(peak.photos, localizedName, descriptionText),
+          GALLERY_IMAGES: buildGallery(peak.photos, localizedName, descriptionText, lang.code),
           APP_URL: lang.appUrl(slug),
           CATALOG_URL: lang.catalogUrl,
           HERO_IMAGE: primaryPhoto.url,
           HERO_ALT: escapeHtml(heroAlt),
+          HERO_LANG_ATTR: heroLangAttr,
+          HERO_CAPTION: escapeHtml(heroCaptionText || heroAlt),
+          HERO_CAPTION_LANG_ATTR: heroCaptionLangAttr,
           HERO_DIMENSIONS:
             primaryPhoto.width && primaryPhoto.height
               ? `width="${primaryPhoto.width}" height="${primaryPhoto.height}"`
