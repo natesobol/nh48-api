@@ -1330,6 +1330,23 @@
         return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
       }
 
+      function entriesFromObject(prefixLabel, obj){
+        const entries = [];
+        if(!obj || typeof obj !== 'object') return entries;
+        Object.entries(obj).forEach(([key, val]) => {
+          if(val === undefined || val === null) return;
+          if(typeof val === 'object' && !Array.isArray(val)){
+            entries.push(...entriesFromObject(`${prefixLabel} — ${humanLabelFromKey(key)}`, val));
+          }else{
+            const valueText = Array.isArray(val) ? val.join(', ') : String(val).trim();
+            if(valueText){
+              entries.push([`${prefixLabel} — ${humanLabelFromKey(key)}`, valueText]);
+            }
+          }
+        });
+        return entries;
+      }
+
       // Always-visible keys
       const PRIMARY_META_KEYS = [
         'season',
@@ -1337,9 +1354,15 @@
         'orientation',
         'captureDate',
         'focalLength',
-        'author'
+        'author',
+        'headline',
+        'caption',
+        'description',
+        'extendedDescription',
+        'altText',
+        'alt'
       ];
-      const SKIP_META_KEYS = new Set(['photoId','filename','url','isPrimary','tags']);
+      const SKIP_META_KEYS = new Set(['photoId','filename','url','isPrimary']);
 
       // --- Enhanced updateMetadata: group fields by type, show all, stacked layout ---
       function updateMetadata(i){
@@ -1368,15 +1391,12 @@
 
         // Grouping keys by type (EXIF, IPTC, SEO, File Info, etc.)
         const GROUPS = [
+          { label: 'Descriptions', keys: ['headline','caption','description','extendedDescription','altText','alt'] },
           { label: 'EXIF', keys: ['captureDate','cameraMaker','cameraModel','camera','lens','fStop','shutterSpeed','iso','exposureBias','focalLength','flashMode','meteringMode','maxAperture','focalLength35mm','rating','dimensions'] },
-          { label: 'SEO', keys: ['headline','description','alt','altText','caption','extendedDescription'] },
           { label: 'File Info', keys: ['fileSize','fileCreateDate','fileModifiedDate','author','title','subject'] },
-          { label: 'Tags', keys: ['tags','season','timeOfDay','orientation'] },
+          { label: 'Tags & Attributes', keys: ['tags','season','timeOfDay','orientation','isPrimary'] },
           { label: 'IPTC', keys: ['iptc'] },
         ];
-        // Always show these keys in collapsed view
-        const PRIMARY_META_KEYS = ['season','timeOfDay','orientation','captureDate','focalLength','author','headline','altText','caption'];
-        const SKIP_META_KEYS = new Set(['photoId','filename','url','isPrimary']);
 
         // Collapsed: show only primary keys
         const primaryWrap = document.createElement('div');
@@ -1398,6 +1418,111 @@
         extraWrap.className = 'metadata-extra';
         let shown = new Set(PRIMARY_META_KEYS);
         GROUPS.forEach(group => {
+          if(group.label === 'IPTC'){
+            const iptc = meta.iptc;
+            if(iptc && typeof iptc === 'object'){
+              shown.add('iptc');
+
+              const groupHeader = document.createElement('div');
+              groupHeader.className = 'metadata-label';
+              groupHeader.style.marginTop = '10px';
+              groupHeader.style.fontWeight = 'bold';
+              groupHeader.textContent = group.label;
+              extraWrap.appendChild(groupHeader);
+
+              const creatorFields = [
+                ['Creator', iptc.creator],
+                ['Creator Job Title', iptc.creatorJobTitle],
+                ['Creator Email', iptc.creatorEmail],
+                ['Creator Website', iptc.creatorWebsite],
+                ['Featured Org Name', iptc.featuredOrgName]
+              ].filter(([,v]) => v !== undefined && v !== null && String(v).trim() !== '');
+
+              if(creatorFields.length){
+                const subHeader = document.createElement('div');
+                subHeader.className = 'metadata-label';
+                subHeader.style.marginTop = '6px';
+                subHeader.textContent = 'Creator & Credits';
+                extraWrap.appendChild(subHeader);
+                creatorFields.forEach(([label, value]) => {
+                  extraWrap.appendChild(makeRow(label, String(value)));
+                });
+              }
+
+              const rightsFields = [
+                ['Credit Line', iptc.creditLine],
+                ['Source', iptc.source],
+                ['Copyright Notice', iptc.copyrightNotice],
+                ['Copyright Status', iptc.copyrightStatus],
+                ['Rights Usage Terms', iptc.rightsUsageTerms],
+                ['Intellectual Genre', iptc.intellectualGenre],
+                ['IPTC Subject Code', iptc.iptcSubjectCode]
+              ].filter(([,v]) => v !== undefined && v !== null && String(v).trim() !== '');
+
+              if(rightsFields.length){
+                const subHeader = document.createElement('div');
+                subHeader.className = 'metadata-label';
+                subHeader.style.marginTop = '6px';
+                subHeader.textContent = 'Rights & Licensing';
+                extraWrap.appendChild(subHeader);
+                rightsFields.forEach(([label, value]) => {
+                  extraWrap.appendChild(makeRow(label, String(value)));
+                });
+              }
+
+              const keywordFields = [];
+              if(Array.isArray(iptc.keywords) && iptc.keywords.length){
+                keywordFields.push(['Keywords', iptc.keywords.join(', ')]);
+              }
+              if(keywordFields.length){
+                const subHeader = document.createElement('div');
+                subHeader.className = 'metadata-label';
+                subHeader.style.marginTop = '6px';
+                subHeader.textContent = 'Keywords';
+                extraWrap.appendChild(subHeader);
+                keywordFields.forEach(([label, value]) => extraWrap.appendChild(makeRow(label, value)));
+              }
+
+              const locationCreatedRows = entriesFromObject('Location Created', iptc.locationCreated);
+              const locationShownRows = entriesFromObject('Location Shown', iptc.locationShown);
+              const locationRows = [...locationCreatedRows, ...locationShownRows];
+              if(locationRows.length){
+                const subHeader = document.createElement('div');
+                subHeader.className = 'metadata-label';
+                subHeader.style.marginTop = '6px';
+                subHeader.textContent = 'Locations';
+                extraWrap.appendChild(subHeader);
+                locationRows.forEach(([label, value]) => extraWrap.appendChild(makeRow(label, value)));
+              }
+
+              const miscIptc = { ...iptc };
+              delete miscIptc.locationCreated;
+              delete miscIptc.locationShown;
+              delete miscIptc.keywords;
+              delete miscIptc.creator;
+              delete miscIptc.creatorJobTitle;
+              delete miscIptc.creatorEmail;
+              delete miscIptc.creatorWebsite;
+              delete miscIptc.featuredOrgName;
+              delete miscIptc.creditLine;
+              delete miscIptc.source;
+              delete miscIptc.copyrightNotice;
+              delete miscIptc.copyrightStatus;
+              delete miscIptc.rightsUsageTerms;
+              delete miscIptc.intellectualGenre;
+              delete miscIptc.iptcSubjectCode;
+              Object.entries(miscIptc).forEach(([key, val]) => {
+                if(val === undefined || val === null) return;
+                const valueText = Array.isArray(val) ? val.join(', ') : String(val).trim();
+                if(valueText){
+                  extraWrap.appendChild(makeRow(humanLabelFromKey(key), valueText));
+                  shown.add(key);
+                }
+              });
+            }
+            return;
+          }
+
           let groupFields = [];
           group.keys.forEach(key => {
             if(SKIP_META_KEYS.has(key)) return;
@@ -1414,18 +1539,10 @@
             groupHeader.textContent = group.label;
             extraWrap.appendChild(groupHeader);
             groupFields.forEach(([key, val]) => {
-              // IPTC: pretty print as JSON if object
-              if(key === 'iptc' && typeof val === 'object'){
-                const pre = document.createElement('pre');
-                pre.style.fontSize = '0.8em';
-                pre.style.background = 'var(--card)';
-                pre.style.color = 'var(--muted)';
-                pre.style.padding = '6px';
-                pre.style.borderRadius = '6px';
-                pre.textContent = JSON.stringify(val, null, 2);
-                extraWrap.appendChild(pre);
-              }else if(Array.isArray(val)){
+              if(Array.isArray(val)){
                 extraWrap.appendChild(makeRow(humanLabelFromKey(key), val.join(', ')));
+              }else if(typeof val === 'object'){
+                extraWrap.appendChild(makeRow(humanLabelFromKey(key), JSON.stringify(val, null, 2)));
               }else{
                 extraWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
               }
@@ -1436,7 +1553,13 @@
         Object.entries(meta).forEach(([key, val]) => {
           if(SKIP_META_KEYS.has(key) || shown.has(key)) return;
           if(val === undefined || val === null || String(val).trim() === '') return;
-          extraWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
+          if(Array.isArray(val)){
+            extraWrap.appendChild(makeRow(humanLabelFromKey(key), val.join(', ')));
+          }else if(typeof val === 'object'){
+            extraWrap.appendChild(makeRow(humanLabelFromKey(key), JSON.stringify(val, null, 2)));
+          }else{
+            extraWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
+          }
           shown.add(key);
         });
 
