@@ -644,6 +644,18 @@
         font-size:0.9rem;
         line-height:1.5;
       }
+      .trail-list a{
+        color:var(--ink);
+        text-decoration:underline;
+        text-decoration-color:var(--stroke);
+        text-underline-offset:3px;
+        text-decoration-thickness:1px;
+        transition:color 0.2s ease, text-decoration-color 0.2s ease;
+      }
+      .trail-list a:hover{
+        color:var(--accent);
+        text-decoration-color:var(--accent);
+      }
       @keyframes spin{
         to{ transform:rotate(360deg); }
       }
@@ -783,6 +795,11 @@
       ];
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
+
+      const translateWithFallback = (key, fallback, vars = {}) => {
+        const translated = t(key, vars);
+        return translated === key ? fallback : translated;
+      };
 
       const trackEvent = (name, params = {}) => {
         const analytics = window.NH48_INFO_ANALYTICS;
@@ -1814,7 +1831,7 @@
 
         const label = document.createElement('div');
         label.className = 'info-label';
-        label.textContent = t('peak.relatedTrails.title');
+        label.textContent = translateWithFallback('peak.relatedTrails.title', 'Related Trails & Routes');
         panel.appendChild(label);
 
         const list = document.createElement('ul');
@@ -1822,7 +1839,7 @@
 
         if(!relatedNames.length){
           const emptyItem = document.createElement('li');
-          emptyItem.textContent = t('peak.relatedTrails.none');
+          emptyItem.textContent = translateWithFallback('peak.relatedTrails.none', 'No related trails listed yet.');
           list.appendChild(emptyItem);
           trackEvent('peak_related_trails_empty', { slug: currentSlug });
         }else{
@@ -1830,7 +1847,7 @@
             const li = document.createElement('li');
             const link = document.createElement('a');
             link.href = `https://nh48.info/trails?trail=${encodeURIComponent(name)}`;
-            link.textContent = t('peak.relatedTrails.link', { name });
+            link.textContent = translateWithFallback('peak.relatedTrails.link', `${name} route`, { name });
             li.appendChild(link);
             list.appendChild(li);
           });
