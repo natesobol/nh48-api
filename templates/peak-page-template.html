@@ -39,10 +39,7 @@
     <link rel="alternate" hreflang="en" href="{{CANONICAL_EN_URL}}" />
     <link rel="alternate" hreflang="fr" href="{{CANONICAL_FR_URL}}" />
     <link rel="alternate" hreflang="x-default" href="{{CANONICAL_XDEFAULT_URL}}" />
-    <script>
-      window.location.replace("{{APP_URL}}");
-    </script>
-    <meta http-equiv="refresh" content="0; url={{APP_URL}}" />
+    <link rel="prefetch" href="{{APP_URL}}" />
     <script type="application/ld+json">{{JSON_LD}}</script>
     <script type="application/ld+json">{{BREADCRUMB_LD}}</script>
     <style>
@@ -151,6 +148,12 @@
         border:1px solid var(--stroke);
         object-fit:cover;
       }
+      .hero-image figcaption{
+        margin-top:8px;
+        color:var(--muted);
+        font-size:0.95rem;
+        line-height:1.4;
+      }
       .section-title{
         margin:22px 0 10px 0;
         font-size:1.1rem;
@@ -187,10 +190,30 @@
         grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
         gap:10px;
       }
+      .gallery-grid figure{
+        margin:0;
+      }
       .gallery-grid img{
         width:100%;
         border-radius:10px;
         border:1px solid var(--stroke);
+      }
+      .gallery-grid figcaption{
+        margin-top:6px;
+        color:var(--muted);
+        font-size:0.9rem;
+        line-height:1.4;
+      }
+      .sr-only{
+        position:absolute;
+        width:1px;
+        height:1px;
+        padding:0;
+        margin:-1px;
+        overflow:hidden;
+        clip:rect(0,0,0,0);
+        white-space:nowrap;
+        border:0;
       }
       .redirect-notice{
         margin-top:22px;
@@ -233,7 +256,8 @@
           <a class="back-link" href="{{CATALOG_URL}}">{{LABEL_BACK_TO_CATALOG}}</a>
         </div>
         <figure class="hero-image">
-          <img src="{{HERO_IMAGE}}" alt="{{HERO_ALT}}" loading="eager" {{HERO_DIMENSIONS}} />
+          <img src="{{HERO_IMAGE}}" alt="{{HERO_ALT}}" loading="eager" {{HERO_DIMENSIONS}}{{HERO_LANG_ATTR}} aria-describedby="hero-image-caption" />
+          <figcaption id="hero-image-caption"{{HERO_CAPTION_LANG_ATTR}}>{{HERO_CAPTION}}</figcaption>
         </figure>
       </header>
 

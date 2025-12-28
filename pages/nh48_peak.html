@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta id="dynamicDescription" name="description" content="NH48 API – peak-level details, routes, terrain notes and photography for New Hampshire’s 4000-footers. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak details, mountain routes, White Mountains data, hiking API, peak metadata, mountain photos">
-    <meta name="robots" content="noindex,follow">
+    <meta name="robots" content="index,follow,max-image-preview:large">
     <link id="dynamicCanonical" rel="canonical" href="https://nh48.info/peaks">
     <link id="hreflangEn" rel="alternate" hreflang="en" href="https://nh48.info/peaks">
     <link id="hreflangFr" rel="alternate" hreflang="fr" href="https://nh48.info/fr/peaks">
@@ -108,6 +108,17 @@
       .nav-brand img{
         height:40px;
         width:auto;
+      }
+      .sr-only{
+        position:absolute;
+        width:1px;
+        height:1px;
+        padding:0;
+        margin:-1px;
+        overflow:hidden;
+        clip:rect(0,0,0,0);
+        border:0;
+        white-space:nowrap;
       }
       .nav-links{
         display:flex;
@@ -400,11 +411,22 @@
         transition:opacity .35s ease;
       }
       .slide.active{ opacity:1; }
-      .slide img{
+      .slide figure{
+        margin:0;
+        display:flex;
+        flex-direction:column;
+        height:100%;
+      }
+      .slide figure img{
         width:100%;
         height:100%;
         object-fit:cover;
         display:block;
+      }
+      .slide figcaption{
+        margin-top:6px;
+        font-size:0.9rem;
+        color:var(--muted);
       }
       .dots{
         position:absolute;
@@ -1204,22 +1226,60 @@
         }
       }
 
-      function buildPhotoAltText(name, meta){
-        if(meta && typeof meta === 'object'){
-          const explicit = (safeText(meta.altText) || safeText(meta.alt)).trim();
-          if(explicit){
-            return explicit;
+      function cleanAltValue(value){
+        return (safeText(value) || '').replace(/\s+/g, ' ').trim();
+      }
+
+      function pickLocalizedText(meta, lang, keys){
+        if(!meta || typeof meta !== 'object') return null;
+        for(const key of keys){
+          if(lang === 'fr'){
+            const frCandidate = cleanAltValue(
+              meta[`${key}_fr`] || meta[`${key}Fr`] || meta[`fr_${key}`]
+            );
+            if(frCandidate){
+              return { text: frCandidate, lang: 'fr' };
+            }
           }
-          const season = meta.season ? translateSeason(meta.season) : '';
-          const timeOfDay = meta.timeOfDay ? translateTimeOfDay(meta.timeOfDay) : '';
-          const text = t('photo.altTemplate', {
-            peak: name,
-            season: season ? `${season}` : '',
-            timeOfDay: timeOfDay ? `${timeOfDay}` : ''
-          }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
-          return text.replace(/\s—\s$/, '').replace(/\s$/, '').replace(/—\s*$/, '').trim();
+          const base = cleanAltValue(meta[key]);
+          if(base){
+            return { text: base, lang: lang === 'fr' ? 'en' : (lang || 'en') };
+          }
         }
-        return t('photo.altTemplate', { peak: name, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
+        return null;
+      }
+
+      function buildPhotoAltText(name, meta){
+        const lang = getSeoLang();
+        const explicit = pickLocalizedText(meta, lang, ['altText', 'alt']);
+        if(explicit) return explicit;
+
+        const described = pickLocalizedText(meta, lang, [
+          'extendedDescription',
+          'description',
+          'caption',
+          'headline',
+        ]);
+        if(described) return described;
+
+        const tags = Array.isArray(meta && meta.tags) ? meta.tags.filter(Boolean) : [];
+        if(tags.length){
+          return { text: `${name} – ${tags.join(', ')}`, lang: lang === 'fr' ? 'fr' : (lang || 'en') };
+        }
+
+        return { text: `${name} in the White Mountains`, lang: lang === 'fr' ? 'en' : (lang || 'en') };
+      }
+
+      function buildPhotoExtendedDescription(meta){
+        const lang = getSeoLang();
+        return (
+          pickLocalizedText(meta, lang, [
+            'extendedDescription',
+            'description',
+            'caption',
+            'headline',
+          ]) || null
+        );
       }
 
       function deferImageSrcSwap(root){
@@ -2112,8 +2172,15 @@
           const slide = document.createElement('div');
           slide.className = 'slide' + (i === 0 ? ' active' : '');
 
+          const figure = document.createElement('figure');
+          figure.className = 'slide-figure';
+
           const img = document.createElement('img');
-          img.alt = buildPhotoAltText(altBase, meta[i]);
+          const altInfo = buildPhotoAltText(altBase, meta[i]);
+          img.alt = altInfo ? altInfo.text : '';
+          if(altInfo && altInfo.lang){
+            img.setAttribute('lang', altInfo.lang);
+          }
 
           const realSrc = src || placeholder;
           const isPlaceholder = realSrc === placeholder;
@@ -2143,7 +2210,30 @@
             resolveFirstImage();
           };
 
-          slide.appendChild(img);
+          figure.appendChild(img);
+
+          const described = buildPhotoExtendedDescription(meta[i]);
+          if(described && described.text){
+            const describedId = `photo-desc-${i}`;
+            img.setAttribute('aria-describedby', describedId);
+            const sr = document.createElement('span');
+            sr.id = describedId;
+            sr.className = 'sr-only';
+            sr.textContent = described.text;
+            if(described.lang){
+              sr.setAttribute('lang', described.lang);
+            }
+            figure.appendChild(sr);
+
+            const caption = document.createElement('figcaption');
+            caption.textContent = described.text;
+            if(described.lang){
+              caption.setAttribute('lang', described.lang);
+            }
+            figure.appendChild(caption);
+          }
+
+          slide.appendChild(figure);
           carouselEl.appendChild(slide);
           carouselImgs.push(img);
 
@@ -2511,54 +2601,54 @@
         <p>Jump directly into every New Hampshire 4,000-footer detail page to strengthen internal linking and keep crawlers flowing through the full NH48 set.</p>
       </div>
       <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
-        <a class="nh48-quick-footer__link" href="/peaks/mount-washington">Mount Washington</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-lafayette">Mount Lafayette</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-lincoln">Mount Lincoln</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh">Mount Tecumseh</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke">Mount Moosilauke</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-pierce">Mount Pierce</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-liberty">Mount Liberty</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-adams">Mount Adams</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower">Mount Eisenhower</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-osceola">Mount Osceola</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-jackson">Mount Jackson</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-monroe">Mount Monroe</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-jefferson">Mount Jefferson</a>
-        <a class="nh48-quick-footer__link" href="/peaks/cannon-mountain">Cannon Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-madison">Mount Madison</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-flume">Mount Flume</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-garfield">Mount Garfield</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-carrigain">Mount Carrigain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain">North Kinsman Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain">South Kinsman Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-whiteface">Mount Whiteface</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway">Mount Passaconaway</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-field">Mount Field</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-tom">Mount Tom</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-willey">Mount Willey</a>
-        <a class="nh48-quick-footer__link" href="/peaks/carter-dome">Carter Dome</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-moriah">Mount Moriah</a>
-        <a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain">South Carter Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain">Middle Carter Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-hale">Mount Hale</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-waumbek">Mount Waumbek</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-isolation">Mount Isolation</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-cabot">Mount Cabot</a>
-        <a class="nh48-quick-footer__link" href="/peaks/north-tripyramid">North Tripyramid</a>
-        <a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid">Middle Tripyramid</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east">Mount Osceola – East Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d">Wildcat Mountain – D Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a">Wildcat Mountain – A Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/galehead-mountain">Galehead Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/zealand-mountain">Zealand Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/west-bond">West Bond</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-bond">Mount Bond</a>
-        <a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain">South Twin Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain">North Twin Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south">Mount Hancock – South Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-hancock">Mount Hancock – North Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/owls-head">Owl's Head</a>
-        <a class="nh48-quick-footer__link" href="/peaks/bondcliff">Bondcliff</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-washington/">Mount Washington</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-lafayette/">Mount Lafayette</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-lincoln/">Mount Lincoln</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh/">Mount Tecumseh</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke/">Mount Moosilauke</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-pierce/">Mount Pierce</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-liberty/">Mount Liberty</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-adams/">Mount Adams</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower/">Mount Eisenhower</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-osceola/">Mount Osceola</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-jackson/">Mount Jackson</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-monroe/">Mount Monroe</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-jefferson/">Mount Jefferson</a>
+        <a class="nh48-quick-footer__link" href="/peaks/cannon-mountain/">Cannon Mountain</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-madison/">Mount Madison</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-flume/">Mount Flume</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-garfield/">Mount Garfield</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-carrigain/">Mount Carrigain</a>
+        <a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain/">North Kinsman Mountain</a>
+        <a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain/">South Kinsman Mountain</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-whiteface/">Mount Whiteface</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway/">Mount Passaconaway</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-field/">Mount Field</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-tom/">Mount Tom</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-willey/">Mount Willey</a>
+        <a class="nh48-quick-footer__link" href="/peaks/carter-dome/">Carter Dome</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-moriah/">Mount Moriah</a>
+        <a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain/">South Carter Mountain</a>
+        <a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain/">Middle Carter Mountain</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-hale/">Mount Hale</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-waumbek/">Mount Waumbek</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-isolation/">Mount Isolation</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-cabot/">Mount Cabot</a>
+        <a class="nh48-quick-footer__link" href="/peaks/north-tripyramid/">North Tripyramid</a>
+        <a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid/">Middle Tripyramid</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east/">Mount Osceola – East Peak</a>
+        <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d/">Wildcat Mountain – D Peak</a>
+        <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a/">Wildcat Mountain – A Peak</a>
+        <a class="nh48-quick-footer__link" href="/peaks/galehead-mountain/">Galehead Mountain</a>
+        <a class="nh48-quick-footer__link" href="/peaks/zealand-mountain/">Zealand Mountain</a>
+        <a class="nh48-quick-footer__link" href="/peaks/west-bond/">West Bond</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-bond/">Mount Bond</a>
+        <a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain/">South Twin Mountain</a>
+        <a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain/">North Twin Mountain</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south/">Mount Hancock – South Peak</a>
+        <a class="nh48-quick-footer__link" href="/peaks/mount-hancock/">Mount Hancock – North Peak</a>
+        <a class="nh48-quick-footer__link" href="/peaks/owls-head/">Owl's Head</a>
+        <a class="nh48-quick-footer__link" href="/peaks/bondcliff/">Bondcliff</a>
       </div>
       <div class="nh48-quick-footer__meta">
         <div class="nh48-quick-footer__legal">© 2024 NH48 API · White Mountains data, trails &amp; photos</div>
