@@ -1,20 +1,26 @@
 <style data-nh48-quick-footer-style>
   .nh48-quick-footer {
-    margin: 48px auto 28px;
-    width: min(1240px, 96vw);
+    margin: 42px auto 34px;
+    width: min(1100px, 94vw);
     background: linear-gradient(135deg, rgba(10, 10, 10, 0.9), rgba(12, 20, 24, 0.92));
     border: 1px solid rgba(255, 255, 255, 0.9);
     border-radius: 18px;
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
-    padding: 24px 22px 26px;
+    padding: 24px 22px 14px;
     color: #ffffff;
     backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: min(400px, 80vh);
+    max-height: 400px;
+    overflow: hidden;
   }
 
   .nh48-quick-footer__header {
     text-align: center;
     max-width: 960px;
-    margin: 0 auto 18px;
+    margin: 0 auto 8px;
   }
 
   .nh48-quick-footer__eyebrow {
@@ -49,7 +55,26 @@
     display: grid;
     grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 10px;
-    margin-top: 18px;
+    margin-top: 10px;
+    padding: 6px 4px 8px;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(43, 216, 121, 0.6) rgba(255, 255, 255, 0.08);
+  }
+
+  .nh48-quick-footer__grid::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .nh48-quick-footer__grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+  }
+
+  .nh48-quick-footer__grid::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #2bd879, #0b9e4c);
+    border-radius: 10px;
   }
 
   .nh48-quick-footer__link {
@@ -78,6 +103,49 @@
     outline: none;
   }
 
+  .nh48-quick-footer__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 12px 4px 4px;
+    font-size: 14px;
+  }
+
+  .nh48-quick-footer__meta-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .nh48-quick-footer__meta-links a {
+    color: #c9f3d7;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.08);
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .nh48-quick-footer__meta-links a:hover,
+  .nh48-quick-footer__meta-links a:focus-visible {
+    color: #22c55e;
+    border-color: rgba(34, 197, 94, 0.7);
+    background: rgba(34, 197, 94, 0.14);
+    outline: none;
+  }
+
+  .nh48-quick-footer__legal {
+    color: #a8cbb7;
+    font-weight: 600;
+  }
+
   @media (max-width: 1180px) {
     .nh48-quick-footer__grid {
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -92,7 +160,8 @@
 
   @media (max-width: 780px) {
     .nh48-quick-footer {
-      padding: 20px 16px 22px;
+      padding: 20px 16px 14px;
+      height: min(400px, 78vh);
     }
     .nh48-quick-footer__grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -166,5 +235,16 @@
     <a class="nh48-quick-footer__link" href="/peaks/mount-hancock.html">Mount Hancock – North Peak</a>
     <a class="nh48-quick-footer__link" href="/peaks/owls-head.html">Owl's Head</a>
     <a class="nh48-quick-footer__link" href="/peaks/bondcliff.html">Bondcliff</a>
+  </div>
+  <div class="nh48-quick-footer__meta">
+    <div class="nh48-quick-footer__legal">© 2024 NH48 API · White Mountains data, trails &amp; photos</div>
+    <div class="nh48-quick-footer__meta-links" aria-label="Footer navigation links">
+      <a href="/catalog">Catalog</a>
+      <a href="/trails">WMNF Trails</a>
+      <a href="/long-trails">Long Trails</a>
+      <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
+      <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
+      <a href="https://www.instagram.com/nate_dumps_pics/" target="_blank" rel="noopener">Latest WMNF Photos</a>
+    </div>
   </div>
 </footer>
