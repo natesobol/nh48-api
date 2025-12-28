@@ -206,7 +206,36 @@
     }
     h1 {
       font-size: clamp(28px, 4vw, 40px);
-      margin-bottom: 12px;
+      margin: 0;
+    }
+    .hero-heading {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      justify-content: center;
+      margin: 0 auto 12px;
+      text-align: left;
+    }
+    .hero-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-start;
+    }
+    .hero-title-meta {
+      margin: 0;
+      font-size: 0.92rem;
+      color: #cfe1ff;
+      letter-spacing: 0.2px;
+    }
+    .hero-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      box-shadow: 0 10px 32px rgba(34, 197, 94, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: #0f172a;
+      object-fit: contain;
     }
     p {
       color: #cbd5f5;
@@ -437,6 +466,14 @@
       h1 {
         font-size: clamp(24px, 6vw, 34px);
       }
+      .hero-heading {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+      }
+      .hero-title-group {
+        align-items: center;
+      }
       p {
         font-size: 0.95rem;
       }
@@ -511,7 +548,25 @@
     <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
   </div>
   <main>
-    <h1 data-i18n="landing.heroTitle">NH48 API</h1>
+    <div class="hero-heading" itemscope itemtype="https://schema.org/Brand">
+      <link itemprop="url" href="https://nh48.info/">
+      <meta itemprop="name" content="NH48 API">
+      <meta itemprop="logo" content="https://nh48.info/nh48API_logo.png">
+      <img
+        src="/nh48API_logo.png"
+        alt="NH48 API logo featuring a stylized White Mountains badge"
+        width="72"
+        height="72"
+        class="hero-logo"
+        itemprop="logo"
+        decoding="async"
+        fetchpriority="high"
+      >
+      <div class="hero-title-group">
+        <h1 data-i18n="landing.heroTitle">NH48 API</h1>
+        <p class="hero-title-meta" aria-hidden="true">New Hampshire’s 4,000-foot peaks &amp; trails</p>
+      </div>
+    </div>
     <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.</p>
     <div class="cta">
       <a href="/catalog" data-i18n="landing.cta.catalog">Open the Peak Catalog</a>
