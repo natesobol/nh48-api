@@ -8,6 +8,213 @@
   <meta name="keywords" content="White Mountain Trails, WMNF trails, White Mountain National Forest data, hiking dataset, New Hampshire trails, Maine trails, open geospatial data">
   <link rel="canonical" href="https://nh48.info/dataset/wmnf-trails">
   <link rel="stylesheet" href="/css/dataset-page.css">
+  <link rel="stylesheet" href="/css/quick-browse-footer.css">
+  <style>
+    /* Site Navigation Header (Peakbagger-inspired) */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+      border-bottom: 1px solid #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .site-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .site-nav-logo img {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      border: 2px solid #ffffff;
+      padding: 2px;
+      background: #0a0a0a;
+      box-sizing: border-box;
+    }
+
+    .site-nav-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      line-height: 1.1;
+    }
+
+    .site-nav-title {
+      font-weight: 800;
+      font-size: 38px;
+      line-height: 1;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .site-nav-tagline {
+      font-size: 13px;
+      color: #e5f8ec;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .site-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .site-nav-links a {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: all 0.2s ease;
+    }
+
+    .site-nav-links a:hover {
+      color: #22c55e;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .site-nav-links a.active {
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .site-nav-dropdown {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .site-nav-dropdown .site-nav-submenu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      padding: 8px;
+      min-width: 200px;
+      z-index: 10;
+    }
+
+    .site-nav-dropdown:hover .site-nav-submenu,
+    .site-nav-dropdown:focus-within .site-nav-submenu {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .site-nav-dropdown .site-nav-submenu a {
+      width: 100%;
+      text-transform: none;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+
+    .site-nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #22c55e;
+      border: 2px solid #22c55e;
+      color: #ffffff;
+      font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue Condensed", Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .site-nav-cta svg {
+      width: 16px;
+      height: 16px;
+      stroke: #ffffff;
+    }
+
+    @media (max-width: 768px) {
+      .site-nav {
+        padding: 10px 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .site-nav-title,
+      .site-nav-tagline {
+        display: none;
+      }
+
+      .site-nav-logo {
+        flex: 1 1 100%;
+        justify-content: center;
+      }
+
+      .site-nav-links {
+        gap: 4px;
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .site-nav-links a {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .site-nav-submenu {
+        min-width: 180px;
+      }
+
+      .site-nav-cta {
+        padding: 6px 10px;
+        font-size: 11px;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .site-nav-links a {
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+
+      .site-nav-cta {
+        width: 100%;
+      }
+    }
+  </style>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -117,6 +324,46 @@
   </script>
 </head>
 <body>
+  <nav class="site-nav">
+    <a href="/" class="site-nav-logo">
+      <img src="/nh48API_logo.png" alt="NH48 API Logo" data-i18n="nav.logoAlt" data-i18n-attr="alt" />
+      <div class="site-nav-title-wrap">
+        <span class="site-nav-title">NH48 API</span>
+        <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
+      </div>
+    </a>
+    <div class="site-nav-links">
+      <a href="/catalog" data-route="catalog" data-i18n="nav.catalog">Catalog</a>
+      <div class="site-nav-dropdown">
+        <a class="active" href="/dataset/wmnf-trails" data-route="trails" data-i18n="nav.trails">White Mountain Trails</a>
+        <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
+          <a href="/pages/trails_app.html">Open WMNF Map</a>
+        </div>
+      </div>
+      <div class="site-nav-dropdown">
+        <a href="/dataset/long-trails" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
+        <div class="site-nav-submenu" aria-label="Long Trails short links">
+          <a href="/pages/long_trails_app.html">Open Long Trails Map</a>
+        </div>
+      </div>
+      <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
+      <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
+      <a
+        class="site-nav-cta"
+        href="https://www.instagram.com/nate_dumps_pics/"
+        target="_blank"
+        rel="noopener"
+        aria-label="Latest WMNF Photos"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+          <circle cx="12" cy="12" r="3.5"></circle>
+          <circle cx="17" cy="7" r="1.2" fill="#ffffff" stroke="none"></circle>
+        </svg>
+        <span data-i18n="nav.latestPhotos">Latest WMNF Photos</span>
+      </a>
+    </div>
+  </nav>
   <main class="dataset-page">
     <header>
       <p class="eyebrow">NH48 API Open Data</p>
@@ -227,5 +474,73 @@
       </ul>
     </section>
   </main>
+  <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
+    <div class="nh48-quick-footer__header">
+      <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
+      <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>
+      <p>Jump directly into every New Hampshire 4,000-footer detail page to strengthen internal linking and keep crawlers flowing through the full NH48 set.</p>
+    </div>
+    <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
+      <a class="nh48-quick-footer__link" href="/peaks/mount-washington">Mount Washington</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-lafayette">Mount Lafayette</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-lincoln">Mount Lincoln</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh">Mount Tecumseh</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke">Mount Moosilauke</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-pierce">Mount Pierce</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-liberty">Mount Liberty</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-adams">Mount Adams</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower">Mount Eisenhower</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-osceola">Mount Osceola</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-jackson">Mount Jackson</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-monroe">Mount Monroe</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-jefferson">Mount Jefferson</a>
+      <a class="nh48-quick-footer__link" href="/peaks/cannon-mountain">Cannon Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-madison">Mount Madison</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-flume">Mount Flume</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-garfield">Mount Garfield</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-carrigain">Mount Carrigain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain">North Kinsman Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain">South Kinsman Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-whiteface">Mount Whiteface</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway">Mount Passaconaway</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-field">Mount Field</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-tom">Mount Tom</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-willey">Mount Willey</a>
+      <a class="nh48-quick-footer__link" href="/peaks/carter-dome">Carter Dome</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-moriah">Mount Moriah</a>
+      <a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain">South Carter Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain">Middle Carter Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-hale">Mount Hale</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-waumbek">Mount Waumbek</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-isolation">Mount Isolation</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-cabot">Mount Cabot</a>
+      <a class="nh48-quick-footer__link" href="/peaks/north-tripyramid">North Tripyramid</a>
+      <a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid">Middle Tripyramid</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east">Mount Osceola – East Peak</a>
+      <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d">Wildcat Mountain – D Peak</a>
+      <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a">Wildcat Mountain – A Peak</a>
+      <a class="nh48-quick-footer__link" href="/peaks/galehead-mountain">Galehead Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/zealand-mountain">Zealand Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/west-bond">West Bond</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-bond">Mount Bond</a>
+      <a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain">South Twin Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain">North Twin Mountain</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south">Mount Hancock – South Peak</a>
+      <a class="nh48-quick-footer__link" href="/peaks/mount-hancock">Mount Hancock – North Peak</a>
+      <a class="nh48-quick-footer__link" href="/peaks/owls-head">Owl's Head</a>
+      <a class="nh48-quick-footer__link" href="/peaks/bondcliff">Bondcliff</a>
+    </div>
+    <div class="nh48-quick-footer__meta">
+      <div class="nh48-quick-footer__legal">© 2024 NH48 API · White Mountains data, trails &amp; photos</div>
+      <div class="nh48-quick-footer__meta-links" aria-label="Footer navigation links">
+        <a href="/catalog">Catalog</a>
+        <a href="/trails">White Mountain Trails</a>
+        <a href="/long-trails">Long Trails</a>
+        <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
+        <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
+        <a href="https://www.instagram.com/nate_dumps_pics/" target="_blank" rel="noopener">Latest WMNF Photos</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
