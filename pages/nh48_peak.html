@@ -644,6 +644,37 @@
         font-size:0.9rem;
         line-height:1.5;
       }
+      .trail-branding{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        margin:6px 0 10px;
+        padding:10px;
+        border:1px solid var(--stroke);
+        border-radius:8px;
+        background:linear-gradient(135deg, rgba(34,197,94,0.08), rgba(10,10,10,0.35));
+        text-decoration:none;
+        color:var(--ink);
+      }
+      .trail-branding img{
+        width:52px;
+        height:auto;
+        border-radius:8px;
+        background:#0a0a0a;
+        border:1px solid rgba(255,255,255,0.2);
+        padding:4px;
+        box-shadow:0 6px 14px rgba(0,0,0,0.35);
+      }
+      .trail-branding-text{
+        display:flex;
+        flex-direction:column;
+        gap:2px;
+        font-size:0.85rem;
+      }
+      .trail-branding-text strong{
+        color:var(--accent);
+        font-size:0.9rem;
+      }
       .trail-list a{
         color:var(--ink);
         text-decoration:underline;
@@ -1868,6 +1899,28 @@
         label.className = 'info-label';
         label.textContent = translateWithFallback('peak.relatedTrails.title', 'Related Trails & Routes');
         panel.appendChild(label);
+
+        const branding = document.createElement('a');
+        branding.className = 'trail-branding';
+        branding.href = 'https://nh48.info/trails';
+        branding.target = '_blank';
+        branding.rel = 'noopener';
+        branding.title = 'Explore White Mountain National Forest trails map and dataset';
+        branding.setAttribute('aria-label', 'Explore White Mountain National Forest trails map and dataset');
+
+        const logo = document.createElement('img');
+        logo.src = '/WMNF_Trails_API_logo.png';
+        logo.alt = 'White Mountain National Forest Trails API logo badge';
+        logo.loading = 'lazy';
+        logo.decoding = 'async';
+        branding.appendChild(logo);
+
+        const brandingCopy = document.createElement('div');
+        brandingCopy.className = 'trail-branding-text';
+        brandingCopy.innerHTML = `<strong>White Mountain Trails Map</strong><span>Interactive WMNF trail list with GPX-backed route details</span>`;
+        branding.appendChild(brandingCopy);
+
+        panel.appendChild(branding);
 
         const list = document.createElement('ul');
         list.className = 'trail-list';

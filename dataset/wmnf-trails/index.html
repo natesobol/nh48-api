@@ -157,6 +157,41 @@
       text-transform: uppercase;
     }
 
+    .dataset-hero-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: linear-gradient(120deg, rgba(34, 197, 94, 0.1), rgba(15, 23, 42, 0.85));
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      box-shadow: 0 12px 22px rgba(0, 0, 0, 0.35);
+      margin-top: 10px;
+    }
+
+    .dataset-hero-logo img {
+      width: 72px;
+      height: auto;
+      border-radius: 12px;
+      background: #0a0a0a;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px;
+    }
+
+    .dataset-hero-logo .logo-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: #e5f8ec;
+      font-size: 14px;
+      max-width: 420px;
+    }
+
+    .dataset-hero-logo .logo-copy strong {
+      color: #22c55e;
+      font-size: 16px;
+    }
+
     .site-nav-cta svg {
       width: 16px;
       height: 16px;
@@ -370,6 +405,13 @@
       <h1>White Mountain Trails Dataset</h1>
       <p class="lede">Download normalized trail data for the White Mountain National Forest, including New Hampshire core coverage, Maine extensions, connector graphs, and supporting peak references.</p>
       <p class="lede">The dataset is published as static files so search engines and downstream apps can consume the metadata without relying on client-side rendering.</p>
+      <div class="dataset-hero-logo">
+        <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest Trails API logo" title="White Mountain National Forest Trails API" loading="lazy" decoding="async">
+        <div class="logo-copy">
+          <strong>WMNF Trails API brandmark</strong>
+          <span>Logo identifier for the White Mountain National Forest trail dataset and map downloads, optimized for search engines and social previews.</span>
+        </div>
+      </div>
     </header>
 
     <nav aria-label="Breadcrumb">
