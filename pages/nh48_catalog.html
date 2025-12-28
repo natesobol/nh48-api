@@ -45,6 +45,7 @@
     <link rel="stylesheet" href="../css/nh48_catalog.css">
     <script type="module" src="../js/i18n.js"></script>
     <link rel="stylesheet" href="/css/quick-browse-footer.css">
+    <script src="/js/quick-browse-footer.js" defer></script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -908,7 +909,7 @@
         trackEvent('catalog_view_change', { view: currentView });
       });
     </script>
-    <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title">
+    <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
       <div class="nh48-quick-footer__header">
         <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
         <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>
