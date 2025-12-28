@@ -110,6 +110,17 @@
         height:40px;
         width:auto;
       }
+      .sr-only{
+        position:absolute;
+        width:1px;
+        height:1px;
+        padding:0;
+        margin:-1px;
+        overflow:hidden;
+        clip:rect(0,0,0,0);
+        border:0;
+        white-space:nowrap;
+      }
       .nav-links{
         display:flex;
         gap:24px;
@@ -401,11 +412,22 @@
         transition:opacity .35s ease;
       }
       .slide.active{ opacity:1; }
-      .slide img{
+      .slide figure{
+        margin:0;
+        display:flex;
+        flex-direction:column;
+        height:100%;
+      }
+      .slide figure img{
         width:100%;
         height:100%;
         object-fit:cover;
         display:block;
+      }
+      .slide figcaption{
+        margin-top:6px;
+        font-size:0.9rem;
+        color:var(--muted);
       }
       .dots{
         position:absolute;
@@ -1205,22 +1227,60 @@
         }
       }
 
-      function buildPhotoAltText(name, meta){
-        if(meta && typeof meta === 'object'){
-          const explicit = (safeText(meta.altText) || safeText(meta.alt)).trim();
-          if(explicit){
-            return explicit;
+      function cleanAltValue(value){
+        return (safeText(value) || '').replace(/\s+/g, ' ').trim();
+      }
+
+      function pickLocalizedText(meta, lang, keys){
+        if(!meta || typeof meta !== 'object') return null;
+        for(const key of keys){
+          if(lang === 'fr'){
+            const frCandidate = cleanAltValue(
+              meta[`${key}_fr`] || meta[`${key}Fr`] || meta[`fr_${key}`]
+            );
+            if(frCandidate){
+              return { text: frCandidate, lang: 'fr' };
+            }
           }
-          const season = meta.season ? translateSeason(meta.season) : '';
-          const timeOfDay = meta.timeOfDay ? translateTimeOfDay(meta.timeOfDay) : '';
-          const text = t('photo.altTemplate', {
-            peak: name,
-            season: season ? `${season}` : '',
-            timeOfDay: timeOfDay ? `${timeOfDay}` : ''
-          }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
-          return text.replace(/\s—\s$/, '').replace(/\s$/, '').replace(/—\s*$/, '').trim();
+          const base = cleanAltValue(meta[key]);
+          if(base){
+            return { text: base, lang: lang === 'fr' ? 'en' : (lang || 'en') };
+          }
         }
-        return t('photo.altTemplate', { peak: name, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
+        return null;
+      }
+
+      function buildPhotoAltText(name, meta){
+        const lang = getSeoLang();
+        const explicit = pickLocalizedText(meta, lang, ['altText', 'alt']);
+        if(explicit) return explicit;
+
+        const described = pickLocalizedText(meta, lang, [
+          'extendedDescription',
+          'description',
+          'caption',
+          'headline',
+        ]);
+        if(described) return described;
+
+        const tags = Array.isArray(meta && meta.tags) ? meta.tags.filter(Boolean) : [];
+        if(tags.length){
+          return { text: `${name} – ${tags.join(', ')}`, lang: lang === 'fr' ? 'fr' : (lang || 'en') };
+        }
+
+        return { text: `${name} in the White Mountains`, lang: lang === 'fr' ? 'en' : (lang || 'en') };
+      }
+
+      function buildPhotoExtendedDescription(meta){
+        const lang = getSeoLang();
+        return (
+          pickLocalizedText(meta, lang, [
+            'extendedDescription',
+            'description',
+            'caption',
+            'headline',
+          ]) || null
+        );
       }
 
       function deferImageSrcSwap(root){
@@ -2113,8 +2173,15 @@
           const slide = document.createElement('div');
           slide.className = 'slide' + (i === 0 ? ' active' : '');
 
+          const figure = document.createElement('figure');
+          figure.className = 'slide-figure';
+
           const img = document.createElement('img');
-          img.alt = buildPhotoAltText(altBase, meta[i]);
+          const altInfo = buildPhotoAltText(altBase, meta[i]);
+          img.alt = altInfo ? altInfo.text : '';
+          if(altInfo && altInfo.lang){
+            img.setAttribute('lang', altInfo.lang);
+          }
 
           const realSrc = src || placeholder;
           const isPlaceholder = realSrc === placeholder;
@@ -2144,7 +2211,30 @@
             resolveFirstImage();
           };
 
-          slide.appendChild(img);
+          figure.appendChild(img);
+
+          const described = buildPhotoExtendedDescription(meta[i]);
+          if(described && described.text){
+            const describedId = `photo-desc-${i}`;
+            img.setAttribute('aria-describedby', describedId);
+            const sr = document.createElement('span');
+            sr.id = describedId;
+            sr.className = 'sr-only';
+            sr.textContent = described.text;
+            if(described.lang){
+              sr.setAttribute('lang', described.lang);
+            }
+            figure.appendChild(sr);
+
+            const caption = document.createElement('figcaption');
+            caption.textContent = described.text;
+            if(described.lang){
+              caption.setAttribute('lang', described.lang);
+            }
+            figure.appendChild(caption);
+          }
+
+          slide.appendChild(figure);
           carouselEl.appendChild(slide);
           carouselImgs.push(img);
 

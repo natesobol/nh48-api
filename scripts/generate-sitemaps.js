@@ -5,7 +5,8 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
-const SITEMAP_OUTPUT = path.join(ROOT, 'sitemap.xml');
+const SITEMAP_INDEX_OUTPUT = path.join(ROOT, 'sitemap.xml');
+const PAGE_SITEMAP_OUTPUT = path.join(ROOT, 'page-sitemap.xml');
 const IMAGE_SITEMAP_OUTPUT = path.join(ROOT, 'image-sitemap.xml');
 const PEAK_BASE = 'https://nh48.info/peaks';
 const PEAK_BASE_FR = 'https://nh48.info/fr/peaks';
@@ -82,7 +83,7 @@ const buildImageEntries = (photos, peakName) => {
 
 const slugs = Object.keys(data).sort();
 
-const buildSitemap = () => {
+const buildPageSitemap = () => {
   const urls = [];
   slugs.forEach((slug) => {
     urls.push({ loc: `${PEAK_BASE}/${slug}/` });
@@ -99,8 +100,8 @@ const buildSitemap = () => {
   });
   parts.push('</urlset>');
 
-  fs.writeFileSync(SITEMAP_OUTPUT, `${parts.join('\n')}\n`);
-  console.log(`Wrote ${urls.length} URLs to ${SITEMAP_OUTPUT}`);
+  fs.writeFileSync(PAGE_SITEMAP_OUTPUT, `${parts.join('\n')}\n`);
+  console.log(`Wrote ${urls.length} URLs to ${PAGE_SITEMAP_OUTPUT}`);
 };
 
 const buildImageSitemap = () => {
@@ -142,5 +143,17 @@ const buildImageSitemap = () => {
   console.log(`Wrote ${urlEntries.length} URL entries to ${IMAGE_SITEMAP_OUTPUT}`);
 };
 
-buildSitemap();
+const buildSitemapIndex = () => {
+  const parts = [];
+  parts.push('<?xml version="1.0" encoding="UTF-8"?>');
+  parts.push('<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+  parts.push(`  <sitemap><loc>${escapeXml('https://nh48.info/page-sitemap.xml')}</loc></sitemap>`);
+  parts.push(`  <sitemap><loc>${escapeXml('https://nh48.info/image-sitemap.xml')}</loc></sitemap>`);
+  parts.push('</sitemapindex>');
+  fs.writeFileSync(SITEMAP_INDEX_OUTPUT, `${parts.join('\n')}\n`);
+  console.log(`Wrote sitemap index to ${SITEMAP_INDEX_OUTPUT}`);
+};
+
+buildPageSitemap();
 buildImageSitemap();
+buildSitemapIndex();
