@@ -231,6 +231,16 @@
       color: #0a0a0a;
       background: #22c55e;
     }
+    .cta a img {
+      height: 24px;
+      width: auto;
+      margin-right: 10px;
+      border-radius: 6px;
+      background: #0a0a0a;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 3px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+    }
     .cta a.secondary {
       background: transparent;
       color: #22c55e;
@@ -514,9 +524,18 @@
     <h1 data-i18n="landing.heroTitle">NH48 API</h1>
     <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.</p>
     <div class="cta">
-      <a href="/catalog" data-i18n="landing.cta.catalog">Open the Peak Catalog</a>
-      <a href="/trails" class="secondary" data-i18n="landing.cta.trails">White Mountain Trails</a>
-      <a href="/long-trails" class="secondary" data-i18n="landing.cta.campaigns">Trail Campaigns</a>
+      <a href="/catalog" data-i18n="landing.cta.catalog">
+        <img src="/nh48API_logo.png" alt="NH48 API crest for the four-thousand-footer peak catalog" title="NH48 API peak catalog logo" loading="lazy" decoding="async">
+        Open the Peak Catalog
+      </a>
+      <a href="/trails" class="secondary" data-i18n="landing.cta.trails">
+        <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest trails API logo" title="White Mountain National Forest Trails API" loading="lazy" decoding="async">
+        White Mountain Trails
+      </a>
+      <a href="/long-trails" class="secondary" data-i18n="landing.cta.campaigns">
+        <img src="/Long_Trails_Logo.png" alt="Long-distance hiking trails dataset logo" title="Long Trails open data logo" loading="lazy" decoding="async">
+        Trail Campaigns
+      </a>
     </div>
     <section class="dataset-notes">
       <h2 data-i18n="landing.notesTitle">Dataset notes</h2>
