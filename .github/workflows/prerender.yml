@@ -1,0 +1,40 @@
+name: Pre-render NH48 pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  prerender:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate static pages and sitemaps
+        run: |
+          node scripts/prerender-peaks.js
+          node scripts/prerender-long-trails.js
+          node scripts/generate-sitemaps.js
+
+      - name: Commit updated renders
+        if: github.event_name == 'push'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update prerendered pages"
+          file_pattern: |
+            peaks/**
+            fr/peaks/**
+            long-trails/**
+            sitemap.xml
+            image-sitemap.xml
+
+      - name: Verify no uncommitted changes
+        if: github.event_name == 'pull_request'
+        run: git diff --quiet --exit-code || (echo "Please run prerender scripts and commit the generated files." && exit 1)

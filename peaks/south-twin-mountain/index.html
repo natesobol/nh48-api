@@ -524,6 +524,12 @@
         border:1px solid var(--stroke);
         object-fit:cover;
       }
+      .hero-image figcaption{
+        margin-top:8px;
+        color:var(--muted);
+        font-size:0.95rem;
+        line-height:1.4;
+      }
       .section-title{
         margin:22px 0 10px 0;
         font-size:1.1rem;
@@ -560,10 +566,30 @@
         grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
         gap:10px;
       }
+      .gallery-grid figure{
+        margin:0;
+      }
       .gallery-grid img{
         width:100%;
         border-radius:10px;
         border:1px solid var(--stroke);
+      }
+      .gallery-grid figcaption{
+        margin-top:6px;
+        color:var(--muted);
+        font-size:0.9rem;
+        line-height:1.4;
+      }
+      .sr-only{
+        position:absolute;
+        width:1px;
+        height:1px;
+        padding:0;
+        margin:-1px;
+        overflow:hidden;
+        clip:rect(0,0,0,0);
+        white-space:nowrap;
+        border:0;
       }
       .redirect-notice{
         margin-top:22px;
@@ -606,7 +632,8 @@
           <a class="back-link" href="https://nh48.info/catalog">Back to NH48 Peak Catalog</a>
         </div>
         <figure class="hero-image">
-          <img src="https://photos.nh48.info/south-twin-mountain/south-twin-mountain__001.jpg" alt="This photograph features South Twin Mountain in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails." loading="eager" width="6105" height="4070" />
+          <img src="https://photos.nh48.info/south-twin-mountain/south-twin-mountain__001.jpg" alt="This photograph features South Twin Mountain in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails." loading="eager" width="6105" height="4070" aria-describedby="hero-image-caption" />
+          <figcaption id="hero-image-caption">This photograph features South Twin Mountain in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.</figcaption>
         </figure>
       </header>
 
@@ -669,8 +696,16 @@
       <section aria-labelledby="galleryHeading">
         <h2 class="section-title" id="galleryHeading">Photo gallery</h2>
         <div class="gallery-grid">
-          <img src="https://photos.nh48.info/south-twin-mountain/south-twin-mountain__001.jpg" alt="Forested mountain ridge and summit of South Twin Mountain in the White Mountain National Forest under a partly cloudy sky." loading="lazy" width="6105" height="4070" />
-<img src="https://photos.nh48.info/south-twin-mountain/south-twin-mountain__002.jpg" alt="Forested mountain ridge and summit of South Twin Mountain in the White Mountain National Forest under a partly cloudy sky." loading="lazy" width="1646" height="1097" />
+          <figure class="gallery-figure">
+        <img src="https://photos.nh48.info/south-twin-mountain/south-twin-mountain__001.jpg" alt="Forested mountain ridge and summit of South Twin Mountain in the White Mountain National Forest under a partly cloudy sky." loading="lazy" width="6105" height="4070" aria-describedby="photo-desc-0" />
+        <span id="photo-desc-0" class="sr-only">This photograph features South Twin Mountain in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.</span>
+        <figcaption>This photograph features South Twin Mountain in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.</figcaption>
+      </figure>
+<figure class="gallery-figure">
+        <img src="https://photos.nh48.info/south-twin-mountain/south-twin-mountain__002.jpg" alt="Forested mountain ridge and summit of South Twin Mountain in the White Mountain National Forest under a partly cloudy sky." loading="lazy" width="1646" height="1097" aria-describedby="photo-desc-1" />
+        <span id="photo-desc-1" class="sr-only">This photograph features South Twin Mountain in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.</span>
+        <figcaption>This photograph features South Twin Mountain in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.</figcaption>
+      </figure>
         </div>
       </section>
 
