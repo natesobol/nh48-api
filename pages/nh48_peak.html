@@ -1319,6 +1319,37 @@
       let isCarouselPaused = false;
 
       /* METADATA PANEL -------------------------------------------------------- */
+      function enrichMetadata(meta){
+        if(!meta || typeof meta !== 'object') return meta;
+
+        const iptc = meta.iptc && typeof meta.iptc === 'object' ? meta.iptc : null;
+        const pickText = (...values) => {
+          for(const v of values){
+            if(v !== undefined && v !== null && String(v).trim() !== ''){
+              return v;
+            }
+          }
+          return undefined;
+        };
+
+        return {
+          ...meta,
+          altText: pickText(meta.altText, iptc && iptc.altText, iptc && iptc.description),
+          alt: pickText(meta.alt, iptc && iptc.altText, iptc && iptc.description),
+          extendedAlt: pickText(meta.extendedAlt, meta.extendedDescription, iptc && iptc.extendedDescription, iptc && iptc.description),
+          headline: pickText(meta.headline, iptc && iptc.headline),
+          caption: pickText(meta.caption, iptc && iptc.description),
+          description: pickText(meta.description, iptc && iptc.description),
+          extendedDescription: pickText(meta.extendedDescription, iptc && iptc.extendedDescription),
+          creator: pickText(meta.creator, iptc && iptc.creator, meta.author),
+          creditLine: pickText(meta.creditLine, iptc && iptc.creditLine),
+          source: pickText(meta.source, iptc && iptc.source),
+          copyrightNotice: pickText(meta.copyrightNotice, iptc && iptc.copyrightNotice),
+          copyrightStatus: pickText(meta.copyrightStatus, iptc && iptc.copyrightStatus),
+          rightsUsageTerms: pickText(meta.rightsUsageTerms, iptc && iptc.rightsUsageTerms)
+        };
+      }
+
       function makeRow(label, value){
         const row = document.createElement('div');
         row.className = 'metadata-row';
@@ -1360,7 +1391,20 @@
           fileCreateDate: 'peak.metadata.labels.fileCreateDate',
           fileModifiedDate: 'peak.metadata.labels.fileModifiedDate',
           rating: 'peak.metadata.labels.rating',
-          metadata: 'peak.metadata.labels.metadata'
+          metadata: 'peak.metadata.labels.metadata',
+          creator: 'peak.metadata.labels.author',
+          creditLine: 'peak.metadata.labels.creditLine',
+          source: 'peak.metadata.labels.source',
+          copyrightNotice: 'peak.metadata.labels.copyrightNotice',
+          copyrightStatus: 'peak.metadata.labels.copyrightStatus',
+          rightsUsageTerms: 'peak.metadata.labels.rightsUsageTerms',
+          altText: 'peak.metadata.labels.altText',
+          alt: 'peak.metadata.labels.alt',
+          extendedAlt: 'peak.metadata.labels.extendedAlt',
+          caption: 'peak.metadata.labels.caption',
+          headline: 'peak.metadata.labels.headline',
+          extendedDescription: 'peak.metadata.labels.extendedDescription',
+          description: 'peak.metadata.labels.description'
         };
         if(map[key]) return t(map[key]);
         return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
@@ -1391,10 +1435,17 @@
         'captureDate',
         'focalLength',
         'author',
+        'creator',
+        'creditLine',
+        'source',
+        'copyrightNotice',
+        'copyrightStatus',
+        'rightsUsageTerms',
         'headline',
         'caption',
         'description',
         'extendedDescription',
+        'extendedAlt',
         'altText',
         'alt'
       ];
@@ -1434,6 +1485,7 @@
         panel.appendChild(header);
 
         const meta = (photoMetaData && photoMetaData[i]) || null;
+        const enrichedMeta = enrichMetadata(meta);
         if(!meta || typeof meta !== 'object'){
           const empty = document.createElement('div');
           empty.className = 'metadata-primary';
@@ -1447,20 +1499,23 @@
 
         // Grouping keys by type (EXIF, IPTC, SEO, File Info, etc.)
         const GROUPS = [
-          { label: 'Descriptions', keys: ['headline','caption','description','extendedDescription','altText','alt'] },
+          { label: 'Descriptions & Accessibility', keys: ['headline','caption','description','extendedDescription','altText','alt','extendedAlt','title','subject'] },
           { label: 'EXIF', keys: ['captureDate','cameraMaker','cameraModel','camera','lens','fStop','shutterSpeed','iso','exposureBias','focalLength','flashMode','meteringMode','maxAperture','focalLength35mm','rating','dimensions'] },
-          { label: 'File Info', keys: ['fileSize','fileCreateDate','fileModifiedDate','author','title','subject'] },
+          { label: 'File Info', keys: ['fileSize','fileCreateDate','fileModifiedDate','author','creator','creditLine','source','title','subject'] },
           { label: 'Tags & Attributes', keys: ['tags','season','timeOfDay','orientation','isPrimary'] },
+          { label: 'Rights & Licensing', keys: ['copyrightNotice','copyrightStatus','rightsUsageTerms'] },
           { label: 'IPTC', keys: ['iptc'] },
         ];
+
+        const displayMeta = (enrichedMeta && typeof enrichedMeta === 'object') ? enrichedMeta : meta;
 
         // Collapsed: show only primary keys
         const primaryWrap = document.createElement('div');
         primaryWrap.className = 'metadata-primary';
         let hasPrimary = false;
         PRIMARY_META_KEYS.forEach(key => {
-          if(meta[key] !== undefined && meta[key] !== null && String(meta[key]).trim() !== ''){
-            primaryWrap.appendChild(makeRow(humanLabelFromKey(key), String(meta[key])));
+          if(enrichedMeta && enrichedMeta[key] !== undefined && enrichedMeta[key] !== null && String(enrichedMeta[key]).trim() !== ''){
+            primaryWrap.appendChild(makeRow(humanLabelFromKey(key), String(enrichedMeta[key])));
             hasPrimary = true;
           }
         });
@@ -1475,7 +1530,7 @@
         let shown = new Set(PRIMARY_META_KEYS);
         GROUPS.forEach(group => {
           if(group.label === 'IPTC'){
-            const iptc = meta.iptc;
+            const iptc = enrichedMeta && enrichedMeta.iptc;
             if(iptc && typeof iptc === 'object'){
               shown.add('iptc');
 
@@ -1487,11 +1542,11 @@
               extraWrap.appendChild(groupHeader);
 
               const creatorFields = [
-                ['Creator', iptc.creator],
-                ['Creator Job Title', iptc.creatorJobTitle],
-                ['Creator Email', iptc.creatorEmail],
-                ['Creator Website', iptc.creatorWebsite],
-                ['Featured Org Name', iptc.featuredOrgName]
+                ['Creator', iptc.creator, 'creator'],
+                ['Creator Job Title', iptc.creatorJobTitle, 'creatorJobTitle'],
+                ['Creator Email', iptc.creatorEmail, 'creatorEmail'],
+                ['Creator Website', iptc.creatorWebsite, 'creatorWebsite'],
+                ['Featured Org Name', iptc.featuredOrgName, 'featuredOrgName']
               ].filter(([,v]) => v !== undefined && v !== null && String(v).trim() !== '');
 
               if(creatorFields.length){
@@ -1500,19 +1555,20 @@
                 subHeader.style.marginTop = '6px';
                 subHeader.textContent = 'Creator & Credits';
                 extraWrap.appendChild(subHeader);
-                creatorFields.forEach(([label, value]) => {
+                creatorFields.forEach(([label, value, key]) => {
                   extraWrap.appendChild(makeRow(label, String(value)));
+                  if(key) shown.add(key);
                 });
               }
 
               const rightsFields = [
-                ['Credit Line', iptc.creditLine],
-                ['Source', iptc.source],
-                ['Copyright Notice', iptc.copyrightNotice],
-                ['Copyright Status', iptc.copyrightStatus],
-                ['Rights Usage Terms', iptc.rightsUsageTerms],
-                ['Intellectual Genre', iptc.intellectualGenre],
-                ['IPTC Subject Code', iptc.iptcSubjectCode]
+                ['Credit Line', iptc.creditLine, 'creditLine'],
+                ['Source', iptc.source, 'source'],
+                ['Copyright Notice', iptc.copyrightNotice, 'copyrightNotice'],
+                ['Copyright Status', iptc.copyrightStatus, 'copyrightStatus'],
+                ['Rights Usage Terms', iptc.rightsUsageTerms, 'rightsUsageTerms'],
+                ['Intellectual Genre', iptc.intellectualGenre, 'intellectualGenre'],
+                ['IPTC Subject Code', iptc.iptcSubjectCode, 'iptcSubjectCode']
               ].filter(([,v]) => v !== undefined && v !== null && String(v).trim() !== '');
 
               if(rightsFields.length){
@@ -1521,22 +1577,20 @@
                 subHeader.style.marginTop = '6px';
                 subHeader.textContent = 'Rights & Licensing';
                 extraWrap.appendChild(subHeader);
-                rightsFields.forEach(([label, value]) => {
+                rightsFields.forEach(([label, value, key]) => {
                   extraWrap.appendChild(makeRow(label, String(value)));
+                  if(key) shown.add(key);
                 });
               }
 
-              const keywordFields = [];
               if(Array.isArray(iptc.keywords) && iptc.keywords.length){
-                keywordFields.push(['Keywords', iptc.keywords.join(', ')]);
-              }
-              if(keywordFields.length){
                 const subHeader = document.createElement('div');
                 subHeader.className = 'metadata-label';
                 subHeader.style.marginTop = '6px';
                 subHeader.textContent = 'Keywords';
                 extraWrap.appendChild(subHeader);
-                keywordFields.forEach(([label, value]) => extraWrap.appendChild(makeRow(label, value)));
+                extraWrap.appendChild(makeRow('Keywords', iptc.keywords.join(', ')));
+                shown.add('keywords');
               }
 
               const locationCreatedRows = entriesFromObject('Location Created', iptc.locationCreated);
@@ -1549,12 +1603,18 @@
                 subHeader.textContent = 'Locations';
                 extraWrap.appendChild(subHeader);
                 locationRows.forEach(([label, value]) => extraWrap.appendChild(makeRow(label, value)));
+                shown.add('locationCreated');
+                shown.add('locationShown');
               }
 
               const miscIptc = { ...iptc };
               delete miscIptc.locationCreated;
               delete miscIptc.locationShown;
               delete miscIptc.keywords;
+              delete miscIptc.altText;
+              delete miscIptc.headline;
+              delete miscIptc.description;
+              delete miscIptc.extendedDescription;
               delete miscIptc.creator;
               delete miscIptc.creatorJobTitle;
               delete miscIptc.creatorEmail;
@@ -1582,8 +1642,8 @@
           let groupFields = [];
           group.keys.forEach(key => {
             if(SKIP_META_KEYS.has(key)) return;
-            if(meta[key] !== undefined && meta[key] !== null && String(meta[key]).trim() !== '' && !shown.has(key)){
-              groupFields.push([key, meta[key]]);
+            if(displayMeta[key] !== undefined && displayMeta[key] !== null && String(displayMeta[key]).trim() !== '' && !shown.has(key)){
+              groupFields.push([key, displayMeta[key]]);
               shown.add(key);
             }
           });
@@ -1606,7 +1666,7 @@
           }
         });
         // Add any remaining fields not in groups
-        Object.entries(meta).forEach(([key, val]) => {
+        Object.entries(displayMeta).forEach(([key, val]) => {
           if(SKIP_META_KEYS.has(key) || shown.has(key)) return;
           if(val === undefined || val === null || String(val).trim() === '') return;
           if(Array.isArray(val)){
