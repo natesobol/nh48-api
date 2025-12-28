@@ -32,4 +32,4 @@ Each peak entry typically includes:
 
 ---
 
-Maintained alongside the WMNF Trails Dataset to enable **cross-linked trail-to-summit experiences** across both collections.
+Maintained alongside the White Mountain Trails Dataset to enable **cross-linked trail-to-summit experiences** across both collections.
