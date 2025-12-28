@@ -59,6 +59,32 @@ h1 {
   font-size: 1.05rem;
 }
 
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 8px 0 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.breadcrumbs li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.breadcrumbs li + li::before {
+  content: "›";
+  color: var(--muted);
+}
+
+.breadcrumbs a {
+  color: var(--text);
+}
+
 section.panel {
   background: var(--panel);
   border: 1px solid var(--border);
