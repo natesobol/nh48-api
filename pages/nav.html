@@ -93,6 +93,43 @@
     background: rgba(34, 197, 94, 0.1);
   }
 
+  .site-nav-dropdown {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-nav-dropdown .site-nav-submenu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    padding: 8px;
+    min-width: 200px;
+    z-index: 10;
+  }
+
+  .site-nav-dropdown:hover .site-nav-submenu,
+  .site-nav-dropdown:focus-within .site-nav-submenu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .site-nav-dropdown .site-nav-submenu a {
+    width: 100%;
+    text-transform: none;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+
   .site-nav-cta {
     display: inline-flex;
     align-items: center;
@@ -145,6 +182,10 @@
       font-size: 12px;
     }
 
+    .site-nav-submenu {
+      min-width: 180px;
+    }
+
     .site-nav-cta {
       padding: 6px 10px;
       font-size: 11px;
@@ -173,8 +214,18 @@
   </a>
   <div class="site-nav-links">
     <a href="/catalog" data-route="catalog" data-i18n="nav.catalog">Catalog</a>
-    <a href="/trails" data-route="trails" data-i18n="nav.trails">WMNF Trails</a>
-    <a href="/long-trails" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
+    <div class="site-nav-dropdown">
+      <a href="/trails" data-route="trails" data-i18n="nav.trails">WMNF Trails</a>
+      <div class="site-nav-submenu" aria-label="WMNF Trails short links">
+        <a href="/pages/trails_app.html">Open WMNF Map</a>
+      </div>
+    </div>
+    <div class="site-nav-dropdown">
+      <a href="/long-trails" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
+      <div class="site-nav-submenu" aria-label="Long Trails short links">
+        <a href="/pages/long_trails_app.html">Open Long Trails Map</a>
+      </div>
+    </div>
     <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
     <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
     <a

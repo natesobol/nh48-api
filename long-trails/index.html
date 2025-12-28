@@ -23,60 +23,74 @@
     {
       "@context": "https://schema.org",
       "@type": "Dataset",
-      "name": "WMNF Trails Dataset",
-      "description": "Open data for the White Mountain National Forest trail network (New Hampshire and Maine). Includes trail segments, lengths, and related metadata.",
-      "url": "https://nh48.info/data/wmnf-trails/",
-      "license": "https://opensource.org/licenses/MIT",
-      "creator": { "@type": "Person", "name": "Nathan Sobol" },
+      "name": "Long-Distance Trails Dataset (Appalachian Trail, PCT, CDT)",
+      "description": "Open dataset of long-distance hiking routes including the Appalachian Trail, Pacific Crest Trail, Continental Divide Trail, and regional thru-hikes with segment metadata for mapping and analysis.",
+      "identifier": "https://nh48.info/dataset/long-trails",
+      "url": "https://nh48.info/long-trails",
+      "sameAs": [
+        "https://nh48.info/dataset/long-trails",
+        "https://github.com/natesobol/nh48-api/tree/main/data/long-trails"
+      ],
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "isAccessibleForFree": true,
+      "creator": { "@type": "Person", "name": "Nathan Sobol", "url": "https://nh48.info" },
       "keywords": [
-        "WMNF",
-        "White Mountain National Forest",
-        "hiking trails",
-        "open dataset"
+        "long-distance trails",
+        "Appalachian Trail dataset",
+        "Pacific Crest Trail dataset",
+        "Continental Divide Trail dataset",
+        "thru-hiking data",
+        "geospatial dataset"
       ],
       "distribution": [
         {
           "@type": "DataDownload",
-          "name": "WMNF Trails – Core NH JSON",
-          "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-trails/wmnf-main.json",
+          "name": "Long trails – full collection",
+          "contentUrl": "https://nh48.info/data/long-trails-full.json",
           "encodingFormat": "application/json"
         },
         {
           "@type": "DataDownload",
-          "name": "WMNF Trails – Pliney Region",
-          "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-trails/wmnf-pliney.json",
+          "name": "Long trails index",
+          "contentUrl": "https://nh48.info/data/long-trails-index.json",
           "encodingFormat": "application/json"
         },
         {
           "@type": "DataDownload",
-          "name": "WMNF Trails – Maine Coverage",
-          "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-trails/wmnf-maine.json",
+          "name": "Long trails manifest",
+          "contentUrl": "https://nh48.info/data/long-trails-manifest.json",
           "encodingFormat": "application/json"
         },
         {
           "@type": "DataDownload",
-          "name": "WMNF Trails – Normalized Network",
-          "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-trails/wmnf-normalized.json",
+          "name": "Appalachian Trail (full route)",
+          "contentUrl": "https://nh48.info/data/long-trails/appalachian_trail.json",
           "encodingFormat": "application/json"
         },
         {
           "@type": "DataDownload",
-          "name": "WMNF Trails – Maine Normalized",
-          "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-trails/maine-normalized.json",
+          "name": "Pacific Crest Trail",
+          "contentUrl": "https://nh48.info/data/long-trails/pacific_crest_trail.json",
           "encodingFormat": "application/json"
         },
         {
           "@type": "DataDownload",
-          "name": "WMNF Trails – Pliney Normalized",
-          "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-trails/pliney-normalized.json",
+          "name": "Continental Divide Trail",
+          "contentUrl": "https://nh48.info/data/long-trails/continential_divide_trail.json",
           "encodingFormat": "application/json"
         },
         {
           "@type": "DataDownload",
-          "name": "White Mountain 2,000-foot Peaks List",
-          "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-trails/NH2000ftpeaks.json",
+          "name": "Arizona Trail",
+          "contentUrl": "https://nh48.info/data/long-trails/arizona_trail.json",
           "encodingFormat": "application/json"
         }
+      ],
+      "hasPart": [
+        { "@type": "Dataset", "name": "Appalachian Trail", "description": "Complete Appalachian Trail geometry and segment metadata." },
+        { "@type": "Dataset", "name": "Pacific Crest Trail", "description": "Pacific Crest Trail alignment with ordered segments." },
+        { "@type": "Dataset", "name": "Continental Divide Trail", "description": "Rockies-spanning Continental Divide Trail route data." },
+        { "@type": "Dataset", "name": "Arizona Trail", "description": "Arizona Trail thru-hike geometry and metadata." }
       ]
     }
   </script>
