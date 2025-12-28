@@ -24,6 +24,7 @@
     <meta id="dynamicTwitterImage" name="twitter:image" content="https://nh48.info/nh48-preview.png">
     <script id="peakJsonLd" type="application/ld+json"></script>
     <script id="breadcrumbJsonLd" type="application/ld+json"></script>
+    <script id="peakDatasetJsonLd" type="application/ld+json"></script>
 
     <title id="dynamicTitle">NH48 API – Peak details, routes &amp; photos</title>
     <link rel="icon" type="image/png" href="/nh48API_logo.png">
@@ -1314,6 +1315,110 @@
         ld.textContent = JSON.stringify(schema);
       }
 
+      function buildPeakDatasetSchema(p, name, canonicalUrl, primaryPhoto, descriptionText){
+        const coords = parseCoordinates(p['Coordinates']);
+        const elevationFt = numberFrom(p['Elevation (ft)']);
+        const prominenceFt = numberFrom(p['Prominence (ft)']);
+        const range = p['Range / Subrange'];
+
+        const dataset = {
+          '@context': 'https://schema.org',
+          '@type': 'Dataset',
+          name: `NH48 API Peak Dataset Entry – ${name}`,
+          description:
+            descriptionText ||
+            `NH48 API dataset entry for ${name}, including elevation, prominence, coordinates, range, trail details, and photo metadata for New Hampshire's 4,000-footers.`,
+          identifier: canonicalUrl,
+          url: canonicalUrl,
+          inLanguage: (document.documentElement.lang || 'en').toLowerCase(),
+          isAccessibleForFree: true,
+          license: 'https://opensource.org/licenses/MIT',
+          creator: {
+            '@type': 'Organization',
+            name: 'NH48 API',
+            url: 'https://nh48.info'
+          },
+          includedInDataCatalog: {
+            '@type': 'DataCatalog',
+            name: 'NH48 API – New Hampshire 4,000-Footers Dataset',
+            url: 'https://nh48.info/catalog'
+          },
+          spatialCoverage: coords
+            ? {
+                '@type': 'Place',
+                name: 'White Mountain National Forest',
+                geo: { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon }
+              }
+            : { '@type': 'Place', name: 'White Mountain National Forest' },
+          variableMeasured: [
+            'elevation',
+            'prominence',
+            'range',
+            'trail type',
+            'photo metadata',
+            'coordinates'
+          ],
+          distribution: [
+            {
+              '@type': 'DataDownload',
+              encodingFormat: 'application/json',
+              contentUrl: 'https://nh48.info/data/nh48.json',
+              name: 'NH48 API master dataset'
+            }
+          ],
+          associatedMedia: primaryPhoto && primaryPhoto.url
+            ? [
+                {
+                  '@type': 'ImageObject',
+                  url: primaryPhoto.url,
+                  caption: primaryPhoto.caption || descriptionText || name,
+                  width: primaryPhoto.width || undefined,
+                  height: primaryPhoto.height || undefined
+                }
+              ]
+            : undefined,
+          about: {
+            '@type': 'Mountain',
+            name,
+            url: canonicalUrl,
+            elevation: elevationFt != null
+              ? { '@type': 'QuantitativeValue', value: elevationFt, unitText: 'FT' }
+              : undefined,
+            geo: coords ? { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon } : undefined,
+            containedInPlace: range ? { '@type': 'Place', name: range } : undefined,
+            additionalProperty: prominenceFt != null
+              ? [{ '@type': 'PropertyValue', name: 'Prominence (ft)', value: prominenceFt, unitText: 'FT' }]
+              : undefined
+          }
+        };
+
+        if (dataset.about) {
+          Object.keys(dataset.about).forEach((key) => {
+            if (dataset.about[key] === undefined) {
+              delete dataset.about[key];
+            }
+          });
+          if (!Object.keys(dataset.about).length) {
+            delete dataset.about;
+          }
+        }
+
+        Object.keys(dataset).forEach((key) => {
+          if (dataset[key] === undefined) {
+            delete dataset[key];
+          }
+        });
+
+        let ld = document.getElementById('peakDatasetJsonLd');
+        if (!ld) {
+          ld = document.createElement('script');
+          ld.type = 'application/ld+json';
+          ld.id = 'peakDatasetJsonLd';
+          document.head.appendChild(ld);
+        }
+        ld.textContent = JSON.stringify(dataset);
+      }
+
       function cleanJSON(raw){
         let cleaned = raw.replace(/:contentReference\[.*?\]\{index=\d+\}/g, '');
         cleaned = cleaned.replace(/\/\*\s*Lines?\s+\d+[\d\-,\s]*omitted\s*\*\//g, '');
@@ -2450,6 +2555,7 @@
           renderConditions(p);
 
           buildMountainSchema(p, name, canonicalUrl, currentPrimaryPhoto, descriptionText);
+          buildPeakDatasetSchema(p, name, canonicalUrl, currentPrimaryPhoto, descriptionText);
           buildCarousel(imgs, meta, name);
           trackEvent('peak_loaded', { slug, name, photoCount: imgs.length });
 
@@ -2482,6 +2588,7 @@
           renderConditions(currentPeak);
           if (currentPrimaryPhoto) {
             buildMountainSchema(currentPeak, name, canonicalUrl, currentPrimaryPhoto, descriptionText);
+            buildPeakDatasetSchema(currentPeak, name, canonicalUrl, currentPrimaryPhoto, descriptionText);
           }
           if (currentImages.length) {
             buildCarousel(currentImages, currentMeta, name);

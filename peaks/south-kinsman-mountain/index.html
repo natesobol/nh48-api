@@ -418,7 +418,51 @@
     }
   ]
 }</script>
-    <style>
+    
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "NH48 API Peak Dataset Entry \u2013 South Kinsman Mountain",
+  "description": "NH48 API dataset entry for South Kinsman Mountain, including elevation, prominence, coordinates, range, trail details, and curated photo metadata.",
+  "identifier": "https://nh48.info/peaks/south-kinsman-mountain/",
+  "url": "https://nh48.info/peaks/south-kinsman-mountain/",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "license": "https://opensource.org/licenses/MIT",
+  "creator": {
+    "@type": "Organization",
+    "name": "NH48 API",
+    "url": "https://nh48.info"
+  },
+  "includedInDataCatalog": {
+    "@type": "DataCatalog",
+    "name": "NH48 API \u2013 New Hampshire 4,000-Footers Dataset",
+    "url": "https://nh48.info/catalog"
+  },
+  "spatialCoverage": {
+    "@type": "Place",
+    "name": "White Mountain National Forest"
+  },
+  "variableMeasured": [
+    "elevation",
+    "prominence",
+    "range",
+    "trail type",
+    "coordinates",
+    "photo metadata"
+  ],
+  "distribution": [
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "application/json",
+      "contentUrl": "https://nh48.info/data/nh48.json",
+      "name": "NH48 API master dataset"
+    }
+  ]
+}
+    </script>
+<style>
       :root{
         --bg:#0a0a0a;
         --panel:#12121a;

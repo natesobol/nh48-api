@@ -13,6 +13,41 @@
   <meta property="og:description" content="Explore long-distance trail campaigns with interactive maps and segment details, including Appalachian Trail New Hampshire sections, on NH48.">
   <meta property="og:url" content="https://nh48.info/long-trails">
   <meta property="og:image" content="https://nh48.info/nh48-preview.png">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Long Trails API – Long-distance trail dataset",
+      "description": "Open dataset of long-distance trail geometry and sections (Appalachian Trail, Pacific Crest Trail, Continental Divide Trail, and more) that powers the NH48 long-distance trails map and filters.",
+      "identifier": "https://nh48.info/long-trails",
+      "url": "https://nh48.info/long-trails",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "isAccessibleForFree": true,
+      "keywords": [
+        "long-distance trails",
+        "Appalachian Trail",
+        "Pacific Crest Trail",
+        "Continental Divide Trail",
+        "thru-hiking data",
+        "trail sections",
+        "open dataset"
+      ],
+      "creator": {"@type": "Organization", "name": "NH48 API", "url": "https://nh48.info"},
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/long-trails-full.json",
+          "name": "Long Trails API master JSON"
+        }
+      ],
+      "includedInDataCatalog": {
+        "@type": "DataCatalog",
+        "name": "Long Trails API",
+        "url": "https://nh48.info/dataset/long-trails"
+      }
+    }
+  </script>
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
