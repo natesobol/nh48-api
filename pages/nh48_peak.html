@@ -709,11 +709,10 @@
         </div>
       </div>
 
-      <!-- METADATA + GENERAL INFO SIDE BY SIDE -------------------------------->
-      <div class="meta-info-row">
-        <div id="photoMetadataPanel" class="metadata-panel" hidden></div>
-        <div id="generalInfoPanel" class="metadata-panel" hidden></div>
-      </div>
+
+      <!-- GENERAL INFO ABOVE METADATA PANEL (STACKED, FULL WIDTH) ------------->
+      <div id="generalInfoPanel" class="metadata-panel" hidden style="margin-bottom:16px;"></div>
+      <div id="photoMetadataPanel" class="metadata-panel" hidden></div>
 
       <!-- OTHER SECTIONS ------------------------------------------------------>
       <section aria-labelledby="routesHeading">
@@ -1342,6 +1341,7 @@
       ];
       const SKIP_META_KEYS = new Set(['photoId','filename','url','isPrimary','tags']);
 
+      // --- Enhanced updateMetadata: group fields by type, show all, stacked layout ---
       function updateMetadata(i){
         const panel = document.getElementById('photoMetadataPanel');
         panel.innerHTML = '';
@@ -1356,66 +1356,103 @@
         header.appendChild(title);
         panel.appendChild(header);
 
-        const primaryWrap = document.createElement('div');
-        primaryWrap.className = 'metadata-primary';
-        panel.appendChild(primaryWrap);
-
-        const extraWrap = document.createElement('div');
-        extraWrap.className = 'metadata-extra';
-        panel.appendChild(extraWrap);
-
         const meta = (photoMetaData && photoMetaData[i]) || null;
-
         if(!meta || typeof meta !== 'object'){
-          primaryWrap.appendChild(makeRow(t('peak.metadata.labels.metadata'), t('peak.metadata.notAvailable')));
+          const empty = document.createElement('div');
+          empty.className = 'metadata-primary';
+          empty.appendChild(makeRow(t('peak.metadata.labels.metadata'), t('peak.metadata.notAvailable')));
+          panel.appendChild(empty);
           panel.hidden = false;
           return;
         }
 
-        // Fill primary entries in specified order
+        // Grouping keys by type (EXIF, IPTC, SEO, File Info, etc.)
+        const GROUPS = [
+          { label: 'EXIF', keys: ['captureDate','cameraMaker','cameraModel','camera','lens','fStop','shutterSpeed','iso','exposureBias','focalLength','flashMode','meteringMode','maxAperture','focalLength35mm','rating','dimensions'] },
+          { label: 'SEO', keys: ['headline','description','alt','altText','caption','extendedDescription'] },
+          { label: 'File Info', keys: ['fileSize','fileCreateDate','fileModifiedDate','author','title','subject'] },
+          { label: 'Tags', keys: ['tags','season','timeOfDay','orientation'] },
+          { label: 'IPTC', keys: ['iptc'] },
+        ];
+        // Always show these keys in collapsed view
+        const PRIMARY_META_KEYS = ['season','timeOfDay','orientation','captureDate','focalLength','author','headline','altText','caption'];
+        const SKIP_META_KEYS = new Set(['photoId','filename','url','isPrimary']);
+
+        // Collapsed: show only primary keys
+        const primaryWrap = document.createElement('div');
+        primaryWrap.className = 'metadata-primary';
         let hasPrimary = false;
         PRIMARY_META_KEYS.forEach(key => {
-          const val = meta[key];
-          if(val !== undefined && val !== null && String(val).trim() !== ''){
-            primaryWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
+          if(meta[key] !== undefined && meta[key] !== null && String(meta[key]).trim() !== ''){
+            primaryWrap.appendChild(makeRow(humanLabelFromKey(key), String(meta[key])));
             hasPrimary = true;
           }
         });
-
-        // Collect all other entries
-        const extras = [];
-        for(const [key, value] of Object.entries(meta)){
-          if(SKIP_META_KEYS.has(key)) continue;
-          if(PRIMARY_META_KEYS.includes(key)) continue;
-          if(value === undefined || value === null || String(value).trim() === '') continue;
-          extras.push([key, value]);
-        }
-        extras.sort((a,b) => a[0].localeCompare(b[0]));
-
-        let hasExtra = false;
-        extras.forEach(([key,val]) => {
-          extraWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
-          hasExtra = true;
-        });
-
-        if(!hasPrimary && !hasExtra){
+        if(!hasPrimary){
           primaryWrap.appendChild(makeRow(t('peak.metadata.labels.metadata'), t('peak.metadata.notAvailable')));
         }
+        panel.appendChild(primaryWrap);
 
-        if(hasExtra){
+        // Expanded: show all fields, grouped by type, skipping duplicates
+        const extraWrap = document.createElement('div');
+        extraWrap.className = 'metadata-extra';
+        let shown = new Set(PRIMARY_META_KEYS);
+        GROUPS.forEach(group => {
+          let groupFields = [];
+          group.keys.forEach(key => {
+            if(SKIP_META_KEYS.has(key)) return;
+            if(meta[key] !== undefined && meta[key] !== null && String(meta[key]).trim() !== '' && !shown.has(key)){
+              groupFields.push([key, meta[key]]);
+              shown.add(key);
+            }
+          });
+          if(groupFields.length > 0){
+            const groupHeader = document.createElement('div');
+            groupHeader.className = 'metadata-label';
+            groupHeader.style.marginTop = '10px';
+            groupHeader.style.fontWeight = 'bold';
+            groupHeader.textContent = group.label;
+            extraWrap.appendChild(groupHeader);
+            groupFields.forEach(([key, val]) => {
+              // IPTC: pretty print as JSON if object
+              if(key === 'iptc' && typeof val === 'object'){
+                const pre = document.createElement('pre');
+                pre.style.fontSize = '0.8em';
+                pre.style.background = 'var(--card)';
+                pre.style.color = 'var(--muted)';
+                pre.style.padding = '6px';
+                pre.style.borderRadius = '6px';
+                pre.textContent = JSON.stringify(val, null, 2);
+                extraWrap.appendChild(pre);
+              }else if(Array.isArray(val)){
+                extraWrap.appendChild(makeRow(humanLabelFromKey(key), val.join(', ')));
+              }else{
+                extraWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
+              }
+            });
+          }
+        });
+        // Add any remaining fields not in groups
+        Object.entries(meta).forEach(([key, val]) => {
+          if(SKIP_META_KEYS.has(key) || shown.has(key)) return;
+          if(val === undefined || val === null || String(val).trim() === '') return;
+          extraWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
+          shown.add(key);
+        });
+
+        if(extraWrap.childNodes.length > 0){
           const toggleBtn = document.createElement('button');
           toggleBtn.type = 'button';
           toggleBtn.className = 'meta-toggle';
           toggleBtn.textContent = t('peak.metadata.moreDetails');
           header.appendChild(toggleBtn);
-
+          panel.appendChild(extraWrap);
           toggleBtn.addEventListener('click', () => {
             const open = extraWrap.classList.toggle('open');
             toggleBtn.textContent = open ? t('peak.metadata.lessDetails') : t('peak.metadata.moreDetails');
             trackEvent('peak_metadata_toggle', { open });
           });
         }
-
         panel.hidden = false;
       }
 
