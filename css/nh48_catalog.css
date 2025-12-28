@@ -41,6 +41,34 @@ body{
   height:40px;
   width:auto;
 }
+.page-breadcrumbs{
+  max-width:1100px;
+  margin:6px auto 12px;
+  padding:0 16px;
+  color:var(--muted);
+  font-size:.95rem;
+}
+.page-breadcrumbs ol{
+  display:flex;
+  gap:8px;
+  padding:0;
+  margin:0;
+  list-style:none;
+}
+.page-breadcrumbs li+li::before{
+  content:"/";
+  color:var(--muted);
+  margin-right:6px;
+}
+.page-breadcrumbs a{
+  color:var(--accent);
+  font-weight:700;
+  text-decoration:none;
+}
+.page-breadcrumbs a:hover,
+.page-breadcrumbs a:focus-visible{
+  text-decoration:underline;
+}
 .nav-links{
   display:flex;
   gap:24px;

@@ -78,12 +78,21 @@ h1 {
 }
 
 .breadcrumbs li + li::before {
-  content: "›";
+  content: "/";
   color: var(--muted);
+  margin-right: 2px;
 }
 
 .breadcrumbs a {
-  color: var(--text);
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.breadcrumbs a:hover,
+.breadcrumbs a:focus-visible {
+  color: var(--accent-strong);
+  text-decoration: underline;
 }
 
 section.panel {
