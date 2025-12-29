@@ -1955,12 +1955,31 @@
         return Array.from(names);
       }
 
-      function renderRelatedTrails(routes){
+      function buildTrailLink(name){
+        const encoded = encodeURIComponent(name);
+        const link = document.createElement('a');
+        link.href = `https://nh48.info/trails?trail=${encoded}`;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = translateWithFallback('peak.relatedTrails.link', `${name} route`, { name });
+        link.setAttribute('aria-label', translateWithFallback('peak.relatedTrails.link', `${name} route`, { name }));
+        link.addEventListener('click', () => {
+          trackEvent('peak_trail_link_click', { trail: name, slug: currentSlug });
+        });
+        return link;
+      }
+
+      function renderRelatedTrails(routes, trailNames = []){
         const relatedGrid = document.getElementById('relatedTrailsGrid');
         if(!relatedGrid) return;
         relatedGrid.innerHTML = '';
 
         const relatedNames = extractRelatedTrailNames(routes);
+        const additionalNames = Array.isArray(trailNames) ? trailNames : [];
+        const combinedNames = Array.from(new Set([...relatedNames, ...additionalNames]
+          .map(name => (name || '').toString().trim())
+          .filter(Boolean)))
+          .sort((a, b) => a.localeCompare(b));
 
         const panel = document.createElement('div');
         panel.className = 'info-panel';
@@ -1995,47 +2014,23 @@
         const list = document.createElement('ul');
         list.className = 'trail-list';
 
-        if(!relatedNames.length){
+        if(!combinedNames.length){
           const emptyItem = document.createElement('li');
           emptyItem.textContent = translateWithFallback('peak.relatedTrails.none', 'No related trails listed yet.');
           list.appendChild(emptyItem);
           trackEvent('peak_related_trails_empty', { slug: currentSlug });
         }else{
-          relatedNames.forEach(name => {
+          combinedNames.forEach(name => {
             const li = document.createElement('li');
-            const link = document.createElement('a');
-            link.href = `https://nh48.info/trails?trail=${encodeURIComponent(name)}`;
-            link.textContent = translateWithFallback('peak.relatedTrails.link', `${name} route`, { name });
-            li.appendChild(link);
+            li.appendChild(buildTrailLink(name));
             list.appendChild(li);
           });
-          trackEvent('peak_related_trails_rendered', { slug: currentSlug, count: relatedNames.length });
+          trackEvent('peak_related_trails_rendered', { slug: currentSlug, count: combinedNames.length });
         }
 
         panel.appendChild(list);
         relatedGrid.appendChild(panel);
         relatedGrid.hidden = false;
-      }
-
-      function renderTrailNames(trailNames){
-        const trailNamesGrid = document.getElementById('trailNamesGrid');
-        if(!trailNamesGrid) return;
-        trailNamesGrid.innerHTML = '';
-        if(!Array.isArray(trailNames) || trailNames.length === 0){
-          trailNamesGrid.hidden = true;
-          trackEvent('peak_trail_names_empty', { slug: currentSlug });
-          return;
-        }
-        const div = document.createElement('div');
-        div.className = 'info-panel';
-        div.innerHTML = `
-          <div class="info-label">${t('peak.trailList.title')}</div>
-          <ul class="trail-list">
-            ${trailNames.map(trail => `<li>${trail}</li>`).join('')}
-          </ul>`;
-        trailNamesGrid.appendChild(div);
-        trailNamesGrid.hidden = false;
-        trackEvent('peak_trail_names_rendered', { slug: currentSlug, count: trailNames.length });
       }
 
       function renderTerrain(p){
@@ -2542,10 +2537,14 @@
           buildGeneralInfo(p);
 
           const routes = p['Standard Routes'] || [];
-          renderRoutes(routes);
-          renderRelatedTrails(routes);
           const trailNames = p['Trail Names'] || [];
-          renderTrailNames(trailNames);
+          renderRoutes(routes);
+          renderRelatedTrails(routes, trailNames);
+          const trailNamesGrid = document.getElementById('trailNamesGrid');
+          if(trailNamesGrid){
+            trailNamesGrid.hidden = true;
+            trailNamesGrid.innerHTML = '';
+          }
           renderTerrain(p);
           renderConditions(p);
 
@@ -2575,9 +2574,14 @@
           const { canonicalUrl, descriptionText } = updateHeadMeta(currentPeak, currentSlug, name, currentPrimaryMeta);
           buildGeneralInfo(currentPeak);
           const routes = currentPeak['Standard Routes'] || [];
+          const trailNames = currentPeak['Trail Names'] || [];
           renderRoutes(routes);
-          renderRelatedTrails(routes);
-          renderTrailNames(currentPeak['Trail Names'] || []);
+          renderRelatedTrails(routes, trailNames);
+          const trailNamesGrid = document.getElementById('trailNamesGrid');
+          if(trailNamesGrid){
+            trailNamesGrid.hidden = true;
+            trailNamesGrid.innerHTML = '';
+          }
           renderTerrain(currentPeak);
           renderConditions(currentPeak);
           if (currentPrimaryPhoto) {
