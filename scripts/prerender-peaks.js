@@ -542,24 +542,39 @@ const buildBreadcrumbJson = (pageName, canonicalUrl, catalogUrl, homeUrl, labels
   {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    "@id": `${canonicalUrl}#breadcrumb`,
+    name: `${pageName} breadcrumb trail`,
+    description: `Navigation path to ${pageName} within the NH48 peak catalog`,
     itemListElement: [
       {
         "@type": "ListItem",
         position: 1,
-        name: labels?.breadcrumbHome || "Home",
-        item: homeUrl || HOME_URL,
+        item: {
+          "@type": "WebPage",
+          "@id": homeUrl || HOME_URL,
+          url: homeUrl || HOME_URL,
+          name: labels?.breadcrumbHome || "Home",
+        },
       },
       {
         "@type": "ListItem",
         position: 2,
-        name: labels?.breadcrumbCatalog || "NH48 Peak Catalog",
-        item: catalogUrl || DEFAULT_CATALOG_URL,
+        item: {
+          "@type": "CollectionPage",
+          "@id": catalogUrl || DEFAULT_CATALOG_URL,
+          url: catalogUrl || DEFAULT_CATALOG_URL,
+          name: labels?.breadcrumbCatalog || "NH48 Peak Catalog",
+        },
       },
       {
         "@type": "ListItem",
         position: 3,
-        name: pageName,
-        item: canonicalUrl,
+        item: {
+          "@type": "WebPage",
+          "@id": canonicalUrl,
+          url: canonicalUrl,
+          name: pageName,
+        },
       },
     ],
   },
@@ -571,10 +586,16 @@ const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImag
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
+    "@id": `${canonicalUrl}#webpage`,
     name: `${pageName} — White Mountain National Forest`,
     description: descriptionText,
     url: canonicalUrl,
     inLanguage: langCode === 'fr' ? 'fr-FR' : 'en-US',
+    mainEntity: {
+      "@type": "Mountain",
+      "@id": `${canonicalUrl}#mountain`,
+      name: pageName,
+    },
     isPartOf: {
       "@type": "WebSite",
       name: "NH48 Peak Guide",
@@ -759,12 +780,14 @@ const buildJsonLd = (
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Mountain",
+    "@id": `${canonicalUrl}#mountain`,
     name: peakName,
     alternateName:
       langConfig.code !== "en" && englishName && englishName !== peakName ? englishName : undefined,
     description: descriptionText,
     url: canonicalUrl,
     author: AUTHOR_NAME,
+    inLanguage: langConfig.code === "fr" ? "fr-FR" : "en-US",
     image: imageList,
     primaryImageOfPage: primaryImage,
     geo: coordinates.latitude && coordinates.longitude
@@ -797,6 +820,12 @@ const buildJsonLd = (
     },
     sameAs: sameAsLinks.length ? sameAsLinks : undefined,
     subjectOf: imageGallery ? [imageGallery] : undefined,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${canonicalUrl}#webpage`,
+      url: canonicalUrl,
+      name: `${peakName} — White Mountain National Forest`,
+    },
   };
 
   Object.keys(jsonLd).forEach((key) => jsonLd[key] === undefined && delete jsonLd[key]);

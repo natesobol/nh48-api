@@ -87,11 +87,13 @@
     <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "Mountain",
+  "@id": "https://nh48.info/fr/peaks/mount-flume/#mountain",
   "name": "Mont Flume",
   "alternateName": "Mount Flume",
   "description": "This photograph features Mount Flume in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.",
   "url": "https://nh48.info/fr/peaks/mount-flume/",
   "author": "Nathan Sobol",
+  "inLanguage": "fr-FR",
   "image": [
     {
       "@type": "ImageObject",
@@ -434,39 +436,66 @@
         }
       ]
     }
-  ]
+  ],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nh48.info/fr/peaks/mount-flume/#webpage",
+    "url": "https://nh48.info/fr/peaks/mount-flume/",
+    "name": "Mont Flume — White Mountain National Forest"
+  }
 }</script>
     <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  "@id": "https://nh48.info/fr/peaks/mount-flume/#breadcrumb",
+  "name": "Mont Flume breadcrumb trail",
+  "description": "Navigation path to Mont Flume within the NH48 peak catalog",
   "itemListElement": [
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "Accueil",
-      "item": "https://nh48.info/fr/"
+      "item": {
+        "@type": "WebPage",
+        "@id": "https://nh48.info/fr/",
+        "url": "https://nh48.info/fr/",
+        "name": "Accueil"
+      }
     },
     {
       "@type": "ListItem",
       "position": 2,
-      "name": "Catalogue des sommets",
-      "item": "https://nh48.info/catalog"
+      "item": {
+        "@type": "CollectionPage",
+        "@id": "https://nh48.info/catalog",
+        "url": "https://nh48.info/catalog",
+        "name": "Catalogue des sommets"
+      }
     },
     {
       "@type": "ListItem",
       "position": 3,
-      "name": "Mont Flume",
-      "item": "https://nh48.info/fr/peaks/mount-flume/"
+      "item": {
+        "@type": "WebPage",
+        "@id": "https://nh48.info/fr/peaks/mount-flume/",
+        "url": "https://nh48.info/fr/peaks/mount-flume/",
+        "name": "Mont Flume"
+      }
     }
   ]
 }</script>
     <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "WebPage",
+  "@id": "https://nh48.info/fr/peaks/mount-flume/#webpage",
   "name": "Mont Flume — White Mountain National Forest",
   "description": "This photograph features Mount Flume in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.",
   "url": "https://nh48.info/fr/peaks/mount-flume/",
   "inLanguage": "fr-FR",
+  "mainEntity": {
+    "@type": "Mountain",
+    "@id": "https://nh48.info/fr/peaks/mount-flume/#mountain",
+    "name": "Mont Flume"
+  },
   "isPartOf": {
     "@type": "WebSite",
     "name": "NH48 Peak Guide",
