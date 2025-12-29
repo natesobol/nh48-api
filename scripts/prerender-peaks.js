@@ -5,6 +5,8 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const TEMPLATE_PATH = path.join(ROOT, "templates", "peak-page-template.html");
+const NAV_PARTIAL_PATH = path.join(ROOT, "pages", "nav.html");
+const QUICK_FOOTER_PATH = path.join(ROOT, "pages", "footer-quick-browse.html");
 const DATA_PATH = path.join(ROOT, "data", "nh48.json");
 const OUTPUT_DIR = path.join(ROOT, "peaks");
 const CANONICAL_BASE = "https://nh48.info/peaks";
@@ -879,6 +881,8 @@ const main = () => {
     console.log(`Output directory: ${OUTPUT_DIR}`);
 
     const template = readFile(TEMPLATE_PATH, "template");
+    const navMenuPartial = readFile(NAV_PARTIAL_PATH, "navigation menu partial");
+    const quickBrowseFooterPartial = readFile(QUICK_FOOTER_PATH, "quick browse footer partial");
     const data = JSON.parse(readFile(DATA_PATH, "data"));
     const slugs = Object.keys(data).sort();
 
@@ -950,6 +954,8 @@ const main = () => {
           CANONICAL_EN_URL: `${CANONICAL_BASE}/${slug}/`,
           CANONICAL_FR_URL: `https://nh48.info/fr/peaks/${slug}/`,
           CANONICAL_XDEFAULT_URL: `${CANONICAL_BASE}/${slug}/`,
+          NAV_MENU: navMenuPartial,
+          QUICK_BROWSE_FOOTER: quickBrowseFooterPartial,
           OG_IMAGE: primaryPhoto.url,
           OG_IMAGE_WIDTH: primaryPhoto.width || "",
           OG_IMAGE_HEIGHT: primaryPhoto.height || "",
