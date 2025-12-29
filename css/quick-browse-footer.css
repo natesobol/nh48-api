@@ -202,7 +202,8 @@
 @media (max-width: 780px) {
   .nh48-quick-footer {
     padding: 20px 16px 14px;
-    height: min(400px, 78vh);
+    height: min(700px, 90vh);
+    max-height: 700px;
   }
   .nh48-quick-footer__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
