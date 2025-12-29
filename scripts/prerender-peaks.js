@@ -601,7 +601,7 @@ const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImag
     },
     potentialAction: {
       "@type": "ReadAction",
-      target: [canonicalUrl]
+      target: canonicalUrl
     }
   },
   null,
