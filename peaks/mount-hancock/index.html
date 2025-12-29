@@ -45,6 +45,45 @@
     <link rel="alternate" hreflang="fr" href="https://nh48.info/fr/peaks/mount-hancock/" />
     <link rel="alternate" hreflang="x-default" href="https://nh48.info/peaks/mount-hancock/" />
     <link rel="prefetch" href="https://nh48.info/pages/nh48_peak.html?slug=mount-hancock" />
+    <script>
+      (function redirectToApp() {
+        const target = "https://nh48.info/pages/nh48_peak.html?slug=mount-hancock";
+        const ua = (typeof navigator !== "undefined" && navigator.userAgent) || "";
+        const botSignatures = [
+          "adsbot-google",
+          "ahrefsbot",
+          "applebot",
+          "baiduspider",
+          "bingbot",
+          "bingpreview",
+          "chatgpt",
+          "claudebot",
+          "duckduckbot",
+          "exabot",
+          "facebookexternalhit",
+          "facebot",
+          "gptbot",
+          "google-inspectiontool",
+          "googlebot",
+          "ia_archiver",
+          "linkedinbot",
+          "mediapartners-google",
+          "petalbot",
+          "redditbot",
+          "semrushbot",
+          "slurp",
+          "sogou",
+          "twitterbot",
+          "yandex"
+        ];
+        const uaLower = ua.toLowerCase();
+        const isKnownBot = botSignatures.some((signature) => uaLower.includes(signature));
+
+        if (!isKnownBot && typeof window !== "undefined" && target) {
+          window.location.replace(target);
+        }
+      })();
+    </script>
     <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "Mountain",
