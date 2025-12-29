@@ -502,7 +502,6 @@ const buildGallery = (photos, peakName, fallbackAlt, langCode) => {
     const descriptionText = `${peakName} in the White Mountains`;
     return `<figure class="gallery-figure">
       <img src="${FALLBACK_IMAGE}" alt="${escapeHtml(descriptionText)}" loading="lazy" />
-      <figcaption>${escapeHtml(descriptionText)}</figcaption>
     </figure>`;
   }
 
@@ -526,8 +525,7 @@ const buildGallery = (photos, peakName, fallbackAlt, langCode) => {
       return `<figure class="gallery-figure">
         <img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" loading="lazy"${dimensionsAttr}${langAttr}${describedBy} />
         ${descriptionText
-          ? `<span id="photo-desc-${index}" class="sr-only"${descriptionLangAttr}>${escapeHtml(descriptionText)}</span>
-        <figcaption${descriptionLangAttr}>${escapeHtml(descriptionText)}</figcaption>`
+          ? `<span id="photo-desc-${index}" class="sr-only"${descriptionLangAttr}>${escapeHtml(descriptionText)}</span>`
           : ''}
       </figure>`;
     })
