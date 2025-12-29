@@ -4,9 +4,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>White Mountain Trails – White Mountain National Forest Trail Dataset | NH48 API</title>
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="author" content="Nathan Sobol">
+  <meta name="publisher" content="NH48 API">
+  <meta name="application-name" content="NH48 API">
+  <meta name="theme-color" content="#0a0a0a">
   <meta name="description" content="Dedicated landing page for the White Mountain National Forest trails dataset from the NH48 API. Explore normalized segments, trailheads, distances, elevations and open downloads for the WMNF network covering New Hampshire and Maine.">
   <meta name="keywords" content="White Mountain Trails, WMNF trails, White Mountain National Forest data, hiking dataset, New Hampshire trails, Maine trails, open geospatial data">
   <link rel="canonical" href="https://nh48.info/dataset/wmnf-trails">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="White Mountain Trails – White Mountain National Forest Trail Dataset | NH48 API">
+  <meta property="og:description" content="Download normalized trail segments, trailheads, and peak references for the White Mountain National Forest. Open data for the WMNF network across New Hampshire and Maine.">
+  <meta property="og:url" content="https://nh48.info/dataset/wmnf-trails">
+  <meta property="og:site_name" content="NH48 API">
+  <meta property="og:image" content="https://nh48.info/WMNF_Trails_API_logo.png">
+  <meta property="og:image:alt" content="White Mountain National Forest trail dataset brandmark">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="White Mountain Trails – White Mountain National Forest Trail Dataset | NH48 API">
+  <meta name="twitter:description" content="Open dataset of White Mountain National Forest trail geometry, connectors, and peak references for mapping and research.">
+  <meta name="twitter:image" content="https://nh48.info/WMNF_Trails_API_logo.png">
+  <meta name="twitter:image:alt" content="White Mountain Trails API logo for the WMNF dataset">
   <link rel="stylesheet" href="/css/dataset-page.css">
   <link rel="stylesheet" href="/css/quick-browse-footer.css">
   <style>
@@ -29,10 +47,14 @@
       justify-content: space-between;
       padding: 12px 24px;
       background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
-      border-bottom: 1px solid #ffffff;
+      border: 1px solid #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
       position: sticky;
-      top: 0;
+      top: 12px;
       z-index: 100;
+      width: min(1200px, 100%);
+      margin: 0 auto 12px;
     }
 
     .site-nav-logo {
@@ -373,7 +395,14 @@
     <div class="site-nav-links">
       <a href="/catalog" data-route="catalog" data-i18n="nav.catalog">Catalog</a>
       <div class="site-nav-dropdown">
-        <a class="active" href="/dataset/wmnf-trails" data-route="trails" data-i18n="nav.trails">White Mountain Trails</a>
+        <a href="/" data-route="dataset-home">NH48 Dataset</a>
+        <div class="site-nav-submenu" aria-label="NH48 dataset short links">
+          <a href="/catalog">Open NH48 Catalog</a>
+          <a href="/page-sitemap.xml">Browse page sitemap</a>
+        </div>
+      </div>
+      <div class="site-nav-dropdown">
+        <a class="active" href="/dataset/wmnf-trails" data-route="trails" data-i18n="nav.trails" aria-current="page">White Mountain Trails</a>
         <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
           <a href="/pages/trails_app.html">Open WMNF Map</a>
         </div>
@@ -432,7 +461,7 @@
           <meta itemprop="position" content="2">
         </li>
         <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-          <a itemprop="item" href="/dataset/wmnf-trails/">
+          <a itemprop="item" href="/dataset/wmnf-trails/" aria-current="page">
             <span itemprop="name">White Mountain Trails</span>
           </a>
           <meta itemprop="position" content="3">

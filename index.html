@@ -183,6 +183,12 @@
       overflow-x: hidden;
     }
 
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       background: #0a0a0a;
@@ -193,9 +199,242 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       gap: clamp(20px, 4vw, 32px);
-      padding: clamp(24px, 4vw, 32px) 16px;
+      padding: clamp(24px, 4vw, 32px) 16px 32px;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+      border: 1px solid #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      width: min(1200px, 100%);
+      margin: 0 auto 12px;
+    }
+
+    .site-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .site-nav-logo img {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      border: 2px solid #ffffff;
+      padding: 0;
+      background: #0a0a0a;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45), 0 0 0 2px #ffffff inset;
+      object-fit: cover;
+    }
+
+    .site-nav-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      line-height: 1.1;
+    }
+
+    .site-nav-title {
+      font-weight: 800;
+      font-size: 32px;
+      line-height: 1;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .site-nav-tagline {
+      font-size: 13px;
+      color: #e5f8ec;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .site-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .site-nav-links a {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: all 0.2s ease;
+    }
+
+    .site-nav-links a:hover {
+      color: #22c55e;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .site-nav-links a.active {
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .site-nav-dropdown {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .site-nav-dropdown .site-nav-submenu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      padding: 8px;
+      min-width: 200px;
+      z-index: 10;
+    }
+
+    .site-nav-dropdown:hover .site-nav-submenu,
+    .site-nav-dropdown:focus-within .site-nav-submenu {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .site-nav-dropdown .site-nav-submenu a {
+      width: 100%;
+      text-transform: none;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+
+    .site-nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #22c55e;
+      border: 2px solid #22c55e;
+      color: #ffffff;
+      font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue Condensed", Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .site-nav-cta svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0;
+      margin: 12px 0 10px;
+      list-style: none;
+      color: #cbd5f5;
+      font-size: 0.95rem;
+    }
+
+    .breadcrumbs li {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .breadcrumbs li + li::before {
+      content: "/";
+      color: #94a3b8;
+      margin-right: 2px;
+    }
+
+    .breadcrumbs a {
+      color: #22c55e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover,
+    .breadcrumbs a:focus-visible {
+      color: #7ee0a3;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 900px) {
+      .site-nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .site-nav-links {
+        flex-wrap: wrap;
+        row-gap: 6px;
+      }
+
+      .site-nav-title {
+        font-size: 28px;
+      }
+
+      .site-nav-logo img {
+        width: 52px;
+        height: 52px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .site-nav {
+        padding: 10px 12px;
+      }
+
+      .site-nav-links a {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .site-nav-submenu {
+        min-width: 180px;
+      }
+
+      .site-nav-cta {
+        padding: 6px 10px;
+        font-size: 11px;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .site-nav-links a {
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+
+      .site-nav-cta {
+        width: 100%;
+      }
     }
     main {
       max-width: 760px;
@@ -565,6 +804,53 @@
   <div class="lang-bar">
     <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
   </div>
+  <nav class="site-nav" aria-label="Site navigation">
+    <a class="site-nav-logo" href="/">
+      <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async">
+      <div class="site-nav-title-wrap">
+        <span class="site-nav-title">NH48 API</span>
+        <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
+      </div>
+    </a>
+    <div class="site-nav-links">
+      <a href="/catalog" data-route="catalog" data-i18n="nav.catalog">Catalog</a>
+      <div class="site-nav-dropdown">
+        <a class="active" href="/" data-route="dataset-home" aria-current="page">NH48 Dataset</a>
+        <div class="site-nav-submenu" aria-label="NH48 dataset short links">
+          <a href="/catalog">Open NH48 Catalog</a>
+          <a href="/page-sitemap.xml">Browse page sitemap</a>
+        </div>
+      </div>
+      <div class="site-nav-dropdown">
+        <a href="/dataset/wmnf-trails" data-route="trails" data-i18n="nav.trails">White Mountain Trails</a>
+        <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
+          <a href="/pages/trails_app.html">Open WMNF Map</a>
+        </div>
+      </div>
+      <div class="site-nav-dropdown">
+        <a href="/dataset/long-trails" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
+        <div class="site-nav-submenu" aria-label="Long Trails short links">
+          <a href="/pages/long_trails_app.html">Open Long Trails Map</a>
+        </div>
+      </div>
+      <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
+      <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
+      <a
+        class="site-nav-cta"
+        href="https://www.instagram.com/nate_dumps_pics/"
+        target="_blank"
+        rel="noopener"
+        aria-label="Latest WMNF Photos"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+          <circle cx="12" cy="12" r="3.5"></circle>
+          <circle cx="17" cy="7" r="1.2" fill="#ffffff" stroke="none"></circle>
+        </svg>
+        <span data-i18n="nav.latestPhotos">Latest WMNF Photos</span>
+      </a>
+    </div>
+  </nav>
   <main>
     <div class="hero-heading" itemscope itemtype="https://schema.org/Brand">
       <link itemprop="url" href="https://nh48.info/">
@@ -585,6 +871,28 @@
         <p class="hero-title-meta" aria-hidden="true">New Hampshire’s 4,000-foot peaks &amp; trails</p>
       </div>
     </div>
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumbs" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/">
+            <span itemprop="name">Home</span>
+          </a>
+          <meta itemprop="position" content="1">
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/dataset/">
+            <span itemprop="name">Datasets</span>
+          </a>
+          <meta itemprop="position" content="2">
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/" aria-current="page">
+            <span itemprop="name">NH48 API Dataset</span>
+          </a>
+          <meta itemprop="position" content="3">
+        </li>
+      </ol>
+    </nav>
     <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.</p>
     <div class="cta">
       <a href="/catalog" data-i18n="landing.cta.catalog">
@@ -689,7 +997,7 @@
       </figure>
     </div>
   </section>
-  <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title">
+  <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
     <div class="nh48-quick-footer__header">
       <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
       <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>
