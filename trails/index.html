@@ -1225,6 +1225,7 @@
       };
 
       const initialTrailQuery = new URLSearchParams(window.location.search).get('trail');
+      const searchInput = document.getElementById('searchInput');
 
       // Set an improved center and zoom over the White Mountain National Forest.
       // These coordinates zoom closer to the core of the WMNF while showing most trails.
@@ -2254,16 +2255,15 @@
             window.location.replace('/not-found.html');
             return;
           }
+          if (searchInput) {
+            searchInput.value = matched;
+            renderTrailList();
+          }
           renderTrailInfo(matched);
           trackEvent('trails_query_select', { trail: matched });
         }
       }
       // Attach event listeners for search, sort, hide completed, and clear progress.
-      const searchInput = document.getElementById('searchInput');
-      if (searchInput && initialTrailQuery) {
-        searchInput.value = initialTrailQuery;
-        renderTrailList();
-      }
       let searchDebounce;
       searchInput.addEventListener('input', () => {
         renderTrailList();
