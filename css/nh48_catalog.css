@@ -8,6 +8,11 @@
   --accent:#22c55e;
   --gap:10px;
 }
+html, body{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+}
 body{
   margin:0;
   background:var(--bg);
