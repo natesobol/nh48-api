@@ -553,7 +553,21 @@
 
   </style>
 </head>
-<body>
+<body data-page="home">
+  <div id="nav-placeholder"></div>
+  <script>
+    (() => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      if (!navPlaceholder) return;
+
+      fetch('/pages/nav.html')
+        .then(response => response.text())
+        .then(html => {
+          navPlaceholder.innerHTML = html;
+        })
+        .catch(err => console.error('Failed to load navigation:', err));
+    })();
+  </script>
   <div id="splash-background" aria-hidden="true"></div>
   <div id="splash-mask" aria-hidden="true"></div>
   <div class="lang-bar">
@@ -683,7 +697,7 @@
       </figure>
     </div>
   </section>
-  <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title">
+  <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
     <div class="nh48-quick-footer__header">
       <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
       <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>

@@ -103,7 +103,9 @@
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://nh48.info/" },
-        { "@type": "ListItem", "position": 2, "name": "Long Trails" }
+        { "@type": "ListItem", "position": 2, "name": "Datasets", "item": "https://nh48.info/dataset/" },
+        { "@type": "ListItem", "position": 3, "name": "Long Trails Dataset", "item": "https://nh48.info/dataset/long-trails/" },
+        { "@type": "ListItem", "position": 4, "name": "Long Trails Map" }
       ]
     }
   </script>
@@ -569,9 +571,29 @@
   </script>
   <header class="page-header">
     <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <ol>
-        <li><a href="/">Home</a></li>
-        <li aria-current="page">Long Trails</li>
+      <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/">
+            <span itemprop="name">Home</span>
+          </a>
+          <meta itemprop="position" content="1" />
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/dataset/">
+            <span itemprop="name">Datasets</span>
+          </a>
+          <meta itemprop="position" content="2" />
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/dataset/long-trails/">
+            <span itemprop="name">Long Trails Dataset</span>
+          </a>
+          <meta itemprop="position" content="3" />
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <span itemprop="name" aria-current="page">Long Trails Map</span>
+          <meta itemprop="position" content="4" />
+        </li>
       </ol>
     </nav>
     <h1>Long-Distance Trails</h1>
