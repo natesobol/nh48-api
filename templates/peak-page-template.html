@@ -105,6 +105,62 @@
         font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         -webkit-font-smoothing:antialiased;
       }
+
+      /* Navigation Menu */
+      .site-nav{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:12px 24px;
+        background:linear-gradient(180deg,#1a1a2e 0%,#16162a 100%);
+        border-bottom:1px solid #ffffff;
+        position:sticky;
+        top:0;
+        z-index:100;
+      }
+      .site-nav-logo{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        text-decoration:none;
+        color:#fff;
+      }
+      .site-nav-logo img{
+        width:58px;
+        height:58px;
+        border-radius:14px;
+        padding:0;
+        background:#0a0a0a;
+        object-fit:cover;
+        border:2px solid #ffffff;
+        box-shadow:0 10px 22px rgba(0,0,0,0.45),0 0 0 2px #ffffff inset;
+      }
+      .site-nav-title-wrap{display:flex;flex-direction:column;gap:6px;line-height:1.1;}
+      .site-nav-title{font-weight:800;font-size:38px;line-height:1;color:#fff;text-transform:uppercase;letter-spacing:1px;}
+      .site-nav-tagline{font-size:13px;color:#e5f8ec;font-weight:600;letter-spacing:0.2px;}
+      .site-nav-links{display:flex;align-items:center;gap:8px;}
+      .site-nav-links a{color:#ffffff;text-decoration:none;padding:8px 16px;border-radius:6px;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;transition:all 0.2s ease;}
+      .site-nav-links a:hover{color:#22c55e;background:rgba(255,255,255,0.08);}
+      .site-nav-links a.active{color:#22c55e;background:rgba(34,197,94,0.1);}
+      .site-nav-dropdown{position:relative;display:inline-flex;flex-direction:column;align-items:flex-start;}
+      .site-nav-dropdown .site-nav-submenu{display:none;position:absolute;top:calc(100% + 6px);left:0;background:#0f172a;border:1px solid rgba(255,255,255,0.08);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,0.4);padding:8px;min-width:200px;z-index:10;}
+      .site-nav-dropdown:hover .site-nav-submenu,.site-nav-dropdown:focus-within .site-nav-submenu{display:flex;flex-direction:column;gap:4px;}
+      .site-nav-dropdown .site-nav-submenu a{width:100%;text-transform:none;font-size:14px;letter-spacing:0.3px;padding:10px 12px;border-radius:8px;}
+      .site-nav-cta{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;font-size:13px;border-radius:6px;background:#22c55e;border:2px solid #22c55e;color:#ffffff;font-family:"Arial Narrow","Roboto Condensed","Helvetica Neue Condensed",Arial,sans-serif;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;}
+      .site-nav-cta svg{width:16px;height:16px;stroke:#ffffff;}
+      @media (max-width:768px){
+        .site-nav{padding:10px 12px;flex-wrap:wrap;justify-content:center;gap:10px;}
+        .site-nav-title,.site-nav-tagline{display:none;}
+        .site-nav-logo{flex:1 1 100%;justify-content:center;}
+        .site-nav-links{gap:4px;width:100%;flex-wrap:wrap;justify-content:center;}
+        .site-nav-links a{padding:6px 10px;font-size:12px;}
+        .site-nav-submenu{min-width:180px;}
+        .site-nav-cta{padding:6px 10px;font-size:11px;justify-content:center;}
+      }
+      @media (max-width:480px){
+        .site-nav-links a{padding:6px 8px;font-size:11px;}
+        .site-nav-cta{width:100%;}
+      }
       .wrap{
         max-width:1000px;
         margin:0 auto;
@@ -293,6 +349,7 @@
   </head>
   <body>
     <a href="#peakTitle" class="skip-link">Skip to main content</a>
+    {{NAV_MENU}}
     <div class="wrap">
       <nav class="breadcrumb-nav" aria-label="Breadcrumb">
         <ol itemscope itemtype="https://schema.org/BreadcrumbList">
@@ -399,5 +456,6 @@
         <p>{{LABEL_FOOTER}}</p>
       </div>
     </div>
+    {{QUICK_BROWSE_FOOTER}}
   </body>
 </html>
