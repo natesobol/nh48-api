@@ -1281,6 +1281,8 @@
         });
         letterNavContainer.appendChild(span);
       });
+      const searchInput = document.getElementById('searchInput');
+      const initialTrailQuery = new URLSearchParams(window.location.search).get('trail');
       // Retrieve success (completed) color from CSS variables.  Fallback to
       // a hardcoded green if not found.
       const successColor = getComputedStyle(document.documentElement).getPropertyValue('--success-green').trim() || '#51cf66';
@@ -2217,19 +2219,22 @@
         populateSuggestions();
         renderTrailList();
         trackEvent('trails_app_ready', { trailCount: trailNames.length });
-        const trailQuery = new URLSearchParams(window.location.search).get('trail');
+        const trailQuery = initialTrailQuery;
         if (trailQuery) {
           const matched = matchTrailName(trailQuery, trailNames);
           if (!matched) {
             window.location.replace('/not-found.html');
             return;
           }
+          if (searchInput) {
+            searchInput.value = matched;
+            renderTrailList();
+          }
           renderTrailInfo(matched);
           trackEvent('trails_query_select', { trail: matched });
         }
       }
       // Attach event listeners for search, sort, hide completed, and clear progress.
-      const searchInput = document.getElementById('searchInput');
       let searchDebounce;
       searchInput.addEventListener('input', () => {
         renderTrailList();
