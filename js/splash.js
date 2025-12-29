@@ -1,5 +1,5 @@
-const SPLASH_ICON_PATH = "/UI-Elements/";
-const SPLASH_ALT_TEXT_PATH = "/UI-Elements/alt-text.json";
+const SPLASH_ICON_PATH = "/photos/";
+const SPLASH_ALT_TEXT_PATH = "/photos/backgrounds/alt-text.json";
 const MAX_SPLASH_ICONS = 40;
 const SPLASH_MIN_DURATION_S = 18;
 const SPLASH_MAX_DURATION_S = 32;
@@ -8,40 +8,9 @@ const SPLASH_MAX_SIZE_MULTIPLIER = 4;
 const SPLASH_DIAGONAL_SPEED_PX = 12;
 const SPLASH_SPEED_VARIANCE = 0.35;
 const SPLASH_MASK_PADDING_PX = 24;
-const SPLASH_ICON_EXCLUSIONS = [
-  "og-cover.png",
-  "nh48-preview.png",
-  "nh48API_logo.png",
-  "WMNF_Trails_API_logo.png",
-  "nh48API_logo.png",
-  "nh48API_logo.svg",
-  "nh48API_logo.webp",
-  "nh48API_logo.jpeg",
-  "nh48API_logo.jpg",
-  "logo.png"
-];
-
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-const parseIconListFromHtml = (htmlText) => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(htmlText, "text/html");
-  const links = Array.from(doc.querySelectorAll("a"));
-  const icons = links
-    .map((link) => link.getAttribute("href"))
-    .filter(Boolean)
-    .filter((href) => href.toLowerCase().endsWith(".png"))
-    .map((href) => new URL(href, `${window.location.origin}${SPLASH_ICON_PATH}`))
-    .map((url) => url.pathname);
-
-  return Array.from(new Set(icons));
-};
-
-const SPLASH_MANIFEST_PATH = "/UI-Elements/manifest.json";
-
-const buildJsdelivrApiUrl = () =>
-  "https://data.jsdelivr.com/v1/packages/gh/natesobol/nh48-api@main?path=/UI-Elements";
+const SPLASH_MANIFEST_PATH = "/photos/backgrounds/manifest.json";
 
 const loadManifestIcons = async () => {
   const response = await fetch(SPLASH_MANIFEST_PATH, { cache: "no-store" });
@@ -54,7 +23,7 @@ const loadManifestIcons = async () => {
   }
   return payload
     .filter((entry) => typeof entry === "string")
-    .filter((name) => name.toLowerCase().endsWith(".png"))
+    .filter((name) => name.toLowerCase().match(/\.(png|jpe?g|webp)$/))
     .map((name) => `${SPLASH_ICON_PATH}${name}`);
 };
 
@@ -76,50 +45,11 @@ const loadAltTextMap = async () => {
 
 const loadSplashIcons = async () => {
   try {
-    const isLocalhost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
     const manifestIcons = await loadManifestIcons();
-    if (manifestIcons.length) {
-      return manifestIcons;
-    }
-    if (isLocalhost) {
-      const response = await fetch(SPLASH_ICON_PATH, { cache: "no-store" });
-      if (!response.ok) {
-        return [];
-      }
-      const contentType = response.headers.get("content-type") || "";
-      const text = await response.text();
-      if (contentType.includes("text/html")) {
-        return parseIconListFromHtml(text);
-      }
-      if (contentType.includes("application/json")) {
-        const payload = JSON.parse(text);
-        if (Array.isArray(payload)) {
-          return payload
-            .filter((entry) => typeof entry === "string")
-            .map((entry) =>
-              new URL(entry, `${window.location.origin}${SPLASH_ICON_PATH}`)
-            )
-            .map((url) => url.pathname);
-        }
-      }
-      return parseIconListFromHtml(text);
-    }
-
-    const response = await fetch(buildJsdelivrApiUrl(), { cache: "no-store" });
-    if (!response.ok) {
+    if (!manifestIcons.length) {
       return [];
     }
-    const payload = await response.json();
-    if (!payload || !Array.isArray(payload.files)) {
-      return [];
-    }
-    return payload.files
-      .filter((entry) => entry && entry.type === "file")
-      .map((entry) => entry.name)
-      .filter((path) => typeof path === "string")
-      .filter((path) => path.toLowerCase().endsWith(".png"))
-      .filter((path) => !SPLASH_ICON_EXCLUSIONS.includes(path))
-      .map((path) => `${SPLASH_ICON_PATH}${path}`);
+    return manifestIcons;
   } catch (error) {
     console.warn("Splash icons unavailable.", error);
     return [];
