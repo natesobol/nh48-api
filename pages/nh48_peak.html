@@ -289,6 +289,14 @@
         border-radius:10px;
         padding:6px 10px;
         font-size:0.85rem;
+        appearance:none;
+        -webkit-appearance:none;
+        -moz-appearance:none;
+        padding-right:34px;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23ffffff' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+        background-repeat:no-repeat;
+        background-position:right 10px center;
+        background-size:12px;
       }
       .nh48-lang-label{
         font-size:0.75rem;
@@ -1473,6 +1481,7 @@
       let currentPrimaryMeta = null;
       let currentPrimaryPhoto = null;
       let metadataExpanded = false;
+      const metadataMobileQuery = window.matchMedia('(max-width: 720px)');
       let isCarouselPaused = false;
       const LANGUAGE_READY_TIMEOUT = 2000;
 
@@ -1524,7 +1533,7 @@
           return undefined;
         };
 
-        return {
+        const merged = {
           ...meta,
           altText: pickText(meta.altText, iptc && iptc.altText, iptc && iptc.description),
           alt: pickText(meta.alt, iptc && iptc.altText, iptc && iptc.description),
@@ -1540,6 +1549,18 @@
           copyrightStatus: pickText(meta.copyrightStatus, iptc && iptc.copyrightStatus),
           rightsUsageTerms: pickText(meta.rightsUsageTerms, iptc && iptc.rightsUsageTerms)
         };
+
+        const normalizePerson = (value) => {
+          if(value === undefined || value === null) return '';
+          return String(value).trim().toLowerCase();
+        };
+        const normalizedAuthor = normalizePerson(merged.author);
+        const normalizedCreator = normalizePerson(merged.creator);
+        if(normalizedAuthor && normalizedCreator && normalizedAuthor === normalizedCreator){
+          delete merged.creator;
+        }
+
+        return merged;
       }
 
       function makeRow(label, value){
@@ -1696,6 +1717,9 @@
 
         const meta = (photoMetaData && photoMetaData[i]) || null;
         const enrichedMeta = enrichMetadata(meta);
+        if(metadataMobileQuery.matches){
+          metadataExpanded = false;
+        }
         if(!meta || typeof meta !== 'object'){
           const empty = document.createElement('div');
           empty.className = 'metadata-primary';
