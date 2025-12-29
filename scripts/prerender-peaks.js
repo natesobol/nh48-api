@@ -565,6 +565,111 @@ const buildBreadcrumbJson = (pageName, canonicalUrl, catalogUrl, homeUrl, labels
   2
 );
 
+const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImage, langCode) => JSON.stringify(
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: `${pageName} — White Mountain National Forest`,
+    description: descriptionText,
+    url: canonicalUrl,
+    inLanguage: langCode === 'fr' ? 'fr-FR' : 'en-US',
+    isPartOf: {
+      "@type": "WebSite",
+      name: "NH48 Peak Guide",
+      url: "https://nh48.info/",
+      publisher: {
+        "@type": "Organization",
+        name: "NH48 Peak Guide",
+        url: "https://nh48.info/",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://nh48.info/nh48API_logo.png",
+          width: 512,
+          height: 512
+        }
+      }
+    },
+    primaryImageOfPage: primaryImage?.url ? {
+      "@type": "ImageObject",
+      url: primaryImage.url,
+      width: primaryImage.width,
+      height: primaryImage.height
+    } : undefined,
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      "@id": `${canonicalUrl}#breadcrumb`
+    },
+    potentialAction: {
+      "@type": "ReadAction",
+      target: [canonicalUrl]
+    }
+  },
+  null,
+  2
+);
+
+const buildFAQSchema = (peakName, routes, difficulty, time, langCode) => {
+  const isEnglish = langCode === 'en';
+  const faqs = [];
+
+  // Add route question if routes exist
+  if (Array.isArray(routes) && routes.length > 0) {
+    const routeNames = routes.map(r => cleanText(r["Route Name"] || r.name || "")).filter(Boolean);
+    if (routeNames.length > 0) {
+      faqs.push({
+        "@type": "Question",
+        name: isEnglish ? `What are the main hiking routes to ${peakName}?` : `Quels sont les principaux itinéraires de randonnée vers ${peakName} ?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: isEnglish 
+            ? `The main routes to ${peakName} include: ${routeNames.join(', ')}.`
+            : `Les principaux itinéraires vers ${peakName} incluent : ${routeNames.join(', ')}.`
+        }
+      });
+    }
+  }
+
+  // Add difficulty question
+  if (difficulty && difficulty !== 'Unknown' && difficulty !== 'Inconnu') {
+    faqs.push({
+      "@type": "Question",
+      name: isEnglish ? `How difficult is hiking ${peakName}?` : `Quelle est la difficulté de la randonnée vers ${peakName} ?`,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: isEnglish
+          ? `${peakName} is rated as ${difficulty} difficulty.`
+          : `${peakName} est classé comme ${difficulty} en difficulté.`
+      }
+    });
+  }
+
+  // Add time question
+  if (time && time !== 'Varies' && time !== 'Variable') {
+    faqs.push({
+      "@type": "Question",
+      name: isEnglish ? `How long does it take to hike ${peakName}?` : `Combien de temps faut-il pour faire la randonnée vers ${peakName} ?`,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: isEnglish
+          ? `Typically, hiking ${peakName} takes ${time}.`
+          : `Typiquement, la randonnée vers ${peakName} prend ${time}.`
+      }
+    });
+  }
+
+  if (faqs.length === 0) return null;
+
+  return JSON.stringify(
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqs
+    },
+    null,
+    2
+  );
+};
+
 const buildJsonLd = (
   peak,
   canonicalUrl,
@@ -918,6 +1023,18 @@ const main = () => {
           BREADCRUMB_LD: escapeScriptJson(
             buildBreadcrumbJson(localizedName, canonicalUrl, lang.catalogUrl, lang.homeUrl, lang.labels)
           ),
+          WEBPAGE_SCHEMA: escapeScriptJson(
+            buildWebPageSchema(localizedName, canonicalUrl, descriptionText, primaryPhoto, lang.code)
+          ),
+          FAQ_SCHEMA: (() => {
+            const faqJson = buildFAQSchema(localizedName, peak["Standard Routes"], difficulty, time, lang.code);
+            return faqJson ? `<script type="application/ld+json">${escapeScriptJson(faqJson)}</script>` : "";
+          })(),
+          GEO_POSITION: coordinates.latitude && coordinates.longitude 
+            ? `${coordinates.latitude};${coordinates.longitude}`
+            : "",
+          GEO_PLACENAME: escapeHtml(localizedName),
+          GEO_REGION: "US-NH",
         };
 
         const outputDir = path.join(lang.outputDir, slug);

@@ -31,7 +31,12 @@
     <meta name="copyright" content="{{PHOTO_CREDIT}}" />
     <meta name="keywords" content="{{PHOTO_KEYWORDS}}" />
     <meta name="exif:summary" content="{{PHOTO_EXIF}}" />
+    <meta name="geo.position" content="{{GEO_POSITION}}" />
+    <meta name="geo.placename" content="{{GEO_PLACENAME}}" />
+    <meta name="geo.region" content="{{GEO_REGION}}" />
+    <meta name="ICBM" content="{{GEO_POSITION}}" />
     <link rel="preload" as="image" href="{{HERO_PRELOAD}}" />
+    <link rel="preconnect" href="https://photos.nh48.info" crossorigin />
     <link rel="icon" href="{{FAVICON_32}}" sizes="32x32" type="image/png">
     <link rel="icon" href="{{FAVICON_16}}" sizes="16x16" type="image/png">
     <link rel="apple-touch-icon" href="{{APPLE_TOUCH_ICON}}">
@@ -42,6 +47,8 @@
     <link rel="prefetch" href="{{APP_URL}}" />
     <script type="application/ld+json">{{JSON_LD}}</script>
     <script type="application/ld+json">{{BREADCRUMB_LD}}</script>
+    <script type="application/ld+json">{{WEBPAGE_SCHEMA}}</script>
+    {{FAQ_SCHEMA}}
     <style>
       :root{
         --bg:#0a0a0a;
@@ -228,9 +235,25 @@
         margin-top:22px;
         color:var(--muted);
       }
+      .skip-link{
+        position:absolute;
+        top:-40px;
+        left:0;
+        background:var(--accent);
+        color:#0a0a0a;
+        padding:8px 12px;
+        text-decoration:none;
+        font-weight:700;
+        border-radius:4px;
+        z-index:100;
+      }
+      .skip-link:focus{
+        top:0;
+      }
     </style>
   </head>
   <body>
+    <a href="#peakTitle" class="skip-link">Skip to main content</a>
     <div class="wrap">
       <nav class="breadcrumb-nav" aria-label="Breadcrumb">
         <ol itemscope itemtype="https://schema.org/BreadcrumbList">
