@@ -23,6 +23,16 @@ jobs:
           node scripts/prerender-long-trails.js
           node scripts/generate-sitemaps.js
 
+      - name: Show generated file diffs (debug)
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "=== git status (porcelain) ==="
+          git status --porcelain
+          echo "=== git diff --name-only ==="
+          git --no-pager diff --name-only || true
+          echo "=== git diff (full) ==="
+          git --no-pager diff || true
+
       - name: Commit updated renders
         if: github.event_name == 'push'
         uses: stefanzweifel/git-auto-commit-action@v5
