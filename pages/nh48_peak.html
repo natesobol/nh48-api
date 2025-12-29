@@ -172,6 +172,29 @@
       @media(max-width:640px){
         .wrap{ padding:12px; }
       }
+      .content-grid{
+        display:grid;
+        grid-template-columns:minmax(0, 1.4fr) minmax(260px, 0.9fr);
+        gap:16px;
+        align-items:start;
+        margin-bottom:20px;
+      }
+      @media(max-width:900px){
+        .content-grid{
+          grid-template-columns:1fr;
+        }
+      }
+      .media-panel{ order:1; }
+      .sidebar-stack{
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        order:2;
+      }
+      @media(max-width:900px){
+        .media-panel{ order:1; }
+        .sidebar-stack{ order:2; }
+      }
       .breadcrumb-nav{
         margin:0 0 12px 0;
         color:var(--muted);
@@ -371,8 +394,11 @@
         overflow:hidden;
         margin-bottom:16px;
         position:relative;
-        aspect-ratio:5/3;
+        aspect-ratio:4/3;
+        min-height:clamp(240px, 60vw, 520px);
+        max-height:min(65vh, 640px);
       }
+      .media-panel .media{ margin-bottom:0; }
       .media-loading{
         position:absolute;
         inset:0;
@@ -414,18 +440,24 @@
       .slide.active{ opacity:1; }
       .slide figure{
         margin:0;
-        display:flex;
-        flex-direction:column;
+        display:grid;
+        grid-template-rows:1fr auto;
+        align-items:center;
+        justify-items:center;
+        gap:6px;
+        padding:6px;
+        box-sizing:border-box;
         height:100%;
       }
       .slide figure img{
         width:100%;
         height:100%;
-        object-fit:cover;
+        object-fit:contain;
+        object-position:center;
         display:block;
+        border-radius:8px;
       }
       .slide figcaption{
-        margin-top:6px;
         font-size:0.9rem;
         color:var(--muted);
       }
@@ -785,34 +817,39 @@
       </nav>
       <h1 id="peakTitle" data-i18n="peak.loading">Loading…</h1>
 
-      <!-- MEDIA / CAROUSEL ---------------------------------------------------->
-      <div class="media" id="media" hidden>
-        <div class="media-loading" id="mediaLoading">
-          <span class="loading-spinner" aria-hidden="true"></span>
-          <span class="loading-text" data-i18n="common.loading">Loading…</span>
-        </div>
-        <div class="carousel" id="carousel"></div>
-        <div class="dots" id="dots"></div>
-        <div class="ctrls">
-          <button id="prevBtn" data-i18n="peak.carousel.prev" data-i18n-attr="aria-label" aria-label="Previous image">‹</button>
-          <button id="nextBtn" data-i18n="peak.carousel.next" data-i18n-attr="aria-label" aria-label="Next image">›</button>
-        </div>
-        <!-- Countdown timer overlay -->
-        <div class="timer" id="carouselTimer" hidden>
-          <div class="timer-visual">
-            <svg viewBox="0 0 40 40">
-              <circle id="timerRing" class="timer-ring" cx="20" cy="20" r="18"></circle>
-            </svg>
-            <span id="timerText" class="timer-text"></span>
+      <div class="content-grid">
+        <div class="media-panel">
+          <!-- MEDIA / CAROUSEL ---------------------------------------------------->
+          <div class="media" id="media" hidden>
+            <div class="media-loading" id="mediaLoading">
+              <span class="loading-spinner" aria-hidden="true"></span>
+              <span class="loading-text" data-i18n="common.loading">Loading…</span>
+            </div>
+            <div class="carousel" id="carousel"></div>
+            <div class="dots" id="dots"></div>
+            <div class="ctrls">
+              <button id="prevBtn" data-i18n="peak.carousel.prev" data-i18n-attr="aria-label" aria-label="Previous image">‹</button>
+              <button id="nextBtn" data-i18n="peak.carousel.next" data-i18n-attr="aria-label" aria-label="Next image">›</button>
+            </div>
+            <!-- Countdown timer overlay -->
+            <div class="timer" id="carouselTimer" hidden>
+              <div class="timer-visual">
+                <svg viewBox="0 0 40 40">
+                  <circle id="timerRing" class="timer-ring" cx="20" cy="20" r="18"></circle>
+                </svg>
+                <span id="timerText" class="timer-text"></span>
+              </div>
+              <button id="carouselPauseBtn" type="button" class="timer-pause" aria-label="Pause carousel" aria-pressed="false" title="Pause carousel">❚❚</button>
+            </div>
           </div>
-          <button id="carouselPauseBtn" type="button" class="timer-pause" aria-label="Pause carousel" aria-pressed="false" title="Pause carousel">❚❚</button>
+        </div>
+
+        <div class="sidebar-stack">
+          <!-- GENERAL INFO ABOVE METADATA PANEL (STACKED, FULL WIDTH) ------------->
+          <div id="generalInfoPanel" class="metadata-panel" hidden></div>
+          <div id="photoMetadataPanel" class="metadata-panel" hidden></div>
         </div>
       </div>
-
-
-      <!-- GENERAL INFO ABOVE METADATA PANEL (STACKED, FULL WIDTH) ------------->
-      <div id="generalInfoPanel" class="metadata-panel" hidden style="margin-bottom:16px;"></div>
-      <div id="photoMetadataPanel" class="metadata-panel" hidden></div>
 
       <!-- OTHER SECTIONS ------------------------------------------------------>
       <section aria-labelledby="routesHeading">
