@@ -16,6 +16,23 @@ const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const SPLASH_MANIFEST_PATH = "/photos/backgrounds/manifest.json";
 
+const whenImageReady = (imgEl) =>
+  new Promise((resolve) => {
+    const finish = () => resolve(imgEl);
+    imgEl.addEventListener(
+      "load",
+      () => {
+        if (typeof imgEl.decode === "function") {
+          imgEl.decode().then(finish).catch(finish);
+          return;
+        }
+        finish();
+      },
+      { once: true }
+    );
+    imgEl.addEventListener("error", finish, { once: true });
+  });
+
 const loadManifestIcons = async () => {
   const response = await fetch(SPLASH_MANIFEST_PATH, { cache: "no-store" });
   if (!response.ok) {
@@ -192,6 +209,8 @@ const initSplash = async () => {
     }
   };
 
+  const iconPromises = [];
+
   selectedIcons.forEach((iconPath) => {
     const imgEl = document.createElement("img");
     imgEl.className = "splash-icon";
@@ -200,29 +219,7 @@ const initSplash = async () => {
     if (imgEl.alt) {
       imgEl.title = imgEl.alt;
     }
-    let isRevealed = false;
-    const revealIcon = () => {
-      if (isRevealed) {
-        return;
-      }
-      isRevealed = true;
-      imgEl.classList.add("is-ready");
-    };
-    imgEl.addEventListener(
-      "load",
-      () => {
-        if (typeof imgEl.decode === "function") {
-          imgEl
-            .decode()
-            .then(revealIcon)
-            .catch(revealIcon);
-        } else {
-          revealIcon();
-        }
-      },
-      { once: true }
-    );
-    imgEl.addEventListener("error", revealIcon, { once: true });
+    const readyPromise = whenImageReady(imgEl);
     imgEl.src = iconPath;
     const baseSize = 24 + Math.random() * 32;
     const sizeMultiplier =
@@ -249,7 +246,6 @@ const initSplash = async () => {
     const opacity = 0.6 + Math.random() * 0.4;
     imgEl.style.opacity = `${opacity}`;
     imgEl.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
-    container.appendChild(imgEl);
     const speedMultiplier =
       SPLASH_MIN_SPEED_MULTIPLIER +
       Math.random() * (SPLASH_MAX_SPEED_MULTIPLIER - SPLASH_MIN_SPEED_MULTIPLIER);
@@ -264,7 +260,22 @@ const initSplash = async () => {
       vx,
       vy,
       rotation,
-      rotationSpeed
+      rotationSpeed,
+      readyPromise
+    });
+    iconPromises.push(readyPromise);
+  });
+
+  await Promise.allSettled(iconPromises);
+
+  const fragment = document.createDocumentFragment();
+  icons.forEach((icon) => {
+    fragment.appendChild(icon.el);
+  });
+  container.appendChild(fragment);
+  requestAnimationFrame(() => {
+    icons.forEach((icon) => {
+      icon.el.classList.add("is-ready");
     });
   });
 
@@ -318,4 +329,8 @@ const initSplash = async () => {
   });
 };
 
-window.addEventListener("load", initSplash);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initSplash);
+} else {
+  initSplash();
+}
