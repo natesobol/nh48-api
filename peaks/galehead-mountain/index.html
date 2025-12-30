@@ -630,6 +630,7 @@
       .site-nav-links a:hover{color:#22c55e;background:rgba(255,255,255,0.08);}
       .site-nav-links a.active{color:#22c55e;background:rgba(34,197,94,0.1);}
       .site-nav-dropdown{position:relative;display:inline-flex;flex-direction:column;align-items:flex-start;}
+      .site-nav-dropdown::after{content:"";position:absolute;left:0;right:0;top:100%;height:12px;}
       .site-nav-dropdown .site-nav-submenu{display:none;position:absolute;top:calc(100% + 6px);left:0;background:#0f172a;border:1px solid rgba(255,255,255,0.08);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,0.4);padding:8px;min-width:200px;z-index:10;}
       .site-nav-dropdown:hover .site-nav-submenu,.site-nav-dropdown:focus-within .site-nav-submenu{display:flex;flex-direction:column;gap:4px;}
       .site-nav-dropdown .site-nav-submenu a{width:100%;text-transform:none;font-size:14px;letter-spacing:0.3px;padding:10px 12px;border-radius:8px;}
@@ -937,6 +938,16 @@
     display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  /* Hover buffer keeps submenu open while moving from parent link to dropdown */
+  .site-nav-dropdown::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 12px;
   }
 
   .site-nav-dropdown .site-nav-submenu {
