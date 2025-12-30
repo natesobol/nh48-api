@@ -71,7 +71,63 @@
   <meta name="twitter:description" content="Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains.">
   <meta name="twitter:image" content="https://nh48.info/UI-Elements/og-cover.png">
   <meta name="twitter:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
-  <meta http-equiv="refresh" content="0; url=/catalog">
+  <script>
+    (function redirectToApp() {
+      const baseTarget = "https://nh48.info/pages/nh48_peak.html";
+      const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+      const slug = params.get("slug");
+      const lang = params.get("lang");
+      const redirectParams = new URLSearchParams();
+
+      if (slug) {
+        redirectParams.set("slug", slug);
+      }
+
+      if (lang) {
+        redirectParams.set("lang", lang);
+      }
+
+      const target = redirectParams.toString()
+        ? `${baseTarget}?${redirectParams.toString()}`
+        : baseTarget;
+
+      const ua = (typeof navigator !== "undefined" && navigator.userAgent) || "";
+      const botSignatures = [
+        "adsbot-google",
+        "ahrefsbot",
+        "applebot",
+        "baiduspider",
+        "bingbot",
+        "bingpreview",
+        "chatgpt",
+        "claudebot",
+        "duckduckbot",
+        "exabot",
+        "facebookexternalhit",
+        "facebot",
+        "gptbot",
+        "google-inspectiontool",
+        "googlebot",
+        "ia_archiver",
+        "linkedinbot",
+        "mediapartners-google",
+        "petalbot",
+        "redditbot",
+        "semrushbot",
+        "slurp",
+        "sogou",
+        "twitterbot",
+        "yandex"
+      ];
+      const uaLower = ua.toLowerCase();
+      const isKnownBot = botSignatures.some((signature) => uaLower.includes(signature));
+      const shouldRedirect = !isKnownBot && typeof window !== "undefined" && target && window.location.href !== target;
+
+      if (shouldRedirect) {
+        window.location.replace(target);
+      }
+    })();
+  </script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
