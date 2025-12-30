@@ -1108,14 +1108,14 @@
     --nh48-footer-border: #ffffff;
     --nh48-footer-ink: var(--ink, #ffffff);
     --nh48-footer-accent: var(--accent, #22c55e);
-    margin: 40px 0 0;
+    margin: 32px 0 0;
     width: 100%;
     max-width: none;
     background: var(--nh48-footer-surface);
     border: 0;
     border-top: 1px solid var(--nh48-footer-border);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    padding: clamp(18px, 2vw, 26px) 0 clamp(20px, 2.5vw, 30px);
+    padding: clamp(16px, 2vw, 22px) 0 clamp(8px, 1.5vw, 14px);
     color: var(--nh48-footer-ink);
     display: flex;
     flex-direction: column;
@@ -1134,8 +1134,8 @@
   .nh48-quick-footer__header {
     text-align: center;
     max-width: 1080px;
-    margin: 0 auto 2px;
-    padding: 0 clamp(16px, 4vw, 40px);
+    margin: 0 auto 0;
+    padding: 0 clamp(16px, 3vw, 32px);
   }
 
   .nh48-quick-footer__controls {
@@ -1181,22 +1181,11 @@
   }
 
   .nh48-quick-footer__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 12px;
-    border-radius: 999px;
-    border: 1px solid var(--nh48-footer-border);
-    background: color-mix(in srgb, var(--nh48-footer-card) 70%, var(--nh48-footer-accent) 30%);
-    color: var(--nh48-footer-ink);
-    font-weight: 800;
-    letter-spacing: 0.35px;
-    text-transform: uppercase;
-    font-size: 12px;
+    display: none;
   }
 
   .nh48-quick-footer__header h2 {
-    margin: 8px 0 4px;
+    margin: 4px 0 4px;
     font-size: clamp(19px, 2.4vw, 24px);
     letter-spacing: 0.35px;
     color: var(--nh48-footer-ink);
@@ -1216,12 +1205,12 @@
     align-items: stretch;
     justify-content: start;
     gap: 14px;
-    width: min(1800px, 100%);
-    margin: 8px auto 0;
-    padding: 8px clamp(16px, 4vw, 40px) 12px;
+    width: min(2200px, 98vw);
+    margin: 6px auto 0;
+    padding: 8px clamp(12px, 2vw, 22px) 8px;
     overflow-x: auto;
     overflow-y: auto;
-    max-height: 320px;
+    max-height: 300px;
     flex: 1 1 auto;
     scrollbar-width: thin;
     scrollbar-color: var(--nh48-footer-accent) color-mix(in srgb, var(--nh48-footer-card) 80%, #000 20%);
@@ -1305,7 +1294,7 @@
     justify-content: center;
     gap: 12px;
     border-top: 1px solid var(--nh48-footer-border);
-    padding: 14px clamp(16px, 4vw, 40px) 2px;
+    padding: 12px clamp(16px, 3vw, 32px) 0;
     font-size: 14px;
     text-align: center;
   }
@@ -1354,18 +1343,18 @@
 
   @media (max-width: 768px) {
     .nh48-quick-footer {
-      margin: 32px auto 16px;
-      padding: 16px clamp(12px, 4vw, 18px) 22px;
+      margin: 24px auto 10px;
+      padding: 14px clamp(12px, 4vw, 18px) 12px;
       width: min(720px, 100%);
-      min-height: 600px;
-      max-height: 720px;
+      min-height: 0;
+      max-height: none;
     }
 
     .nh48-quick-footer .nh48-quick-footer__grid {
       gap: 12px;
       padding: 6px 8px 10px;
       max-height: 320px;
-      min-height: 280px;
+      min-height: 220px;
     }
 
     .nh48-quick-footer__list {
@@ -1381,44 +1370,43 @@
 </style>
 <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
   <div class="nh48-quick-footer__header">
-    <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
-    <h2 id="nh48-quick-footer-title">Quick Browse NH48 peaks of the White Mountains of New Hampshire</h2>
+    <h2 id="nh48-quick-footer-title">Browse the NH48 peaks of the White Mountains of New Hampshire</h2>
     <p>Jump directly into every New Hampshire 4,000-footer detail page to quickly find summit info, photos, and route details.</p>
   </div>
   <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
     <div class="nh48-quick-footer__group">
       <h2>Presidential Range</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-washington">Washington</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-adams">Adams</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-jefferson">Jefferson</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-monroe">Monroe</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower">Eisenhower</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-pierce">Pierce</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-jackson">Jackson</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-madison">Madison</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-isolation">Isolation</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-washington">Mount Washington</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-adams">Mount Adams</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-jefferson">Mount Jefferson</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-monroe">Mount Monroe</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower">Mount Eisenhower</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-pierce">Mount Pierce</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-jackson">Mount Jackson</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-madison">Mount Madison</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-isolation">Mount Isolation</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
       <h2>Franconia Ridge</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-lafayette">Lafayette</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-lincoln">Lincoln</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-liberty">Liberty</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-flume">Flume</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-garfield">Garfield</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-lafayette">Mount Lafayette</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-lincoln">Mount Lincoln</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-liberty">Mount Liberty</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-flume">Mount Flume</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-garfield">Mount Garfield</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2>Twins & Bonds</h2>
+      <h2>Twins &amp; Bonds</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain">South Twin</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain">North Twin</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/galehead-mountain">Galehead</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/zealand-mountain">Zealand</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain">South Twin Mountain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain">North Twin Mountain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/galehead-mountain">Galehead Mountain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/zealand-mountain">Zealand Mountain</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/west-bond">West Bond</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-bond">Bond</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-bond">Mount Bond</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/bondcliff">Bondcliff</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/owls-head">Owl's Head</a></li>
       </ul>
@@ -1427,56 +1415,56 @@
       <h2>Carter-Moriah & Wildcats</h2>
       <ul class="nh48-quick-footer__list">
         <li><a class="nh48-quick-footer__link" href="/peaks/carter-dome">Carter Dome</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain">South Carter</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain">Middle Carter</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-moriah">Moriah</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a">Wildcat A</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d">Wildcat D</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain">South Carter Mountain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain">Middle Carter Mountain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-moriah">Mount Moriah</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a">Wildcat Mountain – A Peak</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d">Wildcat Mountain – D Peak</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
       <h2>Kinsman Range</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain">North Kinsman</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain">South Kinsman</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/cannon-mountain">Cannon</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain">North Kinsman Mountain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain">South Kinsman Mountain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/cannon-mountain">Cannon Mountain</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2>Osceolas & Trips</h2>
+      <h2>Osceolas &amp; Trips</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway">Passaconaway</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-whiteface">Whiteface</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway">Mount Passaconaway</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-whiteface">Mount Whiteface</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/north-tripyramid">North Tripyramid</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid">Middle Tripyramid</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-osceola">Osceola</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east">Osceola East</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh">Tecumseh</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-osceola">Mount Osceola</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east">Mount Osceola – East Peak</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh">Mount Tecumseh</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2>Pemi & Carrigain</h2>
+      <h2>Pemigewasset &amp; Carrigain</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-carrigain">Carrigain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-hancock">Hancock North</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south">Hancock South</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-hale">Hale</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-carrigain">Mount Carrigain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-hancock">Mount Hancock – North Peak</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south">Mount Hancock – South Peak</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-hale">Mount Hale</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
       <h2>Northern Summits</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-cabot">Cabot</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-waumbek">Waumbek</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-cabot">Mount Cabot</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-waumbek">Mount Waumbek</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2>Western Whites</h2>
+      <h2>Western &amp; Outlying</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke">Moosilauke</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-willey">Willey</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-field">Field</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-tom">Tom</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke">Mount Moosilauke</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-willey">Mount Willey</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-field">Mount Field</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-tom">Mount Tom</a></li>
       </ul>
     </div>
   </div>
