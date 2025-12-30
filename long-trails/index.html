@@ -2242,18 +2242,19 @@
 <style data-nh48-quick-footer-style>
 .nh48-quick-footer {
     --nh48-footer-grid-min: clamp(160px, 17vw, 230px);
+    --nh48-footer-surface: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
     --nh48-footer-card: color-mix(in srgb, #141833 70%, rgba(10, 12, 26, 0.55) 30%);
     --nh48-footer-border: #ffffff;
-    --nh48-footer-ink: #f6f7ff;
-    --nh48-footer-accent: #22c55e;
-    margin: 40px 0 0;
+    --nh48-footer-ink: var(--ink, #ffffff);
+    --nh48-footer-accent: var(--accent, #22c55e);
+    margin: 32px 0 0;
     width: 100%;
     max-width: none;
-    background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+    background: var(--nh48-footer-surface);
     border: 0;
-    border-top: 1px solid #ffffff;
+    border-top: 1px solid var(--nh48-footer-border);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    padding: clamp(18px, 2vw, 26px) 0 clamp(20px, 2.5vw, 30px);
+    padding: clamp(16px, 2vw, 22px) 0 clamp(8px, 1.5vw, 14px);
     color: var(--nh48-footer-ink);
     display: flex;
     flex-direction: column;
@@ -2271,9 +2272,9 @@
 
   .nh48-quick-footer__header {
     text-align: center;
-    max-width: 1300px;
-    margin: 0 auto 4px;
-    padding: 0 clamp(16px, 4vw, 40px);
+    max-width: 1080px;
+    margin: 0 auto 0;
+    padding: 0 clamp(16px, 3vw, 32px);
   }
 
   .nh48-quick-footer__controls {
@@ -2293,8 +2294,8 @@
   .nh48-quick-footer__sort-button {
     appearance: none;
     border: 1px solid var(--nh48-footer-border);
-    background: rgba(18, 23, 33, 0.7);
-    color: #ffffff;
+    background: color-mix(in srgb, var(--nh48-footer-card) 70%, #000 30%);
+    color: var(--nh48-footer-ink);
     border-radius: 12px;
     padding: 8px 13px;
     font-weight: 800;
@@ -2306,35 +2307,24 @@
   .nh48-quick-footer__sort-button:hover,
   .nh48-quick-footer__sort-button:focus-visible {
     outline: none;
-    border-color: #2bd879;
-    background: rgba(34, 197, 94, 0.2);
-    box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.24);
+    border-color: var(--nh48-footer-accent);
+    background: color-mix(in srgb, var(--nh48-footer-card) 60%, var(--nh48-footer-accent) 40%);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--nh48-footer-accent) 24%, transparent);
     transform: translateY(-1px);
   }
 
   .nh48-quick-footer__sort-button.is-active {
-    background: linear-gradient(135deg, rgba(43, 216, 121, 0.4), rgba(34, 197, 94, 0.28));
-    border-color: #2bd879;
-    box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.24);
+    background: color-mix(in srgb, var(--nh48-footer-card) 40%, var(--nh48-footer-accent) 60%);
+    border-color: var(--nh48-footer-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--nh48-footer-accent) 24%, transparent);
   }
 
   .nh48-quick-footer__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 12px;
-    border-radius: 999px;
-    border: 1px solid var(--nh48-footer-border);
-    background: color-mix(in srgb, var(--nh48-footer-card) 70%, var(--nh48-footer-accent) 30%);
-    color: var(--nh48-footer-ink);
-    font-weight: 800;
-    letter-spacing: 0.35px;
-    text-transform: uppercase;
-    font-size: 12px;
+    display: none;
   }
 
   .nh48-quick-footer__header h2 {
-    margin: 8px 0 4px;
+    margin: 4px 0 4px;
     font-size: clamp(19px, 2.4vw, 24px);
     letter-spacing: 0.35px;
     color: var(--nh48-footer-ink);
@@ -2354,12 +2344,12 @@
     align-items: stretch;
     justify-content: start;
     gap: 14px;
-    width: min(1800px, 100%);
-    margin: 8px auto 0;
-    padding: 8px clamp(16px, 4vw, 40px) 12px;
+    width: min(2200px, 98vw);
+    margin: 6px auto 0;
+    padding: 8px clamp(12px, 2vw, 22px) 8px;
     overflow-x: auto;
     overflow-y: auto;
-    max-height: 320px;
+    max-height: 300px;
     flex: 1 1 auto;
     scrollbar-width: thin;
     scrollbar-color: var(--nh48-footer-accent) color-mix(in srgb, var(--nh48-footer-card) 80%, #000 20%);
@@ -2406,15 +2396,15 @@
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 6px;
+    gap: 7px;
   }
 
   .nh48-quick-footer__link {
     display: inline-flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 7px 9px;
-    min-height: 36px;
+    padding: 8px 10px;
+    min-height: 40px;
     text-align: left;
     border-radius: 10px;
     border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 70%, var(--nh48-footer-ink) 30%);
@@ -2443,7 +2433,7 @@
     justify-content: center;
     gap: 12px;
     border-top: 1px solid var(--nh48-footer-border);
-    padding: 14px clamp(16px, 4vw, 40px) 2px;
+    padding: 12px clamp(16px, 3vw, 32px) 0;
     font-size: 14px;
     text-align: center;
   }
@@ -2492,18 +2482,18 @@
 
   @media (max-width: 768px) {
     .nh48-quick-footer {
-      margin: 32px auto 16px;
-      padding: 16px clamp(12px, 4vw, 18px) 22px;
+      margin: 24px auto 10px;
+      padding: 14px clamp(12px, 4vw, 18px) 12px;
       width: min(720px, 100%);
-      min-height: 600px;
-      max-height: 720px;
+      min-height: 0;
+      max-height: none;
     }
 
     .nh48-quick-footer .nh48-quick-footer__grid {
       gap: 12px;
       padding: 6px 8px 10px;
       max-height: 320px;
-      min-height: 280px;
+      min-height: 220px;
     }
 
     .nh48-quick-footer__list {
@@ -2519,8 +2509,7 @@
 </style>
 <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
   <div class="nh48-quick-footer__header">
-    <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
-    <h2 id="nh48-quick-footer-title">Quick Browse NH48 peaks of the White Mountains of New Hampshire</h2>
+    <h2 id="nh48-quick-footer-title">Browse the NH48 peaks of the White Mountains of New Hampshire</h2>
     <p>Jump directly into every New Hampshire 4,000-footer detail page to quickly find summit info, photos, and route details.</p>
   </div>
   <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
@@ -2549,7 +2538,7 @@
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2>Twin Range &amp; Bonds</h2>
+      <h2>Twins &amp; Bonds</h2>
       <ul class="nh48-quick-footer__list">
         <li><a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain">South Twin Mountain</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain">North Twin Mountain</a></li>
@@ -2562,7 +2551,7 @@
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2>Carter-Moriah &amp; Wildcats</h2>
+      <h2>Carter-Moriah & Wildcats</h2>
       <ul class="nh48-quick-footer__list">
         <li><a class="nh48-quick-footer__link" href="/peaks/carter-dome">Carter Dome</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain">South Carter Mountain</a></li>
@@ -2581,7 +2570,7 @@
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2>Sandwich Range</h2>
+      <h2>Osceolas &amp; Trips</h2>
       <ul class="nh48-quick-footer__list">
         <li><a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway">Mount Passaconaway</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/mount-whiteface">Mount Whiteface</a></li>
