@@ -1,24 +1,21 @@
 <style data-nh48-quick-footer-style>
   .nh48-quick-footer {
       --nh48-footer-grid-min: clamp(170px, 18vw, 230px);
-      margin: 36px 0 0;
-      width: 100vw;
-      max-width: none;
-      margin-left: calc(50% - 50vw);
-      margin-right: calc(50% - 50vw);
-      background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
-      border-top: 1px solid #ffffff;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.22);
-      box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.45);
-      padding: clamp(18px, 2vw, 26px) clamp(18px, 4vw, 44px) clamp(16px, 2vw, 24px);
+      margin: 48px auto 0;
+      width: min(1240px, 100%);
+      max-width: 1240px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: clamp(14px, 2vw, 26px) clamp(12px, 3vw, 36px) clamp(12px, 2vw, 24px);
       color: #ffffff;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 18px;
-      height: min(520px, 85vh);
-      max-height: 520px;
-      overflow: hidden;
+      height: auto;
+      max-height: none;
+      overflow: visible;
       text-align: center;
       box-sizing: border-box;
     }
@@ -105,10 +102,10 @@
       justify-content: center;
       align-items: stretch;
       gap: 18px;
-      margin-top: 6px;
-      padding: 12px 10px 14px;
+      margin-top: 12px;
+      padding: 0;
       flex: 1 1 auto;
-      overflow-y: auto;
+      overflow: visible;
       scrollbar-width: thin;
       scrollbar-color: rgba(43, 216, 121, 0.65) rgba(26, 26, 46, 0.9);
     }
