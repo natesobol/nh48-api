@@ -72,11 +72,44 @@
   <meta name="twitter:image" content="https://nh48.info/UI-Elements/og-cover.png">
   <meta name="twitter:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
   <script>
-    const trailsPath = '/trails/';
+    (function redirectToApp() {
+      const target = "https://nh48.info/pages/trails_app.html";
+      const ua = (typeof navigator !== "undefined" && navigator.userAgent) || "";
+      const botSignatures = [
+        "adsbot-google",
+        "ahrefsbot",
+        "applebot",
+        "baiduspider",
+        "bingbot",
+        "bingpreview",
+        "chatgpt",
+        "claudebot",
+        "duckduckbot",
+        "exabot",
+        "facebookexternalhit",
+        "facebot",
+        "gptbot",
+        "google-inspectiontool",
+        "googlebot",
+        "ia_archiver",
+        "linkedinbot",
+        "mediapartners-google",
+        "petalbot",
+        "redditbot",
+        "semrushbot",
+        "slurp",
+        "sogou",
+        "twitterbot",
+        "yandex"
+      ];
+      const uaLower = ua.toLowerCase();
+      const isKnownBot = botSignatures.some((signature) => uaLower.includes(signature));
+      const shouldRedirect = !isKnownBot && typeof window !== "undefined" && target && window.location.href !== target;
 
-    if (window.location.pathname !== trailsPath) {
-      window.location.replace(trailsPath);
-    }
+      if (shouldRedirect) {
+        window.location.replace(target);
+      }
+    })();
   </script>
   <script type="application/ld+json">
     {

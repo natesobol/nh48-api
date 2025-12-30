@@ -25,6 +25,46 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/quick-browse-footer.css">
+  <script>
+    (function redirectToApp() {
+      const target = "https://nh48.info/pages/nh48_catalog.html";
+      const ua = (typeof navigator !== "undefined" && navigator.userAgent) || "";
+      const botSignatures = [
+        "adsbot-google",
+        "ahrefsbot",
+        "applebot",
+        "baiduspider",
+        "bingbot",
+        "bingpreview",
+        "chatgpt",
+        "claudebot",
+        "duckduckbot",
+        "exabot",
+        "facebookexternalhit",
+        "facebot",
+        "gptbot",
+        "google-inspectiontool",
+        "googlebot",
+        "ia_archiver",
+        "linkedinbot",
+        "mediapartners-google",
+        "petalbot",
+        "redditbot",
+        "semrushbot",
+        "slurp",
+        "sogou",
+        "twitterbot",
+        "yandex"
+      ];
+      const uaLower = ua.toLowerCase();
+      const isKnownBot = botSignatures.some((signature) => uaLower.includes(signature));
+      const shouldRedirect = !isKnownBot && typeof window !== "undefined" && target && window.location.href !== target;
+
+      if (shouldRedirect) {
+        window.location.replace(target);
+      }
+    })();
+  </script>
   <link rel="alternate" type="application/json" title="NH48 Summit Photo Alt Text" href="https://nh48.info/photos/backgrounds/alt-text.json">
   <link rel="alternate" hreflang="en" href="https://nh48.info/">
   <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
