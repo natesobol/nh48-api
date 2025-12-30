@@ -146,6 +146,7 @@
     if (footerEl.querySelector('.nh48-quick-footer__controls')) return;
     const grid = footerEl.querySelector('.nh48-quick-footer__grid');
     if (!grid) return;
+    if (grid.querySelector('.nh48-quick-footer__group')) return;
 
     let activeSort = 'popularity';
     const hasExistingLinks = grid.querySelectorAll('.nh48-quick-footer__link').length > 0;
