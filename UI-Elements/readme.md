@@ -4,6 +4,11 @@ PNG icons used for the animated splash background live directly in this folder s
 
 Primary and secondary logo marks also live here. When adding or swapping logos, keep the transparent padding intact so the updated wrappers and border styles render cleanly on both light and dark hero areas.
 
+## Shared navigation/footer assets
+
+* The site-wide nav and quick-browse footer both reference the primary logo and OG cover art stored in this folder; keep filenames stable when updating assets so every live page continues to load consistent branding.
+* If a navigation or footer refresh introduces new icons, drop the PNG/SVG here and update all pages in lockstep so the menus and CTA grid stay visually aligned across localized and dataset pages.
+
 ## SEO Notes for Media Assets
 
 * Use descriptive, hyphenated filenames (e.g., `white-mountain-hiking-icon.png`) to reinforce keywords like **“White Mountain trails”** and **“NH48 summit photos.”**
