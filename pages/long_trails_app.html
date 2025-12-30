@@ -67,6 +67,22 @@
       line-height: 1.5;
     }
 
+    .logo-wrap {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      border: 2px solid var(--stroke, #ffffff);
+      overflow: hidden;
+      display: flex;
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
     .map-logo-strip {
       display: inline-flex;
       align-items: center;
@@ -79,13 +95,11 @@
       box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
     }
 
-    .map-logo-strip img {
+    .map-logo-strip .logo-wrap {
       width: 64px;
-      height: auto;
-      border-radius: 10px;
-      background: #0a0a0a;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 5px;
+      height: 64px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
     }
 
     .map-logo-strip .logo-copy {
@@ -441,7 +455,9 @@
   <header class="page-header">
     <h1>Long-Distance Trails</h1>
     <div class="map-logo-strip">
-      <img src="/Long_Trails_Logo.png" alt="Long Trails interactive map logo" title="Long Trails dataset" loading="lazy" decoding="async">
+      <div class="logo-wrap">
+        <img src="/Long_Trails_Logo.png" alt="Long Trails interactive map logo" title="Long Trails dataset" loading="lazy" decoding="async">
+      </div>
       <div class="logo-copy">
         <strong>Long Trails dataset brandmark</strong>
         <span>Logo for the long-distance trail campaigns map, covering Appalachian Trail, Pacific Crest Trail, and other thru-hikes.</span>
