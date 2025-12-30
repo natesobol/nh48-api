@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mount Lincoln (5,089&#39;) – NH 4000 Footer Data &amp; API | NH48.info</title>
+    <title>Mount Lincoln (5,089&#39;) – NH 48 Peak Guide</title>
     <meta name="description" content="This photograph features Mount Lincoln in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails." />
     <meta name="author" content="Nathan Sobol" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="theme-color" content="#0a0a0a" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Mount Lincoln (5,089&#39;) – NH 4000 Footer Data &amp; API | NH48.info" />
+    <meta property="og:title" content="Mount Lincoln (5,089&#39;) – NH 48 Peak Guide" />
     <meta property="og:description" content="This photograph features Mount Lincoln in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails." />
     <meta property="og:image" content="https://photos.nh48.info/mount-lincoln/mount-lincoln__001.jpg" />
     <meta property="og:image:width" content="6585" />
@@ -20,7 +20,7 @@
     <meta property="og:locale" content="en_US" />
     <meta property="og:locale:alternate" content="fr_FR" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Mount Lincoln (5,089&#39;) – NH 4000 Footer Data &amp; API | NH48.info" />
+    <meta name="twitter:title" content="Mount Lincoln (5,089&#39;) – NH 48 Peak Guide" />
     <meta name="twitter:description" content="This photograph features Mount Lincoln in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails." />
     <meta name="twitter:image" content="https://photos.nh48.info/mount-lincoln/mount-lincoln__001.jpg" />
     <meta name="twitter:image:alt" content="Forested mountain ridge and summit of Mount Lincoln in the White Mountain National Forest under a partly cloudy sky." />
@@ -47,6 +47,18 @@
     <link rel="prefetch" href="https://nh48.info/pages/nh48_peak.html?slug=mount-lincoln" />
     <script>
       (function redirectToApp() {
+        const host = location.hostname;
+
+        const isPreviewHost =
+          host === "localhost" ||
+          host === "127.0.0.1" ||
+          host.includes("github") ||
+          host.endsWith("githubpreview.dev");
+
+        if (isPreviewHost) {
+          return;
+        }
+
         const target = "https://nh48.info/pages/nh48_peak.html?slug=mount-lincoln";
         const ua = (typeof navigator !== "undefined" && navigator.userAgent) || "";
         const botSignatures = [
@@ -84,6 +96,13 @@
         }
       })();
     </script>
+<noscript>
+      <p>
+        JavaScript is required to continue.
+        <a href="https://nh48.info/pages/nh48_peak.html?slug=mount-lincoln">Continue</a>
+      </p>
+    </noscript>
+
     <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "Mountain",
@@ -1034,7 +1053,7 @@
   </a>
   <div class="site-nav-links">
     <a href="/catalog" data-route="catalog" data-i18n="nav.catalog">Catalog</a>
-    <a href="/nh-4000-footers-guide.html" data-route="guide">NH48 Guide</a>
+    <a href="/nh-4000-footers-info.html" data-route="info">NH48 Info</a>
     <div class="site-nav-dropdown">
       <a href="/dataset/wmnf-trails" data-route="trails" data-i18n="nav.trails">White Mountain Trails</a>
       <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
@@ -1179,37 +1198,36 @@
       <div class="redirect-notice">
         <p>Redirecting to the interactive page for Mount Lincoln...</p>
         <p>If you are not redirected, <a href="https://nh48.info/pages/nh48_peak.html?slug=mount-lincoln">open the interactive page</a>.</p>
-        <p>NH48 pre-rendered guide page.</p>
+        <p>NH48 pre-rendered info page.</p>
       </div>
     </div>
     <style data-nh48-quick-footer-style>
   .nh48-quick-footer {
-    --nh48-footer-grid-min: clamp(136px, 11vw, 220px);
-    margin: 42px 0 34px;
+    --nh48-footer-grid-min: clamp(210px, 20vw, 280px);
+    margin: 36px 0 0;
     width: 100vw;
     max-width: none;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
-    background: linear-gradient(135deg, rgba(10, 10, 10, 0.9), rgba(12, 20, 24, 0.92));
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    border-radius: 0;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
-    padding: clamp(18px, 2vw, 26px) clamp(18px, 4vw, 44px) clamp(14px, 2vw, 22px);
+    background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+    border-top: 1px solid #ffffff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.45);
+    padding: clamp(18px, 2vw, 26px) clamp(18px, 4vw, 44px) clamp(16px, 2vw, 24px);
     color: #ffffff;
-    backdrop-filter: blur(4px);
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    height: min(460px, 82vh);
-    max-height: 460px;
+    gap: 18px;
+    height: min(520px, 85vh);
+    max-height: 520px;
     overflow: hidden;
     box-sizing: border-box;
   }
 
   .nh48-quick-footer__header {
     text-align: center;
-    max-width: 1040px;
-    margin: 0 auto 6px;
+    max-width: 1080px;
+    margin: 0 auto 4px;
   }
 
   .nh48-quick-footer__controls {
@@ -1218,23 +1236,23 @@
     justify-content: center;
     gap: 10px;
     flex-wrap: wrap;
-    padding: 8px 10px;
-    margin: 2px auto 0;
+    padding: 10px 12px;
+    margin: 4px auto 2px;
     border-radius: 14px;
     border: 1px solid rgba(43, 216, 121, 0.4);
-    background: rgba(34, 197, 94, 0.08);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    background: rgba(34, 197, 94, 0.12);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
 
   .nh48-quick-footer__sort-button {
     appearance: none;
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    background: rgba(10, 10, 10, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    background: rgba(12, 19, 34, 0.6);
     color: #ffffff;
     border-radius: 12px;
-    padding: 8px 14px;
-    font-weight: 700;
-    letter-spacing: 0.2px;
+    padding: 9px 14px;
+    font-weight: 800;
+    letter-spacing: 0.25px;
     cursor: pointer;
     transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   }
@@ -1243,84 +1261,86 @@
   .nh48-quick-footer__sort-button:focus-visible {
     outline: none;
     border-color: #2bd879;
-    background: rgba(34, 197, 94, 0.16);
-    box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.2);
+    background: rgba(34, 197, 94, 0.2);
+    box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.24);
     transform: translateY(-1px);
   }
 
   .nh48-quick-footer__sort-button.is-active {
-    background: linear-gradient(135deg, rgba(43, 216, 121, 0.35), rgba(34, 197, 94, 0.22));
+    background: linear-gradient(135deg, rgba(43, 216, 121, 0.4), rgba(34, 197, 94, 0.28));
     border-color: #2bd879;
-    box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.22);
+    box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.24);
   }
 
   .nh48-quick-footer__eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 12px;
+    padding: 7px 12px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    background: rgba(34, 197, 94, 0.12);
-    color: #bbf7d0;
-    font-weight: 700;
-    letter-spacing: 0.3px;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    background: rgba(34, 197, 94, 0.16);
+    color: #e5f8ec;
+    font-weight: 800;
+    letter-spacing: 0.35px;
     text-transform: uppercase;
     font-size: 12px;
   }
 
   .nh48-quick-footer__header h2 {
-    margin: 6px 0 2px;
-    font-size: clamp(18px, 2.2vw, 23px);
-    letter-spacing: 0.3px;
+    margin: 8px 0 4px;
+    font-size: clamp(19px, 2.4vw, 24px);
+    letter-spacing: 0.35px;
   }
 
   .nh48-quick-footer__header p {
-    margin: 0 0 2px;
-    color: #d7e7db;
-    line-height: 1.35;
-    font-size: 0.9rem;
+    margin: 0 0 4px;
+    color: #dbe5ff;
+    line-height: 1.45;
+    font-size: 0.95rem;
   }
 
   .nh48-quick-footer__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(var(--nh48-footer-grid-min), 1fr));
+    align-content: start;
+    gap: 16px;
     margin-top: 6px;
-    padding: 6px 4px 8px;
+    padding: 10px 6px 12px;
     flex: 1 1 auto;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(43, 216, 121, 0.6) rgba(255, 255, 255, 0.08);
+    scrollbar-color: rgba(43, 216, 121, 0.65) rgba(26, 26, 46, 0.9);
   }
 
   .nh48-quick-footer__grid::-webkit-scrollbar {
-    width: 10px;
+    width: 12px;
   }
 
   .nh48-quick-footer__grid::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(26, 26, 46, 0.9);
     border-radius: 10px;
   }
 
   .nh48-quick-footer__grid::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, #2bd879, #0b9e4c);
     border-radius: 10px;
+    border: 2px solid rgba(26, 26, 46, 0.9);
   }
 
   .nh48-quick-footer__group {
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 12px;
-    padding: 10px 12px;
-    background: rgba(12, 18, 22, 0.65);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 14px;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 18px rgba(0, 0, 0, 0.28);
   }
 
   .nh48-quick-footer__group h2 {
-    margin: 0 0 6px;
+    margin: 0 0 8px;
     font-size: 15px;
-    letter-spacing: 0.15px;
-    color: #c5f2d0;
+    letter-spacing: 0.2px;
+    color: #f1f5ff;
   }
 
   .nh48-quick-footer__list {
@@ -1335,14 +1355,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 9px 10px;
+    padding: 10px 12px;
     min-height: 44px;
     text-align: center;
     border-radius: 10px;
-    border: 1px solid #ffffff;
-    color: #ffffff;
+    border: 1px solid rgba(34, 197, 94, 0.7);
+    color: #e9ffee;
     text-decoration: none;
-    background: rgba(34, 197, 94, 0.14);
+    background: linear-gradient(180deg, rgba(34, 197, 94, 0.18), rgba(15, 110, 63, 0.3));
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
     line-height: 1.35;
     white-space: normal;
@@ -1353,7 +1373,7 @@
   .nh48-quick-footer__link:focus-visible {
     border-color: #2bd879;
     box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.28);
-    background: rgba(34, 197, 94, 0.2);
+    background: linear-gradient(180deg, rgba(34, 197, 94, 0.26), rgba(11, 158, 76, 0.38));
     transform: translateY(-1px);
     outline: none;
   }
@@ -1364,8 +1384,8 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    padding: 12px 4px 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 14px 4px 4px;
     font-size: 14px;
   }
 
@@ -1377,13 +1397,13 @@
   }
 
   .nh48-quick-footer__meta-links a {
-    color: #c9f3d7;
+    color: #f2f6ff;
     text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 8px;
-    border: 1px solid rgba(34, 197, 94, 0.3);
-    background: rgba(34, 197, 94, 0.08);
-    font-weight: 700;
+    padding: 7px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 800;
     letter-spacing: 0.2px;
     transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   }
@@ -1391,14 +1411,14 @@
   .nh48-quick-footer__meta-links a:hover,
   .nh48-quick-footer__meta-links a:focus-visible {
     color: #22c55e;
-    border-color: rgba(34, 197, 94, 0.7);
-    background: rgba(34, 197, 94, 0.14);
+    border-color: rgba(34, 197, 94, 0.9);
+    background: rgba(34, 197, 94, 0.18);
     outline: none;
   }
 
   .nh48-quick-footer__legal {
-    color: #a8cbb7;
-    font-weight: 600;
+    color: #dfe7ff;
+    font-weight: 700;
   }
 
   @media (max-width: 1180px) {
@@ -1408,6 +1428,9 @@
   }
 
   @media (max-width: 960px) {
+    .nh48-quick-footer {
+      height: min(500px, 82vh);
+    }
     .nh48-quick-footer__grid {
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
@@ -1416,14 +1439,17 @@
   @media (max-width: 780px) {
     .nh48-quick-footer {
       padding: 18px 14px 12px;
-      height: min(420px, 78vh);
+      height: min(460px, 78vh);
     }
     .nh48-quick-footer__grid {
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
     }
   }
 
   @media (max-width: 600px) {
+    .nh48-quick-footer {
+      gap: 14px;
+    }
     .nh48-quick-footer__grid {
       grid-template-columns: 1fr;
     }

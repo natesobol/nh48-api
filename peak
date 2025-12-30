@@ -3,19 +3,38 @@
 <head>
   <meta charset="utf-8">
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const slug = params.get('slug');
-    const lang = params.get('lang');
-    const isFrench = lang && lang.toLowerCase().startsWith('fr');
-    const target = slug
-      ? `${isFrench ? '/fr/peaks' : '/peaks'}/${encodeURIComponent(slug)}/`
-      : '/catalog';
-    window.location.replace(target);
+    (function redirectPeakPage() {
+      const host = location.hostname;
+
+      const isPreviewHost =
+        host === "localhost" ||
+        host === "127.0.0.1" ||
+        host.includes("github") ||
+        host.endsWith("githubpreview.dev");
+
+      if (isPreviewHost) {
+        return;
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get('slug');
+      const lang = params.get('lang');
+      const isFrench = lang && lang.toLowerCase().startsWith('fr');
+      const target = slug
+        ? `${isFrench ? '/fr/peaks' : '/peaks'}/${encodeURIComponent(slug)}/`
+        : '/catalog';
+      window.location.replace(target);
+    })();
   </script>
-  <meta http-equiv="refresh" content="0; url=/catalog">
   <title>Redirecting...</title>
 </head>
 <body>
   <p>Redirecting to peak details...</p>
+  <noscript>
+    <p>
+      JavaScript is required to continue.
+      <a href="/catalog">Continue</a>
+    </p>
+  </noscript>
 </body>
 </html>
