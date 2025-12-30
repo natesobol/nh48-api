@@ -1290,9 +1290,15 @@
       <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
     </div>
   </a>
-  <div class="site-nav-links">
-    <a href="/catalog" data-route="catalog" data-i18n="nav.catalog">Catalog</a>
-    <a href="/nh-4000-footers-info.html" data-route="info">NH48 Info</a>
+    <div class="site-nav-links">
+    <div class="site-nav-dropdown">
+      <a href="/" data-route="dataset-home">NH48 Dataset</a>
+      <div class="site-nav-submenu" aria-label="NH48 dataset short links">
+        <a href="/nh-4000-footers-info.html" data-route="info">NH48 Info</a>
+        <a href="/catalog" data-route="catalog">Interactive Catalog</a>
+        <a href="/page-sitemap.xml">Browse page sitemap</a>
+      </div>
+    </div>
     <div class="site-nav-dropdown">
       <a href="/dataset/wmnf-trails" data-route="trails" data-i18n="nav.trails">White Mountain Trails</a>
       <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
