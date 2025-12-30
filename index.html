@@ -529,6 +529,16 @@
     }
 
     /* Floating peak labels */
+    #floating-peaks {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: visible;
+    }
+
     .peak-label {
       position: absolute;
       font-weight: 600;
@@ -536,39 +546,24 @@
       color: var(--text-color, #ffffff);
       white-space: nowrap;
       pointer-events: none;
-      --label-scale: 1.18;
-      --float-distance: 32px;
-      animation-name: float;
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: infinite;
-      transform: translateY(0) scale(var(--label-scale));
+      transform-origin: center;
+      will-change: transform;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
     }
 
-    .peak-name {
-      font-size: 1.25rem;
-      margin-right: 8px;
-      letter-spacing: 0.1px;
+    .peak-label--name {
+      font-size: 1.35rem;
+      letter-spacing: 0.18px;
     }
 
-    .peak-elevation {
-      font-size: 1.05rem;
-      opacity: 0.82;
-    }
-
-    @keyframes float {
-      0% {
-        transform: translateY(0) scale(var(--label-scale, 1));
-      }
-      50% {
-        transform: translateY(calc(-1 * var(--float-distance, 32px))) scale(var(--label-scale, 1));
-      }
-      100% {
-        transform: translateY(0) scale(var(--label-scale, 1));
-      }
+    .peak-label--elevation {
+      font-size: 1.12rem;
+      opacity: 0.84;
+      letter-spacing: 0.12px;
     }
 
     @media (max-width: 768px) {
-      #floating-peaks .peak-label:nth-child(n + 6) {
+      #floating-peaks .peak-label:nth-child(n + 9) {
         display: none;
       }
     }
@@ -912,7 +907,7 @@
   </div>
 </nav>
   <!-- Floating peaks container -->
-  <div id="floating-peaks" style="position: relative; width: 100%; height: 0; pointer-events: none;"></div>
+  <div id="floating-peaks"></div>
   <main>
     <div class="lang-bar">
       <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
@@ -1461,30 +1456,94 @@
       ];
 
       const container = document.getElementById('floating-peaks');
+      const floatingLabels = [];
+      const viewport = { width: window.innerWidth, height: window.innerHeight };
 
-      peaks.forEach((peak) => {
+      const createFloatingLabel = (text, variant) => {
         const label = document.createElement('div');
-        label.classList.add('peak-label');
-        label.innerHTML = `
-          <span class="peak-name">${peak.name}</span>
-          <span class="peak-elevation">${peak.elevation}</span>
-        `;
-        label.style.left = `${10 + Math.random() * 80}%`;
-        label.style.top = `${10 + Math.random() * 80}vh`;
+        label.classList.add('peak-label', `peak-label--${variant}`);
+        label.textContent = text;
 
-        const duration = 4 + Math.random() * 4;
-        const delay = Math.random() * 3;
-        label.style.animationDuration = `${duration}s`;
-        label.style.animationDelay = `${delay}s`;
+        const scale = 1.18 + Math.random() * 0.55;
+        const speed = 8 + Math.random() * 6; // slower, relaxed drift
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
 
-        const scale = 1.1 + Math.random() * 0.45;
-        label.style.setProperty('--label-scale', scale.toFixed(2));
-
-        const floatDistance = 24 + Math.random() * 28;
-        label.style.setProperty('--float-distance', `${floatDistance.toFixed(2)}px`);
+        const bobAmplitude = 6 + Math.random() * 10;
+        const bobFrequency = 0.35 + Math.random() * 0.4;
+        const bobPhase = Math.random() * Math.PI * 2;
 
         container.appendChild(label);
+
+        const labelWidth = label.offsetWidth * scale;
+        const labelHeight = label.offsetHeight * scale;
+
+        const startX = Math.random() * Math.max(1, viewport.width - labelWidth);
+        const startY = Math.random() * Math.max(1, viewport.height - labelHeight);
+
+        floatingLabels.push({
+          el: label,
+          x: startX,
+          y: startY,
+          vx: velocity.x,
+          vy: velocity.y,
+          scale,
+          bobAmplitude,
+          bobFrequency,
+          bobPhase
+        });
+      };
+
+      peaks.forEach((peak) => {
+        createFloatingLabel(peak.name, 'name');
+        createFloatingLabel(peak.elevation, 'elevation');
       });
+
+      const updateViewport = () => {
+        viewport.width = window.innerWidth;
+        viewport.height = window.innerHeight;
+      };
+
+      window.addEventListener('resize', updateViewport);
+
+      let lastTime = performance.now();
+
+      const animate = (timestamp) => {
+        const delta = (timestamp - lastTime) / 1000;
+        lastTime = timestamp;
+
+        floatingLabels.forEach((label) => {
+          const scaledWidth = label.el.offsetWidth * label.scale;
+          const scaledHeight = label.el.offsetHeight * label.scale;
+
+          label.x += label.vx * delta;
+          label.y += label.vy * delta;
+
+          if (label.x <= 0) {
+            label.x = 0;
+            label.vx = Math.abs(label.vx);
+          } else if (label.x + scaledWidth >= viewport.width) {
+            label.x = Math.max(0, viewport.width - scaledWidth);
+            label.vx = -Math.abs(label.vx);
+          }
+
+          if (label.y <= 0) {
+            label.y = 0;
+            label.vy = Math.abs(label.vy);
+          } else if (label.y + scaledHeight >= viewport.height) {
+            label.y = Math.max(0, viewport.height - scaledHeight);
+            label.vy = -Math.abs(label.vy);
+          }
+
+          const bobOffset = Math.sin((timestamp / 1000) * label.bobFrequency * Math.PI * 2 + label.bobPhase) * label.bobAmplitude;
+
+          label.el.style.transform = `translate3d(${label.x}px, ${label.y + bobOffset}px, 0) scale(${label.scale})`;
+        });
+
+        requestAnimationFrame(animate);
+      };
+
+      requestAnimationFrame(animate);
     });
   </script>
   <script>
