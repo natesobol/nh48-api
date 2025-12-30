@@ -433,6 +433,7 @@
         const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
         if (activeLink) {
           activeLink.classList.add('active');
+          activeLink.setAttribute('aria-current', 'page');
         }
       })
       .catch(err => console.error('Failed to load navigation:', err));
