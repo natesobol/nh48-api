@@ -1,0 +1,329 @@
+{
+  "common": {
+    "home": "Home",
+    "language": "Taal",
+    "languagePicker": "Taalkiezer",
+    "loading": "Laden…",
+    "errorLoading": "Fout bij het laden van gegevens",
+    "noResults": "Geen resultaten gevonden.",
+    "noImage": "geen afbeelding",
+    "unknown": "Onbekend",
+    "notAvailable": "Niet beschikbaar",
+    "units": {
+      "ariaLabel": "Eenheden selecteren"
+    },
+    "unitsLabel": "Eenheden",
+    "unitsFeet": "Voeten",
+    "unitsMeters": "Meters"
+  },
+  "landing": {
+    "title": "NH48 API: Open data voor de 1200 meter hoge bergtoppen en lange paden in New Hampshire",
+    "metaDescription": {
+      "content": "NH48 API biedt open, gestructureerde gegevens en foto's van de 48 vierduizend meter hoge toppen van New Hampshire. Verken de catalogus, routes en White Mountain-paden."
+    },
+    "ogTitle": {
+      "content": "NH48 API – Open Trails and Peaks Data"
+    },
+    "ogDescription": {
+      "content": "Blader door de toppencatalogus, verken White Mountain-paden en krijg toegang tot langeafstandsroutegegevens voor de bergen van New Hampshire."
+    },
+    "heroTitle": "NH48 API",
+    "heroBody": "Open data, routes en fotometadata voor de 48 vierduizend meter hoge toppen van New Hampshire. Blader door de catalogus, verken White Mountain-paden en bouw voort op de dataset.",
+    "cta": {
+      "catalog": "Open de Peak Catalog",
+      "trails": "White Mountain Trails",
+      "campaigns": "Trail Campaigns"
+    },
+    "notesTitle": "Dataset notes",
+    "notes": {
+      "versioned": "Versioned releases met changelog en citatie-ready metadata.",
+      "methodology": "Provenance + verzamelmethodologie genoteerd voor pieken, routes en trail-segmenten.",
+      "validation": "Validatiecontroles voor hoogtebereiken, kilometerstanden en consistentie van de geometrie.",
+      "reproducible": "Reproduceerbare pijpleidingen ondersteund op bronscripts en QA-artefacten."
+    },
+    "author": "Auteur: Nathan Sobol"
+  },
+  "nav": {
+    "logoAlt": "NH48 API-logo",
+    "tagline": "Open data en gestructureerde metadata voor de 1200 meter hoge bergtoppen van New Hampshire.",
+    "catalog": "Catalog",
+    "trails": "White Mountain Trails",
+    "longTrails": "Long Trails",
+    "pics": "NH48 Pics",
+    "peakBagger": "Peak Bagger",
+    "latestPhotos": "Nieuwste WMNF-foto's",
+    "login": "Inloggen",
+    "viewProfile": "Bekijken profiel"
+  },
+  "catalog": {
+    "title": "NH48 Peak Catalog",
+    "intro": "Blader door de achtenveertig 4000 voeters van New Hampshire. Klik op een piek om meer details te bekijken. Als er fouten optreden, verschijnen de details hieronder. Open API en datasets voor de 1200 meter hoge bergen van New Hampshire.",
+    "search": {
+      "placeholder": "Zoek pieken op naam…",
+      "ariaLabel": "Zoek pieken op naam"
+    },
+    "sort": {
+      "label": "Sorteer op:",
+      "ariaLabel": "Sorteer pieken op attribuut",
+      "name": "Naam (A–Z)",
+      "elevAsc": "Hoogte ↑",
+      "elevDesc": "Hoogte ↓",
+      "promAsc": "Prominentie ↑",
+      "promDesc": "Prominentie ↓",
+      "diffAsc": "Moeilijkheid A–Z",
+      "diffDesc": "Moeilijkheid Z–A",
+      "rangeAsc": "Bereik A–Z",
+      "trailAsc": "Trailtype A–Z",
+      "exposureAsc": "Blootstelling A–Z"
+    },
+    "filter": {
+      "label": "Filteren op:",
+      "ariaLabel": "Selecteer veld om pieken te filteren",
+      "none": "Geen",
+      "range": "Bereik",
+      "difficulty": "Moeilijkheid",
+      "trail": "Trailtype",
+      "exposure": "Blootstelling"
+    },
+    "value": {
+      "label": "Waarde:",
+      "ariaLabel": "Selecteer waarde voor gekozen filter",
+      "all": "Alle"
+    },
+    "columns": {
+      "label": "Kolommen:",
+      "ariaLabel": "Selecteer het aantal cataloguskolommen"
+    },
+    "empty": "Geen pieken gevonden.",
+    "error": "Fout bij laden pieken",
+    "card": {
+      "elevation": "Hoogte",
+      "prominence": "Prominentie",
+      "range": "Bereik",
+      "trailType": "Type pad",
+      "difficulty": "Moeilijkheid",
+      "exposure": "Belichting"
+    }
+  },
+  "photo": {
+    "altTemplate": "{peak} foto — {season} {timeOfDay}"
+  },
+  "season": {
+    "spring": "lente",
+    "summer": "zomer",
+    "fall": "herfst",
+    "autumn": "herfst",
+    "winter": "winter"
+  },
+  "time": {
+    "sunrise": "zonsopgang",
+    "sunset": "zonsondergang",
+    "morning": "ochtend",
+    "afternoon": "middag",
+    "evening": "avond",
+    "night": "nacht",
+    "day": "dag",
+    "dawn": "dageraad",
+    "dusk": "schemering"
+  },
+  "values": {
+    "trailType": {
+      "loop": "Loop",
+      "loop_or_out_back": "Loop of heen en terug",
+      "loop_or_traverse": "Loop of traverse",
+      "loop_or_traverse_along_ridge": "Los of traverse langs de bergkam",
+      "out_back": "Eruit en terug",
+      "out_back_common": "Eruit en terug - gemeenschappelijk",
+      "out_back_common_or_long_traverse": "Eruit en terug - gemeenschappelijk of lange traverse",
+      "out_back_common_or_loop_with_connector_trails": "Out & back - gemeenschappelijk of lus met verbindingspaden",
+      "out_back_common_or_small_loop_including_mt_webster": "Uit & terug - gemeenschappelijke of kleine lus inclusief Mt Webster",
+      "out_back_commonly": "Eruit & terug - algemeen",
+      "out_back_or_loop": "Uit & terug of lus",
+      "out_back_or_loop_with_tom_and_willey": "Uit & terug of lus - met Tom en Willey",
+      "out_back_or_loop_combining_trails": "Uit & terug of lus combineren van routes",
+      "out_back_or_loop_options": "Uit & terug of lus opties",
+      "out_back_or_point_to_point_traverse": "Uit & terug of point-to-point traverse",
+      "out_back_or_traverse": "Eruit & terug of traverse"
+    },
+    "difficulty": {
+      "moderate": "Gematigd",
+      "moderate_difficult": "Gemiddeld/Moeilijk",
+      "difficult": "Moeilijk",
+      "very_difficult": "Zeer Moeilijk",
+      "extremely_difficult": "Extreem moeilijk"
+    },
+    "exposure": {
+      "high": "Hoog",
+      "medium": "Gemiddeld",
+      "low": "Laag",
+      "low_to_medium": "Laag tot gemiddeld"
+    }
+  },
+  "peak": {
+    "back": "Terug naar NH48 piekcatalogus",
+    "catalog": "Piekcatalogus",
+    "loading": "Laden…",
+    "relatedTrails": {
+      "title": "Gerelateerde routes en routes",
+      "none": "Nog geen gerelateerde routes vermeld.",
+      "link": "{name} route"
+    },
+    "section": {
+      "routes": "Wandelroutes",
+      "trails": "Bijbehorende routes",
+      "terrain": "Trail & terrein",
+      "conditions": "Omstandigheden en toegang"
+    },
+    "carousel": {
+      "prev": "Vorige afbeelding",
+      "next": "Volgende afbeelding"
+    },
+    "metadata": {
+      "title": "Huidige foto-metagegevens",
+      "notAvailable": "Niet beschikbaar",
+      "moreDetails": "Meer details ▾",
+      "lessDetails": "Minder details ▴",
+      "labels": {
+        "season": "Seizoen",
+        "timeOfDay": "Tijdstip",
+        "orientation": "Oriëntatie",
+        "captureDate": "Vastlegdatum",
+        "cameraMaker": "Cameramaker",
+        "cameraModel": "Camera Model",
+        "camera": "Camera",
+        "lens": "Lens",
+        "fStop": "F Stop",
+        "shutterSpeed": "Sluitertijd",
+        "iso": "ISO",
+        "exposureBias": "Belichtingsafwijking",
+        "focalLength": "Brandpuntsafstand",
+        "flashMode": "Flitsmodus",
+        "meteringMode": "Meetmodus",
+        "maxAperture": "Max. diafragma",
+        "author": "Auteur",
+        "dimensions": "Afmetingen",
+        "fileSize": "Bestandsgrootte",
+        "fileCreateDate": "Aanmaakdatum bestand",
+        "fileModifiedDate": "Gewijzigde datum bestand",
+        "rating": "Beoordeling",
+        "metadata": "Metagegevens"
+      }
+    },
+    "generalInfo": {
+      "title": "Algemene piek Info",
+      "elevation": "Hoogte",
+      "prominence": "Prominentie",
+      "range": "Bereik",
+      "trailType": "Type pad",
+      "difficulty": "Moeilijkheid",
+      "exposure": "Blootstelling"
+    },
+    "routes": {
+      "distance": "Afstand",
+      "gain": "Versterking",
+      "difficulty": "Moeilijkheid"
+    },
+    "trailList": {
+      "title": "Traillijst"
+    },
+    "terrain": {
+      "terrain": "Terrein",
+      "scramble": "Klauteren",
+      "view": "Bekijken"
+    },
+    "conditions": {
+      "bestSeasons": "Beste seizoenen",
+      "waterAvailability": "Waterbeschikbaarheid",
+      "cellReception": "Mobiele ontvangst",
+      "weatherExposure": "Blootstelling aan het weer",
+      "emergencyBailout": "Noodnoodhulp",
+      "dogFriendly": "Hondvriendelijk",
+      "nearbyFeatures": "In de buurt "
+    },
+    "errorLoading": "Fout bij laadpiek",
+    "meta": {
+      "titleTemplate": "{name} ({elevationFormatted}) – {suffix}",
+      "descriptionTemplate": "{name} – {elevation} ft hoog, {prominence} ft prominentie, in de {range}. Routes, moeilijkheidsgraad en foto's voor deze 1200 meter."
+    }
+  },
+  "trails": {
+    "title": "Kaart en lijst van White Mountains Trails",
+    "subtitle": "Interactieve WMNF-routekaart met GPX-ondersteunde routedetails.",
+    "intro": "Gebruik dit als een snelle routezoeker en voltooiingstracker voor het White Mountain National Forest. Open datasets en telemetrie voor de 1200 meter hoge bergen van New Hampshire.",
+    "details": {
+      "title": "Traildetails",
+      "empty": "Selecteer een pad om de afstand, hoogte en OpenStreetMap-details te bekijken."
+    },
+    "search": {
+      "placeholder": "Zoek paden..."
+    },
+    "sort": {
+      "az": "Sorteer A → Z",
+      "za": "Sorteer Z → A"
+    },
+    "jumpTo": "Ga naar:",
+    "list": {
+      "headerName": "Trailnaam",
+      "headerCompleted": "Voltooid",
+      "noMatches": "Geen paden gevonden. Probeer een andere zoekopdracht.",
+      "noTrails": "Geen routes beschikbaar."
+    },
+    "loading": "Routes laden...",
+    "about": {
+      "title": "Over deze lijst",
+      "body": "NH Tracing, Redlining en White Mountain Trails verwijzen allemaal naar dezelfde verzameling routes die in de gids worden beschreven. Welke naam u ook gebruikt, u werkt aan hetzelfde doel: het ervaren van deze paden."
+    },
+    "disclaimer": {
+      "title": "Disclaimer",
+      "body": "Deze site is <strong>niet bedoeld voor planning of navigatie</strong>. Trailgegevens kunnen kleine fouten of onnauwkeurigheden bevatten, en deze verzameling is niet de officiële lijst (hoewel deze de meeste bekende routes bevat). Raadpleeg officiële bronnen en gebruik uw gezond verstand in het achterland."
+    },
+    "howto": {
+      "title": "Hoe te gebruiken",
+      "body": "Gebruik de groene cirkels om een ​​pad als voltooid te markeren. Nadat u een route hebt gemarkeerd, tikt u op het kalenderpictogram om een ​​voltooiingsdatum toe te voegen. De datum vervangt het pictogram zodra deze is geselecteerd en kan worden bewerkt door nogmaals te tikken. Uw voortgang wordt lokaal in uw browser opgeslagen. Je kunt je voortgang exporteren of importeren met behulp van de onderstaande knoppen."
+    },
+    "settings": {
+      "title": "Instellingen",
+      "hideCompleted": "Voltooide routes verbergen",
+      "clearProgress": "Alle voortgang wissen"
+    },
+    "export": "CSV exporteren",
+    "import": "Importeren",
+    "viewApi": "API bekijken",
+    "resizePanels": "Formaat van panelen wijzigen",
+    "info": {
+      "noProperties": "Nog geen aanvullende padeigenschappen beschikbaar. Eigenschappen worden gevuld op basis van OpenStreetMap-gegevens.",
+      "loadingProperties": "Aanvullende padeigenschappen laden vanuit OpenStreetMap...",
+      "sourceNote": "Informatie afkomstig van OpenStreetMap, indien beschikbaar.",
+      "distance": "Afstand",
+      "elevationGain": "Hoogteverschil",
+      "minElevation": "Min. hoogte",
+      "maxElevation": "Max. hoogte",
+      "surface": "Oppervlakte",
+      "trailType": "Trailtype",
+      "difficulty": "Moeilijkheid",
+      "visibility": "Zichtbaarheid",
+      "width": "Breedte",
+      "allowedUses": "Toegestaan Toepassingen",
+      "season": "Seizoen",
+      "maintainer": "Maintainer",
+      "source": "Bron"
+    },
+    "virtualHike": "Virtuele wandeling",
+    "unnamedTrail": "Naamloze route",
+    "confirmClear": "Weet u zeker dat u alle voortgang wilt wissen?",
+    "alertLoadFail": "Kan routegegevens niet laden. Zorg ervoor dat je een internetverbinding hebt en probeer de pagina te vernieuwen.",
+    "csv": {
+      "headerTrail": "Trail",
+      "headerCompleted": "Voltooid",
+      "headerDate": "Datum",
+      "filename": "trail-progress.csv"
+    },
+    "map": {
+      "attribution": "Kaartgegevens: © <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> bijdragers, SRTM | Kaartstijl: © <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    },
+    "telemetry": {
+      "label": "{mapped}/{total} routes met GPX-telemetrie",
+      "loading": "GPX-telemetriedekking laden…"
+    }
+  }
+}
