@@ -4,12 +4,31 @@
   <meta charset="UTF-8">
   <title>Virtual Hike Redirect – NH48</title>
   <meta name="robots" content="noindex">
-  <meta http-equiv="refresh" content="0; url=../virtual_hike.html">
   <script>
-    const redirectUrl = new URL('../virtual_hike.html', window.location.href);
-    redirectUrl.search = window.location.search;
-    window.location.replace(redirectUrl.toString());
+    (function redirectVirtualHike() {
+      const host = location.hostname;
+
+      const isPreviewHost =
+        host === "localhost" ||
+        host === "127.0.0.1" ||
+        host.includes("github") ||
+        host.endsWith("githubpreview.dev");
+
+      if (isPreviewHost) {
+        return;
+      }
+
+      const redirectUrl = new URL('../virtual_hike.html', window.location.href);
+      redirectUrl.search = window.location.search;
+      window.location.replace(redirectUrl.toString());
+    })();
   </script>
+  <noscript>
+    <p>
+      JavaScript is required to continue.
+      <a href="../virtual_hike.html">Continue</a>
+    </p>
+  </noscript>
 </head>
 <body>
   <p>Redirecting to the virtual hike…</p>

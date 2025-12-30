@@ -47,6 +47,18 @@
     <link rel="prefetch" href="https://nh48.info/pages/nh48_peak.html?slug=south-carter-mountain&lang=fr" />
     <script>
       (function redirectToApp() {
+        const host = location.hostname;
+
+        const isPreviewHost =
+          host === "localhost" ||
+          host === "127.0.0.1" ||
+          host.includes("github") ||
+          host.endsWith("githubpreview.dev");
+
+        if (isPreviewHost) {
+          return;
+        }
+
         const target = "https://nh48.info/pages/nh48_peak.html?slug=south-carter-mountain&lang=fr";
         const ua = (typeof navigator !== "undefined" && navigator.userAgent) || "";
         const botSignatures = [
@@ -84,6 +96,13 @@
         }
       })();
     </script>
+<noscript>
+      <p>
+        JavaScript is required to continue.
+        <a href="https://nh48.info/pages/nh48_peak.html?slug=south-carter-mountain&lang=fr">Continue</a>
+      </p>
+    </noscript>
+
     <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "Mountain",
