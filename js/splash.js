@@ -3,8 +3,8 @@ const SPLASH_ALT_TEXT_PATH = "/photos/backgrounds/alt-text.json";
 const MAX_SPLASH_ICONS = 40;
 const SPLASH_MIN_DURATION_S = 18;
 const SPLASH_MAX_DURATION_S = 32;
-const SPLASH_MIN_SIZE_MULTIPLIER = 1;
-const SPLASH_MAX_SIZE_MULTIPLIER = 4;
+const SPLASH_MIN_SIZE_MULTIPLIER = 1.5;
+const SPLASH_MAX_SIZE_MULTIPLIER = 6;
 const SPLASH_DIAGONAL_SPEED_PX = 12;
 const SPLASH_SPEED_VARIANCE = 0.35;
 const SPLASH_MASK_PADDING_PX = 24;
@@ -144,13 +144,36 @@ const initSplash = async () => {
   const maskRect = getMaskRect();
   selectedIcons.forEach((iconPath) => {
     const imgEl = document.createElement("img");
-    imgEl.src = iconPath;
     imgEl.className = "splash-icon";
     const fileName = decodeURIComponent(iconPath.split("/").pop() || "");
     imgEl.alt = altTextMap.get(fileName) || "";
     if (imgEl.alt) {
       imgEl.title = imgEl.alt;
     }
+    let isRevealed = false;
+    const revealIcon = () => {
+      if (isRevealed) {
+        return;
+      }
+      isRevealed = true;
+      imgEl.classList.add("is-ready");
+    };
+    imgEl.addEventListener(
+      "load",
+      () => {
+        if (typeof imgEl.decode === "function") {
+          imgEl
+            .decode()
+            .then(revealIcon)
+            .catch(revealIcon);
+        } else {
+          revealIcon();
+        }
+      },
+      { once: true }
+    );
+    imgEl.addEventListener("error", revealIcon, { once: true });
+    imgEl.src = iconPath;
     const baseSize = 24 + Math.random() * 32;
     const sizeMultiplier =
       SPLASH_MIN_SIZE_MULTIPLIER +

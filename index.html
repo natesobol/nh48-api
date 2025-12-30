@@ -763,6 +763,14 @@
       opacity: 0;
       will-change: transform, opacity;
       animation: splashFade 24s ease-in-out infinite;
+      animation-play-state: paused;
+      visibility: hidden;
+      border-radius: 14px;
+      object-fit: cover;
+    }
+    .splash-icon.is-ready {
+      animation-play-state: running;
+      visibility: visible;
     }
     @keyframes splashFade {
       0%,
