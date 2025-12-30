@@ -243,8 +243,9 @@ const initSplash = async () => {
     imgEl.style.width = `${size}px`;
     imgEl.style.left = "0";
     imgEl.style.top = "0";
-    const rotation = Math.random() * 360;
-    const rotationSpeed = (Math.random() * 20 - 10) * (Math.random() < 0.5 ? 1 : -1);
+    const rotation =
+      Math.random() < 0.7 ? Math.random() * 30 - 15 : Math.random() * 360;
+    const rotationSpeed = Math.random() * 6 - 3;
     const opacity = 0.6 + Math.random() * 0.4;
     imgEl.style.opacity = `${opacity}`;
     imgEl.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
