@@ -1180,7 +1180,8 @@
   <body>
     <a href="#peakTitle" class="skip-link">Skip to main content</a>
     <style>
-  /* Site Navigation Header (Peakbagger-inspired) */
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap');
+
   *,
   *::before,
   *::after {
@@ -1197,12 +1198,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 24px;
+    padding: 12px 20px;
     background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
     border-bottom: 1px solid #ffffff;
     position: sticky;
     top: 0;
     z-index: 100;
+    width: 100%;
+    margin: 0;
+    font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
   }
 
   .site-nav-logo {
@@ -1217,11 +1221,11 @@
     width: 58px;
     height: 58px;
     border-radius: 14px;
+    border: 2px solid #ffffff;
     padding: 0;
     background: #0a0a0a;
-    object-fit: cover;
-    border: 2px solid #ffffff;
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45), 0 0 0 2px #ffffff inset;
+    object-fit: cover;
   }
 
   .site-nav-title-wrap {
@@ -1233,7 +1237,7 @@
 
   .site-nav-title {
     font-weight: 800;
-    font-size: 38px;
+    font-size: 32px;
     line-height: 1;
     color: #fff;
     text-transform: uppercase;
@@ -1256,7 +1260,7 @@
   .site-nav-links a {
     color: #ffffff;
     text-decoration: none;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: 6px;
     font-size: 15px;
     font-weight: 700;
@@ -1282,26 +1286,16 @@
     align-items: flex-start;
   }
 
-  /* Hover buffer keeps submenu open while moving from parent link to dropdown */
-  .site-nav-dropdown::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 100%;
-    height: 12px;
-  }
-
   .site-nav-dropdown .site-nav-submenu {
     display: none;
     position: absolute;
-    top: calc(100% + 6px);
+    top: 100%;
     left: 0;
     background: #0f172a;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-    padding: 8px;
+    padding: 12px 10px 10px;
     min-width: 200px;
     z-index: 10;
   }
@@ -1344,29 +1338,31 @@
     stroke: #ffffff;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     .site-nav {
-      padding: 10px 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .site-nav-title,
-    .site-nav-tagline {
-      display: none;
-    }
-
-    .site-nav-logo {
-      flex: 1 1 100%;
-      justify-content: center;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
     }
 
     .site-nav-links {
-      gap: 4px;
-      width: 100%;
       flex-wrap: wrap;
-      justify-content: center;
+      row-gap: 6px;
+    }
+
+    .site-nav-title {
+      font-size: 28px;
+    }
+
+    .site-nav-logo img {
+      width: 52px;
+      height: 52px;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .site-nav {
+      padding: 10px 12px;
     }
 
     .site-nav-links a {
@@ -1396,15 +1392,15 @@
     }
   }
 </style>
-<nav class="site-nav">
+<nav class="site-nav" aria-label="Site navigation">
   <a href="/" class="site-nav-logo">
-    <img src="/nh48API_logo.png" alt="" aria-hidden="true" role="presentation" />
+    <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async" />
     <div class="site-nav-title-wrap">
       <span class="site-nav-title">NH48 API</span>
       <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
     </div>
   </a>
-    <div class="site-nav-links">
+  <div class="site-nav-links">
     <div class="site-nav-dropdown">
       <a href="/" data-route="dataset-home">NH48 Dataset</a>
       <div class="site-nav-submenu" aria-label="NH48 dataset short links">
