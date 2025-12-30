@@ -1669,257 +1669,263 @@
     </div>
     <style data-nh48-quick-footer-style>
   .nh48-quick-footer {
-    --nh48-footer-grid-min: clamp(210px, 20vw, 280px);
-    margin: 36px 0 0;
-    width: 100vw;
-    max-width: none;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
-    border-top: 1px solid #ffffff;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
-    box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.45);
-    padding: clamp(18px, 2vw, 26px) clamp(18px, 4vw, 44px) clamp(16px, 2vw, 24px);
-    color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    height: min(520px, 85vh);
-    max-height: 520px;
-    overflow: hidden;
-    box-sizing: border-box;
-  }
+      --nh48-footer-grid-min: clamp(170px, 18vw, 230px);
+      margin: 36px 0 0;
+      width: 100vw;
+      max-width: none;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+      border-top: 1px solid #ffffff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.45);
+      padding: clamp(18px, 2vw, 26px) clamp(18px, 4vw, 44px) clamp(16px, 2vw, 24px);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      height: min(520px, 85vh);
+      max-height: 520px;
+      overflow: hidden;
+      text-align: center;
+      box-sizing: border-box;
+    }
 
-  .nh48-quick-footer__header {
-    text-align: center;
-    max-width: 1080px;
-    margin: 0 auto 4px;
-  }
+    .nh48-quick-footer__header {
+      text-align: center;
+      max-width: 1080px;
+      margin: 0 auto 4px;
+    }
 
-  .nh48-quick-footer__controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    padding: 10px 12px;
-    margin: 4px auto 2px;
-    border-radius: 14px;
-    border: 1px solid rgba(43, 216, 121, 0.4);
-    background: rgba(34, 197, 94, 0.12);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  }
+    .nh48-quick-footer__controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 12px;
+      margin: 4px auto 2px;
+      border-radius: 14px;
+      border: 1px solid rgba(43, 216, 121, 0.4);
+      background: rgba(34, 197, 94, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
 
-  .nh48-quick-footer__sort-button {
-    appearance: none;
-    border: 1px solid rgba(255, 255, 255, 0.72);
-    background: rgba(12, 19, 34, 0.6);
-    color: #ffffff;
-    border-radius: 12px;
-    padding: 9px 14px;
-    font-weight: 800;
-    letter-spacing: 0.25px;
-    cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-  }
+    .nh48-quick-footer__sort-button {
+      appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      background: rgba(12, 19, 34, 0.6);
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 9px 14px;
+      font-weight: 800;
+      letter-spacing: 0.25px;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
 
-  .nh48-quick-footer__sort-button:hover,
-  .nh48-quick-footer__sort-button:focus-visible {
-    outline: none;
-    border-color: #2bd879;
-    background: rgba(34, 197, 94, 0.2);
-    box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.24);
-    transform: translateY(-1px);
-  }
+    .nh48-quick-footer__sort-button:hover,
+    .nh48-quick-footer__sort-button:focus-visible {
+      outline: none;
+      border-color: #2bd879;
+      background: rgba(34, 197, 94, 0.2);
+      box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.24);
+      transform: translateY(-1px);
+    }
 
-  .nh48-quick-footer__sort-button.is-active {
-    background: linear-gradient(135deg, rgba(43, 216, 121, 0.4), rgba(34, 197, 94, 0.28));
-    border-color: #2bd879;
-    box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.24);
-  }
+    .nh48-quick-footer__sort-button.is-active {
+      background: linear-gradient(135deg, rgba(43, 216, 121, 0.4), rgba(34, 197, 94, 0.28));
+      border-color: #2bd879;
+      box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.24);
+    }
 
-  .nh48-quick-footer__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.75);
-    background: rgba(34, 197, 94, 0.16);
-    color: #e5f8ec;
-    font-weight: 800;
-    letter-spacing: 0.35px;
-    text-transform: uppercase;
-    font-size: 12px;
-  }
+    .nh48-quick-footer__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      background: rgba(34, 197, 94, 0.16);
+      color: #e5f8ec;
+      font-weight: 800;
+      letter-spacing: 0.35px;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
 
-  .nh48-quick-footer__header h2 {
-    margin: 8px 0 4px;
-    font-size: clamp(19px, 2.4vw, 24px);
-    letter-spacing: 0.35px;
-  }
+    .nh48-quick-footer__header h2 {
+      margin: 8px 0 4px;
+      font-size: clamp(19px, 2.4vw, 24px);
+      letter-spacing: 0.35px;
+    }
 
-  .nh48-quick-footer__header p {
-    margin: 0 0 4px;
-    color: #dbe5ff;
-    line-height: 1.45;
-    font-size: 0.95rem;
-  }
+    .nh48-quick-footer__header p {
+      margin: 0 0 4px;
+      color: #dbe5ff;
+      line-height: 1.45;
+      font-size: 0.95rem;
+    }
 
-  .nh48-quick-footer__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(var(--nh48-footer-grid-min), 1fr));
-    align-content: start;
-    gap: 16px;
-    margin-top: 6px;
-    padding: 10px 6px 12px;
-    flex: 1 1 auto;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(43, 216, 121, 0.65) rgba(26, 26, 46, 0.9);
-  }
-
-  .nh48-quick-footer__grid::-webkit-scrollbar {
-    width: 12px;
-  }
-
-  .nh48-quick-footer__grid::-webkit-scrollbar-track {
-    background: rgba(26, 26, 46, 0.9);
-    border-radius: 10px;
-  }
-
-  .nh48-quick-footer__grid::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #2bd879, #0b9e4c);
-    border-radius: 10px;
-    border: 2px solid rgba(26, 26, 46, 0.9);
-  }
-
-  .nh48-quick-footer__group {
-    border: 1px solid rgba(255, 255, 255, 0.24);
-    border-radius: 14px;
-    padding: 12px 14px;
-    background: rgba(255, 255, 255, 0.06);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 18px rgba(0, 0, 0, 0.28);
-  }
-
-  .nh48-quick-footer__group h2 {
-    margin: 0 0 8px;
-    font-size: 15px;
-    letter-spacing: 0.2px;
-    color: #f1f5ff;
-  }
-
-  .nh48-quick-footer__list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 8px;
-  }
-
-  .nh48-quick-footer__link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 12px;
-    min-height: 44px;
-    text-align: center;
-    border-radius: 10px;
-    border: 1px solid rgba(34, 197, 94, 0.7);
-    color: #e9ffee;
-    text-decoration: none;
-    background: linear-gradient(180deg, rgba(34, 197, 94, 0.18), rgba(15, 110, 63, 0.3));
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
-    line-height: 1.35;
-    white-space: normal;
-    height: 100%;
-  }
-
-  .nh48-quick-footer__link:hover,
-  .nh48-quick-footer__link:focus-visible {
-    border-color: #2bd879;
-    box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.28);
-    background: linear-gradient(180deg, rgba(34, 197, 94, 0.26), rgba(11, 158, 76, 0.38));
-    transform: translateY(-1px);
-    outline: none;
-  }
-
-  .nh48-quick-footer__meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.18);
-    padding: 14px 4px 4px;
-    font-size: 14px;
-  }
-
-  .nh48-quick-footer__meta-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .nh48-quick-footer__meta-links a {
-    color: #f2f6ff;
-    text-decoration: none;
-    padding: 7px 12px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.26);
-    background: rgba(255, 255, 255, 0.08);
-    font-weight: 800;
-    letter-spacing: 0.2px;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-  }
-
-  .nh48-quick-footer__meta-links a:hover,
-  .nh48-quick-footer__meta-links a:focus-visible {
-    color: #22c55e;
-    border-color: rgba(34, 197, 94, 0.9);
-    background: rgba(34, 197, 94, 0.18);
-    outline: none;
-  }
-
-  .nh48-quick-footer__legal {
-    color: #dfe7ff;
-    font-weight: 700;
-  }
-
-  @media (max-width: 1180px) {
     .nh48-quick-footer__grid {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(var(--nh48-footer-grid-min), 1fr));
+      align-content: start;
+      justify-items: center;
+      gap: 16px;
+      margin-top: 6px;
+      padding: 10px 6px 12px;
+      flex: 1 1 auto;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(43, 216, 121, 0.65) rgba(26, 26, 46, 0.9);
     }
-  }
 
-  @media (max-width: 960px) {
-    .nh48-quick-footer {
-      height: min(500px, 82vh);
+    .nh48-quick-footer__grid::-webkit-scrollbar {
+      width: 12px;
     }
-    .nh48-quick-footer__grid {
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    }
-  }
 
-  @media (max-width: 780px) {
-    .nh48-quick-footer {
-      padding: 18px 14px 12px;
-      height: min(460px, 78vh);
+    .nh48-quick-footer__grid::-webkit-scrollbar-track {
+      background: rgba(26, 26, 46, 0.9);
+      border-radius: 10px;
     }
-    .nh48-quick-footer__grid {
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    }
-  }
 
-  @media (max-width: 600px) {
-    .nh48-quick-footer {
-      gap: 14px;
+    .nh48-quick-footer__grid::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #2bd879, #0b9e4c);
+      border-radius: 10px;
+      border: 2px solid rgba(26, 26, 46, 0.9);
     }
-    .nh48-quick-footer__grid {
-      grid-template-columns: 1fr;
+
+    .nh48-quick-footer__group {
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 18px rgba(0, 0, 0, 0.28);
+      width: min(100%, 240px);
+      text-align: center;
     }
-  }
+
+    .nh48-quick-footer__group h2 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      letter-spacing: 0.2px;
+      color: #f1f5ff;
+    }
+
+    .nh48-quick-footer__list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .nh48-quick-footer__link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 9px 10px;
+      min-height: 44px;
+      text-align: left;
+      border-radius: 10px;
+      border: 1px solid rgba(34, 197, 94, 0.7);
+      color: #e9ffee;
+      text-decoration: none;
+      background: linear-gradient(180deg, rgba(34, 197, 94, 0.18), rgba(15, 110, 63, 0.3));
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      line-height: 1.35;
+      white-space: normal;
+      width: 100%;
+    }
+
+    .nh48-quick-footer__link:hover,
+    .nh48-quick-footer__link:focus-visible {
+      border-color: #2bd879;
+      box-shadow: 0 0 0 3px rgba(43, 216, 121, 0.28);
+      background: linear-gradient(180deg, rgba(34, 197, 94, 0.26), rgba(11, 158, 76, 0.38));
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .nh48-quick-footer__meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 14px 4px 4px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .nh48-quick-footer__meta-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .nh48-quick-footer__meta-links a {
+      color: #f2f6ff;
+      text-decoration: none;
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      background: rgba(255, 255, 255, 0.08);
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .nh48-quick-footer__meta-links a:hover,
+    .nh48-quick-footer__meta-links a:focus-visible {
+      color: #22c55e;
+      border-color: rgba(34, 197, 94, 0.9);
+      background: rgba(34, 197, 94, 0.18);
+      outline: none;
+    }
+
+    .nh48-quick-footer__legal {
+      color: #dfe7ff;
+      font-weight: 700;
+    }
+
+    @media (max-width: 1180px) {
+      .nh48-quick-footer__grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+    }
+
+    @media (max-width: 960px) {
+      .nh48-quick-footer {
+        height: min(500px, 82vh);
+      }
+      .nh48-quick-footer__grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      }
+    }
+
+    @media (max-width: 780px) {
+      .nh48-quick-footer {
+        padding: 18px 14px 12px;
+        height: min(460px, 78vh);
+      }
+      .nh48-quick-footer__grid {
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .nh48-quick-footer {
+        gap: 14px;
+      }
+      .nh48-quick-footer__grid {
+        grid-template-columns: 1fr;
+      }
+    }
 </style>
 <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
   <div class="nh48-quick-footer__header">
@@ -1931,94 +1937,94 @@
     <div class="nh48-quick-footer__group">
       <h2>Presidential Range</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-washington">Mount Washington</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-adams">Mount Adams</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-jefferson">Mount Jefferson</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-monroe">Mount Monroe</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower">Mount Eisenhower</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-pierce">Mount Pierce</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-jackson">Mount Jackson</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-madison">Mount Madison</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-isolation">Mount Isolation</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-washington">Washington</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-adams">Adams</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-jefferson">Jefferson</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-monroe">Monroe</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower">Eisenhower</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-pierce">Pierce</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-jackson">Jackson</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-madison">Madison</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-isolation">Isolation</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
       <h2>Franconia Ridge</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-lafayette">Mount Lafayette</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-lincoln">Mount Lincoln</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-liberty">Mount Liberty</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-flume">Mount Flume</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-garfield">Mount Garfield</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-lafayette">Lafayette</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-lincoln">Lincoln</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-liberty">Liberty</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-flume">Flume</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-garfield">Garfield</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2>Twin Range &amp; Bonds</h2>
+      <h2>Twins & Bonds</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain">South Twin Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain">North Twin Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/galehead-mountain">Galehead Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/zealand-mountain">Zealand Mountain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain">South Twin</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain">North Twin</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/galehead-mountain">Galehead</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/zealand-mountain">Zealand</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/west-bond">West Bond</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-bond">Mount Bond</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-bond">Bond</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/bondcliff">Bondcliff</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/owls-head">Owl's Head</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2>Carter-Moriah &amp; Wildcats</h2>
+      <h2>Carter-Moriah & Wildcats</h2>
       <ul class="nh48-quick-footer__list">
         <li><a class="nh48-quick-footer__link" href="/peaks/carter-dome">Carter Dome</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain">South Carter Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain">Middle Carter Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-moriah">Mount Moriah</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a">Wildcat Mountain – A Peak</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d">Wildcat Mountain – D Peak</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain">South Carter</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain">Middle Carter</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-moriah">Moriah</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a">Wildcat A</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d">Wildcat D</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
       <h2>Kinsman Range</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain">North Kinsman Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain">South Kinsman Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/cannon-mountain">Cannon Mountain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain">North Kinsman</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain">South Kinsman</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/cannon-mountain">Cannon</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2>Sandwich Range</h2>
+      <h2>Osceolas & Trips</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway">Mount Passaconaway</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-whiteface">Mount Whiteface</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway">Passaconaway</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-whiteface">Whiteface</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/north-tripyramid">North Tripyramid</a></li>
         <li><a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid">Middle Tripyramid</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-osceola">Mount Osceola</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east">Mount Osceola – East Peak</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh">Mount Tecumseh</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-osceola">Osceola</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east">Osceola East</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh">Tecumseh</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2>Pemigewasset &amp; Carrigain</h2>
+      <h2>Pemi & Carrigain</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-carrigain">Mount Carrigain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-hancock">Mount Hancock – North Peak</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south">Mount Hancock – South Peak</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-hale">Mount Hale</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-carrigain">Carrigain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-hancock">Hancock North</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south">Hancock South</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-hale">Hale</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
       <h2>Northern Summits</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-cabot">Mount Cabot</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-waumbek">Mount Waumbek</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-cabot">Cabot</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-waumbek">Waumbek</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2>Western &amp; Outlying</h2>
+      <h2>Western Whites</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke">Mount Moosilauke</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-willey">Mount Willey</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-field">Mount Field</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peaks/mount-tom">Mount Tom</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke">Moosilauke</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-willey">Willey</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-field">Field</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peaks/mount-tom">Tom</a></li>
       </ul>
     </div>
   </div>
