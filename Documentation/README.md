@@ -63,6 +63,10 @@ The live pages share a unified **site-nav** block (see the `<nav class="site-nav
 
 This parity keeps the navigation crawlable, preserves UX muscle memory, and reduces SEO regressions from mismatched menus.
 
+### Only style the live app shells (never the prerendered pages)
+
+All UI/appearance work should be focused on the JavaScript-powered app shells that humans actually see: `/`, `/catalog`, `/trails`, `/long-trails`, `/virtual_hike.html`, and the `/pages/*` app surfaces (`nh48_catalog.html`, `nh48_peak.html`, `trails_app.html`, `long_trails_app.html`, `virtual_hike.html`). The prerendered redirect/index pages (including everything under `/peaks/` and `/fr/peaks/`) exist solely for bots and metadata; do **not** spend time restyling them.
+
 ### SEO Goals
 
 * Be the canonical open-data result for searches that include **“NH48 peaks dataset,” “White Mountain GPX,” “New Hampshire hiking API,”** and **“WMNF trail network JSON.”**

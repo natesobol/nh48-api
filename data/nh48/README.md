@@ -33,3 +33,5 @@ Each peak entry typically includes:
 ---
 
 Maintained alongside the White Mountain Trails Dataset to enable **cross-linked trail-to-summit experiences** across both collections.
+
+> Front-end reminder: UI work belongs on the live JS app shells (landing, catalog, trails, long-trails, virtual hike, and `/pages/*`). The prerendered peak redirect pages are for crawlers only—avoid spending time restyling them.
