@@ -6,7 +6,11 @@ const SPLASH_MAX_DURATION_S = 32;
 const SPLASH_MIN_SIZE_MULTIPLIER = 1.5;
 const SPLASH_MAX_SIZE_MULTIPLIER = 6;
 const SPLASH_DIAGONAL_SPEED_PX = 12;
-const SPLASH_SPEED_VARIANCE = 0.35;
+// Speed multiplier range: 0.5× (50% slower) to 1.5× (50% faster)
+const SPLASH_MIN_SPEED_MULTIPLIER = 0.5;
+const SPLASH_MAX_SPEED_MULTIPLIER = 1.5;
+// Maximum attempts when searching for a non-overlapping position
+const MAX_SPAWN_ATTEMPTS = 100;
 const SPLASH_MASK_PADDING_PX = 24;
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -142,6 +146,52 @@ const initSplash = async () => {
 
   const icons = [];
   const maskRect = getMaskRect();
+
+  // Determine if a new icon at (x,y) with size overlaps any existing icons
+  const doesOverlap = (x, y, size) => {
+    const newRadius = size / 2;
+    for (const other of icons) {
+      const dx = x + newRadius - (other.x + other.size / 2);
+      const dy = y + newRadius - (other.y + other.size / 2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const minDist = newRadius + other.size / 2;
+      if (distance < minDist) return true;
+    }
+    return false;
+  };
+
+  const resolveCollision = (a, b) => {
+    const dx = b.x + b.size / 2 - (a.x + a.size / 2);
+    const dy = b.y + b.size / 2 - (a.y + a.size / 2);
+    const dist = Math.hypot(dx, dy);
+    const overlap = (a.size + b.size) / 2 - dist;
+    if (dist && overlap > 0) {
+      // Normalized collision normal
+      const nx = dx / dist;
+      const ny = dy / dist;
+      // Separate icons to remove overlap
+      a.x -= (nx * overlap) / 2;
+      a.y -= (ny * overlap) / 2;
+      b.x += (nx * overlap) / 2;
+      b.y += (ny * overlap) / 2;
+      // Rotate velocities to collision frame
+      const tx = -ny,
+        ty = nx;
+      const v1n = a.vx * nx + a.vy * ny;
+      const v1t = a.vx * tx + a.vy * ty;
+      const v2n = b.vx * nx + b.vy * ny;
+      const v2t = b.vx * tx + b.vy * ty;
+      // Swap normal components (elastic collision)
+      const v1nAfter = v2n;
+      const v2nAfter = v1n;
+      // Rotate back
+      a.vx = v1nAfter * nx + v1t * tx;
+      a.vy = v1nAfter * ny + v1t * ty;
+      b.vx = v2nAfter * nx + v2t * tx;
+      b.vy = v2nAfter * ny + v2t * ty;
+    }
+  };
+
   selectedIcons.forEach((iconPath) => {
     const imgEl = document.createElement("img");
     imgEl.className = "splash-icon";
@@ -182,7 +232,10 @@ const initSplash = async () => {
     let x = Math.random() * viewportW;
     let y = Math.random() * viewportH;
     let attempts = 0;
-    while (isInMask(x, y, size, maskRect) && attempts < 20) {
+    while (
+      (isInMask(x, y, size, maskRect) || doesOverlap(x, y, size)) &&
+      attempts < MAX_SPAWN_ATTEMPTS
+    ) {
       x = Math.random() * viewportW;
       y = Math.random() * viewportH;
       attempts += 1;
@@ -190,21 +243,27 @@ const initSplash = async () => {
     imgEl.style.width = `${size}px`;
     imgEl.style.left = "0";
     imgEl.style.top = "0";
-    imgEl.style.transform = `translate(${x}px, ${y}px)`;
-    const duration =
-      SPLASH_MIN_DURATION_S +
-      Math.random() * (SPLASH_MAX_DURATION_S - SPLASH_MIN_DURATION_S);
-    const delay = Math.random() * SPLASH_MAX_DURATION_S;
-    imgEl.style.animationDuration = `${duration}s, ${duration}s`;
-    imgEl.style.animationDelay = `-${delay}s, -${delay}s`;
+    const rotation = Math.random() * 360;
+    const rotationSpeed = (Math.random() * 20 - 10) * (Math.random() < 0.5 ? 1 : -1);
+    const opacity = 0.6 + Math.random() * 0.4;
+    imgEl.style.opacity = `${opacity}`;
+    imgEl.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
     container.appendChild(imgEl);
-    const speedVariance = 1 + (Math.random() * 2 - 1) * SPLASH_SPEED_VARIANCE;
+    const speedMultiplier =
+      SPLASH_MIN_SPEED_MULTIPLIER +
+      Math.random() * (SPLASH_MAX_SPEED_MULTIPLIER - SPLASH_MIN_SPEED_MULTIPLIER);
+    const theta = Math.random() * 2 * Math.PI;
+    const vx = Math.cos(theta) * SPLASH_DIAGONAL_SPEED_PX * speedMultiplier;
+    const vy = Math.sin(theta) * SPLASH_DIAGONAL_SPEED_PX * speedMultiplier;
     icons.push({
       el: imgEl,
       x,
       y,
       size,
-      speed: SPLASH_DIAGONAL_SPEED_PX * speedVariance
+      vx,
+      vy,
+      rotation,
+      rotationSpeed
     });
   });
 
@@ -213,17 +272,38 @@ const initSplash = async () => {
     const delta = (now - lastTime) / 1000;
     lastTime = now;
     icons.forEach((icon) => {
-      const dx = icon.speed * delta;
-      const dy = icon.speed * delta;
-      icon.x += dx;
-      icon.y += dy;
-      if (icon.x > viewportWidth + icon.size) {
-        icon.x = -icon.size;
+      icon.x += icon.vx * delta;
+      icon.y += icon.vy * delta;
+      icon.rotation += icon.rotationSpeed * delta;
+
+      const maxX = viewportWidth - icon.size;
+      const maxY = viewportHeight - icon.size;
+
+      if (icon.x < 0) {
+        icon.x = 0;
+        icon.vx *= -1;
+      } else if (icon.x > maxX) {
+        icon.x = maxX;
+        icon.vx *= -1;
       }
-      if (icon.y > viewportHeight + icon.size) {
-        icon.y = -icon.size;
+
+      if (icon.y < 0) {
+        icon.y = 0;
+        icon.vy *= -1;
+      } else if (icon.y > maxY) {
+        icon.y = maxY;
+        icon.vy *= -1;
       }
-      icon.el.style.transform = `translate(${icon.x}px, ${icon.y}px)`;
+    });
+
+    for (let i = 0; i < icons.length; i += 1) {
+      for (let j = i + 1; j < icons.length; j += 1) {
+        resolveCollision(icons[i], icons[j]);
+      }
+    }
+
+    icons.forEach((icon) => {
+      icon.el.style.transform = `translate(${icon.x}px, ${icon.y}px) rotate(${icon.rotation}deg)`;
     });
     requestAnimationFrame(tick);
   };
