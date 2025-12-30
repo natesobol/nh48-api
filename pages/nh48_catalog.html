@@ -242,6 +242,64 @@
         );
       }
 
+      const PLACEHOLDER_DATA_URI = getPlaceholder();
+
+      const lazyQueue = [];
+      let isLoadingImage = false;
+
+      function resetLazyQueue(){
+        lazyQueue.length = 0;
+        isLoadingImage = false;
+      }
+
+      function revealImage(img){
+        img.classList.add('is-visible');
+        img.removeAttribute('data-src');
+      }
+
+      function loadNextImage(){
+        const next = lazyQueue.shift();
+        if(!next){
+          isLoadingImage = false;
+          return;
+        }
+
+        const real = next.getAttribute('data-src');
+        if(!real){
+          requestAnimationFrame(loadNextImage);
+          return;
+        }
+
+        isLoadingImage = true;
+
+        const onLoad = () => {
+          revealImage(next);
+          requestAnimationFrame(loadNextImage);
+        };
+
+        const onError = () => {
+          next.src = PLACEHOLDER_DATA_URI;
+          revealImage(next);
+          requestAnimationFrame(loadNextImage);
+        };
+
+        next.addEventListener('load', onLoad, { once: true });
+        next.addEventListener('error', onError, { once: true });
+        next.src = real;
+
+        if(next.complete){
+          next.dispatchEvent(new Event('load'));
+        }
+      }
+
+      function enqueueLazyImage(img){
+        if(!img || !img.dataset || !img.dataset.src) return;
+        lazyQueue.push(img);
+        if(!isLoadingImage){
+          loadNextImage();
+        }
+      }
+
       function normalizePhotoUrl(url){
         if(!url) return url;
         if(url.startsWith(PHOTO_BASE_URL)) return url;
@@ -533,7 +591,7 @@
         card.className = 'card';
 
         // Thumbnail
-        let thumbSrc = getPlaceholder();
+        let thumbSrc = PLACEHOLDER_DATA_URI;
         let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
           const first = p.photos[0];
@@ -545,6 +603,12 @@
           }
         }
 
+        const shouldLazyLoad = thumbSrc !== PLACEHOLDER_DATA_URI;
+        const thumbClasses = ['lazy-thumb'];
+        if(!shouldLazyLoad){
+          thumbClasses.push('is-visible');
+        }
+
         const elev = p['Elevation (ft)'];
         const prom = p['Prominence (ft)'];
         const range = p['Range / Subrange'] || '—';
@@ -554,7 +618,7 @@
 
         card.innerHTML = `
           <div class="thumb">
-            <img src="${thumbSrc}" alt="${thumbAlt}" loading="lazy" decoding="async">
+            <img class="${thumbClasses.join(' ')}" src="${PLACEHOLDER_DATA_URI}" ${shouldLazyLoad ? `data-src="${thumbSrc}"` : ''} alt="${thumbAlt}" loading="lazy" decoding="async">
           </div>
           <div class="body">
             <h3>${p.peakName}</h3>
@@ -580,7 +644,7 @@
         const item = document.createElement('article');
         item.className = 'list-item';
 
-        let thumbSrc = getPlaceholder();
+        let thumbSrc = PLACEHOLDER_DATA_URI;
         let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
           const first = p.photos[0];
@@ -592,13 +656,19 @@
           }
         }
 
+        const shouldLazyLoad = thumbSrc !== PLACEHOLDER_DATA_URI;
+        const thumbClasses = ['lazy-thumb'];
+        if(!shouldLazyLoad){
+          thumbClasses.push('is-visible');
+        }
+
         const elev = p['Elevation (ft)'];
         const range = p['Range / Subrange'] || '—';
         const href = `/peaks/${encodeURIComponent(p.slug)}/`;
 
         item.innerHTML = `
           <div class="list-thumb">
-            <img src="${thumbSrc}" alt="${thumbAlt}" loading="lazy" decoding="async">
+            <img class="${thumbClasses.join(' ')}" src="${PLACEHOLDER_DATA_URI}" ${shouldLazyLoad ? `data-src="${thumbSrc}"` : ''} alt="${thumbAlt}" loading="lazy" decoding="async">
           </div>
           <div class="list-content">
             <div class="list-main">
@@ -627,18 +697,25 @@
       }
 
       function setupLazyLoading(){
-        if (!('IntersectionObserver' in window)) return;
+        resetLazyQueue();
+        const candidates = document.querySelectorAll('img[data-src]');
+
+        if (!('IntersectionObserver' in window)) {
+          candidates.forEach(img => enqueueLazyImage(img));
+          return;
+        }
+
         const observer = new IntersectionObserver((entries, obs) => {
           entries.forEach(entry => {
             if(entry.isIntersecting){
               const img = entry.target;
-              const real = img.getAttribute('data-src');
-              if(real){ img.src = real; img.removeAttribute('data-src'); }
               obs.unobserve(img);
+              enqueueLazyImage(img);
             }
           });
         }, { rootMargin: '200px' });
-        document.querySelectorAll('img[data-src]').forEach(img => observer.observe(img));
+
+        candidates.forEach(img => observer.observe(img));
       }
 
       function renderGrid(list){
