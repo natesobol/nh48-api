@@ -17,5 +17,8 @@ export const LANGS = [
   { code: 'tr', label: 'Türkçe', flag: '🇹🇷', hreflang: 'tr', rtl: false },
   { code: 'vi', label: 'Tiếng Việt', flag: '🇻🇳', hreflang: 'vi', rtl: false },
   { code: 'pl', label: 'Polski', flag: '🇵🇱', hreflang: 'pl', rtl: false },
-  { code: 'fil', label: 'Filipino', flag: '🇵🇭', hreflang: 'fil', rtl: false }
+  { code: 'fil', label: 'Filipino', flag: '🇵🇭', hreflang: 'fil', rtl: false },
+  { code: 'nl', label: 'Nederlands', flag: '🇳🇱', hreflang: 'nl', rtl: false },
+  { code: 'ur', label: 'اردو', flag: '🇵🇰', hreflang: 'ur', rtl: true },
+  { code: 'sw', label: 'Kiswahili', flag: '🇰🇪', hreflang: 'sw', rtl: false }
 ];
