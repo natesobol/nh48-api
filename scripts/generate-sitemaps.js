@@ -12,6 +12,7 @@ const PEAK_BASE = 'https://nh48.info/peaks';
 const PEAK_BASE_FR = 'https://nh48.info/fr/peaks';
 const PHOTO_BASE_URL = 'https://photos.nh48.info';
 const PHOTO_PATH_PREFIX = '/nh48-photos/';
+const STATIC_PAGES = ['https://nh48.info/nh-4000-footers-guide'];
 
 const data = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
 
@@ -63,6 +64,12 @@ const buildPhotoCaption = (peakName, photo) => {
   return `${peakName} in the White Mountains`;
 };
 
+const buildPhotoTitle = (peakName, photo) => {
+  const explicit = cleanText(photo.headline || photo.caption || photo.title || photo.altText || photo.alt);
+  if (explicit) return explicit;
+  return `${peakName} photo`;
+};
+
 const buildImageEntries = (photos, peakName) => {
   if (!Array.isArray(photos)) return [];
   return photos
@@ -71,12 +78,14 @@ const buildImageEntries = (photos, peakName) => {
         return {
           url: normalizePhotoUrl(photo),
           caption: `${peakName} in the White Mountains`,
+          title: `${peakName} photo`,
         };
       }
       if (!photo || !photo.url) return null;
       return {
         url: normalizePhotoUrl(photo.url),
         caption: buildPhotoCaption(peakName, photo),
+        title: buildPhotoTitle(peakName, photo),
       };
     })
     .filter(Boolean);
@@ -86,6 +95,7 @@ const slugs = Object.keys(data).sort();
 
 const buildPageSitemap = () => {
   const urls = [];
+  STATIC_PAGES.forEach((page) => urls.push({ loc: page }));
   slugs.forEach((slug) => {
     urls.push({ loc: `${PEAK_BASE}/${slug}/` });
     urls.push({ loc: `${PEAK_BASE_FR}/${slug}/` });
@@ -133,6 +143,7 @@ const buildImageSitemap = () => {
       xmlParts.push('    <image:image>');
       xmlParts.push(`      <image:loc>${escapeXml(image.url)}</image:loc>`);
       xmlParts.push(`      <image:caption>${escapeXml(image.caption)}</image:caption>`);
+      xmlParts.push(`      <image:title>${escapeXml(image.title)}</image:title>`);
       xmlParts.push('    </image:image>');
     });
     xmlParts.push('  </url>');

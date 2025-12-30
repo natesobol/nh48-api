@@ -271,7 +271,10 @@
         .then((html) => {
           navPlaceholder.innerHTML = html;
           const activeLink = navPlaceholder.querySelector('[data-route="guide"]');
-          if (activeLink) activeLink.classList.add('active');
+          if (activeLink) {
+            activeLink.classList.add('active');
+            activeLink.setAttribute('aria-current', 'page');
+          }
         })
         .catch((err) => console.error('Navigation failed to load', err));
     </script>
