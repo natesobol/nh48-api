@@ -4,8 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,follow">
-  <meta http-equiv="refresh" content="0; url=/trails">
-  <script>window.location.replace('/trails');</script>
+  <script>
+    const targetPath = '/trails/';
+    const normalizedPath = window.location.pathname.endsWith('/')
+      ? window.location.pathname
+      : `${window.location.pathname}/`;
+    if (normalizedPath !== targetPath) {
+      window.location.replace(targetPath);
+    }
+  </script>
   <title>White Mountain Trails Map &amp; Open Data – White Mountain National Forest</title>
   <meta name="description" content="Explore White Mountain National Forest trails with an interactive map and open datasets for WMNF routes and 2,000-foot peaks. Download normalized JSON for your own apps.">
   <meta name="keywords" content="WMNF trails,White Mountain National Forest,New Hampshire hiking trails,open trail data,WMNF dataset,2000 foot peaks">
