@@ -190,6 +190,7 @@ const initSplash = async () => {
     imgEl.style.width = `${size}px`;
     imgEl.style.left = "0";
     imgEl.style.top = "0";
+    imgEl.style.transform = `translate(${x}px, ${y}px)`;
     const duration =
       SPLASH_MIN_DURATION_S +
       Math.random() * (SPLASH_MAX_DURATION_S - SPLASH_MIN_DURATION_S);
