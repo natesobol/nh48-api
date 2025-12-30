@@ -8,6 +8,7 @@ Primary and secondary logo marks also live here. When adding or swapping logos, 
 
 * The site-wide nav and quick-browse footer both reference the primary logo and OG cover art stored in this folder; keep filenames stable when updating assets so every live page continues to load consistent branding.
 * If a navigation or footer refresh introduces new icons, drop the PNG/SVG here and update all pages in lockstep so the menus and CTA grid stay visually aligned across localized and dataset pages.
+* Only style the live app shells (landing, catalog, trails, long-trails, virtual hike, and `/pages/*`), not the prerendered redirect or peak pages—they're bot-only and shouldn't receive UI polish.
 
 ## SEO Notes for Media Assets
 
