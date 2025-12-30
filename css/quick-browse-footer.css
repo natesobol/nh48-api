@@ -1,8 +1,8 @@
 .nh48-quick-footer {
-    --nh48-footer-grid-min: clamp(165px, 18vw, 230px);
+    --nh48-footer-grid-min: clamp(160px, 17vw, 230px);
     margin: 48px auto 18px;
-    width: min(1240px, 100%);
-    max-width: 1240px;
+    width: min(1600px, 100% - 24px);
+    max-width: none;
     background: linear-gradient(180deg, rgba(82, 57, 138, 0.94), rgba(20, 27, 48, 0.96));
     border: 1px solid rgba(255, 255, 255, 0.14);
     box-shadow: 0 22px 60px rgba(5, 8, 20, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
@@ -100,21 +100,26 @@
   }
 
   .nh48-quick-footer .nh48-quick-footer__grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(var(--nh48-footer-grid-min), 1fr);
     align-items: stretch;
-    gap: 16px;
-    margin-top: 10px;
-    padding: 0;
+    justify-content: start;
+    gap: 14px;
+    width: 100%;
+    margin: 8px -6px 0;
+    padding: 8px 10px 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
     flex: 1 1 auto;
-    overflow: visible;
     scrollbar-width: thin;
     scrollbar-color: rgba(43, 216, 121, 0.65) rgba(26, 26, 46, 0.9);
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
   }
 
   .nh48-quick-footer__grid::-webkit-scrollbar {
-    width: 12px;
+    height: 12px;
   }
 
   .nh48-quick-footer__grid::-webkit-scrollbar-track {
@@ -136,8 +141,8 @@
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 18px rgba(0, 0, 0, 0.28);
     min-width: var(--nh48-footer-grid-min);
     max-width: 260px;
-    flex: 1 1 var(--nh48-footer-grid-min);
     text-align: center;
+    scroll-snap-align: start;
   }
 
   .nh48-quick-footer__group h2 {
@@ -230,6 +235,7 @@
 
     .nh48-quick-footer .nh48-quick-footer__grid {
       gap: 12px;
+      padding: 6px 8px 10px;
     }
 
     .nh48-quick-footer__list {
