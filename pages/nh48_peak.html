@@ -426,11 +426,9 @@
       .slide.active{ opacity:1; }
       .slide figure{
         margin:0;
-        display:grid;
-        grid-template-rows:1fr auto;
+        display:flex;
         align-items:center;
-        justify-items:center;
-        gap:6px;
+        justify-content:center;
         padding:6px;
         box-sizing:border-box;
         height:100%;
@@ -443,10 +441,6 @@
         object-position:center;
         display:block;
         border-radius:8px;
-      }
-      .slide figcaption{
-        font-size:0.9rem;
-        color:var(--muted);
       }
       .dots{
         position:absolute;
@@ -2292,13 +2286,6 @@
               sr.setAttribute('lang', described.lang);
             }
             figure.appendChild(sr);
-
-            const caption = document.createElement('figcaption');
-            caption.textContent = described.text;
-            if(described.lang){
-              caption.setAttribute('lang', described.lang);
-            }
-            figure.appendChild(caption);
           }
 
           slide.appendChild(figure);
