@@ -47,6 +47,18 @@
     <link rel="prefetch" href="{{APP_URL}}" />
     <script>
       (function redirectToApp() {
+        const host = location.hostname;
+
+        const isPreviewHost =
+          host === "localhost" ||
+          host === "127.0.0.1" ||
+          host.includes("github") ||
+          host.endsWith("githubpreview.dev");
+
+        if (isPreviewHost) {
+          return;
+        }
+
         const target = "{{APP_URL}}";
         const ua = (typeof navigator !== "undefined" && navigator.userAgent) || "";
         const botSignatures = [
@@ -84,6 +96,13 @@
         }
       })();
     </script>
+<noscript>
+      <p>
+        JavaScript is required to continue.
+        <a href="{{APP_URL}}">Continue</a>
+      </p>
+    </noscript>
+
     <script type="application/ld+json">{{JSON_LD}}</script>
     <script type="application/ld+json">{{BREADCRUMB_LD}}</script>
     <script type="application/ld+json">{{WEBPAGE_SCHEMA}}</script>
@@ -381,7 +400,7 @@
             <span>{{LABEL_RANGE}}: {{RANGE}}</span>
           </div>
           <a class="cta" href="{{APP_URL}}">{{LABEL_CTA}}</a>
-          <a class="back-link" href="{{CATALOG_URL}}">{{LABEL_BACK_TO_CATALOG}}</a>
+          <a class="back-link" href="https://nh48.info/nh-4000-footers-guide">← Back to NH48 Guide</a>
         </div>
         <figure class="hero-image">
           <img src="{{HERO_IMAGE}}" alt="{{HERO_ALT}}" loading="eager" {{HERO_DIMENSIONS}}{{HERO_LANG_ATTR}} aria-describedby="hero-image-caption" />
