@@ -63,15 +63,20 @@
       color: #fff;
     }
 
-    .site-nav-logo img {
+    .logo-wrap {
       width: 58px;
       height: 58px;
       border-radius: 14px;
-      border: 2px solid #ffffff;
-      padding: 0;
-      background: #0a0a0a;
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45), 0 0 0 2px #ffffff inset;
+      border: 2px solid var(--stroke, #ffffff);
+      overflow: hidden;
+      display: flex;
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
+      display: block;
     }
 
     .site-nav-title-wrap {
@@ -190,15 +195,10 @@
       margin-top: 10px;
     }
 
-    .dataset-hero-logo img {
+    .dataset-hero-logo .logo-wrap {
       width: 98px;
       height: 98px;
       border-radius: 16px;
-      background: #0a0a0a;
-      border: 2px solid #ffffff;
-      padding: 0;
-      box-shadow: 0 0 0 2px #ffffff inset;
-      object-fit: cover;
     }
 
     .dataset-hero-logo .logo-copy {
@@ -517,7 +517,9 @@
 <body>
   <nav class="site-nav">
     <a href="/" class="site-nav-logo">
-      <img src="/nh48API_logo.png" alt="" aria-hidden="true" role="presentation" />
+      <div class="logo-wrap">
+        <img src="/nh48API_logo.png" alt="" aria-hidden="true" role="presentation" />
+      </div>
       <div class="site-nav-title-wrap">
         <span class="site-nav-title">NH48 API</span>
         <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
@@ -572,7 +574,9 @@
       <p class="lede">Download normalized trail data for the White Mountain National Forest, including New Hampshire core coverage, Maine extensions, connector graphs, and supporting peak references.</p>
       <p class="lede">The dataset is published as static files so search engines and downstream apps can consume the metadata without relying on client-side rendering.</p>
       <div class="dataset-hero-logo">
-        <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest Trails API logo" title="White Mountain National Forest Trails API" loading="lazy" decoding="async">
+        <div class="logo-wrap">
+          <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest Trails API logo" title="White Mountain National Forest Trails API" loading="lazy" decoding="async">
+        </div>
         <div class="logo-copy">
           <strong>WMNF Trails API brandmark</strong>
           <span>Logo identifier for the White Mountain National Forest trail dataset and map downloads, optimized for search engines and social previews.</span>

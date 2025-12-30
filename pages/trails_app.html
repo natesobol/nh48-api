@@ -243,6 +243,22 @@
       line-height: 1.5;
     }
 
+    .logo-wrap {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      border: 2px solid var(--stroke, #ffffff);
+      overflow: hidden;
+      display: flex;
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
     .page-header .page-subtitle {
       margin: 0.35rem 0 0;
       font-weight: 600;
@@ -262,13 +278,11 @@
       box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
     }
 
-    .map-logo-strip img {
+    .map-logo-strip .logo-wrap {
       width: 64px;
-      height: auto;
-      border-radius: 10px;
-      background: #0a0a0a;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 5px;
+      height: 64px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
     }
 
     .map-logo-strip .logo-copy {
@@ -1056,7 +1070,9 @@
     <h1 data-i18n="trails.title">🏔️ White Mountain Trails API Map Tool</h1>
     <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
     <div class="map-logo-strip">
-      <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest trails map logo" title="White Mountain Trails API" loading="lazy" decoding="async">
+      <div class="logo-wrap">
+        <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest trails map logo" title="White Mountain Trails API" loading="lazy" decoding="async">
+      </div>
       <div class="logo-copy">
         <strong>White Mountain Trails brandmark</strong>
         <span>Visual identifier for the WMNF trails map and dataset downloads, featuring GPX-backed routes and open data coverage.</span>
