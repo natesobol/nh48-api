@@ -233,15 +233,21 @@
       color: #fff;
     }
 
-    .site-nav-logo img {
+    .logo-wrap {
       width: 58px;
       height: 58px;
       border-radius: 14px;
-      border: 2px solid #ffffff;
-      padding: 0;
-      background: #0a0a0a;
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45), 0 0 0 2px #ffffff inset;
+      overflow: hidden;
+      display: flex;
+      box-shadow: 0 0 0 2px var(--stroke, #ffffff);
+    }
+
+    .logo-wrap img {
+      width: 112%;
+      height: 112%;
       object-fit: cover;
+      display: block;
+      margin: -6%;
     }
 
     .site-nav-title-wrap {
@@ -405,7 +411,7 @@
         font-size: 28px;
       }
 
-      .site-nav-logo img {
+      .logo-wrap {
         width: 52px;
         height: 52px;
       }
@@ -512,16 +518,13 @@
       color: #0a0a0a;
       background: #22c55e;
     }
-    .cta a img {
-      height: 38px;
+    .cta .logo-wrap {
       width: 38px;
-      margin-right: 10px;
+      height: 38px;
       border-radius: 8px;
-      background: transparent;
-      border: none;
-      padding: 0;
-      box-shadow: none;
-      object-fit: cover;
+      border: 2px solid var(--stroke, #ffffff);
+      margin-right: 10px;
+      flex-shrink: 0;
     }
     .cta a.secondary {
       background: transparent;
@@ -861,7 +864,9 @@
   <div id="splash-mask" aria-hidden="true"></div>
   <nav class="site-nav" aria-label="Site navigation">
     <a class="site-nav-logo" href="/">
-      <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async">
+      <div class="logo-wrap">
+        <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async">
+      </div>
       <div class="site-nav-title-wrap">
         <span class="site-nav-title">NH48 API</span>
         <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
@@ -956,15 +961,21 @@
     <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.</p>
     <div class="cta">
       <a href="/catalog" data-i18n="landing.cta.catalog">
-        <img src="/nh48API_logo.png" alt="NH48 API crest for the four-thousand-footer peak catalog" title="NH48 API peak catalog logo" loading="lazy" decoding="async">
+        <div class="logo-wrap">
+          <img src="/nh48API_logo.png" alt="NH48 API crest for the four-thousand-footer peak catalog" title="NH48 API peak catalog logo" loading="lazy" decoding="async">
+        </div>
         Open the Peak Catalog
       </a>
       <a href="/trails" class="secondary" data-i18n="landing.cta.trails">
-        <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest trails API logo" title="White Mountain National Forest Trails API" loading="lazy" decoding="async">
+        <div class="logo-wrap">
+          <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest trails API logo" title="White Mountain National Forest Trails API" loading="lazy" decoding="async">
+        </div>
         White Mountain Trails
       </a>
       <a href="/long-trails" class="secondary" data-i18n="landing.cta.campaigns">
-        <img src="/Long_Trails_Logo.png" alt="Long-distance hiking trails dataset logo" title="Long Trails open data logo" loading="lazy" decoding="async">
+        <div class="logo-wrap">
+          <img src="/Long_Trails_Logo.png" alt="Long-distance hiking trails dataset logo" title="Long Trails open data logo" loading="lazy" decoding="async">
+        </div>
         Trail Campaigns
       </a>
     </div>

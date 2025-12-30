@@ -63,15 +63,21 @@
       color: #fff;
     }
 
-    .site-nav-logo img {
+    .logo-wrap {
       width: 58px;
       height: 58px;
       border-radius: 14px;
-      border: 2px solid #ffffff;
-      padding: 0;
-      background: #0a0a0a;
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45), 0 0 0 2px #ffffff inset;
+      overflow: hidden;
+      display: flex;
+      box-shadow: 0 0 0 2px var(--stroke, #ffffff);
+    }
+
+    .logo-wrap img {
+      width: 112%;
+      height: 112%;
       object-fit: cover;
+      display: block;
+      margin: -6%;
     }
 
     .site-nav-title-wrap {
@@ -190,15 +196,11 @@
       margin-top: 10px;
     }
 
-    .dataset-hero-logo img {
+    .dataset-hero-logo .logo-wrap {
       width: 98px;
       height: 98px;
       border-radius: 16px;
-      background: #0a0a0a;
-      border: 2px solid #ffffff;
-      padding: 0;
-      box-shadow: 0 0 0 2px #ffffff inset;
-      object-fit: cover;
+      box-shadow: 0 0 0 2px var(--stroke, #ffffff);
     }
 
     .dataset-hero-logo .logo-copy {
@@ -516,7 +518,9 @@
 <body>
   <nav class="site-nav">
     <a href="/" class="site-nav-logo">
-      <img src="/nh48API_logo.png" alt="" aria-hidden="true" role="presentation" />
+      <div class="logo-wrap">
+        <img src="/nh48API_logo.png" alt="" aria-hidden="true" role="presentation" />
+      </div>
       <div class="site-nav-title-wrap">
         <span class="site-nav-title">NH48 API</span>
         <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
@@ -571,7 +575,9 @@
       <p class="lede">Structured data for major long-distance hiking routes, from the Appalachian Trail and Pacific Crest Trail to regional traverses like the Arizona Trail.</p>
       <p class="lede">Each dataset is pre-rendered and downloadable so search engines and mapping tools can index and consume the files without client-side API calls.</p>
       <div class="dataset-hero-logo">
-        <img src="/Long_Trails_Logo.png" alt="Long Trails dataset logo" title="Long Trails dataset brandmark" loading="lazy" decoding="async">
+        <div class="logo-wrap">
+          <img src="/Long_Trails_Logo.png" alt="Long Trails dataset logo" title="Long Trails dataset brandmark" loading="lazy" decoding="async">
+        </div>
         <div class="logo-copy">
           <strong>Long Trails open data logo</strong>
           <span>Brand identifier for the long-distance hiking routes library, reinforcing search visibility for Appalachian Trail, Pacific Crest Trail, and more.</span>
