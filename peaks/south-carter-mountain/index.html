@@ -1102,10 +1102,10 @@
     </div>
     <style data-nh48-quick-footer-style>
 .nh48-quick-footer {
-    --nh48-footer-grid-min: clamp(165px, 18vw, 230px);
-    margin: 48px auto 18px;
-    width: min(1240px, 100%);
-    max-width: 1240px;
+    --nh48-footer-grid-min: clamp(150px, 16vw, 210px);
+    margin: 56px auto 24px;
+    width: min(1700px, 98vw);
+    max-width: 1700px;
     background: linear-gradient(180deg, rgba(82, 57, 138, 0.94), rgba(20, 27, 48, 0.96));
     border: 1px solid rgba(255, 255, 255, 0.14);
     box-shadow: 0 22px 60px rgba(5, 8, 20, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
@@ -1127,8 +1127,8 @@
 
   .nh48-quick-footer__header {
     text-align: center;
-    max-width: 1080px;
-    margin: 0 auto 2px;
+    max-width: 1300px;
+    margin: 0 auto 4px;
   }
 
   .nh48-quick-footer__controls {
@@ -1203,14 +1203,16 @@
   }
 
   .nh48-quick-footer .nh48-quick-footer__grid {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--nh48-footer-grid-min), 1fr));
     justify-content: center;
-    align-items: stretch;
-    gap: 16px;
-    margin-top: 10px;
+    align-items: start;
+    gap: 14px 18px;
+    margin: 6px auto 0;
     padding: 0;
     flex: 1 1 auto;
+    width: 100%;
+    max-width: 1620px;
     overflow: visible;
     scrollbar-width: thin;
     scrollbar-color: rgba(43, 216, 121, 0.65) rgba(26, 26, 46, 0.9);
@@ -1234,13 +1236,14 @@
   .nh48-quick-footer .nh48-quick-footer__group {
     border: 1px solid rgba(255, 255, 255, 0.26);
     border-radius: 14px;
-    padding: 12px 14px;
+    padding: 11px 12px;
     background: rgba(255, 255, 255, 0.06);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 18px rgba(0, 0, 0, 0.28);
-    min-width: var(--nh48-footer-grid-min);
-    max-width: 260px;
-    flex: 1 1 var(--nh48-footer-grid-min);
+    min-width: 0;
+    max-width: 220px;
+    width: 100%;
     text-align: center;
+    justify-self: center;
   }
 
   .nh48-quick-footer__group h2 {
@@ -1255,15 +1258,15 @@
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 7px;
+    gap: 6px;
   }
 
   .nh48-quick-footer__link {
     display: inline-flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 8px 10px;
-    min-height: 40px;
+    padding: 7px 9px;
+    min-height: 36px;
     text-align: left;
     border-radius: 10px;
     border: 1px solid rgba(34, 197, 94, 0.7);
