@@ -538,12 +538,10 @@
       pointer-events: none;
       --label-scale: 1.18;
       --float-distance: 32px;
-      --parallax-x: 0px;
-      --parallax-y: 0px;
       animation-name: float;
       animation-timing-function: ease-in-out;
       animation-iteration-count: infinite;
-      transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0) translateY(0) scale(var(--label-scale));
+      transform: translateY(0) scale(var(--label-scale));
     }
 
     .peak-name {
@@ -559,15 +557,13 @@
 
     @keyframes float {
       0% {
-        transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0) translateY(0) scale(var(--label-scale, 1));
+        transform: translateY(0) scale(var(--label-scale, 1));
       }
       50% {
-        transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0)
-          translateY(calc(-1 * var(--float-distance, 32px)))
-          scale(var(--label-scale, 1));
+        transform: translateY(calc(-1 * var(--float-distance, 32px))) scale(var(--label-scale, 1));
       }
       100% {
-        transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0) translateY(0) scale(var(--label-scale, 1));
+        transform: translateY(0) scale(var(--label-scale, 1));
       }
     }
 
@@ -1465,10 +1461,6 @@
       ];
 
       const container = document.getElementById('floating-peaks');
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-
-      const labelStates = [];
 
       peaks.forEach((peak) => {
         const label = document.createElement('div');
@@ -1492,40 +1484,7 @@
         label.style.setProperty('--float-distance', `${floatDistance.toFixed(2)}px`);
 
         container.appendChild(label);
-
-        labelStates.push({
-          element: label,
-          depth: 6 + Math.random() * 14,
-          lag: 0.08 + Math.random() * 0.12,
-          currentX: 0,
-          currentY: 0
-        });
       });
-
-      let pointerX = 0;
-      let pointerY = 0;
-
-      document.addEventListener('mousemove', (event) => {
-        pointerX = (event.clientX / viewportWidth - 0.5) * 2;
-        pointerY = (event.clientY / viewportHeight - 0.5) * 2;
-      });
-
-      const stepParallax = () => {
-        labelStates.forEach((state) => {
-          const desiredX = pointerX * state.depth * 8;
-          const desiredY = pointerY * state.depth * 8;
-
-          state.currentX += (desiredX - state.currentX) * state.lag;
-          state.currentY += (desiredY - state.currentY) * state.lag;
-
-          state.element.style.setProperty('--parallax-x', `${state.currentX.toFixed(2)}px`);
-          state.element.style.setProperty('--parallax-y', `${state.currentY.toFixed(2)}px`);
-        });
-
-        requestAnimationFrame(stepParallax);
-      };
-
-      stepParallax();
     });
   </script>
   <script>
