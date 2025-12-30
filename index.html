@@ -201,14 +201,14 @@
       align-items: center;
       justify-content: flex-start;
       gap: clamp(20px, 4vw, 32px);
-      padding: clamp(24px, 4vw, 32px) 16px 32px;
+      padding: 0 0 32px;
     }
 
     .site-nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 24px;
+      padding: 12px 20px;
       background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
       border-bottom: 1px solid #ffffff;
       position: sticky;
@@ -298,13 +298,13 @@
     .site-nav-dropdown .site-nav-submenu {
       display: none;
       position: absolute;
-      top: calc(100% + 6px);
+      top: 100%;
       left: 0;
       background: #0f172a;
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 10px;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-      padding: 8px;
+      padding: 12px 10px 10px;
       min-width: 200px;
       z-index: 10;
     }
@@ -574,9 +574,12 @@
       line-height: 1.5;
     }
     .lang-bar {
-      position: fixed;
-      top: 20px;
-      right: 20px;
+      position: relative;
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      justify-content: flex-end;
+      margin: 0 auto 8px;
       z-index: 2;
     }
     .nh48-lang {
@@ -685,15 +688,14 @@
     }
     @media (max-width: 640px) {
       body {
-        padding-top: 120px;
+        padding-top: 0;
         gap: 20px;
       }
       .lang-bar {
-        left: 0;
-        right: 0;
-        width: 100%;
         padding: 0 12px;
-        top: 12px;
+        max-width: none;
+        justify-content: center;
+        margin-bottom: 0;
       }
       .nh48-lang {
         justify-content: center;
@@ -799,9 +801,6 @@
 <body>
   <div id="splash-background" aria-hidden="true"></div>
   <div id="splash-mask" aria-hidden="true"></div>
-  <div class="lang-bar">
-    <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
-  </div>
   <nav class="site-nav" aria-label="Site navigation">
     <a class="site-nav-logo" href="/">
       <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async">
@@ -850,6 +849,9 @@
     </div>
   </nav>
   <main>
+    <div class="lang-bar">
+      <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
+    </div>
     <div class="hero-heading" itemscope itemtype="https://schema.org/Brand">
       <link itemprop="url" href="https://nh48.info/">
       <meta itemprop="name" content="NH48 API">
