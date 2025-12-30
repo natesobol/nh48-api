@@ -36,7 +36,7 @@ const LANGUAGE_CONFIGS = [
     siteName: "NH48 Peak Guide",
     ogLocale: "en_US",
     ogLocaleAlternate: "fr_FR",
-    titleSuffix: "NH 48 Peak Guide",
+    titleSuffix: "NH 4000 Footer Data & API | NH48.info",
     descriptionTemplate: (name) => `${name} guide with route details, elevation, and photos.`,
     summaryFallback: (name) => `${name} is one of the classic New Hampshire 4,000-footers.`,
     defaults: {
@@ -80,7 +80,7 @@ const LANGUAGE_CONFIGS = [
     siteName: "Guide des sommets NH48",
     ogLocale: "fr_FR",
     ogLocaleAlternate: "en_US",
-    titleSuffix: "Guide des sommets NH48",
+    titleSuffix: "Données et API des sommets de 4 000 pieds du NH | NH48.info",
     descriptionTemplate: (name) => `${name} : guide avec itinéraires, altitude et photos.`,
     summaryFallback: (name) => `${name} est l’un des sommets classiques de 4 000 pieds du New Hampshire.`,
     defaults: {
@@ -146,6 +146,14 @@ const buildLocalizedDescription = (langCode, values, summaryText, fallbackBuilde
   return baseDescription;
 };
 
+const buildMetaTitle = (langCode, values, fallbackBuilder) => {
+  const template = I18N[langCode]?.peak?.meta?.titleTemplate;
+  if (template) {
+    return formatTemplate(template, values);
+  }
+  return fallbackBuilder(values);
+};
+
 const localizeFrenchName = (name) => {
   const cleaned = cleanText(name);
   if (!cleaned) return cleaned;
@@ -175,6 +183,13 @@ const numberFrom = (value) => {
   if (!cleaned) return null;
   const match = cleaned.match(/-?\d+(?:\.\d+)?/);
   return match ? Number(match[0]) : null;
+};
+
+const formatFeet = (value) => {
+  const numeric = numberFrom(value);
+  if (numeric === null || Number.isNaN(numeric)) return "";
+  const formatted = numeric.toLocaleString("en-US");
+  return `${formatted}'`;
 };
 
 const escapeHtml = (value) =>
@@ -933,6 +948,21 @@ const main = () => {
       LANGUAGE_CONFIGS.forEach((lang) => {
         const canonicalUrl = `${lang.canonicalBase}/${slug}/`;
         const localizedName = localizePeakName(name, lang.code);
+        const formattedElevation = formatFeet(elevation);
+        const elevationText = formattedElevation || (elevation ? `${elevation} ft` : lang.defaults.unknown);
+        const prominenceText = prominence ? `${prominence} ft` : lang.defaults.unknown;
+        const metaTitle = buildMetaTitle(
+          lang.code,
+          {
+            name: localizedName,
+            elevation: elevationText,
+            elevationFormatted: formattedElevation || elevationText,
+            range: rangeValue || lang.defaults.range,
+            suffix: lang.titleSuffix || lang.siteName || DEFAULT_SITE_NAME,
+            site: lang.siteName || DEFAULT_SITE_NAME,
+          },
+          (values) => `${values.name} (${values.elevationFormatted || values.elevation}) – ${values.suffix}`
+        );
         const { primary: primaryPhoto, imageObjects } = pickPrimaryPhoto(
           peak.photos,
           localizedName,
@@ -958,8 +988,6 @@ const main = () => {
         const difficulty = difficultyValue || lang.defaults.difficulty;
         const trailType = trailTypeValue || lang.defaults.trailType;
         const time = timeValue || lang.defaults.time;
-        const elevationText = elevation ? `${elevation} ft` : lang.defaults.unknown;
-        const prominenceText = prominence ? `${prominence} ft` : lang.defaults.unknown;
         const heroAlt =
           cleanText(primaryPhoto.extendedDescription || primaryPhoto.description) ||
           descriptionText ||
@@ -974,7 +1002,7 @@ const main = () => {
 
         const values = {
           LANG: lang.hreflang,
-          TITLE: escapeHtml(`${localizedName} — White Mountain National Forest`),
+          TITLE: escapeHtml(metaTitle),
           DESCRIPTION: escapeHtml(descriptionText),
           OG_SITE_NAME: escapeHtml(lang.siteName || DEFAULT_SITE_NAME),
           OG_LOCALE: lang.ogLocale || "en_US",

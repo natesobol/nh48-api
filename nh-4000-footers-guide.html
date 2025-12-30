@@ -859,4 +859,523 @@
       document.addEventListener('DOMContentLoaded', init);
     </script>
   </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Complete Guide to the New Hampshire 48 4,000 Footers | NH48 Guide</title>
+  <meta name="description" content="Definitive NH48 guide covering the New Hampshire 4,000 footers with peak list, range filters, winter vs. summer tips, interactive map, ItemList schema, and API resources." />
+  <meta name="keywords" content="NH48 guide, New Hampshire 4000 footers, AMC 4000 footers, hiking NH peaks, NH48 peak data" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://nh48.info/nh-4000-footers-guide" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/nh48API_logo.png">
+  <style>
+    :root {
+      --bg: #0b1021;
+      --panel: #0f172a;
+      --card: #11182d;
+      --ink: #e5ecf5;
+      --muted: #a5b4c3;
+      --stroke: #24324d;
+      --accent: #22c55e;
+      --accent-2: #38bdf8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at 10% 20%, rgba(56,189,248,0.08) 0, transparent 30%),
+                  radial-gradient(circle at 90% 10%, rgba(34,197,94,0.08) 0, transparent 25%),
+                  var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent-2); }
+    header.hero {
+      padding: 32px 16px 24px;
+      background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(56,189,248,0.12));
+      border-bottom: 1px solid var(--stroke);
+    }
+    .max-width { max-width: 1180px; margin: 0 auto; }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; align-items: center; }
+    h1 { margin: 0 0 12px; font-size: clamp(2rem, 3vw + 0.5rem, 3rem); line-height: 1.1; }
+    .hero-eyebrow { text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; color: var(--accent); font-size: 0.85rem; }
+    .hero-copy { font-size: 1.05rem; line-height: 1.6; color: var(--muted); }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+    .btn { border: 1px solid var(--stroke); color: var(--ink); background: var(--card); padding: 12px 16px; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-flex; gap: 8px; align-items: center; }
+    .btn-primary { background: linear-gradient(90deg, #22c55e, #38bdf8); color: #0a0f1a; border: none; box-shadow: 0 8px 22px rgba(34,197,94,0.24); }
+    .panel { background: var(--card); border: 1px solid var(--stroke); border-radius: 16px; padding: 16px; box-shadow: 0 14px 32px rgba(0,0,0,0.28); }
+    .quick-stats { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: 12px; margin-top: 16px; }
+    .stat-card { padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--stroke); border-radius: 12px; }
+    .stat-label { color: var(--muted); font-size: 0.9rem; }
+    .stat-value { font-size: 1.4rem; font-weight: 800; margin-top: 6px; }
+    section { padding: 24px 16px; border-top: 1px solid var(--stroke); }
+    section h2 { margin: 0 0 12px; font-size: 1.6rem; }
+    p { color: var(--muted); line-height: 1.6; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 16px; }
+    .range-filter { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 12px 0 8px; }
+    select, button.toggle { background: var(--card); color: var(--ink); border: 1px solid var(--stroke); padding: 10px 12px; border-radius: 10px; font-weight: 600; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--stroke); border-radius: 14px; }
+    table { width: 100%; border-collapse: collapse; min-width: 640px; }
+    th, td { padding: 12px; border-bottom: 1px solid var(--stroke); text-align: left; }
+    th { background: rgba(255,255,255,0.03); font-size: 0.9rem; color: var(--muted); }
+    tbody tr:hover { background: rgba(34,197,94,0.07); }
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 0.85rem; font-weight: 700; background: rgba(34,197,94,0.14); color: #8ef1b6; border: 1px solid rgba(34,197,94,0.3); }
+    .map { height: 320px; background: radial-gradient(circle at 50% 30%, rgba(56,189,248,0.1), transparent 40%), linear-gradient(180deg, #0c1324, #0b0f1d); border: 1px solid var(--stroke); border-radius: 16px; position: relative; overflow: hidden; }
+    .map svg { width: 100%; height: 100%; }
+    .map .pin { fill: var(--accent); opacity: 0.9; }
+    .range-card h3 { margin: 0 0 6px; }
+    .range-card ul { padding-left: 18px; margin: 0; color: var(--muted); line-height: 1.5; }
+    .toggle-group { display: inline-flex; border: 1px solid var(--stroke); border-radius: 10px; overflow: hidden; margin: 12px 0; }
+    .toggle-group button { border: none; background: transparent; padding: 10px 14px; color: var(--muted); font-weight: 700; cursor: pointer; }
+    .toggle-group button.active { background: rgba(34,197,94,0.18); color: var(--ink); }
+    .faq { margin-top: 10px; }
+    .faq details { border: 1px solid var(--stroke); border-radius: 10px; margin-bottom: 8px; padding: 10px 12px; background: rgba(255,255,255,0.02); }
+    .comparison { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 12px; margin-top: 10px; }
+    .comparison ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+    @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="max-width hero-grid">
+      <div>
+        <div class="hero-eyebrow">NH48 pillar</div>
+        <h1>The Complete Guide to the New Hampshire 48 4,000 Footers</h1>
+        <p class="hero-copy">Build topical authority with the definitive NH48 resource. Explore the official AMC-aligned list, filter by range, compare winter vs. summer strategies, and pull open data directly from the NH48.info API to power your own tools.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#official-list">Browse the NH48 list</a>
+          <a class="btn" href="/pages/nh48_peak.html">View interactive peak pages</a>
+          <a class="btn" href="#api">Developer API docs</a>
+        </div>
+        <div class="panel" id="quickFacts" aria-live="polite">
+          <h2 class="sr-only">Quick facts</h2>
+          <div class="quick-stats"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Range filter</h3>
+        <p class="hero-copy" style="margin:0 0 10px">Browse peaks by their White Mountain neighborhood. Select a cluster to filter the official list and jump to range-specific recommendations.</p>
+        <div class="range-filter">
+          <label for="rangeSelect">Filter by range</label>
+          <select id="rangeSelect" aria-label="Filter peaks by mountain range"></select>
+        </div>
+        <div class="map" aria-hidden="true">
+          <svg id="peakMap" viewBox="0 0 600 320" role="presentation"></svg>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="max-width" id="what-is-nh48">
+      <h2>What is the NH48?</h2>
+      <p>The NH48 are the forty-eight New Hampshire summits that rise above 4,000 feet with at least 200 feet of prominence. The idea emerged in 1931 from Dartmouth librarian Nathaniel L. Goodrich. The AMC Four-Thousand-Footer Club formalized the list in 1957, and the roster grew to 48 peaks in 1980 when Bondcliff and Galehead were added after new USGS surveys.</p>
+      <p>To earn credit, hikers must climb and descend on foot (skis and snowshoes count in winter), skip mechanical assists like the Cog Railway or Cannon Tramway, and complete each peak as a contiguous trip without driving between trailheads mid-hike.</p>
+    </section>
+
+    <section class="max-width" id="official-list">
+      <h2>The Official Peak List</h2>
+      <p>Every NH48 peak links to its dedicated page. Use the range filter or type-ahead search to quickly jump to the summits you need.</p>
+      <div class="range-filter">
+        <label for="searchInput">Search peaks</label>
+        <input id="searchInput" type="search" placeholder="Search by name or range" style="padding:10px 12px;border-radius:10px;border:1px solid var(--stroke);background:var(--card);color:var(--ink);flex:1;min-width:240px;">
+      </div>
+      <div class="table-wrap">
+        <table aria-label="Official NH48 peak list">
+          <thead>
+            <tr>
+              <th scope="col">Peak</th>
+              <th scope="col">Elevation</th>
+              <th scope="col">Range</th>
+              <th scope="col">Difficulty</th>
+              <th scope="col">View / Character</th>
+            </tr>
+          </thead>
+          <tbody id="peakTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="max-width" id="ranges">
+      <h2>Peaks by Mountain Range</h2>
+      <p>Use the NH48 as a hub-and-spoke: explore a range, click into each peak, and flow back to this guide to keep topical coverage tight.</p>
+      <div class="grid" id="rangeGrid"></div>
+    </section>
+
+    <section class="max-width" id="difficulty">
+      <h2>Peak Difficulty &amp; Strategy</h2>
+      <div class="grid">
+        <div class="panel">
+          <h3>First-timer friendly</h3>
+          <ul>
+            <li><strong>Mt. Tecumseh</strong> – shortest mileage and forgiving grade.</li>
+            <li><strong>Mt. Waumbek</strong> – steady forest climb with reliable footing.</li>
+            <li><strong>Mt. Pierce</strong> – classic Presidential views from Crawford Path.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Advanced &amp; remote</h3>
+          <ul>
+            <li><strong>The Bonds</strong> – long mileage and commitment, ideal as overnight traverse.</li>
+            <li><strong>Owl’s Head</strong> – long approach, muddy lower miles, loose slide.</li>
+            <li><strong>The Wildcats</strong> – relentless ascent; feel like a stairmaster.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="max-width" id="seasonal">
+      <h2>Seasonal Considerations</h2>
+      <div class="toggle-group" role="tablist" aria-label="Seasonal tips">
+        <button class="toggle active" data-target="summer" role="tab" aria-selected="true">Summer</button>
+        <button class="toggle" data-target="winter" role="tab" aria-selected="false">Winter</button>
+      </div>
+      <div id="summer" class="panel" role="tabpanel">
+        <h3 style="margin-top:0">Summer game plan</h3>
+        <div class="comparison">
+          <div>
+            <strong>Trail conditions</strong>
+            <ul>
+              <li>Afternoon thunderstorms on exposed ridges—start early.</li>
+              <li>Black flies linger in June; carry headnets.</li>
+              <li>Heat on bald summits like Moosilauke and Washington—sun protection is key.</li>
+            </ul>
+          </div>
+          <div>
+            <strong>Strategy</strong>
+            <ul>
+              <li>Link Franconia Ridge (Lafayette + Lincoln) on clear days for views.</li>
+              <li>Pack extra water for dry stretches on Bondcliff, Garfield Ridge, and the Wildcats.</li>
+              <li>Use ridgeline days to stack nearby peaks: Pierce + Eisenhower or Willey + Field + Tom.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div id="winter" class="panel" role="tabpanel" hidden>
+        <h3 style="margin-top:0">Winter NH48 tactics</h3>
+        <div class="comparison">
+          <div>
+            <strong>Rules &amp; risks</strong>
+            <ul>
+              <li>Separate AMC list for winter (Dec 21 – Mar 21).</li>
+              <li>Carry microspikes and snowshoes; use snowshoes when snow is &gt; 8 inches.</li>
+              <li>Trailhead closures (Tripoli Road, Zealand Road) add road-walk miles.</li>
+            </ul>
+          </div>
+          <div>
+            <strong>Route picks</strong>
+            <ul>
+              <li>Seek packed-out peaks like Tecumseh and Pierce after storms.</li>
+              <li>Plan shorter daylight—bring headlamps even for “quick” hikes.</li>
+              <li>Watch wind on Presidentials; bail via treeline escape routes when needed.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="max-width" id="api">
+      <h2>Data &amp; API Resources</h2>
+      <div class="grid">
+        <div class="panel">
+          <h3>Open data for builders</h3>
+          <p>NH48.info exposes JSON and GeoJSON for peak coordinates, elevation, prominence, trail metadata, and photo alt text. Combine the API with your own weather, tracking, or trip-planning layers.</p>
+          <p><a href="https://nh48.info/data/nh48.json">NH48 JSON dataset</a> • <a href="https://nh48.info/photos/backgrounds/alt-text.json">Photo alt text</a></p>
+          <p class="hero-copy">Call to action: build a badge tracker, snowpack notifier, or embed our dataset in your own “NH48 progress” product. Every integration sends link equity back to this guide.</p>
+        </div>
+        <div class="panel">
+          <h3>NH48 Guide flywheel</h3>
+          <ul>
+            <li>Link out from every peak to its detail page to push authority.</li>
+            <li>Use this guide as the canonical backlink target from peak pages.</li>
+            <li>Developers: cite <code>nh48.info/nh-4000-footers-guide</code> in docs to reinforce the hub.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="max-width" id="faq">
+      <h2>NH48 FAQ</h2>
+      <div class="faq">
+        <details open>
+          <summary>What is the easiest 4,000 footer in New Hampshire?</summary>
+          <p>Most hikers start with Mt. Tecumseh or Mt. Waumbek thanks to modest mileage, steady grades, and reliable winter packing.</p>
+        </details>
+        <details>
+          <summary>Which peak has the best views?</summary>
+          <p>Mt. Carrigain’s fire tower delivers a 360-degree sweep of the Pemigewasset Wilderness, while Lafayette and Washington headline above-treeline panoramas.</p>
+        </details>
+        <details>
+          <summary>Do tram or cog rides count toward the list?</summary>
+          <p>No. The AMC rules require climbing and descending on foot (or skis/snowshoes in winter), so mechanical assistance from the Mt. Washington Cog Railway or Cannon Tramway is not permitted.</p>
+        </details>
+        <details>
+          <summary>How should I link my peak trip reports?</summary>
+          <p>Link each report to the matching NH48 peak page and link back here with the anchor text “NH48 Guide” to reinforce the hub-and-spoke structure.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const rangeOptions = [
+      'All ranges',
+      'Presidential Range',
+      'Franconia Range',
+      'Twin/Bond Range',
+      'Carter-Moriah Range',
+      'Kinsman Range',
+      'Sandwich Range',
+      'Willey Range',
+      'Loners & Remote Peaks'
+    ];
+
+    const rangeBuckets = {
+      'Presidential Range': ['presidential'],
+      'Franconia Range': ['franconia'],
+      'Twin/Bond Range': ['twin', 'bond'],
+      'Carter-Moriah Range': ['carter', 'moriah'],
+      'Kinsman Range': ['kinsman'],
+      'Sandwich Range': ['sandwich', 'osceola', 'waterville'],
+      'Willey Range': ['willey'],
+      'Loners & Remote Peaks': ['carrigain', 'owl', 'pilot', 'pliny', 'pemigewasset']
+    };
+
+    function canonicalRange(rawRange = '', peakName = '') {
+      const lower = rawRange.toLowerCase();
+      for (const [label, needles] of Object.entries(rangeBuckets)) {
+        if (needles.some((n) => lower.includes(n) || peakName.toLowerCase().includes(n))) {
+          return label;
+        }
+      }
+      return 'Other White Mountains';
+    }
+
+    async function loadPeaks() {
+      const res = await fetch('/data/nh48.json');
+      const data = await res.json();
+      return Object.values(data).map((peak) => {
+        const name = peak['Peak Name'] || peak.peakName;
+        const elevation = Number(peak['Elevation (ft)']) || null;
+        const prominence = Number(peak['Prominence (ft)']) || null;
+        const range = canonicalRange(peak['Range / Subrange'] || '', name);
+        const rawRange = peak['Range / Subrange'] || 'White Mountains';
+        const difficulty = peak['Difficulty'] || '—';
+        const view = peak['View Type'] || peak['Terrain Character'] || 'Forest and ridge travel';
+        const coords = (peak['Coordinates'] || '').split(',').map((v) => Number(v.trim()));
+        return { name, slug: peak.slug, elevation, prominence, range, rawRange, difficulty, view, coords };
+      });
+    }
+
+    function renderRangeSelect() {
+      const select = document.getElementById('rangeSelect');
+      rangeOptions.forEach((label) => {
+        const option = document.createElement('option');
+        option.value = label;
+        option.textContent = label;
+        select.appendChild(option);
+      });
+    }
+
+    function formatElevation(value) {
+      return value ? `${value.toLocaleString()} ft` : '—';
+    }
+
+    function renderTable(peaks, activeRange = 'All ranges', query = '') {
+      const tbody = document.getElementById('peakTable');
+      tbody.innerHTML = '';
+      const normalizedQuery = query.toLowerCase();
+      peaks
+        .filter((peak) => activeRange === 'All ranges' || peak.range === activeRange)
+        .filter((peak) => peak.name.toLowerCase().includes(normalizedQuery) || peak.range.toLowerCase().includes(normalizedQuery) || peak.rawRange.toLowerCase().includes(normalizedQuery))
+        .sort((a, b) => b.elevation - a.elevation)
+        .forEach((peak) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><a href="/peaks/${peak.slug}/">${peak.name}</a></td>
+            <td>${formatElevation(peak.elevation)}</td>
+            <td>${peak.range}</td>
+            <td><span class="badge">${peak.difficulty}</span></td>
+            <td>${peak.view}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+    }
+
+    function renderQuickStats(peaks) {
+      const statsWrap = document.querySelector('#quickFacts .quick-stats');
+      const totalElevation = peaks.reduce((sum, p) => sum + (p.elevation || 0), 0);
+      const averageProminence = peaks.reduce((sum, p) => sum + (p.prominence || 0), 0) / (peaks.length || 1);
+      const highest = peaks.reduce((max, p) => (p.elevation > (max.elevation || 0) ? p : max), {});
+      const presidentialCount = peaks.filter((p) => p.range === 'Presidential Range').length;
+      statsWrap.innerHTML = `
+        <div class="stat-card"><div class="stat-label">Total peaks</div><div class="stat-value">${peaks.length}</div></div>
+        <div class="stat-card"><div class="stat-label">Summit elevation sum</div><div class="stat-value">${Math.round(totalElevation).toLocaleString()} ft</div></div>
+        <div class="stat-card"><div class="stat-label">Avg prominence</div><div class="stat-value">${Math.round(averageProminence).toLocaleString()} ft</div></div>
+        <div class="stat-card"><div class="stat-label">Highest peak</div><div class="stat-value">${highest.name || 'Mount Washington'} (${formatElevation(highest.elevation)})</div></div>
+        <div class="stat-card"><div class="stat-label">Presidentials on the list</div><div class="stat-value">${presidentialCount} peaks</div></div>
+      `;
+    }
+
+    function renderRangeGrid(peaks) {
+      const grid = document.getElementById('rangeGrid');
+      const grouped = peaks.reduce((acc, peak) => {
+        acc[peak.range] = acc[peak.range] || [];
+        acc[peak.range].push(peak);
+        return acc;
+      }, {});
+      grid.innerHTML = '';
+      rangeOptions.filter((r) => r !== 'All ranges').forEach((range) => {
+        const list = grouped[range] || [];
+        if (!list.length) return;
+        const card = document.createElement('div');
+        card.className = 'panel range-card';
+        card.innerHTML = `<h3>${range}</h3><ul>${list
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map((p) => `<li><a href="/peaks/${p.slug}/">${p.name}</a> — ${formatElevation(p.elevation)}</li>`)
+          .join('')}</ul>`;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderMap(peaks) {
+      const svg = document.getElementById('peakMap');
+      const coords = peaks.map((p) => ({
+        lat: p.coords[0],
+        lon: p.coords[1],
+        name: p.name,
+        slug: p.slug
+      })).filter((c) => Number.isFinite(c.lat) && Number.isFinite(c.lon));
+      const minLat = Math.min(...coords.map((c) => c.lat));
+      const maxLat = Math.max(...coords.map((c) => c.lat));
+      const minLon = Math.min(...coords.map((c) => c.lon));
+      const maxLon = Math.max(...coords.map((c) => c.lon));
+      const pad = 12;
+      svg.innerHTML = '';
+      coords.forEach((c) => {
+        const x = ((c.lon - minLon) / (maxLon - minLon)) * (600 - pad * 2) + pad;
+        const y = (1 - (c.lat - minLat) / (maxLat - minLat)) * (320 - pad * 2) + pad;
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', x.toFixed(2));
+        circle.setAttribute('cy', y.toFixed(2));
+        circle.setAttribute('r', 5);
+        circle.setAttribute('class', 'pin');
+        circle.setAttribute('data-name', c.name);
+        circle.setAttribute('data-slug', c.slug);
+        circle.addEventListener('click', () => {
+          window.location.href = `/peaks/${c.slug}/`;
+        });
+        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        title.textContent = c.name;
+        circle.appendChild(title);
+        svg.appendChild(circle);
+      });
+    }
+
+    function buildItemListSchema(peaks) {
+      const itemList = {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'New Hampshire 4000 Footers',
+        itemListElement: peaks
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map((peak, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: `https://nh48.info/peaks/${peak.slug}/`,
+            name: peak.name
+          }))
+      };
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.textContent = JSON.stringify(itemList, null, 2);
+      document.head.appendChild(script);
+    }
+
+    function buildFaqSchema() {
+      const faqSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'What is the easiest 4,000 footer in New Hampshire?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Mt. Tecumseh and Mt. Waumbek are commonly recommended starters thanks to moderate grades and packed-in winter traffic.'
+            }
+          },
+          {
+            '@type': 'Question',
+            name: 'Which NH48 peak has the best views?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Mt. Carrigain offers 360-degree views from its fire tower, while Lafayette and Washington deliver marquee alpine panoramas.'
+            }
+          },
+          {
+            '@type': 'Question',
+            name: 'Do cog or tram rides count toward the NH48 list?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'No. The AMC Four-Thousand-Footer Club requires hiking up and down on foot (or with skis/snowshoes in winter); mechanical assists like the Mt. Washington Cog Railway or Cannon Tramway do not qualify.'
+            }
+          },
+          {
+            '@type': 'Question',
+            name: 'How do I link to keep NH48 internal equity strong?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Link each summit mention to its /peaks/ page and add a return link with the anchor text "NH48 Guide" pointing back to /nh-4000-footers-guide.'
+            }
+          }
+        ]
+      };
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.textContent = JSON.stringify(faqSchema, null, 2);
+      document.head.appendChild(script);
+    }
+
+    function bindSeasonToggles() {
+      const toggles = document.querySelectorAll('.toggle-group button');
+      toggles.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          toggles.forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          document.querySelectorAll('#summer, #winter').forEach((panel) => {
+            panel.hidden = panel.id !== btn.dataset.target;
+            panel.setAttribute('aria-hidden', panel.hidden ? 'true' : 'false');
+          });
+        });
+      });
+    }
+
+    function wireInteractions(peaks) {
+      const select = document.getElementById('rangeSelect');
+      const search = document.getElementById('searchInput');
+      const update = () => renderTable(peaks, select.value, search.value);
+      select.addEventListener('change', update);
+      search.addEventListener('input', update);
+      update();
+    }
+
+    (async function initGuide() {
+      renderRangeSelect();
+      bindSeasonToggles();
+      const peaks = await loadPeaks();
+      renderTable(peaks);
+      renderQuickStats(peaks);
+      renderRangeGrid(peaks);
+      renderMap(peaks);
+      buildItemListSchema(peaks);
+      buildFaqSchema();
+      wireInteractions(peaks);
+    })();
+  </script>
+</body>
 </html>
