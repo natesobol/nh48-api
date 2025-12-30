@@ -521,6 +521,55 @@
       background: transparent;
       color: #22c55e;
     }
+
+    /* Floating peak labels */
+    .peak-label {
+      position: absolute;
+      font-weight: 600;
+      font-family: "Inter", "Montserrat", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text-color, #ffffff);
+      white-space: nowrap;
+      pointer-events: none;
+      --label-scale: 1.18;
+      --float-distance: 32px;
+      --parallax-x: 0px;
+      --parallax-y: 0px;
+      animation-name: float;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+      transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0) translateY(0) scale(var(--label-scale));
+    }
+
+    .peak-name {
+      font-size: 1.25rem;
+      margin-right: 8px;
+      letter-spacing: 0.1px;
+    }
+
+    .peak-elevation {
+      font-size: 1.05rem;
+      opacity: 0.82;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0) translateY(0) scale(var(--label-scale, 1));
+      }
+      50% {
+        transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0)
+          translateY(calc(-1 * var(--float-distance, 32px)))
+          scale(var(--label-scale, 1));
+      }
+      100% {
+        transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0) translateY(0) scale(var(--label-scale, 1));
+      }
+    }
+
+    @media (max-width: 768px) {
+      #floating-peaks .peak-label:nth-child(n + 6) {
+        display: none;
+      }
+    }
     .meta {
       margin-top: 16px;
       font-size: 0.9rem;
@@ -860,6 +909,8 @@
     </a>
   </div>
 </nav>
+  <!-- Floating peaks container -->
+  <div id="floating-peaks" style="position: relative; width: 100%; height: 0; pointer-events: none;"></div>
   <main>
     <div class="lang-bar">
       <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
@@ -1390,6 +1441,87 @@
   </div>
 </footer>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const peaks = [
+        { name: 'Washington', elevation: "6,288'" },
+        { name: 'Adams', elevation: "5,774'" },
+        { name: 'Jefferson', elevation: "5,712'" },
+        { name: 'Madison', elevation: "5,367'" },
+        { name: 'Moosilauke', elevation: "4,802'" },
+        { name: 'Carrigain', elevation: "4,682'" },
+        { name: 'Lincoln', elevation: "5,089'" },
+        { name: 'Lafayette', elevation: "5,249'" },
+        { name: 'South Twin', elevation: "4,902'" },
+        { name: 'Cannon', elevation: "4,080'" },
+        { name: 'Eisenhower', elevation: "4,780'" },
+        { name: 'Pierce', elevation: "4,312'" }
+      ];
+
+      const container = document.getElementById('floating-peaks');
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      const labelStates = [];
+
+      peaks.forEach((peak) => {
+        const label = document.createElement('div');
+        label.classList.add('peak-label');
+        label.innerHTML = `
+          <span class="peak-name">${peak.name}</span>
+          <span class="peak-elevation">${peak.elevation}</span>
+        `;
+        label.style.left = `${10 + Math.random() * 80}%`;
+        label.style.top = `${10 + Math.random() * 80}vh`;
+
+        const duration = 4 + Math.random() * 4;
+        const delay = Math.random() * 3;
+        label.style.animationDuration = `${duration}s`;
+        label.style.animationDelay = `${delay}s`;
+
+        const scale = 1.1 + Math.random() * 0.45;
+        label.style.setProperty('--label-scale', scale.toFixed(2));
+
+        const floatDistance = 24 + Math.random() * 28;
+        label.style.setProperty('--float-distance', `${floatDistance.toFixed(2)}px`);
+
+        container.appendChild(label);
+
+        labelStates.push({
+          element: label,
+          depth: 6 + Math.random() * 14,
+          lag: 0.08 + Math.random() * 0.12,
+          currentX: 0,
+          currentY: 0
+        });
+      });
+
+      let pointerX = 0;
+      let pointerY = 0;
+
+      document.addEventListener('mousemove', (event) => {
+        pointerX = (event.clientX / viewportWidth - 0.5) * 2;
+        pointerY = (event.clientY / viewportHeight - 0.5) * 2;
+      });
+
+      const stepParallax = () => {
+        labelStates.forEach((state) => {
+          const desiredX = pointerX * state.depth * 8;
+          const desiredY = pointerY * state.depth * 8;
+
+          state.currentX += (desiredX - state.currentX) * state.lag;
+          state.currentY += (desiredY - state.currentY) * state.lag;
+
+          state.element.style.setProperty('--parallax-x', `${state.currentX.toFixed(2)}px`);
+          state.element.style.setProperty('--parallax-y', `${state.currentY.toFixed(2)}px`);
+        });
+
+        requestAnimationFrame(stepParallax);
+      };
+
+      stepParallax();
+    });
+  </script>
   <script>
     if (!localStorage.getItem('nh48_lang')) {
       localStorage.setItem('nh48_lang', 'en');
