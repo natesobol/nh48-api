@@ -262,21 +262,44 @@
       }
     </style>
   </head>
-  <body data-page="info">
+  <body data-route="info" data-page="info">
     <div id="nav-placeholder"></div>
     <script>
-      const navPlaceholder = document.getElementById('nav-placeholder');
-      fetch('/pages/nav.html')
-        .then((r) => r.text())
-        .then((html) => {
-          navPlaceholder.innerHTML = html;
-          const activeLink = navPlaceholder.querySelector('[data-route="info"]');
-          if (activeLink) {
-            activeLink.classList.add('active');
-            activeLink.setAttribute('aria-current', 'page');
-          }
-        })
-        .catch((err) => console.error('Navigation failed to load', err));
+      document.addEventListener('DOMContentLoaded', () => {
+        const navPlaceholder = document.getElementById('nav-placeholder');
+        const footerPlaceholder = document.getElementById('footer-placeholder');
+        const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+        if (navPlaceholder) {
+          fetch('/pages/nav.html')
+            .then((r) => r.text())
+            .then((html) => {
+              navPlaceholder.innerHTML = html;
+              const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+              links.forEach((link) => {
+                const routes = (link.dataset.routes || link.dataset.route || '')
+                  .split(',')
+                  .map((value) => value.trim())
+                  .filter(Boolean);
+
+                if (routes.includes(activeRoute)) {
+                  link.classList.add('active');
+                  link.setAttribute('aria-current', 'page');
+                }
+              });
+            })
+            .catch((err) => console.error('Navigation failed to load', err));
+        }
+
+        if (footerPlaceholder) {
+          fetch('/pages/footer.html')
+            .then((r) => r.text())
+            .then((html) => {
+              footerPlaceholder.innerHTML = html;
+            })
+            .catch((err) => console.error('Footer failed to load', err));
+        }
+      });
     </script>
 
     <main class="wrap">
@@ -874,6 +897,7 @@
       }
 
       document.addEventListener('DOMContentLoaded', init);
-    </script>
-  </body>
+  </script>
+  <div id="footer-placeholder"></div>
+</body>
 </html>
