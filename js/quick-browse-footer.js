@@ -184,7 +184,7 @@
   };
 
   const injectFooter = () => {
-    if (document.getElementById(FOOTER_ID) || document.querySelector(`[${FOOTER_ATTR}]`) || document.querySelector('.nh48-quick-footer')) {
+    if (document.querySelector(`[${FOOTER_ATTR}]`)) {
       return;
     }
 

@@ -12,9 +12,8 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: min(420px, 80vh);
-    max-height: 420px;
-    overflow: hidden;
+    max-height: none;
+    overflow: visible;
   }
 
   .nh48-quick-footer__header {
@@ -101,6 +100,7 @@
     padding: 6px 4px 8px;
     flex: 1 1 auto;
     overflow-y: auto;
+    overscroll-behavior: contain;
     scrollbar-width: thin;
     scrollbar-color: rgba(43, 216, 121, 0.6) rgba(255, 255, 255, 0.08);
   }
@@ -203,7 +203,6 @@
   @media (max-width: 780px) {
     .nh48-quick-footer {
       padding: 18px 14px 12px;
-      height: min(420px, 78vh);
     }
     .nh48-quick-footer__grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -222,7 +221,7 @@
     }
   }
 </style>
-<footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
+<footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer="true">
   <div class="nh48-quick-footer__header">
     <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
     <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>
