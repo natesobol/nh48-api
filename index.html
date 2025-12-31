@@ -1184,11 +1184,13 @@
     grid-auto-flow: column;
     grid-auto-columns: minmax(var(--nh48-footer-grid-min), 1fr);
     align-items: stretch;
-    justify-content: start;
+    justify-content: center;
+    justify-items: center;
     gap: 14px;
-    width: min(2200px, 98vw);
+    width: min(2200px, 100%);
     margin: 6px auto 0;
-    padding: 8px clamp(12px, 2vw, 22px) 8px;
+    padding: 8px clamp(14px, 3vw, 28px) 8px;
+    scroll-padding-inline: clamp(14px, 3vw, 28px);
     overflow-x: auto;
     overflow-y: auto;
     max-height: 300px;
@@ -1224,6 +1226,7 @@
     max-width: 260px;
     text-align: center;
     scroll-snap-align: start;
+    margin-inline: auto;
   }
 
   .nh48-quick-footer__group h2 {
@@ -1315,6 +1318,11 @@
       max-height: 340px;
       overflow-x: hidden;
       scroll-snap-type: y proximity;
+      justify-content: center;
+      justify-items: center;
+      width: 100%;
+      padding: 8px clamp(14px, 4vw, 22px) 10px;
+      scroll-padding-inline: clamp(14px, 4vw, 22px);
     }
 
     .nh48-quick-footer .nh48-quick-footer__group {
