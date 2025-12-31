@@ -1,4 +1,5 @@
-const SPLASH_ICON_PATH = "/photos/";
+const SPLASH_ICON_PATH =
+  "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=1200/";
 const SPLASH_ALT_TEXT_PATH = "/photos/backgrounds/alt-text.json";
 const MAX_SPLASH_ICONS = 40;
 const SPLASH_MIN_DURATION_S = 18;

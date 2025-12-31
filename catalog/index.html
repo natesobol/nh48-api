@@ -257,7 +257,10 @@
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
+      const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85,width=720';
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
+      const PHOTO_BASE = new URL(PHOTO_BASE_URL);
+      const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
       const PHOTO_PATH_PREFIX = '/nh48-photos/';
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
@@ -301,6 +304,23 @@
           return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
         }
         return url;
+      }
+
+      function toTransformedPhotoUrl(url){
+        const normalized = normalizePhotoUrl(url);
+        if(!normalized) return normalized;
+        try{
+          const parsed = normalized.startsWith('http') ? new URL(normalized) : new URL(normalized, PHOTO_BASE.origin);
+          if(parsed.pathname.startsWith('/cdn-cgi/image/')){
+            return normalized;
+          }
+          if(parsed.origin === PHOTO_BASE.origin){
+            return `${IMAGE_TRANSFORM_PREFIX}${parsed.pathname}${parsed.search || ''}`;
+          }
+        } catch(e){
+          return normalized;
+        }
+        return normalized;
       }
 
       // Pagination
@@ -585,9 +605,9 @@
           const first = p.photos[0];
           thumbAlt = buildPhotoAlt(p, first);
           if (typeof first === 'string') {
-            thumbSrc = normalizePhotoUrl(first);
+            thumbSrc = toTransformedPhotoUrl(first);
           } else if (first && first.url) {
-            thumbSrc = normalizePhotoUrl(first.url);
+            thumbSrc = toTransformedPhotoUrl(first.url);
           }
         }
 
@@ -634,9 +654,9 @@
           const first = p.photos[0];
           thumbAlt = buildPhotoAlt(p, first);
           if (typeof first === 'string') {
-            thumbSrc = normalizePhotoUrl(first);
+            thumbSrc = toTransformedPhotoUrl(first);
           } else if (first && first.url) {
-            thumbSrc = normalizePhotoUrl(first.url);
+            thumbSrc = toTransformedPhotoUrl(first.url);
           }
         }
 
