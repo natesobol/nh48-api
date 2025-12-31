@@ -12,7 +12,7 @@
     border: 0;
     border-top: 1px solid var(--nh48-footer-border);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    padding: clamp(16px, 2vw, 22px) 0 clamp(8px, 1.5vw, 14px);
+    padding: clamp(16px, 2vw, 22px) 0 0;
     color: var(--nh48-footer-ink);
     display: flex;
     flex-direction: column;
@@ -241,7 +241,7 @@
   @media (max-width: 768px) {
     .nh48-quick-footer {
       margin: 24px auto 10px;
-      padding: 14px clamp(12px, 4vw, 18px) 12px;
+      padding: 14px clamp(12px, 4vw, 18px) 0;
       width: min(720px, 100%);
       min-height: 0;
       max-height: none;
