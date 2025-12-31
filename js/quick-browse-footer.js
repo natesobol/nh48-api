@@ -3,6 +3,8 @@
   const STYLE_ATTR = 'data-nh48-quick-footer-style';
   const FOOTER_ATTR = 'data-nh48-quick-footer';
   const PARTIAL_URL = '/pages/footer.html';
+  const FOOTER_LEGAL_TEXT = '© 2026 Nathan Sobol · White Mountains data, trails & photos';
+  const PEMI_HEADING_TEXT = 'Pemigewasset';
   const UNIFIED_FOOTER_CSS = `
 .nh48-quick-footer {
     --nh48-footer-grid-min: clamp(160px, 17vw, 230px);
@@ -18,7 +20,7 @@
     border: 0;
     border-top: 1px solid var(--nh48-footer-border);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    padding: clamp(16px, 2vw, 22px) 0 clamp(8px, 1.5vw, 14px);
+    padding: clamp(16px, 2vw, 22px) 0 0;
     color: var(--nh48-footer-ink);
     display: flex;
     flex-direction: column;
@@ -247,7 +249,7 @@
   @media (max-width: 768px) {
     .nh48-quick-footer {
       margin: 24px auto 10px;
-      padding: 14px clamp(12px, 4vw, 18px) 12px;
+      padding: 14px clamp(12px, 4vw, 18px) 0;
       width: min(720px, 100%);
       min-height: 0;
       max-height: none;
@@ -279,6 +281,20 @@
       .replace(/\s*–\s*/g, ' – ')
       .replace(/\s*-\s*/g, ' - ')
       .trim();
+  };
+
+  const harmonizeFooterCopy = (footerEl) => {
+    if (!footerEl) return;
+    footerEl.querySelectorAll('.nh48-quick-footer__group h2').forEach((heading) => {
+      if (/^Pemigewasset\b/i.test(heading.textContent.trim())) {
+        heading.textContent = PEMI_HEADING_TEXT;
+      }
+    });
+
+    const legal = footerEl.querySelector('.nh48-quick-footer__legal');
+    if (legal) {
+      legal.textContent = FOOTER_LEGAL_TEXT;
+    }
   };
   const POPULAR_PEAKS = [
     { slug: 'mount-washington', name: 'Mount Washington', label: 'Washington' },
@@ -456,6 +472,7 @@
   };
 
   const enhanceFooter = (footerEl, peaks) => {
+    harmonizeFooterCopy(footerEl);
     const grid = footerEl.querySelector('.nh48-quick-footer__grid');
     normalizeExistingLinks(grid);
     if (footerEl.querySelector('.nh48-quick-footer__controls')) return;
