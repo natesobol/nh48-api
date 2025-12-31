@@ -219,10 +219,6 @@
             <option value="list">List</option>
           </select>
         </div>
-        <div class="control api-variables-control">
-          <label for="apiVariablesToggle">API Variables</label>
-          <input type="checkbox" id="apiVariablesToggle" aria-label="Toggle API variable labels">
-        </div>
         <div class="control nh48-lang-control">
           <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
         </div>
@@ -355,13 +351,11 @@
       let activeSort = 'name';
 
       const UNIT_STORAGE_KEY = 'nh48_units';
-      const API_VARIABLES_STORAGE_KEY = 'nh48-catalog-api-variables';
       const UNITS = {
         FEET: 'feet',
         METERS: 'meters'
       };
       let currentUnits = UNITS.FEET;
-      let showApiVariables = false;
 
       const FRIENDLY_LABELS = {
         elevation: 'catalog.card.elevation',
@@ -381,19 +375,7 @@
         exposure: 'Exposure'
       };
 
-      const API_LABELS = {
-        elevation: 'Elevation (ft)',
-        prominence: 'Prominence (ft)',
-        range: 'Range / Subrange',
-        trailType: 'Trail Type',
-        difficulty: 'Difficulty',
-        exposure: 'Exposure Level'
-      };
-
       function getCatalogLabel(key){
-        if(showApiVariables){
-          return API_LABELS[key] || key;
-        }
         const i18nKey = FRIENDLY_LABELS[key];
         if(i18nKey){
           const translated = t(i18nKey);
@@ -506,7 +488,7 @@
       };
 
       function translateTrailType(value){
-        if(!value || showApiVariables) return value;
+        if(!value) return value;
         const key = TRAIL_TYPE_TRANSLATIONS[value];
         if(!key) return value;
         const translated = t(key);
@@ -514,7 +496,7 @@
       }
 
       function translateDifficulty(value){
-        if(!value || showApiVariables) return value;
+        if(!value) return value;
         const key = DIFFICULTY_TRANSLATIONS[value];
         if(!key) return value;
         const translated = t(key);
@@ -522,7 +504,7 @@
       }
 
       function translateExposure(value){
-        if(!value || showApiVariables) return value;
+        if(!value) return value;
         const trimmed = String(value).trim();
         const match = trimmed.match(/^(Low to Medium|Low|Medium|High)/i);
         if(!match) return value;
@@ -557,17 +539,6 @@
         }
         if(persist){
           localStorage.setItem(UNIT_STORAGE_KEY, units);
-        }
-      }
-
-      function setApiVariableLabels(enabled, { persist = true } = {}){
-        showApiVariables = Boolean(enabled);
-        const toggle = document.getElementById('apiVariablesToggle');
-        if(toggle){
-          toggle.checked = showApiVariables;
-        }
-        if(persist){
-          localStorage.setItem(API_VARIABLES_STORAGE_KEY, showApiVariables ? 'true' : 'false');
         }
       }
 
@@ -926,14 +897,6 @@
             trackEvent('catalog_units_change', { units: e.target.value });
           });
         }
-        const apiVariablesToggle = document.getElementById('apiVariablesToggle');
-        if(apiVariablesToggle){
-          apiVariablesToggle.addEventListener('change', (e) => {
-            setApiVariableLabels(e.target.checked);
-            updateDisplay();
-            trackEvent('catalog_api_variables_toggle', { enabled: e.target.checked });
-          });
-        }
       }
 
       window.addEventListener('load', init);
@@ -987,11 +950,6 @@
 
       syncUnitsWithLanguage(window.NH48_I18N ? window.NH48_I18N.getLang() : 'en');
 
-      const savedApiVariables = localStorage.getItem(API_VARIABLES_STORAGE_KEY);
-      if(savedApiVariables === 'true'){
-        setApiVariableLabels(true, { persist: false });
-      }
-      
       columnSelect.addEventListener('change', function() {
         const columns = this.value;
         grid.setAttribute('data-columns', columns);

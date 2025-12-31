@@ -162,7 +162,7 @@ input[list]::-webkit-list-button {
   display: none;
 }
 @media(max-width:640px){
-  .search{ margin-bottom:10px; }
+  .search{ margin-bottom:12px; }
   .search input{ height:36px; font-size:14px; padding:0 10px; }
 }
 
@@ -205,14 +205,6 @@ input[list]::-webkit-list-button {
   background-repeat:no-repeat;
   background-position:right 10px center;
   background-size:12px;
-}
-.control.api-variables-control{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-.control.api-variables-control label{
-  margin-right:0;
 }
 .controls input[type="checkbox"]{
   width:16px;
@@ -335,9 +327,43 @@ input[list]::-webkit-list-button {
   outline-offset:2px;
 }
 @media(max-width:640px){
-  .controls{ gap:8px; margin-bottom:10px; }
-  .controls label{ font-size:0.75rem; margin-right:2px; }
-  .controls select{ padding:4px 8px; font-size:0.8rem; }
+  /* Improve mobile layout for controls */
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  /* Each control takes full width and spaces label & input */
+  .controls .control {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Make selects grow to fill remaining space */
+  .controls .control select {
+    flex: 1;
+    min-width: 0;
+    padding:4px 8px;
+    font-size:0.8rem;
+  }
+
+  /* Adjust language picker to stretch like other controls */
+  .controls .control.nh48-lang-control {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* Reduce font size slightly for long labels */
+  .controls label {
+    font-size: 0.75rem;
+    margin-right: 4px;
+  }
+
   .nh48-flag{ width:32px; height:32px; }
 }
 
