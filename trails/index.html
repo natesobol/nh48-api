@@ -767,6 +767,29 @@
       line-height: 1.5;
     }
 
+    .trail-info-about {
+      padding: 0.75rem;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      text-align: left;
+    }
+
+    .trail-info-about h3 {
+      margin: 0 0 0.25rem;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      text-align: left;
+    }
+
+    .trail-info-about p {
+      margin: 0;
+      text-align: left;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      font-size: 0.9rem;
+    }
+
     .peakbagger-panel .cta {
       display: flex;
       flex-direction: column;
@@ -1198,8 +1221,12 @@
         <p id="map-accessibility-note" class="sr-only">High-contrast basemap with green trail lines, white selection outlines, and large circular markers for route highlights. Popups list trail length, elevation context, and OpenStreetMap details. Keyboard users can tab into the map to move focus to interactive controls.</p>
       </div>
       <div id="trailInfoPanel" class="trail-info-panel">
-        <h2 data-i18n="trails.details.title">Trail details</h2>
-        <p data-i18n="trails.details.empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
+        <h2 class="trail-info-heading">Select a trail to view details</h2>
+        <p class="trail-info-empty" data-i18n="trails.details.empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
+        <div class="trail-info-about">
+          <h3 data-i18n="trails.about.title">About this list</h3>
+          <p data-i18n="trails.about.body">NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths.</p>
+        </div>
       </div>
     </div>
     <div id="panelResizer" role="separator" data-i18n="trails.resizePanels" data-i18n-attr="aria-label" aria-label="Resize panels"></div>
@@ -1236,10 +1263,6 @@
       </div>
     </div>
       <div class="info-panel about-panel">
-        <details open>
-          <summary data-i18n="trails.about.title">About this list</summary>
-          <p data-i18n="trails.about.body">NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths.</p>
-        </details>
         <details open>
           <summary data-i18n="trails.disclaimer.title">Disclaimer</summary>
           <p data-i18n-html="trails.disclaimer.body">This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry.</p>
@@ -1718,8 +1741,12 @@
 
         if (!name) {
           trailInfoPanel.innerHTML = `
-            <h2>${t('trails.details.title')}</h2>
+            <h2 class="trail-info-heading">Select a trail to view details</h2>
             <p class="trail-info-empty">${t('trails.details.empty')}</p>
+            <div class="trail-info-about">
+              <h3>${t('trails.about.title')}</h3>
+              <p>${t('trails.about.body')}</p>
+            </div>
           `;
           return;
         }
