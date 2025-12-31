@@ -240,8 +240,9 @@
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
       const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85';
-      const IMAGE_TRANSFORM_PREFIX = `https://nh48.info/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}/`;
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
+      const PHOTO_BASE = new URL(PHOTO_BASE_URL);
+      const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
       const PHOTO_PATH_PREFIX = '/nh48-photos/';
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
@@ -321,8 +322,15 @@
       }
 
       function applyImageTransform(url){
-        if(url && url.startsWith('http') && url.includes('photos.nh48.info')){
-          return `${IMAGE_TRANSFORM_PREFIX}${url}`;
+        if(!url) return url;
+        try {
+          const parsed = new URL(url, window.location.origin);
+          if(parsed.hostname === PHOTO_BASE.hostname){
+            const normalizedPath = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
+            return `${IMAGE_TRANSFORM_PREFIX}${normalizedPath}`;
+          }
+        } catch (err) {
+          console.warn('Unable to normalize photo URL', url, err);
         }
         return url;
       }
