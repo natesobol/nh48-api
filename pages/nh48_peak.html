@@ -984,32 +984,45 @@
       const HOME_URL = 'https://nh48.info/';
       const CATALOG_URL = 'https://nh48.info/catalog';
       const DEFAULT_OG_IMAGE = 'https://nh48.info/nh48API_logo.png';
+      const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85';
+      const IMAGE_TRANSFORM_PREFIX = `https://nh48.info/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}/`;
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
       const PHOTO_PATH_PREFIX = '/nh48-photos/';
 
+      function applyImageTransform(url){
+        if(url && url.startsWith('http') && url.includes('photos.nh48.info')){
+          return `${IMAGE_TRANSFORM_PREFIX}${url}`;
+        }
+        return url;
+      }
+
       function normalizePhotoUrl(url){
         if(!url) return url;
-        if(url.startsWith(PHOTO_BASE_URL)) return url;
+        if(url.startsWith(PHOTO_BASE_URL)) return applyImageTransform(url);
         const isJsdelivrPhoto = url.includes('cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/');
         const isGithubRawPhoto = url.includes('raw.githubusercontent.com/natesobol/nh48-api/main/photos/');
         const isR2PathStyle = url.includes('r2.cloudflarestorage.com/nh48-photos/');
         const isR2BucketHost = url.includes('r2.cloudflarestorage.com/') && !url.includes('/nh48-photos/');
+        let normalized = url;
         if(isR2PathStyle){
           const [, tail] = url.split(PHOTO_PATH_PREFIX);
-          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+          normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
         }
         if(isR2BucketHost){
           const bucketTail = url.split('r2.cloudflarestorage.com/')[1];
           if(bucketTail){
             const normalizedTail = bucketTail.replace(/^nh48-photos\//, '');
-            return `${PHOTO_BASE_URL}/${normalizedTail}`;
+            normalized = `${PHOTO_BASE_URL}/${normalizedTail}`;
           }
         }
         if(isJsdelivrPhoto || isGithubRawPhoto){
           const [, tail] = url.split('/photos/');
-          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+          normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
         }
-        return url;
+        if(normalized.startsWith(PHOTO_BASE_URL)){
+          return applyImageTransform(normalized);
+        }
+        return normalized;
       }
 
       function setMeta(name, content){
