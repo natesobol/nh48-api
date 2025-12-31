@@ -1562,6 +1562,8 @@
 
       spawnNextLabel();
 
+      floatingLabels.forEach((labelObj) => startTypingAnimation(labelObj));
+
       const updateViewport = () => {
         viewport.width = window.innerWidth;
         viewport.height = window.innerHeight;
