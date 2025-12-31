@@ -218,9 +218,9 @@
     }
 
     #map {
-      height: 100%;
+      height: clamp(280px, 55vh, 520px);
       width: 100%;
-      min-height: 360px;
+      min-height: 280px;
     }
 
     .section-details {
@@ -520,21 +520,28 @@
       }
     }
 
-    @media (max-width: 900px){
+    @media (max-width: 900px) {
       #app {
         grid-template-columns: 1fr;
-        height: auto;
-      }
-
-      .sidebar {
-        max-height: 220px;
-        overflow-y: auto;
+        grid-auto-rows: auto;
+        padding: 0 var(--page-padding) clamp(80px, 12vh, 120px);
+        gap: 16px;
       }
 
       .map-panel {
-        height: 60vh;
+        order: 1;
+        min-height: unset;
       }
 
+      #map {
+        height: clamp(260px, 50vh, 420px);
+        min-height: 260px;
+      }
+
+      .sidebar {
+        order: 2;
+        max-height: none;
+      }
     }
 
     @media (max-width: 700px){
