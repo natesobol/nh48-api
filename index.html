@@ -567,12 +567,6 @@
       letter-spacing: 0.18px;
     }
 
-    .peak-label--elevation {
-      font-size: 1.12rem;
-      opacity: 0.84;
-      letter-spacing: 0.12px;
-    }
-
     @media (max-width: 768px) {
       #floating-peaks .peak-label:nth-child(n + 9) {
         display: none;
@@ -1460,23 +1454,25 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const peaks = [
-        { name: 'Washington', elevation: "6,288'" },
-        { name: 'Adams', elevation: "5,774'" },
-        { name: 'Jefferson', elevation: "5,712'" },
-        { name: 'Madison', elevation: "5,367'" },
-        { name: 'Moosilauke', elevation: "4,802'" },
-        { name: 'Carrigain', elevation: "4,682'" },
-        { name: 'Lincoln', elevation: "5,089'" },
-        { name: 'Lafayette', elevation: "5,249'" },
-        { name: 'South Twin', elevation: "4,902'" },
-        { name: 'Cannon', elevation: "4,080'" },
-        { name: 'Eisenhower', elevation: "4,780'" },
-        { name: 'Pierce', elevation: "4,312'" }
+        'Washington',
+        'Adams',
+        'Jefferson',
+        'Madison',
+        'Moosilauke',
+        'Carrigain',
+        'Lincoln',
+        'Lafayette',
+        'South Twin',
+        'Cannon',
+        'Eisenhower',
+        'Pierce'
       ];
 
       const container = document.getElementById('floating-peaks');
       const floatingLabels = [];
       const viewport = { width: window.innerWidth, height: window.innerHeight };
+
+      const randomInRange = (min, max) => min + Math.random() * (max - min);
 
       const createFloatingLabel = (text, variant) => {
         const label = document.createElement('div');
@@ -1484,7 +1480,7 @@
         label.textContent = '';
 
         const scale = 1.18 + Math.random() * 0.55;
-        const speed = 3 + Math.random() * 3;
+        const speed = randomInRange(25, 55);
         const angle = Math.random() * Math.PI * 2;
         const velocity = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
 
@@ -1511,40 +1507,60 @@
       };
 
       const startTypingAnimation = (labelObj) => {
-        const typingSpeed = 70 + Math.random() * 60;
-        const deleteSpeed = 60 + Math.random() * 50;
-        const holdDuration = 1200 + Math.random() * 800;
-        const restartDelay = 500 + Math.random() * 600;
+        const typingSpeed = randomInRange(110, 170);
+        const deleteSpeed = randomInRange(90, 150);
+        const visibleDuration = randomInRange(20000, 30000);
+        const hiddenDuration = randomInRange(20000, 30000);
 
         const step = () => {
-          if (labelObj.typingForward) {
+          if (labelObj.typingTimeout) {
+            clearTimeout(labelObj.typingTimeout);
+          }
+
+          const typeForward = () => {
             if (labelObj.typingIndex < labelObj.fullText.length) {
               labelObj.typingIndex += 1;
               labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
               labelObj.el.style.opacity = 1;
-              labelObj.typingTimeout = setTimeout(step, typingSpeed);
+              labelObj.typingTimeout = setTimeout(typeForward, typingSpeed);
             } else {
-              labelObj.typingForward = false;
-              labelObj.typingTimeout = setTimeout(step, holdDuration);
+              labelObj.typingTimeout = setTimeout(startDeleting, visibleDuration);
             }
-          } else if (labelObj.typingIndex > 0) {
-            labelObj.typingIndex -= 1;
-            labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
-            labelObj.typingTimeout = setTimeout(step, deleteSpeed);
-          } else {
-            labelObj.typingForward = true;
-            labelObj.el.style.opacity = 0;
-            labelObj.typingTimeout = setTimeout(step, restartDelay);
-          }
+          };
+
+          const startDeleting = () => {
+            if (labelObj.typingIndex > 0) {
+              labelObj.typingIndex -= 1;
+              labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
+              labelObj.typingTimeout = setTimeout(startDeleting, deleteSpeed);
+            } else {
+              labelObj.el.style.opacity = 0;
+              labelObj.typingTimeout = setTimeout(() => {
+                labelObj.typingIndex = 0;
+                typeForward();
+              }, hiddenDuration);
+            }
+          };
+
+          typeForward();
         };
 
         step();
       };
 
-      peaks.forEach((peak) => {
-        createFloatingLabel(peak.name, 'name');
-        createFloatingLabel(peak.elevation, 'elevation');
-      });
+      const spawnNextLabel = (index = 0) => {
+        if (index >= peaks.length) {
+          return;
+        }
+
+        const labelObj = createFloatingLabel(peaks[index], 'name');
+        startTypingAnimation(labelObj);
+
+        const nextDelay = randomInRange(3000, 5000);
+        setTimeout(() => spawnNextLabel(index + 1), nextDelay);
+      };
+
+      spawnNextLabel();
 
       floatingLabels.forEach((labelObj) => startTypingAnimation(labelObj));
 
