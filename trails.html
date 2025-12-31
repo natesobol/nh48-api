@@ -3,174 +3,279 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-i18n="landing.title">NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails</title>
-  <meta name="description" data-i18n="landing.metaDescription" data-i18n-attr="content" content="NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Explore the catalog, routes, and White Mountain trails.">
-  <meta name="keywords" content="NH48, New Hampshire 48, White Mountains, hiking trails, peak data, trail data, long trails, four-thousand-foot peaks, outdoor adventure, hiking catalog">
-  <meta name="author" content="Nathan Sobol">
-  <meta name="creator" content="Nathan Sobol">
-  <meta name="publisher" content="NH48 API">
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="application-name" content="NH48 API">
-  <meta name="theme-color" content="#0a0a0a">
-  <link rel="icon" type="image/png" href="nh48API_logo.png">
+  <title>White Mountain Trails – WMNF Trail List, Map &amp; Open Data | NH48</title>
+  <meta name="description" content="Pre-rendered White Mountain National Forest trail index with every trail name, map handoff, and open WMNF data links for SEO and bots.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://nh48.info/trails">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="White Mountain Trails – WMNF Trail List, Map &amp; Open Data | NH48">
+  <meta property="og:description" content="Browse the full White Mountain National Forest trail list, then jump to the live WMNF map and data downloads.">
+  <meta property="og:url" content="https://nh48.info/trails">
+  <meta property="og:image" content="https://nh48.info/WMNF_Trails_API_logo.png">
+  <meta property="og:image:alt" content="White Mountain Trails data badge for the WMNF network">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="White Mountain Trails – WMNF Trail List, Map &amp; Open Data | NH48">
+  <meta name="twitter:description" content="See every WMNF trail name in one place with SEO-friendly headings and a handoff to the live NH48 Trails app.">
+  <meta name="twitter:image" content="https://nh48.info/WMNF_Trails_API_logo.png">
+  <meta name="twitter:image:alt" content="White Mountain Trails data badge for the WMNF network">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/quick-browse-footer.css">
-  <script src="/js/quick-browse-footer.js" defer></script>
-  <link rel="alternate" type="application/json" title="NH48 Summit Photo Alt Text" href="https://nh48.info/photos/backgrounds/alt-text.json">
-  <link rel="alternate" hreflang="en" href="https://nh48.info/trails">
-  <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
-  <link rel="alternate" hreflang="fr" href="https://nh48.info/i18n/fr.html">
-  <link rel="alternate" hreflang="de" href="https://nh48.info/i18n/de.html">
-  <link rel="alternate" hreflang="zh" href="https://nh48.info/i18n/zh.html">
-  <link rel="alternate" hreflang="zh-Hans" href="https://nh48.info/i18n/zh-Hans.html">
-  <link rel="alternate" hreflang="ja" href="https://nh48.info/i18n/ja.html">
-  <link rel="alternate" hreflang="ar" href="https://nh48.info/i18n/ar.html">
-  <link rel="alternate" hreflang="hi-IN" href="https://nh48.info/i18n/hi.html">
-  <link rel="alternate" hreflang="pt" href="https://nh48.info/i18n/pt.html">
-  <link rel="alternate" hreflang="ru" href="https://nh48.info/i18n/ru.html">
-  <link rel="alternate" hreflang="id" href="https://nh48.info/i18n/id.html">
-  <link rel="alternate" hreflang="it" href="https://nh48.info/i18n/it.html">
-  <link rel="alternate" hreflang="ko" href="https://nh48.info/i18n/ko.html">
-  <link rel="alternate" hreflang="tr" href="https://nh48.info/i18n/tr.html">
-  <link rel="alternate" hreflang="vi" href="https://nh48.info/i18n/vi.html">
-  <link rel="alternate" hreflang="pl" href="https://nh48.info/i18n/pl.html">
-  <link rel="alternate" hreflang="fa" href="https://nh48.info/i18n/fa.html">
-  <link rel="alternate" hreflang="fil" href="https://nh48.info/i18n/fil.html">
-  <link rel="alternate" hreflang="x-default" href="https://nh48.info/trails">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="NH48 API">
-  <meta property="og:locale" content="en_US">
-  <meta property="og:locale:alternate" content="es_ES">
-  <meta property="og:locale:alternate" content="fr_FR">
-  <meta property="og:locale:alternate" content="de_DE">
-  <meta property="og:locale:alternate" content="zh_TW">
-  <meta property="og:locale:alternate" content="zh_CN">
-  <meta property="og:locale:alternate" content="zh_TW">
-  <meta property="og:locale:alternate" content="ja_JP">
-  <meta property="og:locale:alternate" content="ar_SA">
-  <meta property="og:locale:alternate" content="hi_IN">
-  <meta property="og:locale:alternate" content="pt_BR">
-  <meta property="og:locale:alternate" content="ru_RU">
-  <meta property="og:locale:alternate" content="id_ID">
-  <meta property="og:locale:alternate" content="it_IT">
-  <meta property="og:locale:alternate" content="ko_KR">
-  <meta property="og:locale:alternate" content="tr_TR">
-  <meta property="og:locale:alternate" content="vi_VN">
-  <meta property="og:locale:alternate" content="pl_PL">
-  <meta property="og:locale:alternate" content="fa_IR">
-  <meta property="og:locale:alternate" content="fil_PH">
-  <meta property="og:title" data-i18n="landing.ogTitle" data-i18n-attr="content" content="NH48 API – Open Trails and Peaks Data">
-  <meta property="og:description" data-i18n="landing.ogDescription" data-i18n-attr="content" content="Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains.">
-  <meta property="og:image" content="https://nh48.info/UI-Elements/og-cover.png">
-  <meta property="og:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
-  <meta property="og:url" content="https://nh48.info/trails">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="NH48 API – Open Trails and Peaks Data">
-  <meta name="twitter:description" content="Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains.">
-  <meta name="twitter:image" content="https://nh48.info/UI-Elements/og-cover.png">
-  <meta name="twitter:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "Organization",
-          "@id": "https://nh48.info/#org",
-          "name": "NH48 API",
-          "description": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks and White Mountain trails.",
-          "url": "https://nh48.info",
-          "logo": "https://nh48.info/UI-Elements/logo.png"
-        },
-        {
-          "@type": "WebSite",
-          "@id": "https://nh48.info/#website",
-          "url": "https://nh48.info",
-          "name": "NH48 API",
-          "description": "Open data and trail resources for New Hampshire’s White Mountains and long-distance routes.",
-          "publisher": { "@id": "https://nh48.info/#org" },
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": "https://nh48.info/search?q={search_term_string}",
-            "query-input": "required name=search_term_string"
-          }
-        },
-        {
-          "@type": "WebPage",
-          "@id": "https://nh48.info/trails/#redirect",
-          "url": "https://nh48.info/trails/",
-          "name": "NH48 White Mountain Trails – Redirect",
-          "description": "SEO-friendly redirect to WMNF trail data, segments, and maps within the NH48 API.",
-          "inLanguage": "en",
-          "isPartOf": { "@id": "https://nh48.info/#website" },
-          "primaryImageOfPage": {
-            "@type": "ImageObject",
-            "url": "https://nh48.info/UI-Elements/og-cover.png",
-            "description": "NH48 API cover illustration highlighting New Hampshire’s White Mountains"
-          }
-        },
-        {
-          "@type": "Dataset",
-          "@id": "https://nh48.info/#nh48-dataset",
-          "name": "NH48 API – New Hampshire 4,000-Footers Dataset",
-          "description": "Structured data for 48 New Hampshire four-thousand-foot peaks with 101 tagged photos, elevations, prominence, difficulty, and geo context in JSON format.",
-          "url": "https://nh48.info/data/nh48.json",
-          "license": "https://creativecommons.org/licenses/by/4.0/",
-          "creator": {
-            "@type": "Person",
-            "name": "Nathan Sobol",
-            "url": "https://www.nh48pics.com/"
-          },
-          "keywords": [
-            "NH48",
-            "White Mountains",
-            "4000 footers",
-            "hiking data",
-            "peak metadata",
-            "photo metadata",
-            "open dataset",
-            "New Hampshire trails"
-          ],
-          "distribution": [
-            {
-              "@type": "DataDownload",
-              "contentUrl": "https://nh48.info/data/nh48.json",
-              "encodingFormat": "application/json"
-            },
-            {
-              "@type": "DataDownload",
-              "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json",
-              "encodingFormat": "application/json"
-            },
-            {
-              "@type": "DataDownload",
-              "contentUrl": "https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json",
-              "encodingFormat": "application/json"
-            }
-          ],
-          "temporalCoverage": "2025-12-06/2025-12-06",
-          "variableMeasured": [
-            "elevation",
-            "prominence",
-            "range",
-            "difficulty",
-            "trail type",
-            "photo metadata"
-          ],
-          "includedInDataCatalog": "NH48 API",
-          "isAccessibleForFree": true,
-          "spatialCoverage": {
-            "@type": "Place",
-            "name": "White Mountain National Forest",
-            "geo": { "@type": "GeoShape", "circle": "44.15 -71.34 50km" }
-          }
-        }
-      ]
+  <style>
+    :root {
+      --bg: #0f1628;
+      --card: #151e33;
+      --border: #2a3550;
+      --text: #f8fafc;
+      --muted: #c7d2fe;
+      --accent: #22c55e;
     }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(34,197,94,0.08), transparent 25%),
+                  radial-gradient(circle at 80% 10%, rgba(59,130,246,0.08), transparent 22%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 32px clamp(16px, 3vw, 36px) 8px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 38px);
+      letter-spacing: 0.3px;
+    }
+
+    header p {
+      margin: 0 auto;
+      max-width: 840px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .cta {
+      margin: 16px auto 0;
+      display: inline-flex;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--card) 65%, #0b1222 35%);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+      color: var(--text);
+    }
+
+    .cta a {
+      text-decoration: none;
+      font-weight: 700;
+      color: var(--text);
+      background: var(--accent);
+      padding: 10px 14px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 18px rgba(34,197,94,0.25);
+    }
+
+    .cta span {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    main {
+      padding: 8px clamp(16px, 4vw, 42px) 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: clamp(16px, 3vw, 24px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      margin: 0 0 6px;
+      font-size: clamp(22px, 3vw, 26px);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent) 18%, #0b1222 82%);
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .intro {
+      color: var(--muted);
+      margin: 0 0 12px;
+    }
+
+    .trail-count {
+      color: #9ae6b4;
+      font-weight: 700;
+    }
+
+    .trail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      padding: 0;
+      margin: 16px 0 0;
+      list-style: none;
+    }
+
+    .trail-card {
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--card) 75%, rgba(34,197,94,0.05) 25%);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .trail-card small {
+      display: block;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 22px 12px 26px;
+      color: var(--muted);
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+  <script>
+    (function redirectHumansToApp() {
+      const target = "https://nh48.info/pages/trails_app.html";
+      const host = typeof location !== 'undefined' ? location.hostname : '';
+      const ua = (typeof navigator !== 'undefined' && navigator.userAgent) || '';
+      const isPreviewHost = host === 'localhost' || host === '127.0.0.1' || host.includes('github');
+      const botSignatures = [
+        'adsbot-google','ahrefsbot','applebot','baiduspider','bingbot','bingpreview','chatgpt','claudebot','duckduckbot','exabot','facebookexternalhit','facebot','gptbot','google-inspectiontool','googlebot','ia_archiver','linkedinbot','mediapartners-google','petalbot','redditbot','semrushbot','slurp','sogou','twitterbot','yandex'
+      ];
+      const isBot = botSignatures.some((signature) => ua.toLowerCase().includes(signature));
+      if (typeof window !== 'undefined' && !isBot && !isPreviewHost && target && window.location.href !== target) {
+        window.location.replace(target);
+      }
+    })();
   </script>
 </head>
-<body></body>
+<body>
+  <header>
+    <div class="eyebrow">White Mountain Trails API</div>
+    <h1>White Mountain Trails – WMNF Trail List &amp; Map Redirect</h1>
+    <p>SEO-friendly landing page that enumerates every White Mountain National Forest trail name for bots and visitors, with a human redirect to the live WMNF Trails experience.</p>
+    <div class="cta">
+      <span>Ready to explore the interactive map?</span>
+      <a href="https://nh48.info/pages/trails_app.html">Open the live Trails App →</a>
+    </div>
+  </header>
+
+  <main>
+    <section aria-labelledby="trail-heading">
+      <span class="visually-hidden">Search engine friendly trail index</span>
+      <h2 id="trail-heading">Complete White Mountain National Forest Trail List</h2>
+      <p class="intro">Pre-rendered list of WMNF trail names to assist SEO crawlers and users. Data is sourced from <code>trails_with_osm.json</code> and kept in alphabetical order. <span class="trail-count" id="trailCount" aria-live="polite"></span></p>
+      <ol class="trail-grid" id="trailGrid"></ol>
+    </section>
+  </main>
+
+  <footer>
+    <p>White Mountain Trails App · WMNF trail data, segments, and peak overlays</p>
+  </footer>
+
+  <script>
+    (() => {
+      const TRAIL_SOURCES = [
+        'data/trails_with_osm.json',
+        '/data/trails_with_osm.json',
+        'https://cdn.jsdelivr.net/gh/natesobol/WMNF-Trails-API@main/trails_with_osm.json',
+        'https://raw.githubusercontent.com/natesobol/WMNF-Trails-API/main/trails_with_osm.json'
+      ];
+
+      const grid = document.getElementById('trailGrid');
+      const countEl = document.getElementById('trailCount');
+
+      function renderTrails(names) {
+        if (!Array.isArray(names) || names.length === 0 || !grid) return;
+        const fragment = document.createDocumentFragment();
+        names.forEach((name, index) => {
+          const item = document.createElement('li');
+          item.className = 'trail-card';
+          item.textContent = name;
+          const number = document.createElement('small');
+          number.textContent = `Trail ${index + 1}`;
+          item.appendChild(number);
+          fragment.appendChild(item);
+        });
+        grid.innerHTML = '';
+        grid.appendChild(fragment);
+        if (countEl) {
+          countEl.textContent = `${names.length.toLocaleString()} trails indexed`;
+        }
+      }
+
+      async function loadTrails() {
+        for (const src of TRAIL_SOURCES) {
+          try {
+            const response = await fetch(src);
+            if (!response.ok) continue;
+            const data = await response.json();
+            const names = data
+              .map((entry) => String(entry.trail_name || entry.name || '').trim())
+              .filter(Boolean)
+              .filter((value, index, self) => self.indexOf(value) === index)
+              .sort((a, b) => a.localeCompare(b));
+            if (names.length) {
+              renderTrails(names);
+              return;
+            }
+          } catch (error) {
+            console.warn('Unable to load WMNF trail names', src, error);
+          }
+        }
+      }
+
+      if (typeof window !== 'undefined') {
+        window.addEventListener('DOMContentLoaded', loadTrails);
+      }
+    })();
+  </script>
+</body>
 </html>
