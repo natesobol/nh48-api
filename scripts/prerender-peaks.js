@@ -15,9 +15,10 @@ const APP_BASE = "https://nh48.info/pages/nh48_peak.html";
 const DEFAULT_CATALOG_URL = "https://nh48.info/catalog";
 const FALLBACK_IMAGE = "https://nh48.info/nh48-preview.png";
 const PHOTO_BASE_URL = "https://photos.nh48.info";
+const PHOTO_BASE = new URL(PHOTO_BASE_URL);
 const PHOTO_PATH_PREFIX = "/nh48-photos/";
 const IMAGE_TRANSFORM_OPTIONS = "format=webp,quality=85";
-const IMAGE_TRANSFORM_PREFIX = `https://nh48.info/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}/`;
+const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
 const DEFAULT_SITE_NAME = "NH48 Peak Guide";
 const AUTHOR_NAME = "Nathan Sobol";
 const TWITTER_HANDLE = "@nate_dumps_pics";
@@ -422,8 +423,17 @@ const pickPrimaryPhoto = (photos, peakName, langCode) => {
 };
 
 const applyImageTransform = (url) => {
-  if (url && url.startsWith("http") && url.includes("photos.nh48.info")) {
-    return `${IMAGE_TRANSFORM_PREFIX}${url}`;
+  if (!url) return url;
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname === PHOTO_BASE.hostname) {
+      const normalizedPath = parsed.pathname.startsWith("/")
+        ? parsed.pathname
+        : `/${parsed.pathname}`;
+      return `${IMAGE_TRANSFORM_PREFIX}${normalizedPath}`;
+    }
+  } catch (error) {
+    return url;
   }
   return url;
 };
