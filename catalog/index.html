@@ -44,6 +44,7 @@
     <link rel="icon" type="image/png" href="../nh48API_logo.png">
     <link rel="stylesheet" href="../css/nh48_catalog.css">
     <link rel="stylesheet" href="/css/quick-browse-footer.css">
+    <script src="/js/quick-browse-footer.js" defer></script>
     <script type="module" src="../js/i18n.js"></script>
     <script>
       (function redirectToApp() {
@@ -219,7 +220,6 @@
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const navPlaceholder = document.getElementById('nav-placeholder');
-        const footerPlaceholder = document.getElementById('footer-placeholder');
         const activeRoute = document.body.dataset.route || document.body.dataset.page;
 
         if (navPlaceholder) {
@@ -243,14 +243,6 @@
             .catch(err => console.error('Failed to load navigation:', err));
         }
 
-        if (footerPlaceholder) {
-          fetch('/pages/footer.html')
-            .then(response => response.text())
-            .then(html => {
-              footerPlaceholder.innerHTML = html;
-            })
-            .catch(err => console.error('Failed to load footer:', err));
-        }
       });
     </script>
     <div class="wrap">
@@ -1082,7 +1074,6 @@
         trackEvent('catalog_view_change', { view: currentView });
       });
     </script>
-    <div id="footer-placeholder"></div>
 <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
       import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
