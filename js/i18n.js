@@ -155,8 +155,10 @@ import { LANGS } from './langConfig.js';
       btn.classList.toggle('active', btnLang === lang);
       if (btnLang === lang) {
         btn.setAttribute('aria-pressed', 'true');
+        btn.setAttribute('aria-selected', 'true');
       } else {
         btn.removeAttribute('aria-pressed');
+        btn.setAttribute('aria-selected', 'false');
       }
     });
   }
@@ -258,6 +260,7 @@ import { LANGS } from './langConfig.js';
     const label = document.createElement('span');
     label.className = 'nh48-lang-label';
     label.setAttribute('data-i18n', 'common.language');
+    label.id = 'langPickerLabel';
     label.textContent = 'LANGUAGE';
     container.appendChild(label);
 
@@ -273,11 +276,14 @@ import { LANGS } from './langConfig.js';
     const options = document.createElement('div');
     options.className = 'nh48-lang-options';
     options.setAttribute('role', 'listbox');
+    options.setAttribute('aria-labelledby', label.id);
     LANGS.forEach(({ code, label: langLabel, flag }) => {
       const btn = document.createElement('button');
       btn.className = 'nh48-flag';
       btn.type = 'button';
       btn.setAttribute('data-lang', code);
+      btn.setAttribute('role', 'option');
+      btn.setAttribute('aria-selected', 'false');
       btn.setAttribute('aria-label', langLabel);
       btn.setAttribute('title', langLabel);
       btn.innerHTML = `<span class="flag flag-${code}" aria-hidden="true">${flag}</span>`;
