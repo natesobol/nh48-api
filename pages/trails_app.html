@@ -1196,14 +1196,16 @@
           .catch(err => console.error('Failed to load navigation:', err));
       }
 
-      if (footerPlaceholder) {
-        fetch('/pages/footer.html')
-          .then(response => response.text())
-          .then(html => {
-            footerPlaceholder.innerHTML = html;
-          })
-          .catch(err => console.error('Failed to load footer:', err));
-      }
+        const hasQuickFooter = document.querySelector('.nh48-quick-footer');
+
+        if (footerPlaceholder && !hasQuickFooter) {
+          fetch('/pages/footer.html')
+            .then(response => response.text())
+            .then(html => {
+              footerPlaceholder.innerHTML = html;
+            })
+            .catch(err => console.error('Failed to load footer:', err));
+        }
     });
   </script>
     <header class="page-header">
