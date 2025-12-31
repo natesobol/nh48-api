@@ -244,20 +244,29 @@
     }
 
     .logo-wrap {
-      width: 58px;
-      height: 58px;
+      width: 72px;
+      height: 72px;
       border-radius: 14px;
       overflow: hidden;
       display: flex;
+      align-items: center;
+      justify-content: center;
       box-shadow: 0 0 0 2px var(--stroke, #ffffff);
+      background: var(--bg-secondary);
+      padding: 6px;
     }
 
     .logo-wrap img {
-      width: 112%;
-      height: 112%;
-      object-fit: cover;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       display: block;
-      margin: -6%;
+      margin: 0;
+    }
+
+    .page-logo {
+      display: inline-flex;
+      margin-bottom: 0.5rem;
     }
 
     .page-header .page-subtitle {
@@ -267,35 +276,43 @@
       color: #d6f5df;
     }
 
-    .map-logo-strip {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 12px;
-      margin: 10px 0;
-      border-radius: 12px;
-      background: linear-gradient(120deg, rgba(34, 197, 94, 0.12), rgba(15, 23, 42, 0.7));
-      border: 1px solid rgba(34, 197, 94, 0.3);
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+    .page-breadcrumbs {
+      max-width: 1100px;
+      margin: 0 auto 10px;
+      padding: 0 1rem;
+      color: var(--text-secondary);
     }
 
-    .map-logo-strip .logo-wrap {
-      width: 64px;
-      height: 64px;
-      border-radius: 12px;
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
-    }
-
-    .map-logo-strip .logo-copy {
+    .page-breadcrumbs ol {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-      color: #e5f8ec;
+      gap: 8px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
       font-size: 0.95rem;
     }
 
-    .map-logo-strip .logo-copy strong {
-      color: #22c55e;
+    .page-breadcrumbs li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .page-breadcrumbs li + li::before {
+      content: "/";
+      color: var(--text-secondary);
+      opacity: 0.7;
+    }
+
+    .page-breadcrumbs a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .page-breadcrumbs a:hover,
+    .page-breadcrumbs a:focus-visible {
+      text-decoration: underline;
     }
     .nh48-lang {
       display: flex;
@@ -1084,19 +1101,15 @@
       }
     });
   </script>
-  <header class="page-header">
-    <h1 data-i18n="trails.title">🏔️ White Mountain Trails API Map Tool</h1>
-    <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
-    <div class="map-logo-strip">
-      <div class="logo-wrap">
-        <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest trails map logo" title="White Mountain Trails API" loading="lazy" decoding="async">
+    <header class="page-header">
+      <div class="page-logo">
+        <div class="logo-wrap">
+          <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest trails map logo" title="White Mountain Trails API" loading="lazy" decoding="async">
+        </div>
       </div>
-      <div class="logo-copy">
-        <strong>White Mountain Trails brandmark</strong>
-        <span>Visual identifier for the WMNF trails map and dataset downloads, featuring GPX-backed routes and open data coverage.</span>
-      </div>
-    </div>
-    <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
+      <h1 data-i18n="trails.title">🏔️ White Mountain Trails API Map Tool</h1>
+      <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
+      <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
     <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
       <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
       <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
