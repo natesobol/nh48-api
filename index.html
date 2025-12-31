@@ -277,6 +277,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
     .site-nav-links a {
@@ -398,13 +400,15 @@
     @media (max-width: 900px) {
       .site-nav {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
         gap: 12px;
       }
 
       .site-nav-links {
         flex-wrap: wrap;
         row-gap: 6px;
+        justify-content: center;
+        width: 100%;
       }
 
       .site-nav-title {
@@ -748,7 +752,7 @@
         padding: 0 12px;
         max-width: none;
         justify-content: center;
-        margin-bottom: 0;
+        margin-bottom: 10px;
       }
       .nh48-lang {
         justify-content: center;
@@ -787,8 +791,15 @@
       p {
         font-size: 0.95rem;
       }
+      .cta {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
       .cta a {
         padding: 8px 14px;
+        width: 100%;
+        justify-content: center;
       }
     }
     #splash-background {
