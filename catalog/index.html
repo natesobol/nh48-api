@@ -6,7 +6,9 @@
     <meta name="description" content="Browse the NH48 Peak Catalog with elevation, prominence, range, difficulty and photo thumbnails for all 48 four-thousand-foot peaks in New Hampshire. Search, filter and sort using this open dataset. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak catalog, White Mountains data, hiking database, open hiking API, peak metadata, mountain photos, NH 48 peaks dataset, White Mountain peak list, open source hiking API">
     <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow,max-image-preview:large">
     <link rel="canonical" href="https://nh48.info/catalog">
+    <link rel="sitemap" type="application/xml" title="Page sitemap" href="https://nh48.info/page-sitemap.xml">
     <link rel="alternate" hreflang="en" href="https://nh48.info/">
     <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
     <link rel="alternate" hreflang="fr" href="https://nh48.info/i18n/fr.html">
@@ -129,6 +131,79 @@
         }
       }
     </script>
+    <script type="application/ld+json" id="breadcrumb-structured-data">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://nh48.info/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "NH48 Peak Catalog",
+            "item": "https://nh48.info/catalog"
+          }
+        ]
+      }
+    </script>
+    <script type="application/ld+json" id="catalog-image-gallery">
+      {
+        "@context": "https://schema.org",
+        "@type": "ImageGallery",
+        "name": "NH48 Peak Catalog Photo Highlights",
+        "url": "https://nh48.info/catalog",
+        "description": "Representative summit photography from the NH48 Peak Catalog with attribution and licensing for search engines.",
+        "creator": {
+          "@type": "Person",
+          "name": "Nathan Sobol",
+          "url": "https://www.nh48pics.com/"
+        },
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "about": {
+          "@type": "Place",
+          "name": "White Mountain National Forest"
+        },
+        "associatedMedia": [
+          {
+            "@type": "ImageObject",
+            "name": "Bondcliff summit ridge",
+            "caption": "Bondcliff summit ridge in New Hampshire’s White Mountains.",
+            "contentUrl": "https://nh48.info/photos/bondcliff/bondcliff__001.jpg",
+            "thumbnailUrl": "https://nh48.info/photos/bondcliff/bondcliff__001.jpg",
+            "creditText": "Nathan Sobol"
+          },
+          {
+            "@type": "ImageObject",
+            "name": "Mount Adams alpine zone",
+            "caption": "Mount Adams summit cone with alpine vegetation and views toward Mount Washington.",
+            "contentUrl": "https://nh48.info/photos/mount-adams/mount-adams__001.jpg",
+            "thumbnailUrl": "https://nh48.info/photos/mount-adams/mount-adams__001.jpg",
+            "creditText": "Nathan Sobol"
+          },
+          {
+            "@type": "ImageObject",
+            "name": "Mount Liberty viewpoint",
+            "caption": "Mount Liberty lookout over Franconia Ridge and the Pemigewasset Wilderness.",
+            "contentUrl": "https://nh48.info/photos/mount-liberty/mount-liberty__001.jpg",
+            "thumbnailUrl": "https://nh48.info/photos/mount-liberty/mount-liberty__001.jpg",
+            "creditText": "Nathan Sobol"
+          },
+          {
+            "@type": "ImageObject",
+            "name": "Mount Washington summit",
+            "caption": "Mount Washington summit buildings and observation deck above the clouds.",
+            "contentUrl": "https://nh48.info/photos/mount-washington/mount-washington__001.jpg",
+            "thumbnailUrl": "https://nh48.info/photos/mount-washington/mount-washington__001.jpg",
+            "creditText": "Nathan Sobol"
+          }
+        ]
+      }
+    </script>
     <!--
       Enhanced catalog page for the NH48 peak list.
 
@@ -179,6 +254,19 @@
       });
     </script>
     <div class="wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-trail" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <ol>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
+            <meta itemprop="position" content="1">
+          </li>
+          <li aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name">Catalog</span>
+            <meta itemprop="item" content="https://nh48.info/catalog">
+            <meta itemprop="position" content="2">
+          </li>
+        </ol>
+      </nav>
       <header>
         <h1 data-i18n="catalog.title">NH48 Peak Catalog</h1>
         <p data-i18n="catalog.intro">Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.</p>
