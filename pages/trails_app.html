@@ -1059,6 +1059,88 @@
     .hike-btn:hover {
       background-color: var(--button-green-dark);
     }
+
+    /* Mobile layout adjustments */
+    @media (max-width: 900px) {
+      #app {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        border: none;
+        box-shadow: none;
+        max-width: none;
+      }
+
+      #panelResizer {
+        display: none;
+      }
+
+      #bottomSection {
+        order: -1;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem 0.5rem;
+      }
+
+      #listSection {
+        max-height: 400px;
+        overflow-y: auto;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        background: var(--bg-tertiary);
+        padding: 0.75rem 0.75rem;
+      }
+
+      #listSection .controls {
+        position: sticky;
+        top: 0;
+        background: var(--bg-tertiary);
+        z-index: 2;
+        padding-top: 0.75rem;
+        margin-left: -0.25rem;
+        margin-right: -0.25rem;
+      }
+
+      .trail-list-container {
+        max-height: none;
+      }
+
+      .about-panel {
+        margin-top: 1rem;
+        order: 2;
+        width: 100%;
+        max-width: none;
+      }
+
+      #topSection {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem 0.5rem;
+      }
+
+      #mapContainer {
+        order: 1;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        min-height: 50vh;
+      }
+
+      #map {
+        min-height: 50vh;
+      }
+
+      #trailInfoPanel {
+        order: 2;
+        margin-top: 0.75rem;
+        width: 100%;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
 </style>
 </head>
 
