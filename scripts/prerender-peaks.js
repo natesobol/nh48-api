@@ -16,6 +16,8 @@ const DEFAULT_CATALOG_URL = "https://nh48.info/catalog";
 const FALLBACK_IMAGE = "https://nh48.info/nh48-preview.png";
 const PHOTO_BASE_URL = "https://photos.nh48.info";
 const PHOTO_PATH_PREFIX = "/nh48-photos/";
+const IMAGE_TRANSFORM_OPTIONS = "format=webp,quality=85";
+const IMAGE_TRANSFORM_PREFIX = `https://nh48.info/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}/`;
 const DEFAULT_SITE_NAME = "NH48 Peak Guide";
 const AUTHOR_NAME = "Nathan Sobol";
 const TWITTER_HANDLE = "@nate_dumps_pics";
@@ -419,21 +421,32 @@ const pickPrimaryPhoto = (photos, peakName, langCode) => {
   };
 };
 
+const applyImageTransform = (url) => {
+  if (url && url.startsWith("http") && url.includes("photos.nh48.info")) {
+    return `${IMAGE_TRANSFORM_PREFIX}${url}`;
+  }
+  return url;
+};
+
 const normalizePhotoUrl = (url) => {
   if (!url) return url;
-  if (url.startsWith(PHOTO_BASE_URL)) return url;
+  if (url.startsWith(PHOTO_BASE_URL)) return applyImageTransform(url);
+
+  let normalized = url;
+
   if (url.includes("r2.cloudflarestorage.com/nh48-photos/")) {
     const [, tail] = url.split(PHOTO_PATH_PREFIX);
-    return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+    normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
   }
   if (
     url.includes("cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/") ||
     url.includes("raw.githubusercontent.com/natesobol/nh48-api/main/photos/")
   ) {
     const [, tail] = url.split("/photos/");
-    return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+    normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
   }
-  return url;
+
+  return applyImageTransform(normalized);
 };
 
 const pickLocalizedField = (photo, langCode, keys) => {
