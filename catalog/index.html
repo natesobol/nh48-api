@@ -174,32 +174,32 @@
             "@type": "ImageObject",
             "name": "Bondcliff summit ridge",
             "caption": "Bondcliff summit ridge in New Hampshire’s White Mountains.",
-            "contentUrl": "https://nh48.info/photos/bondcliff/bondcliff__001.jpg",
-            "thumbnailUrl": "https://nh48.info/photos/bondcliff/bondcliff__001.jpg",
+            "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/bondcliff/bondcliff__001.jpg",
+            "thumbnailUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/bondcliff/bondcliff__001.jpg",
             "creditText": "Nathan Sobol"
           },
           {
             "@type": "ImageObject",
             "name": "Mount Adams alpine zone",
             "caption": "Mount Adams summit cone with alpine vegetation and views toward Mount Washington.",
-            "contentUrl": "https://nh48.info/photos/mount-adams/mount-adams__001.jpg",
-            "thumbnailUrl": "https://nh48.info/photos/mount-adams/mount-adams__001.jpg",
+            "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-adams/mount-adams__001.jpg",
+            "thumbnailUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-adams/mount-adams__001.jpg",
             "creditText": "Nathan Sobol"
           },
           {
             "@type": "ImageObject",
             "name": "Mount Liberty viewpoint",
             "caption": "Mount Liberty lookout over Franconia Ridge and the Pemigewasset Wilderness.",
-            "contentUrl": "https://nh48.info/photos/mount-liberty/mount-liberty__001.jpg",
-            "thumbnailUrl": "https://nh48.info/photos/mount-liberty/mount-liberty__001.jpg",
+            "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-liberty/mount-liberty__001.jpg",
+            "thumbnailUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-liberty/mount-liberty__001.jpg",
             "creditText": "Nathan Sobol"
           },
           {
             "@type": "ImageObject",
             "name": "Mount Washington summit",
             "caption": "Mount Washington summit buildings and observation deck above the clouds.",
-            "contentUrl": "https://nh48.info/photos/mount-washington/mount-washington__001.jpg",
-            "thumbnailUrl": "https://nh48.info/photos/mount-washington/mount-washington__001.jpg",
+            "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-washington/mount-washington__001.jpg",
+            "thumbnailUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-washington/mount-washington__001.jpg",
             "creditText": "Nathan Sobol"
           }
         ]
@@ -361,46 +361,59 @@
         );
       }
 
+      function applyImageTransform(url){
+        if(!url) return url;
+        try {
+          const parsed = new URL(url, window.location.origin);
+          if(parsed.pathname.startsWith('/cdn-cgi/image/')){
+            return url;
+          }
+          if(parsed.hostname === PHOTO_BASE.hostname){
+            const normalizedPath = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
+            return `${IMAGE_TRANSFORM_PREFIX}${normalizedPath}${parsed.search || ''}`;
+          }
+        } catch (err) {
+          console.warn('Unable to normalize photo URL', url, err);
+        }
+        return url;
+      }
+
       function normalizePhotoUrl(url){
         if(!url) return url;
-        if(url.startsWith(PHOTO_BASE_URL)) return url;
+        if(url.startsWith(PHOTO_BASE_URL)) return applyImageTransform(url);
         const isJsdelivrPhoto = url.includes('cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/');
         const isGithubRawPhoto = url.includes('raw.githubusercontent.com/natesobol/nh48-api/main/photos/');
         const isR2PathStyle = url.includes('r2.cloudflarestorage.com/nh48-photos/');
         const isR2BucketHost = url.includes('r2.cloudflarestorage.com/') && !url.includes('/nh48-photos/');
+        let normalized = url;
         if(isR2PathStyle){
           const [, tail] = url.split(PHOTO_PATH_PREFIX);
-          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+          normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
         }
         if(isR2BucketHost){
           const bucketTail = url.split('r2.cloudflarestorage.com/')[1];
           if(bucketTail){
             const normalizedTail = bucketTail.replace(/^nh48-photos\//, '');
-            return `${PHOTO_BASE_URL}/${normalizedTail}`;
+            normalized = `${PHOTO_BASE_URL}/${normalizedTail}`;
           }
         }
         if(isJsdelivrPhoto || isGithubRawPhoto){
           const [, tail] = url.split('/photos/');
-          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+          normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
         }
-        return url;
+        if(normalized.startsWith(PHOTO_BASE_URL)){
+          return applyImageTransform(normalized);
+        }
+        return normalized;
       }
 
       function toTransformedPhotoUrl(url){
         const normalized = normalizePhotoUrl(url);
         if(!normalized) return normalized;
-        try{
-          const parsed = normalized.startsWith('http') ? new URL(normalized) : new URL(normalized, PHOTO_BASE.origin);
-          if(parsed.pathname.startsWith('/cdn-cgi/image/')){
-            return normalized;
-          }
-          if(parsed.origin === PHOTO_BASE.origin){
-            return `${IMAGE_TRANSFORM_PREFIX}${parsed.pathname}${parsed.search || ''}`;
-          }
-        } catch(e){
+        if(normalized.includes('/cdn-cgi/image/')){
           return normalized;
         }
-        return normalized;
+        return applyImageTransform(normalized);
       }
 
       // Pagination

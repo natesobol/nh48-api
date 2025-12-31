@@ -312,47 +312,64 @@
         }
       }
 
-      function applyImageTransform(url){
-        if(!url) return url;
-        try {
-          const parsed = new URL(url, window.location.origin);
-          if(parsed.hostname === PHOTO_BASE.hostname){
-            const normalizedPath = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
-            return `${IMAGE_TRANSFORM_PREFIX}${normalizedPath}`;
-          }
-        } catch (err) {
-          console.warn('Unable to normalize photo URL', url, err);
-        }
-        return url;
+      function toTransformedPath(pathname){
+        const normalizedPath = pathname.startsWith('/') ? pathname : `/${pathname}`;
+        return `${IMAGE_TRANSFORM_PREFIX}${normalizedPath}`;
       }
 
       function normalizePhotoUrl(url){
         if(!url) return url;
-        if(url.startsWith(PHOTO_BASE_URL)) return applyImageTransform(url);
-        const isJsdelivrPhoto = url.includes('cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/');
-        const isGithubRawPhoto = url.includes('raw.githubusercontent.com/natesobol/nh48-api/main/photos/');
-        const isR2PathStyle = url.includes('r2.cloudflarestorage.com/nh48-photos/');
-        const isR2BucketHost = url.includes('r2.cloudflarestorage.com/') && !url.includes('/nh48-photos/');
-        let normalized = url;
-        if(isR2PathStyle){
-          const [, tail] = url.split(PHOTO_PATH_PREFIX);
-          normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+
+        try {
+          const parsed = new URL(url, PHOTO_BASE_URL);
+          const hostname = parsed.hostname.toLowerCase();
+          const originalPath = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
+
+          const isPhotoHost = hostname === PHOTO_BASE.hostname.toLowerCase();
+          const href = parsed.href;
+          const isJsdelivrPhoto = href.includes('cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/');
+          const isGithubRawPhoto = href.includes('raw.githubusercontent.com/natesobol/nh48-api/main/photos/');
+          const isR2PathStyle = href.includes('r2.cloudflarestorage.com/nh48-photos/');
+          const isR2BucketHost = href.includes('r2.cloudflarestorage.com/') && !href.includes('/nh48-photos/');
+
+          let photoPath = originalPath;
+
+          if(!isPhotoHost){
+            if(isR2PathStyle){
+              const [, tail] = href.split(PHOTO_PATH_PREFIX);
+              photoPath = tail ? `/${tail}` : originalPath;
+            }else if(isR2BucketHost){
+              const bucketTail = href.split('r2.cloudflarestorage.com/')[1];
+              if(bucketTail){
+                const normalizedTail = bucketTail.replace(/^nh48-photos\//, '');
+                photoPath = `/${normalizedTail}`;
+              }
+            }else if(isJsdelivrPhoto || isGithubRawPhoto){
+              const [, tail] = href.split('/photos/');
+              photoPath = tail ? `/${tail}` : originalPath;
+            }else{
+              return url;
+            }
+          }
+
+          return toTransformedPath(photoPath);
+        } catch (err) {
+          console.warn('Unable to normalize photo URL', url, err);
+          return url;
         }
-        if(isR2BucketHost){
-          const bucketTail = url.split('r2.cloudflarestorage.com/')[1];
-          if(bucketTail){
-            const normalizedTail = bucketTail.replace(/^nh48-photos\//, '');
-            normalized = `${PHOTO_BASE_URL}/${normalizedTail}`;
+      }
+
+      function extractPhotoUrl(photo){
+        if(!photo) return null;
+        if(typeof photo === 'string') return normalizePhotoUrl(photo);
+
+        const candidateKeys = ['url', 'contentUrl', 'thumbnailUrl', 'src', 'image'];
+        for(const key of candidateKeys){
+          if(photo[key]){
+            return normalizePhotoUrl(photo[key]);
           }
         }
-        if(isJsdelivrPhoto || isGithubRawPhoto){
-          const [, tail] = url.split('/photos/');
-          normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
-        }
-        if(normalized.startsWith(PHOTO_BASE_URL)){
-          return applyImageTransform(normalized);
-        }
-        return normalized;
+        return null;
       }
 
       // Pagination
@@ -600,11 +617,10 @@
         let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
           const first = p.photos[0];
+          const normalizedPhoto = extractPhotoUrl(first);
           thumbAlt = buildPhotoAlt(p, first);
-          if (typeof first === 'string') {
-            thumbSrc = normalizePhotoUrl(first);
-          } else if (first && first.url) {
-            thumbSrc = normalizePhotoUrl(first.url);
+          if(normalizedPhoto){
+            thumbSrc = normalizedPhoto;
           }
         }
 
@@ -653,11 +669,10 @@
         let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
           const first = p.photos[0];
+          const normalizedPhoto = extractPhotoUrl(first);
           thumbAlt = buildPhotoAlt(p, first);
-          if (typeof first === 'string') {
-            thumbSrc = normalizePhotoUrl(first);
-          } else if (first && first.url) {
-            thumbSrc = normalizePhotoUrl(first.url);
+          if(normalizedPhoto){
+            thumbSrc = normalizedPhoto;
           }
         }
 
