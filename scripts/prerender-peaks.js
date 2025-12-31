@@ -576,51 +576,53 @@ const buildGallery = (photos, peakName, fallbackAlt, langCode) => {
 
 const escapeScriptJson = (value) => String(value).replace(/<\/script/gi, "<\\/script");
 
-const buildBreadcrumbJson = (pageName, canonicalUrl, catalogUrl, homeUrl, labels) => JSON.stringify(
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "@id": `${canonicalUrl}#breadcrumb`,
-    name: `${pageName} breadcrumb trail`,
-    description: `Navigation path to ${pageName} within the NH48 peak catalog`,
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        item: {
-          "@type": "WebPage",
-          "@id": homeUrl || HOME_URL,
-          url: homeUrl || HOME_URL,
-          name: labels?.breadcrumbHome || "Home",
-        },
+const buildBreadcrumbData = (pageName, canonicalUrl, catalogUrl, homeUrl, labels) => ({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "@id": `${canonicalUrl}#breadcrumb`,
+  name: `${pageName} breadcrumb trail`,
+  description: `Navigation path to ${pageName} within the NH48 peak catalog`,
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      item: {
+        "@type": "WebPage",
+        "@id": homeUrl || HOME_URL,
+        url: homeUrl || HOME_URL,
+        name: labels?.breadcrumbHome || "Home",
       },
-      {
-        "@type": "ListItem",
-        position: 2,
-        item: {
-          "@type": "CollectionPage",
-          "@id": catalogUrl || DEFAULT_CATALOG_URL,
-          url: catalogUrl || DEFAULT_CATALOG_URL,
-          name: labels?.breadcrumbCatalog || "NH48 Peak Catalog",
-        },
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      item: {
+        "@type": "CollectionPage",
+        "@id": catalogUrl || DEFAULT_CATALOG_URL,
+        url: catalogUrl || DEFAULT_CATALOG_URL,
+        name: labels?.breadcrumbCatalog || "NH48 Peak Catalog",
       },
-      {
-        "@type": "ListItem",
-        position: 3,
-        item: {
-          "@type": "WebPage",
-          "@id": canonicalUrl,
-          url: canonicalUrl,
-          name: pageName,
-        },
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      item: {
+        "@type": "WebPage",
+        "@id": canonicalUrl,
+        url: canonicalUrl,
+        name: pageName,
       },
-    ],
-  },
+    },
+  ],
+});
+
+const buildBreadcrumbJson = (pageName, canonicalUrl, catalogUrl, homeUrl, labels, breadcrumbData) => JSON.stringify(
+  breadcrumbData || buildBreadcrumbData(pageName, canonicalUrl, catalogUrl, homeUrl, labels),
   null,
   2
 );
 
-const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImage, langCode) => JSON.stringify(
+const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImage, langCode, breadcrumbData) => JSON.stringify(
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -656,10 +658,7 @@ const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImag
       width: primaryImage.width,
       height: primaryImage.height
     } : undefined,
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      "@id": `${canonicalUrl}#breadcrumb`
-    },
+    breadcrumb: breadcrumbData || buildBreadcrumbData(pageName, canonicalUrl, DEFAULT_CATALOG_URL, HOME_URL),
     potentialAction: {
       "@type": "ReadAction",
       target: canonicalUrl
@@ -1106,12 +1105,18 @@ const main = () => {
               localizedName
             )
           ),
-          BREADCRUMB_LD: escapeScriptJson(
-            buildBreadcrumbJson(localizedName, canonicalUrl, lang.catalogUrl, lang.homeUrl, lang.labels)
-          ),
-          WEBPAGE_SCHEMA: escapeScriptJson(
-            buildWebPageSchema(localizedName, canonicalUrl, descriptionText, primaryPhoto, lang.code)
-          ),
+          BREADCRUMB_LD: (() => {
+            const breadcrumbData = buildBreadcrumbData(localizedName, canonicalUrl, lang.catalogUrl, lang.homeUrl, lang.labels);
+            return escapeScriptJson(
+              buildBreadcrumbJson(localizedName, canonicalUrl, lang.catalogUrl, lang.homeUrl, lang.labels, breadcrumbData)
+            );
+          })(),
+          WEBPAGE_SCHEMA: (() => {
+            const breadcrumbData = buildBreadcrumbData(localizedName, canonicalUrl, lang.catalogUrl, lang.homeUrl, lang.labels);
+            return escapeScriptJson(
+              buildWebPageSchema(localizedName, canonicalUrl, descriptionText, primaryPhoto, lang.code, breadcrumbData)
+            );
+          })(),
           FAQ_SCHEMA: (() => {
             const faqJson = buildFAQSchema(localizedName, peak["Standard Routes"], difficulty, time, lang.code);
             return faqJson ? `<script type="application/ld+json">${escapeScriptJson(faqJson)}</script>` : "";
