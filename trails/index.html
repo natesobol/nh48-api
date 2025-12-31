@@ -557,14 +557,6 @@
       overflow-y: auto;
     }
 
-    .about-panel {
-      flex: 1;
-      min-width: 300px;
-      max-width: 420px;
-      margin: 0;
-      overflow-y: auto;
-    }
-
     /* Sidebar (settings) styles defined above.  Old definitions removed to avoid conflicts. */
 
     /* Header section with title */
@@ -710,6 +702,19 @@
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+    }
+
+    .trail-info-initial,
+    .trail-info-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      height: 100%;
+    }
+
+    .trail-info-initial[hidden],
+    .trail-info-content[hidden] {
+      display: none;
     }
 
     .trail-info-panel h2 {
@@ -948,9 +953,6 @@
         flex-direction: column;
       }
 
-      .about-panel {
-        max-width: 100%;
-      }
     }
 
     .leaflet-popup-content-wrapper {
@@ -1223,12 +1225,50 @@
         <p id="map-accessibility-note" class="sr-only">High-contrast basemap with green trail lines, white selection outlines, and large circular markers for route highlights. Popups list trail length, elevation context, and OpenStreetMap details. Keyboard users can tab into the map to move focus to interactive controls.</p>
       </div>
       <div id="trailInfoPanel" class="trail-info-panel">
-        <h2 class="trail-info-heading">Select a trail to view details</h2>
-        <p class="trail-info-empty" data-i18n="trails.details.empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
-        <div class="trail-info-about">
-          <h3 data-i18n="trails.about.title">About this list</h3>
-          <p data-i18n="trails.about.body">NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths.</p>
+        <div id="trailInfoInitial" class="trail-info-initial">
+          <h2 id="trailInfoHeading" class="trail-info-heading">Select a trail to view details</h2>
+          <p id="trailInfoEmpty" class="trail-info-empty" data-i18n="trails.details.empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
+          <div class="trail-info-about">
+            <h3 id="trailInfoAboutTitle" data-i18n="trails.about.title">About this tool</h3>
+            <p id="trailInfoAboutBody" data-i18n="trails.about.body">NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths.</p>
+          </div>
+          <div class="info-panel initial-info-panel">
+            <details open>
+              <summary id="trailDisclaimerHeading" data-i18n="trails.disclaimer.title">Disclaimer</summary>
+              <p id="trailDisclaimerBody" data-i18n-html="trails.disclaimer.body">This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry.</p>
+            </details>
+            <details open>
+              <summary id="trailHowToHeading" data-i18n="trails.howto.title">How to use</summary>
+              <p id="trailHowToBody" data-i18n="trails.howto.body">Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below.</p>
+            </details>
+            <details>
+              <summary id="trailSettingsHeading" data-i18n="trails.settings.title">Settings</summary>
+              <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                  <input type="checkbox" id="hideCompleted" style="accent-color: var(--button-green);">
+                  <span id="trailHideCompletedLabel" data-i18n="trails.settings.hideCompleted">Hide completed trails</span>
+                </label>
+                <button id="clearProgress" type="button" style="padding: 0.4rem 0.75rem; background-color: var(--button-green); color: white; border: none; border-radius: 5px; font-size: 0.8rem; cursor: pointer; width: fit-content;" data-i18n="trails.settings.clearProgress">Clear all progress</button>
+              </div>
+            </details>
+            <div class="export-import">
+              <button id="exportBtn" type="button" data-i18n="trails.export">Export CSV</button>
+              <label for="importFile" class="import-label">
+                <span id="trailImportLabel" data-i18n="trails.import">Import</span>
+                <input type="file" id="importFile" accept=".csv,.xlsx,.json" />
+              </label>
+            </div>
+            <div class="api-link-container">
+              <a href="https://github.com/natesobol/WMNF-Trails-API/tree/main" target="_blank" rel="noopener noreferrer" class="view-api-link">
+                <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" style="fill: currentColor; margin-right: 0.4rem;">
+                  <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.62 7.62 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+                <span id="trailApiLinkLabel" data-i18n="trails.viewApi">View API</span>
+              </a>
+            </div>
+          </div>
         </div>
+        <div id="trailInfoContent" class="trail-info-content" hidden></div>
       </div>
     </div>
     <div id="panelResizer" role="separator" data-i18n="trails.resizePanels" data-i18n-attr="aria-label" aria-label="Resize panels"></div>
@@ -1264,44 +1304,6 @@
         </div>
       </div>
     </div>
-      <div class="info-panel about-panel">
-        <details open>
-          <summary data-i18n="trails.disclaimer.title">Disclaimer</summary>
-          <p data-i18n-html="trails.disclaimer.body">This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry.</p>
-        </details>
-        <details open>
-          <summary data-i18n="trails.howto.title">How to use</summary>
-          <p data-i18n="trails.howto.body">Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below.</p>
-        </details>
-        <!-- Settings collapsible section for additional options -->
-        <details>
-          <summary data-i18n="trails.settings.title">Settings</summary>
-          <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
-            <label style="display: flex; align-items: center; gap: 0.5rem;">
-              <input type="checkbox" id="hideCompleted" style="accent-color: var(--button-green);">
-              <span data-i18n="trails.settings.hideCompleted">Hide completed trails</span>
-            </label>
-            <button id="clearProgress" type="button" style="padding: 0.4rem 0.75rem; background-color: var(--button-green); color: white; border: none; border-radius: 5px; font-size: 0.8rem; cursor: pointer; width: fit-content;" data-i18n="trails.settings.clearProgress">Clear all progress</button>
-          </div>
-        </details>
-        <div class="export-import">
-          <button id="exportBtn" type="button" data-i18n="trails.export">Export CSV</button>
-          <label for="importFile" class="import-label">
-            <span data-i18n="trails.import">Import</span>
-            <input type="file" id="importFile" accept=".csv,.xlsx,.json" />
-          </label>
-        </div>
-        <!-- Link to view the GitHub API repository -->
-        <div class="api-link-container">
-          <a href="https://github.com/natesobol/WMNF-Trails-API/tree/main" target="_blank" rel="noopener noreferrer" class="view-api-link">
-            <!-- GitHub logo SVG -->
-            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" style="fill: currentColor; margin-right: 0.4rem;">
-              <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.62 7.62 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-            </svg>
-            <span data-i18n="trails.viewApi">View API</span>
-          </a>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -1426,10 +1428,56 @@
 
       // Trail info lookup and UI state for the details panel beneath the map.
       const trailInfoPanel = document.getElementById('trailInfoPanel');
+      const trailInfoInitial = document.getElementById('trailInfoInitial');
+      const trailInfoContent = document.getElementById('trailInfoContent');
       let trailInfoLookup = new Map();
       let trailInfoLoaded = false;
       let currentTrailSelection = null;
       let telemetryTrailCount = null;
+
+      function setInitialInfoText() {
+        const heading = document.getElementById('trailInfoHeading');
+        if (heading) heading.textContent = 'Select a trail to view details';
+
+        const emptyState = document.getElementById('trailInfoEmpty');
+        if (emptyState) emptyState.textContent = t('trails.details.empty');
+
+        const aboutTitle = document.getElementById('trailInfoAboutTitle');
+        if (aboutTitle) aboutTitle.textContent = t('trails.about.title');
+
+        const aboutBody = document.getElementById('trailInfoAboutBody');
+        if (aboutBody) aboutBody.textContent = t('trails.about.body');
+
+        const disclaimerHeading = document.getElementById('trailDisclaimerHeading');
+        if (disclaimerHeading) disclaimerHeading.textContent = t('trails.disclaimer.title');
+
+        const disclaimerBody = document.getElementById('trailDisclaimerBody');
+        if (disclaimerBody) disclaimerBody.innerHTML = t('trails.disclaimer.body');
+
+        const howToHeading = document.getElementById('trailHowToHeading');
+        if (howToHeading) howToHeading.textContent = t('trails.howto.title');
+
+        const howToBody = document.getElementById('trailHowToBody');
+        if (howToBody) howToBody.textContent = t('trails.howto.body');
+
+        const settingsHeading = document.getElementById('trailSettingsHeading');
+        if (settingsHeading) settingsHeading.textContent = t('trails.settings.title');
+
+        const hideCompletedLabel = document.getElementById('trailHideCompletedLabel');
+        if (hideCompletedLabel) hideCompletedLabel.textContent = t('trails.settings.hideCompleted');
+
+        const clearProgressBtn = document.getElementById('clearProgress');
+        if (clearProgressBtn) clearProgressBtn.textContent = t('trails.settings.clearProgress');
+
+        const exportBtn = document.getElementById('exportBtn');
+        if (exportBtn) exportBtn.textContent = t('trails.export');
+
+        const importLabel = document.getElementById('trailImportLabel');
+        if (importLabel) importLabel.textContent = t('trails.import');
+
+        const apiLinkLabel = document.getElementById('trailApiLinkLabel');
+        if (apiLinkLabel) apiLinkLabel.textContent = t('trails.viewApi');
+      }
 
       // Normalize trail names for matching (case-insensitive, trimmed, collapses spaces).
       function normalizeTrailName(name) {
@@ -1738,27 +1786,26 @@
       }
 
       function renderTrailInfo(name) {
-        if (!trailInfoPanel) return;
+        if (!trailInfoPanel || !trailInfoInitial || !trailInfoContent) return;
         currentTrailSelection = name || null;
 
         if (!name) {
-          trailInfoPanel.innerHTML = `
-            <h2 class="trail-info-heading">Select a trail to view details</h2>
-            <p class="trail-info-empty">${t('trails.details.empty')}</p>
-            <div class="trail-info-about">
-              <h3>${t('trails.about.title')}</h3>
-              <p>${t('trails.about.body')}</p>
-            </div>
-          `;
+          setInitialInfoText();
+          trailInfoContent.innerHTML = '';
+          trailInfoContent.hidden = true;
+          trailInfoInitial.hidden = false;
           return;
         }
+
+        trailInfoInitial.hidden = true;
+        trailInfoContent.hidden = false;
 
         const record = trailInfoLookup.get(normalizeTrailName(name));
         if (!record) {
           const message = trailInfoLoaded
             ? t('trails.info.noProperties')
             : t('trails.info.loadingProperties');
-          trailInfoPanel.innerHTML = `
+          trailInfoContent.innerHTML = `
             <h2>${name}</h2>
             <p class="trail-info-empty">${message}</p>
           `;
@@ -1824,7 +1871,7 @@
             </div>
           `);
 
-        trailInfoPanel.innerHTML = `
+        trailInfoContent.innerHTML = `
           <h2>${record.trail_name || name}</h2>
           <p>${t('trails.info.sourceNote')}</p>
           <div class="trail-info-grid">${primaryItems.concat(extraTags).join('')}</div>
