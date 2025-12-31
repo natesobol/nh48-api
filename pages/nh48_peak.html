@@ -813,7 +813,9 @@
             .catch(err => console.error('Failed to load navigation:', err));
         }
 
-        if (footerPlaceholder) {
+        const hasQuickFooter = document.querySelector('.nh48-quick-footer');
+
+        if (footerPlaceholder && !hasQuickFooter) {
           fetch('/pages/footer.html')
             .then(response => response.text())
             .then(html => {
