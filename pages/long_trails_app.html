@@ -17,8 +17,6 @@
     crossorigin=""
   />
   <link rel="stylesheet" href="../css/long_trails_app.css" />
-  <link rel="stylesheet" href="/css/quick-browse-footer.css">
-  <script src="/js/quick-browse-footer.js" defer></script>
   <style>
     * {
       box-sizing: border-box;
@@ -1330,6 +1328,11 @@
 
     async function init(){
       createMap();
+      window.addEventListener('resize', () => {
+        if(map){
+          map.invalidateSize();
+        }
+      });
       const data = await loadTrails();
       trailData = data.trails || [];
       globalBounds = data.bounds || null;
