@@ -3,11 +3,14 @@
   const STYLE_ATTR = 'data-nh48-quick-footer-style';
   const FOOTER_ATTR = 'data-nh48-quick-footer';
   const PARTIAL_URL = '/pages/footer.html';
-  const FOOTER_LEGAL_TEXT = '© 2026 Nathan Sobol · White Mountains data, trails & photos';
+  const FOOTER_LEGAL_TEXT = '© 2026 Nathan Sobol · ' +
+    '<a href="/catalog" class="legal-link nh48-link">NH 48</a>, ' +
+    '<a href="/trails" class="legal-link tracing-link">White Mountain Tracing</a>, ' +
+    '<a href="/long-trails" class="legal-link long-trail-link">Scenic & Long Trail</a> – Data, Routes, and Photos.';
   const PEMI_HEADING_TEXT = 'Pemigewasset';
   const UNIFIED_FOOTER_CSS = `
 .nh48-quick-footer {
-    --nh48-footer-grid-min: clamp(160px, 17vw, 230px);
+    --nh48-footer-grid-min: clamp(200px, 50vw, 300px);
     --nh48-footer-surface: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
     --nh48-footer-card: color-mix(in srgb, #141833 70%, rgba(10, 12, 26, 0.55) 30%);
     --nh48-footer-border: #ffffff;
@@ -232,6 +235,21 @@
     color: color-mix(in srgb, var(--nh48-footer-ink) 80%, #cbd5e1 20%);
   }
 
+  .nh48-quick-footer__legal a {
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .nh48-quick-footer__legal a.nh48-link { color: var(--nh48-footer-accent); }
+  .nh48-quick-footer__legal a.tracing-link { color: #6ee7b7; }
+  .nh48-quick-footer__legal a.long-trail-link { color: #38bdf8; }
+
+  .nh48-quick-footer__legal a:hover,
+  .nh48-quick-footer__legal a:focus-visible {
+    text-decoration: underline;
+    outline: none;
+  }
+
   @media (max-width: 1024px) {
     .nh48-quick-footer .nh48-quick-footer__grid {
       grid-auto-flow: row;
@@ -247,28 +265,45 @@
   }
 
   @media (max-width: 768px) {
-    .nh48-quick-footer {
-      margin: 24px auto 10px;
-      padding: 14px clamp(12px, 4vw, 18px) 0;
-      width: min(720px, 100%);
-      min-height: 0;
+    .nh48-quick-footer { 
+      margin: 24px auto 10px; 
+      padding: 14px clamp(12px, 4vw, 18px) 0; 
+      width: min(720px, 100%); 
+      min-height: 0; 
+      max-height: none; 
+    }
+
+    .nh48-quick-footer .nh48-quick-footer__grid { 
+      grid-template-columns: 1fr;
+      gap: 14px;
+      padding: 8px 12px 12px;
+      min-height: 320px;
       max-height: none;
     }
 
-    .nh48-quick-footer .nh48-quick-footer__grid {
-      gap: 12px;
-      padding: 6px 8px 10px;
-      max-height: 320px;
-      min-height: 220px;
+    .nh48-quick-footer__list { 
+      gap: 8px; 
     }
 
-    .nh48-quick-footer__list {
-      gap: 6px;
+    .nh48-quick-footer__link { 
+      justify-content: center;
+      font-size: 1rem;
+      min-height: 44px; 
+      padding: 10px 14px; 
     }
 
-    .nh48-quick-footer__link {
-      min-height: 38px;
-      padding: 8px 9px;
+    .nh48-quick-footer__controls {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .nh48-quick-footer__sort-button {
+      width: 100%;
+      text-align: center;
+      padding: 10px 14px;
+      font-size: 1rem;
     }
   }
 `;
@@ -293,7 +328,7 @@
 
     const legal = footerEl.querySelector('.nh48-quick-footer__legal');
     if (legal) {
-      legal.textContent = FOOTER_LEGAL_TEXT;
+      legal.innerHTML = FOOTER_LEGAL_TEXT;
     }
   };
   const POPULAR_PEAKS = [
