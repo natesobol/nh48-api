@@ -671,6 +671,12 @@
         flex:1 1 auto;
         word-break:break-word;
       }
+      .description-body{
+        font-size:1rem;
+        line-height:1.6;
+        color:var(--ink);
+        margin-top:4px;
+      }
 
       h1#peakTitle{
         margin:12px 0 6px 0;
@@ -896,6 +902,7 @@
       </div>
 
 
+      <div id="peakDescriptionPanel" class="metadata-panel" hidden style="margin-bottom:16px;"></div>
       <!-- GENERAL INFO ABOVE METADATA PANEL (STACKED, FULL WIDTH) ------------->
       <div id="generalInfoPanel" class="metadata-panel" hidden style="margin-bottom:16px;"></div>
       <div id="photoMetadataPanel" class="metadata-panel" hidden></div>
@@ -1968,6 +1975,34 @@
         panel.hidden = false;
       }
 
+      function buildPeakDescription(p){
+        const panel = document.getElementById('peakDescriptionPanel');
+        if(!panel) return;
+        panel.innerHTML = '';
+
+        const description = safeText(p.description || p['Description']).trim();
+        if(!description){
+          panel.hidden = true;
+          return;
+        }
+
+        const header = document.createElement('div');
+        header.className = 'metadata-header';
+
+        const title = document.createElement('div');
+        title.className = 'metadata-title';
+        title.textContent = translateWithFallback('peak.description.title', 'Mountain Overview');
+        header.appendChild(title);
+
+        const body = document.createElement('div');
+        body.className = 'description-body';
+        body.textContent = description;
+
+        panel.appendChild(header);
+        panel.appendChild(body);
+        panel.hidden = false;
+      }
+
       /* GENERAL PEAK INFO PANEL ---------------------------------------------- */
       function buildGeneralInfo(p){
         const panel = document.getElementById('generalInfoPanel');
@@ -2193,6 +2228,7 @@
         const elevation = p['Elevation (ft)'] || t('common.unknown');
         const prominence = p['Prominence (ft)'] || t('common.unknown');
         const range = p['Range / Subrange'] || 'White Mountains';
+        const peakDescription = safeText(p.description || p['Description']).trim();
 
         const langCode = getSeoLang();
         const canonicalUrl = buildCanonicalUrl(slug, langCode);
@@ -2204,7 +2240,7 @@
             || safeText(primaryMeta.alt)
             || safeText(primaryMeta.caption)).trim()
           : '';
-        const descriptionText = metaDescription || generatedDescription;
+        const descriptionText = peakDescription || metaDescription || generatedDescription;
         const titleText = `${name} — White Mountain National Forest`;
 
         const titleEl = document.getElementById('dynamicTitle');
@@ -2631,6 +2667,7 @@
             twitterImageEl.setAttribute('content', primaryImage);
           }
 
+          buildPeakDescription(p);
           // Build general info panel
           buildGeneralInfo(p);
 
@@ -2670,6 +2707,7 @@
           const name = currentPeak.peakName || currentPeak['Peak Name'] || currentSlug;
           updatePeakTitle(name);
           const { canonicalUrl, descriptionText } = updateHeadMeta(currentPeak, currentSlug, name, currentPrimaryMeta);
+          buildPeakDescription(currentPeak);
           buildGeneralInfo(currentPeak);
           const routes = currentPeak['Standard Routes'] || [];
           const trailNames = currentPeak['Trail Names'] || [];
