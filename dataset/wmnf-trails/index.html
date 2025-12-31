@@ -64,20 +64,24 @@
     }
 
     .logo-wrap {
-      width: 58px;
-      height: 58px;
+      width: 72px;
+      height: 72px;
       border-radius: 14px;
       overflow: hidden;
       display: flex;
+      align-items: center;
+      justify-content: center;
       box-shadow: 0 0 0 2px var(--stroke, #ffffff);
+      background: var(--bg-secondary);
+      padding: 6px;
     }
 
     .logo-wrap img {
-      width: 112%;
-      height: 112%;
-      object-fit: cover;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       display: block;
-      margin: -6%;
+      margin: 0;
     }
 
     .site-nav-title-wrap {
@@ -190,33 +194,20 @@
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: linear-gradient(120deg, rgba(34, 197, 94, 0.1), rgba(15, 23, 42, 0.85));
-      border: 1px solid rgba(34, 197, 94, 0.25);
-      box-shadow: 0 12px 22px rgba(0, 0, 0, 0.35);
-      margin-top: 10px;
+      padding: 0;
+      margin: 10px 0;
     }
 
     .dataset-hero-logo .logo-wrap {
-      width: 98px;
-      height: 98px;
+      width: 88px;
+      height: 88px;
       border-radius: 16px;
       box-shadow: 0 0 0 2px var(--stroke, #ffffff);
-    }
-
-    .dataset-hero-logo .logo-copy {
+      background: var(--bg-secondary);
+      padding: 8px;
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-      color: #e5f8ec;
-      font-size: 14px;
-      max-width: 420px;
-    }
-
-    .dataset-hero-logo .logo-copy strong {
-      color: #22c55e;
-      font-size: 16px;
+      align-items: center;
+      justify-content: center;
     }
 
     .site-nav-cta svg {
@@ -573,19 +564,15 @@
   </div>
   <main class="dataset-page">
     <header>
-      <p class="eyebrow">NH48 API Open Data</p>
-      <h1>White Mountain Trails Dataset</h1>
-      <p class="lede">Download normalized trail data for the White Mountain National Forest, including New Hampshire core coverage, Maine extensions, connector graphs, and supporting peak references.</p>
-      <p class="lede">The dataset is published as static files so search engines and downstream apps can consume the metadata without relying on client-side rendering.</p>
       <div class="dataset-hero-logo">
         <div class="logo-wrap">
           <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest Trails API logo" title="White Mountain National Forest Trails API" loading="lazy" decoding="async">
         </div>
-        <div class="logo-copy">
-          <strong>WMNF Trails API brandmark</strong>
-          <span>Logo identifier for the White Mountain National Forest trail dataset and map downloads, optimized for search engines and social previews.</span>
-        </div>
       </div>
+      <p class="eyebrow">NH48 API Open Data</p>
+      <h1>White Mountain Trails Dataset</h1>
+      <p class="lede">Download normalized trail data for the White Mountain National Forest, including New Hampshire core coverage, Maine extensions, connector graphs, and supporting peak references.</p>
+      <p class="lede">The dataset is published as static files so search engines and downstream apps can consume the metadata without relying on client-side rendering.</p>
     </header>
 
     <nav aria-label="Breadcrumb">
