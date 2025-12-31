@@ -239,7 +239,7 @@
       border-radius: 14px;
       overflow: hidden;
       display: flex;
-      box-shadow: 0 0 0 2px var(--stroke, #ffffff);
+      box-shadow: none;
     }
 
     .logo-wrap img {
@@ -453,13 +453,18 @@
       width: min(100%, 760px);
       text-align: center;
       position: relative;
-      z-index: 1;
+      z-index: 2;
       margin: 0 auto;
       padding: clamp(24px, 5vw, 36px);
-      background: rgba(12, 12, 12, 0.78);
+      background: rgba(12, 12, 12, 0.9);
       border: 1px solid #ffffff;
       border-radius: 24px;
       box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    footer {
+      position: relative;
+      z-index: 2;
     }
     h1 {
       font-size: clamp(28px, 4vw, 40px);
@@ -522,7 +527,8 @@
       width: 38px;
       height: 38px;
       border-radius: 8px;
-      border: 2px solid var(--stroke, #ffffff);
+      border: none;
+      box-shadow: none;
       margin-right: 10px;
       flex-shrink: 0;
     }
@@ -538,7 +544,7 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: 1;
+      z-index: 0;
       overflow: visible;
     }
 
@@ -552,17 +558,13 @@
       transform-origin: center;
       will-change: transform;
       text-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      transition: opacity 0.6s ease;
     }
 
     .peak-label--name {
       font-size: 1.35rem;
       letter-spacing: 0.18px;
-    }
-
-    .peak-label--elevation {
-      font-size: 1.12rem;
-      opacity: 0.84;
-      letter-spacing: 0.12px;
     }
 
     @media (max-width: 768px) {
@@ -1452,37 +1454,35 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const peaks = [
-        { name: 'Washington', elevation: "6,288'" },
-        { name: 'Adams', elevation: "5,774'" },
-        { name: 'Jefferson', elevation: "5,712'" },
-        { name: 'Madison', elevation: "5,367'" },
-        { name: 'Moosilauke', elevation: "4,802'" },
-        { name: 'Carrigain', elevation: "4,682'" },
-        { name: 'Lincoln', elevation: "5,089'" },
-        { name: 'Lafayette', elevation: "5,249'" },
-        { name: 'South Twin', elevation: "4,902'" },
-        { name: 'Cannon', elevation: "4,080'" },
-        { name: 'Eisenhower', elevation: "4,780'" },
-        { name: 'Pierce', elevation: "4,312'" }
+        'Washington',
+        'Adams',
+        'Jefferson',
+        'Madison',
+        'Moosilauke',
+        'Carrigain',
+        'Lincoln',
+        'Lafayette',
+        'South Twin',
+        'Cannon',
+        'Eisenhower',
+        'Pierce'
       ];
 
       const container = document.getElementById('floating-peaks');
       const floatingLabels = [];
       const viewport = { width: window.innerWidth, height: window.innerHeight };
 
+      const randomInRange = (min, max) => min + Math.random() * (max - min);
+
       const createFloatingLabel = (text, variant) => {
         const label = document.createElement('div');
         label.classList.add('peak-label', `peak-label--${variant}`);
-        label.textContent = text;
+        label.textContent = '';
 
         const scale = 1.18 + Math.random() * 0.55;
-        const speed = 8 + Math.random() * 6; // slower, relaxed drift
+        const speed = randomInRange(25, 55);
         const angle = Math.random() * Math.PI * 2;
         const velocity = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
-
-        const bobAmplitude = 6 + Math.random() * 10;
-        const bobFrequency = 0.35 + Math.random() * 0.4;
-        const bobPhase = Math.random() * Math.PI * 2;
 
         container.appendChild(label);
 
@@ -1499,16 +1499,68 @@
           vx: velocity.x,
           vy: velocity.y,
           scale,
-          bobAmplitude,
-          bobFrequency,
-          bobPhase
+          fullText: text,
+          typingIndex: 0,
+          typingForward: true,
+          typingTimeout: null
         });
       };
 
-      peaks.forEach((peak) => {
-        createFloatingLabel(peak.name, 'name');
-        createFloatingLabel(peak.elevation, 'elevation');
-      });
+      const startTypingAnimation = (labelObj) => {
+        const typingSpeed = randomInRange(110, 170);
+        const deleteSpeed = randomInRange(90, 150);
+        const visibleDuration = randomInRange(20000, 30000);
+        const hiddenDuration = randomInRange(20000, 30000);
+
+        const step = () => {
+          if (labelObj.typingTimeout) {
+            clearTimeout(labelObj.typingTimeout);
+          }
+
+          const typeForward = () => {
+            if (labelObj.typingIndex < labelObj.fullText.length) {
+              labelObj.typingIndex += 1;
+              labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
+              labelObj.el.style.opacity = 1;
+              labelObj.typingTimeout = setTimeout(typeForward, typingSpeed);
+            } else {
+              labelObj.typingTimeout = setTimeout(startDeleting, visibleDuration);
+            }
+          };
+
+          const startDeleting = () => {
+            if (labelObj.typingIndex > 0) {
+              labelObj.typingIndex -= 1;
+              labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
+              labelObj.typingTimeout = setTimeout(startDeleting, deleteSpeed);
+            } else {
+              labelObj.el.style.opacity = 0;
+              labelObj.typingTimeout = setTimeout(() => {
+                labelObj.typingIndex = 0;
+                typeForward();
+              }, hiddenDuration);
+            }
+          };
+
+          typeForward();
+        };
+
+        step();
+      };
+
+      const spawnNextLabel = (index = 0) => {
+        if (index >= peaks.length) {
+          return;
+        }
+
+        const labelObj = createFloatingLabel(peaks[index], 'name');
+        startTypingAnimation(labelObj);
+
+        const nextDelay = randomInRange(3000, 5000);
+        setTimeout(() => spawnNextLabel(index + 1), nextDelay);
+      };
+
+      spawnNextLabel();
 
       const updateViewport = () => {
         viewport.width = window.innerWidth;
@@ -1546,9 +1598,7 @@
             label.vy = -Math.abs(label.vy);
           }
 
-          const bobOffset = Math.sin((timestamp / 1000) * label.bobFrequency * Math.PI * 2 + label.bobPhase) * label.bobAmplitude;
-
-          label.el.style.transform = `translate3d(${label.x}px, ${label.y + bobOffset}px, 0) scale(${label.scale})`;
+          label.el.style.transform = `translate3d(${label.x}px, ${label.y}px, 0) scale(${label.scale})`;
         });
 
         requestAnimationFrame(animate);
