@@ -321,6 +321,21 @@
         if(!url) return url;
 
         try {
+          const CDN_IMAGE_SEGMENT = '/cdn-cgi/image/';
+
+          // If the URL already uses Cloudflare image resizing, enforce our options
+          // while preserving the original path to guarantee webp thumbnails.
+          if(url.includes(CDN_IMAGE_SEGMENT)){
+            const idx = url.indexOf(CDN_IMAGE_SEGMENT);
+            const after = url.slice(idx + CDN_IMAGE_SEGMENT.length);
+            const pathStart = after.indexOf('/');
+            if(pathStart !== -1){
+              const imagePath = after.slice(pathStart);
+              const prefix = url.slice(0, idx + CDN_IMAGE_SEGMENT.length);
+              return `${prefix}${IMAGE_TRANSFORM_OPTIONS}${imagePath}`;
+            }
+          }
+
           const parsed = new URL(url, PHOTO_BASE_URL);
           const hostname = parsed.hostname.toLowerCase();
           const originalPath = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
