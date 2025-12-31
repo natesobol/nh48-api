@@ -230,7 +230,7 @@
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
-      const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85';
+      const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85,width=720';
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
       const PHOTO_BASE = new URL(PHOTO_BASE_URL);
       const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
@@ -324,7 +324,8 @@
           const CDN_IMAGE_SEGMENT = '/cdn-cgi/image/';
 
           // If the URL already uses Cloudflare image resizing, enforce our options
-          // while preserving the original path to guarantee webp thumbnails.
+          // (including width) while preserving the original path to guarantee
+          // webp thumbnails.
           if(url.includes(CDN_IMAGE_SEGMENT)){
             const idx = url.indexOf(CDN_IMAGE_SEGMENT);
             const after = url.slice(idx + CDN_IMAGE_SEGMENT.length);
