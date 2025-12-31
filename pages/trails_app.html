@@ -1173,7 +1173,6 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const navPlaceholder = document.getElementById('nav-placeholder');
-      const footerPlaceholder = document.getElementById('footer-placeholder');
       const activeRoute = document.body.dataset.route || document.body.dataset.page;
 
       if (navPlaceholder) {
@@ -1196,17 +1195,6 @@
           })
           .catch(err => console.error('Failed to load navigation:', err));
       }
-
-        const hasQuickFooter = document.querySelector('.nh48-quick-footer');
-
-        if (footerPlaceholder && !hasQuickFooter) {
-          fetch('/pages/footer.html')
-            .then(response => response.text())
-            .then(html => {
-              footerPlaceholder.innerHTML = html;
-            })
-            .catch(err => console.error('Failed to load footer:', err));
-        }
     });
   </script>
     <header class="page-header">

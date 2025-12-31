@@ -97,27 +97,27 @@
 
   .nh48-quick-footer .nh48-quick-footer__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(var(--nh48-footer-grid-min), 1fr));
+    grid-template-columns: 1fr;
     align-items: stretch;
     justify-items: stretch;
-    gap: clamp(10px, 2vw, 18px);
-    width: 100%;
+    gap: clamp(12px, 2vw, 18px);
+    width: min(1200px, 100%);
     max-width: none;
     margin: 6px auto 0;
     padding: clamp(8px, 2vw, 14px) clamp(12px, 2.5vw, 18px);
-    scroll-padding-inline: clamp(14px, 3vw, 28px);
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: auto;
-    max-height: 380px;
+    max-height: 500px;
+    min-height: 0;
     flex: 1 1 auto;
     scrollbar-width: thin;
     scrollbar-color: var(--nh48-footer-accent) color-mix(in srgb, var(--nh48-footer-card) 80%, #000 20%);
     -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
+    scroll-snap-type: y proximity;
   }
 
   .nh48-quick-footer__grid::-webkit-scrollbar {
-    height: 12px;
+    width: 12px;
   }
 
   .nh48-quick-footer__grid::-webkit-scrollbar-track {
@@ -137,12 +137,11 @@
     padding: clamp(12px, 2vw, 16px);
     background: var(--nh48-footer-card);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.28);
-    min-width: var(--nh48-footer-grid-min);
+    min-width: 0;
     max-width: none;
     width: 100%;
     text-align: center;
     scroll-snap-align: start;
-    margin-inline: auto;
   }
 
   .nh48-quick-footer__group h2 {
@@ -230,16 +229,14 @@
 
   @media (max-width: 1024px) {
     .nh48-quick-footer .nh48-quick-footer__grid {
-      grid-auto-flow: row;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      max-height: 340px;
+      grid-template-columns: 1fr;
+      max-height: 500px;
       overflow-x: hidden;
       scroll-snap-type: y proximity;
       justify-content: center;
-      justify-items: center;
+      justify-items: stretch;
       width: 100%;
       padding: 8px clamp(14px, 4vw, 22px) 10px;
-      scroll-padding-inline: clamp(14px, 4vw, 22px);
     }
 
     .nh48-quick-footer .nh48-quick-footer__group {
@@ -259,8 +256,8 @@
     .nh48-quick-footer .nh48-quick-footer__grid {
       gap: 12px;
       padding: 6px 8px 10px;
-      max-height: 320px;
-      min-height: 220px;
+      max-height: 420px;
+      min-height: 0;
     }
 
     .nh48-quick-footer__list {
