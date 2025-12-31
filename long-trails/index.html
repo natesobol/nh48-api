@@ -172,6 +172,7 @@
       margin: 1.5rem auto 0;
       padding: 0 var(--page-padding);
       width: 100%;
+      max-width: 1280px;
     }
 
     .page-header h1 {
@@ -185,8 +186,34 @@
       line-height: 1.5;
     }
 
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 0.3rem;
+    }
+
+    .page-logo {
+      width: 68px;
+      height: 68px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--bg-secondary);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+      object-fit: cover;
+      flex: 0 0 auto;
+    }
+
+    .title-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
     #app {
       width: 100%;
+      max-width: 1280px;
       margin: 1.5rem auto 2rem;
       padding: 0 var(--page-padding) 2rem;
       display: grid;
@@ -276,12 +303,31 @@
     }
 
     .color-bar {
-      width: 22px;
-      height: 8px;
-      border-radius: 3px;
+      --trail-color: #4a9eff;
+      position: relative;
+      width: 52px;
+      height: 18px;
+      border-radius: 12px;
       display: inline-block;
       flex: 0 0 auto;
       align-self: center;
+      background: var(--trail-color);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.38),
+        inset 0 -1px 6px rgba(0, 0, 0, 0.25),
+        0 6px 14px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+    }
+
+    .color-bar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.18) 40%, rgba(255, 255, 255, 0) 55%);
+      mix-blend-mode: screen;
+      pointer-events: none;
+      opacity: 0.85;
     }
 
     .trail-name {
@@ -549,6 +595,12 @@
         margin-top: 1rem;
       }
 
+      .page-logo {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+      }
+
       .map-panel {
         min-height: 360px;
       }
@@ -557,6 +609,12 @@
     @media (max-width: 520px){
       :root {
         --page-padding: 14px;
+      }
+
+      .page-logo {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
       }
 
       .page-header h1 {
@@ -619,9 +677,14 @@
         <li aria-current="page">Long Trails</li>
       </ol>
     </nav>
-    <h1>Long-Distance Trails</h1>
-    <p>Explore multi-day trail campaigns with interactive maps, filters, and section details.</p>
-    <p>Click a section to view details, then click “View section” for the full section page.</p>
+    <div class="title-row">
+      <img class="page-logo" src="/Long_Trails_Logo.png" alt="Long Trails logo">
+      <div class="title-text">
+        <h1>Long-Distance Trails</h1>
+        <p>Explore multi-day trail campaigns with interactive maps, filters, and section details.</p>
+        <p>Click a section to view details, then click “View section” for the full section page.</p>
+      </div>
+    </div>
   </header>
 
   <main id="app">
@@ -2080,7 +2143,7 @@
         const summary = document.createElement('summary');
         summary.className = 'trail-summary';
         summary.innerHTML = `
-          <span class="color-bar" style="background:${displayColor}"></span>
+          <span class="color-bar" style="--trail-color:${displayColor}"></span>
           <span class="trail-name">${trail.name}</span>
           ${hasTelemetry ? '' : '<span class="telemetry-note">Telemetry Incomplete</span>'}
           <span class="trail-count">${trail.sections.length} sections</span>

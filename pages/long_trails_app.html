@@ -30,7 +30,9 @@
       --text-primary: #ffffff;
       --text-secondary: #d9dde5;
       --accent: #4a9eff;
+      --accent-blue: #4a9eff;
       --page-padding: clamp(16px, 4vw, 48px);
+      --content-width: 1200px;
     }
 
     html, body {
@@ -48,33 +50,49 @@
       flex-direction: column;
     }
 
-    .page-header {
-      margin: 1.5rem auto 0;
+    .page-shell {
+      width: min(100%, var(--content-width));
+      margin: 0 auto;
       padding: 0 var(--page-padding);
-      width: 100%;
+    }
+
+    .page-header {
+      margin: 1.25rem auto 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
     .page-header h1 {
-      margin: 0 0 0.35rem;
-      font-size: 2rem;
+      margin: 0;
+      font-size: clamp(1.65rem, 2vw, 2rem);
+      line-height: 1.1;
     }
 
     .page-header p {
-      margin: 0.2rem 0;
+      margin: 0.2rem 0 0;
       color: var(--text-secondary);
-      line-height: 1.5;
+      line-height: 1.4;
+    }
+
+    .header-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
     }
 
     .logo-wrap {
-      width: 72px;
-      height: 72px;
+      width: 64px;
+      height: 64px;
       border-radius: 14px;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: none;
-      background: transparent;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), transparent 45%), #16181f;
       padding: 0;
     }
 
@@ -88,13 +106,10 @@
 
     .page-logo {
       display: inline-flex;
-      margin-bottom: 0.5rem;
     }
 
     .page-breadcrumbs {
-      max-width: 1100px;
       margin: 0 auto 10px;
-      padding: 0 1rem;
       color: var(--text-secondary);
     }
 
@@ -133,7 +148,7 @@
     #app {
       width: 100%;
       margin: 1.5rem auto 2rem;
-      padding: 0 var(--page-padding) 2rem;
+      padding: 0 0 2rem;
       display: grid;
       grid-template-columns: minmax(280px, 400px) minmax(0, 1fr);
       gap: clamp(16px, 2.5vw, 24px);
@@ -221,11 +236,31 @@
     }
 
     .color-dot {
-      width: 36px;
-      height: 10px;
-      border-radius: 999px;
+      position: relative;
+      width: 32px;
+      height: 18px;
+      border-radius: 12px;
       display: inline-block;
-      flex: 0 0 36px;
+      flex: 0 0 32px;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+        0 4px 12px rgba(0, 0, 0, 0.35);
+      background-image:
+        linear-gradient(130deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 48%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.3));
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      overflow: hidden;
+    }
+
+    .color-dot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.5), transparent 45%);
+      opacity: 0.65;
+      mix-blend-mode: screen;
+      border-radius: inherit;
     }
 
     .trail-name {
@@ -481,34 +516,38 @@
 
       });
     </script>
-  <header class="page-header">
-    <div class="page-logo">
-      <div class="logo-wrap">
-        <img src="/Long_Trails_Logo.png" alt="Long Trails interactive map logo" title="Long Trails dataset" loading="lazy" decoding="async">
+  <div class="page-shell">
+    <header class="page-header">
+      <div class="page-logo">
+        <div class="logo-wrap">
+          <img src="/Long_Trails_Logo.png" alt="Long Trails interactive map logo" title="Long Trails dataset" loading="lazy" decoding="async">
+        </div>
       </div>
-    </div>
-    <h1>Long-Distance Trails</h1>
-    <p>Explore multi-day trail campaigns with interactive maps, filters, and section details.</p>
-    <p>Click a section to view details, then click “View section” for the full section page.</p>
-  </header>
+      <div class="header-text">
+        <h1>Long-Distance Trails</h1>
+        <p>Explore multi-day trail campaigns with interactive maps, filters, and section details.</p>
+        <p>Click a section to view details, then click “View section” for the full section page.</p>
+      </div>
+    </header>
 
-  <nav class="page-breadcrumbs" aria-label="Breadcrumb">
-    <ol>
-      <li><a href="/">Home</a></li>
-      <li>Long Trails</li>
-    </ol>
-  </nav>
+    <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li>Long Trails</li>
+      </ol>
+    </nav>
 
-  <main id="app">
-    <aside class="sidebar" aria-live="polite">
-      <div id="sectionDetails" class="section-details"></div>
-      <div class="trail-directory-title">Trail segments</div>
-      <div id="trailList" class="accordion"></div>
-    </aside>
-    <section class="map-panel">
-      <div id="map"></div>
-    </section>
-  </main>
+    <main id="app">
+      <aside class="sidebar" aria-live="polite">
+        <div id="sectionDetails" class="section-details"></div>
+        <div class="trail-directory-title">Trail segments</div>
+        <div id="trailList" class="accordion"></div>
+      </aside>
+      <section class="map-panel">
+        <div id="map"></div>
+      </section>
+    </main>
+  </div>
 
   <section id="seo-trails" class="sr-only" aria-label="Long-distance trail sections index">
     <h2>Trail Sections Index</h2>
@@ -1086,7 +1125,7 @@
         const summary = document.createElement('summary');
         summary.className = 'trail-summary';
         summary.innerHTML = `
-          <span class="color-dot" style="background:${trail.color}"></span>
+          <span class="color-dot" style="background-color:${trail.color}"></span>
           <span class="trail-name">${trail.name}</span>
           <span class="trail-count">${trail.sections.length} sections</span>
         `;
