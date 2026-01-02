@@ -151,6 +151,7 @@
       --text-secondary: #d9dde5;
       --accent: #4a9eff;
       --page-padding: clamp(16px, 4vw, 48px);
+      --desktop-viewport-buffer: clamp(180px, 18vh, 260px);
     }
 
     html, body {
@@ -242,7 +243,6 @@
       border-radius: 12px;
       overflow: hidden;
       background: var(--bg-secondary);
-      min-height: 480px;
       display: flex;
       flex-direction: column;
       height: 100%;
@@ -278,6 +278,49 @@
       letter-spacing: 0.08em;
       color: var(--text-secondary);
       margin: 4px 2px 10px;
+    }
+
+    @media (min-width: 901px) {
+      body {
+        min-height: 100vh;
+        overflow: hidden;
+      }
+
+      .page-header {
+        margin: 0;
+        max-width: none;
+        padding: 12px clamp(18px, 4vw, 32px) 8px;
+      }
+
+      #app {
+        grid-template-columns: clamp(300px, 24vw, 360px) minmax(0, 1fr);
+        height: 100%;
+        min-height: 0;
+        padding: 0;
+        gap: 0;
+      }
+
+      .sidebar {
+        border-radius: 0;
+        height: 100%;
+        min-height: 0;
+        border: 0;
+        border-right: 1px solid var(--border-color);
+        padding: 18px;
+      }
+
+      .map-panel {
+        border: 0;
+        border-radius: 0;
+        background: var(--bg-primary);
+        height: 100%;
+        min-height: 0;
+      }
+
+      #map {
+        min-height: 0;
+        height: 100%;
+      }
     }
 
     .accordion {
