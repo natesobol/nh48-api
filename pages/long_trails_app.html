@@ -163,37 +163,31 @@
     @media (min-width: 901px) {
       body {
         overflow: hidden;
+        margin: 0;
+        padding: 0;
+      }
+
+      .page-shell {
+        display: none;
       }
 
       #app {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         padding: 0;
         margin: 0;
-      }
-
-      .page-header {
-        display: none;
-      }
-
-      .nh48-quick-footer {
-        display: none;
-      }
-
-      #nav-placeholder {
-        position: absolute;
-        top: 0;
-        left: 320px;
-        right: 0;
-        z-index: 1001;
-        background: rgba(26, 29, 35, 0.95);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        height: 100vh;
+        width: 100vw;
       }
 
       .sidebar {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 320px;
+        width: 20%;
+        min-width: 280px;
+        max-width: 400px;
         height: 100vh;
         background: var(--bg-secondary);
         border: 1px solid var(--border-color);
@@ -209,25 +203,36 @@
         overflow-wrap: break-word;
         z-index: 1000;
         box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+        position: relative;
+        flex-shrink: 0;
       }
 
       .map-panel {
-        position: absolute;
-        left: 320px;
-        right: 0;
-        top: 60px;
-        height: calc(100vh - 60px);
+        flex: 1;
+        height: 100vh;
         border: none;
         border-radius: 0;
         overflow: hidden;
         background: var(--bg-secondary);
-        min-height: calc(100vh - 60px);
+        position: relative;
       }
 
       #map {
         height: 100%;
         width: 100%;
-        min-height: calc(100vh - 60px);
+        min-height: 100vh;
+      }
+
+      #nav-placeholder {
+        position: fixed;
+        top: 0;
+        left: 20%;
+        right: 0;
+        z-index: 1001;
+        background: rgba(26, 29, 35, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border-color);
+        min-width: 280px;
       }
     }
 
@@ -475,30 +480,45 @@
 
     @media (max-width: 1100px) and (min-width: 901px) {
       .sidebar {
-        width: 280px;
-      }
-
-      .map-panel {
-        left: 280px;
+        width: 25%;
+        min-width: 280px;
       }
 
       #nav-placeholder {
-        left: 280px;
+        left: 25%;
       }
     }
 
     @media (max-width: 900px) {
+      body {
+        overflow: auto;
+      }
+
+      .page-shell {
+        display: block;
+      }
+
       #app {
+        position: relative;
         display: grid;
         grid-template-columns: minmax(280px, 400px) minmax(0, 1fr);
         gap: clamp(16px, 2.5vw, 24px);
         padding: 0 var(--page-padding) 2rem;
         margin: 1.5rem auto 2rem;
         align-items: stretch;
+        height: auto;
+        width: 100%;
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
       }
 
       .sidebar {
-        max-height: 220px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px;
         overflow-y: auto;
         overflow-x: hidden;
         min-height: 0;
@@ -512,6 +532,7 @@
         top: auto;
         box-shadow: none;
         z-index: auto;
+        flex-shrink: 0;
       }
 
       .map-panel {
@@ -526,12 +547,21 @@
         right: auto;
         top: auto;
         width: auto;
+        flex: 1;
       }
 
       #map {
         height: 100%;
         width: 100%;
         min-height: 360px;
+      }
+
+      #nav-placeholder {
+        position: static;
+        background: transparent;
+        backdrop-filter: none;
+        border: none;
+        min-width: auto;
       }
     }
 
