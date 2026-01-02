@@ -9,6 +9,14 @@ The **NH48 API** is a comprehensive, self-contained dataset and media delivery s
 * A scalable static CDN-based distribution model
 …and can also be consumed by any external application, script, or map tool.
 
+## 🆕 **Latest Site Updates**
+
+* **Dataset schema markup:** Added sitewide JSON-LD for data-centric pages so search engines can reliably index NH48 and WMNF datasets alongside trail downloads.
+* **SEO & accessibility:** Improved landmark semantics, focus states, and skip links to keep navigation keyboard-friendly while preserving performance-focused markup.
+* **Footer UX:** Sorting controls now have contextual footer options and footer links drop `.html` suffixes for cleaner URLs and canonical consistency.
+* **Brand polish:** Updated logo wrapping and border styles to keep identity assets crisp on dark and light backgrounds across landing pages.
+* **Navigation + footer parity:** Standardized the site-nav menu and quick-browse footer partial so every live page ships the same link set, CTA ordering, and data-route attributes for analytics and crawlability.
+
 ## 🔎 **SEO Implementation & Goals**
 
 We actively structure the project so search engines can surface **New Hampshire 4000-footers**, **White Mountain National Forest trails**, and **hiking route planning data** to the right audiences. Core tactics include:
@@ -16,9 +24,48 @@ We actively structure the project so search engines can surface **New Hampshire 
 * **Semantic HTML + ARIA** in every public page, prioritizing accessible, crawlable content.
 * **JSON-LD** schemas for datasets, trails, and image objects to improve **Google Dataset Search** visibility.
 * **Canonical URLs, OpenGraph, and Twitter cards** on every landing page to prevent duplicate indexing while boosting share previews for hiking keywords.
-* **Per-peak redirect pages** under `/peaks/` and `/fr/peaks/` now use `index, follow` robots directives, OpenGraph/Twitter cards, and the primary summit photo for rich share previews, keeping each mountain indexable even though the interactive UI handles the content.
+* **Per-peak redirect pages** under `/peaks/` and `/fr/peaks/` now use `index, follow` robots directives, OpenGraph/Twitter cards, and the primary summit photo for rich share previews, keeping each mountain indexable even though the interactive UI handles the content. Human visitors are redirected to the live app, while common crawlers (Googlebot, Bingbot, GPTBot, etc.) are allowed to stay on the prerendered HTML via user-agent detection so structured data remains crawlable.
 * **Media hygiene:** descriptive filenames, **ALT text**, captions, and `sr-only` SEO sections that pair keywords like *“White Mountain hiking trails”*, *“NH48 summit photos”*, and *“Appalachian alpine routes”* with internal links.
 * **Performance + CDN delivery** (jsDelivr + Cloudflare R2) to keep **Largest Contentful Paint** and **Core Web Vitals** in ranking-safe ranges for map-heavy pages.
+
+### Heading hierarchy (H1–H3)
+
+* Ship **one H1 per document** that targets the primary intent (e.g., “NH48 API – Open Trails and Peaks Data” or “NH 4,000-Footers Information”).
+* Use **H2** headings for the main content groupings (dataset overview, route planning, WMNF downloads, FAQs) so long-form pages remain scannable and keyword-rich.
+* Nest **H3** headings under the relevant H2s for supporting details (e.g., per-range highlights, seasonal cautions, GPX download notes) while avoiding skipped heading levels.
+* Keep headings descriptive rather than label-only (“White Mountain Trails dataset coverage” beats “Dataset”). This preserves accessibility and supports SEO snippet extraction.
+
+### Dynamic rendering for peak pages
+
+The prerendered `/peaks/` and `/fr/peaks/` pages ship both their full structured markup and a guardrail to keep humans on the interactive app:
+
+1. The HTML itself remains a canonical, indexable document with JSON-LD, OpenGraph, Twitter cards, and canonical/alternate hreflang links.
+2. A client-side redirect runs only when the visitor is **not** a recognized crawler. User-agent strings for Googlebot, Bingbot, GPTBot, ClaudeBot, DuckDuckBot, BaiduSpider, Yandex, and other well-known bots are exempted from redirection so they can read the prerendered content directly.
+3. If you need to adjust crawler coverage, edit the `botSignatures` array in `templates/peak-page-template.html` before rerunning `node scripts/prerender-peaks.js` to regenerate the static files.
+
+This pattern implements Google’s recommended “dynamic rendering” for JS-heavy experiences: humans get forwarded instantly to the live app, while search engines and AI models can crawl the static HTML.
+
+### NH48 Info pillar page
+
+The **NH48 info** experience at `nh-4000-footers-info.html` acts as the long-form **pillar page** for the project. It centralizes unofficial background on the New Hampshire 4,000-footers (ranges, seasonality, safety notes, and how to use the dataset) so search engines can anchor deep-linking on a single authoritative entry point. Keep the following guardrails in place when updating it:
+
+* Preserve the page’s **unofficial** stance and the reminders to verify anything trip-critical with AMC resources; the page is a community guide, not an official list owner.
+* Maintain the canonical URL `https://nh48.info/nh-4000-footers-info` and its OpenGraph/Twitter metadata so it remains the primary SEO landing surface for “NH48 info” searches.
+* Align its nav/footer with the rest of the site and follow the H1–H3 guidance above so headings reinforce the pillar theme while keeping subtopics (planning tips, data access, FAQs) skimmable.
+
+### Navigation and footer consistency
+
+The live pages share a unified **site-nav** block (see the `<nav class="site-nav">` markup in `index.html`) and the **quick browse footer** component that lives in `css/quick-browse-footer.css` and `js/quick-browse-footer.js`. When adding or updating pages:
+
+1. Copy the existing nav markup (including the `data-route` attributes and the NH48 Pics/Peak Bagger CTAs) so the menu order, hover states, and accessibility labels stay identical across `/`, `/catalog`, `/dataset/*`, and localized pages in `/i18n/`.
+2. Include the quick browse footer links and controls so every page exposes the same CTA grid and sort buttons; reuse the existing HTML partial from `index.html` or `nh-4000-footers-info.html` to avoid drift in link text or URL canonicalization.
+3. Keep the canonical/hreflang link set consistent between pages that share templates, and update both nav and footer whenever a route is renamed so crawlers and analytics retain stable paths.
+
+This parity keeps the navigation crawlable, preserves UX muscle memory, and reduces SEO regressions from mismatched menus.
+
+### Only style the live app shells (never the prerendered pages)
+
+All UI/appearance work should be focused on the JavaScript-powered app shells that humans actually see: `/`, `/catalog`, `/trails`, `/long-trails`, `/virtual_hike.html`, and the `/pages/*` app surfaces (`nh48_catalog.html`, `nh48_peak.html`, `trails_app.html`, `long_trails_app.html`, `virtual_hike.html`). The prerendered redirect/index pages (including everything under `/peaks/` and `/fr/peaks/`) exist solely for bots and metadata; do **not** spend time restyling them.
 
 ### SEO Goals
 
@@ -97,7 +144,7 @@ For dataset-specific details and SEO notes, see:
 
 In addition to the NH48 material, the project now ships a standalone open-data
 package for the **White Mountain National Forest**. The WMNF dataset is the
-canonical source for the **WMNF Trails App** and lives in `data/wmnf-trails/`:
+canonical source for the **White Mountain Trails App** and lives in `data/wmnf-trails/`:
 
 * `wmnf-main.json` — normalized WMNF trail network (core New Hampshire coverage)
 * `wmnf-pliney.json` — Pliney region trails

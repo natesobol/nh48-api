@@ -56,7 +56,7 @@
   },
   "catalog": {
     "title": "Danh mục đỉnh NH48",
-    "intro": "Duyệt 48 đỉnh 4.000 feet của New Hampshire. Nhấp vào một đỉnh để xem chi tiết hơn. Nếu xảy ra lỗi, chi tiết sẽ hiện bên dưới. API mở và bộ dữ liệu cho các núi 4.000 feet của New Hampshire.",
+    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
     "search": {
       "placeholder": "Tìm đỉnh theo tên…",
       "ariaLabel": "Tìm đỉnh theo tên"
@@ -204,7 +204,19 @@
         "fileCreateDate": "Ngày tạo tệp",
         "fileModifiedDate": "Ngày sửa tệp",
         "rating": "Đánh giá",
-        "metadata": "Metadata"
+        "metadata": "siêu dữ liệu",
+        "creditLine": "dòng tín dụng",
+        "source": "nguồn",
+        "copyrightNotice": "thông báo bản quyền",
+        "copyrightStatus": "trạng thái bản quyền",
+        "rightsUsageTerms": "điều khoản sử dụng và quyền",
+        "altText": "văn bản thay thế",
+        "alt": "Alt",
+        "extendedAlt": "văn bản thay thế mở rộng",
+        "caption": "chú thích",
+        "headline": "tiêu đề",
+        "extendedDescription": "mô tả mở rộng",
+        "description": "mô tả"
       }
     },
     "generalInfo": {
@@ -245,7 +257,7 @@
     }
   },
   "trails": {
-    "title": "🏔️ Công cụ bản đồ API WMNF Trails",
+    "title": "🏔️ Công cụ bản đồ API White Mountain Trails",
     "subtitle": "Cấu trúc dữ liệu mở cho đỉnh, đường mòn và tuyến ở White Mountains.",
     "intro": "White Mountain National Forest — do Nate Sobol tổng hợp. Dùng như công cụ tìm nhanh đường mòn và theo dõi hoàn thành. API mở và bộ dữ liệu cho các núi 4.000 ft của New Hampshire.",
     "details": {

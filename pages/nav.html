@@ -1,5 +1,6 @@
 <style>
-  /* Site Navigation Header (Peakbagger-inspired) */
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap');
+
   *,
   *::before,
   *::after {
@@ -16,30 +17,42 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 24px;
+    padding: 12px 20px;
     background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
     border-bottom: 1px solid #ffffff;
     position: sticky;
     top: 0;
     z-index: 100;
+    width: 100%;
+    margin: 0;
+    font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
+    gap: 14px;
   }
 
   .site-nav-logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     text-decoration: none;
     color: #fff;
   }
 
-  .site-nav-logo img {
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
-    border: 2px solid #ffffff;
-    padding: 2px;
-    background: #0a0a0a;
-    box-sizing: border-box;
+  .logo-wrap {
+    width: 64px;
+    aspect-ratio: 1 / 1;
+    border-radius: 14px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
+}
+
+  .logo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
   }
 
   .site-nav-title-wrap {
@@ -51,7 +64,7 @@
 
   .site-nav-title {
     font-weight: 800;
-    font-size: 38px;
+    font-size: 32px;
     line-height: 1;
     color: #fff;
     text-transform: uppercase;
@@ -69,12 +82,15 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    text-align: center;
   }
 
   .site-nav-links a {
     color: #ffffff;
     text-decoration: none;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: 6px;
     font-size: 15px;
     font-weight: 700;
@@ -103,13 +119,13 @@
   .site-nav-dropdown .site-nav-submenu {
     display: none;
     position: absolute;
-    top: calc(100% + 6px);
+    top: 100%;
     left: 0;
     background: #0f172a;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-    padding: 8px;
+    padding: 12px 10px 10px;
     min-width: 200px;
     z-index: 10;
   }
@@ -152,29 +168,53 @@
     stroke: #ffffff;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     .site-nav {
-      padding: 10px 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .site-nav-title,
-    .site-nav-tagline {
-      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
     }
 
     .site-nav-logo {
-      flex: 1 1 100%;
+      width: 100%;
       justify-content: center;
+      flex-direction: row;
+      align-items: center;
+      text-align: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .site-nav-title-wrap {
+      align-items: center;
+    }
+
+    .site-nav-tagline {
+      text-align: center;
     }
 
     .site-nav-links {
-      gap: 4px;
-      width: 100%;
       flex-wrap: wrap;
+      row-gap: 6px;
       justify-content: center;
+      width: 100%;
+      padding-bottom: 4px;
+    }
+
+    .site-nav-title {
+      font-size: 28px;
+    }
+
+    .logo-wrap {
+      width: 52px;
+      height: 52px;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .site-nav {
+      padding: 12px 14px;
     }
 
     .site-nav-links a {
@@ -204,26 +244,35 @@
     }
   }
 </style>
-<nav class="site-nav">
+<nav class="site-nav" aria-label="Site navigation">
   <a href="/" class="site-nav-logo">
-    <img src="../nh48API_logo.png" alt="NH48 API Logo" data-i18n="nav.logoAlt" data-i18n-attr="alt" />
+    <div class="logo-wrap">
+      <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async" />
+    </div>
     <div class="site-nav-title-wrap">
       <span class="site-nav-title">NH48 API</span>
       <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
     </div>
   </a>
   <div class="site-nav-links">
-    <a href="/catalog" data-route="catalog" data-i18n="nav.catalog">Catalog</a>
     <div class="site-nav-dropdown">
-      <a href="/dataset/wmnf-trails" data-route="trails" data-i18n="nav.trails">WMNF Trails</a>
-      <div class="site-nav-submenu" aria-label="WMNF Trails short links">
-        <a href="/pages/trails_app.html">Open WMNF Map</a>
+      <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48 Dataset</a>
+      <div class="site-nav-submenu" aria-label="NH48 dataset short links">
+        <a href="/nh-4000-footers-info.html" data-route="info" data-routes="info,guide">NH48 Info</a>
+        <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Interactive Catalog</a>
+        <a href="/page-sitemap.xml">Browse page sitemap</a>
       </div>
     </div>
     <div class="site-nav-dropdown">
-      <a href="/dataset/long-trails" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
+      <a href="/pages/trails_app.html" data-route="trails" data-i18n="nav.trails">White Mountain Trails</a>
+      <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
+        <a href="/dataset/wmnf-trails">WMNF Dataset</a>
+      </div>
+    </div>
+    <div class="site-nav-dropdown">
+      <a href="/pages/long_trails_app.html" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
       <div class="site-nav-submenu" aria-label="Long Trails short links">
-        <a href="/pages/long_trails_app.html">Open Long Trails Map</a>
+        <a href="/dataset/long-trails">Long Trails Dataset</a>
       </div>
     </div>
     <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>

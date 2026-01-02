@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta id="dynamicDescription" name="description" content="NH48 API – peak-level details, routes, terrain notes and photography for New Hampshire’s 4000-footers. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak details, mountain routes, White Mountains data, hiking API, peak metadata, mountain photos">
-    <meta name="robots" content="noindex,follow">
+    <meta name="robots" content="index,follow,max-image-preview:large">
     <link id="dynamicCanonical" rel="canonical" href="https://nh48.info/peaks">
     <link id="hreflangEn" rel="alternate" hreflang="en" href="https://nh48.info/peaks">
     <link id="hreflangFr" rel="alternate" hreflang="fr" href="https://nh48.info/fr/peaks">
@@ -28,6 +28,7 @@
     <title id="dynamicTitle">NH48 API – Peak details, routes &amp; photos</title>
     <link rel="icon" type="image/png" href="/nh48API_logo.png">
     <link rel="stylesheet" href="/css/quick-browse-footer.css">
+    <script src="/js/quick-browse-footer.js" defer></script>
     <script>
       const params = new URLSearchParams(window.location.search);
       const requestedLang = params.get('lang');
@@ -108,6 +109,17 @@
       .nav-brand img{
         height:40px;
         width:auto;
+      }
+      .sr-only{
+        position:absolute;
+        width:1px;
+        height:1px;
+        padding:0;
+        margin:-1px;
+        overflow:hidden;
+        clip:rect(0,0,0,0);
+        border:0;
+        white-space:nowrap;
       }
       .nav-links{
         display:flex;
@@ -277,6 +289,14 @@
         border-radius:10px;
         padding:6px 10px;
         font-size:0.85rem;
+        appearance:none;
+        -webkit-appearance:none;
+        -moz-appearance:none;
+        padding-right:34px;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23ffffff' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+        background-repeat:no-repeat;
+        background-position:right 10px center;
+        background-size:12px;
       }
       .nh48-lang-label{
         font-size:0.75rem;
@@ -321,6 +341,19 @@
         text-decoration:none;
         font-size:0.95rem;
       }
+      .back-guide{
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        color:var(--ink);
+        text-decoration:none;
+        font-weight:800;
+        margin:4px 0 16px;
+        letter-spacing:0.2px;
+      }
+      .back-guide:hover{
+        color:var(--accent);
+      }
       .related-trails{
         margin:16px 0 20px;
         padding:12px 16px;
@@ -359,7 +392,11 @@
         overflow:hidden;
         margin-bottom:16px;
         position:relative;
-        aspect-ratio:5/3;
+        aspect-ratio:4/3;
+        min-height:clamp(240px, 60vw, 520px);
+        max-height:min(65vh, 640px);
+        box-sizing:border-box;
+        box-shadow:0 18px 46px rgba(0,0,0,0.35);
       }
       .media-loading{
         position:absolute;
@@ -400,31 +437,64 @@
         transition:opacity .35s ease;
       }
       .slide.active{ opacity:1; }
-      .slide img{
+      .slide figure{
+        margin:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:6px;
+        box-sizing:border-box;
+        height:100%;
+      }
+      .slide figure img{
+        max-height:100%;
         width:100%;
         height:100%;
-        object-fit:cover;
+        object-fit:contain;
+        object-position:center;
         display:block;
+        border-radius:8px;
       }
       .dots{
         position:absolute;
-        bottom:8px;
-        left:50%;
-        transform:translateX(-50%);
+        bottom:12px;
+        left:12px;
+        right:12px;
         display:flex;
-        gap:6px;
+        gap:10px;
+        padding:10px;
+        background:rgba(10,10,10,0.55);
+        border:1px solid rgba(255,255,255,0.18);
+        border-radius:12px;
+        backdrop-filter:blur(6px);
+        overflow-x:auto;
         z-index:2;
       }
       .dot{
-        width:8px;
-        height:8px;
-        border-radius:50%;
-        border:1px solid #ffffff;
-        background:#ffffff22;
+        width:70px;
+        height:46px;
+        border-radius:10px;
+        border:1px solid rgba(255,255,255,0.35);
+        background-size:cover;
+        background-position:center;
+        background-repeat:no-repeat;
+        background-color:#0f1118;
         cursor:pointer;
+        opacity:0.8;
+        transition:transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+        flex:0 0 auto;
+        padding:0;
+        appearance:none;
       }
+      .dot:focus-visible{
+        outline:2px solid var(--accent);
+        outline-offset:2px;
+      }
+      .dot:hover{ opacity:1; transform:translateY(-2px); }
       .dot.active{
-        background:#ffffff;
+        opacity:1;
+        border-color:var(--accent);
+        box-shadow:0 10px 24px rgba(0,0,0,0.35);
       }
       .ctrls{
         position:absolute;
@@ -435,27 +505,46 @@
         pointer-events:none;
       }
       .ctrls button{
-        background:#00000055;
-        border:1px solid #ffffff;
+        background:rgba(10,10,10,0.5);
+        border:1px solid rgba(255,255,255,0.45);
         color:#ffffff;
-        border-radius:8px;
-        padding:6px 10px;
-        margin:0 8px;
+        border-radius:50%;
+        width:42px;
+        height:42px;
+        padding:0;
+        margin:0 10px;
         cursor:pointer;
         pointer-events:auto;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:1.25rem;
+        box-shadow:0 12px 28px rgba(0,0,0,0.35);
+        transition:transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
       }
+      .ctrls button:hover{ background:rgba(10,10,10,0.7); border-color:var(--accent); transform:translateY(-1px); }
+      .ctrls button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 
       /* Countdown timer styles ---------------------------------------------- */
       .timer{
         position:absolute;
         top:8px;
         right:8px;
+        display:flex;
+        align-items:center;
+        gap:8px;
+        padding:6px 8px;
+        background:rgba(0,0,0,0.35);
+        border-radius:12px;
+        z-index:3;
+      }
+      .timer-visual{
+        position:relative;
         width:56px;
         height:56px;
         display:flex;
         align-items:center;
         justify-content:center;
-        z-index:3;
       }
       .timer svg{
         width:100%;
@@ -475,6 +564,28 @@
         font-size:0.8rem;
         font-weight:600;
         pointer-events:none;
+      }
+      .timer-pause{
+        background:rgba(255,255,255,0.15);
+        color:var(--accent);
+        border:1px solid rgba(255,255,255,0.25);
+        border-radius:50%;
+        width:32px;
+        height:32px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight:700;
+        cursor:pointer;
+        transition:background 0.2s ease, transform 0.2s ease;
+      }
+      .timer-pause:focus-visible{
+        outline:2px solid var(--accent);
+        outline-offset:2px;
+      }
+      .timer-pause:hover{
+        background:rgba(255,255,255,0.25);
+        transform:scale(1.02);
       }
 
       /* SHARED PANEL + ROW STYLE -------------------------------------------- */
@@ -497,6 +608,9 @@
         font-size:0.9rem;
         word-wrap:break-word;
         white-space:normal;
+        width:100%;
+        box-sizing:border-box;
+        box-shadow:0 12px 30px rgba(0,0,0,0.3);
       }
       .metadata-header{
         display:flex;
@@ -557,6 +671,12 @@
         flex:1 1 auto;
         word-break:break-word;
       }
+      .description-body{
+        font-size:1rem;
+        line-height:1.6;
+        color:var(--ink);
+        margin-top:4px;
+      }
 
       h1#peakTitle{
         margin:12px 0 6px 0;
@@ -585,6 +705,9 @@
         border-radius:10px;
         padding:12px;
         font-size:0.9rem;
+        width:100%;
+        box-sizing:border-box;
+        box-shadow:0 10px 24px rgba(0,0,0,0.25);
       }
       @media(max-width:640px){
         .info-panel{ padding:10px; font-size:0.85rem; }
@@ -613,27 +736,94 @@
         font-size:0.9rem;
         line-height:1.5;
       }
+      .trail-branding{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        margin:6px 0 10px;
+        padding:10px;
+        border:1px solid var(--stroke);
+        border-radius:8px;
+        background:linear-gradient(135deg, rgba(34,197,94,0.08), rgba(10,10,10,0.35));
+        text-decoration:none;
+        color:var(--ink);
+      }
+      .trail-branding img{
+        width:52px;
+        height:auto;
+        border-radius:8px;
+        background:#0a0a0a;
+        border:1px solid rgba(255,255,255,0.2);
+        padding:4px;
+        box-shadow:0 6px 14px rgba(0,0,0,0.35);
+      }
+      .trail-branding-text{
+        display:flex;
+        flex-direction:column;
+        gap:2px;
+        font-size:0.85rem;
+      }
+      .trail-branding-text strong{
+        color:var(--accent);
+        font-size:0.9rem;
+      }
+      .trail-list a{
+        color:var(--ink);
+        text-decoration:underline;
+        text-decoration-color:var(--stroke);
+        text-underline-offset:3px;
+        text-decoration-thickness:1px;
+        transition:color 0.2s ease, text-decoration-color 0.2s ease;
+      }
+      .trail-list a:hover{
+        color:var(--accent);
+        text-decoration-color:var(--accent);
+      }
       @keyframes spin{
         to{ transform:rotate(360deg); }
       }
     </style>
   </head>
-  <body data-page="catalog">
+  <body data-route="peak" data-page="peak">
     <div id="nav-placeholder"></div>
     <script>
-      // Load shared navigation
-      const navPlaceholder = document.getElementById('nav-placeholder');
-      fetch('/pages/nav.html')
-        .then(response => response.text())
-        .then(html => {
-          navPlaceholder.innerHTML = html;
-          const activeRoute = document.body.dataset.page;
-          const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
-          if (activeLink) {
-            activeLink.classList.add('active');
-          }
-        })
-        .catch(err => console.error('Failed to load navigation:', err));
+      document.addEventListener('DOMContentLoaded', () => {
+        const navPlaceholder = document.getElementById('nav-placeholder');
+        const footerPlaceholder = document.getElementById('footer-placeholder');
+        const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+        if (navPlaceholder) {
+          fetch('/pages/nav.html')
+            .then(response => response.text())
+            .then(html => {
+              navPlaceholder.innerHTML = html;
+              const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+              links.forEach(link => {
+                const routes = (link.dataset.routes || link.dataset.route || '')
+                  .split(',')
+                  .map(value => value.trim())
+                  .filter(Boolean);
+
+                if (routes.includes(activeRoute)) {
+                  link.classList.add('active');
+                  link.setAttribute('aria-current', 'page');
+                }
+              });
+            })
+            .catch(err => console.error('Failed to load navigation:', err));
+        }
+
+        const hasQuickFooter = document.querySelector('.nh48-quick-footer');
+
+        if (footerPlaceholder && !hasQuickFooter) {
+          fetch('/pages/footer.html')
+            .then(response => response.text())
+            .then(html => {
+              footerPlaceholder.innerHTML = html;
+            })
+            .catch(err => console.error('Failed to load footer:', err));
+        }
+      });
     </script>
     <div class="wrap">
       <div class="seo-links">
@@ -669,6 +859,7 @@
           </select>
         </div>
       </div>
+      <a class="back-guide" href="/nh-4000-footers-guide">NH48 Info</a>
       <nav class="breadcrumb-nav" aria-label="Breadcrumb" id="breadcrumbNav">
         <ol itemscope itemtype="https://schema.org/BreadcrumbList">
           <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
@@ -702,18 +893,21 @@
         </div>
         <!-- Countdown timer overlay -->
         <div class="timer" id="carouselTimer" hidden>
-          <svg viewBox="0 0 40 40">
-            <circle id="timerRing" class="timer-ring" cx="20" cy="20" r="18"></circle>
-          </svg>
-          <span id="timerText" class="timer-text"></span>
+          <div class="timer-visual">
+            <svg viewBox="0 0 40 40">
+              <circle id="timerRing" class="timer-ring" cx="20" cy="20" r="18"></circle>
+            </svg>
+            <span id="timerText" class="timer-text"></span>
+          </div>
+          <button id="carouselPauseBtn" type="button" class="timer-pause" aria-label="Pause carousel" aria-pressed="false" title="Pause carousel">❚❚</button>
         </div>
       </div>
 
-      <!-- METADATA + GENERAL INFO SIDE BY SIDE -------------------------------->
-      <div class="meta-info-row">
-        <div id="photoMetadataPanel" class="metadata-panel" hidden></div>
-        <div id="generalInfoPanel" class="metadata-panel" hidden></div>
-      </div>
+
+      <div id="peakDescriptionPanel" class="metadata-panel" hidden style="margin-bottom:16px;"></div>
+      <!-- GENERAL INFO ABOVE METADATA PANEL (STACKED, FULL WIDTH) ------------->
+      <div id="generalInfoPanel" class="metadata-panel" hidden style="margin-bottom:16px;"></div>
+      <div id="photoMetadataPanel" class="metadata-panel" hidden></div>
 
       <!-- OTHER SECTIONS ------------------------------------------------------>
       <section aria-labelledby="routesHeading">
@@ -746,10 +940,16 @@
       /* API endpoints */
       const API_URLS = [
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
-        'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
+        'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json',
+        '/data/nh48.json'
       ];
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
+
+      const translateWithFallback = (key, fallback, vars = {}) => {
+        const translated = t(key, vars);
+        return translated === key ? fallback : translated;
+      };
 
       const trackEvent = (name, params = {}) => {
         const analytics = window.NH48_INFO_ANALYTICS;
@@ -794,32 +994,53 @@
       const HOME_URL = 'https://nh48.info/';
       const CATALOG_URL = 'https://nh48.info/catalog';
       const DEFAULT_OG_IMAGE = 'https://nh48.info/nh48API_logo.png';
+      const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85';
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
+      const PHOTO_BASE = new URL(PHOTO_BASE_URL);
+      const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
       const PHOTO_PATH_PREFIX = '/nh48-photos/';
+
+      function applyImageTransform(url){
+        if(!url) return url;
+        try {
+          const parsed = new URL(url, window.location.origin);
+          if(parsed.hostname === PHOTO_BASE.hostname){
+            const normalizedPath = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
+            return `${IMAGE_TRANSFORM_PREFIX}${normalizedPath}`;
+          }
+        } catch (error) {
+          console.warn('Unable to normalize photo URL', url, error);
+        }
+        return url;
+      }
 
       function normalizePhotoUrl(url){
         if(!url) return url;
-        if(url.startsWith(PHOTO_BASE_URL)) return url;
+        if(url.startsWith(PHOTO_BASE_URL)) return applyImageTransform(url);
         const isJsdelivrPhoto = url.includes('cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/');
         const isGithubRawPhoto = url.includes('raw.githubusercontent.com/natesobol/nh48-api/main/photos/');
         const isR2PathStyle = url.includes('r2.cloudflarestorage.com/nh48-photos/');
         const isR2BucketHost = url.includes('r2.cloudflarestorage.com/') && !url.includes('/nh48-photos/');
+        let normalized = url;
         if(isR2PathStyle){
           const [, tail] = url.split(PHOTO_PATH_PREFIX);
-          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+          normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
         }
         if(isR2BucketHost){
           const bucketTail = url.split('r2.cloudflarestorage.com/')[1];
           if(bucketTail){
             const normalizedTail = bucketTail.replace(/^nh48-photos\//, '');
-            return `${PHOTO_BASE_URL}/${normalizedTail}`;
+            normalized = `${PHOTO_BASE_URL}/${normalizedTail}`;
           }
         }
         if(isJsdelivrPhoto || isGithubRawPhoto){
           const [, tail] = url.split('/photos/');
-          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+          normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
         }
-        return url;
+        if(normalized.startsWith(PHOTO_BASE_URL)){
+          return applyImageTransform(normalized);
+        }
+        return normalized;
       }
 
       function setMeta(name, content){
@@ -1123,22 +1344,60 @@
         }
       }
 
-      function buildPhotoAltText(name, meta){
-        if(meta && typeof meta === 'object'){
-          const explicit = (safeText(meta.altText) || safeText(meta.alt)).trim();
-          if(explicit){
-            return explicit;
+      function cleanAltValue(value){
+        return (safeText(value) || '').replace(/\s+/g, ' ').trim();
+      }
+
+      function pickLocalizedText(meta, lang, keys){
+        if(!meta || typeof meta !== 'object') return null;
+        for(const key of keys){
+          if(lang === 'fr'){
+            const frCandidate = cleanAltValue(
+              meta[`${key}_fr`] || meta[`${key}Fr`] || meta[`fr_${key}`]
+            );
+            if(frCandidate){
+              return { text: frCandidate, lang: 'fr' };
+            }
           }
-          const season = meta.season ? translateSeason(meta.season) : '';
-          const timeOfDay = meta.timeOfDay ? translateTimeOfDay(meta.timeOfDay) : '';
-          const text = t('photo.altTemplate', {
-            peak: name,
-            season: season ? `${season}` : '',
-            timeOfDay: timeOfDay ? `${timeOfDay}` : ''
-          }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
-          return text.replace(/\s—\s$/, '').replace(/\s$/, '').replace(/—\s*$/, '').trim();
+          const base = cleanAltValue(meta[key]);
+          if(base){
+            return { text: base, lang: lang === 'fr' ? 'en' : (lang || 'en') };
+          }
         }
-        return t('photo.altTemplate', { peak: name, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
+        return null;
+      }
+
+      function buildPhotoAltText(name, meta){
+        const lang = getSeoLang();
+        const explicit = pickLocalizedText(meta, lang, ['altText', 'alt']);
+        if(explicit) return explicit;
+
+        const described = pickLocalizedText(meta, lang, [
+          'extendedDescription',
+          'description',
+          'caption',
+          'headline',
+        ]);
+        if(described) return described;
+
+        const tags = Array.isArray(meta && meta.tags) ? meta.tags.filter(Boolean) : [];
+        if(tags.length){
+          return { text: `${name} – ${tags.join(', ')}`, lang: lang === 'fr' ? 'fr' : (lang || 'en') };
+        }
+
+        return { text: `${name} in the White Mountains`, lang: lang === 'fr' ? 'en' : (lang || 'en') };
+      }
+
+      function buildPhotoExtendedDescription(meta){
+        const lang = getSeoLang();
+        return (
+          pickLocalizedText(meta, lang, [
+            'extendedDescription',
+            'description',
+            'caption',
+            'headline',
+          ]) || null
+        );
       }
 
       function deferImageSrcSwap(root){
@@ -1282,8 +1541,89 @@
       let currentMeta = [];
       let currentPrimaryMeta = null;
       let currentPrimaryPhoto = null;
+      let metadataExpanded = false;
+      const metadataMobileQuery = window.matchMedia('(max-width: 720px)');
+      let isCarouselPaused = false;
+      const LANGUAGE_READY_TIMEOUT = 2000;
+
+      async function waitForI18NReady(timeoutMs = LANGUAGE_READY_TIMEOUT){
+        return new Promise((resolve) => {
+          let resolved = false;
+          const finish = () => {
+            if(resolved) return;
+            resolved = true;
+            resolve();
+          };
+
+          const start = performance.now();
+          const check = () => {
+            const i18n = window.NH48_I18N;
+            if(i18n && typeof i18n.t === 'function'){
+              const sample = i18n.t('peak.generalInfo.title');
+              if(sample && sample !== 'peak.generalInfo.title'){
+                finish();
+                return;
+              }
+            }
+            if(performance.now() - start >= timeoutMs){
+              finish();
+              return;
+            }
+            requestAnimationFrame(check);
+          };
+
+          if(window.NH48_I18N && typeof window.NH48_I18N.onLangChange === 'function'){
+            window.NH48_I18N.onLangChange(() => finish());
+          }
+
+          check();
+        });
+      }
 
       /* METADATA PANEL -------------------------------------------------------- */
+      function enrichMetadata(meta){
+        if(!meta || typeof meta !== 'object') return meta;
+
+        const iptc = meta.iptc && typeof meta.iptc === 'object' ? meta.iptc : null;
+        const pickText = (...values) => {
+          for(const v of values){
+            if(v !== undefined && v !== null && String(v).trim() !== ''){
+              return v;
+            }
+          }
+          return undefined;
+        };
+
+        const merged = {
+          ...meta,
+          altText: pickText(meta.altText, iptc && iptc.altText, iptc && iptc.description),
+          alt: pickText(meta.alt, iptc && iptc.altText, iptc && iptc.description),
+          extendedAlt: pickText(meta.extendedAlt, meta.extendedDescription, iptc && iptc.extendedDescription, iptc && iptc.description),
+          headline: pickText(meta.headline, iptc && iptc.headline),
+          caption: pickText(meta.caption, iptc && iptc.description),
+          description: pickText(meta.description, iptc && iptc.description),
+          extendedDescription: pickText(meta.extendedDescription, iptc && iptc.extendedDescription),
+          creator: pickText(meta.creator, iptc && iptc.creator, meta.author),
+          creditLine: pickText(meta.creditLine, iptc && iptc.creditLine),
+          source: pickText(meta.source, iptc && iptc.source),
+          copyrightNotice: pickText(meta.copyrightNotice, iptc && iptc.copyrightNotice),
+          copyrightStatus: pickText(meta.copyrightStatus, iptc && iptc.copyrightStatus),
+          rightsUsageTerms: pickText(meta.rightsUsageTerms, iptc && iptc.rightsUsageTerms)
+        };
+
+        const normalizePerson = (value) => {
+          if(value === undefined || value === null) return '';
+          return String(value).trim().toLowerCase();
+        };
+        const normalizedAuthor = normalizePerson(merged.author);
+        const normalizedCreator = normalizePerson(merged.creator);
+        if(normalizedAuthor && normalizedCreator && normalizedAuthor === normalizedCreator){
+          delete merged.creator;
+        }
+
+        return merged;
+      }
+
       function makeRow(label, value){
         const row = document.createElement('div');
         row.className = 'metadata-row';
@@ -1325,23 +1665,89 @@
           fileCreateDate: 'peak.metadata.labels.fileCreateDate',
           fileModifiedDate: 'peak.metadata.labels.fileModifiedDate',
           rating: 'peak.metadata.labels.rating',
-          metadata: 'peak.metadata.labels.metadata'
+          metadata: 'peak.metadata.labels.metadata',
+          creator: 'peak.metadata.labels.author',
+          creditLine: 'peak.metadata.labels.creditLine',
+          source: 'peak.metadata.labels.source',
+          copyrightNotice: 'peak.metadata.labels.copyrightNotice',
+          copyrightStatus: 'peak.metadata.labels.copyrightStatus',
+          rightsUsageTerms: 'peak.metadata.labels.rightsUsageTerms',
+          altText: 'peak.metadata.labels.altText',
+          alt: 'peak.metadata.labels.alt',
+          extendedAlt: 'peak.metadata.labels.extendedAlt',
+          caption: 'peak.metadata.labels.caption',
+          headline: 'peak.metadata.labels.headline',
+          extendedDescription: 'peak.metadata.labels.extendedDescription',
+          description: 'peak.metadata.labels.description'
         };
         if(map[key]) return t(map[key]);
         return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
       }
 
+      function entriesFromObject(prefixLabel, obj){
+        const entries = [];
+        if(!obj || typeof obj !== 'object') return entries;
+        Object.entries(obj).forEach(([key, val]) => {
+          if(val === undefined || val === null) return;
+          if(typeof val === 'object' && !Array.isArray(val)){
+            entries.push(...entriesFromObject(`${prefixLabel} — ${humanLabelFromKey(key)}`, val));
+          }else{
+            const valueText = Array.isArray(val) ? val.join(', ') : String(val).trim();
+            if(valueText){
+              entries.push([`${prefixLabel} — ${humanLabelFromKey(key)}`, valueText]);
+            }
+          }
+        });
+        return entries;
+      }
+
       // Always-visible keys
       const PRIMARY_META_KEYS = [
+        'captureDate',
         'season',
         'timeOfDay',
-        'orientation',
-        'captureDate',
-        'focalLength',
-        'author'
+        'author',
+        'creditLine'
       ];
-      const SKIP_META_KEYS = new Set(['photoId','filename','url','isPrimary','tags']);
+      const SKIP_META_KEYS = new Set(['photoId','filename','url','isPrimary']);
 
+      function applyMetadataState(open, extraWrap, toggleBtn, { track=false } = {}){
+        metadataExpanded = open;
+        if(extraWrap){
+          extraWrap.classList.toggle('open', open);
+        }
+        if(toggleBtn){
+          toggleBtn.textContent = open ? t('peak.metadata.lessDetails') : t('peak.metadata.moreDetails');
+        }
+        if(open){
+          pauseCarousel('metadata_panel');
+        }else{
+          resumeCarousel('metadata_panel');
+        }
+        if(track){
+          trackEvent('peak_metadata_toggle', { open });
+        }
+      }
+
+      function applyMetadataState(open, extraWrap, toggleBtn, { track=false } = {}){
+        metadataExpanded = open;
+        if(extraWrap){
+          extraWrap.classList.toggle('open', open);
+        }
+        if(toggleBtn){
+          toggleBtn.textContent = open ? t('peak.metadata.lessDetails') : t('peak.metadata.moreDetails');
+        }
+        if(open){
+          pauseCarousel('metadata_panel');
+        }else{
+          resumeCarousel('metadata_panel');
+        }
+        if(track){
+          trackEvent('peak_metadata_toggle', { open });
+        }
+      }
+
+      // --- Enhanced updateMetadata: group fields by type, show all, stacked layout ---
       function updateMetadata(i){
         const panel = document.getElementById('photoMetadataPanel');
         panel.innerHTML = '';
@@ -1356,66 +1762,247 @@
         header.appendChild(title);
         panel.appendChild(header);
 
-        const primaryWrap = document.createElement('div');
-        primaryWrap.className = 'metadata-primary';
-        panel.appendChild(primaryWrap);
-
-        const extraWrap = document.createElement('div');
-        extraWrap.className = 'metadata-extra';
-        panel.appendChild(extraWrap);
-
         const meta = (photoMetaData && photoMetaData[i]) || null;
-
+        const enrichedMeta = enrichMetadata(meta);
+        if(metadataMobileQuery.matches){
+          metadataExpanded = false;
+        }
         if(!meta || typeof meta !== 'object'){
-          primaryWrap.appendChild(makeRow(t('peak.metadata.labels.metadata'), t('peak.metadata.notAvailable')));
+          const empty = document.createElement('div');
+          empty.className = 'metadata-primary';
+          empty.appendChild(makeRow(t('peak.metadata.labels.metadata'), t('peak.metadata.notAvailable')));
+          panel.appendChild(empty);
+          metadataExpanded = false;
+          resumeCarousel('metadata_panel');
           panel.hidden = false;
           return;
         }
 
-        // Fill primary entries in specified order
+        // Grouping keys by type (EXIF, IPTC, SEO, File Info, etc.)
+        const GROUPS = [
+          { label: 'Descriptions & Accessibility', keys: ['headline','caption','description','extendedDescription','altText','alt','extendedAlt','title','subject'] },
+          { label: 'EXIF', keys: ['captureDate','cameraMaker','cameraModel','camera','lens','fStop','shutterSpeed','iso','exposureBias','focalLength','flashMode','meteringMode','maxAperture','focalLength35mm','rating','dimensions'] },
+          { label: 'File Info', keys: ['fileSize','fileCreateDate','fileModifiedDate','author','creator','creditLine','source','title','subject'] },
+          { label: 'Tags & Attributes', keys: ['tags','season','timeOfDay','orientation','isPrimary'] },
+          { label: 'Rights & Licensing', keys: ['copyrightNotice','copyrightStatus','rightsUsageTerms'] },
+          { label: 'IPTC', keys: ['iptc'] },
+        ];
+
+        const displayMeta = (enrichedMeta && typeof enrichedMeta === 'object') ? enrichedMeta : meta;
+
+        // Collapsed: show only primary keys
+        const primaryWrap = document.createElement('div');
+        primaryWrap.className = 'metadata-primary';
         let hasPrimary = false;
         PRIMARY_META_KEYS.forEach(key => {
-          const val = meta[key];
-          if(val !== undefined && val !== null && String(val).trim() !== ''){
-            primaryWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
+          if(enrichedMeta && enrichedMeta[key] !== undefined && enrichedMeta[key] !== null && String(enrichedMeta[key]).trim() !== ''){
+            primaryWrap.appendChild(makeRow(humanLabelFromKey(key), String(enrichedMeta[key])));
             hasPrimary = true;
           }
         });
-
-        // Collect all other entries
-        const extras = [];
-        for(const [key, value] of Object.entries(meta)){
-          if(SKIP_META_KEYS.has(key)) continue;
-          if(PRIMARY_META_KEYS.includes(key)) continue;
-          if(value === undefined || value === null || String(value).trim() === '') continue;
-          extras.push([key, value]);
-        }
-        extras.sort((a,b) => a[0].localeCompare(b[0]));
-
-        let hasExtra = false;
-        extras.forEach(([key,val]) => {
-          extraWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
-          hasExtra = true;
-        });
-
-        if(!hasPrimary && !hasExtra){
+        if(!hasPrimary){
           primaryWrap.appendChild(makeRow(t('peak.metadata.labels.metadata'), t('peak.metadata.notAvailable')));
         }
+        panel.appendChild(primaryWrap);
 
-        if(hasExtra){
+        // Expanded: show all fields, grouped by type, skipping duplicates
+        const extraWrap = document.createElement('div');
+        extraWrap.className = 'metadata-extra';
+        let shown = new Set(PRIMARY_META_KEYS);
+        GROUPS.forEach(group => {
+          if(group.label === 'IPTC'){
+            const iptc = enrichedMeta && enrichedMeta.iptc;
+            if(iptc && typeof iptc === 'object'){
+              shown.add('iptc');
+
+              const groupHeader = document.createElement('div');
+              groupHeader.className = 'metadata-label';
+              groupHeader.style.marginTop = '10px';
+              groupHeader.style.fontWeight = 'bold';
+              groupHeader.textContent = group.label;
+              extraWrap.appendChild(groupHeader);
+
+              const creatorFields = [
+                ['Creator', iptc.creator, 'creator'],
+                ['Creator Job Title', iptc.creatorJobTitle, 'creatorJobTitle'],
+                ['Creator Email', iptc.creatorEmail, 'creatorEmail'],
+                ['Creator Website', iptc.creatorWebsite, 'creatorWebsite'],
+                ['Featured Org Name', iptc.featuredOrgName, 'featuredOrgName']
+              ].filter(([,v]) => v !== undefined && v !== null && String(v).trim() !== '');
+
+              if(creatorFields.length){
+                const subHeader = document.createElement('div');
+                subHeader.className = 'metadata-label';
+                subHeader.style.marginTop = '6px';
+                subHeader.textContent = 'Creator & Credits';
+                extraWrap.appendChild(subHeader);
+                creatorFields.forEach(([label, value, key]) => {
+                  extraWrap.appendChild(makeRow(label, String(value)));
+                  if(key) shown.add(key);
+                });
+              }
+
+              const rightsFields = [
+                ['Credit Line', iptc.creditLine, 'creditLine'],
+                ['Source', iptc.source, 'source'],
+                ['Copyright Notice', iptc.copyrightNotice, 'copyrightNotice'],
+                ['Copyright Status', iptc.copyrightStatus, 'copyrightStatus'],
+                ['Rights Usage Terms', iptc.rightsUsageTerms, 'rightsUsageTerms'],
+                ['Intellectual Genre', iptc.intellectualGenre, 'intellectualGenre'],
+                ['IPTC Subject Code', iptc.iptcSubjectCode, 'iptcSubjectCode']
+              ].filter(([,v]) => v !== undefined && v !== null && String(v).trim() !== '');
+
+              if(rightsFields.length){
+                const subHeader = document.createElement('div');
+                subHeader.className = 'metadata-label';
+                subHeader.style.marginTop = '6px';
+                subHeader.textContent = 'Rights & Licensing';
+                extraWrap.appendChild(subHeader);
+                rightsFields.forEach(([label, value, key]) => {
+                  extraWrap.appendChild(makeRow(label, String(value)));
+                  if(key) shown.add(key);
+                });
+              }
+
+              if(Array.isArray(iptc.keywords) && iptc.keywords.length){
+                const subHeader = document.createElement('div');
+                subHeader.className = 'metadata-label';
+                subHeader.style.marginTop = '6px';
+                subHeader.textContent = 'Keywords';
+                extraWrap.appendChild(subHeader);
+                extraWrap.appendChild(makeRow('Keywords', iptc.keywords.join(', ')));
+                shown.add('keywords');
+              }
+
+              const locationCreatedRows = entriesFromObject('Location Created', iptc.locationCreated);
+              const locationShownRows = entriesFromObject('Location Shown', iptc.locationShown);
+              const locationRows = [...locationCreatedRows, ...locationShownRows];
+              if(locationRows.length){
+                const subHeader = document.createElement('div');
+                subHeader.className = 'metadata-label';
+                subHeader.style.marginTop = '6px';
+                subHeader.textContent = 'Locations';
+                extraWrap.appendChild(subHeader);
+                locationRows.forEach(([label, value]) => extraWrap.appendChild(makeRow(label, value)));
+                shown.add('locationCreated');
+                shown.add('locationShown');
+              }
+
+              const miscIptc = { ...iptc };
+              delete miscIptc.locationCreated;
+              delete miscIptc.locationShown;
+              delete miscIptc.keywords;
+              delete miscIptc.altText;
+              delete miscIptc.headline;
+              delete miscIptc.description;
+              delete miscIptc.extendedDescription;
+              delete miscIptc.creator;
+              delete miscIptc.creatorJobTitle;
+              delete miscIptc.creatorEmail;
+              delete miscIptc.creatorWebsite;
+              delete miscIptc.featuredOrgName;
+              delete miscIptc.creditLine;
+              delete miscIptc.source;
+              delete miscIptc.copyrightNotice;
+              delete miscIptc.copyrightStatus;
+              delete miscIptc.rightsUsageTerms;
+              delete miscIptc.intellectualGenre;
+              delete miscIptc.iptcSubjectCode;
+              Object.entries(miscIptc).forEach(([key, val]) => {
+                if(val === undefined || val === null) return;
+                const valueText = Array.isArray(val) ? val.join(', ') : String(val).trim();
+                if(valueText){
+                  extraWrap.appendChild(makeRow(humanLabelFromKey(key), valueText));
+                  shown.add(key);
+                }
+              });
+            }
+            return;
+          }
+
+          let groupFields = [];
+          group.keys.forEach(key => {
+            if(SKIP_META_KEYS.has(key)) return;
+            if(displayMeta[key] !== undefined && displayMeta[key] !== null && String(displayMeta[key]).trim() !== '' && !shown.has(key)){
+              groupFields.push([key, displayMeta[key]]);
+              shown.add(key);
+            }
+          });
+          if(groupFields.length > 0){
+            const groupHeader = document.createElement('div');
+            groupHeader.className = 'metadata-label';
+            groupHeader.style.marginTop = '10px';
+            groupHeader.style.fontWeight = 'bold';
+            groupHeader.textContent = group.label;
+            extraWrap.appendChild(groupHeader);
+            groupFields.forEach(([key, val]) => {
+              if(Array.isArray(val)){
+                extraWrap.appendChild(makeRow(humanLabelFromKey(key), val.join(', ')));
+              }else if(typeof val === 'object'){
+                extraWrap.appendChild(makeRow(humanLabelFromKey(key), JSON.stringify(val, null, 2)));
+              }else{
+                extraWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
+              }
+            });
+          }
+        });
+        // Add any remaining fields not in groups
+        Object.entries(displayMeta).forEach(([key, val]) => {
+          if(SKIP_META_KEYS.has(key) || shown.has(key)) return;
+          if(val === undefined || val === null || String(val).trim() === '') return;
+          if(Array.isArray(val)){
+            extraWrap.appendChild(makeRow(humanLabelFromKey(key), val.join(', ')));
+          }else if(typeof val === 'object'){
+            extraWrap.appendChild(makeRow(humanLabelFromKey(key), JSON.stringify(val, null, 2)));
+          }else{
+            extraWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
+          }
+          shown.add(key);
+        });
+
+        if(extraWrap.childNodes.length > 0){
           const toggleBtn = document.createElement('button');
           toggleBtn.type = 'button';
           toggleBtn.className = 'meta-toggle';
-          toggleBtn.textContent = t('peak.metadata.moreDetails');
           header.appendChild(toggleBtn);
-
+          panel.appendChild(extraWrap);
+          applyMetadataState(metadataExpanded, extraWrap, toggleBtn);
           toggleBtn.addEventListener('click', () => {
-            const open = extraWrap.classList.toggle('open');
-            toggleBtn.textContent = open ? t('peak.metadata.lessDetails') : t('peak.metadata.moreDetails');
-            trackEvent('peak_metadata_toggle', { open });
+            const open = !extraWrap.classList.contains('open');
+            applyMetadataState(open, extraWrap, toggleBtn, { track: true });
           });
+        }else{
+          metadataExpanded = false;
+          resumeCarousel('metadata_panel');
+        }
+        panel.hidden = false;
+      }
+
+      function buildPeakDescription(p){
+        const panel = document.getElementById('peakDescriptionPanel');
+        if(!panel) return;
+        panel.innerHTML = '';
+
+        const description = safeText(p.description || p['Description']).trim();
+        if(!description){
+          panel.hidden = true;
+          return;
         }
 
+        const header = document.createElement('div');
+        header.className = 'metadata-header';
+
+        const title = document.createElement('div');
+        title.className = 'metadata-title';
+        title.textContent = translateWithFallback('peak.description.title', 'Mountain Overview');
+        header.appendChild(title);
+
+        const body = document.createElement('div');
+        body.className = 'description-body';
+        body.textContent = description;
+
+        panel.appendChild(header);
+        panel.appendChild(body);
         panel.hidden = false;
       }
 
@@ -1506,65 +2093,82 @@
         return Array.from(names);
       }
 
-      function renderRelatedTrails(routes){
+      function buildTrailLink(name){
+        const encoded = encodeURIComponent(name);
+        const link = document.createElement('a');
+        link.href = `https://nh48.info/trails?trail=${encoded}`;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = translateWithFallback('peak.relatedTrails.link', `${name} route`, { name });
+        link.setAttribute('aria-label', translateWithFallback('peak.relatedTrails.link', `${name} route`, { name }));
+        link.addEventListener('click', () => {
+          trackEvent('peak_trail_link_click', { trail: name, slug: currentSlug });
+        });
+        return link;
+      }
+
+      function renderRelatedTrails(routes, trailNames = []){
         const relatedGrid = document.getElementById('relatedTrailsGrid');
         if(!relatedGrid) return;
         relatedGrid.innerHTML = '';
 
         const relatedNames = extractRelatedTrailNames(routes);
+        const additionalNames = Array.isArray(trailNames) ? trailNames : [];
+        const combinedNames = Array.from(new Set([...relatedNames, ...additionalNames]
+          .map(name => (name || '').toString().trim())
+          .filter(Boolean)))
+          .sort((a, b) => a.localeCompare(b));
 
         const panel = document.createElement('div');
         panel.className = 'info-panel';
 
         const label = document.createElement('div');
         label.className = 'info-label';
-        label.textContent = t('peak.relatedTrails.title');
+        label.textContent = translateWithFallback('peak.relatedTrails.title', 'Related Trails & Routes');
         panel.appendChild(label);
+
+        const branding = document.createElement('a');
+        branding.className = 'trail-branding';
+        branding.href = 'https://nh48.info/trails';
+        branding.target = '_blank';
+        branding.rel = 'noopener';
+        branding.title = 'Explore White Mountain National Forest trails map and dataset';
+        branding.setAttribute('aria-label', 'Explore White Mountain National Forest trails map and dataset');
+
+        const logo = document.createElement('img');
+        logo.src = '/WMNF_Trails_API_logo.png';
+        logo.alt = 'White Mountain National Forest Trails API logo badge';
+        logo.loading = 'lazy';
+        logo.decoding = 'async';
+        branding.appendChild(logo);
+
+        const brandingCopy = document.createElement('div');
+        brandingCopy.className = 'trail-branding-text';
+        brandingCopy.innerHTML = `<strong>White Mountain Trails Map</strong><span>Interactive WMNF trail list with GPX-backed route details</span>`;
+        branding.appendChild(brandingCopy);
+
+        panel.appendChild(branding);
 
         const list = document.createElement('ul');
         list.className = 'trail-list';
 
-        if(!relatedNames.length){
+        if(!combinedNames.length){
           const emptyItem = document.createElement('li');
-          emptyItem.textContent = t('peak.relatedTrails.none');
+          emptyItem.textContent = translateWithFallback('peak.relatedTrails.none', 'No related trails listed yet.');
           list.appendChild(emptyItem);
           trackEvent('peak_related_trails_empty', { slug: currentSlug });
         }else{
-          relatedNames.forEach(name => {
+          combinedNames.forEach(name => {
             const li = document.createElement('li');
-            const link = document.createElement('a');
-            link.href = `https://nh48.info/trails?trail=${encodeURIComponent(name)}`;
-            link.textContent = t('peak.relatedTrails.link', { name });
-            li.appendChild(link);
+            li.appendChild(buildTrailLink(name));
             list.appendChild(li);
           });
-          trackEvent('peak_related_trails_rendered', { slug: currentSlug, count: relatedNames.length });
+          trackEvent('peak_related_trails_rendered', { slug: currentSlug, count: combinedNames.length });
         }
 
         panel.appendChild(list);
         relatedGrid.appendChild(panel);
         relatedGrid.hidden = false;
-      }
-
-      function renderTrailNames(trailNames){
-        const trailNamesGrid = document.getElementById('trailNamesGrid');
-        if(!trailNamesGrid) return;
-        trailNamesGrid.innerHTML = '';
-        if(!Array.isArray(trailNames) || trailNames.length === 0){
-          trailNamesGrid.hidden = true;
-          trackEvent('peak_trail_names_empty', { slug: currentSlug });
-          return;
-        }
-        const div = document.createElement('div');
-        div.className = 'info-panel';
-        div.innerHTML = `
-          <div class="info-label">${t('peak.trailList.title')}</div>
-          <ul class="trail-list">
-            ${trailNames.map(trail => `<li>${trail}</li>`).join('')}
-          </ul>`;
-        trailNamesGrid.appendChild(div);
-        trailNamesGrid.hidden = false;
-        trackEvent('peak_trail_names_rendered', { slug: currentSlug, count: trailNames.length });
       }
 
       function renderTerrain(p){
@@ -1627,6 +2231,7 @@
         const elevation = p['Elevation (ft)'] || t('common.unknown');
         const prominence = p['Prominence (ft)'] || t('common.unknown');
         const range = p['Range / Subrange'] || 'White Mountains';
+        const peakDescription = safeText(p.description || p['Description']).trim();
 
         const langCode = getSeoLang();
         const canonicalUrl = buildCanonicalUrl(slug, langCode);
@@ -1638,7 +2243,7 @@
             || safeText(primaryMeta.alt)
             || safeText(primaryMeta.caption)).trim()
           : '';
-        const descriptionText = metaDescription || generatedDescription;
+        const descriptionText = peakDescription || metaDescription || generatedDescription;
         const titleText = `${name} — White Mountain National Forest`;
 
         const titleEl = document.getElementById('dynamicTitle');
@@ -1711,8 +2316,15 @@
           const slide = document.createElement('div');
           slide.className = 'slide' + (i === 0 ? ' active' : '');
 
+          const figure = document.createElement('figure');
+          figure.className = 'slide-figure';
+
           const img = document.createElement('img');
-          img.alt = buildPhotoAltText(altBase, meta[i]);
+          const altInfo = buildPhotoAltText(altBase, meta[i]);
+          img.alt = altInfo ? altInfo.text : '';
+          if(altInfo && altInfo.lang){
+            img.setAttribute('lang', altInfo.lang);
+          }
 
           const realSrc = src || placeholder;
           const isPlaceholder = realSrc === placeholder;
@@ -1742,12 +2354,33 @@
             resolveFirstImage();
           };
 
-          slide.appendChild(img);
+          figure.appendChild(img);
+
+          const described = buildPhotoExtendedDescription(meta[i]);
+          if(described && described.text){
+            const describedId = `photo-desc-${i}`;
+            img.setAttribute('aria-describedby', describedId);
+            const sr = document.createElement('span');
+            sr.id = describedId;
+            sr.className = 'sr-only';
+            sr.textContent = described.text;
+            if(described.lang){
+              sr.setAttribute('lang', described.lang);
+            }
+            figure.appendChild(sr);
+          }
+
+          slide.appendChild(figure);
           carouselEl.appendChild(slide);
           carouselImgs.push(img);
 
-          const dot = document.createElement('div');
+          const dot = document.createElement('button');
+          dot.type = 'button';
           dot.className = 'dot' + (i === 0 ? ' active' : '');
+          dot.style.backgroundImage = `url('${realSrc}')`;
+          const dotLabel = altInfo && altInfo.text ? altInfo.text : `View photo ${i + 1}`;
+          dot.setAttribute('aria-label', dotLabel);
+          dot.title = dotLabel;
           dot.addEventListener('click', () => {
             trackEvent('peak_carousel_dot_click', { index: i });
             goTo(i, true);
@@ -1797,7 +2430,7 @@
         updateSlides();
         if(manual){
           trackEvent('peak_carousel_next', { index: carouselIdx });
-          startCarousel();
+          restartCarousel();
         }
       }
 
@@ -1807,7 +2440,7 @@
         updateSlides();
         if(manual){
           trackEvent('peak_carousel_prev', { index: carouselIdx });
-          startCarousel();
+          restartCarousel();
         }
       }
 
@@ -1817,12 +2450,16 @@
         updateSlides();
         if(manual){
           trackEvent('peak_carousel_go_to', { index: carouselIdx });
-          startCarousel();
+          restartCarousel();
         }
       }
 
       function startCarousel(){
         stopCarousel();
+        if(isCarouselPaused){
+          updatePauseButton(true);
+          return;
+        }
         currentDelay = BASE_DELAY + Math.floor(Math.random()*2000);
         // start the visual timer immediately
         startTimer(currentDelay);
@@ -1831,6 +2468,7 @@
           next(false);
           startTimer(currentDelay);
         }, currentDelay);
+        updatePauseButton(false);
       }
 
       function stopCarousel(){
@@ -1842,6 +2480,50 @@
           clearInterval(timerInterval);
           timerInterval = null;
         }
+      }
+
+      function updatePauseButton(paused=isCarouselPaused){
+        const btn = document.getElementById('carouselPauseBtn');
+        if(!btn) return;
+        btn.textContent = paused ? '▶' : '❚❚';
+        btn.setAttribute('aria-pressed', paused);
+        btn.setAttribute('aria-label', paused ? 'Resume carousel' : 'Pause carousel');
+        btn.title = paused ? 'Resume carousel' : 'Pause carousel';
+      }
+
+      function pauseCarousel(reason='manual'){
+        if(isCarouselPaused) return;
+        isCarouselPaused = true;
+        stopCarousel();
+        updatePauseButton(true);
+        trackEvent('peak_carousel_paused', { reason });
+      }
+
+      function resumeCarousel(reason='manual'){
+        if(!isCarouselPaused) return;
+        isCarouselPaused = false;
+        startCarousel();
+        updatePauseButton(false);
+        trackEvent('peak_carousel_resumed', { reason });
+      }
+
+      function restartCarousel(){
+        if(isCarouselPaused) return;
+        startCarousel();
+      }
+
+      function toggleCarouselPause(){
+        if(isCarouselPaused){
+          resumeCarousel('pause_button');
+        }else{
+          pauseCarousel('pause_button');
+        }
+      }
+
+      const pauseBtn = document.getElementById('carouselPauseBtn');
+      if(pauseBtn){
+        pauseBtn.addEventListener('click', toggleCarouselPause);
+        updatePauseButton(false);
       }
 
       function setupCarouselLazyLoading(){
@@ -1910,7 +2592,10 @@
         }
 
         try{
-          const data = await fetchPeaks();
+          const [ , data ] = await Promise.all([
+            waitForI18NReady(),
+            fetchPeaks()
+          ]);
           const p = data && data[slug];
 
           if(!p){
@@ -1985,14 +2670,19 @@
             twitterImageEl.setAttribute('content', primaryImage);
           }
 
+          buildPeakDescription(p);
           // Build general info panel
           buildGeneralInfo(p);
 
           const routes = p['Standard Routes'] || [];
-          renderRoutes(routes);
-          renderRelatedTrails(routes);
           const trailNames = p['Trail Names'] || [];
-          renderTrailNames(trailNames);
+          renderRoutes(routes);
+          renderRelatedTrails(routes, trailNames);
+          const trailNamesGrid = document.getElementById('trailNamesGrid');
+          if(trailNamesGrid){
+            trailNamesGrid.hidden = true;
+            trailNamesGrid.innerHTML = '';
+          }
           renderTerrain(p);
           renderConditions(p);
 
@@ -2007,7 +2697,11 @@
         }
       }
 
-      window.addEventListener('load', init);
+      if(document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', init, { once: true });
+      }else{
+        init();
+      }
 
       if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
         window.NH48_I18N.onLangChange((lang) => {
@@ -2016,11 +2710,17 @@
           const name = currentPeak.peakName || currentPeak['Peak Name'] || currentSlug;
           updatePeakTitle(name);
           const { canonicalUrl, descriptionText } = updateHeadMeta(currentPeak, currentSlug, name, currentPrimaryMeta);
+          buildPeakDescription(currentPeak);
           buildGeneralInfo(currentPeak);
           const routes = currentPeak['Standard Routes'] || [];
+          const trailNames = currentPeak['Trail Names'] || [];
           renderRoutes(routes);
-          renderRelatedTrails(routes);
-          renderTrailNames(currentPeak['Trail Names'] || []);
+          renderRelatedTrails(routes, trailNames);
+          const trailNamesGrid = document.getElementById('trailNamesGrid');
+          if(trailNamesGrid){
+            trailNamesGrid.hidden = true;
+            trailNamesGrid.innerHTML = '';
+          }
           renderTerrain(currentPeak);
           renderConditions(currentPeak);
           if (currentPrimaryPhoto) {
@@ -2047,75 +2747,8 @@
 
       syncUnitsWithLanguage(window.NH48_I18N ? window.NH48_I18N.getLang() : 'en');
     </script>
-    <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
-      <div class="nh48-quick-footer__header">
-        <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
-        <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>
-        <p>Jump directly into every New Hampshire 4,000-footer detail page to strengthen internal linking and keep crawlers flowing through the full NH48 set.</p>
-      </div>
-      <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
-        <a class="nh48-quick-footer__link" href="/peaks/mount-washington">Mount Washington</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-lafayette">Mount Lafayette</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-lincoln">Mount Lincoln</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh">Mount Tecumseh</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke">Mount Moosilauke</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-pierce">Mount Pierce</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-liberty">Mount Liberty</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-adams">Mount Adams</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower">Mount Eisenhower</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-osceola">Mount Osceola</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-jackson">Mount Jackson</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-monroe">Mount Monroe</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-jefferson">Mount Jefferson</a>
-        <a class="nh48-quick-footer__link" href="/peaks/cannon-mountain">Cannon Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-madison">Mount Madison</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-flume">Mount Flume</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-garfield">Mount Garfield</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-carrigain">Mount Carrigain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain">North Kinsman Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain">South Kinsman Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-whiteface">Mount Whiteface</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway">Mount Passaconaway</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-field">Mount Field</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-tom">Mount Tom</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-willey">Mount Willey</a>
-        <a class="nh48-quick-footer__link" href="/peaks/carter-dome">Carter Dome</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-moriah">Mount Moriah</a>
-        <a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain">South Carter Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain">Middle Carter Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-hale">Mount Hale</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-waumbek">Mount Waumbek</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-isolation">Mount Isolation</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-cabot">Mount Cabot</a>
-        <a class="nh48-quick-footer__link" href="/peaks/north-tripyramid">North Tripyramid</a>
-        <a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid">Middle Tripyramid</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east">Mount Osceola – East Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d">Wildcat Mountain – D Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a">Wildcat Mountain – A Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/galehead-mountain">Galehead Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/zealand-mountain">Zealand Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/west-bond">West Bond</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-bond">Mount Bond</a>
-        <a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain">South Twin Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain">North Twin Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south">Mount Hancock – South Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-hancock">Mount Hancock – North Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/owls-head">Owl's Head</a>
-        <a class="nh48-quick-footer__link" href="/peaks/bondcliff">Bondcliff</a>
-      </div>
-      <div class="nh48-quick-footer__meta">
-        <div class="nh48-quick-footer__legal">© 2024 NH48 API · White Mountains data, trails &amp; photos</div>
-        <div class="nh48-quick-footer__meta-links" aria-label="Footer navigation links">
-          <a href="/catalog">Catalog</a>
-          <a href="/trails">WMNF Trails</a>
-          <a href="/long-trails">Long Trails</a>
-          <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
-          <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
-          <a href="https://www.instagram.com/nate_dumps_pics/" target="_blank" rel="noopener">Latest WMNF Photos</a>
-        </div>
-      </div>
-    </footer>
-    <script type="module">
+    <div id="footer-placeholder"></div>
+<script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
       import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
 

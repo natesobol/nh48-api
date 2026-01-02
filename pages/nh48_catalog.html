@@ -3,11 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0; url=/catalog/">
-    <script>window.location.replace('/catalog/');</script>
     <meta name="description" content="Browse the NH48 Peak Catalog with elevation, prominence, range, difficulty and photo thumbnails for all 48 four-thousand-foot peaks in New Hampshire. Search, filter and sort using this open dataset. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak catalog, White Mountains data, hiking database, open hiking API, peak metadata, mountain photos, NH 48 peaks dataset, White Mountain peak list, open source hiking API">
-    <meta name="robots" content="noindex,follow">
+    <meta name="robots" content="index,follow">
     <link rel="canonical" href="https://nh48.info/catalog">
     <link rel="alternate" hreflang="en" href="https://nh48.info/">
     <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
@@ -45,6 +43,7 @@
     <link rel="stylesheet" href="../css/nh48_catalog.css">
     <script type="module" src="../js/i18n.js"></script>
     <link rel="stylesheet" href="/css/quick-browse-footer.css">
+    <script src="/js/quick-browse-footer.js" defer></script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -58,7 +57,7 @@
           "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json"
         ],
         "isAccessibleForFree": true,
-        "license": "https://opensource.org/licenses/MIT",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
         "creator": {
           "@type": "Person",
           "name": "Nathan Sobol",
@@ -105,7 +104,7 @@
           "name": "NH48 Open Hiking APIs",
           "url": "https://nh48.info/catalog",
           "description": "Public datasets for the New Hampshire 4000-footers including photo metadata, peak attributes, and API utilities for map clients.",
-          "license": "https://opensource.org/licenses/MIT"
+          "license": "https://creativecommons.org/licenses/by/4.0/"
         }
       }
     </script>
@@ -119,28 +118,48 @@
         • Cards display the same "General Peak Info" as the details page.
     -->
   </head>
-  <body data-page="catalog">
+  <body data-route="catalog" data-page="catalog">
     <div id="nav-placeholder"></div>
     <script>
-      // Load shared navigation
-      const navPlaceholder = document.getElementById('nav-placeholder');
-      fetch('nav.html')
-        .then(response => response.text())
-        .then(html => {
-          navPlaceholder.innerHTML = html;
-          const activeRoute = document.body.dataset.page;
-          const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
-          if (activeLink) {
-            activeLink.classList.add('active');
-          }
-        })
-        .catch(err => console.error('Failed to load navigation:', err));
+      document.addEventListener('DOMContentLoaded', () => {
+        const navPlaceholder = document.getElementById('nav-placeholder');
+        const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+        if (navPlaceholder) {
+          fetch('/pages/nav.html')
+            .then(response => response.text())
+            .then(html => {
+              navPlaceholder.innerHTML = html;
+              const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+              links.forEach(link => {
+                const routes = (link.dataset.routes || link.dataset.route || '')
+                  .split(',')
+                  .map(value => value.trim())
+                  .filter(Boolean);
+
+                if (routes.includes(activeRoute)) {
+                  link.classList.add('active');
+                  link.setAttribute('aria-current', 'page');
+                }
+              });
+            })
+            .catch(err => console.error('Failed to load navigation:', err));
+        }
+
+      });
     </script>
     <div class="wrap">
       <header>
         <h1 data-i18n="catalog.title">NH48 Peak Catalog</h1>
-        <p data-i18n="catalog.intro">Browse New Hampshire's forty-eight 4000-footers. Click a peak to view more details. If errors occur, details will appear below. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
+        <p data-i18n="catalog.intro">Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.</p>
       </header>
+
+      <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li>Catalog</li>
+        </ol>
+      </nav>
 
       <!-- search with datalist for suggestions -->
       <div class="search">
@@ -191,10 +210,6 @@
             <option value="list">List</option>
           </select>
         </div>
-        <div class="control api-variables-control">
-          <label for="apiVariablesToggle">API Variables</label>
-          <input type="checkbox" id="apiVariablesToggle" aria-label="Toggle API variable labels">
-        </div>
         <div class="control nh48-lang-control">
           <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
         </div>
@@ -215,7 +230,10 @@
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
+      const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85,width=720';
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
+      const PHOTO_BASE = new URL(PHOTO_BASE_URL);
+      const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
       const PHOTO_PATH_PREFIX = '/nh48-photos/';
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
@@ -236,29 +254,138 @@
         );
       }
 
+      const PLACEHOLDER_DATA_URI = getPlaceholder();
+
+      const lazyQueue = [];
+      let isLoadingImage = false;
+
+      function resetLazyQueue(){
+        lazyQueue.length = 0;
+        isLoadingImage = false;
+      }
+
+      function revealImage(img){
+        img.classList.add('is-visible');
+        img.removeAttribute('data-src');
+      }
+
+      function loadNextImage(){
+        const next = lazyQueue.shift();
+        if(!next){
+          isLoadingImage = false;
+          return;
+        }
+
+        const real = next.getAttribute('data-src');
+        if(!real){
+          requestAnimationFrame(loadNextImage);
+          return;
+        }
+
+        isLoadingImage = true;
+
+        const onLoad = () => {
+          revealImage(next);
+          requestAnimationFrame(loadNextImage);
+        };
+
+        const onError = () => {
+          next.src = PLACEHOLDER_DATA_URI;
+          revealImage(next);
+          requestAnimationFrame(loadNextImage);
+        };
+
+        next.addEventListener('load', onLoad, { once: true });
+        next.addEventListener('error', onError, { once: true });
+        next.src = real;
+
+        if(next.complete){
+          next.dispatchEvent(new Event('load'));
+        }
+      }
+
+      function enqueueLazyImage(img){
+        if(!img || !img.dataset || !img.dataset.src) return;
+        lazyQueue.push(img);
+        if(!isLoadingImage){
+          loadNextImage();
+        }
+      }
+
+      function toTransformedPath(pathname){
+        const normalizedPath = pathname.startsWith('/') ? pathname : `/${pathname}`;
+        return `${IMAGE_TRANSFORM_PREFIX}${normalizedPath}`;
+      }
+
       function normalizePhotoUrl(url){
         if(!url) return url;
-        if(url.startsWith(PHOTO_BASE_URL)) return url;
-        const isJsdelivrPhoto = url.includes('cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/');
-        const isGithubRawPhoto = url.includes('raw.githubusercontent.com/natesobol/nh48-api/main/photos/');
-        const isR2PathStyle = url.includes('r2.cloudflarestorage.com/nh48-photos/');
-        const isR2BucketHost = url.includes('r2.cloudflarestorage.com/') && !url.includes('/nh48-photos/');
-        if(isR2PathStyle){
-          const [, tail] = url.split(PHOTO_PATH_PREFIX);
-          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+
+        try {
+          const CDN_IMAGE_SEGMENT = '/cdn-cgi/image/';
+
+          // If the URL already uses Cloudflare image resizing, enforce our options
+          // (including width) while preserving the original path to guarantee
+          // webp thumbnails.
+          if(url.includes(CDN_IMAGE_SEGMENT)){
+            const idx = url.indexOf(CDN_IMAGE_SEGMENT);
+            const after = url.slice(idx + CDN_IMAGE_SEGMENT.length);
+            const pathStart = after.indexOf('/');
+            if(pathStart !== -1){
+              const imagePath = after.slice(pathStart);
+              const prefix = url.slice(0, idx + CDN_IMAGE_SEGMENT.length);
+              return `${prefix}${IMAGE_TRANSFORM_OPTIONS}${imagePath}`;
+            }
+          }
+
+          const parsed = new URL(url, PHOTO_BASE_URL);
+          const hostname = parsed.hostname.toLowerCase();
+          const originalPath = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
+
+          const isPhotoHost = hostname === PHOTO_BASE.hostname.toLowerCase();
+          const href = parsed.href;
+          const isJsdelivrPhoto = href.includes('cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/');
+          const isGithubRawPhoto = href.includes('raw.githubusercontent.com/natesobol/nh48-api/main/photos/');
+          const isR2PathStyle = href.includes('r2.cloudflarestorage.com/nh48-photos/');
+          const isR2BucketHost = href.includes('r2.cloudflarestorage.com/') && !href.includes('/nh48-photos/');
+
+          let photoPath = originalPath;
+
+          if(!isPhotoHost){
+            if(isR2PathStyle){
+              const [, tail] = href.split(PHOTO_PATH_PREFIX);
+              photoPath = tail ? `/${tail}` : originalPath;
+            }else if(isR2BucketHost){
+              const bucketTail = href.split('r2.cloudflarestorage.com/')[1];
+              if(bucketTail){
+                const normalizedTail = bucketTail.replace(/^nh48-photos\//, '');
+                photoPath = `/${normalizedTail}`;
+              }
+            }else if(isJsdelivrPhoto || isGithubRawPhoto){
+              const [, tail] = href.split('/photos/');
+              photoPath = tail ? `/${tail}` : originalPath;
+            }else{
+              return url;
+            }
+          }
+
+          return toTransformedPath(photoPath);
+        } catch (err) {
+          console.warn('Unable to normalize photo URL', url, err);
+          return url;
         }
-        if(isR2BucketHost){
-          const bucketTail = url.split('r2.cloudflarestorage.com/')[1];
-          if(bucketTail){
-            const normalizedTail = bucketTail.replace(/^nh48-photos\//, '');
-            return `${PHOTO_BASE_URL}/${normalizedTail}`;
+      }
+
+      function extractPhotoUrl(photo){
+        if(!photo) return null;
+        if(typeof photo === 'string') return normalizePhotoUrl(photo);
+
+        const candidateKeys = ['url', 'contentUrl', 'thumbnailUrl', 'src', 'image'];
+        for(const key of candidateKeys){
+          if(photo[key]){
+            return normalizePhotoUrl(photo[key]);
           }
         }
-        if(isJsdelivrPhoto || isGithubRawPhoto){
-          const [, tail] = url.split('/photos/');
-          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
-        }
-        return url;
+        return null;
       }
 
       // Pagination
@@ -269,13 +396,11 @@
       let activeSort = 'name';
 
       const UNIT_STORAGE_KEY = 'nh48_units';
-      const API_VARIABLES_STORAGE_KEY = 'nh48-catalog-api-variables';
       const UNITS = {
         FEET: 'feet',
         METERS: 'meters'
       };
       let currentUnits = UNITS.FEET;
-      let showApiVariables = false;
 
       const FRIENDLY_LABELS = {
         elevation: 'catalog.card.elevation',
@@ -295,19 +420,7 @@
         exposure: 'Exposure'
       };
 
-      const API_LABELS = {
-        elevation: 'Elevation (ft)',
-        prominence: 'Prominence (ft)',
-        range: 'Range / Subrange',
-        trailType: 'Trail Type',
-        difficulty: 'Difficulty',
-        exposure: 'Exposure Level'
-      };
-
       function getCatalogLabel(key){
-        if(showApiVariables){
-          return API_LABELS[key] || key;
-        }
         const i18nKey = FRIENDLY_LABELS[key];
         if(i18nKey){
           const translated = t(i18nKey);
@@ -420,7 +533,7 @@
       };
 
       function translateTrailType(value){
-        if(!value || showApiVariables) return value;
+        if(!value) return value;
         const key = TRAIL_TYPE_TRANSLATIONS[value];
         if(!key) return value;
         const translated = t(key);
@@ -428,7 +541,7 @@
       }
 
       function translateDifficulty(value){
-        if(!value || showApiVariables) return value;
+        if(!value) return value;
         const key = DIFFICULTY_TRANSLATIONS[value];
         if(!key) return value;
         const translated = t(key);
@@ -436,7 +549,7 @@
       }
 
       function translateExposure(value){
-        if(!value || showApiVariables) return value;
+        if(!value) return value;
         const trimmed = String(value).trim();
         const match = trimmed.match(/^(Low to Medium|Low|Medium|High)/i);
         if(!match) return value;
@@ -471,17 +584,6 @@
         }
         if(persist){
           localStorage.setItem(UNIT_STORAGE_KEY, units);
-        }
-      }
-
-      function setApiVariableLabels(enabled, { persist = true } = {}){
-        showApiVariables = Boolean(enabled);
-        const toggle = document.getElementById('apiVariablesToggle');
-        if(toggle){
-          toggle.checked = showApiVariables;
-        }
-        if(persist){
-          localStorage.setItem(API_VARIABLES_STORAGE_KEY, showApiVariables ? 'true' : 'false');
         }
       }
 
@@ -527,16 +629,21 @@
         card.className = 'card';
 
         // Thumbnail
-        let thumbSrc = getPlaceholder();
+        let thumbSrc = PLACEHOLDER_DATA_URI;
         let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
           const first = p.photos[0];
+          const normalizedPhoto = extractPhotoUrl(first);
           thumbAlt = buildPhotoAlt(p, first);
-          if (typeof first === 'string') {
-            thumbSrc = normalizePhotoUrl(first);
-          } else if (first && first.url) {
-            thumbSrc = normalizePhotoUrl(first.url);
+          if(normalizedPhoto){
+            thumbSrc = normalizedPhoto;
           }
+        }
+
+        const shouldLazyLoad = thumbSrc !== PLACEHOLDER_DATA_URI;
+        const thumbClasses = ['lazy-thumb'];
+        if(!shouldLazyLoad){
+          thumbClasses.push('is-visible');
         }
 
         const elev = p['Elevation (ft)'];
@@ -548,7 +655,7 @@
 
         card.innerHTML = `
           <div class="thumb">
-            <img src="${thumbSrc}" alt="${thumbAlt}" loading="lazy" decoding="async">
+            <img class="${thumbClasses.join(' ')}" src="${PLACEHOLDER_DATA_URI}" ${shouldLazyLoad ? `data-src="${thumbSrc}"` : ''} alt="${thumbAlt}" loading="lazy" decoding="async">
           </div>
           <div class="body">
             <h3>${p.peakName}</h3>
@@ -574,16 +681,21 @@
         const item = document.createElement('article');
         item.className = 'list-item';
 
-        let thumbSrc = getPlaceholder();
+        let thumbSrc = PLACEHOLDER_DATA_URI;
         let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
           const first = p.photos[0];
+          const normalizedPhoto = extractPhotoUrl(first);
           thumbAlt = buildPhotoAlt(p, first);
-          if (typeof first === 'string') {
-            thumbSrc = normalizePhotoUrl(first);
-          } else if (first && first.url) {
-            thumbSrc = normalizePhotoUrl(first.url);
+          if(normalizedPhoto){
+            thumbSrc = normalizedPhoto;
           }
+        }
+
+        const shouldLazyLoad = thumbSrc !== PLACEHOLDER_DATA_URI;
+        const thumbClasses = ['lazy-thumb'];
+        if(!shouldLazyLoad){
+          thumbClasses.push('is-visible');
         }
 
         const elev = p['Elevation (ft)'];
@@ -592,7 +704,7 @@
 
         item.innerHTML = `
           <div class="list-thumb">
-            <img src="${thumbSrc}" alt="${thumbAlt}" loading="lazy" decoding="async">
+            <img class="${thumbClasses.join(' ')}" src="${PLACEHOLDER_DATA_URI}" ${shouldLazyLoad ? `data-src="${thumbSrc}"` : ''} alt="${thumbAlt}" loading="lazy" decoding="async">
           </div>
           <div class="list-content">
             <div class="list-main">
@@ -621,18 +733,25 @@
       }
 
       function setupLazyLoading(){
-        if (!('IntersectionObserver' in window)) return;
+        resetLazyQueue();
+        const candidates = document.querySelectorAll('img[data-src]');
+
+        if (!('IntersectionObserver' in window)) {
+          candidates.forEach(img => enqueueLazyImage(img));
+          return;
+        }
+
         const observer = new IntersectionObserver((entries, obs) => {
           entries.forEach(entry => {
             if(entry.isIntersecting){
               const img = entry.target;
-              const real = img.getAttribute('data-src');
-              if(real){ img.src = real; img.removeAttribute('data-src'); }
               obs.unobserve(img);
+              enqueueLazyImage(img);
             }
           });
         }, { rootMargin: '200px' });
-        document.querySelectorAll('img[data-src]').forEach(img => observer.observe(img));
+
+        candidates.forEach(img => observer.observe(img));
       }
 
       function renderGrid(list){
@@ -821,14 +940,6 @@
             trackEvent('catalog_units_change', { units: e.target.value });
           });
         }
-        const apiVariablesToggle = document.getElementById('apiVariablesToggle');
-        if(apiVariablesToggle){
-          apiVariablesToggle.addEventListener('change', (e) => {
-            setApiVariableLabels(e.target.checked);
-            updateDisplay();
-            trackEvent('catalog_api_variables_toggle', { enabled: e.target.checked });
-          });
-        }
       }
 
       window.addEventListener('load', init);
@@ -882,11 +993,6 @@
 
       syncUnitsWithLanguage(window.NH48_I18N ? window.NH48_I18N.getLang() : 'en');
 
-      const savedApiVariables = localStorage.getItem(API_VARIABLES_STORAGE_KEY);
-      if(savedApiVariables === 'true'){
-        setApiVariableLabels(true, { persist: false });
-      }
-      
       columnSelect.addEventListener('change', function() {
         const columns = this.value;
         grid.setAttribute('data-columns', columns);
@@ -901,64 +1007,7 @@
         trackEvent('catalog_view_change', { view: currentView });
       });
     </script>
-    <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title">
-      <div class="nh48-quick-footer__header">
-        <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
-        <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>
-        <p>Jump directly into every New Hampshire 4,000-footer detail page to strengthen internal linking and keep crawlers flowing through the full NH48 set.</p>
-      </div>
-      <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
-        <a class="nh48-quick-footer__link" href="/peaks/mount-washington">Mount Washington</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-lafayette">Mount Lafayette</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-lincoln">Mount Lincoln</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh">Mount Tecumseh</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke">Mount Moosilauke</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-pierce">Mount Pierce</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-liberty">Mount Liberty</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-adams">Mount Adams</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower">Mount Eisenhower</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-osceola">Mount Osceola</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-jackson">Mount Jackson</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-monroe">Mount Monroe</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-jefferson">Mount Jefferson</a>
-        <a class="nh48-quick-footer__link" href="/peaks/cannon-mountain">Cannon Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-madison">Mount Madison</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-flume">Mount Flume</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-garfield">Mount Garfield</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-carrigain">Mount Carrigain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain">North Kinsman Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain">South Kinsman Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-whiteface">Mount Whiteface</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway">Mount Passaconaway</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-field">Mount Field</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-tom">Mount Tom</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-willey">Mount Willey</a>
-        <a class="nh48-quick-footer__link" href="/peaks/carter-dome">Carter Dome</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-moriah">Mount Moriah</a>
-        <a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain">South Carter Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain">Middle Carter Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-hale">Mount Hale</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-waumbek">Mount Waumbek</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-isolation">Mount Isolation</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-cabot">Mount Cabot</a>
-        <a class="nh48-quick-footer__link" href="/peaks/north-tripyramid">North Tripyramid</a>
-        <a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid">Middle Tripyramid</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east">Mount Osceola – East Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d">Wildcat Mountain – D Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a">Wildcat Mountain – A Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/galehead-mountain">Galehead Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/zealand-mountain">Zealand Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/west-bond">West Bond</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-bond">Mount Bond</a>
-        <a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain">South Twin Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain">North Twin Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south">Mount Hancock – South Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-hancock">Mount Hancock – North Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/owls-head">Owl's Head</a>
-        <a class="nh48-quick-footer__link" href="/peaks/bondcliff">Bondcliff</a>
-      </div>
-    </footer>
-    <script type="module">
+<script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
       import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
 

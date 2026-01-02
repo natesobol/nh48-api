@@ -56,7 +56,7 @@
   },
   "catalog": {
     "title": "NH48 봉우리 카탈로그",
-    "intro": "뉴햄프셔의 4,000피트 봉우리 48개를 둘러보세요. 봉우리를 클릭하면 자세한 정보를 볼 수 있습니다. 오류가 발생하면 아래에 세부 정보가 표시됩니다. 뉴햄프셔 4,000피트 산을 위한 오픈 API 및 데이터셋.",
+    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
     "search": {
       "placeholder": "이름으로 봉우리 검색…",
       "ariaLabel": "이름으로 봉우리 검색"
@@ -204,7 +204,19 @@
         "fileCreateDate": "파일 생성일",
         "fileModifiedDate": "파일 수정일",
         "rating": "평점",
-        "metadata": "메타데이터"
+        "metadata": "메타데이터",
+        "creditLine": "크레딧 라인",
+        "source": "출처",
+        "copyrightNotice": "저작권 공지",
+        "copyrightStatus": "저작권 상태",
+        "rightsUsageTerms": "권리 및 사용 조건",
+        "altText": "대체 텍스트",
+        "alt": "Alt",
+        "extendedAlt": "확장된 대체 텍스트",
+        "caption": "캡션",
+        "headline": "헤드라인",
+        "extendedDescription": "확장 설명",
+        "description": "설명"
       }
     },
     "generalInfo": {
@@ -245,7 +257,7 @@
     }
   },
   "trails": {
-    "title": "🏔️ WMNF Trails API 지도 도구",
+    "title": "🏔️ White Mountain Trails API 지도 도구",
     "subtitle": "White Mountains를 위한 오픈 봉우리, 트레일, 루트 데이터 구조.",
     "intro": "White Mountain National Forest — Nate Sobol이 정리. 빠른 트레일 찾기 및 완주 추적기로 사용하세요. 뉴햄프셔 4,000피트 산을 위한 오픈 API 및 데이터셋.",
     "details": {

@@ -4,19 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,follow">
-  <meta http-equiv="refresh" content="0; url=/trails">
-  <script>window.location.replace('/trails');</script>
-  <title>WMNF Trails Map &amp; Open Data – White Mountain National Forest</title>
+  <title>White Mountain Trails Map &amp; Open Data – White Mountain National Forest</title>
   <meta name="description" content="Explore White Mountain National Forest trails with an interactive map and open datasets for WMNF routes and 2,000-foot peaks. Download normalized JSON for your own apps.">
   <meta name="keywords" content="WMNF trails,White Mountain National Forest,New Hampshire hiking trails,open trail data,WMNF dataset,2000 foot peaks">
   <link rel="canonical" href="https://nh48.info/trails">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="WMNF Trails Map &amp; Open Data – White Mountain National Forest">
+  <meta property="og:title" content="White Mountain Trails Map &amp; Open Data – White Mountain National Forest">
   <meta property="og:description" content="Interactive WMNF trail explorer plus downloadable JSON datasets for White Mountain routes and 2,000-foot peaks.">
   <meta property="og:url" content="https://nh48.info/trails">
   <meta property="og:image" content="https://nh48.info/WMNF_Trails_API_logo.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="WMNF Trails Map &amp; Open Data – White Mountain National Forest">
+  <meta name="twitter:title" content="White Mountain Trails Map &amp; Open Data – White Mountain National Forest">
   <meta name="twitter:description" content="Open WMNF trail and 2,000-foot peak datasets with an interactive planning map.">
   <meta name="twitter:image" content="https://nh48.info/WMNF_Trails_API_logo.png">
     <link rel="alternate" hreflang="en" href="https://nh48.info/">
@@ -38,14 +36,15 @@
     <link rel="alternate" hreflang="pl" href="https://nh48.info/i18n/pl.html">
     <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
   <link rel="stylesheet" href="/css/quick-browse-footer.css">
+  <script src="/js/quick-browse-footer.js" defer></script>
   <script type="module" src="../js/i18n.js"></script>
 
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Dataset",
-      "name": "White Mountain National Forest Trails & 2,000-Foot Peaks (WMNF Trails API)",
-      "description": "Independent WMNF dataset containing normalized trail geometry and 2,000-foot peak records used by the WMNF Trails App.",
+      "name": "White Mountain National Forest Trails & 2,000-Foot Peaks (White Mountain Trails API)",
+      "description": "Independent WMNF dataset containing normalized trail geometry and 2,000-foot peak records used by the White Mountain Trails App.",
       "identifier": "wmnf-trails",
       "url": "https://nh48.info/trails",
       "sameAs": [
@@ -68,7 +67,7 @@
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "creator": {
         "@type": "Organization",
-        "name": "NH48 / WMNF Trails",
+        "name": "NH48 / White Mountain Trails",
         "url": "https://nh48.info"
       },
       "spatialCoverage": {
@@ -104,15 +103,15 @@
         {
           "@type": "DataDownload",
           "encodingFormat": "text/plain",
-          "name": "WMNF Trails (tabular export)",
+          "name": "White Mountain Trails (tabular export)",
           "contentUrl": "https://nh48.info/data/wmnf-trails/White_Mountains_Trails.txt"
         }
       ],
       "includedInDataCatalog": {
         "@type": "DataCatalog",
-        "name": "WMNF Trails App",
+        "name": "White Mountain Trails App",
         "url": "https://nh48.info/trails",
-        "description": "Trail network, peak overlays, and derived files powering the WMNF Trails App and embeddable map widgets.",
+        "description": "Trail network, peak overlays, and derived files powering the White Mountain Trails App and embeddable map widgets.",
         "license": "https://creativecommons.org/licenses/by/4.0/"
       }
     }
@@ -245,11 +244,76 @@
       line-height: 1.5;
     }
 
+    .logo-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none;
+      background: transparent;
+      padding: 0;
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      margin: 0;
+    }
+
+    .page-logo {
+      display: inline-flex;
+      margin-bottom: 0.5rem;
+    }
+
     .page-header .page-subtitle {
       margin: 0.35rem 0 0;
       font-weight: 600;
       font-size: 1.1rem;
       color: #d6f5df;
+    }
+
+    .page-breadcrumbs {
+      max-width: 1100px;
+      margin: 0 auto 10px;
+      padding: 0 1rem;
+      color: var(--text-secondary);
+    }
+
+    .page-breadcrumbs ol {
+      display: flex;
+      gap: 8px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .page-breadcrumbs li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .page-breadcrumbs li + li::before {
+      content: "/";
+      color: var(--text-secondary);
+      opacity: 0.7;
+    }
+
+    .page-breadcrumbs a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .page-breadcrumbs a:hover,
+    .page-breadcrumbs a:focus-visible {
+      text-decoration: underline;
     }
     .nh48-lang {
       display: flex;
@@ -648,6 +712,29 @@
       line-height: 1.5;
     }
 
+    .trail-info-about {
+      padding: 0.75rem;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      text-align: left;
+    }
+
+    .trail-info-about h3 {
+      margin: 0 0 0.25rem;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      text-align: left;
+    }
+
+    .trail-info-about p {
+      margin: 0;
+      text-align: left;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      font-size: 0.9rem;
+    }
+
     .peakbagger-panel .cta {
       display: flex;
       flex-direction: column;
@@ -876,22 +963,31 @@
     }
 
     /* Style for the link to view the GitHub API repository */
+    .api-link-container {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: center;
+    }
     .view-api-link {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.4rem 0.75rem;
-      background-color: var(--button-green);
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 0.8rem;
+      gap: 0.4rem;
+      padding: 0.5rem 0.9rem;
+      background-color: rgba(34, 197, 94, 0.12);
+      color: #eafbf1;
+      border: 1px solid var(--button-green);
+      border-radius: 6px;
+      font-size: 0.85rem;
       cursor: pointer;
       text-decoration: none;
-      transition: background-color 0.2s ease;
+      transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 6px 24px rgba(34, 197, 94, 0.18);
     }
     .view-api-link:hover {
-      background-color: var(--button-green-dark);
+      background-color: rgba(34, 197, 94, 0.22);
+      color: #ffffff;
+      box-shadow: 0 8px 28px rgba(34, 197, 94, 0.28);
     }
 
     /* Trail list styling adjustments for completed status */
@@ -987,34 +1083,129 @@
     .hike-btn:hover {
       background-color: var(--button-green-dark);
     }
+
+    /* Mobile layout adjustments */
+    @media (max-width: 900px) {
+      #app {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        border: none;
+        box-shadow: none;
+        max-width: none;
+      }
+
+      #panelResizer {
+        display: none;
+      }
+
+      #bottomSection {
+        order: -1;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem 0.5rem;
+      }
+
+      #listSection {
+        max-height: 400px;
+        overflow-y: auto;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        background: var(--bg-tertiary);
+        padding: 0.75rem 0.75rem;
+      }
+
+      #listSection .controls {
+        position: sticky;
+        top: 0;
+        background: var(--bg-tertiary);
+        z-index: 2;
+        padding-top: 0.75rem;
+        margin-left: -0.25rem;
+        margin-right: -0.25rem;
+      }
+
+      .trail-list-container {
+        max-height: none;
+      }
+
+      .about-panel {
+        margin-top: 1rem;
+        order: 2;
+        width: 100%;
+        max-width: none;
+      }
+
+      #topSection {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem 0.5rem;
+      }
+
+      #mapContainer {
+        order: 1;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        min-height: 50vh;
+      }
+
+      #map {
+        min-height: 50vh;
+      }
+
+      #trailInfoPanel {
+        order: 2;
+        margin-top: 0.75rem;
+        width: 100%;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
 </style>
 </head>
 
-<body data-page="trails">
+<body data-route="trails" data-page="trails">
   <div id="nav-placeholder"></div>
   <script>
-    (() => {
-      // Load shared navigation without leaking globals so repeated embeds don't redeclare consts
+    document.addEventListener('DOMContentLoaded', () => {
       const navPlaceholder = document.getElementById('nav-placeholder');
-      if (!navPlaceholder) return;
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
 
-      fetch('/pages/nav.html')
-        .then(response => response.text())
-        .then(html => {
-          navPlaceholder.innerHTML = html;
-          const activeRoute = document.body.dataset.page;
-          const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
-          if (activeLink) {
-            activeLink.classList.add('active');
-          }
-        })
-        .catch(err => console.error('Failed to load navigation:', err));
-    })();
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+    });
   </script>
-  <header class="page-header">
-    <h1 data-i18n="trails.title">🏔️ WMNF Trails API Map Tool</h1>
-    <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
-    <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
+    <header class="page-header">
+      <div class="page-logo">
+        <div class="logo-wrap">
+          <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest trails map logo" title="White Mountain Trails API" loading="lazy" decoding="async">
+        </div>
+      </div>
+      <h1 data-i18n="trails.title">🏔️ White Mountain Trails API Map Tool</h1>
+      <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
+      <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
     <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
       <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
       <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
@@ -1037,6 +1228,12 @@
       </button>
     </div>
   </header>
+  <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li>White Mountain Trails</li>
+    </ol>
+  </nav>
   <div id="app">
     <!-- Top section containing the map and trail details -->
     <div id="topSection">
@@ -1045,8 +1242,12 @@
         <div id="map"></div>
       </div>
       <div id="trailInfoPanel" class="trail-info-panel">
-        <h2 data-i18n="trails.details.title">Trail details</h2>
-        <p data-i18n="trails.details.empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
+        <h2 class="trail-info-heading">Select a trail to view details</h2>
+        <p class="trail-info-empty" data-i18n="trails.details.empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
+        <div class="trail-info-about">
+          <h3 data-i18n="trails.about.title">About this list</h3>
+          <p data-i18n="trails.about.body">NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths.</p>
+        </div>
       </div>
     </div>
     <div id="panelResizer" role="separator" data-i18n="trails.resizePanels" data-i18n-attr="aria-label" aria-label="Resize panels"></div>
@@ -1084,10 +1285,6 @@
     </div>
       <div class="info-panel about-panel">
         <details open>
-          <summary data-i18n="trails.about.title">About this list</summary>
-          <p data-i18n="trails.about.body">NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths.</p>
-        </details>
-        <details open>
           <summary data-i18n="trails.disclaimer.title">Disclaimer</summary>
           <p data-i18n-html="trails.disclaimer.body">This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry.</p>
         </details>
@@ -1114,7 +1311,7 @@
           </label>
         </div>
         <!-- Link to view the GitHub API repository -->
-        <div class="api-link-container" style="margin-top: 0.75rem;">
+        <div class="api-link-container">
           <a href="https://github.com/natesobol/WMNF-Trails-API/tree/main" target="_blank" rel="noopener noreferrer" class="view-api-link">
             <!-- GitHub logo SVG -->
             <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" style="fill: currentColor; margin-right: 0.4rem;">
@@ -1235,6 +1432,8 @@
         });
         letterNavContainer.appendChild(span);
       });
+      const searchInput = document.getElementById('searchInput');
+      const initialTrailQuery = new URLSearchParams(window.location.search).get('trail');
       // Retrieve success (completed) color from CSS variables.  Fallback to
       // a hardcoded green if not found.
       const successColor = getComputedStyle(document.documentElement).getPropertyValue('--success-green').trim() || '#51cf66';
@@ -1562,8 +1761,12 @@
 
         if (!name) {
           trailInfoPanel.innerHTML = `
-            <h2>${t('trails.details.title')}</h2>
+            <h2 class="trail-info-heading">Select a trail to view details</h2>
             <p class="trail-info-empty">${t('trails.details.empty')}</p>
+            <div class="trail-info-about">
+              <h3>${t('trails.about.title')}</h3>
+              <p>${t('trails.about.body')}</p>
+            </div>
           `;
           return;
         }
@@ -2171,19 +2374,22 @@
         populateSuggestions();
         renderTrailList();
         trackEvent('trails_app_ready', { trailCount: trailNames.length });
-        const trailQuery = new URLSearchParams(window.location.search).get('trail');
+        const trailQuery = initialTrailQuery;
         if (trailQuery) {
           const matched = matchTrailName(trailQuery, trailNames);
           if (!matched) {
             window.location.replace('/not-found.html');
             return;
           }
+          if (searchInput) {
+            searchInput.value = matched;
+            renderTrailList();
+          }
           renderTrailInfo(matched);
           trackEvent('trails_query_select', { trail: matched });
         }
       }
       // Attach event listeners for search, sort, hide completed, and clear progress.
-      const searchInput = document.getElementById('searchInput');
       let searchDebounce;
       searchInput.addEventListener('input', () => {
         renderTrailList();
@@ -2293,75 +2499,8 @@
 
 })();
 </script>
-<footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
-  <div class="nh48-quick-footer__header">
-    <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
-    <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>
-    <p>Jump directly into every New Hampshire 4,000-footer detail page to strengthen internal linking and keep crawlers flowing through the full NH48 set.</p>
-  </div>
-  <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
-    <a class="nh48-quick-footer__link" href="/peaks/mount-washington">Mount Washington</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-lafayette">Mount Lafayette</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-lincoln">Mount Lincoln</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh">Mount Tecumseh</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke">Mount Moosilauke</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-pierce">Mount Pierce</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-liberty">Mount Liberty</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-adams">Mount Adams</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower">Mount Eisenhower</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-osceola">Mount Osceola</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-jackson">Mount Jackson</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-monroe">Mount Monroe</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-jefferson">Mount Jefferson</a>
-    <a class="nh48-quick-footer__link" href="/peaks/cannon-mountain">Cannon Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-madison">Mount Madison</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-flume">Mount Flume</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-garfield">Mount Garfield</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-carrigain">Mount Carrigain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain">North Kinsman Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain">South Kinsman Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-whiteface">Mount Whiteface</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway">Mount Passaconaway</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-field">Mount Field</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-tom">Mount Tom</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-willey">Mount Willey</a>
-    <a class="nh48-quick-footer__link" href="/peaks/carter-dome">Carter Dome</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-moriah">Mount Moriah</a>
-    <a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain">South Carter Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain">Middle Carter Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-hale">Mount Hale</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-waumbek">Mount Waumbek</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-isolation">Mount Isolation</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-cabot">Mount Cabot</a>
-    <a class="nh48-quick-footer__link" href="/peaks/north-tripyramid">North Tripyramid</a>
-    <a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid">Middle Tripyramid</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east">Mount Osceola – East Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d">Wildcat Mountain – D Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a">Wildcat Mountain – A Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/galehead-mountain">Galehead Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/zealand-mountain">Zealand Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/west-bond">West Bond</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-bond">Mount Bond</a>
-    <a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain">South Twin Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain">North Twin Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south">Mount Hancock – South Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-hancock">Mount Hancock – North Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/owls-head">Owl's Head</a>
-    <a class="nh48-quick-footer__link" href="/peaks/bondcliff">Bondcliff</a>
-  </div>
-  <div class="nh48-quick-footer__meta">
-    <div class="nh48-quick-footer__legal">© 2024 NH48 API · White Mountains data, trails &amp; photos</div>
-    <div class="nh48-quick-footer__meta-links" aria-label="Footer navigation links">
-      <a href="/catalog">Catalog</a>
-      <a href="/trails">WMNF Trails</a>
-      <a href="/long-trails">Long Trails</a>
-      <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
-      <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
-      <a href="https://www.instagram.com/nate_dumps_pics/" target="_blank" rel="noopener">Latest WMNF Photos</a>
-    </div>
-  </div>
-</footer>
-  <script type="module">
+  <div id="footer-placeholder"></div>
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
 

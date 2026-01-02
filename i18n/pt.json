@@ -56,7 +56,7 @@
   },
   "catalog": {
     "title": "Catálogo de Picos NH48",
-    "intro": "Explore os quarenta e oito picos de 4.000 pés de New Hampshire. Clique em um pico para ver mais detalhes. Se ocorrerem erros, os detalhes aparecerão abaixo. API aberta e conjuntos de dados para as montanhas de 4.000 pés de New Hampshire.",
+    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
     "search": {
       "placeholder": "Pesquisar picos pelo nome…",
       "ariaLabel": "Pesquisar picos pelo nome"
@@ -204,7 +204,19 @@
         "fileCreateDate": "Data de criação do arquivo",
         "fileModifiedDate": "Data de modificação do arquivo",
         "rating": "Avaliação",
-        "metadata": "Metadados"
+        "metadata": "metadados",
+        "creditLine": "linha de crédito",
+        "source": "fonte",
+        "copyrightNotice": "aviso de direitos autorais",
+        "copyrightStatus": "status de direitos autorais",
+        "rightsUsageTerms": "termos de uso e direitos",
+        "altText": "texto alternativo",
+        "alt": "alt",
+        "extendedAlt": "texto alternativo estendido",
+        "caption": "legenda",
+        "headline": "título",
+        "extendedDescription": "descrição estendida",
+        "description": "descrição"
       }
     },
     "generalInfo": {
@@ -245,7 +257,7 @@
     }
   },
   "trails": {
-    "title": "🏔️ Ferramenta de Mapa da API WMNF Trails",
+    "title": "🏔️ Ferramenta de Mapa da API White Mountain Trails",
     "subtitle": "Estrutura de dados aberta de picos, trilhas e rotas para as White Mountains.",
     "intro": "White Mountain National Forest — compilado por Nate Sobol. Use como um localizador rápido de trilhas e rastreador de conclusão. API aberta e conjuntos de dados para as montanhas de 4.000 pés de New Hampshire.",
     "details": {

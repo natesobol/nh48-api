@@ -19,9 +19,16 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.109.0/Widgets/widgets.min.css" rel="stylesheet">
 <link rel="stylesheet" href="../css/virtual_hike.css">
 <link rel="stylesheet" href="/css/quick-browse-footer.css">
+<script src="/js/quick-browse-footer.js" defer></script>
 </head>
 <body>
 <div id="toolbar">
+  <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li>Virtual Hike</li>
+    </ol>
+  </nav>
   <h2 id="trailName">Virtual Hike</h2>
   <button id="playBtn">Fly Trail</button>
   <button id="clearBtn">Clear Markers</button>
@@ -174,73 +181,8 @@ async function init() {
 
 init();
 </script>
-<footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
-  <div class="nh48-quick-footer__header">
-    <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
-    <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>
-    <p>Jump directly into every New Hampshire 4,000-footer detail page to strengthen internal linking and keep crawlers flowing through the full NH48 set.</p>
-  </div>
-  <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
-    <a class="nh48-quick-footer__link" href="/peaks/mount-washington">Mount Washington</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-lafayette">Mount Lafayette</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-lincoln">Mount Lincoln</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh">Mount Tecumseh</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke">Mount Moosilauke</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-pierce">Mount Pierce</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-liberty">Mount Liberty</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-adams">Mount Adams</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower">Mount Eisenhower</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-osceola">Mount Osceola</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-jackson">Mount Jackson</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-monroe">Mount Monroe</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-jefferson">Mount Jefferson</a>
-    <a class="nh48-quick-footer__link" href="/peaks/cannon-mountain">Cannon Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-madison">Mount Madison</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-flume">Mount Flume</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-garfield">Mount Garfield</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-carrigain">Mount Carrigain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain">North Kinsman Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain">South Kinsman Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-whiteface">Mount Whiteface</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway">Mount Passaconaway</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-field">Mount Field</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-tom">Mount Tom</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-willey">Mount Willey</a>
-    <a class="nh48-quick-footer__link" href="/peaks/carter-dome">Carter Dome</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-moriah">Mount Moriah</a>
-    <a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain">South Carter Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain">Middle Carter Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-hale">Mount Hale</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-waumbek">Mount Waumbek</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-isolation">Mount Isolation</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-cabot">Mount Cabot</a>
-    <a class="nh48-quick-footer__link" href="/peaks/north-tripyramid">North Tripyramid</a>
-    <a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid">Middle Tripyramid</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east">Mount Osceola – East Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d">Wildcat Mountain – D Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a">Wildcat Mountain – A Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/galehead-mountain">Galehead Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/zealand-mountain">Zealand Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/west-bond">West Bond</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-bond">Mount Bond</a>
-    <a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain">South Twin Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain">North Twin Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south">Mount Hancock – South Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-hancock">Mount Hancock – North Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/owls-head">Owl's Head</a>
-    <a class="nh48-quick-footer__link" href="/peaks/bondcliff">Bondcliff</a>
-  </div>
-  <div class="nh48-quick-footer__meta">
-    <div class="nh48-quick-footer__legal">© 2024 NH48 API · White Mountains data, trails &amp; photos</div>
-    <div class="nh48-quick-footer__meta-links" aria-label="Footer navigation links">
-      <a href="/catalog">Catalog</a>
-      <a href="/trails">WMNF Trails</a>
-      <a href="/long-trails">Long Trails</a>
-      <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
-      <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
-      <a href="https://www.instagram.com/nate_dumps_pics/" target="_blank" rel="noopener">Latest WMNF Photos</a>
-    </div>
-  </div>
-</footer>
+<!-- Quick browse footer injected from /pages/footer.html via quick-browse-footer.js -->
+
+
 </body>
 </html>

@@ -1,0 +1,78 @@
+name: Pre-render NH48 pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  prerender:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate static pages and sitemaps
+        run: |
+          node scripts/prerender-peaks.js
+          node scripts/prerender-long-trails.js
+          node scripts/generate-sitemaps.js
+
+      - name: Show generated file diffs (debug)
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "=== git status (porcelain) ==="
+          git status --porcelain
+          echo "=== git diff --name-only ==="
+          git --no-pager diff --name-only || true
+          echo "=== git diff (full) ==="
+          git --no-pager diff || true
+
+      - name: Commit updated renders
+        if: github.event_name == 'push'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update prerendered pages"
+          file_pattern: |
+            peaks/**
+            fr/peaks/**
+            long-trails/**
+            sitemap.xml
+            image-sitemap.xml
+
+  auto-commit-pr:
+    runs-on: ubuntu-latest
+    needs: prerender
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Auto-commit renders for PRs from this repo
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update prerendered pages"
+          file_pattern: |
+            peaks/**
+            fr/peaks/**
+            long-trails/**
+            sitemap.xml
+            image-sitemap.xml
+
+      - name: Verify no uncommitted changes
+        if: github.event_name == 'pull_request'
+        run: git diff --quiet --exit-code || (echo "Please run prerender scripts and commit the generated files." && exit 1)

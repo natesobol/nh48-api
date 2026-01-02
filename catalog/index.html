@@ -6,7 +6,9 @@
     <meta name="description" content="Browse the NH48 Peak Catalog with elevation, prominence, range, difficulty and photo thumbnails for all 48 four-thousand-foot peaks in New Hampshire. Search, filter and sort using this open dataset. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak catalog, White Mountains data, hiking database, open hiking API, peak metadata, mountain photos, NH 48 peaks dataset, White Mountain peak list, open source hiking API">
     <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow,max-image-preview:large">
     <link rel="canonical" href="https://nh48.info/catalog">
+    <link rel="sitemap" type="application/xml" title="Page sitemap" href="https://nh48.info/page-sitemap.xml">
     <link rel="alternate" hreflang="en" href="https://nh48.info/">
     <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
     <link rel="alternate" hreflang="fr" href="https://nh48.info/i18n/fr.html">
@@ -30,7 +32,7 @@
     <meta property="og:title" content="NH48 Peak Catalog – Data &amp; photos for New Hampshire’s 4000-footers">
     <meta property="og:description" content="Browse the NH48 Peak Catalog with elevation, prominence, range, difficulty and photo thumbnails for all 48 four-thousand-foot peaks in New Hampshire. Search, filter and sort using this open dataset. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta property="og:image" content="https://nh48.info/nh48-preview.png">
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://nh48.info/catalog">
@@ -42,7 +44,67 @@
     <link rel="icon" type="image/png" href="../nh48API_logo.png">
     <link rel="stylesheet" href="../css/nh48_catalog.css">
     <link rel="stylesheet" href="/css/quick-browse-footer.css">
+    <script src="/js/quick-browse-footer.js" defer></script>
     <script type="module" src="../js/i18n.js"></script>
+    <script>
+      (function redirectToApp() {
+        const host = location.hostname;
+
+        const isPreviewHost =
+          host === "localhost" ||
+          host === "127.0.0.1" ||
+          host.includes("github") ||
+          host.endsWith("githubpreview.dev");
+
+        if (isPreviewHost) {
+          return;
+        }
+
+        const target = "https://nh48.info/pages/nh48_catalog.html";
+        const ua = (typeof navigator !== "undefined" && navigator.userAgent) || "";
+        const botSignatures = [
+          "adsbot-google",
+          "ahrefsbot",
+          "applebot",
+          "baiduspider",
+          "bingbot",
+          "bingpreview",
+          "chatgpt",
+          "claudebot",
+          "duckduckbot",
+          "exabot",
+          "facebookexternalhit",
+          "facebot",
+          "gptbot",
+          "google-inspectiontool",
+          "googlebot",
+          "ia_archiver",
+          "linkedinbot",
+          "mediapartners-google",
+          "petalbot",
+          "redditbot",
+          "semrushbot",
+          "slurp",
+          "sogou",
+          "twitterbot",
+          "yandex"
+        ];
+        const uaLower = ua.toLowerCase();
+        const isKnownBot = botSignatures.some((signature) => uaLower.includes(signature));
+        const shouldRedirect = !isKnownBot && typeof window !== "undefined" && target && window.location.href !== target;
+
+        if (shouldRedirect) {
+          window.location.replace(target);
+        }
+      })();
+    </script>
+<noscript>
+      <p>
+        JavaScript is required to continue.
+        <a href="https://nh48.info/pages/nh48_catalog.html">Continue</a>
+      </p>
+    </noscript>
+
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -50,7 +112,7 @@
         "name": "NH48 API – New Hampshire 4000-Footers Data",
         "description": "Structured data and photos for the 48 four-thousand-foot peaks of the White Mountain National Forest, including elevation, prominence, difficulty, routes and rich photo metadata.",
         "url": "https://nh48.info/",
-        "license": "https://opensource.org/licenses/MIT",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
         "creator": {
           "@type": "Person",
           "name": "Nathan Sobol",
@@ -70,6 +132,79 @@
         }
       }
     </script>
+    <script type="application/ld+json" id="breadcrumb-structured-data">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://nh48.info/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "NH48 Peak Catalog",
+            "item": "https://nh48.info/catalog"
+          }
+        ]
+      }
+    </script>
+    <script type="application/ld+json" id="catalog-image-gallery">
+      {
+        "@context": "https://schema.org",
+        "@type": "ImageGallery",
+        "name": "NH48 Peak Catalog Photo Highlights",
+        "url": "https://nh48.info/catalog",
+        "description": "Representative summit photography from the NH48 Peak Catalog with attribution and licensing for search engines.",
+        "creator": {
+          "@type": "Person",
+          "name": "Nathan Sobol",
+          "url": "https://www.nh48pics.com/"
+        },
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "about": {
+          "@type": "Place",
+          "name": "White Mountain National Forest"
+        },
+        "associatedMedia": [
+          {
+            "@type": "ImageObject",
+            "name": "Bondcliff summit ridge",
+            "caption": "Bondcliff summit ridge in New Hampshire’s White Mountains.",
+            "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/bondcliff/bondcliff__001.jpg",
+            "thumbnailUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/bondcliff/bondcliff__001.jpg",
+            "creditText": "Nathan Sobol"
+          },
+          {
+            "@type": "ImageObject",
+            "name": "Mount Adams alpine zone",
+            "caption": "Mount Adams summit cone with alpine vegetation and views toward Mount Washington.",
+            "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-adams/mount-adams__001.jpg",
+            "thumbnailUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-adams/mount-adams__001.jpg",
+            "creditText": "Nathan Sobol"
+          },
+          {
+            "@type": "ImageObject",
+            "name": "Mount Liberty viewpoint",
+            "caption": "Mount Liberty lookout over Franconia Ridge and the Pemigewasset Wilderness.",
+            "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-liberty/mount-liberty__001.jpg",
+            "thumbnailUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-liberty/mount-liberty__001.jpg",
+            "creditText": "Nathan Sobol"
+          },
+          {
+            "@type": "ImageObject",
+            "name": "Mount Washington summit",
+            "caption": "Mount Washington summit buildings and observation deck above the clouds.",
+            "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-washington/mount-washington__001.jpg",
+            "thumbnailUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-washington/mount-washington__001.jpg",
+            "creditText": "Nathan Sobol"
+          }
+        ]
+      }
+    </script>
     <!--
       Enhanced catalog page for the NH48 peak list.
 
@@ -80,27 +215,53 @@
         • Cards display the same "General Peak Info" as the details page.
     -->
   </head>
-  <body data-page="catalog">
+  <body data-route="catalog" data-page="catalog">
     <div id="nav-placeholder"></div>
     <script>
-      // Load shared navigation
-      const navPlaceholder = document.getElementById('nav-placeholder');
-      fetch('../pages/nav.html')
-        .then(response => response.text())
-        .then(html => {
-          navPlaceholder.innerHTML = html;
-          const activeRoute = document.body.dataset.page;
-          const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
-          if (activeLink) {
-            activeLink.classList.add('active');
-          }
-        })
-        .catch(err => console.error('Failed to load navigation:', err));
+      document.addEventListener('DOMContentLoaded', () => {
+        const navPlaceholder = document.getElementById('nav-placeholder');
+        const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+        if (navPlaceholder) {
+          fetch('/pages/nav.html')
+            .then(response => response.text())
+            .then(html => {
+              navPlaceholder.innerHTML = html;
+              const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+              links.forEach(link => {
+                const routes = (link.dataset.routes || link.dataset.route || '')
+                  .split(',')
+                  .map(value => value.trim())
+                  .filter(Boolean);
+
+                if (routes.includes(activeRoute)) {
+                  link.classList.add('active');
+                  link.setAttribute('aria-current', 'page');
+                }
+              });
+            })
+            .catch(err => console.error('Failed to load navigation:', err));
+        }
+
+      });
     </script>
     <div class="wrap">
+      <nav aria-label="Breadcrumb" class="breadcrumb-trail" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <ol>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
+            <meta itemprop="position" content="1">
+          </li>
+          <li aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name">Catalog</span>
+            <meta itemprop="item" content="https://nh48.info/catalog">
+            <meta itemprop="position" content="2">
+          </li>
+        </ol>
+      </nav>
       <header>
         <h1 data-i18n="catalog.title">NH48 Peak Catalog</h1>
-        <p data-i18n="catalog.intro">Browse New Hampshire's forty-eight 4000-footers. Click a peak to view more details. If errors occur, details will appear below. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
+        <p data-i18n="catalog.intro">Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.</p>
       </header>
 
       <!-- search with datalist for suggestions -->
@@ -176,7 +337,10 @@
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
+      const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85,width=720';
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
+      const PHOTO_BASE = new URL(PHOTO_BASE_URL);
+      const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
       const PHOTO_PATH_PREFIX = '/nh48-photos/';
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
@@ -197,29 +361,59 @@
         );
       }
 
+      function applyImageTransform(url){
+        if(!url) return url;
+        try {
+          const parsed = new URL(url, window.location.origin);
+          if(parsed.pathname.startsWith('/cdn-cgi/image/')){
+            return url;
+          }
+          if(parsed.hostname === PHOTO_BASE.hostname){
+            const normalizedPath = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
+            return `${IMAGE_TRANSFORM_PREFIX}${normalizedPath}${parsed.search || ''}`;
+          }
+        } catch (err) {
+          console.warn('Unable to normalize photo URL', url, err);
+        }
+        return url;
+      }
+
       function normalizePhotoUrl(url){
         if(!url) return url;
-        if(url.startsWith(PHOTO_BASE_URL)) return url;
+        if(url.startsWith(PHOTO_BASE_URL)) return applyImageTransform(url);
         const isJsdelivrPhoto = url.includes('cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/');
         const isGithubRawPhoto = url.includes('raw.githubusercontent.com/natesobol/nh48-api/main/photos/');
         const isR2PathStyle = url.includes('r2.cloudflarestorage.com/nh48-photos/');
         const isR2BucketHost = url.includes('r2.cloudflarestorage.com/') && !url.includes('/nh48-photos/');
+        let normalized = url;
         if(isR2PathStyle){
           const [, tail] = url.split(PHOTO_PATH_PREFIX);
-          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+          normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
         }
         if(isR2BucketHost){
           const bucketTail = url.split('r2.cloudflarestorage.com/')[1];
           if(bucketTail){
             const normalizedTail = bucketTail.replace(/^nh48-photos\//, '');
-            return `${PHOTO_BASE_URL}/${normalizedTail}`;
+            normalized = `${PHOTO_BASE_URL}/${normalizedTail}`;
           }
         }
         if(isJsdelivrPhoto || isGithubRawPhoto){
           const [, tail] = url.split('/photos/');
-          return tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+          normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
         }
-        return url;
+        if(normalized.startsWith(PHOTO_BASE_URL)){
+          return applyImageTransform(normalized);
+        }
+        return normalized;
+      }
+
+      function toTransformedPhotoUrl(url){
+        const normalized = normalizePhotoUrl(url);
+        if(!normalized) return normalized;
+        if(normalized.includes('/cdn-cgi/image/')){
+          return normalized;
+        }
+        return applyImageTransform(normalized);
       }
 
       // Pagination
@@ -504,9 +698,9 @@
           const first = p.photos[0];
           thumbAlt = buildPhotoAlt(p, first);
           if (typeof first === 'string') {
-            thumbSrc = normalizePhotoUrl(first);
+            thumbSrc = toTransformedPhotoUrl(first);
           } else if (first && first.url) {
-            thumbSrc = normalizePhotoUrl(first.url);
+            thumbSrc = toTransformedPhotoUrl(first.url);
           }
         }
 
@@ -553,9 +747,9 @@
           const first = p.photos[0];
           thumbAlt = buildPhotoAlt(p, first);
           if (typeof first === 'string') {
-            thumbSrc = normalizePhotoUrl(first);
+            thumbSrc = toTransformedPhotoUrl(first);
           } else if (first && first.url) {
-            thumbSrc = normalizePhotoUrl(first.url);
+            thumbSrc = toTransformedPhotoUrl(first.url);
           }
         }
 
@@ -893,64 +1087,7 @@
         trackEvent('catalog_view_change', { view: currentView });
       });
     </script>
-    <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title">
-      <div class="nh48-quick-footer__header">
-        <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
-        <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>
-        <p>Jump directly into every New Hampshire 4,000-footer detail page to strengthen internal linking and keep crawlers flowing through the full NH48 set.</p>
-      </div>
-      <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
-        <a class="nh48-quick-footer__link" href="/peaks/mount-washington.html">Mount Washington</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-lafayette.html">Mount Lafayette</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-lincoln.html">Mount Lincoln</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh.html">Mount Tecumseh</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke.html">Mount Moosilauke</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-pierce.html">Mount Pierce</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-liberty.html">Mount Liberty</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-adams.html">Mount Adams</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower.html">Mount Eisenhower</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-osceola.html">Mount Osceola</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-jackson.html">Mount Jackson</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-monroe.html">Mount Monroe</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-jefferson.html">Mount Jefferson</a>
-        <a class="nh48-quick-footer__link" href="/peaks/cannon-mountain.html">Cannon Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-madison.html">Mount Madison</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-flume.html">Mount Flume</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-garfield.html">Mount Garfield</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-carrigain.html">Mount Carrigain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain.html">North Kinsman Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain.html">South Kinsman Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-whiteface.html">Mount Whiteface</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway.html">Mount Passaconaway</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-field.html">Mount Field</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-tom.html">Mount Tom</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-willey.html">Mount Willey</a>
-        <a class="nh48-quick-footer__link" href="/peaks/carter-dome.html">Carter Dome</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-moriah.html">Mount Moriah</a>
-        <a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain.html">South Carter Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain.html">Middle Carter Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-hale.html">Mount Hale</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-waumbek.html">Mount Waumbek</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-isolation.html">Mount Isolation</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-cabot.html">Mount Cabot</a>
-        <a class="nh48-quick-footer__link" href="/peaks/north-tripyramid.html">North Tripyramid</a>
-        <a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid.html">Middle Tripyramid</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east.html">Mount Osceola – East Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d.html">Wildcat Mountain – D Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a.html">Wildcat Mountain – A Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/galehead-mountain.html">Galehead Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/zealand-mountain.html">Zealand Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/west-bond.html">West Bond</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-bond.html">Mount Bond</a>
-        <a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain.html">South Twin Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain.html">North Twin Mountain</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south.html">Mount Hancock – South Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/mount-hancock.html">Mount Hancock – North Peak</a>
-        <a class="nh48-quick-footer__link" href="/peaks/owls-head.html">Owl's Head</a>
-        <a class="nh48-quick-footer__link" href="/peaks/bondcliff.html">Bondcliff</a>
-      </div>
-    </footer>
-    <script type="module">
+<script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
       import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
 

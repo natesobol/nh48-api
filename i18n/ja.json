@@ -56,7 +56,7 @@
   },
   "catalog": {
     "title": "NH48 ピーク・カタログ",
-    "intro": "ニューハンプシャー州の4,000フィート峰48座を閲覧できます。ピークをクリックすると詳細が表示されます。エラーが発生した場合は下に表示されます。ニューハンプシャー州4,000フィート峰のオープンAPIとデータセット。",
+    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
     "search": {
       "placeholder": "ピーク名で検索…",
       "ariaLabel": "ピーク名で検索"
@@ -204,7 +204,19 @@
         "fileCreateDate": "作成日時",
         "fileModifiedDate": "更新日時",
         "rating": "評価",
-        "metadata": "メタデータ"
+        "metadata": "メタデータ",
+        "creditLine": "クレジットライン",
+        "source": "ソース",
+        "copyrightNotice": "著作権表示",
+        "copyrightStatus": "著作権の状態",
+        "rightsUsageTerms": "権利と使用条件",
+        "altText": "代替テキスト",
+        "alt": "Alt",
+        "extendedAlt": "拡張代替テキスト",
+        "caption": "キャプション",
+        "headline": "見出し",
+        "extendedDescription": "拡張説明",
+        "description": "説明"
       }
     },
     "generalInfo": {
@@ -245,7 +257,7 @@
     }
   },
   "trails": {
-    "title": "🏔️ WMNF Trails API マップツール",
+    "title": "🏔️ White Mountain Trails API マップツール",
     "subtitle": "White Mountains のピーク・トレイル・ルートのオープンデータ構造。",
     "intro": "White Mountain National Forest — Nate Sobol により編纂。手軽なトレイル検索と達成状況の管理に使えます。ニューハンプシャー州4,000フィート峰のオープンAPIとデータセット。",
     "details": {

@@ -14,6 +14,7 @@
     <meta property="og:image" content="{{OG_IMAGE}}" />
     <meta property="og:image:width" content="{{OG_IMAGE_WIDTH}}" />
     <meta property="og:image:height" content="{{OG_IMAGE_HEIGHT}}" />
+    <meta property="og:image:alt" content="{{OG_IMAGE_ALT}}" />
     <meta property="og:url" content="{{CANONICAL_URL}}" />
     <meta property="og:site_name" content="{{OG_SITE_NAME}}" />
     <meta property="og:locale" content="{{OG_LOCALE}}" />
@@ -22,9 +23,20 @@
     <meta name="twitter:title" content="{{TITLE}}" />
     <meta name="twitter:description" content="{{DESCRIPTION}}" />
     <meta name="twitter:image" content="{{OG_IMAGE}}" />
+    <meta name="twitter:image:alt" content="{{OG_IMAGE_ALT}}" />
     <meta property="twitter:site" content="{{TWITTER_SITE}}" />
     <meta property="twitter:creator" content="{{TWITTER_CREATOR}}" />
+    <meta name="creator" content="{{PAGE_CREATOR}}" />
+    <meta name="publisher" content="{{PHOTO_PUBLISHER}}" />
+    <meta name="copyright" content="{{PHOTO_CREDIT}}" />
+    <meta name="keywords" content="{{PHOTO_KEYWORDS}}" />
+    <meta name="exif:summary" content="{{PHOTO_EXIF}}" />
+    <meta name="geo.position" content="{{GEO_POSITION}}" />
+    <meta name="geo.placename" content="{{GEO_PLACENAME}}" />
+    <meta name="geo.region" content="{{GEO_REGION}}" />
+    <meta name="ICBM" content="{{GEO_POSITION}}" />
     <link rel="preload" as="image" href="{{HERO_PRELOAD}}" />
+    <link rel="preconnect" href="https://nh48.info" crossorigin />
     <link rel="icon" href="{{FAVICON_32}}" sizes="32x32" type="image/png">
     <link rel="icon" href="{{FAVICON_16}}" sizes="16x16" type="image/png">
     <link rel="apple-touch-icon" href="{{APPLE_TOUCH_ICON}}">
@@ -32,12 +44,69 @@
     <link rel="alternate" hreflang="en" href="{{CANONICAL_EN_URL}}" />
     <link rel="alternate" hreflang="fr" href="{{CANONICAL_FR_URL}}" />
     <link rel="alternate" hreflang="x-default" href="{{CANONICAL_XDEFAULT_URL}}" />
+    <link rel="prefetch" href="{{APP_URL}}" />
     <script>
-      window.location.replace("{{APP_URL}}");
+      (function redirectToApp() {
+        const host = location.hostname;
+
+        const isPreviewHost =
+          host === "localhost" ||
+          host === "127.0.0.1" ||
+          host.includes("github") ||
+          host.endsWith("githubpreview.dev");
+
+        if (isPreviewHost) {
+          return;
+        }
+
+        const target = "{{APP_URL}}";
+        const ua = (typeof navigator !== "undefined" && navigator.userAgent) || "";
+        const botSignatures = [
+          "adsbot-google",
+          "ahrefsbot",
+          "applebot",
+          "baiduspider",
+          "bingbot",
+          "bingpreview",
+          "chatgpt",
+          "claudebot",
+          "duckduckbot",
+          "exabot",
+          "facebookexternalhit",
+          "facebot",
+          "gptbot",
+          "google-inspectiontool",
+          "googlebot",
+          "ia_archiver",
+          "linkedinbot",
+          "mediapartners-google",
+          "petalbot",
+          "redditbot",
+          "semrushbot",
+          "slurp",
+          "sogou",
+          "twitterbot",
+          "yandex"
+        ];
+        const uaLower = ua.toLowerCase();
+        const isKnownBot = botSignatures.some((signature) => uaLower.includes(signature));
+
+        if (!isKnownBot && typeof window !== "undefined" && target) {
+          window.location.replace(target);
+        }
+      })();
     </script>
-    <meta http-equiv="refresh" content="0; url={{APP_URL}}" />
+<noscript>
+      <p>
+        JavaScript is required to continue.
+        <a href="{{APP_URL}}">Continue</a>
+      </p>
+    </noscript>
+
     <script type="application/ld+json">{{JSON_LD}}</script>
     <script type="application/ld+json">{{BREADCRUMB_LD}}</script>
+    <script type="application/ld+json">{{WEBPAGE_SCHEMA}}</script>
+    {{FAQ_SCHEMA}}
     <style>
       :root{
         --bg:#0a0a0a;
@@ -54,6 +123,54 @@
         color:var(--ink);
         font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         -webkit-font-smoothing:antialiased;
+      }
+
+      /* Navigation Menu */
+      .site-nav{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:12px 24px;
+        background:linear-gradient(180deg,#1a1a2e 0%,#16162a 100%);
+        border-bottom:1px solid #ffffff;
+        position:sticky;
+        top:0;
+        z-index:100;
+      }
+      .site-nav-logo{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        text-decoration:none;
+        color:#fff;
+      }
+      .site-nav-logo img{width:58px; height:58px; border-radius:14px; padding:0; object-fit:cover; background: transparent; box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32)}
+      .site-nav-title-wrap{display:flex;flex-direction:column;gap:6px;line-height:1.1;}
+      .site-nav-title{font-weight:800;font-size:38px;line-height:1;color:#fff;text-transform:uppercase;letter-spacing:1px;}
+      .site-nav-tagline{font-size:13px;color:#e5f8ec;font-weight:600;letter-spacing:0.2px;}
+      .site-nav-links{display:flex;align-items:center;gap:8px;}
+      .site-nav-links a{color:#ffffff;text-decoration:none;padding:8px 16px;border-radius:6px;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;transition:all 0.2s ease;}
+      .site-nav-links a:hover{color:#22c55e;background:rgba(255,255,255,0.08);}
+      .site-nav-links a.active{color:#22c55e;background:rgba(34,197,94,0.1);}
+      .site-nav-dropdown{position:relative;display:inline-flex;flex-direction:column;align-items:flex-start;}
+      .site-nav-dropdown::after{content:"";position:absolute;left:0;right:0;top:100%;height:12px;}
+      .site-nav-dropdown .site-nav-submenu{display:none;position:absolute;top:calc(100% + 6px);left:0;background:#0f172a;border:1px solid rgba(255,255,255,0.08);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,0.4);padding:8px;min-width:200px;z-index:10;}
+      .site-nav-dropdown:hover .site-nav-submenu,.site-nav-dropdown:focus-within .site-nav-submenu{display:flex;flex-direction:column;gap:4px;}
+      .site-nav-dropdown .site-nav-submenu a{width:100%;text-transform:none;font-size:14px;letter-spacing:0.3px;padding:10px 12px;border-radius:8px;}
+      .site-nav-cta{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;font-size:13px;border-radius:6px;background:#22c55e;border:2px solid #22c55e;color:#ffffff;font-family:"Arial Narrow","Roboto Condensed","Helvetica Neue Condensed",Arial,sans-serif;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;}
+      .site-nav-cta svg{width:16px;height:16px;stroke:#ffffff;}
+      @media (max-width:768px){
+        .site-nav{padding:10px 12px;flex-wrap:wrap;justify-content:center;gap:10px;}
+        .site-nav-title,.site-nav-tagline{display:none;}
+        .site-nav-logo{flex:1 1 100%;justify-content:center;}
+        .site-nav-links{gap:4px;width:100%;flex-wrap:wrap;justify-content:center;}
+        .site-nav-links a{padding:6px 10px;font-size:12px;}
+        .site-nav-submenu{min-width:180px;}
+        .site-nav-cta{padding:6px 10px;font-size:11px;justify-content:center;}
+      }
+      @media (max-width:480px){
+        .site-nav-links a{padding:6px 8px;font-size:11px;}
+        .site-nav-cta{width:100%;}
       }
       .wrap{
         max-width:1000px;
@@ -144,6 +261,12 @@
         border:1px solid var(--stroke);
         object-fit:cover;
       }
+      .hero-image figcaption{
+        margin-top:8px;
+        color:var(--muted);
+        font-size:0.95rem;
+        line-height:1.4;
+      }
       .section-title{
         margin:22px 0 10px 0;
         font-size:1.1rem;
@@ -180,18 +303,64 @@
         grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
         gap:10px;
       }
+      .gallery-grid figure{
+        margin:0;
+      }
       .gallery-grid img{
         width:100%;
+        height:auto;
+        display:block;
+        object-fit:cover;
+        aspect-ratio:4/3;
         border-radius:10px;
         border:1px solid var(--stroke);
+      }
+      @media(max-width:720px){
+        .gallery-grid img{
+          aspect-ratio:3/2;
+        }
+      }
+      .gallery-grid figcaption{
+        margin-top:6px;
+        color:var(--muted);
+        font-size:0.9rem;
+        line-height:1.4;
+      }
+      .sr-only{
+        position:absolute;
+        width:1px;
+        height:1px;
+        padding:0;
+        margin:-1px;
+        overflow:hidden;
+        clip:rect(0,0,0,0);
+        white-space:nowrap;
+        border:0;
       }
       .redirect-notice{
         margin-top:22px;
         color:var(--muted);
       }
+      .skip-link{
+        position:absolute;
+        top:-40px;
+        left:0;
+        background:var(--accent);
+        color:#0a0a0a;
+        padding:8px 12px;
+        text-decoration:none;
+        font-weight:700;
+        border-radius:4px;
+        z-index:100;
+      }
+      .skip-link:focus{
+        top:0;
+      }
     </style>
   </head>
   <body>
+    <a href="#peakTitle" class="skip-link">Skip to main content</a>
+    {{NAV_MENU}}
     <div class="wrap">
       <nav class="breadcrumb-nav" aria-label="Breadcrumb">
         <ol itemscope itemtype="https://schema.org/BreadcrumbList">
@@ -223,10 +392,11 @@
             <span>{{LABEL_RANGE}}: {{RANGE}}</span>
           </div>
           <a class="cta" href="{{APP_URL}}">{{LABEL_CTA}}</a>
-          <a class="back-link" href="{{CATALOG_URL}}">{{LABEL_BACK_TO_CATALOG}}</a>
+          <a class="back-link" href="https://nh48.info/nh-4000-footers-guide">← Back to NH48 Guide</a>
         </div>
         <figure class="hero-image">
-          <img src="{{HERO_IMAGE}}" alt="{{HERO_ALT}}" loading="eager" {{HERO_DIMENSIONS}} />
+          <img src="{{HERO_IMAGE}}" alt="{{HERO_ALT}}" loading="eager" {{HERO_DIMENSIONS}}{{HERO_LANG_ATTR}} aria-describedby="hero-image-caption" />
+          <figcaption id="hero-image-caption"{{HERO_CAPTION_LANG_ATTR}}>{{HERO_CAPTION}}</figcaption>
         </figure>
       </header>
 
@@ -297,5 +467,6 @@
         <p>{{LABEL_FOOTER}}</p>
       </div>
     </div>
+    {{QUICK_BROWSE_FOOTER}}
   </body>
 </html>

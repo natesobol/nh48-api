@@ -56,7 +56,7 @@
   },
   "catalog": {
     "title": "Katalogo ng mga Tuktok ng NH48",
-    "intro": "Tingnan ang apatnapu’t walong 4,000-talampakang tuktok ng New Hampshire. I-click ang tuktok para sa mas maraming detalye. Kapag may error, lilitaw ang mga detalye sa ibaba. Bukas na API at mga dataset para sa mga bundok na 4,000 talampakan ng New Hampshire.",
+    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
     "search": {
       "placeholder": "Maghanap ng tuktok ayon sa pangalan…",
       "ariaLabel": "Maghanap ng tuktok ayon sa pangalan"
@@ -204,7 +204,19 @@
         "fileCreateDate": "File Create Date",
         "fileModifiedDate": "File Modified Date",
         "rating": "Rating",
-        "metadata": "Metadata"
+        "metadata": "metadata",
+        "creditLine": "linya ng kredito",
+        "source": "pinagmulan",
+        "copyrightNotice": "paunawa sa copyright",
+        "copyrightStatus": "katayuan ng copyright",
+        "rightsUsageTerms": "mga tuntunin sa karapatan at paggamit",
+        "altText": "alt na teksto",
+        "alt": "Alt",
+        "extendedAlt": "pinalawak na alt na teksto",
+        "caption": "caption",
+        "headline": "headline",
+        "extendedDescription": "pinalawak na paglalarawan",
+        "description": "paglalarawan"
       }
     },
     "generalInfo": {
@@ -245,7 +257,7 @@
     }
   },
   "trails": {
-    "title": "🏔️ WMNF Trails API Map Tool",
+    "title": "🏔️ White Mountain Trails API Map Tool",
     "subtitle": "Open peak, trail, and route data structure for the White Mountains.",
     "intro": "White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.",
     "details": {

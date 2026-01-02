@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="landing.title">NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails</title>
-  <meta name="description" data-i18n="landing.metaDescription" data-i18n-attr="content" content="NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Browse NH48 peaks of the White Mountains of New Hampshire, explore routes, and access trail details.">
+  <meta name="description" data-i18n="landing.metaDescription" data-i18n-attr="content" content="NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Quick Browse NH48 peaks of the White Mountains of New Hampshire, explore routes, and access trail details.">
   <meta name="keywords" content="NH48, New Hampshire 48, White Mountains, hiking trails, peak data, trail data, long trails, four-thousand-foot peaks, outdoor adventure, hiking catalog, NH 48 peaks, White Mountain National Forest">
   <meta name="author" content="Nathan Sobol">
   <meta name="creator" content="Nathan Sobol">
@@ -25,7 +25,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/quick-browse-footer.css">
-  <link rel="alternate" type="application/json" title="NH48 UI Elements Alt Text" href="https://nh48.info/UI-Elements/alt-text.json">
+  <script src="/js/quick-browse-footer.js" defer></script>
+  <link rel="alternate" type="application/json" title="NH48 Summit Photo Alt Text" href="https://nh48.info/photos/backgrounds/alt-text.json">
   <link rel="alternate" hreflang="en" href="https://nh48.info/">
   <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
   <link rel="alternate" hreflang="fr" href="https://nh48.info/i18n/fr.html">
@@ -34,6 +35,7 @@
   <link rel="alternate" hreflang="zh-Hans" href="https://nh48.info/i18n/zh-Hans.html">
   <link rel="alternate" hreflang="ja" href="https://nh48.info/i18n/ja.html">
   <link rel="alternate" hreflang="ar" href="https://nh48.info/i18n/ar.html">
+  <link rel="alternate" hreflang="fa" href="https://nh48.info/i18n/fa.html">
   <link rel="alternate" hreflang="hi-IN" href="https://nh48.info/i18n/hi.html">
   <link rel="alternate" hreflang="pt" href="https://nh48.info/i18n/pt.html">
   <link rel="alternate" hreflang="ru" href="https://nh48.info/i18n/ru.html">
@@ -43,8 +45,10 @@
   <link rel="alternate" hreflang="tr" href="https://nh48.info/i18n/tr.html">
   <link rel="alternate" hreflang="vi" href="https://nh48.info/i18n/vi.html">
   <link rel="alternate" hreflang="pl" href="https://nh48.info/i18n/pl.html">
-  <link rel="alternate" hreflang="fa" href="https://nh48.info/i18n/fa.html">
   <link rel="alternate" hreflang="fil" href="https://nh48.info/i18n/fil.html">
+  <link rel="alternate" hreflang="nl" href="https://nh48.info/i18n/nl.html">
+  <link rel="alternate" hreflang="ur" href="https://nh48.info/i18n/ur.html">
+  <link rel="alternate" hreflang="sw" href="https://nh48.info/i18n/sw.html">
   <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="NH48 API">
@@ -68,14 +72,17 @@
   <meta property="og:locale:alternate" content="pl_PL">
   <meta property="og:locale:alternate" content="fa_IR">
   <meta property="og:locale:alternate" content="fil_PH">
+  <meta property="og:locale:alternate" content="nl_NL">
+  <meta property="og:locale:alternate" content="ur_PK">
+  <meta property="og:locale:alternate" content="sw_KE">
   <meta property="og:title" data-i18n="landing.ogTitle" data-i18n-attr="content" content="NH48 API – Open Trails and Peaks Data">
-  <meta property="og:description" data-i18n="landing.ogDescription" data-i18n-attr="content" content="Browse NH48 peaks of the White Mountains of New Hampshire, explore trail routes, and access long-distance data for every 4,000-footer.">
+  <meta property="og:description" data-i18n="landing.ogDescription" data-i18n-attr="content" content="Quick Browse NH48 peaks of the White Mountains of New Hampshire, explore trail routes, and access long-distance data for every 4,000-footer.">
   <meta property="og:image" content="https://nh48.info/UI-Elements/og-cover.png">
   <meta property="og:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
   <meta property="og:url" content="https://nh48.info/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="NH48 API – Open Trails and Peaks Data">
-  <meta name="twitter:description" content="Browse NH48 peaks of the White Mountains of New Hampshire, explore trail routes, and access long-distance data for every 4,000-footer.">
+  <meta name="twitter:description" content="Quick Browse NH48 peaks of the White Mountains of New Hampshire, explore trail routes, and access long-distance data for every 4,000-footer.">
   <meta name="twitter:image" content="https://nh48.info/UI-Elements/og-cover.png">
   <meta name="twitter:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
   <script type="application/ld+json">
@@ -108,7 +115,7 @@
           "@id": "https://nh48.info/#homepage",
           "url": "https://nh48.info/",
           "name": "NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails",
-          "description": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse NH48 peaks of the White Mountains of New Hampshire, explore White Mountain trails, and build on the dataset.",
+          "description": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Quick Browse NH48 peaks of the White Mountains of New Hampshire, explore White Mountain trails, and build on the dataset.",
           "inLanguage": "en",
           "isPartOf": { "@id": "https://nh48.info/#website" },
           "primaryImageOfPage": {
@@ -123,7 +130,7 @@
           "name": "NH48 API – New Hampshire 4,000-Footers Dataset",
           "description": "Structured data for 48 New Hampshire four-thousand-foot peaks with 101 tagged photos, elevations, prominence, difficulty, and geo context in JSON format.",
           "url": "https://nh48.info/data/nh48.json",
-          "license": "https://opensource.org/licenses/MIT",
+          "license": "https://creativecommons.org/licenses/by/4.0/",
           "creator": {
             "@type": "Person",
             "name": "Nathan Sobol",
@@ -177,6 +184,18 @@
     }
   </script>
   <style>
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       background: #0a0a0a;
@@ -187,27 +206,303 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
+      gap: clamp(20px, 4vw, 32px);
+      padding: 0 0 32px;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+      border-bottom: 1px solid #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      margin: 0;
+    }
+
+    .site-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .logo-wrap {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      box-shadow: none;
+    }
+
+    .logo-wrap img {
+      width: 112%;
+      height: 112%;
+      object-fit: cover;
+      display: block;
+      margin: -6%;
+    }
+
+    .site-nav-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      line-height: 1.1;
+    }
+
+    .site-nav-title {
+      font-weight: 800;
+      font-size: 32px;
+      line-height: 1;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .site-nav-tagline {
+      font-size: 13px;
+      color: #e5f8ec;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .site-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       justify-content: center;
-      gap: 32px;
-      padding: 32px 16px;
+      flex-wrap: wrap;
+    }
+
+    .site-nav-links a {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: all 0.2s ease;
+    }
+
+    .site-nav-links a:hover {
+      color: #22c55e;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .site-nav-links a.active {
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .site-nav-dropdown {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .site-nav-dropdown .site-nav-submenu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      padding: 12px 10px 10px;
+      min-width: 200px;
+      z-index: 10;
+    }
+
+    .site-nav-dropdown:hover .site-nav-submenu,
+    .site-nav-dropdown:focus-within .site-nav-submenu {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .site-nav-dropdown .site-nav-submenu a {
+      width: 100%;
+      text-transform: none;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+
+    .site-nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #22c55e;
+      border: 2px solid #22c55e;
+      color: #ffffff;
+      font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue Condensed", Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .site-nav-cta svg {
+      width: 16px;
+      height: 16px;
+      stroke: #ffffff;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0;
+      margin: 12px 0 10px;
+      list-style: none;
+      color: #cbd5f5;
+      font-size: 0.95rem;
+    }
+
+    .breadcrumbs li {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .breadcrumbs li + li::before {
+      content: "/";
+      color: #94a3b8;
+      margin-right: 2px;
+    }
+
+    .breadcrumbs a {
+      color: #22c55e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover,
+    .breadcrumbs a:focus-visible {
+      color: #7ee0a3;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 900px) {
+      .site-nav {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .site-nav-links {
+        flex-wrap: wrap;
+        row-gap: 6px;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .site-nav-title {
+        font-size: 28px;
+      }
+
+      .logo-wrap {
+        width: 52px;
+        height: 52px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .site-nav {
+        padding: 10px 12px;
+      }
+
+      .site-nav-links a {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .site-nav-submenu {
+        min-width: 180px;
+      }
+
+      .site-nav-cta {
+        padding: 6px 10px;
+        font-size: 11px;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .site-nav-links a {
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+
+      .site-nav-cta {
+        width: 100%;
+      }
     }
     main {
       max-width: 760px;
-      width: min(92vw, 760px);
+      width: min(100%, 760px);
       text-align: center;
       position: relative;
-      z-index: 1;
+      z-index: 2;
       margin: 0 auto;
-      padding: 32px 36px;
-      background: rgba(12, 12, 12, 0.78);
+      padding: clamp(24px, 5vw, 36px);
+      background: rgba(12, 12, 12, 0.9);
       border: 1px solid #ffffff;
       border-radius: 24px;
       box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
     }
+
+    footer {
+      position: relative;
+      z-index: 2;
+    }
     h1 {
       font-size: clamp(28px, 4vw, 40px);
-      margin-bottom: 12px;
+      margin: 0;
     }
+    .hero-heading {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      justify-content: center;
+      margin: 0 auto 12px;
+      text-align: left;
+    }
+    .hero-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-start;
+    }
+    .hero-title-meta {
+      margin: 0;
+      font-size: 0.92rem;
+      color: #cfe1ff;
+      letter-spacing: 0.2px;
+    }
+    .hero-logo {
+      width: 96px;
+      height: 96px;
+      border-radius: 20px;
+      object-fit: cover;
+      padding: 0;
+      background: transparent;
+      box-shadow: 0 14px 36px rgba(34, 197, 94, 0.28);
+}
     p {
       color: #cbd5f5;
       line-height: 1.6;
@@ -231,9 +526,54 @@
       color: #0a0a0a;
       background: #22c55e;
     }
+    .cta .logo-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      border: none;
+      box-shadow: none;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
     .cta a.secondary {
       background: transparent;
       color: #22c55e;
+    }
+
+    /* Floating peak labels */
+    #floating-peaks {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: visible;
+    }
+
+    .peak-label {
+      position: absolute;
+      font-weight: 600;
+      font-family: "Inter", "Montserrat", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text-color, #ffffff);
+      white-space: nowrap;
+      pointer-events: none;
+      transform-origin: center;
+      will-change: transform;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    .peak-label--name {
+      font-size: 1.35rem;
+      letter-spacing: 0.18px;
+    }
+
+    @media (max-width: 768px) {
+      #floating-peaks .peak-label:nth-child(n + 9) {
+        display: none;
+      }
     }
     .meta {
       margin-top: 16px;
@@ -290,9 +630,12 @@
       line-height: 1.5;
     }
     .lang-bar {
-      position: fixed;
-      top: 20px;
-      right: 20px;
+      position: relative;
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      justify-content: flex-end;
+      margin: 0 auto 8px;
       z-index: 2;
     }
     .nh48-lang {
@@ -401,15 +744,14 @@
     }
     @media (max-width: 640px) {
       body {
-        padding-top: 120px;
+        padding-top: 0;
         gap: 20px;
       }
       .lang-bar {
-        left: 0;
-        right: 0;
-        width: 100%;
         padding: 0 12px;
-        top: 12px;
+        max-width: none;
+        justify-content: center;
+        margin-bottom: 10px;
       }
       .nh48-lang {
         justify-content: center;
@@ -437,18 +779,33 @@
       h1 {
         font-size: clamp(24px, 6vw, 34px);
       }
+      .hero-heading {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+      }
+      .hero-title-group {
+        align-items: center;
+      }
       p {
         font-size: 0.95rem;
       }
+      .cta {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
       .cta a {
         padding: 8px 14px;
+        width: 100%;
+        justify-content: center;
       }
     }
     #splash-background {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
+      width: 100%;
       height: 100vh;
       pointer-events: none;
       z-index: 0;
@@ -468,17 +825,27 @@
       opacity: 0;
       will-change: transform, opacity;
       animation: splashFade 24s ease-in-out infinite;
+      animation-play-state: paused;
+      visibility: hidden;
+      border-radius: 14px;
+      object-fit: cover;
+    }
+    .splash-icon.is-ready {
+      animation-play-state: running;
+      visibility: visible;
     }
     @keyframes splashFade {
-      0%,
-      55% {
+      0% {
         opacity: 0;
       }
-      72% {
+      15% {
+        opacity: 0.85;
+      }
+      70% {
         opacity: 0.9;
       }
-      88% {
-        opacity: 0.2;
+      85% {
+        opacity: 0.35;
       }
       100% {
         opacity: 0;
@@ -507,16 +874,122 @@
 <body>
   <div id="splash-background" aria-hidden="true"></div>
   <div id="splash-mask" aria-hidden="true"></div>
-  <div class="lang-bar">
-    <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
+  <nav class="site-nav" aria-label="Site navigation">
+    <a class="site-nav-logo" href="/">
+      <div class="logo-wrap">
+        <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async">
+      </div>
+      <div class="site-nav-title-wrap">
+        <span class="site-nav-title">NH48 API</span>
+        <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
+      </div>
+    </a>
+    <div class="site-nav-links">
+      <div class="site-nav-dropdown">
+      <a class="active" href="/" data-route="dataset-home" aria-current="page">NH48 Dataset</a>
+      <div class="site-nav-submenu" aria-label="NH48 dataset short links">
+        <a href="/nh-4000-footers-info.html" data-route="info">NH48 Info</a>
+        <a href="/catalog" data-route="catalog">Interactive Catalog</a>
+        <a href="/page-sitemap.xml">Browse page sitemap</a>
+      </div>
+    </div>
+    <div class="site-nav-dropdown">
+      <a href="/pages/trails_app.html" data-route="trails" data-i18n="nav.trails">White Mountain Trails</a>
+      <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
+        <a href="/dataset/wmnf-trails">WMNF Dataset</a>
+      </div>
+    </div>
+    <div class="site-nav-dropdown">
+      <a href="/pages/long_trails_app.html" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
+      <div class="site-nav-submenu" aria-label="Long Trails short links">
+        <a href="/dataset/long-trails">Long Trails Dataset</a>
+      </div>
+    </div>
+    <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
+    <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
+    <a
+      class="site-nav-cta"
+      href="https://www.instagram.com/nate_dumps_pics/"
+      target="_blank"
+      rel="noopener"
+      aria-label="Latest WMNF Photos"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+        <circle cx="12" cy="12" r="3.5"></circle>
+        <circle cx="17" cy="7" r="1.2" fill="#ffffff" stroke="none"></circle>
+      </svg>
+      <span data-i18n="nav.latestPhotos">Latest WMNF Photos</span>
+    </a>
   </div>
+</nav>
+  <!-- Floating peaks container -->
+  <div id="floating-peaks"></div>
   <main>
-    <h1 data-i18n="landing.heroTitle">NH48 API</h1>
+    <div class="lang-bar">
+      <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
+    </div>
+    <div class="hero-heading" itemscope itemtype="https://schema.org/Brand">
+      <link itemprop="url" href="https://nh48.info/">
+      <meta itemprop="name" content="NH48 API">
+      <meta itemprop="logo" content="/nh48API_logo.png">
+      <img
+        src="/nh48API_logo.png"
+        alt="NH48 API logo featuring a stylized White Mountains badge"
+        width="72"
+        height="72"
+        class="hero-logo"
+        itemprop="logo"
+        decoding="async"
+        fetchpriority="high"
+      >
+      <div class="hero-title-group">
+        <h1 data-i18n="landing.heroTitle">NH48 API</h1>
+        <p class="hero-title-meta" aria-hidden="true">New Hampshire’s 4,000-foot peaks &amp; trails</p>
+      </div>
+    </div>
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumbs" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/">
+            <span itemprop="name">Home</span>
+          </a>
+          <meta itemprop="position" content="1">
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/dataset/">
+            <span itemprop="name">Datasets</span>
+          </a>
+          <meta itemprop="position" content="2">
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/" aria-current="page">
+            <span itemprop="name">NH48 API Dataset</span>
+          </a>
+          <meta itemprop="position" content="3">
+        </li>
+      </ol>
+    </nav>
     <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.</p>
     <div class="cta">
-      <a href="/catalog" data-i18n="landing.cta.catalog">Open the Peak Catalog</a>
-      <a href="/trails" class="secondary" data-i18n="landing.cta.trails">White Mountain Trails</a>
-      <a href="/long-trails" class="secondary" data-i18n="landing.cta.campaigns">Trail Campaigns</a>
+      <a href="/catalog" data-i18n="landing.cta.catalog">
+        <div class="logo-wrap">
+          <img src="/nh48API_logo.png" alt="NH48 API crest for the four-thousand-footer peak catalog" title="NH48 API peak catalog logo" loading="lazy" decoding="async">
+        </div>
+        Open the Peak Catalog
+      </a>
+      <a href="/trails" class="secondary" data-i18n="landing.cta.trails">
+        <div class="logo-wrap">
+          <img src="https://nh48.info/cdn-cgi/image/format=webp,quality=85,width=240/WMNF_Trails_API_logo.png" alt="White Mountain National Forest trails API logo" title="White Mountain National Forest Trails API" loading="lazy" decoding="async">
+        </div>
+        White Mountain Trails
+      </a>
+      <a href="/long-trails" class="secondary" data-i18n="landing.cta.campaigns">
+        <div class="logo-wrap">
+          <img src="https://nh48.info/cdn-cgi/image/format=webp,quality=85,width=240/Long_Trails_Logo.png" alt="Long-distance hiking trails dataset logo" title="Long Trails open data logo" loading="lazy" decoding="async">
+        </div>
+        Trail Campaigns
+      </a>
     </div>
     <section class="dataset-notes">
       <h2 data-i18n="landing.notesTitle">Dataset notes</h2>
@@ -530,228 +1003,244 @@
     <p class="meta" data-i18n="landing.author">Author: Nathan Sobol</p>
   </main>
 
-  <section class="seo-gallery" aria-label="NH48 UI element image descriptions">
-    <h2 class="visually-hidden">NH48 UI element image descriptions</h2>
+  <section class="seo-gallery" aria-label="NH48 summit photo descriptions">
+    <h2 class="visually-hidden">NH48 summit photo descriptions</h2>
     <div class="seo-gallery-grid">
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/026-wood (Custom).png" alt="Stack of firewood for campfires on NH48 White Mountains hiking trips" title="Stack of firewood for campfires on NH48 White Mountains hiking trips" loading="lazy" decoding="async" data-description="Stack of firewood for campfires on NH48 White Mountains hiking trips" data-keywords="NH48, White Mountains, firewood, campfire, hiking">
-        <figcaption class="visually-hidden">Stack of firewood for campfires on NH48 White Mountains hiking trips</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/bondcliff/bondcliff__001.jpg" alt="Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route" title="Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route" loading="lazy" decoding="async" data-description="Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route" data-keywords="NH48, Bondcliff, Pemigewasset Wilderness, White Mountains, ridgeline">
+        <figcaption class="visually-hidden">Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/046-carabiner (Custom).png" alt="Climbing carabiner essential for NH48 White Mountains climbing gear" title="Climbing carabiner essential for NH48 White Mountains climbing gear" loading="lazy" decoding="async" data-description="Climbing carabiner essential for NH48 White Mountains climbing gear" data-keywords="NH48, White Mountains, carabiner, climbing, gear">
-        <figcaption class="visually-hidden">Climbing carabiner essential for NH48 White Mountains climbing gear</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/bondcliff/bondcliff__002.jpg" alt="Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop" title="Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop" loading="lazy" decoding="async" data-description="Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop" data-keywords="NH48, Bondcliff, Pemigewasset, White Mountains, summit view">
+        <figcaption class="visually-hidden">Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/010-chair (Custom).png" alt="Portable camping chair for resting during NH48 hikes in the White Mountains" title="Portable camping chair for resting during NH48 hikes in the White Mountains" loading="lazy" decoding="async" data-description="Portable camping chair for resting during NH48 hikes in the White Mountains" data-keywords="NH48, White Mountains, camping chair, rest, hiking">
-        <figcaption class="visually-hidden">Portable camping chair for resting during NH48 hikes in the White Mountains</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/galehead-mountain/galehead-mountain__001.jpg" alt="View of the Twin Range from the wooded spur on Galehead Mountain" title="View of the Twin Range from the wooded spur on Galehead Mountain" loading="lazy" decoding="async" data-description="View of the Twin Range from the wooded spur on Galehead Mountain" data-keywords="NH48, Galehead Mountain, Twin Range, White Mountains, viewpoint">
+        <figcaption class="visually-hidden">View of the Twin Range from the wooded spur on Galehead Mountain</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/022-mountains (Custom).png" alt="Illustration of White Mountains peaks representing NH48 mountain scenery" title="Illustration of White Mountains peaks representing NH48 mountain scenery" loading="lazy" decoding="async" data-description="Illustration of White Mountains peaks representing NH48 mountain scenery" data-keywords="NH48, White Mountains, mountain peaks, illustration, scenery">
-        <figcaption class="visually-hidden">Illustration of White Mountains peaks representing NH48 mountain scenery</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/galehead-mountain/galehead-mountain__002.jpg" alt="Galehead Hut and valley seen from the Galehead Mountain outlook" title="Galehead Hut and valley seen from the Galehead Mountain outlook" loading="lazy" decoding="async" data-description="Galehead Hut and valley seen from the Galehead Mountain outlook" data-keywords="NH48, Galehead Hut, Galehead Mountain, White Mountains, outlook">
+        <figcaption class="visually-hidden">Galehead Hut and valley seen from the Galehead Mountain outlook</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/004-bottle (Custom).png" alt="Water bottle to stay hydrated on NH48 trails in the White Mountains" title="Water bottle to stay hydrated on NH48 trails in the White Mountains" loading="lazy" decoding="async" data-description="Water bottle to stay hydrated on NH48 trails in the White Mountains" data-keywords="NH48, White Mountains, water bottle, hydration, trails">
-        <figcaption class="visually-hidden">Water bottle to stay hydrated on NH48 trails in the White Mountains</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/middle-carter-mountain/middle-carter-mountain__001.jpg" alt="Forest path along Middle Carter Mountain crest toward Carter Dome" title="Forest path along Middle Carter Mountain crest toward Carter Dome" loading="lazy" decoding="async" data-description="Forest path along Middle Carter Mountain crest toward Carter Dome" data-keywords="NH48, Middle Carter Mountain, Carter Dome, White Mountains, ridge">
+        <figcaption class="visually-hidden">Forest path along Middle Carter Mountain crest toward Carter Dome</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/049-backpack (Custom).png" alt="Large backpack used to carry gear on NH48 White Mountains expeditions" title="Large backpack used to carry gear on NH48 White Mountains expeditions" loading="lazy" decoding="async" data-description="Large backpack used to carry gear on NH48 White Mountains expeditions" data-keywords="NH48, White Mountains, backpack, gear, expedition">
-        <figcaption class="visually-hidden">Large backpack used to carry gear on NH48 White Mountains expeditions</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-adams/mount-adams__002.jpg" alt="Rocky alpine cone of Mount Adams above treeline in the Presidential Range" title="Rocky alpine cone of Mount Adams above treeline in the Presidential Range" loading="lazy" decoding="async" data-description="Rocky alpine cone of Mount Adams above treeline in the Presidential Range" data-keywords="NH48, Mount Adams, Presidential Range, White Mountains, alpine zone">
+        <figcaption class="visually-hidden">Rocky alpine cone of Mount Adams above treeline in the Presidential Range</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/011-cup (Custom).png" alt="Tin camping cup for enjoying drinks on NH48 White Mountains campsites" title="Tin camping cup for enjoying drinks on NH48 White Mountains campsites" loading="lazy" decoding="async" data-description="Tin camping cup for enjoying drinks on NH48 White Mountains campsites" data-keywords="NH48, White Mountains, camping cup, campsite, drinks">
-        <figcaption class="visually-hidden">Tin camping cup for enjoying drinks on NH48 White Mountains campsites</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-adams/mount-adams__005.jpg" alt="Mount Adams summit boulders with Mount Madison in the background" title="Mount Adams summit boulders with Mount Madison in the background" loading="lazy" decoding="async" data-description="Mount Adams summit boulders with Mount Madison in the background" data-keywords="NH48, Mount Adams, Mount Madison, White Mountains, summit">
+        <figcaption class="visually-hidden">Mount Adams summit boulders with Mount Madison in the background</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/026-fire lamp (Custom).png" alt="Camping lantern or fire lamp lighting NH48 campsites in the White Mountains" title="Camping lantern or fire lamp lighting NH48 campsites in the White Mountains" loading="lazy" decoding="async" data-description="Camping lantern or fire lamp lighting NH48 campsites in the White Mountains" data-keywords="NH48, White Mountains, lantern, camping, light">
-        <figcaption class="visually-hidden">Camping lantern or fire lamp lighting NH48 campsites in the White Mountains</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-carrigain/mount-carrigain__001.jpg" alt="Signal Ridge leading toward Mount Carrigain and its fire tower" title="Signal Ridge leading toward Mount Carrigain and its fire tower" loading="lazy" decoding="async" data-description="Signal Ridge leading toward Mount Carrigain and its fire tower" data-keywords="NH48, Mount Carrigain, Signal Ridge, White Mountains, fire tower">
+        <figcaption class="visually-hidden">Signal Ridge leading toward Mount Carrigain and its fire tower</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/031-bagpack (Custom).png" alt="Bagpack or rucksack for carrying supplies on NH48 White Mountains treks" title="Bagpack or rucksack for carrying supplies on NH48 White Mountains treks" loading="lazy" decoding="async" data-description="Bagpack or rucksack for carrying supplies on NH48 White Mountains treks" data-keywords="NH48, White Mountains, rucksack, supplies, trekking">
-        <figcaption class="visually-hidden">Bagpack or rucksack for carrying supplies on NH48 White Mountains treks</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-garfield/mount-garfield__001.jpg" alt="Open ledges on Mount Garfield facing Franconia Ridge" title="Open ledges on Mount Garfield facing Franconia Ridge" loading="lazy" decoding="async" data-description="Open ledges on Mount Garfield facing Franconia Ridge" data-keywords="NH48, Mount Garfield, Franconia Ridge, White Mountains, ledge view">
+        <figcaption class="visually-hidden">Open ledges on Mount Garfield facing Franconia Ridge</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/008-bandage (Custom).png" alt="Bandage icon symbolizing first-aid for NH48 hikers in the White Mountains" title="Bandage icon symbolizing first-aid for NH48 hikers in the White Mountains" loading="lazy" decoding="async" data-description="Bandage icon symbolizing first-aid for NH48 hikers in the White Mountains" data-keywords="NH48, White Mountains, bandage, first aid, hiking">
-        <figcaption class="visually-hidden">Bandage icon symbolizing first-aid for NH48 hikers in the White Mountains</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-garfield/mount-garfield__002.jpg" alt="Summit cairn on Mount Garfield looking over the Pemigewasset" title="Summit cairn on Mount Garfield looking over the Pemigewasset" loading="lazy" decoding="async" data-description="Summit cairn on Mount Garfield looking over the Pemigewasset" data-keywords="NH48, Mount Garfield, Pemigewasset Wilderness, White Mountains, cairn">
+        <figcaption class="visually-hidden">Summit cairn on Mount Garfield looking over the Pemigewasset</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/018-swiss army knife (Custom).png" alt="Swiss army knife multi-tool handy for NH48 White Mountains backpacking" title="Swiss army knife multi-tool handy for NH48 White Mountains backpacking" loading="lazy" decoding="async" data-description="Swiss army knife multi-tool handy for NH48 White Mountains backpacking" data-keywords="NH48, White Mountains, multi-tool, backpacking, knife">
-        <figcaption class="visually-hidden">Swiss army knife multi-tool handy for NH48 White Mountains backpacking</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-hancock/mount-hancock__003.jpg" alt="Outlook from Mount Hancock toward the heart of the Pemigewasset Wilderness" title="Outlook from Mount Hancock toward the heart of the Pemigewasset Wilderness" loading="lazy" decoding="async" data-description="Outlook from Mount Hancock toward the heart of the Pemigewasset Wilderness" data-keywords="NH48, Mount Hancock, Pemigewasset Wilderness, White Mountains, vista">
+        <figcaption class="visually-hidden">Outlook from Mount Hancock toward the heart of the Pemigewasset Wilderness</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/042-flashlight (Custom).png" alt="Flashlight for navigating NH48 White Mountains trails after dark" title="Flashlight for navigating NH48 White Mountains trails after dark" loading="lazy" decoding="async" data-description="Flashlight for navigating NH48 White Mountains trails after dark" data-keywords="NH48, White Mountains, flashlight, night hiking, trails">
-        <figcaption class="visually-hidden">Flashlight for navigating NH48 White Mountains trails after dark</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-lafayette/mount-lafayette__001.jpg" alt="Franconia Ridge trail climbing toward the Mount Lafayette summit cone" title="Franconia Ridge trail climbing toward the Mount Lafayette summit cone" loading="lazy" decoding="async" data-description="Franconia Ridge trail climbing toward the Mount Lafayette summit cone" data-keywords="NH48, Mount Lafayette, Franconia Ridge, White Mountains, trail">
+        <figcaption class="visually-hidden">Franconia Ridge trail climbing toward the Mount Lafayette summit cone</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/004-binoculars (Custom).png" alt="Pair of binoculars for spotting distant peaks on NH48 White Mountains hikes" title="Pair of binoculars for spotting distant peaks on NH48 White Mountains hikes" loading="lazy" decoding="async" data-description="Pair of binoculars for spotting distant peaks on NH48 White Mountains hikes" data-keywords="NH48, White Mountains, binoculars, peaks, hiking">
-        <figcaption class="visually-hidden">Pair of binoculars for spotting distant peaks on NH48 White Mountains hikes</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-liberty/mount-liberty__001.jpg" alt="Mount Liberty summit view toward Mount Flume along Franconia Ridge" title="Mount Liberty summit view toward Mount Flume along Franconia Ridge" loading="lazy" decoding="async" data-description="Mount Liberty summit view toward Mount Flume along Franconia Ridge" data-keywords="NH48, Mount Liberty, Mount Flume, White Mountains, summit view">
+        <figcaption class="visually-hidden">Mount Liberty summit view toward Mount Flume along Franconia Ridge</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/048-brochure (Custom).png" alt="Trail brochure or guide representing NH48 White Mountains information" title="Trail brochure or guide representing NH48 White Mountains information" loading="lazy" decoding="async" data-description="Trail brochure or guide representing NH48 White Mountains information" data-keywords="NH48, White Mountains, trail guide, brochure, information">
-        <figcaption class="visually-hidden">Trail brochure or guide representing NH48 White Mountains information</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-washington/mount-washington__001.jpg" alt="Buildings and weather observatory atop Mount Washington in the White Mountains" title="Buildings and weather observatory atop Mount Washington in the White Mountains" loading="lazy" decoding="async" data-description="Buildings and weather observatory atop Mount Washington in the White Mountains" data-keywords="NH48, Mount Washington, Presidential Range, White Mountains, observatory">
+        <figcaption class="visually-hidden">Buildings and weather observatory atop Mount Washington in the White Mountains</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/028-thermo (Custom).png" alt="Thermos bottle to keep beverages warm on NH48 White Mountains adventures" title="Thermos bottle to keep beverages warm on NH48 White Mountains adventures" loading="lazy" decoding="async" data-description="Thermos bottle to keep beverages warm on NH48 White Mountains adventures" data-keywords="NH48, White Mountains, thermos, warm drinks, adventure">
-        <figcaption class="visually-hidden">Thermos bottle to keep beverages warm on NH48 White Mountains adventures</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-washington/mount-washington__005.jpg" alt="Cog railway grade and observation deck near the summit of Mount Washington" title="Cog railway grade and observation deck near the summit of Mount Washington" loading="lazy" decoding="async" data-description="Cog railway grade and observation deck near the summit of Mount Washington" data-keywords="NH48, Mount Washington, Cog Railway, White Mountains, summit">
+        <figcaption class="visually-hidden">Cog railway grade and observation deck near the summit of Mount Washington</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/007-hill (Custom).png" alt="Hill or small mountain icon depicting gentle slopes in the White Mountains for NH48" title="Hill or small mountain icon depicting gentle slopes in the White Mountains for NH48" loading="lazy" decoding="async" data-description="Hill or small mountain icon depicting gentle slopes in the White Mountains for NH48" data-keywords="NH48, White Mountains, hill, mountain, icon">
-        <figcaption class="visually-hidden">Hill or small mountain icon depicting gentle slopes in the White Mountains for NH48</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/west-bond/mount-west-bond__005.jpg" alt="Mount West Bond spur looking down at Bondcliff and the Pemi" title="Mount West Bond spur looking down at Bondcliff and the Pemi" loading="lazy" decoding="async" data-description="Mount West Bond spur looking down at Bondcliff and the Pemi" data-keywords="NH48, Mount West Bond, Bondcliff, Pemigewasset Wilderness, White Mountains">
+        <figcaption class="visually-hidden">Mount West Bond spur looking down at Bondcliff and the Pemi</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/011-compass (Custom).png" alt="Traditional compass used for navigation on NH48 routes in the White Mountains" title="Traditional compass used for navigation on NH48 routes in the White Mountains" loading="lazy" decoding="async" data-description="Traditional compass used for navigation on NH48 routes in the White Mountains" data-keywords="NH48, White Mountains, compass, navigation, routes">
-        <figcaption class="visually-hidden">Traditional compass used for navigation on NH48 routes in the White Mountains</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/west-bond/west-bond__001.jpg" alt="West Bond summit rocks overlooking Zealand Valley and Bondcliff" title="West Bond summit rocks overlooking Zealand Valley and Bondcliff" loading="lazy" decoding="async" data-description="West Bond summit rocks overlooking Zealand Valley and Bondcliff" data-keywords="NH48, West Bond, Bondcliff, White Mountains, Zealand Valley">
+        <figcaption class="visually-hidden">West Bond summit rocks overlooking Zealand Valley and Bondcliff</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="UI-Elements/017-kettle (Custom).png" alt="Camping kettle for boiling water on NH48 White Mountains camping trips" title="Camping kettle for boiling water on NH48 White Mountains camping trips" loading="lazy" decoding="async" data-description="Camping kettle for boiling water on NH48 White Mountains camping trips" data-keywords="NH48, White Mountains, kettle, camping, boiling water">
-        <figcaption class="visually-hidden">Camping kettle for boiling water on NH48 White Mountains camping trips</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/025-bonfire (Custom).png" alt="Bonfire or campfire illustration for NH48 White Mountains camp nights" title="Bonfire or campfire illustration for NH48 White Mountains camp nights" loading="lazy" decoding="async" data-description="Bonfire or campfire illustration for NH48 White Mountains camp nights" data-keywords="NH48, White Mountains, bonfire, campfire, camping">
-        <figcaption class="visually-hidden">Bonfire or campfire illustration for NH48 White Mountains camp nights</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/038-sleeping bag (Custom).png" alt="Sleeping bag for overnight stays on NH48 White Mountains hikes" title="Sleeping bag for overnight stays on NH48 White Mountains hikes" loading="lazy" decoding="async" data-description="Sleeping bag for overnight stays on NH48 White Mountains hikes" data-keywords="NH48, White Mountains, sleeping bag, overnight, hiking">
-        <figcaption class="visually-hidden">Sleeping bag for overnight stays on NH48 White Mountains hikes</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/003-binoculars (Custom).png" alt="Binoculars icon for observing wildlife on NH48 White Mountains journeys" title="Binoculars icon for observing wildlife on NH48 White Mountains journeys" loading="lazy" decoding="async" data-description="Binoculars icon for observing wildlife on NH48 White Mountains journeys" data-keywords="NH48, White Mountains, binoculars, wildlife, journeys">
-        <figcaption class="visually-hidden">Binoculars icon for observing wildlife on NH48 White Mountains journeys</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/024-ice axe (Custom).png" alt="Ice axe used for winter ascents of NH48 peaks in the White Mountains" title="Ice axe used for winter ascents of NH48 peaks in the White Mountains" loading="lazy" decoding="async" data-description="Ice axe used for winter ascents of NH48 peaks in the White Mountains" data-keywords="NH48, White Mountains, ice axe, winter, ascents">
-        <figcaption class="visually-hidden">Ice axe used for winter ascents of NH48 peaks in the White Mountains</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/028-matches (Custom).png" alt="Matches for lighting campfires during NH48 White Mountains camping" title="Matches for lighting campfires during NH48 White Mountains camping" loading="lazy" decoding="async" data-description="Matches for lighting campfires during NH48 White Mountains camping" data-keywords="NH48, White Mountains, matches, campfire, camping">
-        <figcaption class="visually-hidden">Matches for lighting campfires during NH48 White Mountains camping</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/037-canned food (Custom).png" alt="Canned food supplies for NH48 backpackers exploring the White Mountains" title="Canned food supplies for NH48 backpackers exploring the White Mountains" loading="lazy" decoding="async" data-description="Canned food supplies for NH48 backpackers exploring the White Mountains" data-keywords="NH48, White Mountains, canned food, supplies, backpacking">
-        <figcaption class="visually-hidden">Canned food supplies for NH48 backpackers exploring the White Mountains</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/007-flask (Custom).png" alt="Small flask for carrying drinks on NH48 White Mountains hikes" title="Small flask for carrying drinks on NH48 White Mountains hikes" loading="lazy" decoding="async" data-description="Small flask for carrying drinks on NH48 White Mountains hikes" data-keywords="NH48, White Mountains, flask, drinks, hiking">
-        <figcaption class="visually-hidden">Small flask for carrying drinks on NH48 White Mountains hikes</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/015-flask (Custom).png" alt="Large thermos flask for keeping drinks hot on NH48 White Mountains treks" title="Large thermos flask for keeping drinks hot on NH48 White Mountains treks" loading="lazy" decoding="async" data-description="Large thermos flask for keeping drinks hot on NH48 White Mountains treks" data-keywords="NH48, White Mountains, thermos flask, hot drinks, trekking">
-        <figcaption class="visually-hidden">Large thermos flask for keeping drinks hot on NH48 White Mountains treks</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/047-compass (Custom).png" alt="Precision compass for accurate navigation on NH48 White Mountains trails" title="Precision compass for accurate navigation on NH48 White Mountains trails" loading="lazy" decoding="async" data-description="Precision compass for accurate navigation on NH48 White Mountains trails" data-keywords="NH48, White Mountains, compass, navigation, trails">
-        <figcaption class="visually-hidden">Precision compass for accurate navigation on NH48 White Mountains trails</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/001-location (Custom).png" alt="Location pin symbol marking destinations in the NH48 White Mountains region" title="Location pin symbol marking destinations in the NH48 White Mountains region" loading="lazy" decoding="async" data-description="Location pin symbol marking destinations in the NH48 White Mountains region" data-keywords="NH48, White Mountains, location pin, destinations, region">
-        <figcaption class="visually-hidden">Location pin symbol marking destinations in the NH48 White Mountains region</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/011-camping table (Custom).png" alt="Camping table icon for meals on NH48 White Mountains trips" title="Camping table icon for meals on NH48 White Mountains trips" loading="lazy" decoding="async" data-description="Camping table icon for meals on NH48 White Mountains trips" data-keywords="NH48, White Mountains, camping table, meals, trips">
-        <figcaption class="visually-hidden">Camping table icon for meals on NH48 White Mountains trips</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/005-camera (Custom).png" alt="Camera to capture scenic views on NH48 White Mountains adventures" title="Camera to capture scenic views on NH48 White Mountains adventures" loading="lazy" decoding="async" data-description="Camera to capture scenic views on NH48 White Mountains adventures" data-keywords="NH48, White Mountains, camera, scenic views, adventures">
-        <figcaption class="visually-hidden">Camera to capture scenic views on NH48 White Mountains adventures</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/015-cooking gas (Custom).png" alt="Portable cooking gas stove for meals on NH48 White Mountains campouts" title="Portable cooking gas stove for meals on NH48 White Mountains campouts" loading="lazy" decoding="async" data-description="Portable cooking gas stove for meals on NH48 White Mountains campouts" data-keywords="NH48, White Mountains, camp stove, cooking gas, campouts">
-        <figcaption class="visually-hidden">Portable cooking gas stove for meals on NH48 White Mountains campouts</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/027-map (Custom).png" alt="Detailed map for planning NH48 routes in the White Mountains" title="Detailed map for planning NH48 routes in the White Mountains" loading="lazy" decoding="async" data-description="Detailed map for planning NH48 routes in the White Mountains" data-keywords="NH48, White Mountains, map, route planning, trails">
-        <figcaption class="visually-hidden">Detailed map for planning NH48 routes in the White Mountains</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/035-hiking (Custom).png" alt="Hiking poles signifying trekking on NH48 trails through the White Mountains" title="Hiking poles signifying trekking on NH48 trails through the White Mountains" loading="lazy" decoding="async" data-description="Hiking poles signifying trekking on NH48 trails through the White Mountains" data-keywords="NH48, White Mountains, hiking poles, trekking, trails">
-        <figcaption class="visually-hidden">Hiking poles signifying trekking on NH48 trails through the White Mountains</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/023-lighter (Custom).png" alt="Lighter used to start campfires on NH48 White Mountains camping trips" title="Lighter used to start campfires on NH48 White Mountains camping trips" loading="lazy" decoding="async" data-description="Lighter used to start campfires on NH48 White Mountains camping trips" data-keywords="NH48, White Mountains, lighter, campfire, camping">
-        <figcaption class="visually-hidden">Lighter used to start campfires on NH48 White Mountains camping trips</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/046-light (Custom).png" alt="Portable light or lantern providing illumination on NH48 White Mountains campsites" title="Portable light or lantern providing illumination on NH48 White Mountains campsites" loading="lazy" decoding="async" data-description="Portable light or lantern providing illumination on NH48 White Mountains campsites" data-keywords="NH48, White Mountains, portable light, lantern, campsites">
-        <figcaption class="visually-hidden">Portable light or lantern providing illumination on NH48 White Mountains campsites</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/010-compass (Custom).png" alt="Simple compass indicating direction on NH48 White Mountains hikes" title="Simple compass indicating direction on NH48 White Mountains hikes" loading="lazy" decoding="async" data-description="Simple compass indicating direction on NH48 White Mountains hikes" data-keywords="NH48, White Mountains, compass, direction, hikes">
-        <figcaption class="visually-hidden">Simple compass indicating direction on NH48 White Mountains hikes</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/001-backpack (Custom).png" alt="Backpack icon for carrying essentials on NH48 White Mountains climbs" title="Backpack icon for carrying essentials on NH48 White Mountains climbs" loading="lazy" decoding="async" data-description="Backpack icon for carrying essentials on NH48 White Mountains climbs" data-keywords="NH48, White Mountains, backpack, essentials, climbs">
-        <figcaption class="visually-hidden">Backpack icon for carrying essentials on NH48 White Mountains climbs</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/004-raft (Custom).png" alt="Raft icon suggesting river or lake crossings near NH48 White Mountains trails" title="Raft icon suggesting river or lake crossings near NH48 White Mountains trails" loading="lazy" decoding="async" data-description="Raft icon suggesting river or lake crossings near NH48 White Mountains trails" data-keywords="NH48, White Mountains, raft, crossings, trails">
-        <figcaption class="visually-hidden">Raft icon suggesting river or lake crossings near NH48 White Mountains trails</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/013-tissue (Custom).png" alt="Tissue paper roll for hygiene during NH48 White Mountains camping" title="Tissue paper roll for hygiene during NH48 White Mountains camping" loading="lazy" decoding="async" data-description="Tissue paper roll for hygiene during NH48 White Mountains camping" data-keywords="NH48, White Mountains, tissue, hygiene, camping">
-        <figcaption class="visually-hidden">Tissue paper roll for hygiene during NH48 White Mountains camping</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="UI-Elements/034-rope (Custom).png" alt="Coiled rope for climbing or securing gear on NH48 White Mountains expeditions" title="Coiled rope for climbing or securing gear on NH48 White Mountains expeditions" loading="lazy" decoding="async" data-description="Coiled rope for climbing or securing gear on NH48 White Mountains expeditions" data-keywords="NH48, White Mountains, rope, climbing, gear">
-        <figcaption class="visually-hidden">Coiled rope for climbing or securing gear on NH48 White Mountains expeditions</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/west-bond/west-bond__002.jpg" alt="Approach to West Bond through krummholz with the Bonds beyond" title="Approach to West Bond through krummholz with the Bonds beyond" loading="lazy" decoding="async" data-description="Approach to West Bond through krummholz with the Bonds beyond" data-keywords="NH48, West Bond, Bondcliff, White Mountains, krummholz">
+        <figcaption class="visually-hidden">Approach to West Bond through krummholz with the Bonds beyond</figcaption>
       </figure>
     </div>
   </section>
-  <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title">
-    <div class="nh48-quick-footer__header">
-      <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
-      <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>
-      <p>Jump directly into every New Hampshire 4,000-footer detail page to strengthen internal linking and keep crawlers flowing through the full NH48 set.</p>
-    </div>
-    <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
-      <a class="nh48-quick-footer__link" href="/peaks/mount-washington.html">Mount Washington</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-lafayette.html">Mount Lafayette</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-lincoln.html">Mount Lincoln</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh.html">Mount Tecumseh</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke.html">Mount Moosilauke</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-pierce.html">Mount Pierce</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-liberty.html">Mount Liberty</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-adams.html">Mount Adams</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower.html">Mount Eisenhower</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-osceola.html">Mount Osceola</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-jackson.html">Mount Jackson</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-monroe.html">Mount Monroe</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-jefferson.html">Mount Jefferson</a>
-      <a class="nh48-quick-footer__link" href="/peaks/cannon-mountain.html">Cannon Mountain</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-madison.html">Mount Madison</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-flume.html">Mount Flume</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-garfield.html">Mount Garfield</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-carrigain.html">Mount Carrigain</a>
-      <a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain.html">North Kinsman Mountain</a>
-      <a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain.html">South Kinsman Mountain</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-whiteface.html">Mount Whiteface</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway.html">Mount Passaconaway</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-field.html">Mount Field</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-tom.html">Mount Tom</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-willey.html">Mount Willey</a>
-      <a class="nh48-quick-footer__link" href="/peaks/carter-dome.html">Carter Dome</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-moriah.html">Mount Moriah</a>
-      <a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain.html">South Carter Mountain</a>
-      <a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain.html">Middle Carter Mountain</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-hale.html">Mount Hale</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-waumbek.html">Mount Waumbek</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-isolation.html">Mount Isolation</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-cabot.html">Mount Cabot</a>
-      <a class="nh48-quick-footer__link" href="/peaks/north-tripyramid.html">North Tripyramid</a>
-      <a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid.html">Middle Tripyramid</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east.html">Mount Osceola – East Peak</a>
-      <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d.html">Wildcat Mountain – D Peak</a>
-      <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a.html">Wildcat Mountain – A Peak</a>
-      <a class="nh48-quick-footer__link" href="/peaks/galehead-mountain.html">Galehead Mountain</a>
-      <a class="nh48-quick-footer__link" href="/peaks/zealand-mountain.html">Zealand Mountain</a>
-      <a class="nh48-quick-footer__link" href="/peaks/west-bond.html">West Bond</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-bond.html">Mount Bond</a>
-      <a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain.html">South Twin Mountain</a>
-      <a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain.html">North Twin Mountain</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south.html">Mount Hancock – South Peak</a>
-      <a class="nh48-quick-footer__link" href="/peaks/mount-hancock.html">Mount Hancock – North Peak</a>
-      <a class="nh48-quick-footer__link" href="/peaks/owls-head.html">Owl's Head</a>
-      <a class="nh48-quick-footer__link" href="/peaks/bondcliff.html">Bondcliff</a>
-    </div>
-  </footer>
+  <!-- Quick browse footer injected from /pages/footer.html via quick-browse-footer.js -->
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const peaks = [
+        'Washington',
+        'Adams',
+        'Jefferson',
+        'Madison',
+        'Moosilauke',
+        'Carrigain',
+        'Lincoln',
+        'Lafayette',
+        'South Twin',
+        'Cannon',
+        'Eisenhower',
+        'Pierce'
+      ];
+
+      const container = document.getElementById('floating-peaks');
+      const floatingLabels = [];
+      const viewport = { width: window.innerWidth, height: window.innerHeight };
+
+      const randomInRange = (min, max) => min + Math.random() * (max - min);
+
+      const createFloatingLabel = (text, variant) => {
+        const label = document.createElement('div');
+        label.classList.add('peak-label', `peak-label--${variant}`);
+        label.textContent = '';
+
+        const scale = 1.18 + Math.random() * 0.55;
+        const speed = randomInRange(25, 55);
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
+
+        container.appendChild(label);
+
+        const labelWidth = label.offsetWidth * scale;
+        const labelHeight = label.offsetHeight * scale;
+
+        const startX = Math.random() * Math.max(1, viewport.width - labelWidth);
+        const startY = Math.random() * Math.max(1, viewport.height - labelHeight);
+
+        floatingLabels.push({
+          el: label,
+          x: startX,
+          y: startY,
+          vx: velocity.x,
+          vy: velocity.y,
+          scale,
+          fullText: text,
+          typingIndex: 0,
+          typingForward: true,
+          typingTimeout: null
+        });
+      };
+
+      const startTypingAnimation = (labelObj) => {
+        const typingSpeed = randomInRange(110, 170);
+        const deleteSpeed = randomInRange(90, 150);
+        const visibleDuration = randomInRange(20000, 30000);
+        const hiddenDuration = randomInRange(20000, 30000);
+
+        const step = () => {
+          if (labelObj.typingTimeout) {
+            clearTimeout(labelObj.typingTimeout);
+          }
+
+          const typeForward = () => {
+            if (labelObj.typingIndex < labelObj.fullText.length) {
+              labelObj.typingIndex += 1;
+              labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
+              labelObj.el.style.opacity = 1;
+              labelObj.typingTimeout = setTimeout(typeForward, typingSpeed);
+            } else {
+              labelObj.typingTimeout = setTimeout(startDeleting, visibleDuration);
+            }
+          };
+
+          const startDeleting = () => {
+            if (labelObj.typingIndex > 0) {
+              labelObj.typingIndex -= 1;
+              labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
+              labelObj.typingTimeout = setTimeout(startDeleting, deleteSpeed);
+            } else {
+              labelObj.el.style.opacity = 0;
+              labelObj.typingTimeout = setTimeout(() => {
+                labelObj.typingIndex = 0;
+                typeForward();
+              }, hiddenDuration);
+            }
+          };
+
+          typeForward();
+        };
+
+        step();
+      };
+
+      const spawnNextLabel = (index = 0) => {
+        if (index >= peaks.length) {
+          return;
+        }
+
+        const labelObj = createFloatingLabel(peaks[index], 'name');
+        startTypingAnimation(labelObj);
+
+        const nextDelay = randomInRange(3000, 5000);
+        setTimeout(() => spawnNextLabel(index + 1), nextDelay);
+      };
+
+      spawnNextLabel();
+
+      floatingLabels.forEach((labelObj) => startTypingAnimation(labelObj));
+
+      const updateViewport = () => {
+        viewport.width = window.innerWidth;
+        viewport.height = window.innerHeight;
+      };
+
+      window.addEventListener('resize', updateViewport);
+
+      let lastTime = performance.now();
+
+      const animate = (timestamp) => {
+        const delta = (timestamp - lastTime) / 1000;
+        lastTime = timestamp;
+
+        floatingLabels.forEach((label) => {
+          const scaledWidth = label.el.offsetWidth * label.scale;
+          const scaledHeight = label.el.offsetHeight * label.scale;
+
+          label.x += label.vx * delta;
+          label.y += label.vy * delta;
+
+          if (label.x <= 0) {
+            label.x = 0;
+            label.vx = Math.abs(label.vx);
+          } else if (label.x + scaledWidth >= viewport.width) {
+            label.x = Math.max(0, viewport.width - scaledWidth);
+            label.vx = -Math.abs(label.vx);
+          }
+
+          if (label.y <= 0) {
+            label.y = 0;
+            label.vy = Math.abs(label.vy);
+          } else if (label.y + scaledHeight >= viewport.height) {
+            label.y = Math.max(0, viewport.height - scaledHeight);
+            label.vy = -Math.abs(label.vy);
+          }
+
+          label.el.style.transform = `translate3d(${label.x}px, ${label.y}px, 0) scale(${label.scale})`;
+        });
+
+        requestAnimationFrame(animate);
+      };
+
+      requestAnimationFrame(animate);
+    });
+  </script>
   <script>
     if (!localStorage.getItem('nh48_lang')) {
       localStorage.setItem('nh48_lang', 'en');

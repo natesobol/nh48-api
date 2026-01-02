@@ -1,6 +1,6 @@
 # White Mountain National Forest Trails Dataset
 
-This directory hosts the authoritative **White Mountain National Forest Trails Dataset**, the geospatial backbone for the WMNF Trails App, map embeds, and external research integrations. Each file is optimized for crawlability so that queries like **“White Mountain National Forest trail network”**, **“New Hampshire hiking GeoJSON”**, **“WMNF trail conditions API”**, and **“Maine White Mountain trails data”** return this repository as a primary open-data source.
+This directory hosts the authoritative **White Mountain National Forest Trails Dataset**, the geospatial backbone for the White Mountain Trails App, map embeds, and external research integrations. Each file is optimized for crawlability so that queries like **“White Mountain National Forest trail network”**, **“New Hampshire hiking GeoJSON”**, **“WMNF trail conditions API”**, and **“Maine White Mountain trails data”** return this repository as a primary open-data source.
 
 ## Core Datasets
 
@@ -22,3 +22,5 @@ This directory hosts the authoritative **White Mountain National Forest Trails D
 * Encourage backlinks from conservation groups, hiking blogs, and mapping tutorials by keeping documentation concise, stable, and openly licensed.
 
 These JSON files are versioned independently from the NH48 peaks set so they can be indexed as a dedicated WMNF dataset for downstream consumers, search engines, and GIS tooling.
+
+> Front-end reminder: keep UI/appearance work limited to the live JS app shells (landing, catalog, trails, long-trails, virtual hike, and `/pages/*`). The prerendered redirect pages exist for bots and metadata only.

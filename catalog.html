@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="alternate" type="application/json" title="NH48 UI Elements Alt Text" href="https://nh48.info/UI-Elements/alt-text.json">
+  <link rel="alternate" type="application/json" title="NH48 Summit Photo Alt Text" href="https://nh48.info/photos/backgrounds/alt-text.json">
   <link rel="alternate" hreflang="en" href="https://nh48.info/catalog/">
   <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
   <link rel="alternate" hreflang="fr" href="https://nh48.info/i18n/fr.html">
@@ -71,7 +71,30 @@
   <meta name="twitter:description" content="Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains.">
   <meta name="twitter:image" content="https://nh48.info/UI-Elements/og-cover.png">
   <meta name="twitter:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
-  <meta http-equiv="refresh" content="0; url=/catalog/">
+  <script>
+    (function redirectCatalog() {
+      const host = location.hostname;
+
+      const isPreviewHost =
+        host === "localhost" ||
+        host === "127.0.0.1" ||
+        host.includes("github") ||
+        host.endsWith("githubpreview.dev");
+
+      if (isPreviewHost) {
+        return;
+      }
+
+      const target = '/catalog/';
+      window.location.replace(target);
+    })();
+  </script>
+  <noscript>
+    <p>
+      JavaScript is required to continue.
+      <a href="/catalog/">Continue</a>
+    </p>
+  </noscript>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -117,7 +140,7 @@
           "name": "NH48 API – New Hampshire 4,000-Footers Dataset",
           "description": "Structured data for 48 New Hampshire four-thousand-foot peaks with 101 tagged photos, elevations, prominence, difficulty, and geo context in JSON format.",
           "url": "https://nh48.info/data/nh48.json",
-          "license": "https://opensource.org/licenses/MIT",
+          "license": "https://creativecommons.org/licenses/by/4.0/",
           "creator": {
             "@type": "Person",
             "name": "Nathan Sobol",
@@ -170,7 +193,6 @@
       ]
     }
   </script>
-  <script>window.location.replace('/catalog/');</script>
 </head>
 <body></body>
 </html>

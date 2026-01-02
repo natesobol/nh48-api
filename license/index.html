@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NH48 API Data License – Creative Commons Attribution 4.0</title>
+  <meta name="description" content="All NH48 API datasets are licensed under Creative Commons Attribution 4.0. Share and adapt the data with attribution to Nathan Sobol and NH48 API.">
+  <meta name="author" content="Nathan Sobol">
+  <link rel="canonical" href="https://nh48.info/license">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="NH48 API Data License – Creative Commons Attribution 4.0">
+  <meta property="og:description" content="Every NH48 API dataset is available under the CC BY 4.0 license for sharing and reuse with attribution.">
+  <meta property="og:url" content="https://nh48.info/license">
+  <meta property="og:site_name" content="NH48 API">
+  <meta property="og:image" content="https://nh48.info/nh48-preview.png">
+  <meta property="og:image:alt" content="NH48 API open data branding">
+  <link rel="stylesheet" href="/css/dataset-page.css">
+  <link rel="stylesheet" href="/css/quick-browse-footer.css">
+  <script src="/js/quick-browse-footer.js" defer></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+      border: 1px solid #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      width: min(1200px, 100%);
+      margin: 0 auto 12px;
+    }
+
+    .site-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .site-nav-logo img {width: 58px; height: 58px; border-radius: 14px; padding: 0; box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32); object-fit: cover; background: transparent}
+
+    .site-nav-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      line-height: 1.1;
+    }
+
+    .site-nav-title {
+      font-weight: 800;
+      font-size: 38px;
+      line-height: 1;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .site-nav-tagline {
+      font-size: 13px;
+      color: #e5f8ec;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .site-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .site-nav-links a {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: all 0.2s ease;
+    }
+
+    .site-nav-links a:hover {
+      color: #22c55e;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .site-nav-links a.active {
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .site-nav-dropdown {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .site-nav-dropdown .site-nav-submenu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      padding: 8px;
+      min-width: 200px;
+      z-index: 10;
+    }
+
+    .site-nav-dropdown:hover .site-nav-submenu,
+    .site-nav-dropdown:focus-within .site-nav-submenu {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .site-nav-dropdown .site-nav-submenu a {
+      width: 100%;
+      text-transform: none;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+
+    .site-nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #22c55e;
+      border: 2px solid #22c55e;
+      color: #ffffff;
+      font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue Condensed", Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .license-card {
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      border-radius: 14px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(15, 23, 42, 0.88));
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    .license-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .license-actions a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #22c55e;
+      color: #0a0a0a;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .license-actions a.secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    @media (max-width: 768px) {
+      .site-nav {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+        position: static;
+      }
+
+      .site-nav-title {
+        font-size: 30px;
+      }
+
+      .site-nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .site-nav-cta {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .site-nav-links a {
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+
+      .site-nav-cta {
+        width: 100%;
+      }
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "NH48 API Data License",
+      "description": "Human-readable summary of the Creative Commons Attribution 4.0 license that applies to all NH48 API datasets.",
+      "url": "https://nh48.info/license",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "creator": { "@type": "Person", "name": "Nathan Sobol", "url": "https://nh48.info" },
+      "mainEntity": {
+        "@type": "CreativeWork",
+        "name": "NH48 API datasets",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "creator": { "@type": "Person", "name": "Nathan Sobol", "url": "https://nh48.info" }
+      }
+    }
+  </script>
+</head>
+<body>
+  <nav class="site-nav">
+    <a href="/" class="site-nav-logo">
+      <img src="/nh48API_logo.png" alt="NH48 API logo" aria-hidden="true" role="presentation" />
+      <div class="site-nav-title-wrap">
+        <span class="site-nav-title">NH48 API</span>
+        <span class="site-nav-tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
+      </div>
+    </a>
+      <div class="site-nav-links">
+    <div class="site-nav-dropdown">
+      <a href="/" data-route="dataset-home">NH48 Dataset</a>
+      <div class="site-nav-submenu" aria-label="NH48 dataset short links">
+        <a href="/nh-4000-footers-info.html" data-route="info">NH48 Info</a>
+        <a href="/catalog" data-route="catalog">Interactive Catalog</a>
+        <a href="/page-sitemap.xml">Browse page sitemap</a>
+      </div>
+    </div>
+    <div class="site-nav-dropdown">
+      <a href="/pages/trails_app.html" data-route="trails" data-i18n="nav.trails">White Mountain Trails</a>
+      <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
+        <a href="/dataset/wmnf-trails">WMNF Dataset</a>
+      </div>
+    </div>
+    <div class="site-nav-dropdown">
+      <a href="/pages/long_trails_app.html" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
+      <div class="site-nav-submenu" aria-label="Long Trails short links">
+        <a href="/dataset/long-trails">Long Trails Dataset</a>
+      </div>
+    </div>
+    <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
+    <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
+    <a
+      class="site-nav-cta"
+      href="https://www.instagram.com/nate_dumps_pics/"
+      target="_blank"
+      rel="noopener"
+      aria-label="Latest WMNF Photos"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+        <circle cx="12" cy="12" r="3.5"></circle>
+        <circle cx="17" cy="7" r="1.2" fill="#ffffff" stroke="none"></circle>
+      </svg>
+      <span data-i18n="nav.latestPhotos">Latest WMNF Photos</span>
+    </a>
+  </div>
+</nav>
+  <main class="dataset-page">
+    <header>
+      <p class="eyebrow">NH48 API Open Data</p>
+      <h1>Creative Commons Attribution 4.0</h1>
+      <p class="lede">
+        All NH48 API datasets are published under the Creative Commons Attribution 4.0 International License (CC BY 4.0).
+        You are free to share and adapt the data for any purpose with proper attribution to Nathan Sobol and NH48 API.
+      </p>
+    </header>
+
+    <section class="panel license-card">
+      <p class="panel-label">License overview</p>
+      <h2>What CC BY 4.0 allows</h2>
+      <ul class="listed">
+        <li>Share: copy, distribute, and transmit the datasets in any format.</li>
+        <li>Adapt: remix, transform, and build upon the data for any purpose, even commercially.</li>
+        <li>Attribute: credit “NH48 API / Nathan Sobol” with a link to this license page or the official CC BY 4.0 notice.</li>
+      </ul>
+      <div class="license-actions">
+        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">View CC BY 4.0</a>
+        <a class="secondary" href="https://nh48.info/catalog">Browse datasets</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>How to cite NH48 API data</h2>
+      <p>Reference the license in your metadata or citations using either link below:</p>
+      <ul class="listed">
+        <li><code>https://creativecommons.org/licenses/by/4.0/</code></li>
+        <li><code>https://nh48.info/license</code></li>
+      </ul>
+      <p class="lede">Example attribution: “Data from NH48 API (Nathan Sobol), licensed under CC BY 4.0.”</p>
+    </section>
+
+    <section class="panel">
+      <h2>Why this matters</h2>
+      <ul class="listed">
+        <li>Clear licensing improves dataset discovery in Google Dataset Search.</li>
+        <li>Trusted attribution signals encourage reuse by researchers and mapping apps.</li>
+        <li>Consistent CC BY 4.0 coverage keeps downstream mirrors and caches compliant.</li>
+      </ul>
+    </section>
+  </main>
+  <!-- Quick browse footer injected from /pages/footer.html via quick-browse-footer.js -->
+
+
+</body>
+</html>

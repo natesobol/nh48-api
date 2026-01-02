@@ -56,7 +56,7 @@
   },
   "catalog": {
     "title": "NH48 山峰目录",
-    "intro": "浏览新罕布什尔州 48 座 4,000 英尺山峰。点击山峰可查看更多详情。如发生错误，详情将显示在下方。适用于新罕布什尔州 4,000 英尺山峰的开放 API 与数据集。",
+    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
     "search": {
       "placeholder": "按名称搜索山峰…",
       "ariaLabel": "按名称搜索山峰"
@@ -204,7 +204,19 @@
         "fileCreateDate": "创建时间",
         "fileModifiedDate": "修改时间",
         "rating": "评分",
-        "metadata": "元数据"
+        "metadata": "元数据",
+        "creditLine": "署名行",
+        "source": "来源",
+        "copyrightNotice": "版权声明",
+        "copyrightStatus": "版权状态",
+        "rightsUsageTerms": "权利与使用条款",
+        "altText": "替代文本",
+        "alt": "Alt",
+        "extendedAlt": "扩展替代文本",
+        "caption": "标题",
+        "headline": "标题",
+        "extendedDescription": "扩展描述",
+        "description": "描述"
       }
     },
     "generalInfo": {
@@ -245,7 +257,7 @@
     }
   },
   "trails": {
-    "title": "🏔️ WMNF Trails API 地图工具",
+    "title": "🏔️ White Mountain Trails API 地图工具",
     "subtitle": "White Mountains 的山峰、步道与路线开放数据结构。",
     "intro": "White Mountain National Forest — 由 Nate Sobol 汇编。可作为快速步道查找与完成度追踪工具。适用于新罕布什尔州 4,000 英尺山峰的开放 API 与数据集。",
     "details": {

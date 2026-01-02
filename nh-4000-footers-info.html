@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NH 48 4,000-Footers Information – Unofficial Community Resource | NH48 Info</title>
+    <meta
+      name="description"
+      content="Community-curated overview of New Hampshire's 4,000-footers with routes, ranges, season tips, and data tools. Not affiliated with the AMC—verify details with official AMC resources."
+    />
+    <meta
+      name="keywords"
+      content="NH48 info, New Hampshire 4000 footers, AMC 4000 footer list, White Mountains hiking, Presidential Range, Franconia Ridge, NH48 data API"
+    />
+    <link rel="canonical" href="https://nh48.info/nh-4000-footers-info" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="NH 48 4,000-Footers: Unofficial Community Information" />
+    <meta property="og:description" content="Friendly, community-compiled info on New Hampshire's 4,000-footers with live data, maps, and planning notes. Always confirm with the AMC." />
+    <meta property="og:url" content="https://nh48.info/nh-4000-footers-info" />
+    <meta property="og:image" content="https://nh48.info/UI-Elements/og-cover.png" />
+    <meta property="og:image:alt" content="Map illustration of New Hampshire's 4,000 foot peaks" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="/nh48API_logo.png" />
+    <link rel="stylesheet" href="/css/quick-browse-footer.css" />
+    <script src="/js/quick-browse-footer.js" defer></script>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #11172b;
+        --card: #151c31;
+        --ink: #f8fafc;
+        --muted: #cbd5e1;
+        --accent: #22c55e;
+        --accent-2: #60a5fa;
+        --stroke: #243447;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Noto Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: radial-gradient(circle at 20% 20%, #0f172a 0, #0b1020 45%),
+          radial-gradient(circle at 80% 0%, #122041 0, #0b1020 40%),
+          #0b1020;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: var(--accent);
+      }
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 16px 18px 64px;
+      }
+      header.hero {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.14), rgba(96, 165, 250, 0.1));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 28px;
+        box-shadow: none;
+        margin: 14px 0 28px;
+      }
+      header.hero h1 {
+        font-size: clamp(32px, 4vw, 44px);
+        margin: 0 0 12px;
+      }
+      header.hero p {
+        color: var(--muted);
+        max-width: 900px;
+        font-size: 17px;
+        line-height: 1.6;
+      }
+      .quick-facts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+      .fact-card {
+        background: var(--card);
+        border: 1px solid var(--stroke);
+        padding: 14px;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .fact-label {
+        text-transform: uppercase;
+        letter-spacing: 0.9px;
+        font-weight: 700;
+        color: #c8f6db;
+        font-size: 12px;
+      }
+      .fact-value {
+        font-size: 22px;
+        font-weight: 800;
+      }
+      section {
+        margin: 36px 0 28px;
+      }
+      h2 {
+        font-size: 26px;
+        margin-bottom: 12px;
+      }
+      p,
+      li {
+        line-height: 1.7;
+        color: var(--muted);
+      }
+      .content-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+        align-items: start;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--stroke);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: none;
+      }
+      .range-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0 18px;
+      }
+      .chip {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--ink);
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 14px;
+        transition: all 0.18s ease;
+      }
+      .chip.active {
+        background: var(--accent);
+        color: #0b1020;
+        border-color: var(--accent);
+      }
+      .table-scroll {
+        overflow-x: auto;
+        border-radius: 14px;
+        border: 1px solid var(--stroke);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--card);
+      }
+      th,
+      td {
+        padding: 12px;
+        border-bottom: 1px solid var(--stroke);
+        text-align: left;
+      }
+      th {
+        text-transform: uppercase;
+        font-size: 13px;
+        letter-spacing: 0.6px;
+        color: #dbeafe;
+      }
+      tr:hover td {
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .map-shell {
+        background: var(--panel);
+        border: 1px solid var(--stroke);
+        border-radius: 14px;
+        padding: 12px;
+      }
+      #peakMap {
+        width: 100%;
+        height: 360px;
+        background: radial-gradient(circle at 25% 30%, rgba(34, 197, 94, 0.1), rgba(96, 165, 250, 0.05)),
+          linear-gradient(145deg, #0d162b, #0b1224);
+        border-radius: 12px;
+        border: 1px solid var(--stroke);
+      }
+      .map-legend {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+      }
+      .range-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 12px;
+        margin-top: 8px;
+      }
+      .range-card {
+        background: var(--panel);
+        border: 1px solid var(--stroke);
+        padding: 12px;
+        border-radius: 12px;
+      }
+      .toggle-group {
+        display: inline-flex;
+        border: 1px solid var(--stroke);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .toggle-group button {
+        background: transparent;
+        border: none;
+        color: var(--ink);
+        padding: 10px 14px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .toggle-group button.active {
+        background: var(--accent);
+        color: #0b1020;
+      }
+      .season-table {
+        margin-top: 14px;
+      }
+      .faq-item {
+        margin-bottom: 12px;
+      }
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        background: var(--accent);
+        border: 2px solid var(--accent);
+        color: #0b1020;
+        border-radius: 10px;
+        font-weight: 800;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+      @media (max-width: 700px) {
+        th,
+        td {
+          padding: 10px;
+        }
+        .range-filters {
+          gap: 6px;
+        }
+      }
+    </style>
+  </head>
+  <body data-route="info" data-page="info">
+    <div id="nav-placeholder"></div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const navPlaceholder = document.getElementById('nav-placeholder');
+        const footerPlaceholder = document.getElementById('footer-placeholder');
+        const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+        if (navPlaceholder) {
+          fetch('/pages/nav.html')
+            .then((r) => r.text())
+            .then((html) => {
+              navPlaceholder.innerHTML = html;
+              const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+              links.forEach((link) => {
+                const routes = (link.dataset.routes || link.dataset.route || '')
+                  .split(',')
+                  .map((value) => value.trim())
+                  .filter(Boolean);
+
+                if (routes.includes(activeRoute)) {
+                  link.classList.add('active');
+                  link.setAttribute('aria-current', 'page');
+                }
+              });
+            })
+            .catch((err) => console.error('Navigation failed to load', err));
+        }
+
+        const hasQuickFooter = document.querySelector('.nh48-quick-footer');
+
+        if (footerPlaceholder && !hasQuickFooter) {
+          fetch('/pages/footer.html')
+            .then((r) => r.text())
+            .then((html) => {
+              footerPlaceholder.innerHTML = html;
+            })
+            .catch((err) => console.error('Footer failed to load', err));
+        }
+      });
+    </script>
+
+    <main class="wrap">
+      <header class="hero">
+        <p class="eyebrow">Community compiled • Unofficial overview</p>
+        <h1>NH 48 4,000-Footers: Unofficial Information Hub</h1>
+        <p>
+          Community members gathered these notes on the AMC Four-Thousand-Footer peaks—routes, ranges, seasonality patterns, and developer tools—to make browsing easier. Details are not fully verified; please cross-check against the Appalachian Mountain Club’s official resources before you go.
+        </p>
+        <div class="quick-facts" id="quickFacts">
+          <div class="fact-card">
+            <span class="fact-label">Total Peaks</span>
+            <span class="fact-value" id="factCount">48</span>
+            <small class="muted">AMC-recognized 4,000-footers (confirm for updates)</small>
+          </div>
+          <div class="fact-card">
+            <span class="fact-label">Highest Summit</span>
+            <span class="fact-value" id="factHigh">Mount Washington – 6,288 ft</span>
+            <small class="muted">Presidential Range</small>
+          </div>
+          <div class="fact-card">
+            <span class="fact-label">Cumulative Elevation</span>
+            <span class="fact-value" id="factTotal">Calculating…</span>
+            <small class="muted">Sum of all summit elevations</small>
+          </div>
+          <div class="fact-card">
+            <span class="fact-label">API Ready</span>
+            <span class="fact-value">JSON, GeoJSON, Images</span>
+            <small class="muted">Open data for maps, apps, and trackers</small>
+          </div>
+        </div>
+      </header>
+
+      <section id="what-is-nh48">
+        <h2>What is the NH48?</h2>
+        <p>
+          The New Hampshire 48 refers to mountains that meet the AMC Four-Thousand-Footer Club standard of at least 4,000 feet above sea level and 200 feet of topographic prominence. NH48.info is not affiliated with the AMC; this overview summarizes information gathered from public references and hiker contributions.
+        </p>
+        <p>
+          The idea dates to 1931 when Dartmouth librarian Nathaniel L. Goodrich outlined an early challenge. Refined USGS surveys and AMC guidelines eventually set the list at 48 peaks—adding Bondcliff and Galehead while excluding shoulder summits like Mt. Guyot and Mt. Clay. Readers should confirm criteria and routes with the Appalachian Mountain Club before planning trips.
+        </p>
+      </section>
+
+      <section id="disclaimer">
+        <h2>Important Disclaimer</h2>
+        <p>
+          NH48.info is an unofficial, community-driven site. Use this page at your own risk; always verify trail status, rules, and safety information with the Appalachian Mountain Club and other official sources.
+        </p>
+        <p><a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>.</p>
+      </section>
+
+      <section id="official-peak-list">
+        <h2>Current NH 4,000-Footer List</h2>
+        <p>
+          Peaks shown here reflect the summits recognized by the AMC at the time of publication. Tap a range filter to see the peaks clustered by geography, or click a summit name to open its detailed page. Each row pulls live attributes from the NH48 manifest so the table stays synchronized with the photo-rich peak templates.
+        </p>
+        <p>
+          <a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>. Please confirm prominence, elevation, and trail guidance with the AMC before relying on this table.
+        </p>
+        <div class="range-filters" id="rangeFilters" aria-label="Filter peaks by range"></div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Peak</th>
+                <th>Elevation (ft)</th>
+                <th>Range</th>
+                <th>Best For</th>
+              </tr>
+            </thead>
+            <tbody id="peakTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="range-map" class="content-grid">
+        <div class="panel map-shell">
+          <h2>Peaks by Mountain Range</h2>
+          <p>
+            The NH48 spans eight major clusters. Use the quick chips to jump straight to a filtered list: the Presidential Range’s alpine zone, the Franconia Ridge views, the remote Bonds inside the Pemigewasset Wilderness, and the Sandwich Range approaches. Conditions and difficulty vary by season; consult route guides before you go.
+          </p>
+          <div class="range-list" id="rangeList"></div>
+        </div>
+        <div class="panel map-shell">
+          <h2>Interactive Map</h2>
+          <p>Zoom with your mousewheel or tap each pin to see peak names. All coordinates load from the same manifest that powers the catalog and should be cross-checked with official maps.</p>
+          <svg id="peakMap" role="img" aria-label="Map of all 48 New Hampshire 4,000 foot peaks"></svg>
+          <div class="map-legend">
+            <span><span class="legend-dot" style="background:#22c55e"></span>NH48 Summits</span>
+            <span><span class="legend-dot" style="background:#60a5fa"></span>Range clusters</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="difficulty-strategy">
+        <h2>Peak Difficulty &amp; Strategy</h2>
+        <p>
+          Difficulty is subjective and conditions change quickly. The notes below reflect commonly shared hiker experiences, not official designations. Plan carefully and consult AMC trail guides and forecasts before committing to any route.
+        </p>
+        <div class="content-grid">
+          <div class="panel">
+            <h3>Beginner-Friendly choices</h3>
+            <ul>
+              <li><strong>Mt. Tecumseh</strong> — many hikers find this short, direct trail to be the gentlest ascent on the list.</li>
+              <li><strong>Mt. Waumbek</strong> — often chosen for its steady grade, sheltered forest, and forgiving footing.</li>
+              <li><strong>Mt. Pierce</strong> — provides Crawford Path views with less exposure than some Presidential neighbors.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Advanced &amp; committing</h3>
+            <ul>
+              <li><strong>The Bonds</strong> (Bond, West Bond, Bondcliff) — often tackled as a 19–23 mile day or an overnight traverse.</li>
+              <li><strong>Owl’s Head</strong> — known for a long approach with a loose slide and muddy valley miles.</li>
+              <li><strong>The Wildcats</strong> — feature relentless grades that many describe as a backcountry stair climber.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="seasonal-considerations">
+        <h2>Seasonal Considerations</h2>
+        <p>
+          Strategies shift every year as trailheads, roads, and weather patterns change. The AMC tracks winter finishers separately because road closures, avalanche zones, and snowpack reshape the effort. Use the toggle to switch between summer and winter planning and verify access and forecasts with official sources.
+        </p>
+        <div class="toggle-group" role="group" aria-label="Toggle hiking season">
+          <button id="summerBtn" class="active" type="button">Summer</button>
+          <button id="winterBtn" type="button">Winter</button>
+        </div>
+        <div class="table-scroll season-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Focus</th>
+                <th id="seasonHeading">Summer Strategy</th>
+              </tr>
+            </thead>
+            <tbody id="seasonRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="history">
+        <h2>History &amp; Rules Recap</h2>
+        <p>
+          The AMC Four-Thousand-Footer Club launched officially in 1957 to encourage hikers into the deeper corners of the White Mountain National Forest. According to AMC guidelines, a peak must have 200 feet of prominence from any connecting col. Human-powered ascents are expected—using the Cog Railway or Cannon’s tramway does not meet the guidelines.
+        </p>
+        <p>
+          Thousands of finishers log their climbs by mailing the AMC application or joining online trackers. Please read the Appalachian Mountain Club’s introductory letter for the most accurate and current requirements, and verify any summary here with the official resource.
+        </p>
+        <p><a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>.</p>
+      </section>
+
+      <section id="data-api">
+        <h2>Data &amp; API Resources</h2>
+        <p>
+          NH48.info exposes every peak as JSON so developers can build their own dashboards, weather overlays, or GPX generators. These community tools may contain inaccuracies and should be verified before use for navigation. The manifest powering this page includes elevations, coordinates, route notes, exposure ratings, and captioned photography with alt text. Grab the files directly or mirror them through a CDN.
+        </p>
+        <ul>
+          <li><a href="https://nh48.info/data/nh48.json">NH48 JSON dataset</a> (all peaks and photo metadata)</li>
+          <li><a href="https://nh48.info/manifest_out.json">Expanded manifest</a> (coordinates, routes, exposure, seasonality)</li>
+          <li><a href="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json">jsDelivr CDN mirror</a> for cached pulls</li>
+        </ul>
+        <p>
+          Developers: embed the table via fetch, use the map pins in GeoJSON, or remix the photos (with attribution) to power your own NH48 tracker. Please credit NH48.info for reused assets and confirm data against official sources when accuracy is critical.
+        </p>
+        <a class="cta" href="https://github.com/natesobol/nh48-api">Use the API</a>
+      </section>
+
+      <section id="faq">
+        <h2>Frequently Asked Questions</h2>
+        <p>
+          These responses summarize common hiker opinions and may not reflect official AMC guidance. For definitive answers, <a href="https://www.amc4000footer.org/faq" target="_blank" rel="noopener">visit the official AMC FAQ</a>.
+        </p>
+        <div class="faq-item">
+          <strong>What is the easiest 4,000 footer in New Hampshire?</strong>
+          <p>Mt. Tecumseh and Mt. Waumbek are widely considered the most approachable thanks to short mileage, steady grades, and sheltered routes; however, experiences vary.</p>
+        </div>
+        <div class="faq-item">
+          <strong>Do winter ascents count toward the regular NH48 list?</strong>
+          <p>Many hikers count winter ascents toward the primary list and separately for the Winter NH48 award. December 21–March 21 is the commonly accepted window; review AMC criteria to be sure.</p>
+        </div>
+        <div class="faq-item">
+          <strong>Which range has the most challenging weather?</strong>
+          <p>The Presidential Range is often cited for challenging weather. Above-treeline exposure, fast-moving storms, and wind chills make even summer days serious—plan conservatively.</p>
+        </div>
+        <div class="faq-item">
+          <strong>How do I link to individual peak details?</strong>
+          <p>Use the /peaks/slug/ format shown in the Current NH 4,000-Footer List. Each peak page includes a “Back to the NH48 Info” link for reciprocal navigation.</p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const rangeLookup = {
+        'bondcliff': 'Twin/Bond Range',
+        'west-bond': 'Twin/Bond Range',
+        'mount-bond': 'Twin/Bond Range',
+        'south-twin-mountain': 'Twin/Bond Range',
+        'north-twin-mountain': 'Twin/Bond Range',
+        'zealand-mountain': 'Twin/Bond Range',
+        'galehead-mountain': 'Twin/Bond Range',
+        'mount-hale': 'Twin/Bond Range',
+        'mount-garfield': 'Franconia Range',
+        'mount-lafayette': 'Franconia Range',
+        'mount-lincoln': 'Franconia Range',
+        'mount-liberty': 'Franconia Range',
+        'mount-flume': 'Franconia Range',
+        'mount-washington': 'Presidential Range',
+        'mount-adams': 'Presidential Range',
+        'mount-jefferson': 'Presidential Range',
+        'mount-monroe': 'Presidential Range',
+        'mount-madison': 'Presidential Range',
+        'mount-eisenhower': 'Presidential Range',
+        'mount-pierce': 'Presidential Range',
+        'mount-jackson': 'Presidential Range',
+        'mount-isolation': 'Presidential Range',
+        'carter-dome': 'Carter-Moriah Range',
+        'middle-carter-mountain': 'Carter-Moriah Range',
+        'south-carter-mountain': 'Carter-Moriah Range',
+        'wildcat-mountain-a': 'Carter-Moriah Range',
+        'wildcat-mountain-d': 'Carter-Moriah Range',
+        'mount-moriah': 'Carter-Moriah Range',
+        'mount-moosilauke': 'Kinsman Range',
+        'north-kinsman-mountain': 'Kinsman Range',
+        'south-kinsman-mountain': 'Kinsman Range',
+        'cannon-mountain': 'Kinsman Range',
+        'mount-osceola': 'Sandwich Range',
+        'mount-osceola-east': 'Sandwich Range',
+        'north-tripyramid': 'Sandwich Range',
+        'middle-tripyramid': 'Sandwich Range',
+        'mount-whiteface': 'Sandwich Range',
+        'mount-passaconaway': 'Sandwich Range',
+        'mount-tecumseh': 'Sandwich Range',
+        'mount-willey': 'Willey Range',
+        'mount-field': 'Willey Range',
+        'mount-tom': 'Willey Range',
+        'mount-carrigain': 'Pemi Wilderness & Remote',
+        'owls-head': 'Pemi Wilderness & Remote',
+        'mount-hancock': 'Pemi Wilderness & Remote',
+        'mount-hancock-south': 'Pemi Wilderness & Remote',
+        'mount-cabot': 'Loners & Remote Peaks',
+        'mount-waumbek': 'Loners & Remote Peaks'
+      };
+
+      const rangeOrder = [
+        'All',
+        'Presidential Range',
+        'Franconia Range',
+        'Twin/Bond Range',
+        'Carter-Moriah Range',
+        'Kinsman Range',
+        'Sandwich Range',
+        'Willey Range',
+        'Pemi Wilderness & Remote',
+        'Loners & Remote Peaks'
+      ];
+
+      let peaks = [];
+      let currentRange = 'All';
+      let itemListSchemaEl;
+
+      const seasonRows = {
+        summer: [
+          ['Trail access', 'Many trailheads open after mud season, but check for temporary closures or construction detours.'],
+          ['Gear', 'Light layers, sun protection, bug netting in early summer, and traction for lingering monorail snow.'],
+          ['Strategy', 'Many hikers start at dawn for Lafayette–Lincoln or the Bonds to avoid thunderstorms and crowds.'],
+          ['Road notes', 'Tripoli Road (Tecumseh/Osceola) and Zealand Road often open after mud season; confirm status with official updates.'],
+          ['Navigation', 'Above-treeline routes on Washington, Jefferson, and Adams require careful rock hopping and bailout awareness.']
+        ],
+        winter: [
+          ['Trail access', 'Gated roads (Zealand, Tripoli, Sawyer River) often add miles to Osceola, Zealand, and Carrigain; verify current access.'],
+          ['Gear', 'Snowshoes (when depth >8"), microspikes, goggles, four-season shells, and hot backups for electronics.'],
+          ['Strategy', 'Short daylight usually demands pre-dawn starts; sheltered routes (Pierce, Waumbek, Tecumseh) are popular in high winds.'],
+          ['Road notes', 'Cog Railway and Cannon tram do not count toward AMC credit; plan self-propelled ascents from winter lots.'],
+          ['Navigation', 'Whiteouts on the Presidential Range make cairn-to-cairn travel hazardous—carry map, compass, and GPX.']
+        ]
+      };
+
+      function parseCoords(coordString) {
+        if (!coordString || typeof coordString !== 'string' || !coordString.includes(',')) return null;
+        const [lat, lon] = coordString.split(',').map((v) => parseFloat(v.trim()));
+        if (Number.isFinite(lat) && Number.isFinite(lon)) return { lat, lon };
+        return null;
+      }
+
+      function bestFor(entry, slug) {
+        if (entry['View Type']) return entry['View Type'];
+        if (entry['Terrain Character']) return entry['Terrain Character'];
+        const custom = {
+          'mount-tecumseh': 'First NH48 summit / family-friendly',
+          'mount-waumbek': 'Low exposure forest hike',
+          'mount-washington': 'Alpine weather & observatory views',
+          'mount-lafayette': 'Franconia Ridge panorama',
+          'owls-head': 'Remote endurance loop',
+          'bondcliff': 'Iconic cliff ledge panorama'
+        };
+        return custom[slug] || 'Classic NH48 experience';
+      }
+
+      function getRange(entry, slug) {
+        if (rangeLookup[slug]) return rangeLookup[slug];
+        const range = entry['Range / Subrange'];
+        if (range && typeof range === 'string') {
+          if (range.toLowerCase().includes('presidential')) return 'Presidential Range';
+          if (range.toLowerCase().includes('franconia')) return 'Franconia Range';
+          if (range.toLowerCase().includes('carter') || range.toLowerCase().includes('moriah')) return 'Carter-Moriah Range';
+        }
+        return 'Pemi Wilderness & Remote';
+      }
+
+      function renderRangeFilters() {
+        const container = document.getElementById('rangeFilters');
+        container.innerHTML = '';
+        rangeOrder.forEach((label) => {
+          const btn = document.createElement('button');
+          btn.className = `chip ${currentRange === label ? 'active' : ''}`;
+          btn.type = 'button';
+          btn.textContent = label;
+          btn.dataset.range = label;
+          btn.addEventListener('click', () => {
+            currentRange = label;
+            renderRangeFilters();
+            renderPeakTable();
+          });
+          container.appendChild(btn);
+        });
+      }
+
+      function renderRangeList() {
+        const list = document.getElementById('rangeList');
+        list.innerHTML = '';
+        const descriptions = {
+          'Presidential Range': 'High alpine ridges with volatile weather; many hikers rehearse bailout options for Washington–Jefferson–Adams days.',
+          'Franconia Range': 'Iconic ridge walks featuring Lafayette, Lincoln, Liberty, Flume, and Garfield. Check route guides for conditions.',
+          'Twin/Bond Range': 'Long Pemigewasset Wilderness miles featuring Bondcliff’s ledge and West Bond’s sunset perch; logistics vary by season.',
+          'Carter-Moriah Range': 'Forest duff, ledgy steps, and hut-to-hut options linking the Carters and Wildcats; exposure shifts with weather.',
+          'Kinsman Range': 'Moosilauke’s bald dome plus Cannon/Kinsman ledges overlooking Franconia Notch—expect changing footing and wind.',
+          'Sandwich Range': 'Osceola, Passaconaway, Whiteface, and the Tripyramids with varied footing that can feel very different in winter.',
+          'Willey Range': 'Short, steep climbs to Tom, Field, and Willey with viewpoints that reward calm-weather days.',
+          'Pemi Wilderness & Remote': 'Carrigain’s fire tower, Owl’s Head’s slide, and the Hancock pair tucked inside the Pemi; approaches can be wet or muddy.',
+          'Loners & Remote Peaks': 'Cabot in the Pilot Range and Waumbek in the Pliny Range—quiet forest walks where conditions change quickly.'
+        };
+        rangeOrder.filter((r) => r !== 'All').forEach((range) => {
+          const card = document.createElement('div');
+          card.className = 'range-card';
+          const title = document.createElement('div');
+          title.style.display = 'flex';
+          title.style.justifyContent = 'space-between';
+          title.style.alignItems = 'center';
+          const h = document.createElement('h3');
+          h.textContent = range;
+          h.style.margin = '0 0 6px';
+          const filterBtn = document.createElement('button');
+          filterBtn.className = 'chip';
+          filterBtn.textContent = 'Filter';
+          filterBtn.type = 'button';
+          filterBtn.addEventListener('click', () => {
+            currentRange = range;
+            renderRangeFilters();
+            renderPeakTable();
+            window.scrollTo({ top: document.getElementById('official-peak-list').offsetTop - 60, behavior: 'smooth' });
+          });
+          title.appendChild(h);
+          title.appendChild(filterBtn);
+          const desc = document.createElement('p');
+          desc.textContent = descriptions[range];
+          card.appendChild(title);
+          card.appendChild(desc);
+          list.appendChild(card);
+        });
+      }
+
+      function renderPeakTable() {
+        const tbody = document.getElementById('peakTableBody');
+        tbody.innerHTML = '';
+        const filtered = currentRange === 'All' ? peaks : peaks.filter((p) => p.range === currentRange);
+        filtered
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .forEach((peak) => {
+            const tr = document.createElement('tr');
+            const peakCell = document.createElement('td');
+            const link = document.createElement('a');
+            link.href = `/peaks/${peak.slug}/`;
+            link.textContent = peak.name;
+            peakCell.appendChild(link);
+
+            const elevCell = document.createElement('td');
+            elevCell.textContent = peak.elevation ? peak.elevation.toLocaleString() : '—';
+
+            const rangeCell = document.createElement('td');
+            rangeCell.textContent = peak.range;
+
+            const bestCell = document.createElement('td');
+            bestCell.textContent = peak.bestFor;
+
+            tr.appendChild(peakCell);
+            tr.appendChild(elevCell);
+            tr.appendChild(rangeCell);
+            tr.appendChild(bestCell);
+            tbody.appendChild(tr);
+          });
+      }
+
+      function renderQuickFacts() {
+        const totalElevation = peaks.reduce((sum, p) => sum + (p.elevation || 0), 0);
+        document.getElementById('factTotal').textContent = `${totalElevation.toLocaleString()} ft`;
+        const highest = [...peaks].sort((a, b) => (b.elevation || 0) - (a.elevation || 0))[0];
+        if (highest) {
+          document.getElementById('factHigh').textContent = `${highest.name} – ${highest.elevation?.toLocaleString() || '—'} ft`;
+        }
+      }
+
+      function renderMap() {
+        const map = document.getElementById('peakMap');
+        map.innerHTML = '';
+        const coords = peaks.filter((p) => p.coords);
+        if (!coords.length) {
+          map.innerHTML = '<text x="10" y="30" fill="#cbd5e1">No coordinate data available.</text>';
+          return;
+        }
+        const lats = coords.map((c) => c.coords.lat);
+        const lons = coords.map((c) => c.coords.lon);
+        const minLat = Math.min(...lats);
+        const maxLat = Math.max(...lats);
+        const minLon = Math.min(...lons);
+        const maxLon = Math.max(...lons);
+        const padding = 20;
+        const width = map.clientWidth || 800;
+        const height = map.clientHeight || 360;
+        map.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+        function project(lat, lon) {
+          const x = ((lon - minLon) / (maxLon - minLon)) * (width - padding * 2) + padding;
+          const y = ((maxLat - lat) / (maxLat - minLat)) * (height - padding * 2) + padding;
+          return { x, y };
+        }
+
+        coords.forEach((peak) => {
+          const { x, y } = project(peak.coords.lat, peak.coords.lon);
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', x);
+          circle.setAttribute('cy', y);
+          circle.setAttribute('r', 5);
+          circle.setAttribute('fill', '#22c55e');
+          circle.setAttribute('stroke', '#0b1020');
+          circle.setAttribute('stroke-width', '1');
+          circle.setAttribute('aria-label', peak.name);
+          circle.addEventListener('mouseenter', () => {
+            circle.setAttribute('fill', '#60a5fa');
+          });
+          circle.addEventListener('mouseleave', () => {
+            circle.setAttribute('fill', '#22c55e');
+          });
+          circle.addEventListener('click', () => {
+            window.open(`/peaks/${peak.slug}/`, '_blank');
+          });
+          map.appendChild(circle);
+        });
+      }
+
+      function renderSeasonTable(season) {
+        const tbody = document.getElementById('seasonRows');
+        const heading = document.getElementById('seasonHeading');
+        heading.textContent = season === 'winter' ? 'Winter Strategy' : 'Summer Strategy';
+        tbody.innerHTML = '';
+        seasonRows[season].forEach(([topic, detail]) => {
+          const tr = document.createElement('tr');
+          const t1 = document.createElement('td');
+          t1.textContent = topic;
+          const t2 = document.createElement('td');
+          t2.textContent = detail;
+          tr.appendChild(t1);
+          tr.appendChild(t2);
+          tbody.appendChild(tr);
+        });
+      }
+
+      function renderItemListSchema() {
+        if (itemListSchemaEl) itemListSchemaEl.remove();
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        const itemList = {
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: 'NH48 Peaks',
+          description: 'Community directory of the New Hampshire 4,000-footers with links to every peak detail page; confirm details with the AMC.',
+          numberOfItems: peaks.length,
+          itemListOrder: 'Ascending',
+          itemListElement: peaks.map((peak, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: peak.name,
+            url: `https://nh48.info/peaks/${peak.slug}/`,
+            description: `${peak.range} — ${peak.bestFor}`
+          }))
+        };
+        script.textContent = JSON.stringify(itemList, null, 2);
+        document.body.appendChild(script);
+        itemListSchemaEl = script;
+      }
+
+      function injectFAQSchema() {
+        const faqScript = document.createElement('script');
+        faqScript.type = 'application/ld+json';
+        faqScript.textContent = JSON.stringify(
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: [
+              {
+                '@type': 'Question',
+                name: 'What is the easiest 4000 footer in New Hampshire?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'Mt. Tecumseh and Mt. Waumbek offer short mileage, modest elevation gain, and sheltered forest routes, making them the gentlest NH48 summits.'
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'Do winter ascents count toward the NH48 list?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'Yes. Winter climbs (December 21 through March 21) count toward the primary NH48 completion and separately for the AMC Winter Four-Thousand-Footer award.'
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'Which NH48 range has the most dangerous weather?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'The Presidential Range is the most weather-exposed: rapid temperature swings, alpine winds, and long above-treeline stretches demand conservative decision-making.'
+                }
+              },
+              {
+                '@type': 'Question',
+                name: 'How do I find individual peak details?',
+                acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Follow the links in the Current NH 4,000-Footer List to /peaks/slug/. Each peak page includes a Back to the NH48 Info link for reciprocal navigation.'
+            }
+          }
+        ]
+      },
+          null,
+          2
+        );
+        document.body.appendChild(faqScript);
+      }
+
+      function hydratePeaks(data) {
+        peaks = Object.values(data).map((entry) => {
+          const slug = entry.slug || entry.peakName?.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          return {
+            slug,
+            name: entry.peakName || entry['Peak Name'],
+            elevation: parseInt(entry['Elevation (ft)'], 10) || null,
+            prominence: parseInt(entry['Prominence (ft)'], 10) || null,
+            range: getRange(entry, slug),
+            bestFor: bestFor(entry, slug),
+            coords: parseCoords(entry.Coordinates)
+          };
+        });
+      }
+
+      function init() {
+        renderRangeFilters();
+        renderRangeList();
+        renderSeasonTable('summer');
+        document.getElementById('summerBtn').addEventListener('click', () => {
+          document.getElementById('summerBtn').classList.add('active');
+          document.getElementById('winterBtn').classList.remove('active');
+          renderSeasonTable('summer');
+        });
+        document.getElementById('winterBtn').addEventListener('click', () => {
+          document.getElementById('winterBtn').classList.add('active');
+          document.getElementById('summerBtn').classList.remove('active');
+          renderSeasonTable('winter');
+        });
+
+        fetch('/manifest_out.json')
+          .then((r) => r.json())
+          .then((data) => {
+            hydratePeaks(data);
+            renderPeakTable();
+            renderQuickFacts();
+            renderItemListSchema();
+            renderMap();
+          })
+          .catch((err) => {
+            console.error('Failed to load peak data', err);
+            document.getElementById('peakTableBody').innerHTML = '<tr><td colspan="4">Unable to load peaks right now.</td></tr>';
+          });
+
+        injectFAQSchema();
+      }
+
+      document.addEventListener('DOMContentLoaded', init);
+  </script>
+  <div id="footer-placeholder"></div>
+</body>
+</html>

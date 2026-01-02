@@ -5,23 +5,75 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <script>
-    // Preserve clean URLs while serving the app directly from /trails/
-    if (window.location.pathname === '/pages/trails_app.html') {
-      window.location.replace('/trails');
-    }
+    (function redirectToApp() {
+      const host = location.hostname;
+
+      const isPreviewHost =
+        host === "localhost" ||
+        host === "127.0.0.1" ||
+        host.includes("github") ||
+        host.endsWith("githubpreview.dev");
+
+      if (isPreviewHost) {
+        return;
+      }
+
+      const target = "https://nh48.info/pages/trails_app.html";
+      const ua = (typeof navigator !== "undefined" && navigator.userAgent) || "";
+      const botSignatures = [
+        "adsbot-google",
+        "ahrefsbot",
+        "applebot",
+        "baiduspider",
+        "bingbot",
+        "bingpreview",
+        "chatgpt",
+        "claudebot",
+        "duckduckbot",
+        "exabot",
+        "facebookexternalhit",
+        "facebot",
+        "gptbot",
+        "google-inspectiontool",
+        "googlebot",
+        "ia_archiver",
+        "linkedinbot",
+        "mediapartners-google",
+        "petalbot",
+        "redditbot",
+        "semrushbot",
+        "slurp",
+        "sogou",
+        "twitterbot",
+        "yandex"
+      ];
+      const uaLower = ua.toLowerCase();
+      const isKnownBot = botSignatures.some((signature) => uaLower.includes(signature));
+      const shouldRedirect = !isKnownBot && typeof window !== "undefined" && target && window.location.href !== target;
+
+      if (shouldRedirect) {
+        window.location.replace(target);
+      }
+    })();
   </script>
-  <title>WMNF Trails Map &amp; Open Data – White Mountain National Forest</title>
+  <noscript>
+    <p>
+      JavaScript is required to continue.
+      <a href="https://nh48.info/pages/trails_app.html">Continue</a>
+    </p>
+  </noscript>
+  <title>White Mountain Trails Map &amp; Open Data – White Mountain National Forest</title>
   <meta name="description" content="Explore White Mountain National Forest trails with an interactive map and open datasets for WMNF routes and 2,000-foot peaks. Download normalized JSON for your own apps.">
   <meta name="keywords" content="WMNF trails,White Mountain National Forest,New Hampshire hiking trails,open trail data,WMNF dataset,2000 foot peaks">
   <link rel="canonical" href="https://nh48.info/trails">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="WMNF Trails Map &amp; Open Data – White Mountain National Forest">
+  <meta property="og:title" content="White Mountain Trails Map &amp; Open Data – White Mountain National Forest">
   <meta property="og:description" content="Interactive WMNF trail explorer plus downloadable JSON datasets for White Mountain routes and 2,000-foot peaks.">
   <meta property="og:url" content="https://nh48.info/trails">
   <meta property="og:image" content="https://nh48.info/WMNF_Trails_API_logo.png">
   <meta property="og:image:alt" content="White Mountain National Forest trail data and map preview">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="WMNF Trails Map &amp; Open Data – White Mountain National Forest">
+  <meta name="twitter:title" content="White Mountain Trails Map &amp; Open Data – White Mountain National Forest">
   <meta name="twitter:description" content="Open WMNF trail and 2,000-foot peak datasets with an interactive planning map.">
   <meta name="twitter:image" content="https://nh48.info/WMNF_Trails_API_logo.png">
   <meta name="twitter:image:alt" content="White Mountain National Forest trail data and map preview">
@@ -44,14 +96,15 @@
     <link rel="alternate" hreflang="pl" href="https://nh48.info/i18n/pl.html">
     <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
     <link rel="stylesheet" href="/css/quick-browse-footer.css">
+    <script src="/js/quick-browse-footer.js" defer></script>
     <script type="module" src="../js/i18n.js"></script>
 
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Dataset",
-      "name": "White Mountain National Forest Trails & 2,000-Foot Peaks (WMNF Trails API)",
-      "description": "Independent WMNF dataset containing normalized trail geometry and 2,000-foot peak records used by the WMNF Trails App.",
+      "name": "White Mountain National Forest Trails & 2,000-Foot Peaks (White Mountain Trails API)",
+      "description": "Independent WMNF dataset containing normalized trail geometry and 2,000-foot peak records used by the White Mountain Trails App.",
       "identifier": "wmnf-trails",
       "url": "https://nh48.info/trails",
       "sameAs": [
@@ -75,7 +128,7 @@
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "creator": {
         "@type": "Organization",
-        "name": "NH48 / WMNF Trails",
+        "name": "NH48 / White Mountain Trails",
         "url": "https://nh48.info"
       },
       "spatialCoverage": {
@@ -111,15 +164,15 @@
         {
           "@type": "DataDownload",
           "encodingFormat": "text/plain",
-          "name": "WMNF Trails (tabular export)",
+          "name": "White Mountain Trails (tabular export)",
           "contentUrl": "https://nh48.info/data/wmnf-trails/White_Mountains_Trails.txt"
         }
       ],
       "includedInDataCatalog": {
         "@type": "DataCatalog",
-        "name": "WMNF Trails App",
+        "name": "White Mountain Trails App",
         "url": "https://nh48.info/trails",
-        "description": "Trail network, peak overlays, and derived files powering the WMNF Trails App and embeddable map widgets.",
+        "description": "Trail network, peak overlays, and derived files powering the White Mountain Trails App and embeddable map widgets.",
         "license": "https://creativecommons.org/licenses/by/4.0/"
       }
     }
@@ -130,7 +183,7 @@
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://nh48.info/" },
-        { "@type": "ListItem", "position": 2, "name": "WMNF Trails" }
+        { "@type": "ListItem", "position": 2, "name": "White Mountain Trails" }
       ]
     }
   </script>
@@ -504,14 +557,6 @@
       overflow-y: auto;
     }
 
-    .about-panel {
-      flex: 1;
-      min-width: 300px;
-      max-width: 420px;
-      margin: 0;
-      overflow-y: auto;
-    }
-
     /* Sidebar (settings) styles defined above.  Old definitions removed to avoid conflicts. */
 
     /* Header section with title */
@@ -659,6 +704,19 @@
       gap: 0.5rem;
     }
 
+    .trail-info-initial,
+    .trail-info-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      height: 100%;
+    }
+
+    .trail-info-initial[hidden],
+    .trail-info-content[hidden] {
+      display: none;
+    }
+
     .trail-info-panel h2 {
       margin: 0 0 0.35rem;
       font-size: 1.1rem;
@@ -712,6 +770,29 @@
       text-align: center;
       color: var(--text-secondary);
       line-height: 1.5;
+    }
+
+    .trail-info-about {
+      padding: 0.75rem;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      text-align: left;
+    }
+
+    .trail-info-about h3 {
+      margin: 0 0 0.25rem;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      text-align: left;
+    }
+
+    .trail-info-about p {
+      margin: 0;
+      text-align: left;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      font-size: 0.9rem;
     }
 
     .peakbagger-panel .cta {
@@ -872,9 +953,6 @@
         flex-direction: column;
       }
 
-      .about-panel {
-        max-width: 100%;
-      }
     }
 
     .leaflet-popup-content-wrapper {
@@ -942,22 +1020,31 @@
     }
 
     /* Style for the link to view the GitHub API repository */
+    .api-link-container {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: center;
+    }
     .view-api-link {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.4rem 0.75rem;
-      background-color: var(--button-green);
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 0.8rem;
+      gap: 0.4rem;
+      padding: 0.5rem 0.9rem;
+      background-color: rgba(34, 197, 94, 0.12);
+      color: #eafbf1;
+      border: 1px solid var(--button-green);
+      border-radius: 6px;
+      font-size: 0.85rem;
       cursor: pointer;
       text-decoration: none;
-      transition: background-color 0.2s ease;
+      transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 6px 24px rgba(34, 197, 94, 0.18);
     }
     .view-api-link:hover {
-      background-color: var(--button-green-dark);
+      background-color: rgba(34, 197, 94, 0.22);
+      color: #ffffff;
+      box-shadow: 0 8px 28px rgba(34, 197, 94, 0.28);
     }
 
     /* Trail list styling adjustments for completed status */
@@ -1056,35 +1143,55 @@
 </style>
 </head>
 
-<body data-page="trails">
+<body data-route="trails" data-page="trails">
   <div id="nav-placeholder"></div>
   <script>
-    (() => {
-      // Load shared navigation without leaking globals so repeated embeds don't redeclare consts
+    document.addEventListener('DOMContentLoaded', () => {
       const navPlaceholder = document.getElementById('nav-placeholder');
-      if (!navPlaceholder) return;
+      const footerPlaceholder = document.getElementById('footer-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
 
-      fetch('/pages/nav.html')
-        .then(response => response.text())
-        .then(html => {
-          navPlaceholder.innerHTML = html;
-          const activeRoute = document.body.dataset.page;
-          const activeLink = navPlaceholder.querySelector(`[data-route="${activeRoute}"]`);
-          if (activeLink) {
-            activeLink.classList.add('active');
-          }
-        })
-        .catch(err => console.error('Failed to load navigation:', err));
-    })();
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+
+      const hasQuickFooter = document.querySelector('.nh48-quick-footer');
+
+      if (footerPlaceholder && !hasQuickFooter) {
+        fetch('/pages/footer.html')
+          .then(response => response.text())
+          .then(html => {
+            footerPlaceholder.innerHTML = html;
+          })
+          .catch(err => console.error('Failed to load footer:', err));
+      }
+    });
   </script>
   <header class="page-header">
     <nav class="breadcrumbs" aria-label="Breadcrumb">
       <ol>
         <li><a href="/">Home</a></li>
-        <li aria-current="page">WMNF Trails</li>
+        <li aria-current="page">White Mountain Trails</li>
       </ol>
     </nav>
-    <h1 data-i18n="trails.title">🏔️ WMNF Trails API Map Tool</h1>
+    <h1 data-i18n="trails.title">🏔️ White Mountain Trails API Map Tool</h1>
     <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
     <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
     <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
@@ -1118,8 +1225,50 @@
         <p id="map-accessibility-note" class="sr-only">High-contrast basemap with green trail lines, white selection outlines, and large circular markers for route highlights. Popups list trail length, elevation context, and OpenStreetMap details. Keyboard users can tab into the map to move focus to interactive controls.</p>
       </div>
       <div id="trailInfoPanel" class="trail-info-panel">
-        <h2 data-i18n="trails.details.title">Trail details</h2>
-        <p data-i18n="trails.details.empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
+        <div id="trailInfoInitial" class="trail-info-initial">
+          <h2 id="trailInfoHeading" class="trail-info-heading">Select a trail to view details</h2>
+          <p id="trailInfoEmpty" class="trail-info-empty" data-i18n="trails.details.empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
+          <div class="trail-info-about">
+            <h3 id="trailInfoAboutTitle" data-i18n="trails.about.title">About this tool</h3>
+            <p id="trailInfoAboutBody" data-i18n="trails.about.body">NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths.</p>
+          </div>
+          <div class="info-panel initial-info-panel">
+            <details open>
+              <summary id="trailDisclaimerHeading" data-i18n="trails.disclaimer.title">Disclaimer</summary>
+              <p id="trailDisclaimerBody" data-i18n-html="trails.disclaimer.body">This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry.</p>
+            </details>
+            <details open>
+              <summary id="trailHowToHeading" data-i18n="trails.howto.title">How to use</summary>
+              <p id="trailHowToBody" data-i18n="trails.howto.body">Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below.</p>
+            </details>
+            <details>
+              <summary id="trailSettingsHeading" data-i18n="trails.settings.title">Settings</summary>
+              <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                  <input type="checkbox" id="hideCompleted" style="accent-color: var(--button-green);">
+                  <span id="trailHideCompletedLabel" data-i18n="trails.settings.hideCompleted">Hide completed trails</span>
+                </label>
+                <button id="clearProgress" type="button" style="padding: 0.4rem 0.75rem; background-color: var(--button-green); color: white; border: none; border-radius: 5px; font-size: 0.8rem; cursor: pointer; width: fit-content;" data-i18n="trails.settings.clearProgress">Clear all progress</button>
+              </div>
+            </details>
+            <div class="export-import">
+              <button id="exportBtn" type="button" data-i18n="trails.export">Export CSV</button>
+              <label for="importFile" class="import-label">
+                <span id="trailImportLabel" data-i18n="trails.import">Import</span>
+                <input type="file" id="importFile" accept=".csv,.xlsx,.json" />
+              </label>
+            </div>
+            <div class="api-link-container">
+              <a href="https://github.com/natesobol/WMNF-Trails-API/tree/main" target="_blank" rel="noopener noreferrer" class="view-api-link">
+                <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" style="fill: currentColor; margin-right: 0.4rem;">
+                  <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.62 7.62 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+                <span id="trailApiLinkLabel" data-i18n="trails.viewApi">View API</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div id="trailInfoContent" class="trail-info-content" hidden></div>
       </div>
     </div>
     <div id="panelResizer" role="separator" data-i18n="trails.resizePanels" data-i18n-attr="aria-label" aria-label="Resize panels"></div>
@@ -1155,48 +1304,6 @@
         </div>
       </div>
     </div>
-      <div class="info-panel about-panel">
-        <details open>
-          <summary data-i18n="trails.about.title">About this list</summary>
-          <p data-i18n="trails.about.body">NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths.</p>
-        </details>
-        <details open>
-          <summary data-i18n="trails.disclaimer.title">Disclaimer</summary>
-          <p data-i18n-html="trails.disclaimer.body">This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry.</p>
-        </details>
-        <details open>
-          <summary data-i18n="trails.howto.title">How to use</summary>
-          <p data-i18n="trails.howto.body">Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below.</p>
-        </details>
-        <!-- Settings collapsible section for additional options -->
-        <details>
-          <summary data-i18n="trails.settings.title">Settings</summary>
-          <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
-            <label style="display: flex; align-items: center; gap: 0.5rem;">
-              <input type="checkbox" id="hideCompleted" style="accent-color: var(--button-green);">
-              <span data-i18n="trails.settings.hideCompleted">Hide completed trails</span>
-            </label>
-            <button id="clearProgress" type="button" style="padding: 0.4rem 0.75rem; background-color: var(--button-green); color: white; border: none; border-radius: 5px; font-size: 0.8rem; cursor: pointer; width: fit-content;" data-i18n="trails.settings.clearProgress">Clear all progress</button>
-          </div>
-        </details>
-        <div class="export-import">
-          <button id="exportBtn" type="button" data-i18n="trails.export">Export CSV</button>
-          <label for="importFile" class="import-label">
-            <span data-i18n="trails.import">Import</span>
-            <input type="file" id="importFile" accept=".csv,.xlsx,.json" />
-          </label>
-        </div>
-        <!-- Link to view the GitHub API repository -->
-        <div class="api-link-container" style="margin-top: 0.75rem;">
-          <a href="https://github.com/natesobol/WMNF-Trails-API/tree/main" target="_blank" rel="noopener noreferrer" class="view-api-link">
-            <!-- GitHub logo SVG -->
-            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" style="fill: currentColor; margin-right: 0.4rem;">
-              <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.62 7.62 0 012-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-            </svg>
-            <span data-i18n="trails.viewApi">View API</span>
-          </a>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -1222,6 +1329,9 @@
           });
         }
       };
+
+      const initialTrailQuery = new URLSearchParams(window.location.search).get('trail');
+      const searchInput = document.getElementById('searchInput');
 
       // Set an improved center and zoom over the White Mountain National Forest.
       // These coordinates zoom closer to the core of the WMNF while showing most trails.
@@ -1318,10 +1428,56 @@
 
       // Trail info lookup and UI state for the details panel beneath the map.
       const trailInfoPanel = document.getElementById('trailInfoPanel');
+      const trailInfoInitial = document.getElementById('trailInfoInitial');
+      const trailInfoContent = document.getElementById('trailInfoContent');
       let trailInfoLookup = new Map();
       let trailInfoLoaded = false;
       let currentTrailSelection = null;
       let telemetryTrailCount = null;
+
+      function setInitialInfoText() {
+        const heading = document.getElementById('trailInfoHeading');
+        if (heading) heading.textContent = 'Select a trail to view details';
+
+        const emptyState = document.getElementById('trailInfoEmpty');
+        if (emptyState) emptyState.textContent = t('trails.details.empty');
+
+        const aboutTitle = document.getElementById('trailInfoAboutTitle');
+        if (aboutTitle) aboutTitle.textContent = t('trails.about.title');
+
+        const aboutBody = document.getElementById('trailInfoAboutBody');
+        if (aboutBody) aboutBody.textContent = t('trails.about.body');
+
+        const disclaimerHeading = document.getElementById('trailDisclaimerHeading');
+        if (disclaimerHeading) disclaimerHeading.textContent = t('trails.disclaimer.title');
+
+        const disclaimerBody = document.getElementById('trailDisclaimerBody');
+        if (disclaimerBody) disclaimerBody.innerHTML = t('trails.disclaimer.body');
+
+        const howToHeading = document.getElementById('trailHowToHeading');
+        if (howToHeading) howToHeading.textContent = t('trails.howto.title');
+
+        const howToBody = document.getElementById('trailHowToBody');
+        if (howToBody) howToBody.textContent = t('trails.howto.body');
+
+        const settingsHeading = document.getElementById('trailSettingsHeading');
+        if (settingsHeading) settingsHeading.textContent = t('trails.settings.title');
+
+        const hideCompletedLabel = document.getElementById('trailHideCompletedLabel');
+        if (hideCompletedLabel) hideCompletedLabel.textContent = t('trails.settings.hideCompleted');
+
+        const clearProgressBtn = document.getElementById('clearProgress');
+        if (clearProgressBtn) clearProgressBtn.textContent = t('trails.settings.clearProgress');
+
+        const exportBtn = document.getElementById('exportBtn');
+        if (exportBtn) exportBtn.textContent = t('trails.export');
+
+        const importLabel = document.getElementById('trailImportLabel');
+        if (importLabel) importLabel.textContent = t('trails.import');
+
+        const apiLinkLabel = document.getElementById('trailApiLinkLabel');
+        if (apiLinkLabel) apiLinkLabel.textContent = t('trails.viewApi');
+      }
 
       // Normalize trail names for matching (case-insensitive, trimmed, collapses spaces).
       function normalizeTrailName(name) {
@@ -1630,23 +1786,26 @@
       }
 
       function renderTrailInfo(name) {
-        if (!trailInfoPanel) return;
+        if (!trailInfoPanel || !trailInfoInitial || !trailInfoContent) return;
         currentTrailSelection = name || null;
 
         if (!name) {
-          trailInfoPanel.innerHTML = `
-            <h2>${t('trails.details.title')}</h2>
-            <p class="trail-info-empty">${t('trails.details.empty')}</p>
-          `;
+          setInitialInfoText();
+          trailInfoContent.innerHTML = '';
+          trailInfoContent.hidden = true;
+          trailInfoInitial.hidden = false;
           return;
         }
+
+        trailInfoInitial.hidden = true;
+        trailInfoContent.hidden = false;
 
         const record = trailInfoLookup.get(normalizeTrailName(name));
         if (!record) {
           const message = trailInfoLoaded
             ? t('trails.info.noProperties')
             : t('trails.info.loadingProperties');
-          trailInfoPanel.innerHTML = `
+          trailInfoContent.innerHTML = `
             <h2>${name}</h2>
             <p class="trail-info-empty">${message}</p>
           `;
@@ -1712,7 +1871,7 @@
             </div>
           `);
 
-        trailInfoPanel.innerHTML = `
+        trailInfoContent.innerHTML = `
           <h2>${record.trail_name || name}</h2>
           <p>${t('trails.info.sourceNote')}</p>
           <div class="trail-info-grid">${primaryItems.concat(extraTags).join('')}</div>
@@ -2244,19 +2403,22 @@
         populateSuggestions();
         renderTrailList();
         trackEvent('trails_app_ready', { trailCount: trailNames.length });
-        const trailQuery = new URLSearchParams(window.location.search).get('trail');
+        const trailQuery = initialTrailQuery;
         if (trailQuery) {
           const matched = matchTrailName(trailQuery, trailNames);
           if (!matched) {
             window.location.replace('/not-found.html');
             return;
           }
+          if (searchInput) {
+            searchInput.value = matched;
+            renderTrailList();
+          }
           renderTrailInfo(matched);
           trackEvent('trails_query_select', { trail: matched });
         }
       }
       // Attach event listeners for search, sort, hide completed, and clear progress.
-      const searchInput = document.getElementById('searchInput');
       let searchDebounce;
       searchInput.addEventListener('input', () => {
         renderTrailList();
@@ -2366,64 +2528,8 @@
 
 })();
 </script>
-<footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title">
-  <div class="nh48-quick-footer__header">
-    <div class="nh48-quick-footer__eyebrow">Quick Browse</div>
-    <h2 id="nh48-quick-footer-title">Browse NH48 peaks of the White Mountains of New Hampshire</h2>
-    <p>Jump directly into every New Hampshire 4,000-footer detail page to strengthen internal linking and keep crawlers flowing through the full NH48 set.</p>
-  </div>
-  <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
-    <a class="nh48-quick-footer__link" href="/peaks/mount-washington.html">Mount Washington</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-lafayette.html">Mount Lafayette</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-lincoln.html">Mount Lincoln</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-tecumseh.html">Mount Tecumseh</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-moosilauke.html">Mount Moosilauke</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-pierce.html">Mount Pierce</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-liberty.html">Mount Liberty</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-adams.html">Mount Adams</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-eisenhower.html">Mount Eisenhower</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-osceola.html">Mount Osceola</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-jackson.html">Mount Jackson</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-monroe.html">Mount Monroe</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-jefferson.html">Mount Jefferson</a>
-    <a class="nh48-quick-footer__link" href="/peaks/cannon-mountain.html">Cannon Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-madison.html">Mount Madison</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-flume.html">Mount Flume</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-garfield.html">Mount Garfield</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-carrigain.html">Mount Carrigain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/north-kinsman-mountain.html">North Kinsman Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/south-kinsman-mountain.html">South Kinsman Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-whiteface.html">Mount Whiteface</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-passaconaway.html">Mount Passaconaway</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-field.html">Mount Field</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-tom.html">Mount Tom</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-willey.html">Mount Willey</a>
-    <a class="nh48-quick-footer__link" href="/peaks/carter-dome.html">Carter Dome</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-moriah.html">Mount Moriah</a>
-    <a class="nh48-quick-footer__link" href="/peaks/south-carter-mountain.html">South Carter Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/middle-carter-mountain.html">Middle Carter Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-hale.html">Mount Hale</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-waumbek.html">Mount Waumbek</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-isolation.html">Mount Isolation</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-cabot.html">Mount Cabot</a>
-    <a class="nh48-quick-footer__link" href="/peaks/north-tripyramid.html">North Tripyramid</a>
-    <a class="nh48-quick-footer__link" href="/peaks/middle-tripyramid.html">Middle Tripyramid</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-osceola-east.html">Mount Osceola – East Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-d.html">Wildcat Mountain – D Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/wildcat-mountain-a.html">Wildcat Mountain – A Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/galehead-mountain.html">Galehead Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/zealand-mountain.html">Zealand Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/west-bond.html">West Bond</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-bond.html">Mount Bond</a>
-    <a class="nh48-quick-footer__link" href="/peaks/south-twin-mountain.html">South Twin Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/north-twin-mountain.html">North Twin Mountain</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-hancock-south.html">Mount Hancock – South Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/mount-hancock.html">Mount Hancock – North Peak</a>
-    <a class="nh48-quick-footer__link" href="/peaks/owls-head.html">Owl's Head</a>
-    <a class="nh48-quick-footer__link" href="/peaks/bondcliff.html">Bondcliff</a>
-  </div>
-</footer>
-  <script type="module">
+  <div id="footer-placeholder"></div>
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
 

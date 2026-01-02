@@ -56,7 +56,7 @@
   },
   "catalog": {
     "title": "کاتالوگ قله‌های NH48",
-    "intro": "قله‌های چهارهزار فوتی نیوهمپشایر را مرور کنید. روی هر قله کلیک کنید تا جزئیات بیشتری ببینید. اگر خطایی رخ دهد، جزئیات در پایین نمایش داده می‌شود. دادهٔ باز و مجموعه‌داده‌های کوه‌های ۴٬۰۰۰ فوتی نیوهمپشایر.",
+    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
     "search": {
       "placeholder": "جستجوی قله بر اساس نام…",
       "ariaLabel": "جستجوی قله بر اساس نام"
@@ -204,7 +204,19 @@
         "fileCreateDate": "File Create Date",
         "fileModifiedDate": "File Modified Date",
         "rating": "Rating",
-        "metadata": "Metadata"
+        "metadata": "فراداده",
+        "creditLine": "خط اعتبار",
+        "source": "منبع",
+        "copyrightNotice": "اعلامیه حق نشر",
+        "copyrightStatus": "وضعیت حق نشر",
+        "rightsUsageTerms": "شرایط حقوق و استفاده",
+        "altText": "متن جایگزین",
+        "alt": "جایگزین",
+        "extendedAlt": "متن جایگزین گسترده",
+        "caption": "شرح",
+        "headline": "تیتر",
+        "extendedDescription": "توضیح گسترده",
+        "description": "توضیح"
       }
     },
     "generalInfo": {
@@ -245,7 +257,7 @@
     }
   },
   "trails": {
-    "title": "🏔️ WMNF Trails API Map Tool",
+    "title": "🏔️ White Mountain Trails API Map Tool",
     "subtitle": "Open peak, trail, and route data structure for the White Mountains.",
     "intro": "White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.",
     "details": {

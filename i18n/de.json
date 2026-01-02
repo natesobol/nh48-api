@@ -46,7 +46,7 @@
     "logoAlt": "NH48 API-Logo",
     "tagline": "Offene Daten und strukturierte Metadaten für die 4.000-Fuß-Gipfel in New Hampshire.",
     "catalog": "Katalog",
-    "trails": "WMNF Trails",
+    "trails": "White Mountain Trails",
     "longTrails": "Lange Trails",
     "pics": "NH48 Pics",
     "peakBagger": "Peak Bagger",
@@ -56,7 +56,7 @@
   },
   "catalog": {
     "title": "NH48-Gipfelkatalog",
-    "intro": "Durchstöbern Sie New Hampshires achtundvierzig 4.000-Fuß-Gipfel. Klicken Sie auf einen Gipfel, um mehr Details zu sehen. Bei Fehlern erscheinen die Details unten. Offene API und Datensätze für New Hampshires 4.000-Fuß-Berge.",
+    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
     "search": {
       "placeholder": "Gipfel nach Namen suchen…",
       "ariaLabel": "Gipfel nach Namen suchen"
@@ -204,7 +204,19 @@
         "fileCreateDate": "Dateierstellung",
         "fileModifiedDate": "Dateiänderung",
         "rating": "Bewertung",
-        "metadata": "Metadaten"
+        "metadata": "Metadaten",
+        "creditLine": "Bildnachweis",
+        "source": "Quelle",
+        "copyrightNotice": "Copyright-Hinweis",
+        "copyrightStatus": "Copyright-Status",
+        "rightsUsageTerms": "Nutzungsbedingungen",
+        "altText": "Alternativtext",
+        "alt": "Alt",
+        "extendedAlt": "Erweiterter Alternativtext",
+        "caption": "Bildunterschrift",
+        "headline": "Überschrift",
+        "extendedDescription": "Erweiterte Beschreibung",
+        "description": "Beschreibung"
       }
     },
     "generalInfo": {
@@ -245,7 +257,7 @@
     }
   },
   "trails": {
-    "title": "🏔️ WMNF Trails API-Kartentool",
+    "title": "🏔️ White Mountain Trails API-Kartentool",
     "subtitle": "Offene Datenstruktur für Gipfel, Wege und Routen der White Mountains.",
     "intro": "White Mountain National Forest — zusammengestellt von Nate Sobol. Nutzen Sie dies als schnellen Wegfinder und Fortschrittstracker. Offene API und Datensätze für New Hampshires 4.000-Fuß-Berge.",
     "details": {
