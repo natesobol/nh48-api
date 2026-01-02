@@ -638,6 +638,18 @@
 
       });
     </script>
+
+  <main id="app">
+    <aside class="sidebar" aria-live="polite">
+      <div id="sectionDetails" class="section-details"></div>
+      <div class="trail-directory-title">Trail segments</div>
+      <div id="trailList" class="accordion"></div>
+    </aside>
+    <section class="map-panel">
+      <div id="map"></div>
+    </section>
+  </main>
+
   <div class="page-shell">
     <header class="page-header">
       <div class="page-logo">
@@ -648,7 +660,7 @@
       <div class="header-text">
         <h1>Long-Distance Trails</h1>
         <p>Explore multi-day trail campaigns with interactive maps, filters, and section details.</p>
-        <p>Click a section to view details, then click “View section” for the full section page.</p>
+        <p>Click a section to view details, then click "View section" for the full section page.</p>
       </div>
     </header>
 
@@ -658,17 +670,6 @@
         <li>Long Trails</li>
       </ol>
     </nav>
-
-    <main id="app">
-      <aside class="sidebar" aria-live="polite">
-        <div id="sectionDetails" class="section-details"></div>
-        <div class="trail-directory-title">Trail segments</div>
-        <div id="trailList" class="accordion"></div>
-      </aside>
-      <section class="map-panel">
-        <div id="map"></div>
-      </section>
-    </main>
   </div>
 
   <!-- Quick browse footer injected from /pages/footer.html via quick-browse-footer.js -->
