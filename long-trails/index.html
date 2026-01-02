@@ -151,6 +151,7 @@
       --text-secondary: #d9dde5;
       --accent: #4a9eff;
       --page-padding: clamp(16px, 4vw, 48px);
+      --desktop-viewport-buffer: clamp(180px, 18vh, 260px);
     }
 
     html, body {
@@ -278,6 +279,24 @@
       letter-spacing: 0.08em;
       color: var(--text-secondary);
       margin: 4px 2px 10px;
+    }
+
+    @media (min-width: 901px) {
+      #app {
+        height: calc(100dvh - var(--desktop-viewport-buffer));
+        min-height: calc(100dvh - var(--desktop-viewport-buffer));
+        padding-bottom: clamp(24px, 3vw, 48px);
+      }
+
+      .sidebar,
+      .map-panel {
+        height: 100%;
+        min-height: 0;
+      }
+
+      #map {
+        min-height: 0;
+      }
     }
 
     .accordion {
