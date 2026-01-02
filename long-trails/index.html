@@ -243,7 +243,6 @@
       border-radius: 12px;
       overflow: hidden;
       background: var(--bg-secondary);
-      min-height: 480px;
       display: flex;
       flex-direction: column;
       height: 100%;
@@ -282,20 +281,45 @@
     }
 
     @media (min-width: 901px) {
-      #app {
-        height: calc(100dvh - var(--desktop-viewport-buffer));
-        min-height: calc(100dvh - var(--desktop-viewport-buffer));
-        padding-bottom: clamp(24px, 3vw, 48px);
+      body {
+        min-height: 100vh;
+        overflow: hidden;
       }
 
-      .sidebar,
+      .page-header {
+        margin: 0;
+        max-width: none;
+        padding: 12px clamp(18px, 4vw, 32px) 8px;
+      }
+
+      #app {
+        grid-template-columns: clamp(300px, 24vw, 360px) minmax(0, 1fr);
+        height: 100%;
+        min-height: 0;
+        padding: 0;
+        gap: 0;
+      }
+
+      .sidebar {
+        border-radius: 0;
+        height: 100%;
+        min-height: 0;
+        border: 0;
+        border-right: 1px solid var(--border-color);
+        padding: 18px;
+      }
+
       .map-panel {
+        border: 0;
+        border-radius: 0;
+        background: var(--bg-primary);
         height: 100%;
         min-height: 0;
       }
 
       #map {
         min-height: 0;
+        height: 100%;
       }
     }
 
