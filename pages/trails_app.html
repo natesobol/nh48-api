@@ -211,6 +211,8 @@
       --accent-red: #ff6b6b;
       --success-green: #51cf66;
       --hover-bg: #33373f;
+      --page-padding: clamp(16px, 4vw, 48px);
+      --content-width: 1200px;
 
       /* Dark green used for primary action buttons (Export/Import) */
       --button-green: #2f855a;
@@ -228,20 +230,75 @@
 
     .page-header {
       max-width: 1100px;
-      margin: 1rem auto;
-      padding: 0 16px;
+      margin: 1.25rem auto 0.35rem;
+      padding: 0 var(--page-padding);
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
     .page-header h1 {
-      margin: 0 0 0.35rem;
-      font-size: 1.8rem;
+      margin: 0;
+      font-size: clamp(1.65rem, 2vw, 2rem);
+      line-height: 1.1;
     }
 
     .page-header p {
-      margin: 0;
+      margin: 0.2rem 0 0;
       color: var(--text-secondary);
-      font-size: 1rem;
-      line-height: 1.5;
+      line-height: 1.4;
+    }
+
+    .header-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .page-logo {
+      display: inline-flex;
+    }
+
+    .page-breadcrumbs {
+      margin: 0 auto 10px;
+      color: var(--text-secondary);
+      max-width: 1100px;
+      padding: 0 var(--page-padding);
+    }
+
+    .page-breadcrumbs ol {
+      display: flex;
+      gap: 8px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .page-breadcrumbs li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .page-breadcrumbs li + li::before {
+      content: "/";
+      color: var(--text-secondary);
+      opacity: 0.7;
+    }
+
+    .page-breadcrumbs a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .page-breadcrumbs a:hover,
+    .page-breadcrumbs a:focus-visible {
+      text-decoration: underline;
     }
 
     .logo-wrap {
@@ -275,45 +332,6 @@
       font-weight: 600;
       font-size: 1.1rem;
       color: #d6f5df;
-    }
-
-    .page-breadcrumbs {
-      max-width: 1100px;
-      margin: 0 auto 10px;
-      padding: 0 1rem;
-      color: var(--text-secondary);
-    }
-
-    .page-breadcrumbs ol {
-      display: flex;
-      gap: 8px;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      font-size: 0.95rem;
-    }
-
-    .page-breadcrumbs li {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .page-breadcrumbs li + li::before {
-      content: "/";
-      color: var(--text-secondary);
-      opacity: 0.7;
-    }
-
-    .page-breadcrumbs a {
-      color: var(--accent-blue);
-      text-decoration: none;
-      font-weight: 700;
-    }
-
-    .page-breadcrumbs a:hover,
-    .page-breadcrumbs a:focus-visible {
-      text-decoration: underline;
     }
     .nh48-lang {
       display: flex;
@@ -1084,15 +1102,332 @@
       background-color: var(--button-green-dark);
     }
 
+    /* Fullscreen desktop layout */
+    @media (min-width: 901px) {
+      body {
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+      }
+
+      .page-shell {
+        display: none;
+      }
+
+      #app {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+        border: none;
+        box-shadow: none;
+        max-width: none;
+      }
+
+      .sidebar {
+        width: 20%;
+        min-width: 280px;
+        max-width: 400px;
+        height: 100vh;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 0;
+        border-left: none;
+        border-top: none;
+        border-bottom: none;
+        padding: 20px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        z-index: 1000;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+        position: relative;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .map-panel {
+        flex: 1;
+        height: 100vh;
+        border: none;
+        border-radius: 0;
+        overflow: hidden;
+        background: var(--bg-secondary);
+        position: relative;
+      }
+
+      #mapContainer {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        background-color: var(--bg-secondary);
+        border: none;
+        border-radius: 0;
+        height: 100vh;
+      }
+
+      #map {
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        background-color: #2d2d2d;
+        border-radius: 0;
+      }
+
+      #nav-placeholder {
+        position: fixed;
+        top: 0;
+        left: 20%;
+        right: 0;
+        z-index: 1001;
+        background: rgba(26, 29, 35, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border-color);
+        min-width: 280px;
+      }
+
+      /* Hide footer on desktop */
+      .nh48-quick-footer {
+        display: none !important;
+      }
+
+      /* Trail info panel styling for sidebar */
+      .trail-info-panel {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      .trail-info-heading {
+        margin: 0 0 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .trail-info-empty {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      .trail-info-about {
+        margin-top: 16px;
+      }
+
+      .trail-info-about h3 {
+        margin: 0 0 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .trail-info-about p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        line-height: 1.4;
+      }
+
+      .trail-directory-title {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-secondary);
+        margin: 4px 2px 10px;
+      }
+
+      .controls {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .controls input[type="text"] {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        font-size: 0.9rem;
+      }
+
+      .controls select {
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        font-size: 0.9rem;
+      }
+
+      .letter-nav-wrapper {
+        margin-bottom: 12px;
+      }
+
+      .jump-label {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-right: 8px;
+      }
+
+      .letter-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .letter-nav span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .letter-nav span:hover {
+        background: var(--accent-blue);
+        color: var(--text-primary);
+        border-color: var(--accent-blue);
+      }
+
+      .trail-list-container {
+        flex: 1;
+        overflow-y: auto;
+        min-height: 0;
+      }
+
+      #trailList {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      #trailList li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        margin-bottom: 4px;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      #trailList li:hover {
+        background: var(--hover-bg);
+        border-color: var(--accent-blue);
+      }
+
+      .loading-state {
+        text-align: center;
+        padding: 20px;
+        color: var(--text-secondary);
+      }
+    }
+
     /* Mobile layout adjustments */
     @media (max-width: 900px) {
+      body {
+        overflow: auto;
+      }
+
+      .page-shell {
+        display: block;
+      }
+
       #app {
+        position: relative;
         display: flex;
         flex-direction: column;
         height: auto;
         border: none;
         box-shadow: none;
         max-width: none;
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
+      }
+
+      .sidebar {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        position: relative;
+        width: auto;
+        height: auto;
+        left: auto;
+        top: auto;
+        box-shadow: none;
+        z-index: auto;
+        flex-shrink: 0;
+        order: 2;
+      }
+
+      .map-panel {
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--bg-secondary);
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        width: auto;
+        flex: 1;
+        order: 1;
+        min-height: 50vh;
+      }
+
+      #mapContainer {
+        order: 1;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        min-height: 50vh;
+      }
+
+      #map {
+        min-height: 50vh;
+      }
+
+      #nav-placeholder {
+        position: static;
+        background: transparent;
+        backdrop-filter: none;
+        border: none;
+        min-width: auto;
       }
 
       #panelResizer {
@@ -1143,19 +1478,6 @@
         padding: 0.75rem 0.5rem;
       }
 
-      #mapContainer {
-        order: 1;
-        padding: 0;
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
-        min-height: 50vh;
-      }
-
-      #map {
-        min-height: 50vh;
-      }
-
       #trailInfoPanel {
         order: 2;
         margin-top: 0.75rem;
@@ -1197,15 +1519,61 @@
       }
     });
   </script>
+  <main id="app">
+    <aside class="sidebar" aria-live="polite">
+      <div id="trailInfoPanel" class="trail-info-panel">
+        <h2 class="trail-info-heading">Select a trail to view details</h2>
+        <p class="trail-info-empty" data-i18n="trails.details.empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
+        <div class="trail-info-about">
+          <h3 data-i18n="trails.about.title">About this list</h3>
+          <p data-i18n="trails.about.body">NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you're working towards the same goal of experiencing these paths.</p>
+        </div>
+      </div>
+      <div class="trail-directory-title">White Mountain Trails</div>
+      <!-- Search and sort controls -->
+      <div class="controls">
+        <!-- Search input with autocomplete support using datalist -->
+        <input type="text" id="searchInput" data-i18n="trails.search" data-i18n-attr="placeholder" placeholder="Search trails…" list="trailSuggestions" autocomplete="off" />
+        <!-- Datalist providing autocomplete suggestions for trail names sans suffixes -->
+      <datalist id="trailSuggestions"></datalist>
+      <select id="sortSelect">
+        <option value="az" data-i18n="trails.sort.az">Sort A → Z</option>
+        <option value="za" data-i18n="trails.sort.za">Sort Z → A</option>
+      </select>
+    </div>
+      <!-- A‑Z letter navigation bar with label -->
+      <div class="letter-nav-wrapper">
+        <span class="jump-label" data-i18n="trails.jumpTo">Jump To:</span>
+        <div id="letterNav" class="letter-nav"></div>
+      </div>
+      <!-- Trail list container -->
+      <div class="trail-list-container">
+        <ul id="trailList"></ul>
+        <div id="loadingState" class="loading-state" style="display: none;">
+          <p data-i18n="trails.loading">Loading trails...</p>
+        </div>
+      </div>
+    </aside>
+    <section class="map-panel">
+      <div id="mapContainer">
+        <div id="map"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="page-shell">
     <header class="page-header">
       <div class="page-logo">
         <div class="logo-wrap">
           <img src="/WMNF_Trails_API_logo.png" alt="White Mountain National Forest trails map logo" title="White Mountain Trails API" loading="lazy" decoding="async">
         </div>
       </div>
-      <h1 data-i18n="trails.title">🏔️ White Mountain Trails API Map Tool</h1>
-      <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
-      <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
+      <div class="header-text">
+        <h1 data-i18n="trails.title">🏔️ White Mountain Trails API Map Tool</h1>
+        <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
+        <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire's 4,000-foot mountains.</p>
+      </div>
+    </header>
     <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
       <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
       <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
@@ -1227,85 +1595,30 @@
         <span class="flag flag-ja" aria-hidden="true">🇯🇵</span>
       </button>
     </div>
-  </header>
-  <nav class="page-breadcrumbs" aria-label="Breadcrumb">
-    <ol>
-      <li><a href="/">Home</a></li>
-      <li>White Mountain Trails</li>
-    </ol>
-  </nav>
-  <div id="app">
-    <!-- Top section containing the map and trail details -->
-    <div id="topSection">
-      <!-- Map container wrapped in its own panel to provide padding and border -->
-      <div id="mapContainer">
-        <div id="map"></div>
-      </div>
-      <div id="trailInfoPanel" class="trail-info-panel">
-        <h2 class="trail-info-heading">Select a trail to view details</h2>
-        <p class="trail-info-empty" data-i18n="trails.details.empty">Select a trail to view distance, elevation, and OpenStreetMap details.</p>
-        <div class="trail-info-about">
-          <h3 data-i18n="trails.about.title">About this list</h3>
-          <p data-i18n="trails.about.body">NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths.</p>
-        </div>
-      </div>
-    </div>
-    <div id="panelResizer" role="separator" data-i18n="trails.resizePanels" data-i18n-attr="aria-label" aria-label="Resize panels"></div>
-    <!-- List section below the map, spanning full width -->
-    <div id="bottomSection">
-      <div id="listSection">
-        <!-- Search and sort controls -->
-        <div class="controls">
-          <!-- Search input with autocomplete support using datalist -->
-          <input type="text" id="searchInput" data-i18n="trails.search" data-i18n-attr="placeholder" placeholder="Search trails…" list="trailSuggestions" autocomplete="off" />
-          <!-- Datalist providing autocomplete suggestions for trail names sans suffixes -->
-        <datalist id="trailSuggestions"></datalist>
-        <select id="sortSelect">
-          <option value="az" data-i18n="trails.sort.az">Sort A → Z</option>
-          <option value="za" data-i18n="trails.sort.za">Sort Z → A</option>
-        </select>
-      </div>
-      <!-- A‑Z letter navigation bar with label -->
-      <div class="letter-nav-wrapper">
-        <span class="jump-label" data-i18n="trails.jumpTo">Jump To:</span>
-        <div id="letterNav" class="letter-nav"></div>
-      </div>
-      <!-- Header row for the trail list -->
-      <div class="list-header">
-        <span class="header-name" data-i18n="trails.list.headerName">Trail Name</span>
-        <span class="header-completed" data-i18n="trails.list.headerCompleted">Completed</span>
-      </div>
-      <!-- Trail list container -->
-      <div class="trail-list-container">
-        <ul id="trailList"></ul>
-        <div id="loadingState" class="loading-state" style="display: none;">
-          <p data-i18n="trails.loading">Loading trails...</p>
-        </div>
-      </div>
-    </div>
-      <div class="info-panel about-panel">
-        <details open>
-          <summary data-i18n="trails.disclaimer.title">Disclaimer</summary>
-          <p data-i18n-html="trails.disclaimer.body">This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry.</p>
-        </details>
-        <details open>
-          <summary data-i18n="trails.howto.title">How to use</summary>
-          <p data-i18n="trails.howto.body">Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below.</p>
-        </details>
-        <!-- Settings collapsible section for additional options -->
-        <details>
-          <summary data-i18n="trails.settings.title">Settings</summary>
-          <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
-            <label style="display: flex; align-items: center; gap: 0.5rem;">
-              <input type="checkbox" id="hideCompleted" style="accent-color: var(--button-green);">
-              <span data-i18n="trails.settings.hideCompleted">Hide completed trails</span>
-            </label>
-            <button id="clearProgress" type="button" style="padding: 0.4rem 0.75rem; background-color: var(--button-green); color: white; border: none; border-radius: 5px; font-size: 0.8rem; cursor: pointer; width: fit-content;" data-i18n="trails.settings.clearProgress">Clear all progress</button>
-          </div>
-        </details>
-        <div class="export-import">
-          <button id="exportBtn" type="button" data-i18n="trails.export">Export CSV</button>
-          <label for="importFile" class="import-label">
+    <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li>White Mountain Trails</li>
+      </ol>
+    </nav>
+
+    <!-- Disclaimer and How to use sections for mobile -->
+    <div class="info-panel about-panel">
+      <details open>
+        <summary data-i18n="trails.disclaimer.title">Disclaimer</summary>
+        <p data-i18n-html="trails.disclaimer.body">This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry.</p>
+      </details>
+      <details open>
+        <summary data-i18n="trails.howto.title">How to use</summary>
+        <p data-i18n="trails.howto.body">Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below.</p>
+      </details>
+      <!-- Settings collapsible section for additional options -->
+      <details>
+        <summary data-i18n="trails.settings.title">Settings</summary>
+        <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" id="showCompleted" />
+            <span data-i18n="trails.settings.showCompleted">Show completed trails</span>
             <span data-i18n="trails.import">Import</span>
             <input type="file" id="importFile" accept=".csv,.xlsx,.json" />
           </label>
