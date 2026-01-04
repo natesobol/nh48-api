@@ -1617,11 +1617,21 @@
         <summary data-i18n="trails.settings.title">Settings</summary>
         <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
           <label style="display: flex; align-items: center; gap: 0.5rem;">
-            <input type="checkbox" id="showCompleted" />
-            <span data-i18n="trails.settings.showCompleted">Show completed trails</span>
-            <span data-i18n="trails.import">Import</span>
-            <input type="file" id="importFile" accept=".csv,.xlsx,.json" />
+            <input type="checkbox" id="hideCompleted" />
+            <span data-i18n="trails.settings.showCompleted">Hide completed trails</span>
           </label>
+          <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+            <button id="exportBtn" style="padding: 0.25rem 0.5rem; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
+              Export
+            </button>
+            <label style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer; padding: 0.25rem 0.5rem; border: 1px solid var(--border-color); background: var(--bg-tertiary); border-radius: 4px; font-size: 0.8rem;">
+              <span data-i18n="trails.import">Import</span>
+              <input type="file" id="importFile" accept=".csv,.xlsx,.json" style="display: none;" />
+            </label>
+            <button id="clearProgress" style="padding: 0.25rem 0.5rem; border: 1px solid var(--accent-red); background: var(--bg-tertiary); color: var(--accent-red); border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
+              Clear Progress
+            </button>
+          </div>
         </div>
         <!-- Link to view the GitHub API repository -->
         <div class="api-link-container">
@@ -1700,6 +1710,7 @@
         requestAnimationFrame(() => map.invalidateSize());
       }
 
+      // Only set up panel resizer if it exists (it won't in the new layout)
       if (panelResizer) {
         panelResizer.addEventListener('pointerdown', event => {
           event.preventDefault();
@@ -1952,6 +1963,7 @@
       }
 
       async function loadOsmTrailData() {
+        console.log('Starting to load OSM trail data...');
         const sources = [
           [
             '../data/wmnf-trails/wmnf-main.json',
@@ -1970,16 +1982,26 @@
           ]
         ];
 
+        console.log('Loading official trail names...');
         const officialNames = await loadOfficialTrailNames();
+        console.log('Official names loaded:', officialNames ? 'success' : 'failed');
         const allowedNames = officialNames?.normalized || null;
+        console.log('Allowed names count:', allowedNames ? allowedNames.size : 0);
 
         const allElements = [];
-        for (const urls of sources) {
+        for (let i = 0; i < sources.length; i++) {
+          const urls = sources[i];
+          console.log(`Loading source ${i + 1}/${sources.length}...`);
           const data = await fetchJsonWithFallback(urls);
           if (data && Array.isArray(data.elements)) {
+            console.log(`Source ${i + 1}: loaded ${data.elements.length} elements`);
             allElements.push(...data.elements);
+          } else {
+            console.log(`Source ${i + 1}: failed to load`);
           }
         }
+
+        console.log(`Total elements loaded: ${allElements.length}`);
 
         trailInfoLookup = new Map();
 
@@ -2018,6 +2040,8 @@
           group.tags = { ...group.tags, ...tags };
           group.distance_miles += computeDistanceMiles(coords);
         });
+
+        console.log(`Grouped trails: ${grouped.size}`);
 
         if (!grouped.size) {
           telemetryTrailCount = 0;
@@ -2345,36 +2369,42 @@
       }
 
       // Hook up export button click
-      document.getElementById('exportBtn').addEventListener('click', () => {
-        trackEvent('trails_export_csv');
-        exportCSV();
-      });
+      const exportBtn = document.getElementById('exportBtn');
+      if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+          trackEvent('trails_export_csv');
+          exportCSV();
+        });
+      }
       // Hook up import file change
-      document.getElementById('importFile').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        trackEvent('trails_import_start', { extension: file.name.split('.').pop().toLowerCase() });
-        const ext = file.name.split('.').pop().toLowerCase();
-        if (ext === 'csv') {
-          const reader = new FileReader();
-          reader.onload = function(ev) {
-            parseCSV(ev.target.result);
-          };
-          reader.readAsText(file);
-        } else if (ext === 'xlsx' || ext === 'xls') {
-          const reader = new FileReader();
-          reader.onload = function(ev) {
-            const data = new Uint8Array(ev.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-            parseRows(rows);
-          };
-          reader.readAsArrayBuffer(file);
-        }
-        // reset input to allow re-import of same file
-        this.value = '';
-      });
+      const importFile = document.getElementById('importFile');
+      if (importFile) {
+        importFile.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (!file) return;
+          trackEvent('trails_import_start', { extension: file.name.split('.').pop().toLowerCase() });
+          const ext = file.name.split('.').pop().toLowerCase();
+          if (ext === 'csv') {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+              parseCSV(ev.target.result);
+            };
+            reader.readAsText(file);
+          } else if (ext === 'xlsx' || ext === 'xls') {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+              const data = new Uint8Array(ev.target.result);
+              const workbook = XLSX.read(data, { type: 'array' });
+              const sheet = workbook.Sheets[workbook.SheetNames[0]];
+              const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+              parseRows(rows);
+            };
+            reader.readAsArrayBuffer(file);
+          }
+          // reset input to allow re-import of same file
+          this.value = '';
+        });
+      }
 
       // Helper function to highlight a single trail layer.  Resets all others
       // back to the default style before applying a highlighted style to the
@@ -2679,13 +2709,20 @@
       // Initialization logic
       // ------------------------
       // Load completion state, fetch GeoJSON, then populate map and list.
+      console.log('Initializing White Mountain Trails app...');
       loadCompletion();
       renderTrailInfo(null);
+      console.log('Loading OSM trail data...');
       const geoData = await loadOsmTrailData();
+      console.log('GeoData loaded:', geoData ? 'success' : 'failed');
       if (geoData) {
+        console.log('Adding trails to map...');
         addTrailsToMap(geoData);
+        console.log('Populating suggestions...');
         populateSuggestions();
+        console.log('Rendering trail list...');
         renderTrailList();
+        console.log('Trail names loaded:', trailNames.length);
         trackEvent('trails_app_ready', { trailCount: trailNames.length });
         const trailQuery = initialTrailQuery;
         if (trailQuery) {
@@ -2701,6 +2738,8 @@
           renderTrailInfo(matched);
           trackEvent('trails_query_select', { trail: matched });
         }
+      } else {
+        console.error('Failed to load trail data');
       }
       // Attach event listeners for search, sort, hide completed, and clear progress.
       let searchDebounce;
@@ -2715,20 +2754,26 @@
         renderTrailList();
         trackEvent('trails_sort_change', { sort: event.target.value });
       });
-      document.getElementById('hideCompleted').addEventListener('change', function() {
-        hideCompleted = this.checked;
-        renderTrailList();
-        trackEvent('trails_hide_completed_toggle', { enabled: hideCompleted });
-      });
-      document.getElementById('clearProgress').addEventListener('click', function() {
-        if (confirm(t('trails.confirmClear'))) {
-          completedTrails = {};
-          saveCompletion();
-          applyCompletionStyles();
+      const hideCompletedCheckbox = document.getElementById('hideCompleted');
+      if (hideCompletedCheckbox) {
+        hideCompletedCheckbox.addEventListener('change', function() {
+          hideCompleted = this.checked;
           renderTrailList();
-          trackEvent('trails_clear_progress');
-        }
-      });
+          trackEvent('trails_hide_completed_toggle', { enabled: hideCompleted });
+        });
+      }
+      const clearProgressBtn = document.getElementById('clearProgress');
+      if (clearProgressBtn) {
+        clearProgressBtn.addEventListener('click', function() {
+          if (confirm(t('trails.confirmClear'))) {
+            completedTrails = {};
+            saveCompletion();
+            applyCompletionStyles();
+            renderTrailList();
+            trackEvent('trails_clear_progress');
+          }
+        });
+      }
 
       if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
         window.NH48_I18N.onLangChange(() => {

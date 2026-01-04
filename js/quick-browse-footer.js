@@ -555,6 +555,11 @@
       return;
     }
 
+    // Check for footer-placeholder and inject there if found
+    const placeholder = document.getElementById('footer-placeholder');
+    const targetParent = placeholder ? placeholder.parentNode : document.body;
+    const insertBefore = placeholder ? placeholder.nextSibling : null;
+
     fetch(PARTIAL_URL)
       .then((response) => (response.ok ? response.text() : ''))
       .then((html) => {
@@ -570,7 +575,19 @@
         const footer = wrapper.querySelector(`[${FOOTER_ATTR}]`);
         if (!footer) return;
         footer.id = FOOTER_ID;
-        document.body.appendChild(footer);
+        
+        // Remove the placeholder if it exists
+        if (placeholder) {
+          placeholder.remove();
+        }
+        
+        // Insert the footer
+        if (insertBefore) {
+          targetParent.insertBefore(footer, insertBefore);
+        } else {
+          targetParent.appendChild(footer);
+        }
+        
         ensureFooterStyles();
         initializeFooters();
       })

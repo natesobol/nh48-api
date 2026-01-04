@@ -116,21 +116,124 @@
     scroll-snap-type: y proximity;
   }
 
-  .nh48-quick-footer__grid::-webkit-scrollbar {
-    width: 12px;
+  /* Desktop: Show all cards in one horizontal row */
+  @media (min-width: 1025px) {
+    .nh48-quick-footer .nh48-quick-footer__grid {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      justify-items: stretch;
+      gap: 12px;
+      width: min(1400px, 95vw);
+      max-width: none;
+      margin: 6px auto 0;
+      padding: 12px clamp(16px, 2vw, 24px);
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-height: none;
+      min-height: 0;
+      flex: 1 1 auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--nh48-footer-accent) color-mix(in srgb, var(--nh48-footer-card) 80%, #000 20%);
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+      scroll-padding: 0 20px;
+    }
+
+    .nh48-quick-footer .nh48-quick-footer__group {
+      flex: 1;
+      min-width: 140px;
+      max-width: 180px;
+      border: 1px solid var(--nh48-footer-border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: var(--nh48-footer-card);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.28);
+      text-align: center;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .nh48-quick-footer__group h2 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      letter-spacing: 0.1px;
+      color: var(--nh48-footer-ink);
+      line-height: 1.2;
+    }
+
+    .nh48-quick-footer__list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nh48-quick-footer__link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 6px 8px;
+      min-height: 32px;
+      text-align: left;
+      border-radius: 8px;
+      border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 70%, var(--nh48-footer-ink) 30%);
+      color: var(--nh48-footer-ink);
+      text-decoration: none;
+      background: color-mix(in srgb, var(--nh48-footer-card) 70%, var(--nh48-footer-accent) 30%);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      line-height: 1.2;
+      white-space: nowrap;
+      width: 100%;
+      font-size: 0.85rem;
+    }
+
+    .nh48-quick-footer__link:hover,
+    .nh48-quick-footer__link:focus-visible {
+      border-color: var(--nh48-footer-accent);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--nh48-footer-accent) 28%, transparent);
+      background: color-mix(in srgb, var(--nh48-footer-card) 55%, var(--nh48-footer-accent) 45%);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .nh48-quick-footer__grid::-webkit-scrollbar {
+      height: 8px;
+      width: auto;
+    }
+
+    .nh48-quick-footer__grid::-webkit-scrollbar-track {
+      background: color-mix(in srgb, var(--nh48-footer-card) 80%, #000 20%);
+      border-radius: 4px;
+    }
+
+    .nh48-quick-footer__grid::-webkit-scrollbar-thumb {
+      background: var(--nh48-footer-accent);
+      border-radius: 4px;
+      border: 1px solid rgba(26, 26, 46, 0.9);
+    }
   }
 
-  .nh48-quick-footer__grid::-webkit-scrollbar-track {
-    background: color-mix(in srgb, var(--nh48-footer-card) 80%, #000 20%);
-    border-radius: 10px;
+  /* Mobile/Tablet: Keep original stacked layout */
+  @media (max-width: 1024px) {
+    .nh48-quick-footer .nh48-quick-footer__grid {
+      grid-template-columns: 1fr;
+      max-height: 500px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 8px clamp(14px, 4vw, 22px) 10px;
+    }
+
+    .nh48-quick-footer .nh48-quick-footer__group {
+      max-width: 100%;
+    }
   }
 
-  .nh48-quick-footer__grid::-webkit-scrollbar-thumb {
-    background: var(--nh48-footer-accent);
-    border-radius: 10px;
-    border: 2px solid rgba(26, 26, 46, 0.9);
-  }
-
+  /* Base styles (non-desktop) */
   .nh48-quick-footer .nh48-quick-footer__group {
     border: 1px solid var(--nh48-footer-border);
     border-radius: 14px;
@@ -232,6 +335,7 @@
       grid-template-columns: 1fr;
       max-height: 500px;
       overflow-x: hidden;
+      overflow-y: auto;
       scroll-snap-type: y proximity;
       justify-content: center;
       justify-items: stretch;
