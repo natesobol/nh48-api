@@ -68,30 +68,50 @@
           "baiduspider",
           "bingbot",
           "bingpreview",
+          "bitlybot",
           "chatgpt",
           "claudebot",
+          "discordbot",
           "duckduckbot",
+          "embedly",
           "exabot",
           "facebookexternalhit",
           "facebot",
           "gptbot",
           "google-inspectiontool",
+          "google-sdtt",
+          "google-structured-data",
+          "googleother",
           "googlebot",
           "ia_archiver",
+          "ifttt",
           "linkedinbot",
+          "lighthouse",
           "mediapartners-google",
           "petalbot",
+          "pinterest",
+          "pinterestbot",
+          "qwantify",
           "redditbot",
           "semrushbot",
+          "slackbot",
           "slurp",
           "sogou",
+          "telegrambot",
           "twitterbot",
+          "uptimerobot",
+          "vkshare",
+          "w3c_validator",
+          "whatsapp",
           "yandex"
         ];
         const uaLower = ua.toLowerCase();
         const isKnownBot = botSignatures.some((signature) => uaLower.includes(signature));
+        const matchesBotKeyword = /(bot|spider|crawl|fetch|preview|validator|analyze)/i.test(
+          ua
+        );
 
-        if (!isKnownBot && typeof window !== "undefined" && target) {
+        if (!isKnownBot && !matchesBotKeyword && typeof window !== "undefined" && target) {
           window.location.replace(target);
         }
       })();
