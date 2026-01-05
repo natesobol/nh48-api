@@ -17,7 +17,6 @@
     crossorigin=""
   />
   <link rel="stylesheet" href="../css/long_trails_app.css" />
-  <link rel="stylesheet" href="/css/quick-browse-footer.css">
   <script src="/js/unified-footer.js" defer></script>
   <style>
     * {
@@ -233,11 +232,6 @@
         backdrop-filter: blur(10px);
         border-bottom: 1px solid var(--border-color);
         min-width: 280px;
-      }
-
-      /* Hide footer on desktop */
-      .nh48-quick-footer {
-        display: none !important;
       }
     }
 
@@ -672,8 +666,6 @@
     </nav>
   </div>
 
-  <!-- Quick browse footer injected from /pages/footer.html via quick-browse-footer.js -->
-  
   <section id="seo-trails" class="sr-only" aria-label="Long-distance trail sections index">
     <h2>Trail Sections Index</h2>
   </section>
@@ -1516,7 +1508,6 @@
 
   window.addEventListener('DOMContentLoaded', init);
 </script>
-<!-- Quick browse footer injected from /pages/footer.html via quick-browse-footer.js -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
