@@ -9,8 +9,8 @@
         --nh48-footer-surface: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
         --nh48-footer-card: color-mix(in srgb, #141833 70%, rgba(10, 12, 26, 0.55) 30%);
         --nh48-footer-border: #ffffff;
-        --nh48-footer-ink: var(--ink, #ffffff);
-        --nh48-footer-accent: var(--accent, #22c55e);
+        --nh48-footer-ink: #ffffff;
+        --nh48-footer-accent: #22c55e;
         margin: 32px 0 0;
         width: 100vw;
         max-width: none;
