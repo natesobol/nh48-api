@@ -4,58 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="index, follow, max-image-preview:large">
-  <script>
-    (function redirectToApp() {
-      const host = location.hostname;
-
-      const isPreviewHost =
-        host === "localhost" ||
-        host === "127.0.0.1" ||
-        host.includes("github") ||
-        host.endsWith("githubpreview.dev");
-
-      if (isPreviewHost) {
-        return;
-      }
-
-      const target = "https://nh48.info/pages/trails_app.html";
-      const ua = (typeof navigator !== "undefined" && navigator.userAgent) || "";
-      const botSignatures = [
-        "adsbot-google",
-        "ahrefsbot",
-        "applebot",
-        "baiduspider",
-        "bingbot",
-        "bingpreview",
-        "chatgpt",
-        "claudebot",
-        "duckduckbot",
-        "exabot",
-        "facebookexternalhit",
-        "facebot",
-        "gptbot",
-        "google-inspectiontool",
-        "googlebot",
-        "ia_archiver",
-        "linkedinbot",
-        "mediapartners-google",
-        "petalbot",
-        "redditbot",
-        "semrushbot",
-        "slurp",
-        "sogou",
-        "twitterbot",
-        "yandex"
-      ];
-      const uaLower = ua.toLowerCase();
-      const isKnownBot = botSignatures.some((signature) => uaLower.includes(signature));
-      const shouldRedirect = !isKnownBot && typeof window !== "undefined" && target && window.location.href !== target;
-
-      if (shouldRedirect) {
-        window.location.replace(target);
-      }
-    })();
-  </script>
   <noscript>
     <p>
       JavaScript is required to continue.
