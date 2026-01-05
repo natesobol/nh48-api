@@ -6,19 +6,19 @@
     <meta id="dynamicDescription" name="description" content="NH48 API – peak-level details, routes, terrain notes and photography for New Hampshire’s 4000-footers. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak details, mountain routes, White Mountains data, hiking API, peak metadata, mountain photos">
     <meta name="robots" content="index,follow,max-image-preview:large">
-    <link id="dynamicCanonical" rel="canonical" href="https://nh48.info/peaks">
-    <link id="hreflangEn" rel="alternate" hreflang="en" href="https://nh48.info/peaks">
-    <link id="hreflangFr" rel="alternate" hreflang="fr" href="https://nh48.info/fr/peaks">
-    <link id="hreflangDefault" rel="alternate" hreflang="x-default" href="https://nh48.info/peaks">
+    <link id="dynamicCanonical" rel="canonical" href="https://nh48.info/peak">
+    <link id="hreflangEn" rel="alternate" hreflang="en" href="https://nh48.info/peak">
+    <link id="hreflangFr" rel="alternate" hreflang="fr" href="https://nh48.info/fr/peak">
+    <link id="hreflangDefault" rel="alternate" hreflang="x-default" href="https://nh48.info/peak">
     <meta property="og:type" content="website">
-    <meta id="dynamicOgUrl" property="og:url" content="https://nh48.info/peaks">
+    <meta id="dynamicOgUrl" property="og:url" content="https://nh48.info/peak">
     <meta id="dynamicOgTitle" property="og:title" content="NH48 API – Peak details, routes &amp; photos">
     <meta id="dynamicOgDescription" property="og:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta id="dynamicOgImage" property="og:image" content="https://nh48.info/nh48-preview.png">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://nh48.info/peaks">
+    <meta name="twitter:url" content="https://nh48.info/peak">
     <meta id="dynamicTwitterTitle" name="twitter:title" content="NH48 API – Peak details, routes &amp; photos">
     <meta id="dynamicTwitterDescription" name="twitter:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta id="dynamicTwitterImage" name="twitter:image" content="https://nh48.info/nh48-preview.png">
@@ -29,16 +29,23 @@
     <link rel="icon" type="image/png" href="/nh48API_logo.png">
     <script src="/js/unified-footer.js" defer></script>
     <script>
+      function getRouteInfo(pathname){
+        const parts = pathname.split('/').filter(Boolean);
+        const isFrench = parts[0] === 'fr';
+        const slug = parts[isFrench ? 2 : 1] || '';
+        return { slug, isFrench };
+      }
+
       const params = new URLSearchParams(window.location.search);
       const requestedLang = params.get('lang');
       if (requestedLang) {
         localStorage.setItem('nh48_lang', requestedLang);
       }
 
-      const slugParam = params.get('slug');
-      const langForCanonical = (requestedLang || localStorage.getItem('nh48_lang') || '').toLowerCase();
-      const isFrench = langForCanonical.startsWith('fr');
-      const canonicalBaseEarly = isFrench ? 'https://nh48.info/fr/peaks' : 'https://nh48.info/peaks';
+      const routeInfo = getRouteInfo(window.location.pathname);
+      const slugParam = routeInfo.slug || params.get('slug');
+      const langHint = (requestedLang || localStorage.getItem('nh48_lang') || '').toLowerCase();
+      const canonicalBaseEarly = (langHint.startsWith('fr') || routeInfo.isFrench) ? 'https://nh48.info/fr/peak' : 'https://nh48.info/peak';
       const canonicalUrlEarly = slugParam ? `${canonicalBaseEarly}/${encodeURIComponent(slugParam)}/` : `${canonicalBaseEarly}/`;
       const canonicalEl = document.getElementById('dynamicCanonical');
       if (canonicalEl) {
@@ -46,16 +53,18 @@
       }
       const hreflangEnEarly = document.getElementById('hreflangEn');
       if (hreflangEnEarly) {
-        hreflangEnEarly.setAttribute('href', slugParam ? `https://nh48.info/peaks/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/peaks/');
+        hreflangEnEarly.setAttribute('href', slugParam ? `https://nh48.info/peak/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/peak/');
       }
       const hreflangFrEarly = document.getElementById('hreflangFr');
       if (hreflangFrEarly) {
-        hreflangFrEarly.setAttribute('href', slugParam ? `https://nh48.info/fr/peaks/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/fr/peaks/');
+        hreflangFrEarly.setAttribute('href', slugParam ? `https://nh48.info/fr/peak/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/fr/peak/');
       }
       const hreflangDefaultEarly = document.getElementById('hreflangDefault');
       if (hreflangDefaultEarly) {
-        hreflangDefaultEarly.setAttribute('href', slugParam ? `https://nh48.info/peaks/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/peaks/');
+        hreflangDefaultEarly.setAttribute('href', slugParam ? `https://nh48.info/peak/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/peak/');
       }
+
+      window.NH48_ROUTE_INFO = routeInfo;
     </script>
     <script type="module" src="/js/i18n.js"></script>
     <!--
@@ -784,6 +793,14 @@
     </style>
   </head>
   <body data-route="peak" data-page="peak">
+    <script>
+      window.NH48_ROUTE_INFO = window.NH48_ROUTE_INFO || (function(){
+        return {
+          slug: '',
+          isFrench: false
+        };
+      })();
+    </script>
     <div id="nav-placeholder"></div>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
@@ -976,8 +993,8 @@
         );
       }
 
-      const BASE_CANONICAL = 'https://nh48.info/peaks';
-      const BASE_CANONICAL_FR = 'https://nh48.info/fr/peaks';
+      const BASE_CANONICAL = 'https://nh48.info/peak';
+      const BASE_CANONICAL_FR = 'https://nh48.info/fr/peak';
       const HOME_URL = 'https://nh48.info/';
       const CATALOG_URL = 'https://nh48.info/catalog';
       const DEFAULT_OG_IMAGE = 'https://nh48.info/nh48API_logo.png';
@@ -986,6 +1003,15 @@
       const PHOTO_BASE = new URL(PHOTO_BASE_URL);
       const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
       const PHOTO_PATH_PREFIX = '/nh48-photos/';
+
+      function getResolvedSlug(){
+        const info = window.NH48_ROUTE_INFO || getRouteInfo(window.location.pathname);
+        if(info && info.slug){
+          return info.slug;
+        }
+        const params = new URLSearchParams(window.location.search);
+        return params.get('slug');
+      }
 
       function applyImageTransform(url){
         if(!url) return url;
@@ -1185,6 +1211,8 @@
         const paramLang = params.get('lang');
         const normalizedParam = paramLang ? paramLang.toLowerCase() : '';
         if(normalizedParam.startsWith('fr')) return 'fr';
+
+        if(window.NH48_ROUTE_INFO && window.NH48_ROUTE_INFO.isFrench) return 'fr';
 
         const storedLang = localStorage.getItem('nh48_lang');
         if(storedLang && storedLang.toLowerCase().startsWith('fr')) return 'fr';
@@ -2571,10 +2599,10 @@
 
       /* INIT ----------------------------------------------------------------- */
       async function init(){
-        const slug = new URLSearchParams(window.location.search).get('slug');
+        const slug = getResolvedSlug();
         if(!slug){
           trackEvent('peak_missing_slug');
-          window.location.replace('/not-found.html');
+          updatePeakTitle(t('peak.notFound') || 'Peak not found');
           return;
         }
 
@@ -2587,7 +2615,7 @@
 
           if(!p){
             trackEvent('peak_not_found', { slug });
-            window.location.replace('/not-found.html');
+            updatePeakTitle(t('peak.notFound') || 'Peak not found');
             return;
           }
 

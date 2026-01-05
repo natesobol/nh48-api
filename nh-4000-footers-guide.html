@@ -475,7 +475,7 @@
         </div>
         <div class="faq-item">
           <strong>How do I link to individual peak details?</strong>
-          <p>Use the /peaks/slug/ format shown in the Official Peak List. Each peak page now includes a “Back to the NH48 Guide” link for reciprocal navigation.</p>
+          <p>Use the /peak/slug/ format shown in the Official Peak List. Each peak page now includes a “Back to the NH48 Guide” link for reciprocal navigation.</p>
         </div>
       </section>
     </main>
@@ -670,7 +670,7 @@
             const tr = document.createElement('tr');
             const peakCell = document.createElement('td');
             const link = document.createElement('a');
-            link.href = `/peaks/${peak.slug}/`;
+            link.href = `/peak/${peak.slug}/`;
             link.textContent = peak.name;
             peakCell.appendChild(link);
 
@@ -742,7 +742,7 @@
             circle.setAttribute('fill', '#22c55e');
           });
           circle.addEventListener('click', () => {
-            window.open(`/peaks/${peak.slug}/`, '_blank');
+            window.open(`/peak/${peak.slug}/`, '_blank');
           });
           map.appendChild(circle);
         });
@@ -780,7 +780,7 @@
             '@type': 'ListItem',
             position: index + 1,
             name: peak.name,
-            url: `https://nh48.info/peaks/${peak.slug}/`,
+            url: `https://nh48.info/peak/${peak.slug}/`,
             description: `${peak.range} — ${peak.bestFor}`
           }))
         };
@@ -826,7 +826,7 @@
                 name: 'How do I find individual peak details?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: 'Follow the links in the Official Peak List to /peaks/slug/. Each peak page includes a Back to the NH48 Guide link for reciprocal navigation.'
+                  text: 'Follow the links in the Official Peak List to /peak/slug/. Each peak page includes a Back to the NH48 Guide link for reciprocal navigation.'
                 }
               }
             ]
@@ -976,7 +976,7 @@
         <p class="hero-copy">Build topical authority with the definitive NH48 resource. Explore the official AMC-aligned list, filter by range, compare winter vs. summer strategies, and pull open data directly from the NH48.info API to power your own tools.</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="#official-list">Browse the NH48 list</a>
-          <a class="btn" href="/pages/nh48_peak.html">View interactive peak pages</a>
+          <a class="btn" href="/peak/mount-washington">View interactive peak pages</a>
           <a class="btn" href="#api">Developer API docs</a>
         </div>
         <div class="panel" id="quickFacts" aria-live="polite">
@@ -1224,7 +1224,7 @@
         .forEach((peak) => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td><a href="/peaks/${peak.slug}/">${peak.name}</a></td>
+            <td><a href="/peak/${peak.slug}/">${peak.name}</a></td>
             <td>${formatElevation(peak.elevation)}</td>
             <td>${peak.range}</td>
             <td><span class="badge">${peak.difficulty}</span></td>
@@ -1264,7 +1264,7 @@
         card.className = 'panel range-card';
         card.innerHTML = `<h3>${range}</h3><ul>${list
           .sort((a, b) => a.name.localeCompare(b.name))
-          .map((p) => `<li><a href="/peaks/${p.slug}/">${p.name}</a> — ${formatElevation(p.elevation)}</li>`)
+          .map((p) => `<li><a href="/peak/${p.slug}/">${p.name}</a> — ${formatElevation(p.elevation)}</li>`)
           .join('')}</ul>`;
         grid.appendChild(card);
       });
@@ -1295,7 +1295,7 @@
         circle.setAttribute('data-name', c.name);
         circle.setAttribute('data-slug', c.slug);
         circle.addEventListener('click', () => {
-          window.location.href = `/peaks/${c.slug}/`;
+          window.location.href = `/peak/${c.slug}/`;
         });
         const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
         title.textContent = c.name;
@@ -1314,7 +1314,7 @@
           .map((peak, index) => ({
             '@type': 'ListItem',
             position: index + 1,
-            url: `https://nh48.info/peaks/${peak.slug}/`,
+            url: `https://nh48.info/peak/${peak.slug}/`,
             name: peak.name
           }))
       };
@@ -1358,7 +1358,7 @@
             name: 'How do I link to keep NH48 internal equity strong?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Link each summit mention to its /peaks/ page and add a return link with the anchor text "NH48 Guide" pointing back to /nh-4000-footers-guide.'
+              text: 'Link each summit mention to its /peak/ page and add a return link with the anchor text "NH48 Guide" pointing back to /nh-4000-footers-guide.'
             }
           }
         ]

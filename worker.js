@@ -1,0 +1,266 @@
+// Cloudflare Worker for NH48 Peak Guide – Full Template Version
+//
+// This Worker serves the full interactive peak detail page stored in the
+// GitHub repository (pages/nh48_peak.html) at clean URLs like
+// `/peak/{slug}` and `/fr/peak/{slug}`.  It removes the client-side
+// redirect logic from the template, injects a script that rewrites
+// `window.location.search` so that the existing client-side code can
+// read the slug from the query string, and inserts server-rendered
+// meta tags and structured data for SEO.  The Worker fetches the
+// mountain data and descriptions from an R2 bucket (`NH48_DATA`), and
+// loads translation dictionaries from GitHub to build localized
+// titles and descriptions.  By doing this work on the server, the
+// page becomes indexable while still delivering the full SPA
+// experience once the JS hydrates on the client.
+
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    const parts = url.pathname.split('/').filter(Boolean);
+
+    // Determine if the route is French and extract the slug.  We
+    // support two patterns:
+    //   /peak/{slug}
+    //   /fr/peak/{slug}
+    const isFrench = parts[0] === 'fr';
+    const slugIdx = isFrench ? 2 : 1;
+    const slug = parts[slugIdx] || '';
+    const lang = isFrench ? 'fr' : 'en';
+
+    // Only handle peak routes.  If the URL does not match, return 404.
+    const ok = (!isFrench && parts[0] === 'peak') || (isFrench && parts[1] === 'peak');
+    if (!ok || !slug) {
+      return new Response('Not found', { status: 404 });
+    }
+
+    // Constants
+    const SITE = 'https://nh48.info';
+    const RAW_TEMPLATE_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/pages/nh48_peak.html';
+    const EN_TRANS_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/i18n/en.json';
+    const FR_TRANS_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/i18n/fr.json';
+    const DEFAULT_IMAGE = `${SITE}/nh48-preview.png`;
+
+    // Global caches for translation JSON and mountain description map.  These
+    // persist across requests within the same instance of the Worker.
+    env.__i18n = env.__i18n || {};
+    env.__descMap = env.__descMap || null;
+    env.__peaks = env.__peaks || null;
+
+    // Fetch translation dictionary if needed
+    async function loadTranslation(code) {
+      if (!env.__i18n[code]) {
+        const url = code === 'fr' ? FR_TRANS_URL : EN_TRANS_URL;
+        try {
+          const res = await fetch(url, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
+          if (res.ok) {
+            env.__i18n[code] = await res.json();
+          }
+        } catch (_) {}
+      }
+      return env.__i18n[code] || {};
+    }
+
+    // Load mountain descriptions from R2 or cache
+    async function loadDescriptions() {
+      if (env.__descMap) return env.__descMap;
+      const map = Object.create(null);
+      try {
+        if (env.NH48_DATA) {
+          const obj = await env.NH48_DATA.get('mountain-descriptions.txt');
+          if (obj) {
+            const text = await obj.text();
+            text.split(/\r?\n/).forEach((line) => {
+              const trimmed = line.trim();
+              if (!trimmed || trimmed.startsWith('#')) return;
+              const idx = trimmed.indexOf(':');
+              if (idx > 0) {
+                const key = trimmed.slice(0, idx).trim();
+                const value = trimmed.slice(idx + 1).trim();
+                if (key) map[key] = value;
+              }
+            });
+          }
+        }
+      } catch (_) {}
+      env.__descMap = map;
+      return map;
+    }
+
+    // Load nh48.json from R2 or origin and cache it
+    async function loadPeaks() {
+      if (env.__peaks) return env.__peaks;
+      let peaks;
+      try {
+        if (env.NH48_DATA) {
+          const obj = await env.NH48_DATA.get('nh48.json');
+          if (obj) {
+            peaks = JSON.parse(await obj.text());
+          }
+        }
+      } catch (_) {}
+      if (!peaks) {
+        const res = await fetch(`${SITE}/data/nh48.json`, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
+        peaks = await res.json();
+      }
+      env.__peaks = peaks;
+      return peaks;
+    }
+
+    // Escape HTML characters
+    function esc(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Format numbers as feet
+    function formatFeet(value) {
+      if (value === null || value === undefined || value === '') return '';
+      const num = Number(String(value).replace(/[^0-9.-]/g, ''));
+      if (Number.isNaN(num)) return String(value);
+      return `${num.toLocaleString('en-US')} ft`;
+    }
+
+    // Parse coordinates
+    function parseCoords(val) {
+      if (!val) return { text: '', lat: null, lon: null };
+      const m = String(val).match(/-?\d+(?:\.\d+)?/g);
+      if (!m || m.length < 2) return { text: String(val), lat: null, lon: null };
+      return { text: `${m[0]}, ${m[1]}`, lat: Number(m[0]), lon: Number(m[1]) };
+    }
+
+    // Build meta title and description using translations and values
+    function buildMeta(trans, peakName, elevation, range, description) {
+      const titleTpl = trans['peak.meta.titleTemplate'] || '{peakName} | NH48';
+      const descTpl = trans['peak.meta.descriptionTemplate'] || '{peakName} – {description}';
+      const title = titleTpl.replace('{peakName}', peakName).replace('{elevation}', elevation).replace('{range}', range);
+      const descriptionText = descTpl.replace('{peakName}', peakName).replace('{description}', description).replace('{elevation}', elevation).replace('{range}', range);
+      return { title: esc(title), description: esc(descriptionText) };
+    }
+
+    // Build minimal JSON-LD for Mountain and Breadcrumb
+    function buildJsonLd(peakName, elevation, prominence, rangeVal, coords, canonicalUrl, imageUrl, summaryText) {
+      const mountain = {
+        '@context': 'https://schema.org',
+        '@type': 'Mountain',
+        name: peakName,
+        description: summaryText,
+        image: imageUrl,
+        url: canonicalUrl,
+        additionalProperty: []
+      };
+      if (elevation) {
+        mountain.additionalProperty.push({ '@type': 'PropertyValue', name: 'Elevation (ft)', value: elevation.replace(/ ft$/, '') });
+      }
+      if (prominence) {
+        mountain.additionalProperty.push({ '@type': 'PropertyValue', name: 'Prominence (ft)', value: prominence.replace(/ ft$/, '') });
+      }
+      if (rangeVal) {
+        mountain.additionalProperty.push({ '@type': 'PropertyValue', name: 'Range', value: rangeVal });
+      }
+      if (coords.lat && coords.lon) {
+        mountain.geo = { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon };
+      }
+      const breadcrumb = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: isFrench ? 'Accueil' : 'Home', item: isFrench ? `${SITE}/fr/` : `${SITE}/` },
+          { '@type': 'ListItem', position: 2, name: isFrench ? 'Catalogue des sommets' : 'Peak Catalog', item: isFrench ? `${SITE}/fr/catalog` : `${SITE}/catalog` },
+          { '@type': 'ListItem', position: 3, name: peakName, item: canonicalUrl }
+        ]
+      };
+      return { mountain, breadcrumb };
+    }
+
+    // Find the peak by slug in the loaded dataset
+    function findPeak(peaks, slugValue) {
+      let peak = null;
+      if (Array.isArray(peaks)) {
+        peak = peaks.find((p) => p.slug === slugValue || p.slug_en === slugValue || p.Slug === slugValue);
+      } else if (peaks && typeof peaks === 'object') {
+        peak = peaks[slugValue] || Object.values(peaks).find((p) => p.slug === slugValue || p.slug_en === slugValue || p.Slug === slugValue);
+      }
+      return peak;
+    }
+
+    // Load necessary data
+    const [peaks, descMap, trans] = await Promise.all([
+      loadPeaks(),
+      loadDescriptions(),
+      loadTranslation(lang)
+    ]);
+
+    const peak = findPeak(peaks, slug);
+    if (!peak) {
+      // If the slug doesn’t exist, return a simple 404 page instead of redirecting.  We
+      // avoid client redirects so that crawlers get a proper 404.
+      return new Response('<!doctype html><title>404 Not Found</title><h1>Peak not found</h1>', { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+
+    // Extract attributes for meta and structured data
+    const peakName = peak.peakName || peak.name || peak['Peak Name'] || slug;
+    const elevation = formatFeet(peak['Elevation (ft)'] || peak.elevation_ft || '');
+    const prominence = formatFeet(peak['Prominence (ft)'] || peak.prominence_ft || '');
+    const rangeVal = peak['Range / Subrange'] || peak.range || '';
+    const coords = parseCoords(peak.lat || peak.latitude || peak['Coordinates'] || '');
+    const primaryPhoto = Array.isArray(peak.photos) && peak.photos.length > 0 ? peak.photos[0] : null;
+    const heroUrl = primaryPhoto && primaryPhoto.url ? primaryPhoto.url : DEFAULT_IMAGE;
+    const summaryFromFile = descMap[slug] || '';
+    const summaryVal = summaryFromFile || (peak.summary || peak.description || '').toString().trim();
+
+    // Build canonical and alternate URLs
+    const canonical = isFrench ? `${SITE}/fr/peak/${encodeURIComponent(slug)}` : `${SITE}/peak/${encodeURIComponent(slug)}`;
+    const canonicalEn = `${SITE}/peak/${encodeURIComponent(slug)}`;
+    const canonicalFr = `${SITE}/fr/peak/${encodeURIComponent(slug)}`;
+    const canonicalX = canonicalEn;
+
+    // Build meta tags
+    const { title, description } = buildMeta(trans, peakName, elevation, rangeVal, summaryVal);
+    const { mountain, breadcrumb } = buildJsonLd(peakName, elevation, prominence, rangeVal, coords, canonical, heroUrl, summaryVal);
+
+    // Fetch the raw interactive HTML template from GitHub
+    const tplResp = await fetch(RAW_TEMPLATE_URL, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
+    if (!tplResp.ok) {
+      return new Response('Template unavailable', { status: 500 });
+    }
+    let html = await tplResp.text();
+
+    // Remove the client-side redirect logic.  The redirect in the
+    // original template checks for missing slug and redirects to
+    // /not-found.html if not found.  We remove any script that calls
+    // window.location.replace('/not-found.html') or similar.  This is a
+    // simple regex that removes the entire script block containing
+    // redirectToApp or window.location.replace.
+    html = html.replace(/<script[^>]*>[\s\S]*?window\.location\.replace\([^)]*\)[\s\S]*?<\/script>/gi, '');
+
+    // Insert our meta tags, canonical links and structured data just
+    // before the closing head tag.  We remove any existing dynamic
+    // placeholders for these elements and insert our own.
+    const metaBlock = [
+      `<title>${title}</title>`,
+      `<meta name="description" content="${description}" />`,
+      `<link rel="canonical" href="${canonical}" />`,
+      `<link rel="alternate" hreflang="en" href="${canonicalEn}" />`,
+      `<link rel="alternate" hreflang="fr" href="${canonicalFr}" />`,
+      `<link rel="alternate" hreflang="x-default" href="${canonicalX}" />`,
+      `<script type="application/ld+json">${JSON.stringify(mountain).replace(/</g, '<\/')}</script>`,
+      `<script type="application/ld+json">${JSON.stringify(breadcrumb).replace(/</g, '<\/')}</script>`
+    ].join('\n');
+    html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
+
+    // Return the modified interactive page with caching.  Set
+    // appropriate headers for SEO.  Browser cache is short to
+    // encourage fresh translation, edge cache is longer.
+    return new Response(html, {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, max-age=0, s-maxage=86400',
+        'X-Robots-Tag': 'index, follow'
+      }
+    });
+  }
+};

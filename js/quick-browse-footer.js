@@ -426,7 +426,7 @@
     try {
       const response = await fetch('/data/nh48.json');
       if (!response.ok) {
-        return POPULAR_PEAKS.map((peak) => ({ ...peak, href: `/peaks/${peak.slug}`, elevation: null }));
+        return POPULAR_PEAKS.map((peak) => ({ ...peak, href: `/peak/${peak.slug}`, elevation: null }));
       }
       const data = await response.json();
       return POPULAR_PEAKS.map((peak) => {
@@ -435,12 +435,12 @@
         return {
           ...peak,
           elevation,
-          href: `/peaks/${peak.slug}`
+          href: `/peak/${peak.slug}`
         };
       });
     } catch (error) {
       console.warn('NH48 quick footer failed to load elevations, falling back to defaults', error);
-      return POPULAR_PEAKS.map((peak) => ({ ...peak, href: `/peaks/${peak.slug}`, elevation: null }));
+      return POPULAR_PEAKS.map((peak) => ({ ...peak, href: `/peak/${peak.slug}`, elevation: null }));
     }
   };
 

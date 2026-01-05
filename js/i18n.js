@@ -14,6 +14,8 @@ import { LANGS } from './langConfig.js';
 
   function getLangFromPath() {
     const path = window.location.pathname || '';
+
+    // Dedicated translation pages (/i18n/{lang}.html)
     if (path.startsWith('/i18n/')) {
       const parts = path.split('/');
       if (parts.length >= 3) {
@@ -22,6 +24,12 @@ import { LANGS } from './langConfig.js';
         if (SUPPORTED_LANGS.includes(lang)) return lang;
       }
     }
+
+    // Site sections that are explicitly language-scoped (e.g., /fr/...)
+    if (path === '/fr' || path === '/fr/' || path.startsWith('/fr/')) {
+      return SUPPORTED_LANGS.includes('fr') ? 'fr' : DEFAULT_LANG;
+    }
+
     return DEFAULT_LANG;
   }
 
