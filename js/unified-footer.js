@@ -11,19 +11,19 @@
         --nh48-footer-border: #ffffff;
         --nh48-footer-ink: #ffffff;
         --nh48-footer-accent: #22c55e;
-        margin: 32px 0 0;
+        margin: 24px 0 0;
         width: 100vw;
         max-width: none;
         background: var(--nh48-footer-surface);
         border: 0;
         border-top: 1px solid var(--nh48-footer-border);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        padding: clamp(16px, 2vw, 22px) 0 0;
+        padding: clamp(12px, 1.5vw, 18px) 0 0;
         color: var(--nh48-footer-ink);
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 16px;
+        gap: 12px;
         height: auto;
         max-height: none;
         overflow: visible;
@@ -34,6 +34,18 @@
         isolation: isolate;
         left: 50%;
         transform: translateX(-50%);
+        z-index: 0;
+      }
+
+      /* Special handling for map pages with fixed layouts */
+      body[data-route="trails"] .nh48-quick-footer,
+      body[data-route="long-trails"] .nh48-quick-footer {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        z-index: 999 !important;
       }
 
       .nh48-quick-footer__header {
@@ -161,7 +173,8 @@
           scroll-snap-align: start;
           display: flex;
           flex-direction: column;
-          justify-content: center;
+          justify-content: flex-start;
+          align-items: center;
         }
 
         .nh48-quick-footer__group h2 {
@@ -253,6 +266,10 @@
         width: 100%;
         text-align: center;
         scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
       }
 
       .nh48-quick-footer__group h2 {
