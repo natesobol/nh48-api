@@ -582,9 +582,10 @@
     .dataset-cards {
       margin: 32px auto 0;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
-      max-width: 900px;
+      max-width: 1200px;
+      width: 100%;
     }
     
     .dataset-card {
@@ -594,19 +595,24 @@
       padding: 24px;
       text-align: left;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
     }
     
     .dataset-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(34, 197, 94, 0.15);
       border-color: rgba(34, 197, 94, 0.5);
+      text-decoration: none;
+      color: inherit;
     }
     
     .dataset-card h3 {
       margin: 0 0 12px;
       font-size: 1.2rem;
       color: #22c55e;
-      text-transform: uppercase;
+      font-weight: 700;
       letter-spacing: 0.08em;
     }
     
@@ -617,36 +623,28 @@
       font-size: 0.95rem;
     }
     
-    .dataset-card a {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #22c55e;
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.2s ease, gap 0.2s ease;
-    }
-    
-    .dataset-card a:hover {
-      color: #7ee0a3;
-      gap: 12px;
-    }
-    
     .dataset-card .card-icon {
       width: 20px;
       height: 20px;
       opacity: 0.8;
+      transition: opacity 0.2s ease;
     }
-    .visually-hidden {
-      border: 0;
-      clip: rect(0 0 0 0);
-      height: 1px;
-      margin: -1px;
-      overflow: hidden;
-      padding: 0;
-      position: absolute;
-      width: 1px;
-      white-space: nowrap;
+    
+    .dataset-card .card-link-text {
+      color: #22c55e;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: gap 0.2s ease;
+    }
+    
+    .dataset-card:hover .card-link-text {
+      gap: 12px;
+    }
+    
+    .dataset-card:hover .card-icon {
+      opacity: 1;
     }
     .seo-gallery {
       position: absolute;
@@ -841,6 +839,8 @@
         gap: 16px;
         margin: 24px auto 0;
         padding: 0 12px;
+        max-width: none;
+        width: 100%;
       }
       
       .dataset-card {
@@ -1046,40 +1046,34 @@
       </a>
     </div>
     <section class="dataset-cards">
-      <div class="dataset-card">
+      <a href="/catalog" class="dataset-card">
         <h3>NH48 Catalog</h3>
         <p>Browse New Hampshire's 48 four-thousand-foot peaks with detailed elevation data, route information, and summit photos. Filter by difficulty, range, and completion status.</p>
-        <a href="/catalog">
-          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-          </svg>
-          Explore NH48 Peaks
-        </a>
-      </div>
+        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span class="card-link-text">Explore NH48 Peaks</span>
+      </a>
       
-      <div class="dataset-card">
+      <a href="/pages/trails_app.html" class="dataset-card">
         <h3>White Mountain Trails</h3>
         <p>Interactive map and trail finder for the White Mountain National Forest. Track completion progress, view trail details, and explore routes with real-time filtering.</p>
-        <a href="/pages/trails_app.html">
-          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          Explore Trails
-        </a>
-      </div>
+        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span class="card-link-text">Explore Trails</span>
+      </a>
       
-      <div class="dataset-card">
+      <a href="/pages/long_trails_app.html" class="dataset-card">
         <h3>Long Trails</h3>
         <p>Discover long-distance hiking trails across North America. View trail segments, elevation profiles, and route details for scenic thru-hikes and backpacking adventures.</p>
-        <a href="/pages/long_trails_app.html">
-          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-          </svg>
-          View Long Trails
-        </a>
-      </div>
+        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+        </svg>
+        <span class="card-link-text">View Long Trails</span>
+      </a>
     </section>
     <p class="meta" data-i18n="landing.author">Author: Nathan Sobol</p>
     <div id="footer-placeholder"></div>
