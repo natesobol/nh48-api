@@ -24,7 +24,7 @@ We actively structure the project so search engines can surface **New Hampshire 
 * **Semantic HTML + ARIA** in every public page, prioritizing accessible, crawlable content.
 * **JSON-LD** schemas for datasets, trails, and image objects to improve **Google Dataset Search** visibility.
 * **Canonical URLs, OpenGraph, and Twitter cards** on every landing page to prevent duplicate indexing while boosting share previews for hiking keywords.
-* **Per-peak redirect pages** under `/peaks/` and `/fr/peaks/` now use `index, follow` robots directives, OpenGraph/Twitter cards, and the primary summit photo for rich share previews, keeping each mountain indexable even though the interactive UI handles the content. Human visitors are redirected to the live app, while common crawlers (Googlebot, Bingbot, GPTBot, etc.) are allowed to stay on the prerendered HTML via user-agent detection so structured data remains crawlable.
+* **Per-peak redirect pages** under `/peak/` and `/fr/peak/` now use `index, follow` robots directives, OpenGraph/Twitter cards, and the primary summit photo for rich share previews, keeping each mountain indexable even though the interactive UI handles the content. Human visitors are redirected to the live app, while common crawlers (Googlebot, Bingbot, GPTBot, etc.) are allowed to stay on the prerendered HTML via user-agent detection so structured data remains crawlable.
 * **Media hygiene:** descriptive filenames, **ALT text**, captions, and `sr-only` SEO sections that pair keywords like *“White Mountain hiking trails”*, *“NH48 summit photos”*, and *“Appalachian alpine routes”* with internal links.
 * **Performance + CDN delivery** (jsDelivr + Cloudflare R2) to keep **Largest Contentful Paint** and **Core Web Vitals** in ranking-safe ranges for map-heavy pages.
 
@@ -37,7 +37,7 @@ We actively structure the project so search engines can surface **New Hampshire 
 
 ### Dynamic rendering for peak pages
 
-The prerendered `/peaks/` and `/fr/peaks/` pages ship both their full structured markup and a guardrail to keep humans on the interactive app:
+The prerendered `/peak/` and `/fr/peak/` pages ship both their full structured markup and a guardrail to keep humans on the interactive app:
 
 1. The HTML itself remains a canonical, indexable document with JSON-LD, OpenGraph, Twitter cards, and canonical/alternate hreflang links.
 2. A client-side redirect runs only when the visitor is **not** a recognized crawler. User-agent strings for Googlebot, Bingbot, GPTBot, ClaudeBot, DuckDuckBot, BaiduSpider, Yandex, and other well-known bots are exempted from redirection so they can read the prerendered content directly.
@@ -65,7 +65,7 @@ This parity keeps the navigation crawlable, preserves UX muscle memory, and redu
 
 ### Only style the live app shells (never the prerendered pages)
 
-All UI/appearance work should be focused on the JavaScript-powered app shells that humans actually see: `/`, `/catalog`, `/trails`, `/long-trails`, `/virtual_hike.html`, and the `/pages/*` app surfaces (`nh48_catalog.html`, `nh48_peak.html`, `trails_app.html`, `long_trails_app.html`, `virtual_hike.html`). The prerendered redirect/index pages (including everything under `/peaks/` and `/fr/peaks/`) exist solely for bots and metadata; do **not** spend time restyling them.
+All UI/appearance work should be focused on the JavaScript-powered app shells that humans actually see: `/`, `/catalog`, `/trails`, `/long-trails`, `/virtual_hike.html`, and the `/pages/*` app surfaces (`nh48_catalog.html`, `nh48_peak.html`, `trails_app.html`, `long_trails_app.html`, `virtual_hike.html`). The prerendered redirect/index pages (including everything under `/peak/` and `/fr/peak/`) exist solely for bots and metadata; do **not** spend time restyling them.
 
 ### SEO Goals
 

@@ -6,19 +6,19 @@
     <meta id="dynamicDescription" name="description" content="NH48 API – peak-level details, routes, terrain notes and photography for New Hampshire’s 4000-footers. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak details, mountain routes, White Mountains data, hiking API, peak metadata, mountain photos">
     <meta name="robots" content="index,follow,max-image-preview:large">
-    <link id="dynamicCanonical" rel="canonical" href="https://nh48.info/peaks">
-    <link id="hreflangEn" rel="alternate" hreflang="en" href="https://nh48.info/peaks">
-    <link id="hreflangFr" rel="alternate" hreflang="fr" href="https://nh48.info/fr/peaks">
-    <link id="hreflangDefault" rel="alternate" hreflang="x-default" href="https://nh48.info/peaks">
+    <link id="dynamicCanonical" rel="canonical" href="https://nh48.info/peak">
+    <link id="hreflangEn" rel="alternate" hreflang="en" href="https://nh48.info/peak">
+    <link id="hreflangFr" rel="alternate" hreflang="fr" href="https://nh48.info/fr/peak">
+    <link id="hreflangDefault" rel="alternate" hreflang="x-default" href="https://nh48.info/peak">
     <meta property="og:type" content="website">
-    <meta id="dynamicOgUrl" property="og:url" content="https://nh48.info/peaks">
+    <meta id="dynamicOgUrl" property="og:url" content="https://nh48.info/peak">
     <meta id="dynamicOgTitle" property="og:title" content="NH48 API – Peak details, routes &amp; photos">
     <meta id="dynamicOgDescription" property="og:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta id="dynamicOgImage" property="og:image" content="https://nh48.info/nh48-preview.png">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://nh48.info/peaks">
+    <meta name="twitter:url" content="https://nh48.info/peak">
     <meta id="dynamicTwitterTitle" name="twitter:title" content="NH48 API – Peak details, routes &amp; photos">
     <meta id="dynamicTwitterDescription" name="twitter:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata. Open API and datasets for New Hampshire’s 4,000-foot mountains.">
     <meta id="dynamicTwitterImage" name="twitter:image" content="https://nh48.info/nh48-preview.png">
@@ -45,7 +45,7 @@
       const routeInfo = getRouteInfo(window.location.pathname);
       const slugParam = routeInfo.slug || params.get('slug');
       const langHint = (requestedLang || localStorage.getItem('nh48_lang') || '').toLowerCase();
-      const canonicalBaseEarly = (langHint.startsWith('fr') || routeInfo.isFrench) ? 'https://nh48.info/fr/peaks' : 'https://nh48.info/peaks';
+      const canonicalBaseEarly = (langHint.startsWith('fr') || routeInfo.isFrench) ? 'https://nh48.info/fr/peak' : 'https://nh48.info/peak';
       const canonicalUrlEarly = slugParam ? `${canonicalBaseEarly}/${encodeURIComponent(slugParam)}/` : `${canonicalBaseEarly}/`;
       const canonicalEl = document.getElementById('dynamicCanonical');
       if (canonicalEl) {
@@ -53,15 +53,15 @@
       }
       const hreflangEnEarly = document.getElementById('hreflangEn');
       if (hreflangEnEarly) {
-        hreflangEnEarly.setAttribute('href', slugParam ? `https://nh48.info/peaks/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/peaks/');
+        hreflangEnEarly.setAttribute('href', slugParam ? `https://nh48.info/peak/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/peak/');
       }
       const hreflangFrEarly = document.getElementById('hreflangFr');
       if (hreflangFrEarly) {
-        hreflangFrEarly.setAttribute('href', slugParam ? `https://nh48.info/fr/peaks/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/fr/peaks/');
+        hreflangFrEarly.setAttribute('href', slugParam ? `https://nh48.info/fr/peak/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/fr/peak/');
       }
       const hreflangDefaultEarly = document.getElementById('hreflangDefault');
       if (hreflangDefaultEarly) {
-        hreflangDefaultEarly.setAttribute('href', slugParam ? `https://nh48.info/peaks/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/peaks/');
+        hreflangDefaultEarly.setAttribute('href', slugParam ? `https://nh48.info/peak/${encodeURIComponent(slugParam)}/` : 'https://nh48.info/peak/');
       }
 
       window.NH48_ROUTE_INFO = routeInfo;
@@ -993,8 +993,8 @@
         );
       }
 
-      const BASE_CANONICAL = 'https://nh48.info/peaks';
-      const BASE_CANONICAL_FR = 'https://nh48.info/fr/peaks';
+      const BASE_CANONICAL = 'https://nh48.info/peak';
+      const BASE_CANONICAL_FR = 'https://nh48.info/fr/peak';
       const HOME_URL = 'https://nh48.info/';
       const CATALOG_URL = 'https://nh48.info/catalog';
       const DEFAULT_OG_IMAGE = 'https://nh48.info/nh48API_logo.png';
