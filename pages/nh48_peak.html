@@ -784,6 +784,20 @@
     </style>
   </head>
   <body data-route="peak" data-page="peak">
+    <script>
+      (function(){
+        const parts = window.location.pathname.split('/').filter(Boolean);
+        const isFrench = parts[0] === 'fr';
+        const slug = isFrench ? parts[2] : parts[1];
+        const params = new URLSearchParams(window.location.search);
+        if(!params.has('slug')){
+          params.set('slug', slug);
+          if(isFrench) params.set('lang', 'fr');
+          const newUrl = `${window.location.pathname}?${params.toString()}`;
+          window.history.replaceState(null, '', newUrl);
+        }
+      })();
+    </script>
     <div id="nav-placeholder"></div>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
@@ -2574,7 +2588,7 @@
         const slug = new URLSearchParams(window.location.search).get('slug');
         if(!slug){
           trackEvent('peak_missing_slug');
-          window.location.replace('/not-found.html');
+          updatePeakTitle(t('peak.notFound') || 'Peak not found');
           return;
         }
 
@@ -2587,7 +2601,7 @@
 
           if(!p){
             trackEvent('peak_not_found', { slug });
-            window.location.replace('/not-found.html');
+            updatePeakTitle(t('peak.notFound') || 'Peak not found');
             return;
           }
 

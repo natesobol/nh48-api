@@ -175,8 +175,8 @@ export default {
 
     // This keeps your "beautiful JS graphics" because the SSR page can still load your SPA
     const appUrl = isFrench
-      ? `${SITE}/pages/nh48_peak.html?slug=${encodeURIComponent(slug)}&lang=fr`
-      : `${SITE}/pages/nh48_peak.html?slug=${encodeURIComponent(slug)}`;
+      ? `${SITE}/fr/peak/${encodeURIComponent(slug)}`
+      : `${SITE}/peak/${encodeURIComponent(slug)}`;
 
     // ---------- 5) JSON-LD ----------
     const mountainSchema = {
