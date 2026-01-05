@@ -11,7 +11,8 @@ const DATA_PATH = path.join(ROOT, "data", "nh48.json");
 const OUTPUT_DIR = path.join(ROOT, "peaks");
 const CANONICAL_BASE = "https://nh48.info/peaks";
 const HOME_URL = "https://nh48.info/";
-const APP_BASE = "https://nh48.info/pages/nh48_peak.html";
+const APP_BASE_EN = "https://nh48.info/peak";
+const APP_BASE_FR = "https://nh48.info/fr/peak";
 const DEFAULT_CATALOG_URL = "https://nh48.info/catalog";
 const FALLBACK_IMAGE = "https://nh48.info/nh48-preview.png";
 const PHOTO_BASE_URL = "https://photos.nh48.info";
@@ -71,7 +72,7 @@ const LANGUAGE_CONFIGS = [
       breadcrumbHome: "Home",
       breadcrumbCatalog: "Peak Catalog",
     },
-    appUrl: (slug) => `${APP_BASE}?slug=${slug}`,
+    appUrl: (slug) => `${APP_BASE_EN}/${slug}`,
   },
   {
     code: "fr",
@@ -115,7 +116,7 @@ const LANGUAGE_CONFIGS = [
       breadcrumbHome: "Accueil",
       breadcrumbCatalog: "Catalogue des sommets",
     },
-    appUrl: (slug) => `${APP_BASE}?slug=${slug}&lang=fr`,
+    appUrl: (slug) => `${APP_BASE_FR}/${slug}`,
   },
 ];
 
