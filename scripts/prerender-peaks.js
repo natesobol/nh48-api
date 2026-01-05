@@ -9,7 +9,7 @@ const NAV_PARTIAL_PATH = path.join(ROOT, "pages", "nav.html");
 const QUICK_FOOTER_PATH = path.join(ROOT, "pages", "footer.html");
 const DATA_PATH = path.join(ROOT, "data", "nh48.json");
 const OUTPUT_DIR = path.join(ROOT, "peaks");
-const CANONICAL_BASE = "https://nh48.info/peaks";
+const CANONICAL_BASE = "https://nh48.info/peak";
 const HOME_URL = "https://nh48.info/";
 const APP_BASE_EN = "https://nh48.info/peak";
 const APP_BASE_FR = "https://nh48.info/fr/peak";
@@ -1032,7 +1032,7 @@ const main = () => {
           OG_LOCALE_ALT: lang.ogLocaleAlternate || "en_US",
           CANONICAL_URL: canonicalUrl,
           CANONICAL_EN_URL: `${CANONICAL_BASE}/${slug}/`,
-          CANONICAL_FR_URL: `https://nh48.info/fr/peaks/${slug}/`,
+          CANONICAL_FR_URL: `https://nh48.info/fr/peak/${slug}/`,
           CANONICAL_XDEFAULT_URL: `${CANONICAL_BASE}/${slug}/`,
           NAV_MENU: navMenuPartial,
           QUICK_BROWSE_FOOTER: quickBrowseFooterPartial,

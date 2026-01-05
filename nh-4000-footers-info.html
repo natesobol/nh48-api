@@ -489,7 +489,7 @@
         </div>
         <div class="faq-item">
           <strong>How do I link to individual peak details?</strong>
-          <p>Use the /peaks/slug/ format shown in the Current NH 4,000-Footer List. Each peak page includes a “Back to the NH48 Info” link for reciprocal navigation.</p>
+          <p>Use the /peak/slug/ format shown in the Current NH 4,000-Footer List. Each peak page includes a “Back to the NH48 Info” link for reciprocal navigation.</p>
         </div>
       </section>
     </main>
@@ -684,7 +684,7 @@
             const tr = document.createElement('tr');
             const peakCell = document.createElement('td');
             const link = document.createElement('a');
-            link.href = `/peaks/${peak.slug}/`;
+            link.href = `/peak/${peak.slug}/`;
             link.textContent = peak.name;
             peakCell.appendChild(link);
 
@@ -756,7 +756,7 @@
             circle.setAttribute('fill', '#22c55e');
           });
           circle.addEventListener('click', () => {
-            window.open(`/peaks/${peak.slug}/`, '_blank');
+            window.open(`/peak/${peak.slug}/`, '_blank');
           });
           map.appendChild(circle);
         });
@@ -794,7 +794,7 @@
             '@type': 'ListItem',
             position: index + 1,
             name: peak.name,
-            url: `https://nh48.info/peaks/${peak.slug}/`,
+            url: `https://nh48.info/peak/${peak.slug}/`,
             description: `${peak.range} — ${peak.bestFor}`
           }))
         };
@@ -840,7 +840,7 @@
                 name: 'How do I find individual peak details?',
                 acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Follow the links in the Current NH 4,000-Footer List to /peaks/slug/. Each peak page includes a Back to the NH48 Info link for reciprocal navigation.'
+              text: 'Follow the links in the Current NH 4,000-Footer List to /peak/slug/. Each peak page includes a Back to the NH48 Info link for reciprocal navigation.'
             }
           }
         ]

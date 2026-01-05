@@ -670,7 +670,7 @@
 
         card.addEventListener('click', () => {
           trackEvent('catalog_peak_open', { slug: p.slug, name: p.peakName });
-          window.location.href = `/peaks/${encodeURIComponent(p.slug)}/`;
+          window.location.href = `/peak/${encodeURIComponent(p.slug)}/`;
         });
 
         return card;
@@ -699,7 +699,7 @@
 
         const elev = p['Elevation (ft)'];
         const range = p['Range / Subrange'] || '—';
-        const href = `/peaks/${encodeURIComponent(p.slug)}/`;
+        const href = `/peak/${encodeURIComponent(p.slug)}/`;
 
         item.innerHTML = `
           <div class="list-thumb">
