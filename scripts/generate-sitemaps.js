@@ -8,11 +8,15 @@ const DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
 const SITEMAP_INDEX_OUTPUT = path.join(ROOT, 'sitemap.xml');
 const PAGE_SITEMAP_OUTPUT = path.join(ROOT, 'page-sitemap.xml');
 const IMAGE_SITEMAP_OUTPUT = path.join(ROOT, 'image-sitemap.xml');
-const PEAK_BASE = 'https://nh48.info/peaks';
-const PEAK_BASE_FR = 'https://nh48.info/fr/peaks';
+const PEAK_BASE = 'https://nh48.info/peak';
+const PEAK_BASE_FR = 'https://nh48.info/fr/peak';
 const PHOTO_BASE_URL = 'https://photos.nh48.info';
 const PHOTO_PATH_PREFIX = '/nh48-photos/';
-const STATIC_PAGES = ['https://nh48.info/nh-4000-footers-guide'];
+const STATIC_PAGES = [
+  'https://nh48.info/',
+  'https://nh48.info/catalog',
+  'https://nh48.info/nh-4000-footers-guide',
+];
 
 const data = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
 
@@ -91,6 +95,25 @@ const buildImageEntries = (photos, peakName) => {
     .filter(Boolean);
 };
 
+const scoreImageDetail = (image) => {
+  const caption = cleanText(image.caption);
+  const title = cleanText(image.title);
+  return (caption ? caption.length + 10 : 0) + (title ? title.length + 5 : 0);
+};
+
+const dedupeImages = (images) => {
+  const bestByUrl = new Map();
+  images.forEach((image) => {
+    if (!image.url) return;
+    const key = image.url;
+    const existing = bestByUrl.get(key);
+    if (!existing || scoreImageDetail(image) > scoreImageDetail(existing)) {
+      bestByUrl.set(key, image);
+    }
+  });
+  return Array.from(bestByUrl.values());
+};
+
 const slugs = Object.keys(data).sort();
 
 const buildPageSitemap = () => {
@@ -121,7 +144,7 @@ const buildImageSitemap = () => {
   slugs.forEach((slug) => {
     const peak = data[slug] || {};
     const name = peak.peakName || peak['Peak Name'] || slug;
-    const images = buildImageEntries(peak.photos, name);
+    const images = dedupeImages(buildImageEntries(peak.photos, name));
     if (!images.length) return;
     [
       `${PEAK_BASE}/${slug}/`,
