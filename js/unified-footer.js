@@ -375,94 +375,94 @@
         {
           title: "Presidential Range",
           links: [
-            { href: "/peaks/mount-washington", text: "Washington" },
-            { href: "/peaks/mount-adams", text: "Adams" },
-            { href: "/peaks/mount-jefferson", text: "Jefferson" },
-            { href: "/peaks/mount-monroe", text: "Monroe" },
-            { href: "/peaks/mount-eisenhower", text: "Eisenhower" },
-            { href: "/peaks/mount-pierce", text: "Pierce" },
-            { href: "/peaks/mount-jackson", text: "Jackson" },
-            { href: "/peaks/mount-madison", text: "Madison" },
-            { href: "/peaks/mount-isolation", text: "Isolation" }
+            { href: "/peak/mount-washington", text: "Washington" },
+            { href: "/peak/mount-adams", text: "Adams" },
+            { href: "/peak/mount-jefferson", text: "Jefferson" },
+            { href: "/peak/mount-monroe", text: "Monroe" },
+            { href: "/peak/mount-eisenhower", text: "Eisenhower" },
+            { href: "/peak/mount-pierce", text: "Pierce" },
+            { href: "/peak/mount-jackson", text: "Jackson" },
+            { href: "/peak/mount-madison", text: "Madison" },
+            { href: "/peak/mount-isolation", text: "Isolation" }
           ]
         },
         {
           title: "Franconia Ridge",
           links: [
-            { href: "/peaks/mount-lafayette", text: "Lafayette" },
-            { href: "/peaks/mount-lincoln", text: "Lincoln" },
-            { href: "/peaks/mount-liberty", text: "Liberty" },
-            { href: "/peaks/mount-flume", text: "Flume" },
-            { href: "/peaks/mount-garfield", text: "Garfield" }
+            { href: "/peak/mount-lafayette", text: "Lafayette" },
+            { href: "/peak/mount-lincoln", text: "Lincoln" },
+            { href: "/peak/mount-liberty", text: "Liberty" },
+            { href: "/peak/mount-flume", text: "Flume" },
+            { href: "/peak/mount-garfield", text: "Garfield" }
           ]
         },
         {
           title: "Twins & Bonds",
           links: [
-            { href: "/peaks/south-twin-mountain", text: "South Twin" },
-            { href: "/peaks/north-twin-mountain", text: "North Twin" },
-            { href: "/peaks/galehead-mountain", text: "Galehead" },
-            { href: "/peaks/zealand-mountain", text: "Zealand" },
-            { href: "/peaks/west-bond", text: "West Bond" },
-            { href: "/peaks/mount-bond", text: "Bond" },
-            { href: "/peaks/bondcliff", text: "Bondcliff" },
-            { href: "/peaks/owls-head", text: "Owl's Head" }
+            { href: "/peak/south-twin-mountain", text: "South Twin" },
+            { href: "/peak/north-twin-mountain", text: "North Twin" },
+            { href: "/peak/galehead-mountain", text: "Galehead" },
+            { href: "/peak/zealand-mountain", text: "Zealand" },
+            { href: "/peak/west-bond", text: "West Bond" },
+            { href: "/peak/mount-bond", text: "Bond" },
+            { href: "/peak/bondcliff", text: "Bondcliff" },
+            { href: "/peak/owls-head", text: "Owl's Head" }
           ]
         },
         {
           title: "Carter-Moriah & Wildcats",
           links: [
-            { href: "/peaks/carter-dome", text: "Carter Dome" },
-            { href: "/peaks/south-carter-mountain", text: "South Carter" },
-            { href: "/peaks/middle-carter-mountain", text: "Middle Carter" },
-            { href: "/peaks/mount-moriah", text: "Moriah" },
-            { href: "/peaks/wildcat-mountain-a", text: "Wildcat A" },
-            { href: "/peaks/wildcat-mountain-d", text: "Wildcat D" }
+            { href: "/peak/carter-dome", text: "Carter Dome" },
+            { href: "/peak/south-carter-mountain", text: "South Carter" },
+            { href: "/peak/middle-carter-mountain", text: "Middle Carter" },
+            { href: "/peak/mount-moriah", text: "Moriah" },
+            { href: "/peak/wildcat-mountain-a", text: "Wildcat A" },
+            { href: "/peak/wildcat-mountain-d", text: "Wildcat D" }
           ]
         },
         {
           title: "Kinsman Range",
           links: [
-            { href: "/peaks/north-kinsman-mountain", text: "North Kinsman" },
-            { href: "/peaks/south-kinsman-mountain", text: "South Kinsman" },
-            { href: "/peaks/cannon-mountain", text: "Cannon" }
+            { href: "/peak/north-kinsman-mountain", text: "North Kinsman" },
+            { href: "/peak/south-kinsman-mountain", text: "South Kinsman" },
+            { href: "/peak/cannon-mountain", text: "Cannon" }
           ]
         },
         {
           title: "Osceolas & Trips",
           links: [
-            { href: "/peaks/mount-passaconaway", text: "Passaconaway" },
-            { href: "/peaks/mount-whiteface", text: "Whiteface" },
-            { href: "/peaks/north-tripyramid", text: "North Tripyramid" },
-            { href: "/peaks/middle-tripyramid", text: "Middle Tripyramid" },
-            { href: "/peaks/mount-osceola", text: "Osceola" },
-            { href: "/peaks/mount-osceola-east", text: "Osceola East" },
-            { href: "/peaks/mount-tecumseh", text: "Tecumseh" }
+            { href: "/peak/mount-passaconaway", text: "Passaconaway" },
+            { href: "/peak/mount-whiteface", text: "Whiteface" },
+            { href: "/peak/north-tripyramid", text: "North Tripyramid" },
+            { href: "/peak/middle-tripyramid", text: "Middle Tripyramid" },
+            { href: "/peak/mount-osceola", text: "Osceola" },
+            { href: "/peak/mount-osceola-east", text: "Osceola East" },
+            { href: "/peak/mount-tecumseh", text: "Tecumseh" }
           ]
         },
         {
           title: "Pemigewasset",
           links: [
-            { href: "/peaks/mount-carrigain", text: "Carrigain" },
-            { href: "/peaks/mount-hancock", text: "Hancock North" },
-            { href: "/peaks/mount-hancock-south", text: "Hancock South" },
-            { href: "/peaks/mount-hale", text: "Hale" }
+            { href: "/peak/mount-carrigain", text: "Carrigain" },
+            { href: "/peak/mount-hancock", text: "Hancock North" },
+            { href: "/peak/mount-hancock-south", text: "Hancock South" },
+            { href: "/peak/mount-hale", text: "Hale" }
           ]
         },
         {
           title: "Northern Summits",
           links: [
-            { href: "/peaks/mount-cabot", text: "Cabot" },
-            { href: "/peaks/mount-waumbek", text: "Waumbek" }
+            { href: "/peak/mount-cabot", text: "Cabot" },
+            { href: "/peak/mount-waumbek", text: "Waumbek" }
           ]
         },
         {
           title: "Western & Outlying",
           links: [
-            { href: "/peaks/mount-moosilauke", text: "Moosilauke" },
-            { href: "/peaks/mount-willey", text: "Willey" },
-            { href: "/peaks/mount-field", text: "Field" },
-            { href: "/peaks/mount-tom", text: "Tom" }
+            { href: "/peak/mount-moosilauke", text: "Moosilauke" },
+            { href: "/peak/mount-willey", text: "Willey" },
+            { href: "/peak/mount-field", text: "Field" },
+            { href: "/peak/mount-tom", text: "Tom" }
           ]
         }
       ],
@@ -600,7 +600,7 @@
         a.textContent = link.text;
         
         // Add elevation data if available
-        const peak = FOOTER_CONFIG.peaks.find(p => p.slug === link.href.replace('/peaks/', ''));
+        const peak = FOOTER_CONFIG.peaks.find(p => p.slug === link.href.replace('/peak/', ''));
         if (peak && peak.elevation) {
           a.setAttribute('data-elevation', peak.elevation);
         }
