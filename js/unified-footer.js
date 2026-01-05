@@ -1,0 +1,750 @@
+(() => {
+  'use strict';
+
+  // Footer configuration with all data
+  const FOOTER_CONFIG = {
+    styles: `
+      .nh48-quick-footer {
+        --nh48-footer-grid-min: clamp(220px, 21vw, 260px);
+        --nh48-footer-surface: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+        --nh48-footer-card: color-mix(in srgb, #141833 70%, rgba(10, 12, 26, 0.55) 30%);
+        --nh48-footer-border: #ffffff;
+        --nh48-footer-ink: var(--ink, #ffffff);
+        --nh48-footer-accent: var(--accent, #22c55e);
+        margin: 32px 0 0;
+        width: 100%;
+        max-width: none;
+        background: var(--nh48-footer-surface);
+        border: 0;
+        border-top: 1px solid var(--nh48-footer-border);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        padding: clamp(16px, 2vw, 22px) 0 0;
+        color: var(--nh48-footer-ink);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        height: auto;
+        max-height: none;
+        overflow: visible;
+        text-align: center;
+        box-sizing: border-box;
+        border-radius: 0;
+        position: relative;
+        isolation: isolate;
+      }
+
+      .nh48-quick-footer__header {
+        text-align: center;
+        max-width: 1080px;
+        margin: 0 auto 0;
+        padding: 0 clamp(16px, 3vw, 32px);
+      }
+
+      .nh48-quick-footer__controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 9px 12px;
+        margin: 2px auto 0;
+        border-radius: 14px;
+        border: 1px solid var(--nh48-footer-border);
+        background: var(--nh48-footer-card);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      }
+
+      .nh48-quick-footer__sort-button {
+        appearance: none;
+        border: 1px solid var(--nh48-footer-border);
+        background: color-mix(in srgb, var(--nh48-footer-card) 70%, #000 30%);
+        color: var(--nh48-footer-ink);
+        border-radius: 12px;
+        padding: 8px 13px;
+        font-weight: 800;
+        letter-spacing: 0.25px;
+        cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      }
+
+      .nh48-quick-footer__sort-button:hover,
+      .nh48-quick-footer__sort-button:focus-visible {
+        outline: none;
+        border-color: var(--nh48-footer-accent);
+        background: color-mix(in srgb, var(--nh48-footer-card) 60%, var(--nh48-footer-accent) 40%);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--nh48-footer-accent) 24%, transparent);
+        transform: translateY(-1px);
+      }
+
+      .nh48-quick-footer__sort-button.is-active {
+        background: color-mix(in srgb, var(--nh48-footer-card) 40%, var(--nh48-footer-accent) 60%);
+        border-color: var(--nh48-footer-accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--nh48-footer-accent) 24%, transparent);
+      }
+
+      .nh48-quick-footer__eyebrow {
+        display: none;
+      }
+
+      .nh48-quick-footer__header h2 {
+        margin: 4px 0 4px;
+        font-size: clamp(19px, 2.4vw, 24px);
+        letter-spacing: 0.35px;
+        color: var(--nh48-footer-ink);
+      }
+
+      .nh48-quick-footer__header p {
+        margin: 0 0 4px;
+        color: color-mix(in srgb, var(--nh48-footer-ink) 80%, #cbd5e1 20%);
+        line-height: 1.45;
+        font-size: 0.95rem;
+      }
+
+      .nh48-quick-footer .nh48-quick-footer__grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        justify-items: stretch;
+        gap: clamp(12px, 2vw, 18px);
+        width: min(1200px, 100%);
+        max-width: none;
+        margin: 6px auto 0;
+        padding: clamp(8px, 2vw, 14px) clamp(12px, 2.5vw, 18px);
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-height: 500px;
+        min-height: 0;
+        flex: 1 1 auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--nh48-footer-accent) color-mix(in srgb, var(--nh48-footer-card) 80%, #000 20%);
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: y proximity;
+      }
+
+      /* Desktop: Show all cards in one horizontal row */
+      @media (min-width: 1025px) {
+        .nh48-quick-footer .nh48-quick-footer__grid {
+          display: flex;
+          flex-direction: row;
+          align-items: stretch;
+          justify-items: stretch;
+          gap: 12px;
+          width: min(1400px, 95vw);
+          max-width: none;
+          margin: 6px auto 0;
+          padding: 12px clamp(16px, 2vw, 24px);
+          overflow-x: auto;
+          overflow-y: hidden;
+          max-height: none;
+          min-height: 0;
+          flex: 1 1 auto;
+          scrollbar-width: thin;
+          scrollbar-color: var(--nh48-footer-accent) color-mix(in srgb, var(--nh48-footer-card) 80%, #000 20%);
+          -webkit-overflow-scrolling: touch;
+          scroll-snap-type: x proximity;
+          scroll-padding: 0 20px;
+        }
+
+        .nh48-quick-footer .nh48-quick-footer__group {
+          flex: 1;
+          min-width: 140px;
+          max-width: 180px;
+          border: 1px solid var(--nh48-footer-border);
+          border-radius: 14px;
+          padding: 12px 14px;
+          background: var(--nh48-footer-card);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.28);
+          text-align: center;
+          scroll-snap-align: start;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        .nh48-quick-footer__group h2 {
+          margin: 0 0 6px;
+          font-size: 13px;
+          letter-spacing: 0.1px;
+          color: var(--nh48-footer-ink);
+          line-height: 1.2;
+        }
+
+        .nh48-quick-footer__list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .nh48-quick-footer__link {
+          display: inline-flex;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 6px 8px;
+          min-height: 32px;
+          text-align: left;
+          border-radius: 8px;
+          border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 70%, var(--nh48-footer-ink) 30%);
+          color: var(--nh48-footer-ink);
+          text-decoration: none;
+          background: color-mix(in srgb, var(--nh48-footer-card) 70%, var(--nh48-footer-accent) 30%);
+          transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
+          line-height: 1.2;
+          white-space: nowrap;
+          width: 100%;
+          font-size: 0.85rem;
+        }
+
+        .nh48-quick-footer__link:hover,
+        .nh48-quick-footer__link:focus-visible {
+          border-color: var(--nh48-footer-accent);
+          box-shadow: 0 0 0 2px color-mix(in srgb, var(--nh48-footer-accent) 28%, transparent);
+          background: color-mix(in srgb, var(--nh48-footer-card) 55%, var(--nh48-footer-accent) 45%);
+          transform: translateY(-1px);
+          outline: none;
+        }
+
+        .nh48-quick-footer__grid::-webkit-scrollbar {
+          height: 8px;
+          width: auto;
+        }
+
+        .nh48-quick-footer__grid::-webkit-scrollbar-track {
+          background: color-mix(in srgb, var(--nh48-footer-card) 80%, #000 20%);
+          border-radius: 4px;
+        }
+
+        .nh48-quick-footer__grid::-webkit-scrollbar-thumb {
+          background: var(--nh48-footer-accent);
+          border-radius: 4px;
+          border: 1px solid rgba(26, 26, 46, 0.9);
+        }
+      }
+
+      /* Mobile/Tablet: Keep original stacked layout */
+      @media (max-width: 1024px) {
+        .nh48-quick-footer .nh48-quick-footer__grid {
+          grid-template-columns: 1fr;
+          max-height: 500px;
+          overflow-x: hidden;
+          overflow-y: auto;
+          padding: 8px clamp(14px, 4vw, 22px) 10px;
+        }
+
+        .nh48-quick-footer .nh48-quick-footer__group {
+          max-width: 100%;
+        }
+      }
+
+      /* Base styles (non-desktop) */
+      .nh48-quick-footer .nh48-quick-footer__group {
+        border: 1px solid var(--nh48-footer-border);
+        border-radius: 14px;
+        padding: clamp(12px, 2vw, 16px);
+        background: var(--nh48-footer-card);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.28);
+        min-width: 0;
+        max-width: none;
+        width: 100%;
+        text-align: center;
+        scroll-snap-align: start;
+      }
+
+      .nh48-quick-footer__group h2 {
+        margin: 0 0 8px;
+        font-size: 15px;
+        letter-spacing: 0.2px;
+        color: var(--nh48-footer-ink);
+      }
+
+      .nh48-quick-footer__list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 7px;
+      }
+
+      .nh48-quick-footer__link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 8px 10px;
+        min-height: 40px;
+        text-align: left;
+        border-radius: 10px;
+        border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 70%, var(--nh48-footer-ink) 30%);
+        color: var(--nh48-footer-ink);
+        text-decoration: none;
+        background: color-mix(in srgb, var(--nh48-footer-card) 70%, var(--nh48-footer-accent) 30%);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
+        line-height: 1.32;
+        white-space: normal;
+        width: 100%;
+      }
+
+      .nh48-quick-footer__link:hover,
+      .nh48-quick-footer__link:focus-visible {
+        border-color: var(--nh48-footer-accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--nh48-footer-accent) 28%, transparent);
+        background: color-mix(in srgb, var(--nh48-footer-card) 55%, var(--nh48-footer-accent) 45%);
+        transform: translateY(-1px);
+        outline: none;
+      }
+
+      .nh48-quick-footer__meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        border-top: 1px solid var(--nh48-footer-border);
+        padding: 12px clamp(16px, 3vw, 32px) 0;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .nh48-quick-footer__meta-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nh48-quick-footer__meta-links a {
+        color: color-mix(in srgb, var(--nh48-footer-ink) 85%, #cbd5e1 15%);
+        text-decoration: none;
+        padding: 6px 10px;
+        border-radius: 9px;
+        border: 1px solid transparent;
+        transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      }
+
+      .nh48-quick-footer__meta-links a:hover,
+      .nh48-quick-footer__meta-links a:focus-visible {
+        color: #ffffff;
+        background: color-mix(in srgb, var(--nh48-footer-card) 65%, var(--nh48-footer-accent) 35%);
+        border-color: color-mix(in srgb, var(--nh48-footer-accent) 32%, transparent);
+        outline: none;
+      }
+
+      .nh48-quick-footer__legal {
+        color: color-mix(in srgb, var(--nh48-footer-ink) 80%, #cbd5e1 20%);
+      }
+
+      @media (max-width: 768px) {
+        .nh48-quick-footer {
+          margin: 24px auto 10px;
+          padding: 14px clamp(12px, 4vw, 18px) 0;
+          width: min(720px, 100%);
+          min-height: 0;
+          max-height: none;
+        }
+
+        .nh48-quick-footer .nh48-quick-footer__grid {
+          gap: 12px;
+          padding: 6px 8px 10px;
+          max-height: 420px;
+          min-height: 0;
+        }
+
+        .nh48-quick-footer__list {
+          gap: 6px;
+        }
+
+        .nh48-quick-footer__link {
+          min-height: 38px;
+          padding: 8px 9px;
+        }
+      }
+    `,
+    
+    content: {
+      header: {
+        title: "Quick browse the White Mountains of New Hampshire",
+        description: "Jump directly into every New Hampshire 4,000-footer detail page to quickly find summit info, photos, and route details."
+      },
+      
+      groups: [
+        {
+          title: "Presidential Range",
+          links: [
+            { href: "/peaks/mount-washington", text: "Mount Washington" },
+            { href: "/peaks/mount-adams", text: "Mount Adams" },
+            { href: "/peaks/mount-jefferson", text: "Mount Jefferson" },
+            { href: "/peaks/mount-monroe", text: "Mount Monroe" },
+            { href: "/peaks/mount-eisenhower", text: "Mount Eisenhower" },
+            { href: "/peaks/mount-pierce", text: "Mount Pierce" },
+            { href: "/peaks/mount-jackson", text: "Mount Jackson" },
+            { href: "/peaks/mount-madison", text: "Mount Madison" },
+            { href: "/peaks/mount-isolation", text: "Mount Isolation" }
+          ]
+        },
+        {
+          title: "Franconia Ridge",
+          links: [
+            { href: "/peaks/mount-lafayette", text: "Mount Lafayette" },
+            { href: "/peaks/mount-lincoln", text: "Mount Lincoln" },
+            { href: "/peaks/mount-liberty", text: "Mount Liberty" },
+            { href: "/peaks/mount-flume", text: "Mount Flume" },
+            { href: "/peaks/mount-garfield", text: "Mount Garfield" }
+          ]
+        },
+        {
+          title: "Twins & Bonds",
+          links: [
+            { href: "/peaks/south-twin-mountain", text: "South Twin Mountain" },
+            { href: "/peaks/north-twin-mountain", text: "North Twin Mountain" },
+            { href: "/peaks/galehead-mountain", text: "Galehead Mountain" },
+            { href: "/peaks/zealand-mountain", text: "Zealand Mountain" },
+            { href: "/peaks/west-bond", text: "West Bond" },
+            { href: "/peaks/mount-bond", text: "Mount Bond" },
+            { href: "/peaks/bondcliff", text: "Bondcliff" },
+            { href: "/peaks/owls-head", text: "Owl's Head" }
+          ]
+        },
+        {
+          title: "Carter-Moriah & Wildcats",
+          links: [
+            { href: "/peaks/carter-dome", text: "Carter Dome" },
+            { href: "/peaks/south-carter-mountain", text: "South Carter Mountain" },
+            { href: "/peaks/middle-carter-mountain", text: "Middle Carter Mountain" },
+            { href: "/peaks/mount-moriah", text: "Mount Moriah" },
+            { href: "/peaks/wildcat-mountain-a", text: "Wildcat Mountain – A Peak" },
+            { href: "/peaks/wildcat-mountain-d", text: "Wildcat Mountain – D Peak" }
+          ]
+        },
+        {
+          title: "Kinsman Range",
+          links: [
+            { href: "/peaks/north-kinsman-mountain", text: "North Kinsman Mountain" },
+            { href: "/peaks/south-kinsman-mountain", text: "South Kinsman Mountain" },
+            { href: "/peaks/cannon-mountain", text: "Cannon Mountain" }
+          ]
+        },
+        {
+          title: "Osceolas & Trips",
+          links: [
+            { href: "/peaks/mount-passaconaway", text: "Mount Passaconaway" },
+            { href: "/peaks/mount-whiteface", text: "Mount Whiteface" },
+            { href: "/peaks/north-tripyramid", text: "North Tripyramid" },
+            { href: "/peaks/middle-tripyramid", text: "Middle Tripyramid" },
+            { href: "/peaks/mount-osceola", text: "Mount Osceola" },
+            { href: "/peaks/mount-osceola-east", text: "Mount Osceola – East Peak" },
+            { href: "/peaks/mount-tecumseh", text: "Mount Tecumseh" }
+          ]
+        },
+        {
+          title: "Pemigewasset",
+          links: [
+            { href: "/peaks/mount-carrigain", text: "Mount Carrigain" },
+            { href: "/peaks/mount-hancock", text: "Mount Hancock – North Peak" },
+            { href: "/peaks/mount-hancock-south", text: "Mount Hancock – South Peak" },
+            { href: "/peaks/mount-hale", text: "Mount Hale" }
+          ]
+        },
+        {
+          title: "Northern Summits",
+          links: [
+            { href: "/peaks/mount-cabot", text: "Mount Cabot" },
+            { href: "/peaks/mount-waumbek", text: "Mount Waumbek" }
+          ]
+        },
+        {
+          title: "Western & Outlying",
+          links: [
+            { href: "/peaks/mount-moosilauke", text: "Mount Moosilauke" },
+            { href: "/peaks/mount-willey", text: "Mount Willey" },
+            { href: "/peaks/mount-field", text: "Mount Field" },
+            { href: "/peaks/mount-tom", text: "Mount Tom" }
+          ]
+        }
+      ],
+      
+      meta: {
+        legal: '© 2026 Nathan Sobol · <a href="/catalog" class="legal-link nh48-link">NH 48</a>, <a href="/trails" class="legal-link tracing-link">White Mountain Tracing</a>, <a href="/long-trails" class="legal-link long-trail-link">Scenic & Long Trail</a> – Data, Routes, and Photos',
+        links: [
+          { href: "/catalog", text: "Catalog" },
+          { href: "/trails", text: "White Mountain Trails" },
+          { href: "/long-trails", text: "Long Trails" },
+          { href: "https://nh48pics.com", text: "NH48 Pics", external: true },
+          { href: "https://nh48.app", text: "Peak Bagger", external: true },
+          { href: "https://www.instagram.com/nate_dumps_pics/", text: "Latest WMNF Photos", external: true }
+        ]
+      }
+    },
+    
+    // Peak data for sorting functionality
+    peaks: [
+      { slug: 'mount-washington', name: 'Mount Washington', elevation: 6288 },
+      { slug: 'mount-adams', name: 'Mount Adams', elevation: 5793 },
+      { slug: 'mount-jefferson', name: 'Mount Jefferson', elevation: 5712 },
+      { slug: 'mount-monroe', name: 'Mount Monroe', elevation: 5372 },
+      { slug: 'mount-eisenhower', name: 'Mount Eisenhower', elevation: 4780 },
+      { slug: 'mount-pierce', name: 'Mount Pierce', elevation: 4310 },
+      { slug: 'mount-jackson', name: 'Mount Jackson', elevation: 4052 },
+      { slug: 'mount-madison', name: 'Mount Madison', elevation: 5367 },
+      { slug: 'mount-isolation', name: 'Mount Isolation', elevation: 4035 },
+      { slug: 'mount-lafayette', name: 'Mount Lafayette', elevation: 5260 },
+      { slug: 'mount-lincoln', name: 'Mount Lincoln', elevation: 5089 },
+      { slug: 'mount-liberty', name: 'Mount Liberty', elevation: 4459 },
+      { slug: 'mount-flume', name: 'Mount Flume', elevation: 4328 },
+      { slug: 'mount-garfield', name: 'Mount Garfield', elevation: 6000 },
+      { slug: 'south-twin-mountain', name: 'South Twin Mountain', elevation: 4902 },
+      { slug: 'north-twin-mountain', name: 'North Twin Mountain', elevation: 4760 },
+      { slug: 'galehead-mountain', name: 'Galehead Mountain', elevation: 4024 },
+      { slug: 'zealand-mountain', name: 'Zealand Mountain', elevation: 4260 },
+      { slug: 'west-bond', name: 'West Bond', elevation: 4540 },
+      { slug: 'mount-bond', name: 'Mount Bond', elevation: 4698 },
+      { slug: 'bondcliff', name: 'Bondcliff', elevation: 4260 },
+      { slug: 'owls-head', name: "Owl's Head", elevation: 4025 },
+      { slug: 'carter-dome', name: 'Carter Dome', elevation: 4832 },
+      { slug: 'south-carter-mountain', name: 'South Carter Mountain', elevation: 4440 },
+      { slug: 'middle-carter-mountain', name: 'Middle Carter Mountain', elevation: 4610 },
+      { slug: 'mount-moriah', name: 'Mount Moriah', elevation: 4049 },
+      { slug: 'wildcat-mountain-a', name: 'Wildcat Mountain – A Peak', elevation: 4422 },
+      { slug: 'wildcat-mountain-d', name: 'Wildcat Mountain – D Peak', elevation: 4062 },
+      { slug: 'north-kinsman-mountain', name: 'North Kinsman Mountain', elevation: 4293 },
+      { slug: 'south-kinsman-mountain', name: 'South Kinsman Mountain', elevation: 4358 },
+      { slug: 'cannon-mountain', name: 'Cannon Mountain', elevation: 4100 },
+      { slug: 'mount-passaconaway', name: 'Mount Passaconaway', elevation: 4043 },
+      { slug: 'mount-whiteface', name: 'Mount Whiteface', elevation: 4020 },
+      { slug: 'north-tripyramid', name: 'North Tripyramid', elevation: 4180 },
+      { slug: 'middle-tripyramid', name: 'Middle Tripyramid', elevation: 4140 },
+      { slug: 'mount-osceola', name: 'Mount Osceola', elevation: 4315 },
+      { slug: 'mount-osceola-east', name: 'Mount Osceola – East Peak', elevation: 4156 },
+      { slug: 'mount-tecumseh', name: 'Mount Tecumseh', elevation: 4003 },
+      { slug: 'mount-carrigain', name: 'Mount Carrigain', elevation: 4700 },
+      { slug: 'mount-hancock', name: 'Mount Hancock – North Peak', elevation: 4420 },
+      { slug: 'mount-hancock-south', name: 'Mount Hancock – South Peak', elevation: 4319 },
+      { slug: 'mount-hale', name: 'Mount Hale', elevation: 4054 },
+      { slug: 'mount-cabot', name: 'Mount Cabot', elevation: 4170 },
+      { slug: 'mount-waumbek', name: 'Mount Waumbek', elevation: 4006 },
+      { slug: 'mount-moosilauke', name: 'Mount Moosilauke', elevation: 4802 },
+      { slug: 'mount-willey', name: 'Mount Willey', elevation: 4285 },
+      { slug: 'mount-field', name: 'Mount Field', elevation: 4340 },
+      { slug: 'mount-tom', name: 'Mount Tom', elevation: 4051 }
+    ]
+  };
+
+  // Popularity index for sorting
+  const POPULARITY_INDEX = {
+    'mount-washington': 1, 'mount-adams': 2, 'mount-jefferson': 3, 'mount-monroe': 4,
+    'mount-madison': 5, 'mount-lafayette': 6, 'mount-lincoln': 7, 'mount-liberty': 8,
+    'mount-flume': 9, 'mount-garfield': 10, 'mount-bond': 11, 'west-bond': 12,
+    'bondcliff': 13, 'mount-carrigain': 14, 'mount-eisenhower': 15, 'mount-pierce': 16,
+    'north-twin-mountain': 17, 'south-twin-mountain': 18, 'carter-dome': 19,
+    'mount-moosilauke': 20, 'mount-hancock': 21, 'mount-hancock-south': 22,
+    'south-carter-mountain': 23, 'middle-carter-mountain': 24, 'mount-isolation': 25,
+    'zealand-mountain': 26, 'mount-osceola': 27, 'mount-osceola-east': 28,
+    'galehead-mountain': 29, 'mount-jackson': 30, 'mount-moriah': 31,
+    'wildcat-mountain-a': 32, 'wildcat-mountain-d': 33, 'north-tripyramid': 34,
+    'middle-tripyramid': 35, 'mount-cabot': 36, 'mount-waumbek': 37,
+    'north-kinsman-mountain': 38, 'south-kinsman-mountain': 39, 'cannon-mountain': 40,
+    'mount-hale': 41, 'mount-passaconaway': 42, 'mount-whiteface': 43,
+    'mount-tecumseh': 44, 'mount-willey': 45, 'mount-field': 46, 'mount-tom': 47,
+    'owls-head': 48
+  };
+
+  // Helper functions
+  const cleanLinkText = (text) => {
+    if (!text) return '';
+    return text
+      .replace(/\s+(Trail|Loop|Cutoff|Road|Path|Connector|Summit|Route)$/i, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
+  const getLabel = (peak) => cleanLinkText(peak.name || peak.label);
+
+  const sortPeaks = (peaks, sortKey) => {
+    const list = peaks.slice();
+    if (sortKey === 'alphabetical') {
+      list.sort((a, b) => getLabel(a).localeCompare(getLabel(b), undefined, { sensitivity: 'base' }));
+    } else if (sortKey === 'elevation') {
+      list.sort((a, b) => (b.elevation || 0) - (a.elevation || 0));
+    } else {
+      list.sort((a, b) => POPULARITY_INDEX[a.slug] - POPULARITY_INDEX[b.slug]);
+    }
+    return list;
+  };
+
+  const renderGrid = (gridEl, peaks, sortKey) => {
+    const sorted = sortPeaks(peaks, sortKey);
+    gridEl.innerHTML = '';
+    
+    // Create groups based on the configuration
+    const groups = FOOTER_CONFIG.content.groups;
+    groups.forEach(group => {
+      const groupEl = document.createElement('div');
+      groupEl.className = 'nh48-quick-footer__group';
+      
+      const titleEl = document.createElement('h2');
+      titleEl.textContent = group.title;
+      groupEl.appendChild(titleEl);
+      
+      const listEl = document.createElement('ul');
+      listEl.className = 'nh48-quick-footer__list';
+      
+      group.links.forEach(link => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.className = 'nh48-quick-footer__link';
+        a.href = link.href;
+        a.textContent = link.text;
+        
+        // Add elevation data if available
+        const peak = FOOTER_CONFIG.peaks.find(p => p.slug === link.href.replace('/peaks/', ''));
+        if (peak && peak.elevation) {
+          a.setAttribute('data-elevation', peak.elevation);
+        }
+        
+        li.appendChild(a);
+        listEl.appendChild(li);
+      });
+      
+      groupEl.appendChild(listEl);
+      gridEl.appendChild(groupEl);
+    });
+  };
+
+  const createControls = (onChange) => {
+    const controls = document.createElement('div');
+    controls.className = 'nh48-quick-footer__controls';
+    const buttons = [
+      { key: 'popularity', label: 'Popularity' },
+      { key: 'alphabetical', label: 'Alphabetical' },
+      { key: 'elevation', label: 'Elevation' }
+    ];
+
+    buttons.forEach(({ key, label }) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = label;
+      button.className = 'nh48-quick-footer__sort-button';
+      if (key === 'popularity') {
+        button.classList.add('is-active');
+      }
+      button.addEventListener('click', () => {
+        controls.querySelectorAll('.nh48-quick-footer__sort-button').forEach((btn) => btn.classList.remove('is-active'));
+        button.classList.add('is-active');
+        onChange(key);
+      });
+      controls.appendChild(button);
+    });
+
+    return controls;
+  };
+
+  const enhanceFooter = (footerEl) => {
+    const grid = footerEl.querySelector('.nh48-quick-footer__grid');
+    if (footerEl.querySelector('.nh48-quick-footer__controls')) return;
+    if (!grid) return;
+
+    let activeSort = 'popularity';
+    let hasRendered = false;
+
+    const renderIfNeeded = (sortKey, allowInitialRender = false) => {
+      if (!allowInitialRender && sortKey === 'popularity' && !hasRendered) {
+        return;
+      }
+      renderGrid(grid, FOOTER_CONFIG.peaks, sortKey);
+      hasRendered = true;
+    };
+
+    const controls = createControls((sortKey) => {
+      activeSort = sortKey;
+      renderIfNeeded(sortKey, true);
+    });
+
+    const insertionTarget = footerEl.querySelector('.nh48-quick-footer__header') || footerEl;
+    insertionTarget.parentNode.insertBefore(controls, grid);
+    renderIfNeeded(activeSort, true);
+  };
+
+  const generateFooterHTML = () => {
+    const content = FOOTER_CONFIG.content;
+    
+    return `
+      <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
+        <div class="nh48-quick-footer__header">
+          <h2 id="nh48-quick-footer-title">${content.header.title}</h2>
+          <p>${content.header.description}</p>
+        </div>
+        <div class="nh48-quick-footer__grid" aria-label="NH48 quick browse footer links">
+          ${content.groups.map(group => `
+            <div class="nh48-quick-footer__group">
+              <h2>${group.title}</h2>
+              <ul class="nh48-quick-footer__list">
+                ${group.links.map(link => `
+                  <li><a class="nh48-quick-footer__link" href="${link.href}">${link.text}</a></li>
+                `).join('')}
+              </ul>
+            </div>
+          `).join('')}
+        </div>
+        <div class="nh48-quick-footer__meta">
+          <div class="nh48-quick-footer__legal">${content.meta.legal}</div>
+          <div class="nh48-quick-footer__meta-links" aria-label="Footer navigation links">
+            ${content.meta.links.map(link => `
+              <a href="${link.href}" ${link.external ? 'target="_blank" rel="noopener"' : ''}>${link.text}</a>
+            `).join('')}
+          </div>
+        </div>
+      </footer>
+    `;
+  };
+
+  const injectFooter = () => {
+    // Check if footer already exists
+    if (document.querySelector('.nh48-quick-footer') || document.querySelector('[data-nh48-quick-footer]')) {
+      return;
+    }
+
+    // Check for footer-placeholder and inject there if found
+    const placeholder = document.getElementById('footer-placeholder');
+    const targetParent = placeholder ? placeholder.parentNode : document.body;
+    const insertBefore = placeholder ? placeholder.nextSibling : null;
+
+    // Create style element
+    const styleEl = document.createElement('style');
+    styleEl.textContent = FOOTER_CONFIG.styles;
+    document.head.appendChild(styleEl);
+
+    // Create footer element
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = generateFooterHTML();
+    const footer = wrapper.firstElementChild;
+
+    // Remove the placeholder if it exists
+    if (placeholder) {
+      placeholder.remove();
+    }
+
+    // Insert the footer
+    if (insertBefore) {
+      targetParent.insertBefore(footer, insertBefore);
+    } else {
+      targetParent.appendChild(footer);
+    }
+
+    // Enhance with interactive features
+    enhanceFooter(footer);
+  };
+
+  // Initialize when DOM is ready
+  const boot = () => {
+    injectFooter();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+})();
