@@ -237,11 +237,6 @@ export default {
     // redirectToApp or window.location.replace.
     html = html.replace(/<script[^>]*>[\s\S]*?window\.location\.replace\([^)]*\)[\s\S]*?<\/script>/gi, '');
 
-    // Inject a small script to set the slug as a query parameter.  The
-    // client-side code expects the slug in the query string (?slug=).
-    const slugScript = `\n<script>\n(function(){\n  const slug = ${JSON.stringify(slug)};\n  const langCode = ${JSON.stringify(lang)};\n  const params = new URLSearchParams(window.location.search);\n  if (!params.has('slug')) {\n    params.set('slug', slug);\n    if (langCode === 'fr') params.set('lang', 'fr');\n    const newSearch = params.toString();\n    if (window.location.search !== '?' + newSearch) {\n      window.history.replaceState(null, '', window.location.pathname + '?' + newSearch);\n    }\n  }\n})();\n</script>\n`;
-    html = html.replace(/<body([^>]*)>/i, `<body$1>${slugScript}`);
-
     // Insert our meta tags, canonical links and structured data just
     // before the closing head tag.  We remove any existing dynamic
     // placeholders for these elements and insert our own.
