@@ -1141,48 +1141,6 @@
     padding: 0 clamp(16px, 3vw, 32px);
   }
 
-  .nh48-quick-footer__controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    padding: 9px 12px;
-    margin: 2px auto 0;
-    border-radius: 14px;
-    border: 1px solid var(--nh48-footer-border);
-    background: var(--nh48-footer-card);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  }
-
-  .nh48-quick-footer__sort-button {
-    appearance: none;
-    border: 1px solid var(--nh48-footer-border);
-    background: color-mix(in srgb, var(--nh48-footer-card) 70%, #000 30%);
-    color: var(--nh48-footer-ink);
-    border-radius: 12px;
-    padding: 8px 13px;
-    font-weight: 800;
-    letter-spacing: 0.25px;
-    cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-  }
-
-  .nh48-quick-footer__sort-button:hover,
-  .nh48-quick-footer__sort-button:focus-visible {
-    outline: none;
-    border-color: var(--nh48-footer-accent);
-    background: color-mix(in srgb, var(--nh48-footer-card) 60%, var(--nh48-footer-accent) 40%);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--nh48-footer-accent) 24%, transparent);
-    transform: translateY(-1px);
-  }
-
-  .nh48-quick-footer__sort-button.is-active {
-    background: color-mix(in srgb, var(--nh48-footer-card) 40%, var(--nh48-footer-accent) 60%);
-    border-color: var(--nh48-footer-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--nh48-footer-accent) 24%, transparent);
-  }
-
   .nh48-quick-footer__eyebrow {
     display: none;
   }
@@ -1380,27 +1338,13 @@
       gap: 8px;
     }
 
-    .nh48-quick-footer__link {
-      justify-content: center;
-      font-size: 1rem;
-      min-height: 44px;
-      padding: 10px 14px;
-    }
-
-    .nh48-quick-footer__controls {
-      width: 100%;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 8px;
-    }
-
-    .nh48-quick-footer__sort-button {
-      width: 100%;
-      text-align: center;
-      padding: 10px 14px;
-      font-size: 1rem;
-    }
+  .nh48-quick-footer__link {
+    justify-content: center;
+    font-size: 1rem;
+    min-height: 44px;
+    padding: 10px 14px;
   }
+}
 
 </style>
 <footer class="nh48-quick-footer" aria-labelledby="nh48-quick-footer-title" data-nh48-quick-footer>
