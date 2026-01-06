@@ -46,8 +46,9 @@
       align-items: center;
       justify-content: space-between;
       padding: 12px 24px;
-      background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
-      border-bottom: 1px solid #ffffff;
+      background: var(--panel);
+      border-bottom: 1px solid var(--stroke);
+      box-shadow: none;
       position: sticky;
       top: 0;
       z-index: 100;
@@ -116,7 +117,7 @@
     }
 
     .site-nav-links a {
-      color: #ffffff;
+      color: var(--ink);
       text-decoration: none;
       padding: 8px 16px;
       border-radius: 6px;
@@ -128,12 +129,12 @@
     }
 
     .site-nav-links a:hover {
-      color: #22c55e;
-      background: rgba(255, 255, 255, 0.08);
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     .site-nav-links a.active {
-      color: #22c55e;
+      color: var(--accent);
       background: rgba(34, 197, 94, 0.1);
     }
 
@@ -149,10 +150,10 @@
       position: absolute;
       top: 100%;
       left: 0;
-      background: #0f172a;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--card);
+      border: 2px solid var(--stroke);
       border-radius: 10px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
       padding: 8px;
       min-width: 200px;
       z-index: 10;
@@ -172,6 +173,12 @@
       letter-spacing: 0.3px;
       padding: 10px 12px;
       border-radius: 8px;
+      color: var(--ink);
+    }
+
+    .site-nav-dropdown .site-nav-submenu a:hover {
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     .site-nav-cta {
@@ -181,13 +188,19 @@
       padding: 6px 14px;
       font-size: 13px;
       border-radius: 6px;
-      background: #22c55e;
-      border: 2px solid #22c55e;
-      color: #ffffff;
+      background: var(--accent);
+      border: 2px solid var(--accent);
+      color: var(--bg);
       font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue Condensed", Arial, sans-serif;
       font-weight: 700;
       letter-spacing: 0.6px;
       text-transform: uppercase;
+    }
+
+    .site-nav-cta:hover {
+      background: var(--accent-strong);
+      border-color: var(--accent-strong);
+      color: var(--bg);
     }
 
     .dataset-hero-logo {
@@ -213,7 +226,7 @@
     .site-nav-cta svg {
       width: 16px;
       height: 16px;
-      stroke: #ffffff;
+      stroke: var(--bg);
     }
 
     @media (max-width: 768px) {
@@ -283,7 +296,7 @@
 
     .nh48-lang-label {
       font-size: 0.78rem;
-      color: #dbeafe;
+      color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.8px;
     }
@@ -300,8 +313,8 @@
       padding: 6px 12px;
       border-radius: 10px;
       border: 2px solid #ffffff;
-      background: #0f172a;
-      color: #f8fafc;
+      background: var(--card);
+      color: var(--ink);
       cursor: pointer;
       font-size: 0.85rem;
       text-transform: uppercase;
@@ -326,7 +339,7 @@
       position: absolute;
       right: 0;
       top: calc(100% + 8px);
-      background: #0f172a;
+      background: var(--card);
       border: 2px solid #ffffff;
       border-radius: 12px;
       padding: 8px;
@@ -334,7 +347,7 @@
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 6px;
       min-width: 220px;
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.35);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
       opacity: 0;
       pointer-events: none;
       transform: translateY(-6px);
@@ -353,8 +366,8 @@
       height: 34px;
       border-radius: 8px;
       border: 2px solid #ffffff;
-      background: #111827;
-      color: #0f172a;
+      background: var(--card);
+      color: var(--ink);
       display: flex;
       align-items: center;
       justify-content: center;
