@@ -169,12 +169,12 @@
           padding: 12px 14px;
           background: var(--nh48-footer-card);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.28);
-          text-align: center;
+          text-align: left;
           scroll-snap-align: start;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
-          align-items: center;
+          align-items: flex-start;
         }
 
         .nh48-quick-footer__group h2 {
@@ -264,12 +264,12 @@
         min-width: 0;
         max-width: none;
         width: 100%;
-        text-align: center;
+        text-align: left;
         scroll-snap-align: start;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        align-items: center;
+        align-items: flex-start;
       }
 
       .nh48-quick-footer__group h2 {
