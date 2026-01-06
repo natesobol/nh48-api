@@ -153,7 +153,8 @@
       scroll-snap-align: start;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
+      align-items: flex-start;
     }
 
     .nh48-quick-footer__group h2 {
