@@ -480,6 +480,7 @@
       background-color: var(--bg-secondary);
       border: 1px solid var(--border-color);
       border-radius: 8px;
+      min-height: 70vh;
     }
 
     /* Map itself fills its container */
@@ -489,6 +490,7 @@
       height: 100%;
       background-color: #2d2d2d;
       border-radius: 6px;
+      min-height: 70vh;
     }
 
     /* Bottom container holds the trail list and the info/settings panel */
@@ -1676,9 +1678,26 @@
       // Use a detailed topographic map tile layer (OpenTopoMap) which includes contour lines
       // and hiking paths.  Attribution is required to credit data sources.
       const baseLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        attribution:
-          t('trails.map.attribution'),
-        maxZoom: 17
+        attribution: t('trails.map.attribution'),
+        maxZoom: 17,
+        crossOrigin: true
+      }).addTo(map);
+
+      // Fallback to standard OpenStreetMap tiles if OpenTopoMap is unavailable
+      const fallbackLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      });
+
+      baseLayer.on('tileerror', () => {
+        if (!map.hasLayer(fallbackLayer)) {
+          fallbackLayer.addTo(map);
+        }
+      });
+
+      // Overlay high-contrast hiking trails on top of the topo base
+      const hikingOverlay = L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
+        attribution: 'Hiking overlay &copy; waymarkedtrails.org',
+        opacity: 0.9
       }).addTo(map);
 
       map.on('zoomend', () => {
