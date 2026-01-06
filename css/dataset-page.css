@@ -1,12 +1,24 @@
 :root {
-  --bg: #0d1117;
-  --panel: #111827;
-  --border: #1f2937;
-  --text: #e5e7eb;
-  --muted: #9ca3af;
-  --accent: #4ea6ff;
-  --accent-strong: #7ce0ff;
-  --success: #6ee7b7;
+  /* dark surfaces */
+  --bg: #0a0a0a;
+  --panel: #12121a;
+  --card: #171a22;
+
+  /* typography */
+  --ink: #ffffff;
+  --muted: #cbd5e1;
+
+  /* stroke/border */
+  --stroke: #ffffff33;
+
+  /* accent colour – green */
+  --accent: #22c55e;
+  --accent-strong: #4ade80;
+
+  /* you can leave --max-width and other variables unchanged */
+  --success: var(--accent);
+  --border: var(--stroke);
+  --text: var(--ink);
   --max-width: 1100px;
 }
 
@@ -22,7 +34,7 @@ html, body {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
@@ -103,10 +115,10 @@ h1 {
 
 section.panel {
   background: var(--panel);
-  border: 1px solid var(--border);
+  border: 2px solid var(--stroke);
   border-radius: 14px;
   padding: 18px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  box-shadow: none;
 }
 
 .panel-label {
@@ -115,7 +127,7 @@ section.panel {
   gap: 8px;
   margin: 0 0 4px;
   font-weight: 600;
-  color: var(--success);
+  color: var(--accent);
   letter-spacing: 0.02em;
   text-transform: uppercase;
   font-size: 0.9rem;
@@ -126,8 +138,8 @@ section.panel {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--success);
-  box-shadow: 0 0 0 6px rgba(110, 231, 183, 0.12);
+  background: var(--accent);
+  box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.12);
 }
 
 section.panel h2 {
@@ -150,9 +162,9 @@ section.panel p {
 }
 
 .badge {
-  background: rgba(78, 166, 255, 0.12);
-  border: 1px solid rgba(78, 166, 255, 0.35);
-  color: var(--text);
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: var(--ink);
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 0.9rem;
@@ -170,20 +182,21 @@ section.panel p {
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  background: linear-gradient(120deg, rgba(110, 231, 183, 0.18), rgba(78, 166, 255, 0.12));
-  border: 1px solid rgba(110, 231, 183, 0.5);
+  background: rgba(34, 197, 94, 0.2);
+  border: 2px solid var(--accent);
   border-radius: 12px;
-  color: var(--text);
+  color: var(--ink);
   font-weight: 600;
   text-decoration: none;
-  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+  transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
 .cta-button:hover,
 .cta-button:focus {
-  transform: translateY(-1px);
-  border-color: rgba(110, 231, 183, 0.8);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  transform: translateY(-2px);
+  background: rgba(34, 197, 94, 0.3);
+  border-color: var(--accent-strong);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
   text-decoration: none;
 }
 
@@ -198,13 +211,18 @@ section.panel p {
 
 .download-card {
   display: block;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border);
+  background: var(--card);
+  border: 2px solid var(--stroke);
   border-radius: 12px;
   padding: 12px 14px;
   height: 100%;
   color: inherit;
   text-decoration: none;
+}
+
+.download-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .download-card strong {
