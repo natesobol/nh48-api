@@ -188,7 +188,7 @@ section.panel p {
   color: var(--ink);
   font-weight: 600;
   text-decoration: none;
-  transition: transform 120ms ease, box-shadow 120ms ease;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
 }
 
 .cta-button:hover,
@@ -218,6 +218,7 @@ section.panel p {
   height: 100%;
   color: inherit;
   text-decoration: none;
+  transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
 .download-card:hover {
