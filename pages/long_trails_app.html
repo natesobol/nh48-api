@@ -159,6 +159,10 @@
       min-height: 0;
     }
 
+    #footer-placeholder {
+      margin-top: clamp(160px, 22vh, 320px);
+    }
+
     @media (min-width: 901px) {
       body {
         overflow: hidden;
@@ -181,6 +185,10 @@
         display: flex;
         height: 100vh;
         width: 100vw;
+      }
+
+      #footer-placeholder {
+        margin-top: clamp(220px, 32vh, 420px);
       }
 
       .sidebar {
