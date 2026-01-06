@@ -427,19 +427,20 @@
 
     /* Root container for the app */
     #app {
-      /* Layout as a grid to support a draggable divider between the top and list panels */
-      --top-height: 55vh;
-      display: grid;
-      grid-template-rows: var(--top-height) 10px 1fr;
-      height: calc(100vh + 2000px);
-      gap: 0;
-      max-width: 1100px;
-      margin: 0 auto 1rem;
-      /* Pure white border around the entire application similar to peakbagger */
-      border: 1px solid #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-    }
+    /* Layout as a grid to support a draggable divider between the top and list panels */
+    --top-height: 68vh;
+    display: grid;
+    grid-template-rows: var(--top-height) 10px 1fr;
+    height: calc(100vh + 2400px);
+    gap: 0;
+    max-width: 1100px;
+    margin: 0 auto clamp(2rem, 8vh, 3.5rem);
+    /* Pure white border around the entire application similar to peakbagger */
+    border: 1px solid #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    padding-bottom: clamp(120px, 14vh, 220px);
+  }
 
     /* Top section holds the sidebar and the map side by side */
     #topSection {
@@ -480,7 +481,7 @@
       background-color: var(--bg-secondary);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      min-height: 70vh;
+      min-height: 78vh;
     }
 
     /* Map itself fills its container */
@@ -490,7 +491,7 @@
       height: 100%;
       background-color: #2d2d2d;
       border-radius: 6px;
-      min-height: 70vh;
+      min-height: 78vh;
     }
 
     /* Bottom container holds the trail list and the info/settings panel */
@@ -500,7 +501,11 @@
       padding: 1rem;
       width: 100%;
       box-sizing: border-box;
-      min-height: 280px;
+      min-height: 320px;
+    }
+
+    #footer-placeholder {
+      margin-top: clamp(160px, 20vh, 280px);
     }
 
     /* List section below the map; spans most of the width */
