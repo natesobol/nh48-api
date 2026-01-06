@@ -55,48 +55,6 @@
         padding: 0 clamp(16px, 3vw, 32px);
       }
 
-      .nh48-quick-footer__controls {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        padding: 9px 12px;
-        margin: 2px auto 0;
-        border-radius: 14px;
-        border: 1px solid var(--nh48-footer-border);
-        background: var(--nh48-footer-card);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      }
-
-      .nh48-quick-footer__sort-button {
-        appearance: none;
-        border: 1px solid var(--nh48-footer-border);
-        background: color-mix(in srgb, var(--nh48-footer-card) 70%, #000 30%);
-        color: var(--nh48-footer-ink);
-        border-radius: 12px;
-        padding: 8px 13px;
-        font-weight: 800;
-        letter-spacing: 0.25px;
-        cursor: pointer;
-        transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-      }
-
-      .nh48-quick-footer__sort-button:hover,
-      .nh48-quick-footer__sort-button:focus-visible {
-        outline: none;
-        border-color: var(--nh48-footer-accent);
-        background: color-mix(in srgb, var(--nh48-footer-card) 60%, var(--nh48-footer-accent) 40%);
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--nh48-footer-accent) 24%, transparent);
-        transform: translateY(-1px);
-      }
-
-      .nh48-quick-footer__sort-button.is-active {
-        background: color-mix(in srgb, var(--nh48-footer-card) 40%, var(--nh48-footer-accent) 60%);
-        border-color: var(--nh48-footer-accent);
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--nh48-footer-accent) 24%, transparent);
-      }
-
       .nh48-quick-footer__eyebrow {
         display: none;
       }
@@ -551,49 +509,7 @@
   };
 
   // Popularity index for sorting
-  const POPULARITY_INDEX = {
-    'mount-washington': 1, 'mount-adams': 2, 'mount-jefferson': 3, 'mount-monroe': 4,
-    'mount-madison': 5, 'mount-lafayette': 6, 'mount-lincoln': 7, 'mount-liberty': 8,
-    'mount-flume': 9, 'mount-garfield': 10, 'mount-bond': 11, 'west-bond': 12,
-    'bondcliff': 13, 'mount-carrigain': 14, 'mount-eisenhower': 15, 'mount-pierce': 16,
-    'north-twin-mountain': 17, 'south-twin-mountain': 18, 'carter-dome': 19,
-    'mount-moosilauke': 20, 'mount-hancock': 21, 'mount-hancock-south': 22,
-    'south-carter-mountain': 23, 'middle-carter-mountain': 24, 'mount-isolation': 25,
-    'zealand-mountain': 26, 'mount-osceola': 27, 'mount-osceola-east': 28,
-    'galehead-mountain': 29, 'mount-jackson': 30, 'mount-moriah': 31,
-    'wildcat-mountain-a': 32, 'wildcat-mountain-d': 33, 'north-tripyramid': 34,
-    'middle-tripyramid': 35, 'mount-cabot': 36, 'mount-waumbek': 37,
-    'north-kinsman-mountain': 38, 'south-kinsman-mountain': 39, 'cannon-mountain': 40,
-    'mount-hale': 41, 'mount-passaconaway': 42, 'mount-whiteface': 43,
-    'mount-tecumseh': 44, 'mount-willey': 45, 'mount-field': 46, 'mount-tom': 47,
-    'owls-head': 48
-  };
-
-  // Helper functions
-  const cleanLinkText = (text) => {
-    if (!text) return '';
-    return text
-      .replace(/\s+(Trail|Loop|Cutoff|Road|Path|Connector|Summit|Route)$/i, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-  };
-
-  const getLabel = (peak) => cleanLinkText(peak.name || peak.label);
-
-  const sortPeaks = (peaks, sortKey) => {
-    const list = peaks.slice();
-    if (sortKey === 'alphabetical') {
-      list.sort((a, b) => getLabel(a).localeCompare(getLabel(b), undefined, { sensitivity: 'base' }));
-    } else if (sortKey === 'elevation') {
-      list.sort((a, b) => (b.elevation || 0) - (a.elevation || 0));
-    } else {
-      list.sort((a, b) => POPULARITY_INDEX[a.slug] - POPULARITY_INDEX[b.slug]);
-    }
-    return list;
-  };
-
-  const renderGrid = (gridEl, peaks, sortKey) => {
-    const sorted = sortPeaks(peaks, sortKey);
+  const renderGrid = (gridEl) => {
     gridEl.innerHTML = '';
     
     // Create groups based on the configuration
@@ -631,58 +547,11 @@
     });
   };
 
-  const createControls = (onChange) => {
-    const controls = document.createElement('div');
-    controls.className = 'nh48-quick-footer__controls';
-    const buttons = [
-      { key: 'popularity', label: 'Popularity' },
-      { key: 'alphabetical', label: 'Alphabetical' },
-      { key: 'elevation', label: 'Elevation' }
-    ];
-
-    buttons.forEach(({ key, label }) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.textContent = label;
-      button.className = 'nh48-quick-footer__sort-button';
-      if (key === 'popularity') {
-        button.classList.add('is-active');
-      }
-      button.addEventListener('click', () => {
-        controls.querySelectorAll('.nh48-quick-footer__sort-button').forEach((btn) => btn.classList.remove('is-active'));
-        button.classList.add('is-active');
-        onChange(key);
-      });
-      controls.appendChild(button);
-    });
-
-    return controls;
-  };
-
   const enhanceFooter = (footerEl) => {
     const grid = footerEl.querySelector('.nh48-quick-footer__grid');
-    if (footerEl.querySelector('.nh48-quick-footer__controls')) return;
     if (!grid) return;
 
-    let activeSort = 'popularity';
-    let hasRendered = false;
-
-    const renderIfNeeded = (sortKey, allowInitialRender = false) => {
-      if (!allowInitialRender && sortKey === 'popularity' && !hasRendered) {
-        return;
-      }
-      renderGrid(grid, FOOTER_CONFIG.peaks, sortKey);
-      hasRendered = true;
-    };
-
-    const controls = createControls((sortKey) => {
-      activeSort = sortKey;
-      renderIfNeeded(sortKey, true);
-    });
-
-    const insertionTarget = footerEl.querySelector('.nh48-quick-footer__header') || footerEl;
-    insertionTarget.parentNode.insertBefore(controls, grid);
-    renderIfNeeded(activeSort, true);
+    renderGrid(grid);
   };
 
   const generateFooterHTML = () => {
