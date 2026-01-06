@@ -155,10 +155,10 @@
         .nh48-quick-footer__link {
           display: inline-flex;
           align-items: center;
-          justify-content: flex-start;
+          justify-content: center;
           padding: 6px 8px;
           min-height: 32px;
-          text-align: left;
+          text-align: center;
           border-radius: 8px;
           border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 70%, var(--nh48-footer-ink) 30%);
           color: var(--nh48-footer-ink);
@@ -169,6 +169,7 @@
           white-space: nowrap;
           width: 100%;
           font-size: 0.85rem;
+          align-self: stretch;
         }
 
         .nh48-quick-footer__link:hover,
@@ -248,10 +249,10 @@
       .nh48-quick-footer__link {
         display: inline-flex;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
         padding: 8px 10px;
         min-height: 40px;
-        text-align: left;
+        text-align: center;
         border-radius: 10px;
         border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 70%, var(--nh48-footer-ink) 30%);
         color: var(--nh48-footer-ink);
@@ -261,6 +262,7 @@
         line-height: 1.32;
         white-space: normal;
         width: 100%;
+        align-self: stretch;
       }
 
       .nh48-quick-footer__link:hover,
