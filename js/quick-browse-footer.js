@@ -46,48 +46,6 @@
     padding: 0 clamp(16px, 3vw, 32px);
   }
 
-  .nh48-quick-footer__controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    padding: 9px 12px;
-    margin: 2px auto 0;
-    border-radius: 14px;
-    border: 1px solid var(--nh48-footer-border);
-    background: var(--nh48-footer-card);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  }
-
-  .nh48-quick-footer__sort-button {
-    appearance: none;
-    border: 1px solid var(--nh48-footer-border);
-    background: color-mix(in srgb, var(--nh48-footer-card) 70%, #000 30%);
-    color: var(--nh48-footer-ink);
-    border-radius: 12px;
-    padding: 8px 13px;
-    font-weight: 800;
-    letter-spacing: 0.25px;
-    cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-  }
-
-  .nh48-quick-footer__sort-button:hover,
-  .nh48-quick-footer__sort-button:focus-visible {
-    outline: none;
-    border-color: var(--nh48-footer-accent);
-    background: color-mix(in srgb, var(--nh48-footer-card) 60%, var(--nh48-footer-accent) 40%);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--nh48-footer-accent) 24%, transparent);
-    transform: translateY(-1px);
-  }
-
-  .nh48-quick-footer__sort-button.is-active {
-    background: color-mix(in srgb, var(--nh48-footer-card) 40%, var(--nh48-footer-accent) 60%);
-    border-color: var(--nh48-footer-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--nh48-footer-accent) 24%, transparent);
-  }
-
   .nh48-quick-footer__eyebrow {
     display: none;
   }
@@ -292,19 +250,6 @@
       padding: 10px 14px; 
     }
 
-    .nh48-quick-footer__controls {
-      width: 100%;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 8px;
-    }
-
-    .nh48-quick-footer__sort-button {
-      width: 100%;
-      text-align: center;
-      padding: 10px 14px;
-      font-size: 1rem;
-    }
   }
 `;
 
@@ -382,11 +327,6 @@
     { slug: 'bondcliff', name: 'Bondcliff', label: 'Bondcliff' }
   ];
 
-  const POPULARITY_INDEX = POPULAR_PEAKS.reduce((map, peak, index) => {
-    map[peak.slug] = index;
-    return map;
-  }, {});
-
   const ensureFooterStyles = () => {
     let styleEl = document.head.querySelector(`style[${STYLE_ATTR}]`);
     if (!styleEl) {
@@ -446,22 +386,9 @@
 
   const getLabel = (peak) => cleanLinkText(peak.label || peak.name);
 
-  const sortPeaks = (peaks, sortKey) => {
-    const list = peaks.slice();
-    if (sortKey === 'alphabetical') {
-      list.sort((a, b) => getLabel(a).localeCompare(getLabel(b), undefined, { sensitivity: 'base' }));
-    } else if (sortKey === 'elevation') {
-      list.sort((a, b) => (b.elevation || 0) - (a.elevation || 0));
-    } else {
-      list.sort((a, b) => POPULARITY_INDEX[a.slug] - POPULARITY_INDEX[b.slug]);
-    }
-    return list;
-  };
-
-  const renderGrid = (gridEl, peaks, sortKey) => {
-    const sorted = sortPeaks(peaks, sortKey);
+  const renderGrid = (gridEl, peaks) => {
     gridEl.innerHTML = '';
-    sorted.forEach((peak) => {
+    peaks.forEach((peak) => {
       const link = document.createElement('a');
       link.className = 'nh48-quick-footer__link';
       link.href = peak.href;
@@ -478,63 +405,26 @@
     });
   };
 
-  const createControls = (onChange) => {
-    const controls = document.createElement('div');
-    controls.className = 'nh48-quick-footer__controls';
-    const buttons = [
-      { key: 'popularity', label: 'Popularity' },
-      { key: 'alphabetical', label: 'Alphabetical' },
-      { key: 'elevation', label: 'Elevation' }
-    ];
-
-    buttons.forEach(({ key, label }) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.textContent = label;
-      button.className = 'nh48-quick-footer__sort-button';
-      if (key === 'popularity') {
-        button.classList.add('is-active');
-      }
-      button.addEventListener('click', () => {
-        controls.querySelectorAll('.nh48-quick-footer__sort-button').forEach((btn) => btn.classList.remove('is-active'));
-        button.classList.add('is-active');
-        onChange(key);
-      });
-      controls.appendChild(button);
-    });
-
-    return controls;
-  };
-
   const enhanceFooter = (footerEl, peaks) => {
     harmonizeFooterCopy(footerEl);
     const grid = footerEl.querySelector('.nh48-quick-footer__grid');
     normalizeExistingLinks(grid);
-    if (footerEl.querySelector('.nh48-quick-footer__controls')) return;
     if (!grid) return;
     if (grid.querySelector('.nh48-quick-footer__group')) return;
 
-    let activeSort = 'popularity';
     const hasExistingLinks = grid.querySelectorAll('.nh48-quick-footer__link').length > 0;
     let hasRendered = false;
 
-    const renderIfNeeded = (sortKey, allowInitialRender = false) => {
-      if (!allowInitialRender && sortKey === 'popularity' && hasExistingLinks && !hasRendered) {
+    const renderIfNeeded = (allowInitialRender = false) => {
+      if (!allowInitialRender && hasExistingLinks && !hasRendered) {
         return;
       }
-      renderGrid(grid, peaks, sortKey);
+      renderGrid(grid, peaks);
       hasRendered = true;
     };
 
-    const controls = createControls((sortKey) => {
-      activeSort = sortKey;
-      renderIfNeeded(sortKey, true);
-    });
-
-    const insertionTarget = footerEl.querySelector('.nh48-quick-footer__header') || footerEl;
-    insertionTarget.parentNode.insertBefore(controls, grid);
     if (!hasExistingLinks) {
-      renderIfNeeded(activeSort, true);
+      renderIfNeeded(true);
     }
   };
 
