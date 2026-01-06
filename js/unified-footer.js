@@ -12,7 +12,7 @@
         --nh48-footer-ink: #ffffff;
         --nh48-footer-accent: #22c55e;
         margin: 24px 0 0;
-        width: 100vw;
+        width: 100%;
         max-width: none;
         background: var(--nh48-footer-surface);
         border: 0;
@@ -32,9 +32,9 @@
         border-radius: 0;
         position: relative;
         isolation: isolate;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 0;
+        left: auto;
+        transform: none;
+        z-index: 1;
       }
 
       /* Special handling for map pages with fixed layouts */
