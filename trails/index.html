@@ -43,8 +43,6 @@
     <link rel="alternate" hreflang="vi" href="https://nh48.info/i18n/vi.html">
     <link rel="alternate" hreflang="pl" href="https://nh48.info/i18n/pl.html">
     <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
-    <link rel="stylesheet" href="/css/quick-browse-footer.css">
-    <script src="/js/quick-browse-footer.js" defer></script>
     <script type="module" src="../js/i18n.js"></script>
 
   <script type="application/ld+json">
@@ -1096,7 +1094,6 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const navPlaceholder = document.getElementById('nav-placeholder');
-      const footerPlaceholder = document.getElementById('footer-placeholder');
       const activeRoute = document.body.dataset.route || document.body.dataset.page;
 
       if (navPlaceholder) {
@@ -1118,17 +1115,6 @@
             });
           })
           .catch(err => console.error('Failed to load navigation:', err));
-      }
-
-      const hasQuickFooter = document.querySelector('.nh48-quick-footer');
-
-      if (footerPlaceholder && !hasQuickFooter) {
-        fetch('/pages/footer.html')
-          .then(response => response.text())
-          .then(html => {
-            footerPlaceholder.innerHTML = html;
-          })
-          .catch(err => console.error('Failed to load footer:', err));
       }
     });
   </script>
@@ -2476,7 +2462,6 @@
 
 })();
 </script>
-  <div id="footer-placeholder"></div>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
