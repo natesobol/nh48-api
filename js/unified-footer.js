@@ -149,16 +149,21 @@
           margin: 0;
           display: flex;
           flex-direction: column;
-          gap: 4px;
+          gap: 6px;
+          width: 100%;
+        }
+
+        .nh48-quick-footer__list li {
+          width: 100%;
         }
 
         .nh48-quick-footer__link {
           display: inline-flex;
           align-items: center;
-          justify-content: center;
-          padding: 6px 8px;
-          min-height: 32px;
-          text-align: center;
+          justify-content: flex-start;
+          padding: 8px 12px;
+          min-height: 34px;
+          text-align: left;
           border-radius: 8px;
           border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 70%, var(--nh48-footer-ink) 30%);
           color: var(--nh48-footer-ink);
@@ -166,10 +171,11 @@
           background: color-mix(in srgb, var(--nh48-footer-card) 70%, var(--nh48-footer-accent) 30%);
           transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
           line-height: 1.2;
-          white-space: nowrap;
+          white-space: normal;
           width: 100%;
           font-size: 0.85rem;
           align-self: stretch;
+          box-sizing: border-box;
         }
 
         .nh48-quick-footer__link:hover,
@@ -244,15 +250,20 @@
         margin: 0;
         display: grid;
         gap: 7px;
+        width: 100%;
+      }
+
+      .nh48-quick-footer__list li {
+        width: 100%;
       }
 
       .nh48-quick-footer__link {
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-        padding: 8px 10px;
+        justify-content: flex-start;
+        padding: 8px 12px;
         min-height: 40px;
-        text-align: center;
+        text-align: left;
         border-radius: 10px;
         border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 70%, var(--nh48-footer-ink) 30%);
         color: var(--nh48-footer-ink);
@@ -263,6 +274,7 @@
         white-space: normal;
         width: 100%;
         align-self: stretch;
+        box-sizing: border-box;
       }
 
       .nh48-quick-footer__link:hover,
@@ -590,6 +602,11 @@
   };
 
   const injectFooter = () => {
+    const route = document.body?.dataset?.route || document.body?.dataset?.page || '';
+    if (route === 'trails' || route === 'long-trails') {
+      return;
+    }
+
     // Check if footer already exists
     if (document.querySelector('.nh48-quick-footer') || document.querySelector('[data-nh48-quick-footer]')) {
       return;
