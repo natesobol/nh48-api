@@ -21,6 +21,7 @@ const PHOTO_PATH_PREFIX = "/nh48-photos/";
 const IMAGE_TRANSFORM_OPTIONS = "format=webp,quality=85";
 const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
 const DEFAULT_SITE_NAME = "NH48 Peak Guide";
+const IMAGE_LICENSE_URL = "https://nh48.info/license";
 const AUTHOR_NAME = "Nathan Sobol";
 const TWITTER_HANDLE = "@nate_dumps_pics";
 
@@ -286,7 +287,7 @@ const buildContentLocation = (photo) => {
   return Object.keys(place).length ? place : undefined;
 };
 
-const buildImageObject = (photo, peakName, isPrimary, langCode) => {
+const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
   const normalizedUrl = normalizePhotoUrl(photo.url) || FALLBACK_IMAGE;
   const { width: parsedWidth, height: parsedHeight } = parseDimensions(photo.dimensions || photo.dimension || '');
   const width = parsedWidth || undefined;
@@ -299,13 +300,16 @@ const buildImageObject = (photo, peakName, isPrimary, langCode) => {
   const headline =
     cleanText(photo[`headline_${langCode}`]) || cleanText(photo.headline) || `${peakName} — White Mountain National Forest`;
   const description = cleanText(extendedDescription || photo.caption || '');
-  const creator = cleanText(photo.author || photo.creator || photo.iptc?.creator || AUTHOR_NAME) || AUTHOR_NAME;
-  const creditText = cleanText(photo.iptc?.creditLine || photo.creditText || creator || AUTHOR_NAME) || AUTHOR_NAME;
+  const creatorName = cleanText(photo.author || photo.creator || photo.iptc?.creator || AUTHOR_NAME) || AUTHOR_NAME;
+  const creditText = cleanText(photo.iptc?.creditLine || photo.creditText || creatorName || AUTHOR_NAME) || AUTHOR_NAME;
   const publisherName = cleanText(photo.iptc?.featuredOrgName) || TWITTER_HANDLE;
+  const copyrightNotice = cleanText(photo.iptc?.copyrightNotice) || `© ${AUTHOR_NAME}`;
+  const licenseUrl = IMAGE_LICENSE_URL;
   const keywords = buildKeywords(photo);
   const exifData = buildExifSummary(photo);
   const imageObject = {
     '@type': 'ImageObject',
+    '@id': imageId,
     url: normalizedUrl,
     contentUrl: normalizedUrl,
     name: headline || alt,
@@ -313,9 +317,11 @@ const buildImageObject = (photo, peakName, isPrimary, langCode) => {
     alternateName: alt,
     description: description || alt,
     creditText,
-    creator,
-    author: creator,
-    copyrightNotice: cleanText(photo.iptc?.copyrightNotice),
+    creator: { '@type': 'Person', name: creatorName },
+    author: { '@type': 'Person', name: creatorName },
+    copyrightNotice,
+    license: licenseUrl,
+    acquireLicensePage: licenseUrl,
     contentSize: cleanText(photo.fileSize),
     uploadDate: cleanText(photo.fileCreateDate || photo.captureDate),
     dateCreated: cleanText(photo.captureDate),
@@ -348,7 +354,7 @@ const buildImageObject = (photo, peakName, isPrimary, langCode) => {
     extendedDescriptionLang,
     width,
     height,
-    creator,
+    creator: creatorName,
     creditText,
     publisherName,
     keywords,
@@ -356,10 +362,11 @@ const buildImageObject = (photo, peakName, isPrimary, langCode) => {
   };
 };
 
-const pickPrimaryPhoto = (photos, peakName, langCode) => {
+const pickPrimaryPhoto = (photos, peakName, langCode, canonicalUrl) => {
   if (!Array.isArray(photos) || photos.length === 0) {
     const fallbackImageObject = {
       '@type': 'ImageObject',
+      '@id': `${canonicalUrl}#img-001`,
       url: FALLBACK_IMAGE,
       contentUrl: FALLBACK_IMAGE,
       name: `${peakName} — White Mountain National Forest`,
@@ -367,8 +374,11 @@ const pickPrimaryPhoto = (photos, peakName, langCode) => {
       alternateName: `${peakName} in the White Mountains`,
       description: `${peakName} in the White Mountains`,
       creditText: AUTHOR_NAME,
-      creator: AUTHOR_NAME,
-      author: AUTHOR_NAME,
+      creator: { '@type': 'Person', name: AUTHOR_NAME },
+      author: { '@type': 'Person', name: AUTHOR_NAME },
+      copyrightNotice: `© ${AUTHOR_NAME}`,
+      license: IMAGE_LICENSE_URL,
+      acquireLicensePage: IMAGE_LICENSE_URL,
       representativeOfPage: true,
     };
     return {
@@ -398,7 +408,13 @@ const pickPrimaryPhoto = (photos, peakName, langCode) => {
   );
 
   const imageEntries = photos.map((photo, index) =>
-    buildImageObject(photo, peakName, index === primaryIndex, langCode)
+    buildImageObject(
+      photo,
+      peakName,
+      index === primaryIndex,
+      langCode,
+      `${canonicalUrl}#img-${String(index + 1).padStart(3, "0")}`
+    )
   );
   const primary = imageEntries[primaryIndex];
 
@@ -784,19 +800,24 @@ const buildJsonLd = (
       : null,
   ].filter(Boolean);
 
-  const imageList = Array.isArray(photoSet?.imageObjects) && photoSet.imageObjects.length
+  const imageObjects = Array.isArray(photoSet?.imageObjects) && photoSet.imageObjects.length
     ? photoSet.imageObjects
     : photoSet?.primary?.url
       ? [
         {
           '@type': 'ImageObject',
+          '@id': `${canonicalUrl}#img-001`,
           url: photoSet.primary.url,
           contentUrl: photoSet.primary.url,
           name: photoSet.primary.headline || peakName,
           caption: photoSet.primary.description || descriptionText,
           description: photoSet.primary.extendedDescription || photoSet.primary.description || descriptionText,
           creditText: photoSet.primary.creditText || photoSet.primary.creator || AUTHOR_NAME,
-          creator: photoSet.primary.creator || AUTHOR_NAME,
+          creator: { '@type': 'Person', name: photoSet.primary.creator || AUTHOR_NAME },
+          author: { '@type': 'Person', name: photoSet.primary.creator || AUTHOR_NAME },
+          copyrightNotice: `© ${AUTHOR_NAME}`,
+          license: IMAGE_LICENSE_URL,
+          acquireLicensePage: IMAGE_LICENSE_URL,
           representativeOfPage: true,
           width: photoSet.primary.width || undefined,
           height: photoSet.primary.height || undefined,
@@ -804,14 +825,15 @@ const buildJsonLd = (
       ]
       : undefined;
 
-  const primaryImage = imageList?.find((img) => img.representativeOfPage) || imageList?.[0];
+  const primaryImage = imageObjects?.find((img) => img.representativeOfPage) || imageObjects?.[0];
+  const imageList = imageObjects?.filter((img) => !img.representativeOfPage);
 
-  const imageGallery = imageList?.length
+  const imageGallery = imageObjects?.length
     ? {
       '@type': 'ImageGallery',
       name: `${peakName} photo gallery`,
       description: `Photos of ${peakName} in the White Mountains`,
-      associatedMedia: imageList,
+      associatedMedia: imageObjects,
     }
     : undefined;
 
@@ -826,8 +848,8 @@ const buildJsonLd = (
     url: canonicalUrl,
     author: AUTHOR_NAME,
     inLanguage: langConfig.code === "fr" ? "fr-FR" : "en-US",
-    image: imageList,
-    primaryImageOfPage: primaryImage,
+    image: imageList?.length ? imageList.map((img) => ({ '@id': img['@id'] })) : undefined,
+    primaryImageOfPage: primaryImage ? { '@id': primaryImage['@id'] } : undefined,
     geo: coordinates.latitude && coordinates.longitude
       ? {
         "@type": "GeoCoordinates",
@@ -989,7 +1011,8 @@ const main = () => {
         const { primary: primaryPhoto, imageObjects } = pickPrimaryPhoto(
           peak.photos,
           localizedName,
-          lang.code
+          lang.code,
+          canonicalUrl
         );
         const descriptionValues = {
           name: localizedName,
