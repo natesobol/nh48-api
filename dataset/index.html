@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NH48 Datasets – NH48 API Open Data</title>
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="author" content="Nathan Sobol">
+  <meta name="publisher" content="NH48 API">
+  <meta name="application-name" content="NH48 API">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="Explore the NH48 API open datasets for 4,000-foot peaks, White Mountain National Forest trails, and major long-distance hiking routes with downloadable, search-friendly exports.">
+  <meta name="keywords" content="NH48 dataset, White Mountain National Forest trails, long trails dataset, open hiking data, peak metadata, geospatial dataset">
+  <link rel="canonical" href="https://nh48.info/dataset/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="NH48 Datasets – NH48 API Open Data">
+  <meta property="og:description" content="Open datasets for NH48 peaks, White Mountain trails, and long-distance routes with downloadable exports and GIS-ready metadata.">
+  <meta property="og:url" content="https://nh48.info/dataset/">
+  <meta property="og:site_name" content="NH48 API">
+  <meta property="og:image" content="https://nh48.info/nh48API_logo.png">
+  <meta property="og:image:alt" content="NH48 API open data logo used for dataset previews">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="NH48 Datasets – NH48 API Open Data">
+  <meta name="twitter:description" content="Browse open datasets for NH48 peaks, WMNF trails, and long-distance hiking routes with stable downloads.">
+  <meta name="twitter:image" content="https://nh48.info/nh48API_logo.png">
+  <meta name="twitter:image:alt" content="NH48 API open data logo for the datasets overview">
+  <link rel="stylesheet" href="/css/dataset-page.css">
+  <script src="/js/unified-footer.js" defer></script>
+  <style>
+    /* Site Navigation Header (Peakbagger-inspired) */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--stroke);
+      box-shadow: none;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      margin: 0;
+    }
+
+    .site-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .logo-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      background: transparent;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      margin: 0;
+    }
+
+    .site-nav-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      line-height: 1.1;
+    }
+
+    .site-nav-title {
+      font-weight: 800;
+      font-size: 38px;
+      line-height: 1;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .site-nav-tagline {
+      font-size: 13px;
+      color: #e5f8ec;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .site-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .site-nav-links a {
+      color: var(--ink);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: all 0.2s ease;
+    }
+
+    .site-nav-links a:hover {
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .site-nav-links a.active {
+      color: var(--accent);
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .site-nav-dropdown {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .site-nav-dropdown .site-nav-submenu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--card);
+      border: 2px solid var(--stroke);
+      border-radius: 10px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+      padding: 8px;
+      min-width: 200px;
+      z-index: 10;
+    }
+
+    .site-nav-dropdown:hover .site-nav-submenu,
+    .site-nav-dropdown:focus-within .site-nav-submenu {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .site-nav-dropdown .site-nav-submenu a {
+      width: 100%;
+      text-transform: none;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--ink);
+    }
+
+    .site-nav-dropdown .site-nav-submenu a:hover {
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .site-nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      border-radius: 6px;
+      background: var(--accent);
+      border: 2px solid var(--accent);
+      color: var(--bg);
+      font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue Condensed", Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .site-nav-cta:hover {
+      background: var(--accent-strong);
+      border-color: var(--accent-strong);
+      color: var(--bg);
+    }
+
+    .dataset-hero-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0;
+      margin: 10px 0;
+    }
+
+    .dataset-hero-logo .logo-wrap {
+      width: 88px;
+      height: 88px;
+      border-radius: 16px;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
+    }
+
+    .site-nav-cta svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--bg);
+    }
+
+    @media (max-width: 768px) {
+      .site-nav {
+        padding: 10px 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .site-nav-title,
+      .site-nav-tagline {
+        display: none;
+      }
+
+      .site-nav-logo {
+        flex: 1 1 100%;
+        justify-content: center;
+      }
+
+      .site-nav-links {
+        gap: 4px;
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .site-nav-links a {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .site-nav-submenu {
+        min-width: 180px;
+      }
+
+      .site-nav-cta {
+        padding: 6px 10px;
+        font-size: 11px;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .site-nav-links a {
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+
+      .site-nav-cta {
+        width: 100%;
+      }
+    }
+
+    .lang-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin: 12px 0 6px;
+    }
+
+    .nh48-lang {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .nh48-lang-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .nh48-lang-menu {
+      position: relative;
+    }
+
+    .nh48-lang-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 2px solid #ffffff;
+      background: var(--card);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .nh48-lang-toggle .flag {
+      font-size: 18px;
+    }
+
+    .nh48-lang-toggle-text {
+      white-space: nowrap;
+    }
+
+    .nh48-lang-caret {
+      font-size: 0.65rem;
+      margin-left: 2px;
+      opacity: 0.8;
+    }
+
+    .nh48-lang-options {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      background: var(--card);
+      border: 2px solid #ffffff;
+      border-radius: 12px;
+      padding: 8px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      min-width: 220px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 4;
+    }
+
+    .nh48-lang-menu.open .nh48-lang-options {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .nh48-flag {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 2px solid #ffffff;
+      background: var(--card);
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .nh48-flag .flag {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .nh48-flag.active {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+    }
+
+    .nh48-flag:focus-visible {
+      outline: 2px solid #22c55e;
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 640px) {
+      .lang-bar {
+        justify-content: center;
+      }
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "DataCatalog",
+      "name": "NH48 API Open Data",
+      "description": "Catalog of open datasets for NH48 peaks, White Mountain National Forest trails, and major long-distance hiking routes.",
+      "url": "https://nh48.info/dataset/",
+      "creator": {
+        "@type": "Person",
+        "name": "Nathan Sobol",
+        "url": "https://nh48.info"
+      },
+      "dataset": [
+        {
+          "@type": "Dataset",
+          "name": "NH48 Peaks Dataset",
+          "description": "Structured data for all 4,000-foot peaks in New Hampshire, including geometry, trailheads, markers, and metadata.",
+          "url": "https://nh48.info/dataset/nh48",
+          "license": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        {
+          "@type": "Dataset",
+          "name": "White Mountain Trails Dataset",
+          "description": "Open dataset of hiking trails in the White Mountain National Forest with distances, elevation profiles, and features.",
+          "url": "https://nh48.info/dataset/wmnf-trails",
+          "license": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        {
+          "@type": "Dataset",
+          "name": "Long Trails Dataset",
+          "description": "GeoJSON and segment metadata for long-distance trails like the Appalachian Trail, Pacific Crest Trail and more.",
+          "url": "https://nh48.info/dataset/long-trails",
+          "license": "https://creativecommons.org/licenses/by/4.0/"
+        }
+      ]
+    }
+  </script>
+</head>
+<body>
+  <nav class="site-nav">
+    <a href="/" class="site-nav-logo">
+      <div class="logo-wrap">
+        <img src="/nh48API_logo.png" alt="" aria-hidden="true" role="presentation" />
+      </div>
+      <div class="site-nav-title-wrap">
+        <span class="site-nav-title">NH48 API</span>
+        <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
+      </div>
+    </a>
+      <div class="site-nav-links">
+    <div class="site-nav-dropdown">
+      <a href="/" data-route="dataset-home">NH48 Dataset</a>
+      <div class="site-nav-submenu" aria-label="NH48 dataset short links">
+        <a href="/nh-4000-footers-info.html" data-route="info">NH48 Info</a>
+        <a href="/catalog" data-route="catalog">Interactive Catalog</a>
+        <a href="/page-sitemap.xml">Browse page sitemap</a>
+      </div>
+    </div>
+    <div class="site-nav-dropdown">
+      <a href="/pages/trails_app.html" data-route="trails" data-i18n="nav.trails">White Mountain Trails</a>
+      <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
+        <a href="/dataset/wmnf-trails">WMNF Dataset</a>
+      </div>
+    </div>
+    <div class="site-nav-dropdown">
+      <a href="/pages/long_trails_app.html" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
+      <div class="site-nav-submenu" aria-label="Long Trails short links">
+        <a href="/dataset/long-trails">Long Trails Dataset</a>
+      </div>
+    </div>
+    <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
+    <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
+    <a
+      class="site-nav-cta"
+      href="https://www.instagram.com/nate_dumps_pics/"
+      target="_blank"
+      rel="noopener"
+      aria-label="Latest WMNF Photos"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+        <circle cx="12" cy="12" r="3.5"></circle>
+        <circle cx="17" cy="7" r="1.2" fill="#ffffff" stroke="none"></circle>
+      </svg>
+      <span data-i18n="nav.latestPhotos">Latest WMNF Photos</span>
+    </a>
+  </div>
+</nav>
+  <div class="lang-bar">
+    <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
+  </div>
+  <main class="dataset-page">
+      <header>
+        <div class="dataset-hero-logo">
+          <div class="logo-wrap">
+            <img src="/nh48API_logo.png" alt="NH48 datasets logo" title="NH48 datasets logo" loading="lazy" decoding="async">
+          </div>
+        </div>
+        <p class="eyebrow">NH48 API Open Data</p>
+        <h1>NH48 Datasets</h1>
+        <p class="lede">Explore our catalogue of open data covering New Hampshire’s 4,000-foot peaks, White Mountain National Forest trails, and the major long-distance hiking routes of North America.</p>
+        <p class="lede">Each dataset is pre-rendered and downloadable, making it easy for search engines and mapping tools to index and use.</p>
+      </header>
+
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumbs" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/">
+            <span itemprop="name">Home</span>
+          </a>
+          <meta itemprop="position" content="1">
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/dataset/" aria-current="page">
+            <span itemprop="name">Datasets</span>
+          </a>
+          <meta itemprop="position" content="2">
+        </li>
+      </ol>
+    </nav>
+
+    <section class="panel">
+      <p class="panel-label">Peak metadata</p>
+      <h2>NH48 Peaks Dataset</h2>
+      <p>Comprehensive data for all 48 four-thousand-foot peaks of New Hampshire, including coordinates, elevation, prominence, trailhead details, markers, and historical notes.</p>
+      <ul class="listed">
+        <li>GeoJSON geometries for each peak</li>
+        <li>Summit elevation, prominence and ridgeline connectivity</li>
+        <li>Trailhead and parking locations</li>
+        <li>Trail difficulty and distance statistics</li>
+      </ul>
+      <div class="cta-actions">
+        <a class="cta-button" href="/catalog">Explore peaks catalog</a>
+        <a class="cta-button" href="/dataset/nh48/">Download dataset</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="panel-label">Trail network</p>
+      <h2>White Mountain Trails Dataset</h2>
+      <p>A fully attributed trail network for the White Mountain National Forest, including distances, elevation profiles, surfaces, permitted uses, and connecting routes.</p>
+      <ul class="listed">
+        <li>Segment-level GeoJSON with mileages and elevation gain/loss</li>
+        <li>Trail classifications (blazed vs unblazed, maintained vs abandoned)</li>
+        <li>Connections to trailheads and other trail systems</li>
+        <li>Attribution of difficulty, scenic value, and seasonality</li>
+      </ul>
+      <div class="cta-actions">
+        <a class="cta-button" href="/pages/trails_app.html">Open trail explorer</a>
+        <a class="cta-button" href="/dataset/wmnf-trails/">Download dataset</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="panel-label">Long-distance routes</p>
+      <h2>Long Trails Dataset</h2>
+      <p>Structured data for major long-distance hiking routes, from the Appalachian Trail and Pacific Crest Trail to regional traverses like the Arizona Trail.</p>
+      <ul class="listed">
+        <li>GeoJSON-like trail geometries suitable for maps and GIS workflows</li>
+        <li>Segment metadata including names, ordering, and distance summaries</li>
+        <li>Dedicated exports for each marquee route plus combined catalogs</li>
+      </ul>
+      <div class="cta-actions">
+        <a class="cta-button" href="/long-trails/">Open long-trails map</a>
+        <a class="cta-button" href="/dataset/long-trails/">Download dataset</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>How to use these datasets</h2>
+      <ul class="listed">
+        <li>Display peaks, trails, and thru-hikes on interactive maps and dashboards</li>
+        <li>Perform mileage rollups and route planning using combined exports</li>
+        <li>Cache the JSON locally for offline hiking applications</li>
+        <li>Integrate the data into GIS software for analysis and overlays</li>
+      </ul>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+
+
+<script type="module" src="/js/i18n.js"></script>
+
+</body>
+</html>
