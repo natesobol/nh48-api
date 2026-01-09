@@ -182,31 +182,34 @@ export default {
       canonicalUrl,
       imageUrl,
       summaryText,
-      primaryPhoto
+      photos = []
     ) {
-      let imageObject = null;
-      if (primaryPhoto && primaryPhoto.url) {
-        const exifData = buildExifData(primaryPhoto);
-        imageObject = {
-          '@type': 'ImageObject',
-          contentUrl: primaryPhoto.url,
-          url: primaryPhoto.url,
-          name: primaryPhoto.headline || `${peakName} — White Mountain National Forest`,
-          caption: primaryPhoto.description || summaryText,
-          creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
-          creditText: RIGHTS_DEFAULTS.creditText,
-          copyrightNotice: RIGHTS_DEFAULTS.copyrightNotice,
-          license: RIGHTS_DEFAULTS.licenseUrl,
-          acquireLicensePage: RIGHTS_DEFAULTS.acquireLicensePageUrl,
-          exifData
-        };
-      }
+      const imageObjects = (Array.isArray(photos) ? photos : [])
+        .slice(0, 10)
+        .map((photo) => {
+          if (!photo || !photo.url) return null;
+          const exifData = buildExifData(photo);
+          return {
+            '@type': 'ImageObject',
+            contentUrl: photo.url,
+            url: photo.url,
+            name: photo.headline || `${peakName} — White Mountain National Forest`,
+            caption: photo.description || summaryText,
+            creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
+            creditText: RIGHTS_DEFAULTS.creditText,
+            copyrightNotice: RIGHTS_DEFAULTS.copyrightNotice,
+            license: RIGHTS_DEFAULTS.licenseUrl,
+            acquireLicensePage: RIGHTS_DEFAULTS.acquireLicensePageUrl,
+            exifData
+          };
+        })
+        .filter(Boolean);
       const mountain = {
         '@context': 'https://schema.org',
         '@type': 'Mountain',
         name: peakName,
         description: summaryText,
-        image: imageObject ? [imageObject] : imageUrl,
+        image: imageObjects.length ? imageObjects : imageUrl,
         url: canonicalUrl,
         additionalProperty: []
       };
@@ -265,11 +268,14 @@ export default {
     const prominence = formatFeet(peak['Prominence (ft)'] || peak.prominence_ft || '');
     const rangeVal = peak['Range / Subrange'] || peak.range || '';
     const coords = parseCoords(peak.lat || peak.latitude || peak['Coordinates'] || '');
-    const rawPrimaryPhoto = Array.isArray(peak.photos) && peak.photos.length > 0 ? peak.photos[0] : null;
-    const primaryPhoto = typeof rawPrimaryPhoto === 'string'
-      ? { url: rawPrimaryPhoto }
-      : rawPrimaryPhoto;
-    const heroUrl = primaryPhoto && primaryPhoto.url ? primaryPhoto.url : DEFAULT_IMAGE;
+    let photos = [];
+    if (Array.isArray(peak.photos)) {
+      photos = peak.photos
+        .map((photo) => (typeof photo === 'string' ? { url: photo } : photo))
+        .filter((photo) => photo && photo.url);
+    }
+    const primaryPhoto = photos.length ? photos[0] : null;
+    const heroUrl = primaryPhoto ? primaryPhoto.url : DEFAULT_IMAGE;
     const summaryFromFile = descMap[slug] || '';
     const summaryVal = summaryFromFile || (peak.summary || peak.description || '').toString().trim();
 
@@ -290,7 +296,7 @@ export default {
       canonical,
       heroUrl,
       summaryVal,
-      primaryPhoto
+      photos
     );
 
     // Fetch the raw interactive HTML template from GitHub
