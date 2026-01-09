@@ -84,6 +84,7 @@
         --muted:#a5b4c3;
         --stroke:#ffffff33;
         --accent:#22c55e;
+        --accent-strong:#4ade80;
       }
       body{
         margin:0;
@@ -200,16 +201,17 @@
         gap:6px;
       }
       .breadcrumb-nav li+li::before{
-        content:'›';
+        content:'/';
         color:var(--muted);
         opacity:0.5;
       }
       .breadcrumb-nav a{
-        color:var(--muted);
+        color:var(--accent);
+        font-weight:700;
         text-decoration:none;
       }
       .breadcrumb-nav a:hover{
-        color:var(--accent);
+        color:var(--accent-strong);
       }
       .controls-row{
         display:flex;
@@ -830,6 +832,23 @@
       });
     </script>
     <div class="wrap">
+      <nav class="breadcrumb-nav" aria-label="Breadcrumb" id="breadcrumbNav">
+        <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="/" id="breadcrumbHomeLink"><span itemprop="name" data-i18n="common.home">Home</span></a>
+            <meta itemprop="position" content="1">
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="/catalog" id="breadcrumbCatalogLink"><span itemprop="name" data-i18n="peak.catalog">Peak Catalog</span></a>
+            <meta itemprop="position" content="2">
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name" id="breadcrumbCurrent" data-i18n="peak.loading">Loading…</span>
+            <meta id="breadcrumbCurrentUrl" itemprop="item" content="">
+            <meta itemprop="position" content="3">
+          </li>
+        </ol>
+      </nav>
       <div class="seo-links">
         <a href="/catalog" data-i18n="peak.back">Back to NH48 Peak Catalog</a>
       </div>
@@ -864,23 +883,6 @@
         </div>
       </div>
       <a class="back-guide" href="/nh-4000-footers-guide">NH48 Info</a>
-      <nav class="breadcrumb-nav" aria-label="Breadcrumb" id="breadcrumbNav">
-        <ol itemscope itemtype="https://schema.org/BreadcrumbList">
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="/" id="breadcrumbHomeLink"><span itemprop="name" data-i18n="common.home">Home</span></a>
-            <meta itemprop="position" content="1">
-          </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="/catalog" id="breadcrumbCatalogLink"><span itemprop="name" data-i18n="peak.catalog">Peak Catalog</span></a>
-            <meta itemprop="position" content="2">
-          </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <span itemprop="name" id="breadcrumbCurrent" data-i18n="peak.loading">Loading…</span>
-            <meta id="breadcrumbCurrentUrl" itemprop="item" content="">
-            <meta itemprop="position" content="3">
-          </li>
-        </ol>
-      </nav>
       <h1 id="peakTitle" data-i18n="peak.loading">Loading…</h1>
 
       <!-- MEDIA / CAROUSEL ---------------------------------------------------->
