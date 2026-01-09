@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
@@ -12,11 +13,12 @@ const PEAK_BASE = 'https://nh48.info/peak';
 const PEAK_BASE_FR = 'https://nh48.info/fr/peak';
 const PHOTO_BASE_URL = 'https://photos.nh48.info';
 const PHOTO_PATH_PREFIX = '/nh48-photos/';
-const STATIC_PAGES = [
-  'https://nh48.info/',
-  'https://nh48.info/catalog',
-  'https://nh48.info/nh-4000-footers-guide',
+const STATIC_PAGE_ENTRIES = [
+  { loc: 'https://nh48.info/', file: 'index.html' },
+  { loc: 'https://nh48.info/catalog', file: 'catalog.html' },
+  { loc: 'https://nh48.info/nh-4000-footers-guide', file: 'nh-4000-footers-guide.html' },
 ];
+const IMAGE_LICENSE_URL = 'https://nh48.info/licensing';
 
 const data = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
 
@@ -66,6 +68,13 @@ function pickFirstNonEmpty(...vals) {
   return '';
 }
 
+function isSlugLike(value) {
+  if (!value) return false;
+  const s = normalizeTextForWeb(value);
+  if (!s || /\s/.test(s)) return false;
+  return /^[a-z0-9]+([_-][a-z0-9]+)+$/i.test(s);
+}
+
 function formatCameraBits(photo) {
   const bits = [];
   const cam = pickFirstNonEmpty(photo.cameraModel, photo.camera);
@@ -97,8 +106,10 @@ function formatDescriptorBits(photo) {
 }
 
 function buildPhotoTitleUnique(peakName, photo) {
-  const explicit = pickFirstNonEmpty(photo.headline, photo.title, photo.altText, photo.caption);
-  if (explicit) return explicit;
+  const explicit = pickFirstNonEmpty(photo.headline, photo.altText, photo.caption);
+  if (explicit && !isSlugLike(explicit)) return explicit;
+  const titleCandidate = pickFirstNonEmpty(photo.title);
+  if (titleCandidate && !isSlugLike(titleCandidate)) return titleCandidate;
   const descBits = formatDescriptorBits(photo);
   const cameraBits = formatCameraBits(photo);
   let title = `${peakName} - White Mountain National Forest (New Hampshire)`;
@@ -130,6 +141,23 @@ function uniqueify(text, photo, usedSet) {
   usedSet.add(out);
   return out;
 }
+
+const getGitLastmod = (filePath) => {
+  if (!filePath) return '';
+  const relativePath = path.isAbsolute(filePath) ? path.relative(ROOT, filePath) : filePath;
+  if (!fs.existsSync(path.join(ROOT, relativePath))) return '';
+  try {
+    const output = execSync(`git log -1 --format=%cI -- "${relativePath}"`, {
+      cwd: ROOT,
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
+      .toString()
+      .trim();
+    return output || '';
+  } catch (error) {
+    return '';
+  }
+};
 
 const normalizePhotoUrl = (url) => {
   if (!url) return url;
@@ -193,10 +221,18 @@ const slugs = Object.keys(data).sort();
 
 const buildPageSitemap = () => {
   const urls = [];
-  STATIC_PAGES.forEach((page) => urls.push({ loc: page }));
+  STATIC_PAGE_ENTRIES.forEach((entry) =>
+    urls.push({ loc: entry.loc, lastmod: getGitLastmod(entry.file) }),
+  );
   slugs.forEach((slug) => {
-    urls.push({ loc: `${PEAK_BASE}/${slug}/` });
-    urls.push({ loc: `${PEAK_BASE_FR}/${slug}/` });
+    urls.push({
+      loc: `${PEAK_BASE}/${slug}/`,
+      lastmod: getGitLastmod(path.join('peaks', slug, 'index.html')),
+    });
+    urls.push({
+      loc: `${PEAK_BASE_FR}/${slug}/`,
+      lastmod: getGitLastmod(path.join('fr', 'peaks', slug, 'index.html')),
+    });
   });
 
   const parts = [];
@@ -205,6 +241,9 @@ const buildPageSitemap = () => {
   urls.forEach((entry) => {
     parts.push('  <url>');
     parts.push(`    <loc>${escapeXml(entry.loc)}</loc>`);
+    if (entry.lastmod) {
+      parts.push(`    <lastmod>${escapeXml(entry.lastmod)}</lastmod>`);
+    }
     parts.push('  </url>');
   });
   parts.push('</urlset>');
@@ -221,12 +260,7 @@ const buildImageSitemap = () => {
     const name = peak.peakName || peak['Peak Name'] || slug;
     const images = dedupeImages(buildImageEntries(peak.photos, name));
     if (!images.length) return;
-    [
-      `${PEAK_BASE}/${slug}/`,
-      `${PEAK_BASE_FR}/${slug}/`,
-    ].forEach((loc) => {
-      urlEntries.push({ loc, images });
-    });
+    urlEntries.push({ loc: `${PEAK_BASE}/${slug}/`, images });
   });
 
   const xmlParts = [];
@@ -246,6 +280,7 @@ const buildImageSitemap = () => {
       xmlParts.push(`      <image:loc>${escapeXml(image.url)}</image:loc>`);
       xmlParts.push(`      <image:caption>${escapeXml(caption)}</image:caption>`);
       xmlParts.push(`      <image:title>${escapeXml(title)}</image:title>`);
+      xmlParts.push(`      <image:license>${escapeXml(IMAGE_LICENSE_URL)}</image:license>`);
       xmlParts.push('    </image:image>');
     });
     xmlParts.push('  </url>');
