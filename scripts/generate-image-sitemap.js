@@ -7,6 +7,7 @@ const ROOT = path.resolve(__dirname, '..');
 const DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
 const OUTPUT_PATH = path.join(ROOT, 'image-sitemap.xml');
 const CANONICAL_BASE = 'https://nh48.info/peaks';
+const IMAGE_LICENSE_URL = 'https://nh48.info/licensing';
 
 const data = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
 
@@ -28,6 +29,23 @@ const buildPhotoCaption = (peakName, photo) => {
   return `${peakName} photo`;
 };
 
+const isSlugLike = (value) => {
+  if (!value) return false;
+  const cleaned = String(value).trim();
+  if (!cleaned || /\s/.test(cleaned)) return false;
+  return /^[a-z0-9]+([_-][a-z0-9]+)+$/i.test(cleaned);
+};
+
+const buildPhotoTitle = (peakName, photo) => {
+  if (photo && typeof photo === 'object') {
+    const explicitTitle = (photo.headline || photo.caption || '').trim();
+    if (explicitTitle && !isSlugLike(explicitTitle)) return explicitTitle;
+    const fallbackTitle = (photo.title || '').trim();
+    if (fallbackTitle && !isSlugLike(fallbackTitle)) return fallbackTitle;
+  }
+  return `${peakName} — White Mountain National Forest (New Hampshire)`;
+};
+
 const buildImageEntries = (photos, peakName) => {
   if (!Array.isArray(photos)) return [];
   return photos
@@ -36,12 +54,14 @@ const buildImageEntries = (photos, peakName) => {
         return {
           url: photo,
           caption: buildPhotoCaption(peakName, {}),
+          title: buildPhotoTitle(peakName, {}),
         };
       }
       if (photo && photo.url) {
         return {
           url: photo.url,
           caption: buildPhotoCaption(peakName, photo),
+          title: buildPhotoTitle(peakName, photo),
         };
       }
       return null;
@@ -71,13 +91,16 @@ xmlParts.push('        xmlns:image="http://www.google.com/schemas/sitemap-image/
 urlEntries.forEach((entry) => {
   xmlParts.push('  <url>');
   xmlParts.push(`    <loc>${escapeXml(entry.loc)}</loc>`);
-  entry.images.forEach((image) => {
-    xmlParts.push('    <image:image>');
-    xmlParts.push(`      <image:loc>${escapeXml(image.url)}</image:loc>`);
-    const captionText = image.caption ? escapeXml(image.caption) : '';
-    xmlParts.push(`      <image:caption>${captionText}</image:caption>`);
-    xmlParts.push('    </image:image>');
-  });
+    entry.images.forEach((image) => {
+      xmlParts.push('    <image:image>');
+      xmlParts.push(`      <image:loc>${escapeXml(image.url)}</image:loc>`);
+      const captionText = image.caption ? escapeXml(image.caption) : '';
+      const titleText = image.title ? escapeXml(image.title) : '';
+      xmlParts.push(`      <image:caption>${captionText}</image:caption>`);
+      xmlParts.push(`      <image:title>${titleText}</image:title>`);
+      xmlParts.push(`      <image:license>${escapeXml(IMAGE_LICENSE_URL)}</image:license>`);
+      xmlParts.push('    </image:image>');
+    });
   xmlParts.push('  </url>');
 });
 
