@@ -626,16 +626,24 @@
     }
 
     @media (max-width: 900px) {
+      body {
+        height: auto;
+        min-height: 100vh;
+        display: block;
+      }
+
       #app {
         grid-template-columns: 1fr;
         grid-auto-rows: auto;
         padding: 0 var(--page-padding) clamp(80px, 12vh, 120px);
         gap: 16px;
+        height: auto;
       }
 
       .map-panel {
         order: 1;
         min-height: unset;
+        height: auto;
       }
 
       #map {
