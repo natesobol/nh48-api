@@ -39,6 +39,13 @@ export default {
     const EN_TRANS_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/i18n/en.json';
     const FR_TRANS_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/i18n/fr.json';
     const DEFAULT_IMAGE = `${SITE}/nh48-preview.png`;
+    const RIGHTS_DEFAULTS = {
+      creatorName: 'Nathan Sobol',
+      creditText: '© Nathan Sobol / NH48pics.com',
+      copyrightNotice: '© Nathan Sobol',
+      licenseUrl: 'https://nh48.info/license',
+      acquireLicensePageUrl: 'https://nh48.info/contact'
+    };
 
     // Global caches for translation JSON and mountain description map.  These
     // persist across requests within the same instance of the Worker.
@@ -141,14 +148,68 @@ export default {
       return { title: esc(title), description: esc(descriptionText) };
     }
 
-    // Build minimal JSON-LD for Mountain and Breadcrumb
-    function buildJsonLd(peakName, elevation, prominence, rangeVal, coords, canonicalUrl, imageUrl, summaryText) {
+    function flattenMetaToPropertyValues(prefix, obj, out) {
+      if (!obj || typeof obj !== 'object') return;
+      for (const [key, val] of Object.entries(obj)) {
+        if (val === undefined || val === null) continue;
+        if (['url', 'photoId', 'filename', 'isPrimary'].includes(key)) continue;
+        const name = prefix ? `${prefix}.${key}` : key;
+        if (Array.isArray(val)) {
+          const text = val.map((item) => String(item).trim()).filter(Boolean).join(', ');
+          if (text) out.push({ '@type': 'PropertyValue', name, value: text });
+        } else if (typeof val === 'object') {
+          flattenMetaToPropertyValues(name, val, out);
+        } else {
+          const text = String(val).trim();
+          if (text) out.push({ '@type': 'PropertyValue', name, value: text });
+        }
+      }
+    }
+
+    function buildExifData(photoMeta) {
+      const out = [];
+      flattenMetaToPropertyValues('', photoMeta || {}, out);
+      return out;
+    }
+
+    // Build JSON-LD for Mountain and Breadcrumb
+    function buildJsonLd(
+      peakName,
+      elevation,
+      prominence,
+      rangeVal,
+      coords,
+      canonicalUrl,
+      imageUrl,
+      summaryText,
+      photos = []
+    ) {
+      const imageObjects = (Array.isArray(photos) ? photos : [])
+        .slice(0, 10)
+        .map((photo) => {
+          if (!photo || !photo.url) return null;
+          const exifData = buildExifData(photo);
+          return {
+            '@type': 'ImageObject',
+            contentUrl: photo.url,
+            url: photo.url,
+            name: photo.headline || `${peakName} — White Mountain National Forest`,
+            caption: photo.description || summaryText,
+            creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
+            creditText: RIGHTS_DEFAULTS.creditText,
+            copyrightNotice: RIGHTS_DEFAULTS.copyrightNotice,
+            license: RIGHTS_DEFAULTS.licenseUrl,
+            acquireLicensePage: RIGHTS_DEFAULTS.acquireLicensePageUrl,
+            exifData
+          };
+        })
+        .filter(Boolean);
       const mountain = {
         '@context': 'https://schema.org',
         '@type': 'Mountain',
         name: peakName,
         description: summaryText,
-        image: imageUrl,
+        image: imageObjects.length ? imageObjects : imageUrl,
         url: canonicalUrl,
         additionalProperty: []
       };
@@ -207,8 +268,14 @@ export default {
     const prominence = formatFeet(peak['Prominence (ft)'] || peak.prominence_ft || '');
     const rangeVal = peak['Range / Subrange'] || peak.range || '';
     const coords = parseCoords(peak.lat || peak.latitude || peak['Coordinates'] || '');
-    const primaryPhoto = Array.isArray(peak.photos) && peak.photos.length > 0 ? peak.photos[0] : null;
-    const heroUrl = primaryPhoto && primaryPhoto.url ? primaryPhoto.url : DEFAULT_IMAGE;
+    let photos = [];
+    if (Array.isArray(peak.photos)) {
+      photos = peak.photos
+        .map((photo) => (typeof photo === 'string' ? { url: photo } : photo))
+        .filter((photo) => photo && photo.url);
+    }
+    const primaryPhoto = photos.length ? photos[0] : null;
+    const heroUrl = primaryPhoto ? primaryPhoto.url : DEFAULT_IMAGE;
     const summaryFromFile = descMap[slug] || '';
     const summaryVal = summaryFromFile || (peak.summary || peak.description || '').toString().trim();
 
@@ -220,7 +287,17 @@ export default {
 
     // Build meta tags
     const { title, description } = buildMeta(trans, peakName, elevation, rangeVal, summaryVal);
-    const { mountain, breadcrumb } = buildJsonLd(peakName, elevation, prominence, rangeVal, coords, canonical, heroUrl, summaryVal);
+    const { mountain, breadcrumb } = buildJsonLd(
+      peakName,
+      elevation,
+      prominence,
+      rangeVal,
+      coords,
+      canonical,
+      heroUrl,
+      summaryVal,
+      photos
+    );
 
     // Fetch the raw interactive HTML template from GitHub
     const tplResp = await fetch(RAW_TEMPLATE_URL, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
@@ -237,12 +314,35 @@ export default {
     // redirectToApp or window.location.replace.
     html = html.replace(/<script[^>]*>[\s\S]*?window\.location\.replace\([^)]*\)[\s\S]*?<\/script>/gi, '');
 
+    // Remove existing placeholders and duplicate head tags.
+    html = html
+      .replace(/<title[^>]*>.*?<\/title>/i, '')
+      .replace(/<meta[^>]*name="description"[^>]*>/i, '')
+      .replace(/<meta[^>]*property="og:title"[^>]*>/i, '')
+      .replace(/<meta[^>]*property="og:description"[^>]*>/i, '')
+      .replace(/<meta[^>]*property="og:image"[^>]*>/i, '')
+      .replace(/<meta[^>]*property="og:image:alt"[^>]*>/i, '')
+      .replace(/<meta[^>]*property="og:url"[^>]*>/i, '')
+      .replace(/<meta[^>]*property="og:site_name"[^>]*>/i, '')
+      .replace(/<link[^>]*rel="canonical"[^>]*>/i, '')
+      .replace(/<link[^>]*rel="alternate"[^>]*hreflang="en"[^>]*>/gi, '')
+      .replace(/<link[^>]*rel="alternate"[^>]*hreflang="fr"[^>]*>/gi, '')
+      .replace(/<link[^>]*rel="alternate"[^>]*hreflang="x-default"[^>]*>/gi, '')
+      .replace(/<script[^>]*id="peakJsonLd"[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<script[^>]*id="breadcrumbJsonLd"[^>]*>[\s\S]*?<\/script>/gi, '');
+
     // Insert our meta tags, canonical links and structured data just
-    // before the closing head tag.  We remove any existing dynamic
-    // placeholders for these elements and insert our own.
+    // before the closing head tag.
     const metaBlock = [
       `<title>${title}</title>`,
       `<meta name="description" content="${description}" />`,
+      `<meta name="author" content="Nathan Sobol" />`,
+      `<meta property="og:site_name" content="nh48.info" />`,
+      `<meta property="og:title" content="${title}" />`,
+      `<meta property="og:description" content="${description}" />`,
+      `<meta property="og:image" content="${heroUrl}" />`,
+      `<meta property="og:image:alt" content="${primaryPhoto && primaryPhoto.headline ? esc(primaryPhoto.headline) : esc(peakName)}" />`,
+      `<meta property="og:url" content="${canonical}" />`,
       `<link rel="canonical" href="${canonical}" />`,
       `<link rel="alternate" hreflang="en" href="${canonicalEn}" />`,
       `<link rel="alternate" hreflang="fr" href="${canonicalFr}" />`,

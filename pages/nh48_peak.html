@@ -1066,6 +1066,16 @@
         el.setAttribute('content', content);
       }
 
+      function setMetaProperty(property, content){
+        let el = document.querySelector(`meta[property="${property}"]`);
+        if(!el){
+          el = document.createElement('meta');
+          el.setAttribute('property', property);
+          document.head.appendChild(el);
+        }
+        el.setAttribute('content', content);
+      }
+
       function updatePeakTitle(name){
         const peakTitle = document.getElementById('peakTitle');
         if(!peakTitle) return;
@@ -1382,20 +1392,36 @@
         return null;
       }
 
-      function buildPhotoAltText(name, meta){
+      function pickPhotoLocalizedText(photo, keys){
         const lang = getSeoLang();
-        const explicit = pickLocalizedText(meta, lang, ['altText', 'alt']);
+        if(!photo || typeof photo !== 'object') return null;
+        const sources = [];
+        if(photo.meta && typeof photo.meta === 'object') sources.push(photo.meta);
+        if(photo.iptc && typeof photo.iptc === 'object') sources.push(photo.iptc);
+        sources.push(photo);
+        for(const source of sources){
+          const candidate = pickLocalizedText(source, lang, keys);
+          if(candidate) return candidate;
+        }
+        return null;
+      }
+
+      function buildPhotoAltText(name, photo){
+        const lang = getSeoLang();
+        const explicit = pickPhotoLocalizedText(photo, ['altText', 'alt']);
         if(explicit) return explicit;
 
-        const described = pickLocalizedText(meta, lang, [
-          'extendedDescription',
-          'description',
-          'caption',
+        const described = pickPhotoLocalizedText(photo, [
           'headline',
+          'title',
+          'caption',
+          'description',
+          'extendedDescription',
         ]);
         if(described) return described;
 
-        const tags = Array.isArray(meta && meta.tags) ? meta.tags.filter(Boolean) : [];
+        const tagsSource = photo && typeof photo === 'object' ? (photo.meta || photo) : null;
+        const tags = Array.isArray(tagsSource && tagsSource.tags) ? tagsSource.tags.filter(Boolean) : [];
         if(tags.length){
           return { text: `${name} – ${tags.join(', ')}`, lang: lang === 'fr' ? 'fr' : (lang || 'en') };
         }
@@ -1403,10 +1429,9 @@
         return { text: `${name} in the White Mountains`, lang: lang === 'fr' ? 'en' : (lang || 'en') };
       }
 
-      function buildPhotoExtendedDescription(meta){
-        const lang = getSeoLang();
+      function buildPhotoExtendedDescription(photo){
         return (
-          pickLocalizedText(meta, lang, [
+          pickPhotoLocalizedText(photo, [
             'extendedDescription',
             'description',
             'caption',
@@ -1439,13 +1464,22 @@
         const difficulty = p['Difficulty'];
         const range = p['Range / Subrange'];
         const trailType = p['Trail Type'];
+        const enriched = primaryPhoto ? enrichMetadata(primaryPhoto, primaryPhoto.iptc) : null;
+        const photoAlt = primaryPhoto ? buildPhotoAltText(name, primaryPhoto) : null;
+        const photoDescription = primaryPhoto ? buildPhotoExtendedDescription(primaryPhoto) : null;
+        const photoUrl = primaryPhoto && (primaryPhoto.originalUrl || primaryPhoto.url);
+        const photoContentUrl = primaryPhoto && primaryPhoto.url;
         const imageObject = primaryPhoto && primaryPhoto.url
           ? {
             '@type': 'ImageObject',
-            url: primaryPhoto.url,
-            name: primaryPhoto.headline || `${name} — White Mountain National Forest`,
-            caption: primaryPhoto.description || descriptionText,
-            creditText: '© Nathan Sobol',
+            url: photoUrl,
+            contentUrl: photoContentUrl,
+            name: (enriched && enriched.headline) || `${name} — White Mountain National Forest`,
+            caption: (photoDescription && photoDescription.text) || descriptionText,
+            creditText: (enriched && enriched.creditLine) || '© Nathan Sobol',
+            creator: enriched && enriched.creator ? { '@type': 'Person', name: enriched.creator } : undefined,
+            license: (enriched && enriched.rightsUsageTerms) || undefined,
+            alternateName: photoAlt ? photoAlt.text : undefined,
             width: primaryPhoto.width || undefined,
             height: primaryPhoto.height || undefined
           }
@@ -1481,6 +1515,9 @@
           description: descriptionText,
           url: canonicalUrl,
           image: imageObject ? [imageObject] : undefined,
+          creator: enriched && enriched.creator ? { '@type': 'Person', name: enriched.creator } : undefined,
+          publisher: enriched ? { '@type': 'Organization', name: 'NH48pics.com' } : undefined,
+          license: enriched && enriched.rightsUsageTerms ? enriched.rightsUsageTerms : undefined,
           geo: coords ? { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon } : undefined,
           elevation: elevationFt != null ? {
             '@type': 'QuantitativeValue',
@@ -1596,10 +1633,12 @@
       }
 
       /* METADATA PANEL -------------------------------------------------------- */
-      function enrichMetadata(meta){
+      function enrichMetadata(meta = {}, iptc = {}){
         if(!meta || typeof meta !== 'object') return meta;
 
-        const iptc = meta.iptc && typeof meta.iptc === 'object' ? meta.iptc : null;
+        const safeIptc = iptc && typeof iptc === 'object'
+          ? iptc
+          : (meta.iptc && typeof meta.iptc === 'object' ? meta.iptc : {});
         const pickText = (...values) => {
           for(const v of values){
             if(v !== undefined && v !== null && String(v).trim() !== ''){
@@ -1610,21 +1649,39 @@
         };
 
         const merged = {
+          ...safeIptc,
           ...meta,
-          altText: pickText(meta.altText, iptc && iptc.altText, iptc && iptc.description),
-          alt: pickText(meta.alt, iptc && iptc.altText, iptc && iptc.description),
-          extendedAlt: pickText(meta.extendedAlt, meta.extendedDescription, iptc && iptc.extendedDescription, iptc && iptc.description),
-          headline: pickText(meta.headline, iptc && iptc.headline),
-          caption: pickText(meta.caption, iptc && iptc.description),
-          description: pickText(meta.description, iptc && iptc.description),
-          extendedDescription: pickText(meta.extendedDescription, iptc && iptc.extendedDescription),
-          creator: pickText(meta.creator, iptc && iptc.creator, meta.author),
-          creditLine: pickText(meta.creditLine, iptc && iptc.creditLine),
-          source: pickText(meta.source, iptc && iptc.source),
-          copyrightNotice: pickText(meta.copyrightNotice, iptc && iptc.copyrightNotice),
-          copyrightStatus: pickText(meta.copyrightStatus, iptc && iptc.copyrightStatus),
-          rightsUsageTerms: pickText(meta.rightsUsageTerms, iptc && iptc.rightsUsageTerms)
+          altText: pickText(meta.altText, safeIptc.altText, safeIptc.description),
+          alt: pickText(meta.alt, safeIptc.altText, safeIptc.description),
+          extendedAlt: pickText(
+            meta.extendedAlt,
+            meta.extendedDescription,
+            safeIptc.extendedDescription,
+            safeIptc.description
+          ),
+          headline: pickText(meta.headline, safeIptc.headline),
+          caption: pickText(meta.caption, safeIptc.description),
+          description: pickText(meta.description, safeIptc.description),
+          extendedDescription: pickText(meta.extendedDescription, safeIptc.extendedDescription),
+          creator: pickText(meta.creator, safeIptc.creator, meta.author),
+          creditLine: pickText(meta.creditLine, safeIptc.creditLine),
+          source: pickText(meta.source, safeIptc.source),
+          copyrightNotice: pickText(meta.copyrightNotice, safeIptc.copyrightNotice),
+          copyrightStatus: pickText(meta.copyrightStatus, safeIptc.copyrightStatus),
+          rightsUsageTerms: pickText(meta.rightsUsageTerms, safeIptc.rightsUsageTerms)
         };
+
+        if(!merged.creator) merged.creator = 'Nathan Sobol';
+        if(!merged.creditLine) merged.creditLine = '© Nathan Sobol / NH48pics.com';
+        if(!merged.source) merged.source = 'nh48.info';
+        if(!merged.copyrightNotice) merged.copyrightNotice = '© Nathan Sobol';
+        if(!merged.copyrightStatus) merged.copyrightStatus = 'Copyrighted';
+        if(!merged.rightsUsageTerms){
+          merged.rightsUsageTerms =
+            'No Unauthorized Reprint or Resale – Free to Reference Online';
+        }
+        if(meta.license) merged.license = meta.license;
+        if(meta.credentials) merged.credentials = meta.credentials;
 
         const normalizePerson = (value) => {
           if(value === undefined || value === null) return '';
@@ -2251,12 +2308,13 @@
         const langCode = getSeoLang();
         const canonicalUrl = buildCanonicalUrl(slug, langCode);
         const generatedDescription = t('peak.meta.descriptionTemplate', { name, elevation, prominence, range });
-        const metaDescription = primaryMeta
-          ? (safeText(primaryMeta.description)
-            || safeText(primaryMeta.extendedDescription)
-            || safeText(primaryMeta.altText)
-            || safeText(primaryMeta.alt)
-            || safeText(primaryMeta.caption)).trim()
+        const enrichedMeta = primaryMeta ? enrichMetadata(primaryMeta, primaryMeta.iptc) : null;
+        const metaDescription = enrichedMeta
+          ? (safeText(enrichedMeta.description)
+            || safeText(enrichedMeta.extendedDescription)
+            || safeText(enrichedMeta.altText)
+            || safeText(enrichedMeta.alt)
+            || safeText(enrichedMeta.caption)).trim()
           : '';
         const descriptionText = peakDescription || metaDescription || generatedDescription;
         const titleText = `${name} — White Mountain National Forest`;
@@ -2298,6 +2356,13 @@
           twitterUrlEl.setAttribute('content', canonicalUrl);
         }
         setMeta('keywords', `NH48 API, ${name} peak details, New Hampshire 4000 footers, White Mountains routes, hiking data, peak metadata, mountain photos`);
+        setMeta('author', (enrichedMeta && enrichedMeta.creator) || 'Nathan Sobol');
+        setMetaProperty('article:author', 'https://nh48.info');
+        setMetaProperty('og:site_name', 'nh48.info');
+        setMetaProperty(
+          'og:copyright',
+          (enrichedMeta && enrichedMeta.copyrightNotice) || '© Nathan Sobol'
+        );
 
         updateHreflangLinks(slug);
         updateBreadcrumbNav(name, canonicalUrl);
@@ -2634,7 +2699,7 @@
               if(typeof item === 'string'){
                 const normalizedUrl = normalizePhotoUrl(item);
                 imgs.push(normalizedUrl);
-                meta.push({ url: normalizedUrl });
+                meta.push({ url: normalizedUrl, originalUrl: item });
                 if(item && typeof item === 'object' && item.isPrimary && !primaryMarked){
                   primaryIndex = idx;
                   primaryMarked = true;
@@ -2642,7 +2707,7 @@
               }else if(item && item.url){
                 const normalizedUrl = normalizePhotoUrl(item.url);
                 imgs.push(normalizedUrl);
-                meta.push({ ...item, url: normalizedUrl });
+                meta.push({ ...item, url: normalizedUrl, originalUrl: item.url });
                 if(item.isPrimary && !primaryMarked){
                   primaryIndex = idx;
                   primaryMarked = true;
