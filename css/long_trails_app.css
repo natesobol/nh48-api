@@ -292,13 +292,15 @@ body {
     gap: clamp(16px, 2.5vw, 24px);
   }
   .map-panel {
-    height: auto;
-    min-height: 360px;
-    max-height: 70vh;
+    height: clamp(260px, 60vh, 420px);
+    min-height: 260px;
+    max-height: none;
+  }
+  #map {
+    min-height: 260px;
   }
   .sidebar {
-    max-height: 440px;
-    overflow-y: auto;
+    max-height: none;
   }
   .filter-panel {
     grid-template-columns: 1fr;
