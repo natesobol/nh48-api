@@ -20,21 +20,116 @@ const STATIC_PAGES = [
 
 const data = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
 
+// Normalize strings for web output. Fixes common mojibake (â€” → —, etc.)
+// and replaces em/en dashes with a simple hyphen for XML.
+const normalizeTextForWeb = (input) => {
+  if (!input) return '';
+  let s = String(input);
+  // Fix UTF-8 / Windows-1252 mixups
+  s = s
+    .replace(/â€”/g, '—')
+    .replace(/â€“/g, '–')
+    .replace(/â€˜|â€™/g, "'")
+    .replace(/â€œ|â€�/g, '"')
+    .replace(/Â/g, '');
+  // Normalize dashes
+  s = s.replace(/[—–]/g, ' - ');
+  // Collapse whitespace
+  return s.replace(/\s+/g, ' ').trim();
+};
+
 const cleanText = (value) => {
   if (value === null || value === undefined) return '';
-  return String(value)
+  let s = String(value)
     .replace(/:contentReference\[[^\]]*\]\{[^}]*\}/g, '')
     .replace(/\s+/g, ' ')
     .trim();
+  return normalizeTextForWeb(s);
 };
 
-const escapeXml = (value) =>
-  String(value)
+const escapeXml = (value) => {
+  const s = normalizeTextForWeb(value);
+  return String(s)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
+};
+
+function pickFirstNonEmpty(...vals) {
+  for (const v of vals) {
+    if (!v) continue;
+    const s = normalizeTextForWeb(v);
+    if (s) return s;
+  }
+  return '';
+}
+
+function formatCameraBits(photo) {
+  const bits = [];
+  const cam = pickFirstNonEmpty(photo.cameraModel, photo.camera);
+  const lens = pickFirstNonEmpty(photo.lens);
+  const focal = pickFirstNonEmpty(photo.focalLength);
+  const iso = pickFirstNonEmpty(photo.iso);
+  const fstop = pickFirstNonEmpty(photo.fStop);
+  const ss = pickFirstNonEmpty(photo.shutterSpeed);
+  if (cam) bits.push(cam);
+  if (lens) bits.push(lens);
+  if (focal) bits.push(focal);
+  if (fstop) bits.push(`f/${String(fstop).replace(/^f\//, '')}`);
+  if (ss) bits.push(ss);
+  if (iso) bits.push(`ISO ${iso}`);
+  return bits.length ? bits.join(' • ') : '';
+}
+
+function formatDescriptorBits(photo) {
+  const bits = [];
+  const season = pickFirstNonEmpty(photo.season);
+  const tod = pickFirstNonEmpty(photo.timeOfDay);
+  const orient = pickFirstNonEmpty(photo.orientation);
+  if (season) bits.push(season);
+  if (tod) bits.push(tod);
+  if (orient) bits.push(orient);
+  const tags = Array.isArray(photo.tags) ? photo.tags.map(normalizeTextForWeb).filter(Boolean) : [];
+  for (const t of tags.slice(0, 3)) bits.push(t);
+  return bits.length ? bits.join(', ') : '';
+}
+
+function buildPhotoTitleUnique(peakName, photo) {
+  const explicit = pickFirstNonEmpty(photo.headline, photo.title, photo.altText, photo.caption);
+  if (explicit) return explicit;
+  const descBits = formatDescriptorBits(photo);
+  const cameraBits = formatCameraBits(photo);
+  let title = `${peakName} - White Mountain National Forest (New Hampshire)`;
+  if (descBits) title = `${peakName} - ${descBits} - White Mountain National Forest (New Hampshire)`;
+  if (cameraBits) title = `${title} - ${cameraBits}`;
+  return title;
+}
+
+function buildPhotoCaptionUnique(peakName, photo) {
+  const explicit = pickFirstNonEmpty(photo.description, photo.extendedDescription, photo.caption, photo.altText);
+  if (explicit) return explicit;
+  const descBits = formatDescriptorBits(photo);
+  const cameraBits = formatCameraBits(photo);
+  let caption = `Landscape photograph of ${peakName} in the White Mountain National Forest, New Hampshire.`;
+  if (descBits) caption = `${caption} Details: ${descBits}.`;
+  if (cameraBits) caption = `${caption} Camera: ${cameraBits}.`;
+  return caption;
+}
+
+function uniqueify(text, photo, usedSet) {
+  let out = normalizeTextForWeb(text);
+  if (!usedSet.has(out)) {
+    usedSet.add(out);
+    return out;
+  }
+  const source = pickFirstNonEmpty(photo.photoId, photo.filename, photo.url);
+  const id = source ? source.slice(-12) : 'image';
+  out = `${out} (${id})`;
+  usedSet.add(out);
+  return out;
+}
 
 const normalizePhotoUrl = (url) => {
   if (!url) return url;
@@ -53,43 +148,23 @@ const normalizePhotoUrl = (url) => {
   return url;
 };
 
-const buildPhotoCaption = (peakName, photo) => {
-  const explicit = cleanText(
-    photo.altText ||
-      photo.alt ||
-      photo.extendedDescription ||
-      photo.description ||
-      photo.caption ||
-      photo.headline
-  );
-  if (explicit) return explicit;
-  const tags = Array.isArray(photo.tags) ? photo.tags.filter(Boolean) : [];
-  if (tags.length) return `${peakName} – ${tags.join(', ')}`;
-  return `${peakName} in the White Mountains`;
-};
-
-const buildPhotoTitle = (peakName, photo) => {
-  const explicit = cleanText(photo.headline || photo.caption || photo.title || photo.altText || photo.alt);
-  if (explicit) return explicit;
-  return `${peakName} photo`;
-};
-
 const buildImageEntries = (photos, peakName) => {
   if (!Array.isArray(photos)) return [];
   return photos
     .map((photo) => {
       if (typeof photo === 'string') {
+        const entryPhoto = { url: photo };
         return {
           url: normalizePhotoUrl(photo),
-          caption: `${peakName} in the White Mountains`,
-          title: `${peakName} photo`,
+          caption: buildPhotoCaptionUnique(peakName, entryPhoto),
+          title: buildPhotoTitleUnique(peakName, entryPhoto),
         };
       }
       if (!photo || !photo.url) return null;
       return {
         url: normalizePhotoUrl(photo.url),
-        caption: buildPhotoCaption(peakName, photo),
-        title: buildPhotoTitle(peakName, photo),
+        caption: buildPhotoCaptionUnique(peakName, photo),
+        title: buildPhotoTitleUnique(peakName, photo),
       };
     })
     .filter(Boolean);
@@ -162,11 +237,15 @@ const buildImageSitemap = () => {
   urlEntries.forEach((entry) => {
     xmlParts.push('  <url>');
     xmlParts.push(`    <loc>${escapeXml(entry.loc)}</loc>`);
+    const usedTitles = new Set();
+    const usedCaptions = new Set();
     entry.images.forEach((image) => {
+      const title = uniqueify(image.title, { url: image.url }, usedTitles);
+      const caption = uniqueify(image.caption, { url: image.url }, usedCaptions);
       xmlParts.push('    <image:image>');
       xmlParts.push(`      <image:loc>${escapeXml(image.url)}</image:loc>`);
-      xmlParts.push(`      <image:caption>${escapeXml(image.caption)}</image:caption>`);
-      xmlParts.push(`      <image:title>${escapeXml(image.title)}</image:title>`);
+      xmlParts.push(`      <image:caption>${escapeXml(caption)}</image:caption>`);
+      xmlParts.push(`      <image:title>${escapeXml(title)}</image:title>`);
       xmlParts.push('    </image:image>');
     });
     xmlParts.push('  </url>');

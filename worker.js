@@ -123,6 +123,85 @@ export default {
         .replace(/'/g, '&#39;');
     }
 
+    // Normalize strings for web output. Fixes common mojibake (â€” → —, etc.)
+    // and replaces em/en dashes with a simple hyphen for XML.
+    function normalizeTextForWeb(input) {
+      if (!input) return '';
+      let s = String(input);
+      // Fix UTF-8 / Windows-1252 mixups
+      s = s
+        .replace(/â€”/g, '—')
+        .replace(/â€“/g, '–')
+        .replace(/â€˜|â€™/g, "'")
+        .replace(/â€œ|â€�/g, '"')
+        .replace(/Â/g, '');
+      // Normalize dashes
+      s = s.replace(/[—–]/g, ' - ');
+      // Collapse whitespace
+      return s.replace(/\s+/g, ' ').trim();
+    }
+
+    function pickFirstNonEmpty(...vals) {
+      for (const v of vals) {
+        if (!v) continue;
+        const s = normalizeTextForWeb(v);
+        if (s) return s;
+      }
+      return '';
+    }
+
+    function formatCameraBits(photo) {
+      const bits = [];
+      const cam = pickFirstNonEmpty(photo.cameraModel, photo.camera);
+      const lens = pickFirstNonEmpty(photo.lens);
+      const focal = pickFirstNonEmpty(photo.focalLength);
+      const iso = pickFirstNonEmpty(photo.iso);
+      const fstop = pickFirstNonEmpty(photo.fStop);
+      const ss = pickFirstNonEmpty(photo.shutterSpeed);
+      if (cam) bits.push(cam);
+      if (lens) bits.push(lens);
+      if (focal) bits.push(focal);
+      if (fstop) bits.push(`f/${String(fstop).replace(/^f\//, '')}`);
+      if (ss) bits.push(ss);
+      if (iso) bits.push(`ISO ${iso}`);
+      return bits.length ? bits.join(' • ') : '';
+    }
+
+    function formatDescriptorBits(photo) {
+      const bits = [];
+      const season = pickFirstNonEmpty(photo.season);
+      const tod = pickFirstNonEmpty(photo.timeOfDay);
+      const orient = pickFirstNonEmpty(photo.orientation);
+      if (season) bits.push(season);
+      if (tod) bits.push(tod);
+      if (orient) bits.push(orient);
+      const tags = Array.isArray(photo.tags) ? photo.tags.map(normalizeTextForWeb).filter(Boolean) : [];
+      for (const t of tags.slice(0, 3)) bits.push(t);
+      return bits.length ? bits.join(', ') : '';
+    }
+
+    function buildPhotoTitleUnique(peakName, photo) {
+      const explicit = pickFirstNonEmpty(photo.headline, photo.title, photo.altText, photo.caption);
+      if (explicit) return explicit;
+      const descBits = formatDescriptorBits(photo);
+      const cameraBits = formatCameraBits(photo);
+      let title = `${peakName} - White Mountain National Forest (New Hampshire)`;
+      if (descBits) title = `${peakName} - ${descBits} - White Mountain National Forest (New Hampshire)`;
+      if (cameraBits) title = `${title} - ${cameraBits}`;
+      return title;
+    }
+
+    function buildPhotoCaptionUnique(peakName, photo) {
+      const explicit = pickFirstNonEmpty(photo.description, photo.extendedDescription, photo.caption, photo.altText);
+      if (explicit) return explicit;
+      const descBits = formatDescriptorBits(photo);
+      const cameraBits = formatCameraBits(photo);
+      let caption = `Landscape photograph of ${peakName} in the White Mountain National Forest, New Hampshire.`;
+      if (descBits) caption = `${caption} Details: ${descBits}.`;
+      if (cameraBits) caption = `${caption} Camera: ${cameraBits}.`;
+      return caption;
+    }
+
     // Format numbers as feet
     function formatFeet(value) {
       if (value === null || value === undefined || value === '') return '';
@@ -193,8 +272,8 @@ export default {
             '@type': 'ImageObject',
             contentUrl: photo.url,
             url: photo.url,
-            name: photo.headline || `${peakName} — White Mountain National Forest`,
-            caption: photo.description || summaryText,
+            name: buildPhotoTitleUnique(peakName, photo),
+            caption: buildPhotoCaptionUnique(peakName, photo),
             creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
             creditText: RIGHTS_DEFAULTS.creditText,
             copyrightNotice: RIGHTS_DEFAULTS.copyrightNotice,
@@ -287,6 +366,9 @@ export default {
 
     // Build meta tags
     const { title, description } = buildMeta(trans, peakName, elevation, rangeVal, summaryVal);
+    const primaryCaption = primaryPhoto
+      ? buildPhotoCaptionUnique(peakName, primaryPhoto)
+      : peakName;
     const { mountain, breadcrumb } = buildJsonLd(
       peakName,
       elevation,
@@ -341,7 +423,7 @@ export default {
       `<meta property="og:title" content="${title}" />`,
       `<meta property="og:description" content="${description}" />`,
       `<meta property="og:image" content="${heroUrl}" />`,
-      `<meta property="og:image:alt" content="${primaryPhoto && primaryPhoto.headline ? esc(primaryPhoto.headline) : esc(peakName)}" />`,
+      `<meta property="og:image:alt" content="${esc(primaryCaption)}" />`,
       `<meta property="og:url" content="${canonical}" />`,
       `<link rel="canonical" href="${canonical}" />`,
       `<link rel="alternate" hreflang="en" href="${canonicalEn}" />`,
