@@ -27,15 +27,10 @@ export default {
     const slug = parts[slugIdx] || '';
     const lang = isFrench ? 'fr' : 'en';
 
-    // Only handle peak routes.  If the URL does not match, return 404.
-    const ok = (!isFrench && parts[0] === 'peak') || (isFrench && parts[1] === 'peak');
-    if (!ok || !slug) {
-      return new Response('Not found', { status: 404 });
-    }
-
     // Constants
     const SITE = 'https://nh48.info';
     const RAW_TEMPLATE_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/pages/nh48_peak.html';
+    const RAW_CATALOG_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/pages/nh48_catalog.html';
     const EN_TRANS_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/i18n/en.json';
     const FR_TRANS_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/i18n/fr.json';
     const DEFAULT_IMAGE = `${SITE}/nh48-preview.png`;
@@ -251,6 +246,72 @@ export default {
       return out;
     }
 
+    function buildCatalogDataset({ canonicalUrl, title, description, imageObjects }) {
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'Dataset',
+        name: title,
+        description,
+        identifier: 'nh48.json',
+        url: canonicalUrl,
+        sameAs: [
+          'https://github.com/natesobol/nh48-api',
+          'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json'
+        ],
+        isAccessibleForFree: true,
+        license: 'https://creativecommons.org/licenses/by/4.0/',
+        creator: {
+          '@type': 'Person',
+          name: RIGHTS_DEFAULTS.creatorName,
+          url: 'https://www.nh48pics.com/'
+        },
+        keywords: [
+          'NH48',
+          'White Mountains',
+          '4000 footers',
+          'hiking data',
+          'peak metadata',
+          'photo metadata',
+          'open dataset',
+          'New Hampshire 4,000-footers API'
+        ],
+        spatialCoverage: {
+          '@type': 'Place',
+          name: 'White Mountain National Forest',
+          geo: { '@type': 'GeoShape', circle: '44.15 -71.34 50km' }
+        },
+        temporalCoverage: '2020-01-01/2025-12-31',
+        distribution: [
+          {
+            '@type': 'DataDownload',
+            name: 'NH48 API (cdn.jsdelivr)',
+            encodingFormat: 'application/json',
+            contentUrl: 'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json'
+          },
+          {
+            '@type': 'DataDownload',
+            name: 'NH48 API (raw GitHub)',
+            encodingFormat: 'application/json',
+            contentUrl: 'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
+          },
+          {
+            '@type': 'DataDownload',
+            name: 'NH48 API (site mirror)',
+            encodingFormat: 'application/json',
+            contentUrl: 'https://nh48.info/data/nh48.json'
+          }
+        ],
+        includedInDataCatalog: {
+          '@type': 'DataCatalog',
+          name: 'NH48 Open Hiking APIs',
+          url: canonicalUrl,
+          description: 'Public datasets for the New Hampshire 4000-footers including photo metadata, peak attributes, and API utilities for map clients.',
+          license: 'https://creativecommons.org/licenses/by/4.0/'
+        },
+        image: imageObjects.length ? imageObjects : DEFAULT_IMAGE
+      };
+    }
+
     // Build JSON-LD for Mountain and Breadcrumb
     function buildJsonLd(
       peakName,
@@ -314,6 +375,116 @@ export default {
         ]
       };
       return { mountain, breadcrumb };
+    }
+
+    async function serveCatalog() {
+      const canonicalUrl = isFrench ? `${SITE}/fr/catalog` : `${SITE}/catalog`;
+      const title = isFrench
+        ? 'Catalogue NH48 - Données et photos des sommets du New Hampshire'
+        : 'NH48 Peak Catalog - Data & photos for New Hampshire’s 4000-footers';
+      const description = isFrench
+        ? 'Parcourez le catalogue NH48 avec altitude, proéminence, chaîne, difficulté et vignettes photo pour les 48 sommets de 4 000 pieds du New Hampshire.'
+        : 'Browse the NH48 Peak Catalog with elevation, prominence, range, difficulty and photo thumbnails for all 48 four-thousand-foot peaks in New Hampshire.';
+      const altText = isFrench
+        ? 'Aperçu du catalogue NH48 avec photos et données des sommets.'
+        : 'Preview of the NH48 Peak Catalog with peak photos and data.';
+
+      const peaks = await loadPeaks();
+      const peakList = Array.isArray(peaks) ? peaks : Object.values(peaks || {});
+      const photos = [];
+      for (const peak of peakList) {
+        if (!peak) continue;
+        const peakName = peak.peakName || peak.name || peak['Peak Name'] || '';
+        const peakPhotos = Array.isArray(peak.photos) ? peak.photos : [];
+        for (const photo of peakPhotos) {
+          const data = typeof photo === 'string' ? { url: photo } : photo;
+          if (!data || !data.url) continue;
+          photos.push({ peakName, data });
+        }
+      }
+
+      const imageObjects = photos.slice(0, 1000).map(({ peakName, data }) => {
+        const photoMeta = { ...data };
+        const exifData = buildExifData(photoMeta);
+        return {
+          '@type': 'ImageObject',
+          contentUrl: photoMeta.url,
+          url: photoMeta.url,
+          name: buildPhotoTitleUnique(peakName, photoMeta),
+          caption: buildPhotoCaptionUnique(peakName, photoMeta),
+          creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
+          creditText: RIGHTS_DEFAULTS.creditText,
+          copyrightNotice: RIGHTS_DEFAULTS.copyrightNotice,
+          license: RIGHTS_DEFAULTS.licenseUrl,
+          acquireLicensePage: RIGHTS_DEFAULTS.acquireLicensePageUrl,
+          exifData
+        };
+      });
+
+      const datasetSchema = buildCatalogDataset({
+        canonicalUrl,
+        title,
+        description,
+        imageObjects
+      });
+
+      const tplResp = await fetch(RAW_CATALOG_URL, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
+      if (!tplResp.ok) {
+        return new Response('Template unavailable', { status: 500 });
+      }
+      let html = await tplResp.text();
+      html = html
+        .replace(/<title[^>]*>.*?<\/title>/i, '')
+        .replace(/<meta[^>]*name="description"[^>]*>/i, '')
+        .replace(/<meta[^>]*property="og:[^"]*"[^>]*>/gi, '')
+        .replace(/<meta[^>]*name="twitter:[^"]*"[^>]*>/gi, '')
+        .replace(/<meta[^>]*property="twitter:[^"]*"[^>]*>/gi, '')
+        .replace(/<link[^>]*rel="canonical"[^>]*>/i, '')
+        .replace(/<link[^>]*rel="alternate"[^>]*>/gi, '')
+        .replace(/<script[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/gi, '');
+
+      const metaBlock = [
+        `<title>${esc(title)}</title>`,
+        `<meta name="description" content="${esc(description)}" />`,
+        `<meta name="author" content="Nathan Sobol" />`,
+        `<meta property="og:site_name" content="nh48.info" />`,
+        `<meta property="og:type" content="website" />`,
+        `<meta property="og:title" content="${esc(title)}" />`,
+        `<meta property="og:description" content="${esc(description)}" />`,
+        `<meta property="og:image" content="${DEFAULT_IMAGE}" />`,
+        `<meta property="og:image:alt" content="${esc(altText)}" />`,
+        `<meta property="og:url" content="${canonicalUrl}" />`,
+        `<meta name="twitter:card" content="summary_large_image" />`,
+        `<meta name="twitter:title" content="${esc(title)}" />`,
+        `<meta name="twitter:description" content="${esc(description)}" />`,
+        `<meta name="twitter:image" content="${DEFAULT_IMAGE}" />`,
+        `<link rel="canonical" href="${canonicalUrl}" />`,
+        `<link rel="alternate" hreflang="en" href="${SITE}/catalog" />`,
+        `<link rel="alternate" hreflang="fr" href="${SITE}/fr/catalog" />`,
+        `<link rel="alternate" hreflang="x-default" href="${SITE}/catalog" />`,
+        `<script type="application/ld+json">${JSON.stringify(datasetSchema).replace(/</g, '<\/')}</script>`
+      ].join('\n');
+      html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
+
+      return new Response(html, {
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, max-age=0, s-maxage=86400',
+          'X-Robots-Tag': 'index, follow'
+        }
+      });
+    }
+
+    const isCatalogRoute = (!isFrench && parts[0] === 'catalog' && parts.length === 1)
+      || (isFrench && parts[1] === 'catalog' && parts.length === 2);
+    if (isCatalogRoute) {
+      return serveCatalog();
+    }
+
+    // Only handle peak routes.  If the URL does not match, return 404.
+    const ok = (!isFrench && parts[0] === 'peak') || (isFrench && parts[1] === 'peak');
+    if (!ok || !slug) {
+      return new Response('Not found', { status: 404 });
     }
 
     // Find the peak by slug in the loaded dataset

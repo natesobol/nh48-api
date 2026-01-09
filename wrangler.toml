@@ -1,3 +1,9 @@
 name = "nh48-ssr"
 main = "worker.js"
 compatibility_date = "2026-01-05"
+routes = [
+  "nh48.info/peak/*",
+  "nh48.info/fr/peak/*",
+  "nh48.info/catalog*",
+  "nh48.info/fr/catalog*"
+]
