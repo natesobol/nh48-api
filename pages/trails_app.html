@@ -1595,7 +1595,8 @@
     </nav>
 
     <!-- Disclaimer and How to use sections for mobile -->
-    <div class="info-panel about-panel">
+    <div id="trailIntroHome">
+      <div id="trailIntroPanel" class="info-panel about-panel">
       <details open>
         <summary data-i18n="trails.disclaimer.title">Disclaimer</summary>
         <p data-i18n-html="trails.disclaimer.body">This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry.</p>
@@ -1635,6 +1636,7 @@
             <span data-i18n="trails.viewApi">View API</span>
           </a>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -1770,6 +1772,8 @@
       // Retrieve success (completed) color from CSS variables.  Fallback to
       // a hardcoded green if not found.
       const successColor = getComputedStyle(document.documentElement).getPropertyValue('--success-green').trim() || '#51cf66';
+      const defaultTrailColor = '#e03a2d';
+      const selectedTrailColor = '#b81414';
 
       // Track whether completed trails should be hidden in the list. This is toggled
       // via the settings panel checkbox. Defaults to false (show all).
@@ -1780,6 +1784,10 @@
       let trailInfoLookup = new Map();
       let trailInfoLoaded = false;
       let currentTrailSelection = null;
+      let introPanelShown = false;
+      let introPanelDismissed = false;
+      const introPanel = document.getElementById('trailIntroPanel');
+      const introPanelHome = document.getElementById('trailIntroHome');
       let telemetryTrailCount = null;
 
       // Normalize trail names for matching (case-insensitive, trimmed, collapses spaces).
@@ -2101,21 +2109,42 @@
         return `${rounded} miles`;
       }
 
+      function showIntroPanel() {
+        if (!trailInfoPanel || !introPanel) return;
+        if (trailInfoPanel.contains(introPanel)) {
+          introPanelShown = true;
+          return;
+        }
+        trailInfoPanel.innerHTML = '';
+        trailInfoPanel.appendChild(introPanel);
+        introPanelShown = true;
+      }
+
+      function restoreIntroPanelHome() {
+        if (!introPanel || !introPanelHome) return;
+        if (!introPanelHome.contains(introPanel)) {
+          introPanelHome.appendChild(introPanel);
+        }
+      }
+
       function renderTrailInfo(name) {
         if (!trailInfoPanel) return;
         currentTrailSelection = name || null;
 
         if (!name) {
+          if (!introPanelDismissed) {
+            showIntroPanel();
+            return;
+          }
+          restoreIntroPanelHome();
           trailInfoPanel.innerHTML = `
             <h2 class="trail-info-heading">Select a trail to view details</h2>
             <p class="trail-info-empty">${t('trails.details.empty')}</p>
-            <div class="trail-info-about">
-              <h3>${t('trails.about.title')}</h3>
-              <p>${t('trails.about.body')}</p>
-            </div>
           `;
           return;
         }
+        introPanelDismissed = true;
+        restoreIntroPanelHome();
 
         const record = trailInfoLookup.get(normalizeTrailName(name));
         if (!record) {
@@ -2267,7 +2296,7 @@
         Object.entries(trailLayers).forEach(([name, info]) => {
           const status = completedTrails[name];
           const completed = status && status.completed;
-          const color = completed ? successColor : '#3388ff';
+          const color = defaultTrailColor;
           const weight = completed ? 5 : 3;
           info.layer.setStyle({ color: color, weight: weight });
         });
@@ -2287,7 +2316,7 @@
           const completed = status && status.completed;
           const isVisible = filteredNames.includes(name);
           // Determine color and weight as in applyCompletionStyles
-          const color = completed ? successColor : '#3388ff';
+          const color = defaultTrailColor;
           const weight = completed ? 5 : 3;
           const opacity = isVisible ? 1 : 0;
           info.layer.setStyle({ color: color, weight: weight, opacity: opacity });
@@ -2422,7 +2451,18 @@
         // Reset all trails to their completion or default color
         applyCompletionStyles();
         // Highlight the selected trail in red
-        targetLayer.setStyle({ color: '#e74c3c', weight: 5 });
+        targetLayer.setStyle({ color: selectedTrailColor, weight: 6 });
+      }
+
+      function focusTrailBounds(layer) {
+        if (!layer) return;
+        const bounds = layer.getBounds();
+        if (!bounds || !bounds.isValid()) return;
+        map.fitBounds(bounds.pad(0.12), {
+          maxZoom: 14,
+          animate: true,
+          padding: [48, 48]
+        });
       }
 
       /**
@@ -2464,7 +2504,7 @@
         const geoLayer = L.geoJSON(geoData, {
           style: function(feature) {
             // Default line styling.  You can change the color or weight here.
-            return { color: '#3388ff', weight: 3 };
+            return { color: defaultTrailColor, weight: 3 };
           },
           onEachFeature: function(feature, layer) {
             const name = feature.properties && feature.properties.name
@@ -2479,7 +2519,7 @@
             // Handle click on the map line.  Highlight and zoom.
             layer.on('click', function() {
               highlightLayer(layer);
-              map.fitBounds(layer.getBounds(), { maxZoom: 14, animate: true });
+              focusTrailBounds(layer);
               layer.openPopup();
               renderTrailInfo(name);
               trackEvent('trails_map_trail_click', { trail: name });
@@ -2574,25 +2614,12 @@
         // Build status circle and date controls.
         const { statusSpan, dateContainer, dateInput } = createStatusAndDateControls(name);
 
-        // Optional: button to launch virtual hike (remove if not needed).
-        const hikeBtn = document.createElement('button');
-        hikeBtn.className = 'hike-btn';
-        hikeBtn.title     = t('trails.virtualHike');
-        hikeBtn.setAttribute('aria-label', t('trails.virtualHike'));
-        hikeBtn.innerHTML = '🌄';
-        hikeBtn.addEventListener('click', e => {
-          e.stopPropagation();
-          const encoded = encodeURIComponent(name);
-          window.open(`/virtual_hike.html?trail=${encoded}`, '_blank');
-          trackEvent('trails_virtual_hike_open', { trail: name });
-        });
-
         // When clicking the list item, highlight the trail on the map.
         li.addEventListener('click', () => {
           const info = trailLayers[name];
           if (info) {
             highlightLayer(info.layer);
-            map.fitBounds(info.layer.getBounds(), { maxZoom: 14, animate: true });
+            focusTrailBounds(info.layer);
             info.layer.openPopup();
             document.querySelectorAll('#trailList li').forEach(el => el.classList.remove('active'));
             li.classList.add('active');
@@ -2605,7 +2632,6 @@
         li.appendChild(nameSpan);
         li.appendChild(dateContainer);
         li.appendChild(dateInput);
-        li.appendChild(hikeBtn);   // comment out if not using virtual hike
         li.appendChild(statusSpan);
         return li;
       }
