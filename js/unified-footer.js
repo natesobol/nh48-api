@@ -63,7 +63,7 @@
         margin: 4px 0 4px;
         font-size: clamp(19px, 2.4vw, 24px);
         letter-spacing: 0.35px;
-        color: var(--nh48-footer-ink);
+        color: var(--nh48-footer-accent);
       }
 
       .nh48-quick-footer__header p {
@@ -165,10 +165,10 @@
           min-height: 34px;
           text-align: left;
           border-radius: 8px;
-          border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 70%, var(--nh48-footer-ink) 30%);
-          color: var(--nh48-footer-ink);
+          border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 85%, var(--nh48-footer-ink) 15%);
+          color: #ffffff;
           text-decoration: none;
-          background: color-mix(in srgb, var(--nh48-footer-card) 70%, var(--nh48-footer-accent) 30%);
+          background: color-mix(in srgb, var(--nh48-footer-card) 50%, var(--nh48-footer-accent) 50%);
           transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
           line-height: 1.2;
           white-space: normal;
@@ -182,7 +182,7 @@
         .nh48-quick-footer__link:focus-visible {
           border-color: var(--nh48-footer-accent);
           box-shadow: 0 0 0 2px color-mix(in srgb, var(--nh48-footer-accent) 28%, transparent);
-          background: color-mix(in srgb, var(--nh48-footer-card) 55%, var(--nh48-footer-accent) 45%);
+          background: color-mix(in srgb, var(--nh48-footer-card) 40%, var(--nh48-footer-accent) 60%);
           transform: translateY(-1px);
           outline: none;
         }
@@ -265,10 +265,10 @@
         min-height: 40px;
         text-align: left;
         border-radius: 10px;
-        border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 70%, var(--nh48-footer-ink) 30%);
-        color: var(--nh48-footer-ink);
+        border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 85%, var(--nh48-footer-ink) 15%);
+        color: #ffffff;
         text-decoration: none;
-        background: color-mix(in srgb, var(--nh48-footer-card) 70%, var(--nh48-footer-accent) 30%);
+        background: color-mix(in srgb, var(--nh48-footer-card) 50%, var(--nh48-footer-accent) 50%);
         transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
         line-height: 1.32;
         white-space: normal;
@@ -281,7 +281,7 @@
       .nh48-quick-footer__link:focus-visible {
         border-color: var(--nh48-footer-accent);
         box-shadow: 0 0 0 3px color-mix(in srgb, var(--nh48-footer-accent) 28%, transparent);
-        background: color-mix(in srgb, var(--nh48-footer-card) 55%, var(--nh48-footer-accent) 45%);
+        background: color-mix(in srgb, var(--nh48-footer-card) 40%, var(--nh48-footer-accent) 60%);
         transform: translateY(-1px);
         outline: none;
       }
@@ -307,20 +307,38 @@
       }
 
       .nh48-quick-footer__meta-links a {
-        color: color-mix(in srgb, var(--nh48-footer-ink) 85%, #cbd5e1 15%);
+        color: #f8fafc;
         text-decoration: none;
         padding: 6px 10px;
         border-radius: 9px;
-        border: 1px solid transparent;
+        border: 1px solid color-mix(in srgb, var(--nh48-footer-ink) 60%, var(--nh48-footer-accent) 40%);
+        background: color-mix(in srgb, var(--nh48-footer-card) 55%, #000 45%);
         transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
       }
 
       .nh48-quick-footer__meta-links a:hover,
       .nh48-quick-footer__meta-links a:focus-visible {
         color: #ffffff;
-        background: color-mix(in srgb, var(--nh48-footer-card) 65%, var(--nh48-footer-accent) 35%);
-        border-color: color-mix(in srgb, var(--nh48-footer-accent) 32%, transparent);
+        background: color-mix(in srgb, var(--nh48-footer-card) 45%, var(--nh48-footer-accent) 55%);
+        border-color: color-mix(in srgb, var(--nh48-footer-accent) 60%, transparent);
         outline: none;
+      }
+
+      .nh48-quick-footer__meta-links a.nh48-quick-footer__meta-link--instagram,
+      .nh48-quick-footer__meta-links a[href*="instagram.com/nate_dumps_pics"] {
+        background: #22c55e;
+        border-color: #16a34a;
+        color: #f0fdf4;
+        font-weight: 700;
+      }
+
+      .nh48-quick-footer__meta-links a.nh48-quick-footer__meta-link--instagram:hover,
+      .nh48-quick-footer__meta-links a.nh48-quick-footer__meta-link--instagram:focus-visible,
+      .nh48-quick-footer__meta-links a[href*=\"instagram.com/nate_dumps_pics\"]:hover,
+      .nh48-quick-footer__meta-links a[href*=\"instagram.com/nate_dumps_pics\"]:focus-visible {
+        background: #16a34a;
+        border-color: #15803d;
+        color: #ffffff;
       }
 
       .nh48-quick-footer__legal {
@@ -464,7 +482,7 @@
           { href: "/long-trails", text: "Long Trails" },
           { href: "https://nh48pics.com", text: "NH48 Pics", external: true },
           { href: "https://nh48.app", text: "Peak Bagger", external: true },
-          { href: "https://www.instagram.com/nate_dumps_pics/", text: "Latest WMNF Photos", external: true }
+          { href: "https://www.instagram.com/nate_dumps_pics/", text: "@nate_dumps_pics", external: true, className: "nh48-quick-footer__meta-link--instagram" }
         ]
       }
     },
@@ -593,7 +611,7 @@
           <div class="nh48-quick-footer__legal">${content.meta.legal}</div>
           <div class="nh48-quick-footer__meta-links" aria-label="Footer navigation links">
             ${content.meta.links.map(link => `
-              <a href="${link.href}" ${link.external ? 'target="_blank" rel="noopener"' : ''}>${link.text}</a>
+              <a href="${link.href}" ${link.external ? 'target="_blank" rel="noopener"' : ''} ${link.className ? `class="${link.className}"` : ''}>${link.text}</a>
             `).join('')}
           </div>
         </div>

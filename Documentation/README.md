@@ -63,6 +63,8 @@ The live pages share a unified **site-nav** block (see the `<nav class="site-nav
 
 This parity keeps the navigation crawlable, preserves UX muscle memory, and reduces SEO regressions from mismatched menus.
 
+To keep the footer unified across all entry points, treat the footer as a single shared component with synchronized sources: `pages/footer.html` (HTML + baseline styles), `css/quick-browse-footer.css` (shared stylesheet), and the JS-driven variants in `js/quick-browse-footer.js` and `js/unified-footer.js`. When adjusting copy or styles, update each source in the same change so the quick browse footer renders identically whether it is injected or hardcoded, and keep the intent of the component focused on shared navigation and discovery rather than page-specific tweaks.
+
 ### Only style the live app shells (never the prerendered pages)
 
 All UI/appearance work should be focused on the JavaScript-powered app shells that humans actually see: `/`, `/catalog`, `/trails`, `/long-trails`, `/virtual_hike.html`, and the `/pages/*` app surfaces (`nh48_catalog.html`, `nh48_peak.html`, `trails_app.html`, `long_trails_app.html`, `virtual_hike.html`). The prerendered redirect/index pages (including everything under `/peak/` and `/fr/peak/`) exist solely for bots and metadata; do **not** spend time restyling them.
