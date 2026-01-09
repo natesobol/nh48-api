@@ -681,6 +681,7 @@
         --muted:#a5b4c3;
         --stroke:#ffffff33;
         --accent:#22c55e;
+        --accent-strong:#4ade80;
       }
       body{
         margin:0;
@@ -763,15 +764,16 @@
         gap:6px;
       }
       .breadcrumb-nav li+li::before{
-        content:'›';
+        content:'/';
         color:var(--muted);
         opacity:0.6;
       }
       .breadcrumb-nav a{
-        color:var(--muted);
+        color:var(--accent);
+        font-weight:700;
         text-decoration:none;
       }
-      .breadcrumb-nav a:hover{ color:var(--accent); }
+      .breadcrumb-nav a:hover{ color:var(--accent-strong); }
       header.hero{
         display:grid;
         grid-template-columns:1.1fr 0.9fr;
