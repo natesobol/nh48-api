@@ -4,7 +4,62 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Howker Ridge • Plant Details</title>
-<meta name="description" content="Detailed view for an alpine/subalpine plant observed along Howker Ridge Trail. Explore photos, facts, and notes for the selected species." />
+<meta id="meta-description" name="description" content="Detailed view for an alpine/subalpine plant observed along Howker Ridge Trail. Explore photos, facts, and notes for the selected species." />
+<link rel="canonical" href="https://nh48.info/pages/plant.html" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://nh48.info/pages/plant.html" />
+<meta property="og:image" content="https://nh48.info/nh48API_logo.png" />
+<meta property="og:image:alt" content="NH48 API logo" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://nh48.info/nh48API_logo.png" />
+<meta name="twitter:image:alt" content="NH48 API logo" />
+<meta id="og-title" property="og:title" content="Howker Ridge • Plant Details" />
+<meta id="og-description" property="og:description" content="Detailed species view for alpine and subalpine plants observed along the Howker Ridge Trail." />
+<meta id="twitter-title" name="twitter:title" content="Howker Ridge • Plant Details" />
+<meta id="twitter-description" name="twitter:description" content="Explore species facts, field notes, and photo credits for alpine plants along Howker Ridge." />
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Howker Ridge Plant Details",
+    "description": "Detailed species view for alpine and subalpine plants observed along the Howker Ridge Trail.",
+    "url": "https://nh48.info/pages/plant.html",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "NH48 API",
+      "url": "https://nh48.info/"
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://nh48.info/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Projects",
+          "item": "https://nh48.info/pages/plant_catalog.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Howker Ridge Plant Catalog",
+          "item": "https://nh48.info/pages/plant_catalog.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Plant Details",
+          "item": "https://nh48.info/pages/plant.html"
+        }
+      ]
+    }
+  }
+</script>
 <script src="/js/unified-footer.js" defer></script>
 
 <style>
@@ -87,6 +142,35 @@ header h1{
 header p{
   margin:0;
   color:var(--muted);
+}
+
+.page-breadcrumbs{
+  margin:6px 0 16px;
+  font-size:13px;
+  color:var(--muted);
+}
+.page-breadcrumbs ol{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.page-breadcrumbs li::after{
+  content:"/";
+  margin-left:6px;
+  color:var(--muted);
+}
+.page-breadcrumbs li:last-child::after{
+  content:"";
+}
+.page-breadcrumbs a{
+  color:inherit;
+  text-decoration:none;
+}
+.page-breadcrumbs a:hover{
+  color:var(--accent);
 }
 
 /****************************
@@ -383,6 +467,14 @@ header p{
       <p>Detailed information for an alpine or subalpine species recorded along Howker Ridge Trail. Use the back link to return to the catalog.</p>
     </blockquote>
   </header>
+  <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/pages/plant_catalog.html">Projects</a></li>
+      <li><a href="/pages/plant_catalog.html">Howker Ridge Plant Catalog</a></li>
+      <li>Plant Details</li>
+    </ol>
+  </nav>
   <!-- Settings panel (retained for theme toggle on desktop) -->
   <aside class="settings" id="settings-panel">
     <div class="settings-logo">
@@ -480,6 +572,13 @@ header p{
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image unavailable</text></svg>`
   );
 
+  function updateMeta(id, content){
+    const el = document.getElementById(id);
+    if (el && content) {
+      el.setAttribute('content', content);
+    }
+  }
+
   /* ---------- Data source: static JSON from GitHub Pages ---------- */
   async function fetchPlants() {
     const res = await fetch(
@@ -573,6 +672,15 @@ header p{
 
   /* ---------- Populate details ---------- */
   function populatePlant(p){
+    const titleText = `${p.common || 'Plant'} • Howker Ridge Plant Details`;
+    const descText = `Details for ${p.common || 'a plant'}${p.latin ? ` (${p.latin})` : ''} observed along the Howker Ridge Trail in the White Mountains of New Hampshire.`;
+    document.title = titleText;
+    updateMeta('meta-description', descText);
+    updateMeta('og-title', titleText);
+    updateMeta('og-description', descText);
+    updateMeta('twitter-title', titleText);
+    updateMeta('twitter-description', descText);
+
     document.getElementById('d-title').textContent = p.common || '';
     document.getElementById('d-latin').textContent = p.latin || '';
     document.getElementById('d-tags').innerHTML = `
@@ -613,6 +721,7 @@ header p{
     if (!plantId){
       // No id provided
       document.getElementById('d-title').textContent = 'Plant not specified';
+      document.title = 'Plant not specified • Howker Ridge Plant Details';
       return;
     }
     try{
@@ -623,10 +732,12 @@ header p{
         populatePlant(p);
       } else {
         document.getElementById('d-title').textContent = 'Plant not found';
+        document.title = 'Plant not found • Howker Ridge Plant Details';
       }
     }catch(err){
       console.error(err);
       document.getElementById('d-title').textContent = 'Error loading plant';
+      document.title = 'Error loading plant • Howker Ridge Plant Details';
     }
 
     // Settings handlers (simplified)
