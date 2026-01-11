@@ -1,1012 +1,1360 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Howker Ridge • Trail Plant Catalog</title>
-<meta name="description" content="Interactive alpine plant catalog for Howker Ridge (Mount Madison, NH). Browse quick facts, habitats, elevation ranges, and seasonal notes. Click a plant for details." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="landing.title">NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails</title>
+  <meta name="description" data-i18n="landing.metaDescription" data-i18n-attr="content" content="NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Quick Browse NH48 peaks of the White Mountains of New Hampshire, explore routes, and access trail details.">
+  <meta name="keywords" content="NH48, New Hampshire 48, White Mountains, hiking trails, peak data, trail data, long trails, four-thousand-foot peaks, outdoor adventure, hiking catalog, NH 48 peaks, White Mountain National Forest">
+  <meta name="author" content="Nathan Sobol">
+  <meta name="creator" content="Nathan Sobol">
+  <meta name="publisher" content="NH48 API">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="application-name" content="NH48 API">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="mask-icon" href="/favicon.ico" color="#22c55e">
+  <link rel="icon" type="image/png" href="/nh48API_logo.png">
+  <link rel="manifest" href="/manifest_out.json">
+  <link rel="canonical" href="https://nh48.info/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="/js/unified-footer.js" defer></script>
+  <link rel="alternate" type="application/json" title="NH48 Summit Photo Alt Text" href="https://nh48.info/photos/backgrounds/alt-text.json">
+  <link rel="alternate" hreflang="en" href="https://nh48.info/">
+  <link rel="alternate" hreflang="es" href="https://nh48.info/i18n/es.html">
+  <link rel="alternate" hreflang="fr" href="https://nh48.info/i18n/fr.html">
+  <link rel="alternate" hreflang="de" href="https://nh48.info/i18n/de.html">
+  <link rel="alternate" hreflang="zh" href="https://nh48.info/i18n/zh.html">
+  <link rel="alternate" hreflang="zh-Hans" href="https://nh48.info/i18n/zh-Hans.html">
+  <link rel="alternate" hreflang="ja" href="https://nh48.info/i18n/ja.html">
+  <link rel="alternate" hreflang="ar" href="https://nh48.info/i18n/ar.html">
+  <link rel="alternate" hreflang="fa" href="https://nh48.info/i18n/fa.html">
+  <link rel="alternate" hreflang="hi-IN" href="https://nh48.info/i18n/hi.html">
+  <link rel="alternate" hreflang="pt" href="https://nh48.info/i18n/pt.html">
+  <link rel="alternate" hreflang="ru" href="https://nh48.info/i18n/ru.html">
+  <link rel="alternate" hreflang="id" href="https://nh48.info/i18n/id.html">
+  <link rel="alternate" hreflang="it" href="https://nh48.info/i18n/it.html">
+  <link rel="alternate" hreflang="ko" href="https://nh48.info/i18n/ko.html">
+  <link rel="alternate" hreflang="tr" href="https://nh48.info/i18n/tr.html">
+  <link rel="alternate" hreflang="vi" href="https://nh48.info/i18n/vi.html">
+  <link rel="alternate" hreflang="pl" href="https://nh48.info/i18n/pl.html">
+  <link rel="alternate" hreflang="fil" href="https://nh48.info/i18n/fil.html">
+  <link rel="alternate" hreflang="nl" href="https://nh48.info/i18n/nl.html">
+  <link rel="alternate" hreflang="ur" href="https://nh48.info/i18n/ur.html">
+  <link rel="alternate" hreflang="sw" href="https://nh48.info/i18n/sw.html">
+  <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NH48 API">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="es_ES">
+  <meta property="og:locale:alternate" content="fr_FR">
+  <meta property="og:locale:alternate" content="de_DE">
+  <meta property="og:locale:alternate" content="zh_TW">
+  <meta property="og:locale:alternate" content="zh_CN">
+  <meta property="og:locale:alternate" content="zh_TW">
+  <meta property="og:locale:alternate" content="ja_JP">
+  <meta property="og:locale:alternate" content="ar_SA">
+  <meta property="og:locale:alternate" content="hi_IN">
+  <meta property="og:locale:alternate" content="pt_BR">
+  <meta property="og:locale:alternate" content="ru_RU">
+  <meta property="og:locale:alternate" content="id_ID">
+  <meta property="og:locale:alternate" content="it_IT">
+  <meta property="og:locale:alternate" content="ko_KR">
+  <meta property="og:locale:alternate" content="tr_TR">
+  <meta property="og:locale:alternate" content="vi_VN">
+  <meta property="og:locale:alternate" content="pl_PL">
+  <meta property="og:locale:alternate" content="fa_IR">
+  <meta property="og:locale:alternate" content="fil_PH">
+  <meta property="og:locale:alternate" content="nl_NL">
+  <meta property="og:locale:alternate" content="ur_PK">
+  <meta property="og:locale:alternate" content="sw_KE">
+  <meta property="og:title" data-i18n="landing.ogTitle" data-i18n-attr="content" content="NH48 API – Open Trails and Peaks Data">
+  <meta property="og:description" data-i18n="landing.ogDescription" data-i18n-attr="content" content="Quick Browse NH48 peaks of the White Mountains of New Hampshire, explore trail routes, and access long-distance data for every 4,000-footer.">
+  <meta property="og:image" content="https://nh48.info/UI-Elements/og-cover.png">
+  <meta property="og:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
+  <meta property="og:url" content="https://nh48.info/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="NH48 API – Open Trails and Peaks Data">
+  <meta name="twitter:description" content="Quick Browse NH48 peaks of the White Mountains of New Hampshire, explore trail routes, and access long-distance data for every 4,000-footer.">
+  <meta name="twitter:image" content="https://nh48.info/UI-Elements/og-cover.png">
+  <meta name="twitter:image:alt" content="NH48 API cover illustration highlighting New Hampshire’s White Mountains">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://nh48.info/#org",
+          "name": "NH48 API",
+          "description": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks and White Mountain trails.",
+          "url": "https://nh48.info",
+          "logo": "https://nh48.info/UI-Elements/logo.png"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://nh48.info/#website",
+          "url": "https://nh48.info",
+          "name": "NH48 API",
+          "description": "Open data and trail resources for New Hampshire’s White Mountains and long-distance routes.",
+          "publisher": { "@id": "https://nh48.info/#org" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://nh48.info/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://nh48.info/#homepage",
+          "url": "https://nh48.info/",
+          "name": "NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails",
+          "description": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Quick Browse NH48 peaks of the White Mountains of New Hampshire, explore White Mountain trails, and build on the dataset.",
+          "inLanguage": "en",
+          "isPartOf": { "@id": "https://nh48.info/#website" },
+          "primaryImageOfPage": {
+            "@type": "ImageObject",
+            "url": "https://nh48.info/UI-Elements/og-cover.png",
+            "description": "NH48 API cover illustration highlighting New Hampshire’s White Mountains"
+          }
+        },
+        {
+          "@type": "Dataset",
+          "@id": "https://nh48.info/#nh48-dataset",
+          "name": "NH48 API – New Hampshire 4,000-Footers Dataset",
+          "description": "Structured data for 48 New Hampshire four-thousand-foot peaks with 101 tagged photos, elevations, prominence, difficulty, and geo context in JSON format.",
+          "url": "https://nh48.info/data/nh48.json",
+          "license": "https://creativecommons.org/licenses/by/4.0/",
+          "creator": {
+            "@type": "Person",
+            "name": "Nathan Sobol",
+            "url": "https://www.nh48pics.com/"
+          },
+          "keywords": [
+            "NH48",
+            "White Mountains",
+            "4000 footers",
+            "hiking data",
+            "peak metadata",
+            "photo metadata",
+            "open dataset",
+            "New Hampshire trails"
+          ],
+          "distribution": [
+            {
+              "@type": "DataDownload",
+              "contentUrl": "https://nh48.info/data/nh48.json",
+              "encodingFormat": "application/json"
+            },
+            {
+              "@type": "DataDownload",
+              "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json",
+              "encodingFormat": "application/json"
+            },
+            {
+              "@type": "DataDownload",
+              "contentUrl": "https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json",
+              "encodingFormat": "application/json"
+            }
+          ],
+          "temporalCoverage": "2025-12-06/2025-12-06",
+          "variableMeasured": [
+            "elevation",
+            "prominence",
+            "range",
+            "difficulty",
+            "trail type",
+            "photo metadata"
+          ],
+          "includedInDataCatalog": "NH48 API",
+          "isAccessibleForFree": true,
+          "spatialCoverage": {
+            "@type": "Place",
+            "name": "White Mountain National Forest",
+            "geo": { "@type": "GeoShape", "circle": "44.15 -71.34 50km" }
+          }
+        }
+      ]
+    }
+  </script>
+  <style>
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
 
-<style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
 
-/****************************
- * THEME VARIABLES
- ****************************/
-:root{
-  /* Dark theme palette
-     - bg: background color of the page
-     - panel/card: surfaces for panels and cards
-     - ink: primary text color
-     - muted: secondary text color
-     - stroke: border color (forced pure white here)
-     - accent: highlight color used for active states
-     - gap: base spacing unit for components */
-  --bg:#0a0a0a;
-  --panel:#12121a;
-  --card:#171a22;
-  --ink:#ffffff;
-  --muted:#a5b4c3;
-  --stroke:#ffffff;
-  --accent:#22c55e;
-  --gap:10px;
-}
-/* Light theme overrides applied when body has class "light" */
-body.light{
-  --bg:#f8fafc;
-  --panel:#ffffff;
-  --card:#f7f9fc;
-  --ink:#1f2937;
-  --muted:#6b7280;
-  --stroke:#00000022;
-  --accent:#22c55e;
-}
+    body {
+      margin: 0;
+      background: #0a0a0a;
+      color: #ffffff;
+      font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: clamp(20px, 4vw, 32px);
+      padding: 0 0 32px;
+    }
 
-/****************************
- * GLOBAL RESETS & BASICS
- ****************************/
-*{ box-sizing:border-box; }
-html{
-  min-width:320px;
-  scroll-behavior:smooth;
-}
-@media (prefers-reduced-motion: reduce){
-  html{ scroll-behavior:auto; }
-}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-  overflow:auto; /* allow the page to scroll, avoid nested page-level scrolls */
-}
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: linear-gradient(180deg, #1a1a2e 0%, #16162a 100%);
+      border-bottom: 1px solid #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      margin: 0;
+    }
 
-/****************************
- * LAYOUT CONTAINERS
- ****************************/
-/* Wrapper to constrain content width and provide horizontal padding */
-.wrap{
-  max-width:1100px;
-  margin:0 auto;
-  padding:12px;
-}
-/* Main panel surface with white border and slight shadow */
-.panel{
-  background:var(--panel);
-  border:2px solid #ffffff;
-  border-radius:10px;
-  padding:16px;
-  box-shadow:0 10px 30px #0004;
-  overflow:hidden;
-}
+    .site-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+    }
 
-/****************************
- * TYPOGRAPHY
- ****************************/
-header h1{
-  margin:0 0 8px;
-  font-size:clamp(20px,3.2vw,28px);
-  letter-spacing:.2px;
-  line-height:1.2;
-}
-header p{
-  margin:0;
-  color:var(--muted);
-}
+    .logo-wrap {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      box-shadow: none;
+    }
 
-/****************************
- * FILTER CONTROLS
- ****************************/
-/* Controls layout: grid of inputs/selects */
-.controls{
-  display:grid;
-  gap:10px;
-  margin:14px 0;
-}
-@media(min-width:860px){
-  .controls{ grid-template-columns:1.2fr .8fr .8fr .6fr; }
-}
-.ctrl{
-  display:flex;
-  align-items:center;
-}
-.ctrl input,
-.ctrl select{
-  width:100%;
-  height:42px;
-  border:1px solid var(--stroke);
-  border-radius:12px;
-  background:var(--card);
-  color:var(--ink);
-  padding:0 14px;
-  outline:none;
-  min-width:0;
-}
-.ctrl input::placeholder{
-  color:var(--muted);
-}
+    .logo-wrap img {
+      width: 112%;
+      height: 112%;
+      object-fit: cover;
+      display: block;
+      margin: -6%;
+    }
 
-/****************************
- * SETTINGS PANEL
- ****************************/
-/* Outer settings container with subtle shadow */
-.settings{
-  background:var(--panel);
-  border:1px solid var(--stroke);
-  border-radius:12px;
-  padding:18px;
-  box-shadow:0 4px 12px #0003;
-  margin-bottom:16px;
-  max-width:100%;
-}
-/* Settings logo/title line */
-.settings-logo{
-  font-size:18px;
-  font-weight:bold;
-  margin-bottom:12px;
-  color:var(--accent);
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-.settings-icon{
-  font-size:20px;
-}
-/* Each row containing a checkbox and label */
-.setting-row{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-top:10px;
-  font-size:14px;
-  color:var(--muted);
-}
-.setting-row input{
-  width:18px;
-  height:18px;
-  cursor:pointer;
-}
-/* Desktop layout: align settings horizontally with spacing */
-@media (min-width: 760px){
-  .settings{
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
-    flex-wrap:wrap;
-    gap:22px 26px;
-  }
-  .settings-logo{
-    margin-bottom:0;
-    margin-right:18px;
-    padding-right:18px;
-    border-right:1px solid var(--stroke);
-  }
-  .setting-row{
-    margin-top:0;
-    flex:0 0 auto;
-  }
-}
+    .site-nav-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      line-height: 1.1;
+    }
 
-/****************************
- * GRID OF CARDS
- ****************************/
-/* Base grid for plant cards */
-.grid{
-  display:grid;
-  gap:12px;
-  min-height:160px;
-}
-@media(min-width:760px){
-  .grid{ grid-template-columns:repeat(3,1fr); }
-}
-/* Individual plant card */
-.card{
-  background:var(--card);
-  border:1px solid var(--stroke);
-  border-radius:12px;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  min-height:220px;
-  cursor:pointer;
-  transition:transform .12s ease, box-shadow .12s ease;
-  position:relative; /* anchor for arrow icon */
-}
-.card:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 20px #0005;
-}
-/* Thumbnail area retains 5:3 aspect ratio and uses dashed separator */
-.thumb{
-  aspect-ratio:5/3;
-  height:auto;
-  overflow:hidden;
-  border-bottom:1px dashed var(--stroke);
-}
-.thumb img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-/* Card body content */
-.card .body{
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  overflow-wrap:break-word;
-  hyphens:auto;
-}
-.card h3{
-  margin:0;
-  font-size:16px;
-  line-height:1.2;
-}
-.card .latin{
-  color:var(--muted);
-  font-style:italic;
-  font-size:13px;
-}
-.chiprow{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin-top:4px;
-}
-.chip{
-  display:inline-block;
-  border:1px solid var(--stroke);
-  border-radius:9999px;
-  padding:6px 10px;
-  font-size:11.5px;
-  line-height:1.25;
-  color:var(--muted);
-  max-width:100%;
-  word-break:break-word;
-  white-space:normal;
-}
-/* Arrow indicator pinned bottom right of card */
-.card .more{
-  position:absolute;
-  bottom:var(--gap);
-  right:var(--gap);
-  font-size:16px;
-  color:var(--accent);
-  pointer-events:none;
-}
+    .site-nav-title {
+      font-weight: 800;
+      font-size: 32px;
+      line-height: 1;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-/****************************
- * VIEW MODE OVERRIDES
- ****************************/
-/* List view: cards become horizontal rows */
-body.list-view .grid{
-  display:flex;
-  flex-direction:column;
-}
-body.list-view .card{
-  flex-direction:row;
-  min-height:80px;
-}
-body.list-view .thumb{
-  width:120px;
-  height:80px;
-  border-right:1px dashed var(--stroke);
-  border-bottom:none;
-}
-body.list-view .body{
-  flex:1;
-}
-body.list-view .chiprow{
-  margin-top:4px;
-}
-/* Compact mode reduces padding and chip sizes */
-body.compact .card .body{
-  padding:8px;
-}
-body.compact .chip{
-  padding:4px 8px;
-  font-size:11px;
-}
-body.compact .card{
-  min-height:200px;
-}
-/* Apply to the whole page so no horizontal scroll is possible */
-html, body {
-  overflow-x: hidden;
-}
+    .site-nav-tagline {
+      font-size: 13px;
+      color: #e5f8ec;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
 
-/* Drawer defaults: no margin and 100% translation so it doesn’t add width */
-.drawer {
-  margin: 0;
-  width: 100%;               /* full viewport width */
-  height: 100dvh;            /* full viewport height */
-  transform: translateX(100%); /* completely off-screen when closed */
-}
+    .site-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
 
-/* When the drawer opens, translate back to origin */
-.drawer.open {
-  transform: translateX(0);
-}
+    .site-nav-links a {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: all 0.2s ease;
+    }
 
-/* Optional: for small screens, you can collapse the border/margins further */
-@media (max-width: 480px) {
-  .drawer {
-    border-radius: 0;
-    border-left: none;
-  }
-}
+    .site-nav-links a:hover {
+      color: #22c55e;
+      background: rgba(255, 255, 255, 0.08);
+    }
 
-/****************************
- * STICKY HEADER SUPPORT
- ****************************/
-header.sticky{
-  position:sticky;
-  top:0;
-  z-index:20;
-  background:var(--panel);
-  padding-top:10px;
-  padding-bottom:10px;
-}
+    .site-nav-links a.active {
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
 
-/****************************
- * FOOTER & MESSAGES
- ****************************/
-.footer{
-  margin-top:12px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  color:var(--muted);
-  font-size:12px;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.empty,
-.error,
-.loading{
-  color:var(--muted);
-  text-align:center;
-  padding:24px;
-  border:1px dashed var(--stroke);
-  border-radius:10px;
-}
+    .site-nav-dropdown {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
 
-/****************************
- * PREVENT HORIZONTAL SCROLL
- ****************************/
-html,
-body,
-#howker-plants{
-  overflow-x:hidden;
-}
+    .site-nav-dropdown .site-nav-submenu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      padding: 12px 10px 10px;
+      min-width: 200px;
+      z-index: 10;
+    }
 
-/****************************
- * PAGINATION UI (cleaned)
- ****************************/
-/* The pager consists of two columns: left for stats, right for page controls.  
-   A CSS grid is used for robust centering of the page controls while keeping
-   stats text aligned left. Adjust gap and margins to maintain rhythm. */
-.pager-wrap{
-  display:grid;
-  grid-template-columns:auto 1fr;
-  align-items:center;
-  gap:10px;
-  margin:16px 0;
-  padding:6px 0;
-}
-.pager-left{
-  justify-self:start;
-}
-.pager-stats{
-  color:var(--muted);
-  font-size:12px;
-  white-space:nowrap;
-}
-.pager-right{
-  justify-self:center;
-}
-.page-list{
-  display:flex;
-  gap:6px;
-  flex-wrap:nowrap;
-  justify-content:center;
-}
-/* Base page button styling */
-.page-btn{
-  background:var(--card);
-  border:1px solid var(--stroke);
-  border-radius:10px;
-  min-width:34px;
-  height:34px;
-  display:grid;
-  place-items:center;
-  cursor:pointer;
-  color:var(--ink);
-}
-.page-btn[aria-current="page"]{
-  border-color:var(--accent);
-  outline:2px solid #22c55e55;
-  color:#ffffff;
-}
+    .site-nav-dropdown:hover .site-nav-submenu,
+    .site-nav-dropdown:focus-within .site-nav-submenu {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
 
-/* Hide the main catalog when details pane is open */
-body.details-open #howker-plants {
-  display: none;
+    .site-nav-dropdown .site-nav-submenu a {
+      width: 100%;
+      text-transform: none;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+
+    .site-nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      border-radius: 6px;
+      background: #22c55e;
+      border: 2px solid #22c55e;
+      color: #ffffff;
+      font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue Condensed", Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .site-nav-cta svg {
+      width: 16px;
+      height: 16px;
+      stroke: #ffffff;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0;
+      margin: 12px 0 10px;
+      list-style: none;
+      color: #cbd5f5;
+      font-size: 0.95rem;
+    }
+
+    .breadcrumbs li {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .breadcrumbs li + li::before {
+      content: "/";
+      color: #94a3b8;
+      margin-right: 2px;
+    }
+
+    .breadcrumbs a {
+      color: #22c55e;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .breadcrumbs a:hover,
+    .breadcrumbs a:focus-visible {
+      color: #7ee0a3;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 900px) {
+      .site-nav {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .site-nav-links {
+        flex-wrap: wrap;
+        row-gap: 6px;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .site-nav-title {
+        font-size: 28px;
+      }
+
+      .logo-wrap {
+        width: 52px;
+        height: 52px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .site-nav {
+        padding: 10px 12px;
+      }
+
+      .site-nav-links a {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .site-nav-submenu {
+        min-width: 180px;
+      }
+
+      .site-nav-cta {
+        padding: 6px 10px;
+        font-size: 11px;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .site-nav-links a {
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+
+      .site-nav-cta {
+        width: 100%;
+      }
+    }
+    main {
+      max-width: 1200px;
+      width: min(100%, 1200px);
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      margin: 0 auto;
+      padding: clamp(24px, 5vw, 36px);
+      background: rgba(12, 12, 12, 0.9);
+      border: 1px solid #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+      margin-bottom: clamp(48px, 6vw, 80px);
+    }
+
+    footer {
+      position: relative;
+      z-index: 2;
+    }
+    h1 {
+      font-size: clamp(28px, 4vw, 40px);
+      margin: 0;
+    }
+    .hero-heading {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      justify-content: center;
+      margin: 0 auto 12px;
+      text-align: left;
+    }
+    .hero-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-start;
+    }
+    .hero-title-meta {
+      margin: 0;
+      font-size: 0.92rem;
+      color: #cfe1ff;
+      letter-spacing: 0.2px;
+    }
+    .hero-logo {
+      width: 96px;
+      height: 96px;
+      border-radius: 20px;
+      object-fit: cover;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
 }
+    p {
+      color: #cbd5f5;
+      line-height: 1.6;
+      margin: 0 0 24px;
+    }
+    .cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .cta a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      border: 1px solid #22c55e;
+      color: #0a0a0a;
+      background: #22c55e;
+    }
+    .cta .logo-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      border: none;
+      box-shadow: none;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+    .cta a.secondary {
+      background: transparent;
+      color: #22c55e;
+    }
 
-/* Drawer hidden by default */
-.drawer {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  margin: 0;
-  border-left: none;
-  border-radius: 0;
-  z-index: 1000;           /* ensures it overlays everything */
-  transform: translateX(0);/* no slide animation on mobile */
-}
+    /* Floating peak labels */
+    #floating-peaks {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: visible;
+    }
 
-/* Show the drawer when it's both .open and the body has .details-open */
-body.details-open .drawer.open {
-  display: flex;
-}
+    .peak-label {
+      position: absolute;
+      font-weight: 600;
+      font-family: "Inter", "Montserrat", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text-color, #ffffff);
+      white-space: nowrap;
+      pointer-events: none;
+      transform-origin: center;
+      will-change: transform;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
 
-/****************************
- * RESPONSIVE BREAKPOINTS
- ****************************/
-@media (max-width:480px){
-  :root{
-    --edge:max(10px, env(safe-area-inset-left), env(safe-area-inset-right));
-  }
-  .wrap{
-    padding:0;
-  }
-  .panel{
-    width:calc(100% - (2 * var(--edge)));
-    margin-inline:var(--edge);
-    max-width:none;
-    border-width:2px;
-    border-radius:10px;
-  }
-  .grid{
-    grid-template-columns:1fr;
-    justify-items:center;
-  }
-  .card{
-    width:min(100%, 360px);
-  }
-  .ctrl input,
-  .ctrl select{
-    height:44px;
-    padding:0 16px;
-    border-radius:14px;
-  }
-  .chip{
-    font-size:11px;
-    padding:6px 11px;
-  }
-  /* Pagination on mobile: reduce button sizes and spacing */
-  .pager-wrap{
-    margin:14px 0;
-    padding:4px 0;
-  }
-  .pager-stats{
-    font-size:11px;
-  }
-  .page-list{
-    gap:4px;
-  }
-  .page-btn{
-    min-width:26px;
-    height:26px;
-    font-size:12px;
-    border-radius:8px;
-  }
-  /* Buttons in controls (not page) shrink on mobile */
-  .pager button,
-  .pager-select{
-    height:30px;
-    min-width:30px;
-    padding:6px 8px;
-    border-radius:8px;
-  }
-}
+    .peak-label--name {
+      font-size: 1.35rem;
+      letter-spacing: 0.18px;
+    }
 
-@media (max-width:320px){
-  :root{
-    --edge:max(8px, env(safe-area-inset-left), env(safe-area-inset-right));
-  }
-  .panel{
-    width:calc(100% - (2 * var(--edge)));
-    margin-inline:var(--edge);
-    border-width:2px;
-    border-radius:10px;
-  }
-  .ctrl input,
-  .ctrl select{
-    height:42px;
-  }
-  header h1{
-    font-size:20px;
-  }
-  .card{
-    width:100%;
-  }
-  .chip{
-    font-size:10.5px;
-    padding:6px 10px;
-  }
-}
+    @media (max-width: 768px) {
+      #floating-peaks .peak-label:nth-child(n + 9) {
+        display: none;
+      }
+    }
+    .meta {
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: #9aa8c7;
+    }
+    .dataset-cards {
+      margin: 32px auto 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 1200px;
+      width: 100%;
+    }
+    
+    .dataset-card {
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: left;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 100%;
+    }
+    
+    .dataset-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(34, 197, 94, 0.15);
+      border-color: rgba(34, 197, 94, 0.5);
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    .dataset-card h3 {
+      margin: 0 0 12px;
+      font-size: 1.2rem;
+      color: #22c55e;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+    
+    .dataset-card p {
+      margin: 0 0 16px;
+      color: #cfe1ff;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+    
+    .dataset-card .card-icon {
+      width: 20px;
+      height: 20px;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+      flex-shrink: 0;
+    }
 
-</style>
+    .dataset-card .card-link-text {
+      color: #22c55e;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: gap 0.2s ease;
+    }
 
+    .dataset-card:hover .card-link-text {
+      gap: 12px;
+    }
+
+    .dataset-card:hover .card-icon {
+      opacity: 1;
+    }
+
+    .card-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto;
+    }
+    .seo-gallery {
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    .seo-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 8px;
+    }
+    .seo-gallery-item {
+      margin: 0;
+    }
+    .dataset-notes ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #cfe1ff;
+      line-height: 1.5;
+    }
+    .lang-bar {
+      position: relative;
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      justify-content: flex-end;
+      margin: 0 auto 8px;
+      z-index: 2;
+    }
+    .nh48-lang {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      max-width: 260px;
+    }
+    .nh48-lang-label {
+      font-size: 0.75rem;
+      color: #d6f5df;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-right: 4px;
+    }
+    .nh48-flag {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.6);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      margin-bottom: 4px;
+    }
+    .nh48-flag .flag {
+      font-size: 16px;
+      line-height: 1;
+    }
+    .nh48-lang-menu {
+      position: relative;
+    }
+    .nh48-lang-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 4px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.6);
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .nh48-lang-toggle .flag {
+      font-size: 16px;
+    }
+    .nh48-lang-toggle-text {
+      white-space: nowrap;
+    }
+    .nh48-lang-caret {
+      font-size: 0.65rem;
+      margin-left: 2px;
+      opacity: 0.8;
+    }
+    .nh48-lang-options {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      border-radius: 12px;
+      padding: 8px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      min-width: 220px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.45);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 5;
+    }
+    .nh48-lang-menu.open .nh48-lang-options {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .nh48-flag.active {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 2px rgba(81, 207, 102, 0.25);
+    }
+    .nh48-flag:focus-visible {
+      outline: 2px solid #22c55e;
+      outline-offset: 2px;
+    }
+    .rtl .nh48-lang {
+      flex-direction: row-reverse;
+      justify-content: flex-start;
+    }
+    .rtl main {
+      text-align: right;
+    }
+    .rtl .dataset-card {
+      text-align: right;
+    }
+    @media (max-width: 640px) {
+      body {
+        padding-top: 0;
+        gap: 20px;
+      }
+      .lang-bar {
+        padding: 0 12px;
+        max-width: none;
+        justify-content: center;
+        margin-bottom: 10px;
+      }
+      .nh48-lang {
+        justify-content: center;
+        max-width: none;
+        width: 100%;
+      }
+      .nh48-lang-options {
+        left: 50%;
+        right: auto;
+        transform: translate(-50%, -6px);
+        min-width: min(320px, 100%);
+      }
+      .nh48-lang-menu.open .nh48-lang-options {
+        transform: translate(-50%, 0);
+      }
+      .nh48-lang-label {
+        flex-basis: 100%;
+        text-align: center;
+        margin-right: 0;
+      }
+      main {
+        max-width: 640px;
+        width: min(100%, 640px);
+        padding: 24px 20px;
+        margin-bottom: clamp(24px, 4vw, 32px);
+      }
+      h1 {
+        font-size: clamp(24px, 6vw, 34px);
+      }
+      .hero-heading {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+      }
+      .hero-title-group {
+        align-items: center;
+      }
+      p {
+        font-size: 0.95rem;
+      }
+      .cta {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .dataset-cards {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin: 24px auto 0;
+        padding: 0 12px;
+        max-width: none;
+        width: 100%;
+      }
+      
+      .dataset-card {
+        padding: 20px;
+      }
+      
+      .dataset-card h3 {
+        font-size: 1.1rem;
+      }
+      
+      .dataset-card p {
+        font-size: 0.9rem;
+      }
+    }
+    #splash-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    #splash-mask {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+      background: transparent;
+      border: none;
+      border-radius: 24px;
+    }
+    .splash-icon {
+      position: absolute;
+      z-index: 0;
+      opacity: 0;
+      will-change: transform, opacity;
+      animation: splashFade 24s ease-in-out infinite;
+      animation-play-state: paused;
+      visibility: hidden;
+      border-radius: 14px;
+      object-fit: cover;
+    }
+    .splash-icon.is-ready {
+      animation-play-state: running;
+      visibility: visible;
+    }
+    @keyframes splashFade {
+      0% {
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.85;
+      }
+      70% {
+        opacity: 0.9;
+      }
+      85% {
+        opacity: 0.35;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+    main {
+      position: relative;
+      z-index: 2;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #splash-background {
+        display: none;
+      }
+      #splash-mask {
+        display: none;
+      }
+    }
+    @media (max-width: 768px) {
+      #splash-mask {
+        display: none;
+      }
+    }
+
+  </style>
 </head>
 <body>
-<!-- data-site-origin ensures Editor/Preview loads entries -->
-<div class="wrap panel" id="howker-plants" data-site-origin="https://www.nh48pics.com">
-  <header>
-    <blockquote>
-      <h1>Howker Ridge • Sub &amp; Alpine Plant Catalog</h1>
-    </blockquote>
-    <blockquote>
-      <p>Browse alpine/subalpine species and communities observed along Howker Ridge Trail. Click a card for detailed information. Disclosure Information compiled w/ AI. Purely for exploration &amp; may not be completely accurate. This log should be refined &amp; updated over time as I continue to work safely as the Trail Adopter.</p>
-    </blockquote>
-  </header>
-  <!-- Settings panel -->
-<aside class="settings" id="settings-panel">
-  <div class="settings-logo">
-    <span class="settings-icon">⚙️</span>
-    Settings
-  </div>
-  <div class="setting-row">
-    <input type="checkbox" id="theme-toggle" checked>
-    <label for="theme-toggle">🌙 Dark theme</label>
-  </div>
-  <div class="setting-row">
-    <input type="checkbox" id="view-toggle">
-    <label for="view-toggle">📋 List view</label>
-  </div>
-  <div class="setting-row">
-    <input type="checkbox" id="rotate-toggle" checked>
-    <label for="rotate-toggle">🔄 Rotate images</label>
-  </div>
-  <div class="setting-row">
-    <input type="checkbox" id="compact-toggle">
-    <label for="compact-toggle">📏 Compact view</label>
-  </div>
-  <div class="setting-row">
-    <input type="checkbox" id="sticky-toggle">
-    <label for="sticky-toggle">📌 Sticky header</label>
-  </div>
-</aside>
-
-
-  <div class="controls">
-    <label class="ctrl"><input id="q" placeholder="Name, latin, tag, habitat…"></label>
-    <label class="ctrl">
-      <select id="type">
-        <option value="">All types</option>
-        <option>Shrub</option><option>Wildflower</option><option>Moss</option>
-        <option>Lichen</option><option>Forest</option><option>Community</option><option>Fungus</option>
-      </select>
-    </label>
-    <label class="ctrl">
-      <select id="habitat">
-        <option value="">Any habitat</option>
-        <option>Alpine heath</option><option>Krumholz</option><option>Talus/boulder</option>
-        <option>Spruce–fir forest</option><option>Moist ravine</option>
-      </select>
-    </label>
-    <label class="ctrl">
-      <select id="bloom">
-        <option value="">Any season</option>
-        <option>Late spring</option><option>Summer</option><option>Non-flowering</option>
-      </select>
-    </label>
-  </div>
-
-  <!-- Pagination header (Top) -->
-  <div class="pager-wrap">
-    <div class="pager-left">
-      <div class="pager-stats" id="pager-stats-top">Showing —</div>
-    </div>
-    <div class="pager-right">
-      <div class="page-list" id="page-list-top" aria-label="Pagination"></div>
-    </div>
-  </div>
-
-  <div id="grid" class="grid" aria-live="polite">
-    <div class="loading" id="loading">Loading plant catalog…</div>
-  </div>
-
-  <!-- Pagination footer (Bottom) -->
-  <div class="pager-wrap">
-    <div class="pager-left">
-      <div class="pager-stats" id="pager-stats-bot">Showing —</div>
-    </div>
-    <div class="pager-right">
-      <div class="page-list" id="page-list-bot" aria-label="Pagination"></div>
-    </div>
-  </div>
-
-  <div class="footer">
-    <span>Unofficial &amp; volunteer • Howker Ridge Trail Sub &amp; Alpine Plant Catalog</span>
-    <span>© <span id="year"></span> Nathan Sobol • NH48pics</span>
-  </div>
-</div>
-
-<script>
-  /* =============================================================
-     HOWKER RIDGE — APP CORE (single scroll + pagination @ 20)
-     Implements 5-step plan:
-       1) Pagination (20 / page) + page owns scrolling
-       2) Dynamic viewport units (100dvh) for drawer
-       3) overscroll-behavior containment on internal scroller
-       4) Robust body-lock utility (disabled by default)
-       5) Safer iframe auto-resize for Wix (postMessage)
-     Also includes: pure-white borders & one-line mobile pager
-     ============================================================= */
-
-  /* ---------- Data & State ---------- */
-  let PLANTS = [];
-  let CURRENT = [];           // filtered list
-  let PAGE = 1;               // 1-based
-  const DEFAULT_PAGE_SIZE = 20;  // Step #1: fixed 20 to hold height steady
-  let PAGE_SIZE = DEFAULT_PAGE_SIZE; // could be made user-selectable later
-  let TOTAL_PAGES = 1;
-
-  // Mapping: page => [start,end) indices
-  const pageBounds = (page, size, total) => {
-    const p = Math.max(1, Math.min(page, Math.max(1, Math.ceil(total / size) || 1)));
-    const start = (p - 1) * size;
-    const end = Math.min(start + size, total);
-    return { p, start, end };
-  };
-
-  // Carousel state
-  let carouselTimer = null;   // setInterval handle
-  let carouselIdx = 0;        // active index
-  let carouselImgs = [];      // img elements
-  let carouselDelay = 4000;   // default ~4s (3–5s jitter)
-
-  // Rotation control for cards
-  let rotateInterval = null;
-
-  // DOM helpers
-  const $ = s => document.querySelector(s);
-  const grid = $("#grid");
-  // Removed reference to drawer on the catalog page. We will redirect instead.
-  const qEl=$("#q"), typeEl=$("#type"), habEl=$("#habitat"), bloomEl=$("#bloom");
-  const drawerContent = null; // no drawer on this page
-  const themeToggle = document.getElementById('theme-toggle');
-  const viewToggle  = document.getElementById('view-toggle');
-  const rotateToggle = document.getElementById('rotate-toggle');
-  const compactToggle = document.getElementById('compact-toggle');
-  const stickyToggle = document.getElementById('sticky-toggle');
-  const pageListTop = document.getElementById('page-list-top');
-  const pageListBot = document.getElementById('page-list-bot');
-  const statsTop = document.getElementById('pager-stats-top');
-  const statsBot = document.getElementById('pager-stats-bot');
-  document.getElementById("year").textContent = new Date().getFullYear();
-
-  // Placeholders for images
-  const LQ_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image loading…</text></svg>`
-  );
-  const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image unavailable</text></svg>`
-  );
-
-  /* ---------- Editor/Preview safe site-origin resolution ---------- */
-  const SITE_ORIGIN = (() => {
-    const attr = document.getElementById('howker-plants')?.dataset?.siteOrigin;
-    if (attr) return attr;
-    const canon = document.querySelector('link[rel="canonical"]')?.href;
-    if (canon) { try { return new URL(canon).origin; } catch(e){} }
-    if (document.referrer) {
-      try {
-        const o = new URL(document.referrer).origin;
-        if (/nh48pics\.com$/i.test(new URL(o).hostname)) return o;
-      } catch(e){}
-    }
-    return 'https://www.nh48pics.com';
-  })();
-
-  async function fetchJSON(url){
-    const res = await fetch(url, { mode:'cors', credentials:'omit', headers:{ 'Accept':'application/json' } });
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
-  }
-
-  async function fetchPlants() {
-  const url = 'https://natesobol.github.io/howker-ridge-plant-catalog/plants.json';
-  const res = await fetch(url, { mode: 'cors' });
-  return res.json();
-}
-
-
-  /* ---------- Step #5: Safer auto-resize for Wix iframe ---------- */
-  (function(){
-    if (window.__hrtSizerInstalled) return; window.__hrtSizerInstalled = true;
-    const MIN_DELAY_MS = 200;  // throttle
-    const EPSILON = 2;
-    const TARGET_ORIGIN = '*';
-    let lastH = 0, tId = 0, ro = null;
-    const root = document.querySelector('#howker-plants') || document.body;
-    function measure(){
-      const d = document;
-      return Math.ceil(Math.max(
-        d.documentElement.scrollHeight,
-        d.body.scrollHeight,
-        d.documentElement.offsetHeight,
-        d.body.offsetHeight,
-        d.documentElement.clientHeight
-      ));
-    }
-    function doPost(){
-      if (document.visibilityState === 'hidden') return;
-      const h = measure();
-      if (Math.abs(h - lastH) <= EPSILON) return;
-      lastH = h;
-      window.parent.postMessage({ type:'resize', height:h }, TARGET_ORIGIN);
-    }
-    function schedule(){ if (tId) return; tId = setTimeout(() => { tId = 0; doPost(); }, MIN_DELAY_MS); }
-    window.schedule = schedule;
-    window.addEventListener('load', () => { doPost(); setTimeout(doPost, 300); setTimeout(doPost, 1000); }, { once:true });
-    window.addEventListener('resize', schedule, { passive:true });
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') schedule(); });
-    try { ro = new ResizeObserver(() => schedule()); ro.observe(root); } catch(e){}
-    window.addEventListener('beforeunload', () => { if (ro) ro.disconnect(); });
-    const css = document.createElement('style'); css.textContent = 'html,body{background:transparent;margin:0;padding:0}'; document.head.appendChild(css);
-  })();
-
-  /* ---------- Lazy image loading via IntersectionObserver ---------- */
-  let imgObserver;            // IntersectionObserver for image src swap
-  function setupImgObserver(){
-    if (imgObserver) imgObserver.disconnect();
-    const opts = { rootMargin: '200px 0px', threshold: 0.01 };
-    imgObserver = new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        if (entry.isIntersecting){
-          const img = entry.target; const real = img.getAttribute('data-src');
-          if (real){ img.src = real; img.removeAttribute('data-src'); }
-          imgObserver.unobserve(img);
-        }
-      });
-    }, opts);
-  }
-
-  /* ---------- Card templating (uses data-src for lazy images) ---------- */
-  function cardHTML(p){
-    const src = (Array.isArray(p.imgs) && p.imgs.length ? p.imgs[0] : (p.img || PLACEHOLDER));
-    return `
-      <div class="thumb">
-        <img src="${LQ_PLACEHOLDER}" data-src="${src}"
-             alt="${p.common} thumbnail" loading="lazy" decoding="async" fetchpriority="low"
-             referrerpolicy="no-referrer" crossorigin="anonymous"
-             onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
+  <div id="splash-background" aria-hidden="true"></div>
+  <div id="splash-mask" aria-hidden="true"></div>
+  <nav class="site-nav" aria-label="Site navigation">
+    <a class="site-nav-logo" href="/">
+      <div class="logo-wrap">
+        <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async">
       </div>
-      <div class="body">
-        <h3>${p.common}</h3>
-        <div class="latin">${p.latin || ''}</div>
-        <div class="chiprow">
-          ${p.type ? `<span class="chip">${p.type}</span>` : ''}
-          ${p.habitat ? `<span class="chip">${p.habitat}</span>` : ''}
-          ${(p.tags||[]).slice(0,3).map(t=>`<span class=\"chip\">#${t}</span>`).join("")}
+      <div class="site-nav-title-wrap">
+        <span class="site-nav-title">NH48 API</span>
+        <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
+      </div>
+    </a>
+    <div class="site-nav-links">
+      <div class="site-nav-dropdown">
+      <a class="active" href="/" data-route="dataset-home" aria-current="page">NH48 Dataset</a>
+      <div class="site-nav-submenu" aria-label="NH48 dataset short links">
+        <a href="/nh-4000-footers-info.html" data-route="info">NH48 Info</a>
+        <a href="/catalog" data-route="catalog">Interactive Catalog</a>
+        <a href="/page-sitemap.xml">Browse page sitemap</a>
+      </div>
+    </div>
+    <div class="site-nav-dropdown">
+      <a href="/pages/trails_app.html" data-route="trails" data-i18n="nav.trails">White Mountain Trails</a>
+      <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
+        <a href="/dataset/wmnf-trails">WMNF Dataset</a>
+      </div>
+    </div>
+    <div class="site-nav-dropdown">
+      <a href="/pages/long_trails_app.html" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
+      <div class="site-nav-submenu" aria-label="Long Trails short links">
+        <a href="/dataset/long-trails">Long Trails Dataset</a>
+      </div>
+    </div>
+    <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
+    <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
+    <a
+      class="site-nav-cta"
+      href="https://www.instagram.com/nate_dumps_pics/"
+      target="_blank"
+      rel="noopener"
+      aria-label="Latest WMNF Photos"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+        <circle cx="12" cy="12" r="3.5"></circle>
+        <circle cx="17" cy="7" r="1.2" fill="#ffffff" stroke="none"></circle>
+      </svg>
+      <span data-i18n="nav.latestPhotos">Latest WMNF Photos</span>
+    </a>
+  </div>
+</nav>
+  <!-- Floating peaks container -->
+  <div id="floating-peaks"></div>
+  <main>
+    <div class="lang-bar">
+      <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
+    </div>
+    <div class="hero-heading" itemscope itemtype="https://schema.org/Brand">
+      <link itemprop="url" href="https://nh48.info/">
+      <meta itemprop="name" content="NH48 API">
+      <meta itemprop="logo" content="/nh48API_logo.png">
+      <img
+        src="/nh48API_logo.png"
+        alt="NH48 API logo featuring a stylized White Mountains badge"
+        width="72"
+        height="72"
+        class="hero-logo"
+        itemprop="logo"
+        decoding="async"
+        fetchpriority="high"
+      >
+      <div class="hero-title-group">
+        <h1 data-i18n="landing.heroTitle">NH48 API</h1>
+        <p class="hero-title-meta" aria-hidden="true">New Hampshire’s 4,000-foot peaks &amp; trails</p>
+      </div>
+    </div>
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumbs" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/">
+            <span itemprop="name">Home</span>
+          </a>
+          <meta itemprop="position" content="1">
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/dataset/">
+            <span itemprop="name">Datasets</span>
+          </a>
+          <meta itemprop="position" content="2">
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/" aria-current="page">
+            <span itemprop="name">NH48 API Dataset</span>
+          </a>
+          <meta itemprop="position" content="3">
+        </li>
+      </ol>
+    </nav>
+    <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.</p>
+
+      <section class="dataset-cards">
+      <a href="/catalog" class="dataset-card">
+        <h3>NH48 Catalog</h3>
+        <p>Browse New Hampshire's 48 four-thousand-foot peaks with detailed elevation data, route information, and summit photos. Filter by difficulty, range, and completion status.</p>
+        <div class="card-action">
+          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span class="card-link-text">Explore NH48 Peaks</span>
         </div>
-        ${p.teaser ? `<p style="margin:6px 0 0;color:var(--muted);font-size:13px">${p.teaser}</p>` : ''}
-        <div class="more">›</div>
-      </div>`;
-  }
+      </a>
+      
+      <a href="/pages/trails_app.html" class="dataset-card">
+        <h3>White Mountain Trails</h3>
+        <p>Interactive map and trail finder for the White Mountain National Forest. Track completion progress, view trail details, and explore routes with real-time filtering.</p>
+        <div class="card-action">
+          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          <span class="card-link-text">Explore Trails</span>
+        </div>
+      </a>
+      
+      <a href="/pages/long_trails_app.html" class="dataset-card">
+        <h3>Long Trails</h3>
+        <p>Discover long-distance hiking trails across North America. View trail segments, elevation profiles, and route details for scenic thru-hikes and backpacking adventures.</p>
+        <div class="card-action">
+          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+          </svg>
+          <span class="card-link-text">View Long Trails</span>
+        </div>
+      </a>
+    </section>
+    <p class="meta" data-i18n="landing.author">Author: Nathan Sobol</p>
+  </main>
 
-  /* ---------- RENDER (Pagination instead of infinite scroll) ---------- */
-  function resetGrid(){ grid.innerHTML = ""; }
+  <section class="seo-gallery" aria-label="NH48 summit photo descriptions">
+    <h2 class="visually-hidden">NH48 summit photo descriptions</h2>
+    <div class="seo-gallery-grid">
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/bondcliff/bondcliff__001.jpg" alt="Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route" title="Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route" loading="lazy" decoding="async" data-description="Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route" data-keywords="NH48, Bondcliff, Pemigewasset Wilderness, White Mountains, ridgeline">
+        <figcaption class="visually-hidden">Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/bondcliff/bondcliff__002.jpg" alt="Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop" title="Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop" loading="lazy" decoding="async" data-description="Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop" data-keywords="NH48, Bondcliff, Pemigewasset, White Mountains, summit view">
+        <figcaption class="visually-hidden">Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/galehead-mountain/galehead-mountain__001.jpg" alt="View of the Twin Range from the wooded spur on Galehead Mountain" title="View of the Twin Range from the wooded spur on Galehead Mountain" loading="lazy" decoding="async" data-description="View of the Twin Range from the wooded spur on Galehead Mountain" data-keywords="NH48, Galehead Mountain, Twin Range, White Mountains, viewpoint">
+        <figcaption class="visually-hidden">View of the Twin Range from the wooded spur on Galehead Mountain</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/galehead-mountain/galehead-mountain__002.jpg" alt="Galehead Hut and valley seen from the Galehead Mountain outlook" title="Galehead Hut and valley seen from the Galehead Mountain outlook" loading="lazy" decoding="async" data-description="Galehead Hut and valley seen from the Galehead Mountain outlook" data-keywords="NH48, Galehead Hut, Galehead Mountain, White Mountains, outlook">
+        <figcaption class="visually-hidden">Galehead Hut and valley seen from the Galehead Mountain outlook</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/middle-carter-mountain/middle-carter-mountain__001.jpg" alt="Forest path along Middle Carter Mountain crest toward Carter Dome" title="Forest path along Middle Carter Mountain crest toward Carter Dome" loading="lazy" decoding="async" data-description="Forest path along Middle Carter Mountain crest toward Carter Dome" data-keywords="NH48, Middle Carter Mountain, Carter Dome, White Mountains, ridge">
+        <figcaption class="visually-hidden">Forest path along Middle Carter Mountain crest toward Carter Dome</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-adams/mount-adams__002.jpg" alt="Rocky alpine cone of Mount Adams above treeline in the Presidential Range" title="Rocky alpine cone of Mount Adams above treeline in the Presidential Range" loading="lazy" decoding="async" data-description="Rocky alpine cone of Mount Adams above treeline in the Presidential Range" data-keywords="NH48, Mount Adams, Presidential Range, White Mountains, alpine zone">
+        <figcaption class="visually-hidden">Rocky alpine cone of Mount Adams above treeline in the Presidential Range</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-adams/mount-adams__005.jpg" alt="Mount Adams summit boulders with Mount Madison in the background" title="Mount Adams summit boulders with Mount Madison in the background" loading="lazy" decoding="async" data-description="Mount Adams summit boulders with Mount Madison in the background" data-keywords="NH48, Mount Adams, Mount Madison, White Mountains, summit">
+        <figcaption class="visually-hidden">Mount Adams summit boulders with Mount Madison in the background</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-carrigain/mount-carrigain__001.jpg" alt="Signal Ridge leading toward Mount Carrigain and its fire tower" title="Signal Ridge leading toward Mount Carrigain and its fire tower" loading="lazy" decoding="async" data-description="Signal Ridge leading toward Mount Carrigain and its fire tower" data-keywords="NH48, Mount Carrigain, Signal Ridge, White Mountains, fire tower">
+        <figcaption class="visually-hidden">Signal Ridge leading toward Mount Carrigain and its fire tower</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-garfield/mount-garfield__001.jpg" alt="Open ledges on Mount Garfield facing Franconia Ridge" title="Open ledges on Mount Garfield facing Franconia Ridge" loading="lazy" decoding="async" data-description="Open ledges on Mount Garfield facing Franconia Ridge" data-keywords="NH48, Mount Garfield, Franconia Ridge, White Mountains, ledge view">
+        <figcaption class="visually-hidden">Open ledges on Mount Garfield facing Franconia Ridge</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-garfield/mount-garfield__002.jpg" alt="Summit cairn on Mount Garfield looking over the Pemigewasset" title="Summit cairn on Mount Garfield looking over the Pemigewasset" loading="lazy" decoding="async" data-description="Summit cairn on Mount Garfield looking over the Pemigewasset" data-keywords="NH48, Mount Garfield, Pemigewasset Wilderness, White Mountains, cairn">
+        <figcaption class="visually-hidden">Summit cairn on Mount Garfield looking over the Pemigewasset</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-hancock/mount-hancock__003.jpg" alt="Outlook from Mount Hancock toward the heart of the Pemigewasset Wilderness" title="Outlook from Mount Hancock toward the heart of the Pemigewasset Wilderness" loading="lazy" decoding="async" data-description="Outlook from Mount Hancock toward the heart of the Pemigewasset Wilderness" data-keywords="NH48, Mount Hancock, Pemigewasset Wilderness, White Mountains, vista">
+        <figcaption class="visually-hidden">Outlook from Mount Hancock toward the heart of the Pemigewasset Wilderness</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-lafayette/mount-lafayette__001.jpg" alt="Franconia Ridge trail climbing toward the Mount Lafayette summit cone" title="Franconia Ridge trail climbing toward the Mount Lafayette summit cone" loading="lazy" decoding="async" data-description="Franconia Ridge trail climbing toward the Mount Lafayette summit cone" data-keywords="NH48, Mount Lafayette, Franconia Ridge, White Mountains, trail">
+        <figcaption class="visually-hidden">Franconia Ridge trail climbing toward the Mount Lafayette summit cone</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-liberty/mount-liberty__001.jpg" alt="Mount Liberty summit view toward Mount Flume along Franconia Ridge" title="Mount Liberty summit view toward Mount Flume along Franconia Ridge" loading="lazy" decoding="async" data-description="Mount Liberty summit view toward Mount Flume along Franconia Ridge" data-keywords="NH48, Mount Liberty, Mount Flume, White Mountains, summit view">
+        <figcaption class="visually-hidden">Mount Liberty summit view toward Mount Flume along Franconia Ridge</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-washington/mount-washington__001.jpg" alt="Buildings and weather observatory atop Mount Washington in the White Mountains" title="Buildings and weather observatory atop Mount Washington in the White Mountains" loading="lazy" decoding="async" data-description="Buildings and weather observatory atop Mount Washington in the White Mountains" data-keywords="NH48, Mount Washington, Presidential Range, White Mountains, observatory">
+        <figcaption class="visually-hidden">Buildings and weather observatory atop Mount Washington in the White Mountains</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-washington/mount-washington__005.jpg" alt="Cog railway grade and observation deck near the summit of Mount Washington" title="Cog railway grade and observation deck near the summit of Mount Washington" loading="lazy" decoding="async" data-description="Cog railway grade and observation deck near the summit of Mount Washington" data-keywords="NH48, Mount Washington, Cog Railway, White Mountains, summit">
+        <figcaption class="visually-hidden">Cog railway grade and observation deck near the summit of Mount Washington</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/west-bond/mount-west-bond__005.jpg" alt="Mount West Bond spur looking down at Bondcliff and the Pemi" title="Mount West Bond spur looking down at Bondcliff and the Pemi" loading="lazy" decoding="async" data-description="Mount West Bond spur looking down at Bondcliff and the Pemi" data-keywords="NH48, Mount West Bond, Bondcliff, Pemigewasset Wilderness, White Mountains">
+        <figcaption class="visually-hidden">Mount West Bond spur looking down at Bondcliff and the Pemi</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/west-bond/west-bond__001.jpg" alt="West Bond summit rocks overlooking Zealand Valley and Bondcliff" title="West Bond summit rocks overlooking Zealand Valley and Bondcliff" loading="lazy" decoding="async" data-description="West Bond summit rocks overlooking Zealand Valley and Bondcliff" data-keywords="NH48, West Bond, Bondcliff, White Mountains, Zealand Valley">
+        <figcaption class="visually-hidden">West Bond summit rocks overlooking Zealand Valley and Bondcliff</figcaption>
+      </figure>
+      <figure class="seo-gallery-item">
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/west-bond/west-bond__002.jpg" alt="Approach to West Bond through krummholz with the Bonds beyond" title="Approach to West Bond through krummholz with the Bonds beyond" loading="lazy" decoding="async" data-description="Approach to West Bond through krummholz with the Bonds beyond" data-keywords="NH48, West Bond, Bondcliff, White Mountains, krummholz">
+        <figcaption class="visually-hidden">Approach to West Bond through krummholz with the Bonds beyond</figcaption>
+      </figure>
+    </div>
+  </section>
+  <!-- Quick browse footer injected from /pages/footer.html via quick-browse-footer.js -->
 
-  function renderPage(){
-    const total = CURRENT.length;
-    const { p, start, end } = pageBounds(PAGE, PAGE_SIZE, total);
-    PAGE = p; // clamp
 
-    resetGrid();
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const peaks = [
+        'Washington',
+        'Adams',
+        'Jefferson',
+        'Madison',
+        'Moosilauke',
+        'Carrigain',
+        'Lincoln',
+        'Lafayette',
+        'South Twin',
+        'Cannon',
+        'Eisenhower',
+        'Pierce'
+      ];
 
-    if (!total){
-      grid.innerHTML = `<div class="empty">No plants match your filters.</div>`;
-      updatePager(0, 0, 0);
-      schedule();
-      return;
-    }
+      const container = document.getElementById('floating-peaks');
+      const floatingLabels = [];
+      const viewport = { width: window.innerWidth, height: window.innerHeight };
 
-    const slice = CURRENT.slice(start, end);
-    slice.forEach(p=>{
-      const el = document.createElement("article");
-      el.className = "card";
-      el.innerHTML = cardHTML(p);
-      // dataset for rotating card images
-      if (p.imgs && p.imgs.length > 1) {
-        el.dataset.imgs = p.imgs.join('|');
-        el.dataset.idx = '0';
-      }
-      el.dataset.pid = p.id;
-      const img = el.querySelector('img');
-      if (img) {
-        imgObserver && imgObserver.observe(img);
-        img.addEventListener('load', schedule, {once:true});
-      }
-      // Instead of opening a drawer, redirect to details page
-     el.addEventListener("click", () => {
-  const id = p.id;
-  // Force navigation in the top frame rather than staying in the Wix embed
-  window.open(
-    `https://natesobol.github.io/howker-ridge-plant-catalog/plant.html?id=${encodeURIComponent(id)}`,
-    "_top"
-  );
-});
+      const randomInRange = (min, max) => min + Math.random() * (max - min);
 
+      const createFloatingLabel = (text, variant) => {
+        const label = document.createElement('div');
+        label.classList.add('peak-label', `peak-label--${variant}`);
+        label.textContent = '';
 
-      grid.appendChild(el);
-    });
+        const scale = 1.18 + Math.random() * 0.55;
+        const speed = randomInRange(25, 55);
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
 
-    updatePager(total, start + 1, end);
+        container.appendChild(label);
 
-    // keep the host page in charge of scrolling: scroll to the list top
-    const wrapTop = document.getElementById('howker-plants').offsetTop;
-    try { window.scrollTo({ top: wrapTop, behavior: 'smooth' }); } catch(_) { window.scrollTo(0, wrapTop); }
+        const labelWidth = label.offsetWidth * scale;
+        const labelHeight = label.offsetHeight * scale;
 
-    schedule();
-  }
+        const startX = Math.random() * Math.max(1, viewport.width - labelWidth);
+        const startY = Math.random() * Math.max(1, viewport.height - labelHeight);
 
-  /* ---------- Pagination UI ---------- */
-  function updatePager(total, from, to){
-    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE) || 1);
-    TOTAL_PAGES = totalPages;
-
-    const label = total ? `Showing ${from}–${to} of ${total}` : 'No results';
-    statsTop.textContent = label; statsBot.textContent = label;
-
-    const buildButtons = (where) => {
-      const host = where === 'top' ? pageListTop : pageListBot;
-      host.innerHTML = '';
-
-      const mkBtn = (txt, disabled, onClick, aria) => {
-        const b = document.createElement('button');
-        b.className = 'page-btn'; b.textContent = txt; b.disabled = !!disabled; if (aria) b.setAttribute('aria-label', aria);
-        b.addEventListener('click', onClick);
-        return b;
+        floatingLabels.push({
+          el: label,
+          x: startX,
+          y: startY,
+          vx: velocity.x,
+          vy: velocity.y,
+          scale,
+          fullText: text,
+          typingIndex: 0,
+          typingForward: true,
+          typingTimeout: null
+        });
       };
 
-      // First / Prev
-      host.appendChild(mkBtn('«', PAGE===1, ()=>gotoPage(1), 'First page'));
-      host.appendChild(mkBtn('‹', PAGE===1, ()=>gotoPage(PAGE-1), 'Previous page'));
+      const startTypingAnimation = (labelObj) => {
+        const typingSpeed = randomInRange(110, 170);
+        const deleteSpeed = randomInRange(90, 150);
+        const visibleDuration = randomInRange(20000, 30000);
+        const hiddenDuration = randomInRange(20000, 30000);
 
-      // Page window — show up to 7 numbers centered on current
-      const windowSize = 7;
-      let start = Math.max(1, PAGE - Math.floor(windowSize/2));
-      let end = Math.min(totalPages, start + windowSize - 1);
-      start = Math.max(1, Math.min(start, Math.max(1, end - windowSize + 1)));
-      for (let i=start; i<=end; i++){
-        const b = mkBtn(String(i), false, ()=>gotoPage(i));
-        if (i===PAGE) b.setAttribute('aria-current','page');
-        host.appendChild(b);
-      }
+        const step = () => {
+          if (labelObj.typingTimeout) {
+            clearTimeout(labelObj.typingTimeout);
+          }
 
-      // Next / Last
-      host.appendChild(mkBtn('›', PAGE===totalPages, ()=>gotoPage(PAGE+1), 'Next page'));
-      host.appendChild(mkBtn('»', PAGE===totalPages, ()=>gotoPage(totalPages), 'Last page'));
+          const typeForward = () => {
+            if (labelObj.typingIndex < labelObj.fullText.length) {
+              labelObj.typingIndex += 1;
+              labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
+              labelObj.el.style.opacity = 1;
+              labelObj.typingTimeout = setTimeout(typeForward, typingSpeed);
+            } else {
+              labelObj.typingTimeout = setTimeout(startDeleting, visibleDuration);
+            }
+          };
+
+          const startDeleting = () => {
+            if (labelObj.typingIndex > 0) {
+              labelObj.typingIndex -= 1;
+              labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
+              labelObj.typingTimeout = setTimeout(startDeleting, deleteSpeed);
+            } else {
+              labelObj.el.style.opacity = 0;
+              labelObj.typingTimeout = setTimeout(() => {
+                labelObj.typingIndex = 0;
+                typeForward();
+              }, hiddenDuration);
+            }
+          };
+
+          typeForward();
+        };
+
+        step();
+      };
+
+      const spawnNextLabel = (index = 0) => {
+        if (index >= peaks.length) {
+          return;
+        }
+
+        const labelObj = createFloatingLabel(peaks[index], 'name');
+        startTypingAnimation(labelObj);
+
+        const nextDelay = randomInRange(3000, 5000);
+        setTimeout(() => spawnNextLabel(index + 1), nextDelay);
+      };
+
+      spawnNextLabel();
+
+      floatingLabels.forEach((labelObj) => startTypingAnimation(labelObj));
+
+      const updateViewport = () => {
+        viewport.width = window.innerWidth;
+        viewport.height = window.innerHeight;
+      };
+
+      window.addEventListener('resize', updateViewport);
+
+      let lastTime = performance.now();
+
+      const animate = (timestamp) => {
+        const delta = (timestamp - lastTime) / 1000;
+        lastTime = timestamp;
+
+        floatingLabels.forEach((label) => {
+          const scaledWidth = label.el.offsetWidth * label.scale;
+          const scaledHeight = label.el.offsetHeight * label.scale;
+
+          label.x += label.vx * delta;
+          label.y += label.vy * delta;
+
+          if (label.x <= 0) {
+            label.x = 0;
+            label.vx = Math.abs(label.vx);
+          } else if (label.x + scaledWidth >= viewport.width) {
+            label.x = Math.max(0, viewport.width - scaledWidth);
+            label.vx = -Math.abs(label.vx);
+          }
+
+          if (label.y <= 0) {
+            label.y = 0;
+            label.vy = Math.abs(label.vy);
+          } else if (label.y + scaledHeight >= viewport.height) {
+            label.y = Math.max(0, viewport.height - scaledHeight);
+            label.vy = -Math.abs(label.vy);
+          }
+
+          label.el.style.transform = `translate3d(${label.x}px, ${label.y}px, 0) scale(${label.scale})`;
+        });
+
+        requestAnimationFrame(animate);
+      };
+
+      requestAnimationFrame(animate);
+    });
+  </script>
+  <script>
+    if (!localStorage.getItem('nh48_lang')) {
+      localStorage.setItem('nh48_lang', 'en');
+    }
+  </script>
+  <script type="module" src="/js/i18n.js"></script>
+  <script src="/js/splash.js" defer></script>
+
+  <div id="footer-placeholder"></div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUShYXwxGVEDNzMeIwSFPmDaYeXSqRK4A",
+      authDomain: "nh48-info.firebaseapp.com",
+      projectId: "nh48-info",
+      storageBucket: "nh48-info.firebasestorage.app",
+      messagingSenderId: "732743288228",
+      appId: "1:732743288228:web:d82d62cae0c3999ee5ad31",
+      measurementId: "G-Q9F2W8YB7D"
     };
 
-    buildButtons('top');
-    buildButtons('bot');
-  }
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
 
-  function gotoPage(p){ PAGE = Math.max(1, Math.min(p, TOTAL_PAGES)); renderPage(); }
+    // Expose globally for app scripts
+    window.NH48_INFO_ANALYTICS = {
+      analytics,
+      logEvent
+    };
 
-  /* ---------- Filtering ---------- */
-  function filter(){
-    const q = (qEl.value||"").toLowerCase();
-    const t = typeEl.value, h = habEl.value, b = bloomEl.value;
-    CURRENT = PLANTS.filter(p=>{
-      const hay = [p.common,p.latin,p.type,p.habitat,(p.tags||[]).join(" "),p.teaser,p.desc].join(" ").toLowerCase();
-      const okQ = !q || hay.includes(q);
-      const okT = !t || p.type===t;
-      const okH = !h || p.habitat===h;
-      const okB = !b || p.bloom===b;
-      return okQ && okT && okH && okB;
+    // Base page-load event
+    logEvent(analytics, "page_loaded", {
+      site: "nh48-info",
+      page: location.pathname
     });
-    PAGE = 1; // reset to first page after filter
-    renderPage();
-  }
-
-  function setHidden(id, hidden){ const el = document.getElementById(id); if (!el) return; hidden ? el.setAttribute('hidden','') : el.removeAttribute('hidden'); }
-
-  /* ---------- Card image rotation ---------- */
-  function rotateCardImages(){
-    const cards = document.querySelectorAll('#grid .card[data-imgs]');
-    cards.forEach(card => {
-      const imgs = card.dataset.imgs.split('|');
-      let idx = parseInt(card.dataset.idx || '0', 10);
-      idx = (idx + 1) % imgs.length;
-      const imgEl = card.querySelector('.thumb img');
-      if (imgEl) {
-        imgEl.src = imgs[idx];
-        imgEl.removeAttribute('data-src');
-      }
-      card.dataset.idx = idx;
-    });
-  }
-
-  /* ---------- Step #4: Robust body scroll lock utility (off by default) ---------- */
-  const BodyLock = (()=>{
-    let locked = false, y = 0;
-    function lock(){
-      if (locked) return; locked = true;
-      y = window.scrollY || window.pageYOffset || 0;
-      Object.assign(document.body.style, { position:'fixed', top:`-${y}px`, width:'100%' });
-    }
-    function unlock(){
-      if (!locked) return; locked = false;
-      const restoreY = y; y = 0;
-      Object.assign(document.body.style, { position:'', top:'', width:'' });
-      window.scrollTo(0, restoreY);
-    }
-    return { lock, unlock };
-  })();
-  // NOTE: We keep body unlocked to avoid competing scrolls. If you ever need to lock during a modal:
-  // const USE_BODY_LOCK = false; if (USE_BODY_LOCK) BodyLock.lock(); else BodyLock.unlock();
-
-  /* ---------- Init ---------- */
-  (async function init(){
-    setupImgObserver();
-    try{
-      const items = await fetchPlants();
-      PLANTS = items;
-      CURRENT = PLANTS.slice();
-      PAGE = 1; TOTAL_PAGES = Math.max(1, Math.ceil(CURRENT.length / PAGE_SIZE));
-      renderPage();
-      // start rotating card images only if rotateToggle checked
-      if (rotateToggle.checked) { rotateInterval = setInterval(rotateCardImages, 5000); }
-    }catch(err){
-      console.error(err);
-      grid.innerHTML = `<div class="error">Couldn’t load the catalog (network ${err.message}).</div>`;
-      schedule();
-    }
-
-    // Settings handlers
-    themeToggle.addEventListener('change', () => {
-      if (themeToggle.checked) { document.body.classList.remove('light'); }
-      else { document.body.classList.add('light'); }
-    });
-    viewToggle.addEventListener('change', () => {
-      document.body.classList.toggle('list-view', viewToggle.checked); schedule();
-    });
-    rotateToggle.addEventListener('change', () => {
-      if (rotateToggle.checked) {
-        if (!rotateInterval) rotateInterval = setInterval(rotateCardImages, 5000);
-      } else {
-        if (rotateInterval) { clearInterval(rotateInterval); rotateInterval = null; }
-      }
-    });
-    compactToggle.addEventListener('change', () => {
-      document.body.classList.toggle('compact', compactToggle.checked); schedule();
-    });
-    stickyToggle.addEventListener('change', () => {
-      const headerEl = document.querySelector('header');
-      headerEl.classList.toggle('sticky', stickyToggle.checked);
-    });
-  })();
-
-  /* ---------- schedule() proxy used by sizer ---------- */
-  function schedule(){ try { if (typeof window.schedule === 'function') window.schedule(); } catch(e){} }
-
-  /* ---------- Keyboard shortcuts for pagination ---------- */
-  window.addEventListener('keydown', (e)=>{
-    if (e.target && (/input|select|textarea/i).test(e.target.tagName)) return;
-    if (e.key === 'ArrowRight') { gotoPage(PAGE + 1); }
-    if (e.key === 'ArrowLeft')  { gotoPage(PAGE - 1); }
-  });
-</script>
+  </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"dae671bca6324baa829e17d4b424a76a","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
