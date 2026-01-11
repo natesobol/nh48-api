@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Howker Ridge Plant Catalog Dataset | NH48 API</title>
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="author" content="Nathan Sobol">
+  <meta name="publisher" content="NH48 API">
+  <meta name="application-name" content="NH48 API">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="Download the Howker Ridge alpine plant catalog dataset from NH48 API, featuring species notes, habitat tags, and photo references for subalpine flora.">
+  <meta name="keywords" content="Howker Ridge plant catalog, alpine plant dataset, subalpine flora, NH48 API data, hiking plant list">
+  <link rel="canonical" href="https://nh48.info/dataset/howker-plants">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Howker Ridge Plant Catalog Dataset | NH48 API">
+  <meta property="og:description" content="Access the Howker Ridge plant catalog dataset with habitat notes, bloom timing, and photo references for alpine plants.">
+  <meta property="og:url" content="https://nh48.info/dataset/howker-plants">
+  <meta property="og:site_name" content="NH48 API">
+  <meta property="og:image" content="https://nh48.info/nh48API_logo.png">
+  <meta property="og:image:alt" content="NH48 API open data logo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Howker Ridge Plant Catalog Dataset | NH48 API">
+  <meta name="twitter:description" content="Download the Howker Ridge plant catalog dataset with alpine species notes, habitats, and photo references.">
+  <meta name="twitter:image" content="https://nh48.info/nh48API_logo.png">
+  <meta name="twitter:image:alt" content="NH48 API open data logo">
+  <link rel="stylesheet" href="/css/dataset-page.css">
+  <script src="/js/unified-footer.js" defer></script>
+  <style>
+    * ,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--stroke);
+      box-shadow: none;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      margin: 0;
+    }
+
+    .site-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .logo-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      background: transparent;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      margin: 0;
+    }
+
+    .site-nav-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      line-height: 1.1;
+    }
+
+    .site-nav-title {
+      font-weight: 800;
+      font-size: 38px;
+      line-height: 1;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .site-nav-tagline {
+      font-size: 13px;
+      color: #e5f8ec;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .site-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .site-nav-links a {
+      color: var(--ink);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: all 0.2s ease;
+    }
+
+    .site-nav-links a:hover {
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .site-nav-links a.active {
+      color: var(--accent);
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .site-nav-dropdown {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .site-nav-dropdown .site-nav-submenu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--card);
+      border: 2px solid var(--stroke);
+      border-radius: 10px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+      padding: 8px;
+      min-width: 200px;
+      z-index: 10;
+    }
+
+    .site-nav-dropdown:hover .site-nav-submenu,
+    .site-nav-dropdown:focus-within .site-nav-submenu {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .site-nav-dropdown .site-nav-submenu a {
+      width: 100%;
+      text-transform: none;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--ink);
+    }
+
+    .site-nav-dropdown .site-nav-submenu a:hover {
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .site-nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      border-radius: 6px;
+      background: var(--accent);
+      border: 2px solid var(--accent);
+      color: var(--bg);
+      font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue Condensed", Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .site-nav-cta:hover {
+      color: var(--bg);
+    }
+
+    .site-nav-cta svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--bg);
+    }
+
+    @media (max-width: 900px) {
+      .site-nav {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 14px;
+      }
+
+      .site-nav-logo {
+        width: 100%;
+        justify-content: center;
+        flex-direction: row;
+        align-items: center;
+        text-align: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .site-nav-title-wrap {
+        align-items: center;
+      }
+
+      .site-nav-tagline {
+        text-align: center;
+      }
+
+      .site-nav-links {
+        flex-wrap: wrap;
+        row-gap: 6px;
+        justify-content: center;
+        width: 100%;
+        padding-bottom: 4px;
+      }
+
+      .site-nav-title {
+        font-size: 28px;
+      }
+
+      .logo-wrap {
+        width: 52px;
+        height: 52px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .site-nav {
+        padding: 12px 14px;
+      }
+
+      .site-nav-links a {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .site-nav-submenu {
+        min-width: 180px;
+      }
+
+      .site-nav-cta {
+        padding: 6px 10px;
+        font-size: 11px;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .site-nav-links a {
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+
+      .site-nav-cta {
+        width: 100%;
+      }
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Howker Ridge Plant Catalog Dataset",
+      "description": "Alpine and subalpine plant observations from the Howker Ridge Trail with habitat notes, seasonal timing, and photo references.",
+      "identifier": "howker-plants",
+      "url": "https://nh48.info/dataset/howker-plants",
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "creator": {
+        "@type": "Person",
+        "name": "Nathan Sobol",
+        "url": "https://www.nh48pics.com/"
+      },
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "name": "Howker Plant Catalog (site mirror)",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/howker-plants"
+        },
+        {
+          "@type": "DataDownload",
+          "name": "Howker Plant Catalog (raw GitHub)",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://raw.githubusercontent.com/natesobol/nh48-api/main/data/howker-plants"
+        },
+        {
+          "@type": "DataDownload",
+          "name": "Howker Plant Catalog (cdn.jsdelivr)",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/howker-plants"
+        }
+      ],
+      "keywords": [
+        "Howker Ridge",
+        "alpine plants",
+        "subalpine flora",
+        "plant catalog",
+        "NH48 API dataset"
+      ]
+    }
+  </script>
+</head>
+<body>
+  <nav class="site-nav">
+    <a href="/" class="site-nav-logo">
+      <div class="logo-wrap">
+        <img src="/nh48API_logo.png" alt="" aria-hidden="true" role="presentation" />
+      </div>
+      <div class="site-nav-title-wrap">
+        <span class="site-nav-title">NH48 API</span>
+        <span class="site-nav-tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
+      </div>
+    </a>
+    <div class="site-nav-links">
+      <div class="site-nav-dropdown">
+        <a href="/" data-route="dataset-home">NH48 Dataset</a>
+        <div class="site-nav-submenu" aria-label="NH48 dataset short links">
+          <a href="/nh-4000-footers-info.html">NH48 Info</a>
+          <a href="/catalog">Interactive Catalog</a>
+          <a href="/page-sitemap.xml">Browse page sitemap</a>
+        </div>
+      </div>
+      <div class="site-nav-dropdown">
+        <a href="/pages/trails_app.html" data-route="trails">White Mountain Trails</a>
+        <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
+          <a href="/dataset/wmnf-trails">WMNF Dataset</a>
+        </div>
+      </div>
+      <div class="site-nav-dropdown">
+        <a href="/pages/long_trails_app.html" data-route="long-trails">Long Trails</a>
+        <div class="site-nav-submenu" aria-label="Long Trails short links">
+          <a href="/dataset/long-trails">Long Trails Dataset</a>
+        </div>
+      </div>
+      <div class="site-nav-dropdown">
+        <a href="/pages/plant_catalog.html" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Projects</a>
+        <div class="site-nav-submenu" aria-label="Projects short links">
+          <a href="/pages/plant_catalog.html">Howker Plant Catalog</a>
+          <a href="/dataset/howker-plants">Howker Plant Dataset</a>
+        </div>
+      </div>
+      <a href="https://nh48pics.com" target="_blank" rel="noopener">NH48 Pics</a>
+      <a href="https://nh48.app" target="_blank" rel="noopener">Peak Bagger</a>
+      <a
+        class="site-nav-cta"
+        href="https://www.instagram.com/nate_dumps_pics/"
+        target="_blank"
+        rel="noopener"
+        aria-label="Latest WMNF Photos"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+          <circle cx="12" cy="12" r="3.5"></circle>
+          <circle cx="17" cy="7" r="1.2" fill="#ffffff" stroke="none"></circle>
+        </svg>
+        <span>Latest WMNF Photos</span>
+      </a>
+    </div>
+  </nav>
+  <main class="dataset-page">
+    <header>
+      <div class="dataset-hero-logo">
+        <div class="logo-wrap">
+          <img src="/nh48API_logo.png" alt="NH48 datasets logo" title="NH48 datasets logo" loading="lazy" decoding="async">
+        </div>
+      </div>
+      <p class="eyebrow">NH48 API Open Data</p>
+      <h1>Howker Ridge Plant Catalog Dataset</h1>
+      <p class="lede">Alpine and subalpine plant observations from the Howker Ridge Trail, curated for the NH48 open data collection.</p>
+    </header>
+
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumbs" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/">
+            <span itemprop="name">Home</span>
+          </a>
+          <meta itemprop="position" content="1">
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/dataset/">
+            <span itemprop="name">Datasets</span>
+          </a>
+          <meta itemprop="position" content="2">
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/dataset/howker-plants/" aria-current="page">
+            <span itemprop="name">Howker Plant Catalog</span>
+          </a>
+          <meta itemprop="position" content="3">
+        </li>
+      </ol>
+    </nav>
+
+    <section class="panel">
+      <p class="panel-label">Dataset overview</p>
+      <h2>Howker Ridge Plant Catalog</h2>
+      <p>Structured JSON containing common and scientific names, habitat tags, elevation ranges, and seasonal notes for alpine flora observed on the Howker Ridge Trail.</p>
+      <ul class="listed">
+        <li>Species profiles with bloom timing and habitat labels</li>
+        <li>Photo references and credit notes for catalog imagery</li>
+        <li>Tags for quick filtering by plant type and ecology</li>
+        <li>Curated notes for field identification</li>
+      </ul>
+      <div class="cta-actions">
+        <a class="cta-button" href="/pages/plant_catalog.html">Open plant catalog</a>
+        <a class="cta-button" href="/data/howker-plants">Download JSON</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Additional downloads</h2>
+      <ul class="listed">
+        <li><a href="https://raw.githubusercontent.com/natesobol/nh48-api/main/data/howker-plants">Raw GitHub mirror</a></li>
+        <li><a href="https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/howker-plants">jsDelivr CDN mirror</a></li>
+      </ul>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+</body>
+</html>

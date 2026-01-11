@@ -584,7 +584,7 @@
     .dataset-cards {
       margin: 32px auto 0;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 20px;
       max-width: 1200px;
       width: 100%;
@@ -658,6 +658,12 @@
       align-items: center;
       gap: 10px;
       margin-top: auto;
+    }
+    @media (max-width: 1200px) {
+      .dataset-cards {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 900px;
+      }
     }
     .seo-gallery {
       position: absolute;
@@ -974,6 +980,13 @@
         <a href="/dataset/long-trails">Long Trails Dataset</a>
       </div>
     </div>
+    <div class="site-nav-dropdown">
+      <a href="/pages/plant_catalog.html" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Projects</a>
+      <div class="site-nav-submenu" aria-label="Projects short links">
+        <a href="/pages/plant_catalog.html">Howker Plant Catalog</a>
+        <a href="/dataset/howker-plants">Howker Plant Dataset</a>
+      </div>
+    </div>
     <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
     <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
     <a
@@ -1041,7 +1054,7 @@
     </nav>
     <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.</p>
 
-      <section class="dataset-cards">
+    <section class="dataset-cards">
       <a href="/catalog" class="dataset-card">
         <h3>NH48 Catalog</h3>
         <p>Browse New Hampshire's 48 four-thousand-foot peaks with detailed elevation data, route information, and summit photos. Filter by difficulty, range, and completion status.</p>
@@ -1073,9 +1086,20 @@
           <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
           </svg>
-          <span class="card-link-text">View Long Trails</span>
-        </div>
-      </a>
+        <span class="card-link-text">View Long Trails</span>
+      </div>
+    </a>
+    <a href="/pages/plant_catalog.html" class="dataset-card">
+      <h3>Howker Plant Catalog</h3>
+      <p>Explore alpine and subalpine plant observations from the Howker Ridge Trail, with species details, habitat notes, and photo references.</p>
+      <div class="card-action">
+        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2c-4.5 4-6 8-6 12 0 4 3 8 6 8s6-4 6-8c0-4-1.5-8-6-12Z"></path>
+          <path d="M12 6v16"></path>
+        </svg>
+        <span class="card-link-text">Browse Plant Catalog</span>
+      </div>
+    </a>
     </section>
     <p class="meta" data-i18n="landing.author">Author: Nathan Sobol</p>
   </main>

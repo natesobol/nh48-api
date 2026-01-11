@@ -5,6 +5,69 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Howker Ridge • Trail Plant Catalog</title>
 <meta name="description" content="Interactive alpine plant catalog for Howker Ridge (Mount Madison, NH). Browse quick facts, habitats, elevation ranges, and seasonal notes. Click a plant for details." />
+<link rel="canonical" href="https://nh48.info/pages/plant_catalog.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Howker Ridge • Alpine &amp; Subalpine Plant Catalog" />
+<meta property="og:description" content="Interactive catalog documenting alpine and subalpine plants along the Howker Ridge Trail on Mount Madison, NH." />
+<meta property="og:url" content="https://nh48.info/pages/plant_catalog.html" />
+<meta property="og:image" content="https://nh48.info/nh48API_logo.png" />
+<meta property="og:image:alt" content="NH48 API logo" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Howker Ridge • Alpine &amp; Subalpine Plant Catalog" />
+<meta name="twitter:description" content="Search, filter, and browse alpine plant observations from the Howker Ridge Trail with detailed species pages." />
+<meta name="twitter:image" content="https://nh48.info/nh48API_logo.png" />
+<meta name="twitter:image:alt" content="NH48 API logo" />
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Howker Ridge Alpine & Subalpine Plant Catalog",
+    "description": "Interactive catalog documenting alpine and subalpine species along the Howker Ridge Trail on Mount Madison in the White Mountains of New Hampshire.",
+    "url": "https://nh48.info/pages/plant_catalog.html",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "NH48 API",
+      "url": "https://nh48.info/"
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://nh48.info/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Projects",
+          "item": "https://nh48.info/pages/plant_catalog.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Howker Ridge Plant Catalog",
+          "item": "https://nh48.info/pages/plant_catalog.html"
+        }
+      ]
+    },
+    "mainEntity": {
+      "@type": "Dataset",
+      "name": "Howker Ridge Plant Catalog Dataset",
+      "description": "Structured JSON records for alpine and subalpine plants observed on the Howker Ridge Trail.",
+      "url": "https://nh48.info/data/howker-plants",
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/data/howker-plants"
+        }
+      ]
+    }
+  }
+</script>
+<script src="/js/unified-footer.js" defer></script>
 
 <style>
 
@@ -92,6 +155,65 @@ header h1{
 header p{
   margin:0;
   color:var(--muted);
+}
+
+.page-breadcrumbs{
+  margin:6px 0 16px;
+  font-size:13px;
+  color:var(--muted);
+}
+.page-breadcrumbs ol{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.page-breadcrumbs li::after{
+  content:"/";
+  margin-left:6px;
+  color:var(--muted);
+}
+.page-breadcrumbs li:last-child::after{
+  content:"";
+}
+.page-breadcrumbs a{
+  color:inherit;
+  text-decoration:none;
+}
+.page-breadcrumbs a:hover{
+  color:var(--accent);
+}
+
+.catalog-meta{
+  margin-top:24px;
+  border-top:1px dashed var(--stroke);
+  padding-top:18px;
+  display:grid;
+  gap:16px;
+}
+.catalog-meta h2{
+  margin:0 0 6px;
+  font-size:18px;
+}
+.catalog-meta h3{
+  margin:0 0 6px;
+  font-size:16px;
+}
+.catalog-meta p{
+  margin:0 0 10px;
+  color:var(--muted);
+}
+.catalog-meta ul{
+  margin:0;
+  padding-left:18px;
+  color:var(--muted);
+}
+@media(min-width:860px){
+  .catalog-meta{
+    grid-template-columns:1fr 1fr;
+  }
 }
 
 /****************************
@@ -545,9 +667,37 @@ body.details-open .drawer.open {
 </style>
 
 </head>
-<body>
+<body data-route="plant-catalog" data-page="plant-catalog">
+  <div id="nav-placeholder"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+    });
+  </script>
 <!-- data-site-origin ensures Editor/Preview loads entries -->
-<div class="wrap panel" id="howker-plants" data-site-origin="https://www.nh48pics.com">
+<div class="wrap panel" id="howker-plants">
   <header>
     <blockquote>
       <h1>Howker Ridge • Sub &amp; Alpine Plant Catalog</h1>
@@ -556,6 +706,13 @@ body.details-open .drawer.open {
       <p>Browse alpine/subalpine species and communities observed along Howker Ridge Trail. Click a card for detailed information. Disclosure Information compiled w/ AI. Purely for exploration &amp; may not be completely accurate. This log should be refined &amp; updated over time as I continue to work safely as the Trail Adopter.</p>
     </blockquote>
   </header>
+  <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/pages/plant_catalog.html">Projects</a></li>
+      <li>Howker Ridge Plant Catalog</li>
+    </ol>
+  </nav>
   <!-- Settings panel -->
 <aside class="settings" id="settings-panel">
   <div class="settings-logo">
@@ -633,6 +790,23 @@ body.details-open .drawer.open {
     </div>
   </div>
 
+  <section class="catalog-meta" aria-label="About the catalog">
+    <div>
+      <h2>🌿 About the Project</h2>
+      <p>This catalog is part of a personal trail-adoption project for Howker Ridge, performed as a volunteer with the Randolph Mountain Club. The species list is a living document—continuously refined with real observations, field notes, and ecological references.</p>
+      <p>All content is displayed with a dark, high-contrast UI optimized for low-light conditions often encountered on trail.</p>
+    </div>
+    <div>
+      <h3>🚀 Catalog Features</h3>
+      <ul>
+        <li>Search by common name, latin name, tags, habitat, and text fields.</li>
+        <li>Filter by type, habitat, and bloom season with pagination for stable scrolling.</li>
+        <li>Rotate high-quality thumbnails with lazy-loading for responsive browsing.</li>
+        <li>Open detailed species views with carousels, notes, and photo credits.</li>
+      </ul>
+    </div>
+  </section>
+
   <div class="footer">
     <span>Unofficial &amp; volunteer • Howker Ridge Trail Sub &amp; Alpine Plant Catalog</span>
     <span>© <span id="year"></span> Nathan Sobol • NH48pics</span>
@@ -701,68 +875,11 @@ body.details-open .drawer.open {
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image unavailable</text></svg>`
   );
 
-  /* ---------- Editor/Preview safe site-origin resolution ---------- */
-  const SITE_ORIGIN = (() => {
-    const attr = document.getElementById('howker-plants')?.dataset?.siteOrigin;
-    if (attr) return attr;
-    const canon = document.querySelector('link[rel="canonical"]')?.href;
-    if (canon) { try { return new URL(canon).origin; } catch(e){} }
-    if (document.referrer) {
-      try {
-        const o = new URL(document.referrer).origin;
-        if (/nh48pics\.com$/i.test(new URL(o).hostname)) return o;
-      } catch(e){}
-    }
-    return 'https://www.nh48pics.com';
-  })();
-
-  async function fetchJSON(url){
-    const res = await fetch(url, { mode:'cors', credentials:'omit', headers:{ 'Accept':'application/json' } });
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+  async function fetchPlants() {
+    const res = await fetch('/data/howker-plants', { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
   }
-
-  async function fetchPlants() {
-  const url = 'https://natesobol.github.io/howker-ridge-plant-catalog/plants.json';
-  const res = await fetch(url, { mode: 'cors' });
-  return res.json();
-}
-
-
-  /* ---------- Step #5: Safer auto-resize for Wix iframe ---------- */
-  (function(){
-    if (window.__hrtSizerInstalled) return; window.__hrtSizerInstalled = true;
-    const MIN_DELAY_MS = 200;  // throttle
-    const EPSILON = 2;
-    const TARGET_ORIGIN = '*';
-    let lastH = 0, tId = 0, ro = null;
-    const root = document.querySelector('#howker-plants') || document.body;
-    function measure(){
-      const d = document;
-      return Math.ceil(Math.max(
-        d.documentElement.scrollHeight,
-        d.body.scrollHeight,
-        d.documentElement.offsetHeight,
-        d.body.offsetHeight,
-        d.documentElement.clientHeight
-      ));
-    }
-    function doPost(){
-      if (document.visibilityState === 'hidden') return;
-      const h = measure();
-      if (Math.abs(h - lastH) <= EPSILON) return;
-      lastH = h;
-      window.parent.postMessage({ type:'resize', height:h }, TARGET_ORIGIN);
-    }
-    function schedule(){ if (tId) return; tId = setTimeout(() => { tId = 0; doPost(); }, MIN_DELAY_MS); }
-    window.schedule = schedule;
-    window.addEventListener('load', () => { doPost(); setTimeout(doPost, 300); setTimeout(doPost, 1000); }, { once:true });
-    window.addEventListener('resize', schedule, { passive:true });
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') schedule(); });
-    try { ro = new ResizeObserver(() => schedule()); ro.observe(root); } catch(e){}
-    window.addEventListener('beforeunload', () => { if (ro) ro.disconnect(); });
-    const css = document.createElement('style'); css.textContent = 'html,body{background:transparent;margin:0;padding:0}'; document.head.appendChild(css);
-  })();
 
   /* ---------- Lazy image loading via IntersectionObserver ---------- */
   let imgObserver;            // IntersectionObserver for image src swap
@@ -837,14 +954,10 @@ body.details-open .drawer.open {
         img.addEventListener('load', schedule, {once:true});
       }
       // Instead of opening a drawer, redirect to details page
-     el.addEventListener("click", () => {
-  const id = p.id;
-  // Force navigation in the top frame rather than staying in the Wix embed
-  window.open(
-    `https://natesobol.github.io/howker-ridge-plant-catalog/plant.html?id=${encodeURIComponent(id)}`,
-    "_top"
-  );
-});
+      el.addEventListener("click", () => {
+        const id = p.id;
+        window.location.href = `/pages/plant.html?id=${encodeURIComponent(id)}`;
+      });
 
 
       grid.appendChild(el);
@@ -998,8 +1111,8 @@ body.details-open .drawer.open {
     });
   })();
 
-  /* ---------- schedule() proxy used by sizer ---------- */
-  function schedule(){ try { if (typeof window.schedule === 'function') window.schedule(); } catch(e){} }
+  /* ---------- schedule() no-op hook for standalone layout ---------- */
+  function schedule() {}
 
   /* ---------- Keyboard shortcuts for pagination ---------- */
   window.addEventListener('keydown', (e)=>{
@@ -1008,5 +1121,6 @@ body.details-open .drawer.open {
     if (e.key === 'ArrowLeft')  { gotoPage(PAGE - 1); }
   });
 </script>
+<div id="footer-placeholder"></div>
 </body>
 </html>

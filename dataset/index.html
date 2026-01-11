@@ -10,19 +10,19 @@
   <meta name="publisher" content="NH48 API">
   <meta name="application-name" content="NH48 API">
   <meta name="theme-color" content="#0a0a0a">
-  <meta name="description" content="Explore the NH48 API open datasets for 4,000-foot peaks, White Mountain National Forest trails, and major long-distance hiking routes with downloadable, search-friendly exports.">
-  <meta name="keywords" content="NH48 dataset, White Mountain National Forest trails, long trails dataset, open hiking data, peak metadata, geospatial dataset">
+  <meta name="description" content="Explore the NH48 API open datasets for 4,000-foot peaks, White Mountain National Forest trails, alpine plant catalogs, and major long-distance hiking routes with downloadable, search-friendly exports.">
+  <meta name="keywords" content="NH48 dataset, White Mountain National Forest trails, long trails dataset, alpine plant catalog, open hiking data, peak metadata, geospatial dataset">
   <link rel="canonical" href="https://nh48.info/dataset/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="NH48 Datasets – NH48 API Open Data">
-  <meta property="og:description" content="Open datasets for NH48 peaks, White Mountain trails, and long-distance routes with downloadable exports and GIS-ready metadata.">
+  <meta property="og:description" content="Open datasets for NH48 peaks, White Mountain trails, alpine plant catalogs, and long-distance routes with downloadable exports and GIS-ready metadata.">
   <meta property="og:url" content="https://nh48.info/dataset/">
   <meta property="og:site_name" content="NH48 API">
   <meta property="og:image" content="https://nh48.info/nh48API_logo.png">
   <meta property="og:image:alt" content="NH48 API open data logo used for dataset previews">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="NH48 Datasets – NH48 API Open Data">
-  <meta name="twitter:description" content="Browse open datasets for NH48 peaks, WMNF trails, and long-distance hiking routes with stable downloads.">
+  <meta name="twitter:description" content="Browse open datasets for NH48 peaks, WMNF trails, alpine plant catalogs, and long-distance hiking routes with stable downloads.">
   <meta name="twitter:image" content="https://nh48.info/nh48API_logo.png">
   <meta name="twitter:image:alt" content="NH48 API open data logo for the datasets overview">
   <link rel="stylesheet" href="/css/dataset-page.css">
@@ -401,7 +401,7 @@
       "@context": "https://schema.org",
       "@type": "DataCatalog",
       "name": "NH48 API Open Data",
-      "description": "Catalog of open datasets for NH48 peaks, White Mountain National Forest trails, and major long-distance hiking routes.",
+      "description": "Catalog of open datasets for NH48 peaks, White Mountain National Forest trails, alpine plant catalogs, and major long-distance hiking routes.",
       "url": "https://nh48.info/dataset/",
       "creator": {
         "@type": "Person",
@@ -428,6 +428,13 @@
           "name": "Long Trails Dataset",
           "description": "GeoJSON and segment metadata for long-distance trails like the Appalachian Trail, Pacific Crest Trail and more.",
           "url": "https://nh48.info/dataset/long-trails",
+          "license": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        {
+          "@type": "Dataset",
+          "name": "Howker Ridge Plant Catalog Dataset",
+          "description": "Alpine and subalpine plant observations from the Howker Ridge Trail with habitat notes, tags, and photo links.",
+          "url": "https://nh48.info/dataset/howker-plants",
           "license": "https://creativecommons.org/licenses/by/4.0/"
         }
       ]
@@ -466,6 +473,13 @@
         <a href="/dataset/long-trails">Long Trails Dataset</a>
       </div>
     </div>
+    <div class="site-nav-dropdown">
+      <a href="/pages/plant_catalog.html" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Projects</a>
+      <div class="site-nav-submenu" aria-label="Projects short links">
+        <a href="/pages/plant_catalog.html">Howker Plant Catalog</a>
+        <a href="/dataset/howker-plants">Howker Plant Dataset</a>
+      </div>
+    </div>
     <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
     <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
     <a
@@ -496,7 +510,7 @@
         </div>
         <p class="eyebrow">NH48 API Open Data</p>
         <h1>NH48 Datasets</h1>
-        <p class="lede">Explore our catalogue of open data covering New Hampshire’s 4,000-foot peaks, White Mountain National Forest trails, and the major long-distance hiking routes of North America.</p>
+        <p class="lede">Explore our catalogue of open data covering New Hampshire’s 4,000-foot peaks, White Mountain National Forest trails, alpine plant catalogs, and the major long-distance hiking routes of North America.</p>
         <p class="lede">Each dataset is pre-rendered and downloadable, making it easy for search engines and mapping tools to index and use.</p>
       </header>
 
@@ -546,6 +560,22 @@
       <div class="cta-actions">
         <a class="cta-button" href="/pages/trails_app.html">Open trail explorer</a>
         <a class="cta-button" href="/dataset/wmnf-trails/">Download dataset</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="panel-label">Alpine flora</p>
+      <h2>Howker Ridge Plant Catalog Dataset</h2>
+      <p>Species observations and notes from the Howker Ridge Trail, including habitats, seasonal tags, and photo references for alpine and subalpine plants.</p>
+      <ul class="listed">
+        <li>Common and scientific names with habitat tags</li>
+        <li>Elevation ranges, bloom timing, and field notes</li>
+        <li>Photo references and contributor credits</li>
+        <li>Search-friendly JSON for plant catalog tooling</li>
+      </ul>
+      <div class="cta-actions">
+        <a class="cta-button" href="/pages/plant_catalog.html">Open plant catalog</a>
+        <a class="cta-button" href="/dataset/howker-plants/">Download dataset</a>
       </div>
     </section>
 
