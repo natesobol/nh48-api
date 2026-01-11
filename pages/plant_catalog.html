@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Howker Ridge • Trail Plant Catalog</title>
 <meta name="description" content="Interactive alpine plant catalog for Howker Ridge (Mount Madison, NH). Browse quick facts, habitats, elevation ranges, and seasonal notes. Click a plant for details." />
+<script src="/js/unified-footer.js" defer></script>
 
 <style>
 
@@ -545,9 +546,37 @@ body.details-open .drawer.open {
 </style>
 
 </head>
-<body>
+<body data-route="plant-catalog" data-page="plant-catalog">
+  <div id="nav-placeholder"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+    });
+  </script>
 <!-- data-site-origin ensures Editor/Preview loads entries -->
-<div class="wrap panel" id="howker-plants" data-site-origin="https://www.nh48pics.com">
+<div class="wrap panel" id="howker-plants">
   <header>
     <blockquote>
       <h1>Howker Ridge • Sub &amp; Alpine Plant Catalog</h1>
@@ -701,68 +730,11 @@ body.details-open .drawer.open {
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image unavailable</text></svg>`
   );
 
-  /* ---------- Editor/Preview safe site-origin resolution ---------- */
-  const SITE_ORIGIN = (() => {
-    const attr = document.getElementById('howker-plants')?.dataset?.siteOrigin;
-    if (attr) return attr;
-    const canon = document.querySelector('link[rel="canonical"]')?.href;
-    if (canon) { try { return new URL(canon).origin; } catch(e){} }
-    if (document.referrer) {
-      try {
-        const o = new URL(document.referrer).origin;
-        if (/nh48pics\.com$/i.test(new URL(o).hostname)) return o;
-      } catch(e){}
-    }
-    return 'https://www.nh48pics.com';
-  })();
-
-  async function fetchJSON(url){
-    const res = await fetch(url, { mode:'cors', credentials:'omit', headers:{ 'Accept':'application/json' } });
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+  async function fetchPlants() {
+    const res = await fetch('/data/howker-plants', { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
   }
-
-  async function fetchPlants() {
-  const url = 'https://natesobol.github.io/howker-ridge-plant-catalog/plants.json';
-  const res = await fetch(url, { mode: 'cors' });
-  return res.json();
-}
-
-
-  /* ---------- Step #5: Safer auto-resize for Wix iframe ---------- */
-  (function(){
-    if (window.__hrtSizerInstalled) return; window.__hrtSizerInstalled = true;
-    const MIN_DELAY_MS = 200;  // throttle
-    const EPSILON = 2;
-    const TARGET_ORIGIN = '*';
-    let lastH = 0, tId = 0, ro = null;
-    const root = document.querySelector('#howker-plants') || document.body;
-    function measure(){
-      const d = document;
-      return Math.ceil(Math.max(
-        d.documentElement.scrollHeight,
-        d.body.scrollHeight,
-        d.documentElement.offsetHeight,
-        d.body.offsetHeight,
-        d.documentElement.clientHeight
-      ));
-    }
-    function doPost(){
-      if (document.visibilityState === 'hidden') return;
-      const h = measure();
-      if (Math.abs(h - lastH) <= EPSILON) return;
-      lastH = h;
-      window.parent.postMessage({ type:'resize', height:h }, TARGET_ORIGIN);
-    }
-    function schedule(){ if (tId) return; tId = setTimeout(() => { tId = 0; doPost(); }, MIN_DELAY_MS); }
-    window.schedule = schedule;
-    window.addEventListener('load', () => { doPost(); setTimeout(doPost, 300); setTimeout(doPost, 1000); }, { once:true });
-    window.addEventListener('resize', schedule, { passive:true });
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') schedule(); });
-    try { ro = new ResizeObserver(() => schedule()); ro.observe(root); } catch(e){}
-    window.addEventListener('beforeunload', () => { if (ro) ro.disconnect(); });
-    const css = document.createElement('style'); css.textContent = 'html,body{background:transparent;margin:0;padding:0}'; document.head.appendChild(css);
-  })();
 
   /* ---------- Lazy image loading via IntersectionObserver ---------- */
   let imgObserver;            // IntersectionObserver for image src swap
@@ -837,14 +809,10 @@ body.details-open .drawer.open {
         img.addEventListener('load', schedule, {once:true});
       }
       // Instead of opening a drawer, redirect to details page
-     el.addEventListener("click", () => {
-  const id = p.id;
-  // Force navigation in the top frame rather than staying in the Wix embed
-  window.open(
-    `https://natesobol.github.io/howker-ridge-plant-catalog/plant.html?id=${encodeURIComponent(id)}`,
-    "_top"
-  );
-});
+      el.addEventListener("click", () => {
+        const id = p.id;
+        window.location.href = `/pages/plant.html?id=${encodeURIComponent(id)}`;
+      });
 
 
       grid.appendChild(el);
@@ -998,8 +966,8 @@ body.details-open .drawer.open {
     });
   })();
 
-  /* ---------- schedule() proxy used by sizer ---------- */
-  function schedule(){ try { if (typeof window.schedule === 'function') window.schedule(); } catch(e){} }
+  /* ---------- schedule() no-op hook for standalone layout ---------- */
+  function schedule() {}
 
   /* ---------- Keyboard shortcuts for pagination ---------- */
   window.addEventListener('keydown', (e)=>{
@@ -1008,5 +976,6 @@ body.details-open .drawer.open {
     if (e.key === 'ArrowLeft')  { gotoPage(PAGE - 1); }
   });
 </script>
+<div id="footer-placeholder"></div>
 </body>
 </html>
