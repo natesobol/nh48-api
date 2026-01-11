@@ -325,6 +325,8 @@ header p{
 }
 .fact h4{
   margin:0 0 6px;
+  padding-bottom:6px;
+  border-bottom:1px dotted var(--stroke);
   font-size:12px;
   color:var(--muted);
   letter-spacing:.2px;
@@ -477,21 +479,18 @@ header p{
   </nav>
   <!-- Settings panel (retained for theme toggle on desktop) -->
   <aside class="settings" id="settings-panel">
-    <div class="settings-logo">
-      <span class="settings-icon">⚙️</span>
-      Settings
-    </div>
+    <div class="settings-logo">Settings</div>
     <div class="setting-row">
       <input type="checkbox" id="theme-toggle" checked>
-      <label for="theme-toggle">🌙 Dark theme</label>
+      <label for="theme-toggle">Dark theme</label>
     </div>
     <div class="setting-row">
       <input type="checkbox" id="rotate-toggle" checked>
-      <label for="rotate-toggle">🔄 Rotate images</label>
+      <label for="rotate-toggle">Rotate images</label>
     </div>
     <div class="setting-row">
       <input type="checkbox" id="sticky-toggle">
-      <label for="sticky-toggle">📌 Sticky header</label>
+      <label for="sticky-toggle">Sticky header</label>
     </div>
   </aside>
 
@@ -512,28 +511,28 @@ header p{
   </div>
   <div class="content" id="drawerContent">
     <div class="facts">
-      <div class="fact"><h4>🌿 TYPE</h4><p id="f-type">—</p></div>
-      <div class="fact"><h4>⛰️ ELEVATION</h4><p id="f-elev">—</p></div>
-      <div class="fact"><h4>🏕️ HABITAT</h4><p id="f-habitat">—</p></div>
-      <div class="fact"><h4>🌸 BLOOM / SEASON</h4><p id="f-bloom">—</p></div>
-      <div class="fact"><h4>🍃 LEAF &amp; STEM</h4><p id="f-morph">—</p></div>
-      <div class="fact"><h4>🔍 SIMILAR SPECIES</h4><p id="f-similar">—</p></div>
-      <div class="fact"><h4>🌎 ECOLOGY</h4><p id="f-ecology">—</p></div>
-      <div class="fact"><h4>📊 STATUS</h4><p id="f-status">—</p></div>
+      <div class="fact"><h4>TYPE</h4><p id="f-type">—</p></div>
+      <div class="fact"><h4>ELEVATION</h4><p id="f-elev">—</p></div>
+      <div class="fact"><h4>HABITAT</h4><p id="f-habitat">—</p></div>
+      <div class="fact"><h4>BLOOM / SEASON</h4><p id="f-bloom">—</p></div>
+      <div class="fact"><h4>LEAF &amp; STEM</h4><p id="f-morph">—</p></div>
+      <div class="fact"><h4>SIMILAR SPECIES</h4><p id="f-similar">—</p></div>
+      <div class="fact"><h4>ECOLOGY</h4><p id="f-ecology">—</p></div>
+      <div class="fact"><h4>STATUS</h4><p id="f-status">—</p></div>
     </div>
 
     <div class="section" id="sec-desc" hidden>
-      <h3>📝 Short Description</h3>
+      <h3>Short Description</h3>
       <p id="d-desc"></p>
     </div>
 
     <div class="section" id="sec-notes" hidden>
-      <h3>📓 Field Notes</h3>
+      <h3>Field Notes</h3>
       <ul id="d-notes"></ul>
     </div>
 
     <div class="section" id="sec-credits" hidden>
-      <h3>📸 Photo Credits</h3>
+      <h3>Photo Credits</h3>
       <p id="d-credits"></p>
     </div>
   </div>
