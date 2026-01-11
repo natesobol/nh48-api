@@ -24,9 +24,15 @@
     <meta id="dynamicTwitterImage" name="twitter:image" content="https://nh48.info/nh48-preview.png">
     <script id="peakJsonLd" type="application/ld+json"></script>
     <script id="breadcrumbJsonLd" type="application/ld+json"></script>
+    <script id="mapJsonLd" type="application/ld+json"></script>
 
     <title id="dynamicTitle">NH48 API – Peak details, routes &amp; photos</title>
     <link rel="icon" type="image/png" href="/nh48API_logo.png">
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin=""
+    >
     <script src="/js/unified-footer.js" defer></script>
     <script>
       function getRouteInfo(pathname){
@@ -789,6 +795,87 @@
         color:var(--accent);
         text-decoration-color:var(--accent);
       }
+      .peak-map-panel{
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        background:linear-gradient(160deg, rgba(18,18,26,0.95), rgba(10,10,10,0.85));
+        padding:14px;
+        margin-bottom:16px;
+        box-shadow:0 12px 28px rgba(0,0,0,0.35);
+      }
+      .peak-map-header{
+        display:flex;
+        align-items:flex-start;
+        justify-content:space-between;
+        gap:16px;
+        margin-bottom:10px;
+        flex-wrap:wrap;
+      }
+      .peak-map-title{
+        font-size:0.95rem;
+        font-weight:700;
+        color:var(--ink);
+      }
+      .peak-map-subtitle{
+        font-size:0.8rem;
+        color:var(--muted);
+        margin-top:2px;
+      }
+      .peak-map-cta{
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        padding:8px 14px;
+        border-radius:999px;
+        border:1px solid rgba(34,197,94,0.8);
+        background:rgba(34,197,94,0.15);
+        color:var(--accent);
+        font-weight:700;
+        text-decoration:none;
+        transition:all 0.2s ease;
+        white-space:nowrap;
+      }
+      .peak-map-cta:hover{
+        background:rgba(34,197,94,0.25);
+        color:var(--accent-strong);
+        border-color:rgba(34,197,94,1);
+      }
+      .peak-map-frame{
+        position:relative;
+        width:100%;
+        height:320px;
+        border-radius:10px;
+        overflow:hidden;
+        border:1px solid rgba(255,255,255,0.15);
+        background:#0b0b10;
+      }
+      .peak-map-canvas{
+        position:absolute;
+        inset:0;
+      }
+      .peak-map-status{
+        position:absolute;
+        inset:auto 12px 12px 12px;
+        background:rgba(10,10,10,0.75);
+        border:1px solid rgba(255,255,255,0.1);
+        border-radius:8px;
+        padding:6px 10px;
+        font-size:0.78rem;
+        color:var(--muted);
+      }
+      .peak-map-tooltip{
+        background:rgba(10,10,10,0.8);
+        border:1px solid rgba(34,197,94,0.8);
+        color:var(--ink);
+        font-weight:700;
+        font-size:0.78rem;
+        padding:4px 8px;
+        border-radius:8px;
+        box-shadow:0 6px 16px rgba(0,0,0,0.3);
+      }
+      .leaflet-container{
+        background:#0b0b10;
+      }
       @keyframes spin{
         to{ transform:rotate(360deg); }
       }
@@ -918,6 +1005,20 @@
       <!-- OTHER SECTIONS ------------------------------------------------------>
       <section aria-labelledby="routesHeading">
         <h2 id="routesHeading" class="section-title" data-i18n="peak.section.routes">Hiking Routes</h2>
+        <div class="peak-map-panel" id="peakMapPanel" hidden>
+          <span id="peak-trail-map" class="sr-only">Peak trail map</span>
+          <div class="peak-map-header">
+            <div>
+              <div class="peak-map-title" id="peakMapTitle">Peak Trail Map</div>
+              <div class="peak-map-subtitle" id="peakMapSubtitle">OpenStreetMap topographic view with WMNF trail overlays.</div>
+            </div>
+            <a class="peak-map-cta" id="peakMapCta" href="/trails">White Mountain Trails →</a>
+          </div>
+          <div class="peak-map-frame">
+            <div class="peak-map-canvas" id="peakMap" role="img" aria-label="Topographic map of the peak area"></div>
+            <div class="peak-map-status" id="peakMapStatus">Loading trail map…</div>
+          </div>
+        </div>
         <div class="info-grid" id="routesGrid" hidden></div>
       </section>
 
@@ -942,6 +1043,7 @@
       </section>
     </div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script>
       /* API endpoints */
       const API_URLS = [
@@ -949,6 +1051,12 @@
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json',
         '/data/nh48.json'
       ];
+      const TRAIL_API_URLS = [
+        '/data/wmnf-trails/wmnf-normalized.json',
+        'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-trails/wmnf-normalized.json',
+        'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-normalized.json'
+      ];
+      const MAP_RADIUS_MILES = 2.5;
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
 
@@ -1095,6 +1203,15 @@
           return { lat, lon };
         }
         return null;
+      }
+
+      function escapeHtml(value){
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
       }
 
       function safeText(value){
@@ -1599,6 +1716,12 @@
       const metadataMobileQuery = window.matchMedia('(max-width: 720px)');
       let isCarouselPaused = false;
       const LANGUAGE_READY_TIMEOUT = 2000;
+      let peakMap = null;
+      let peakMapTrailsLayer = null;
+      let peakMapMarker = null;
+      let peakMapLabel = null;
+      let peakMapBounds = null;
+      let peakMapTrailDataPromise = null;
 
       async function waitForI18NReady(timeoutMs = LANGUAGE_READY_TIMEOUT){
         return new Promise((resolve) => {
@@ -2245,6 +2368,289 @@
         relatedGrid.hidden = false;
       }
 
+      function getPeakMapElements(){
+        return {
+          panel: document.getElementById('peakMapPanel'),
+          map: document.getElementById('peakMap'),
+          status: document.getElementById('peakMapStatus'),
+          title: document.getElementById('peakMapTitle'),
+          subtitle: document.getElementById('peakMapSubtitle'),
+          cta: document.getElementById('peakMapCta')
+        };
+      }
+
+      function updatePeakMapStatus(message, show = true){
+        const { status } = getPeakMapElements();
+        if(!status) return;
+        status.textContent = message;
+        status.style.display = show ? 'block' : 'none';
+      }
+
+      function getPeakMapBounds(coords){
+        const latDelta = MAP_RADIUS_MILES / 69;
+        const lonDivisor = Math.max(Math.cos(coords.lat * Math.PI / 180), 0.2);
+        const lonDelta = MAP_RADIUS_MILES / (69 * lonDivisor);
+        return {
+          south: coords.lat - latDelta,
+          west: coords.lon - lonDelta,
+          north: coords.lat + latDelta,
+          east: coords.lon + lonDelta
+        };
+      }
+
+      function ensureLeafletReady(){
+        if(window.L) return Promise.resolve(true);
+        return new Promise(resolve => {
+          const start = performance.now();
+          const check = () => {
+            if(window.L){
+              resolve(true);
+              return;
+            }
+            if(performance.now() - start > 4000){
+              resolve(false);
+              return;
+            }
+            requestAnimationFrame(check);
+          };
+          check();
+        });
+      }
+
+      async function fetchTrailData(){
+        if(peakMapTrailDataPromise) return peakMapTrailDataPromise;
+        peakMapTrailDataPromise = (async () => {
+          for(const url of TRAIL_API_URLS){
+            try{
+              const res = await fetch(url, { mode: 'cors' });
+              if(!res.ok) continue;
+              const text = await res.text();
+              const cleaned = text.replace(/^\uFEFF/, '');
+              const data = JSON.parse(cleaned);
+              if(Array.isArray(data)){
+                trackEvent('peak_map_trails_loaded', { source: url, count: data.length });
+                return data;
+              }
+            }catch(err){
+              console.warn('Trail data fetch failed', url, err);
+            }
+          }
+          trackEvent('peak_map_trails_failed');
+          return [];
+        })();
+        return peakMapTrailDataPromise;
+      }
+
+      function normalizeTrailName(value){
+        return String(value || '')
+          .toLowerCase()
+          .replace(/[()]/g, ' ')
+          .replace(/[^\w\s'-]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function buildTrailNameCandidates(routes, trailNames){
+        const related = extractRelatedTrailNames(routes);
+        const manual = Array.isArray(trailNames) ? trailNames : [];
+        const combined = [...related, ...manual]
+          .map(name => String(name || '').trim())
+          .filter(Boolean);
+
+        const suffixes = ['trail', 'loop', 'cutoff', 'road', 'path', 'connector', 'summit', 'route'];
+        const candidates = new Set();
+        combined.forEach(name => {
+          const normalized = normalizeTrailName(name);
+          if(normalized) candidates.add(normalized);
+          const withoutSuffix = normalized.replace(new RegExp(`\\b(${suffixes.join('|')})\\b`, 'gi'), '').trim();
+          if(withoutSuffix) candidates.add(withoutSuffix);
+        });
+        return candidates;
+      }
+
+      function trailWithinBounds(trail, bounds){
+        if(trail && trail.bounds){
+          return !(
+            trail.bounds.maxlat < bounds.south ||
+            trail.bounds.minlat > bounds.north ||
+            trail.bounds.maxlon < bounds.west ||
+            trail.bounds.minlon > bounds.east
+          );
+        }
+        if(!Array.isArray(trail.geometry)) return false;
+        return trail.geometry.some(point => point.lat >= bounds.south && point.lat <= bounds.north &&
+          point.lon >= bounds.west && point.lon <= bounds.east);
+      }
+
+      function setMapJsonLd(name, canonicalUrl, coords, bounds){
+        const mapSchema = {
+          '@context': 'https://schema.org',
+          '@type': 'Map',
+          name: `Topographic trail map for ${name}`,
+          description: `Interactive map showing White Mountain National Forest trails near ${name}.`,
+          url: `${canonicalUrl}#peak-trail-map`,
+          isPartOf: {
+            '@type': 'WebPage',
+            '@id': canonicalUrl
+          },
+          about: {
+            '@type': 'Mountain',
+            name,
+            url: canonicalUrl
+          },
+          spatialCoverage: {
+            '@type': 'Place',
+            geo: {
+              '@type': 'GeoShape',
+              box: `${bounds.south} ${bounds.west} ${bounds.north} ${bounds.east}`
+            }
+          },
+          contentLocation: {
+            '@type': 'Place',
+            geo: {
+              '@type': 'GeoCoordinates',
+              latitude: coords.lat,
+              longitude: coords.lon
+            }
+          }
+        };
+
+        const ld = document.getElementById('mapJsonLd');
+        if(ld){
+          ld.textContent = JSON.stringify(mapSchema);
+        }
+      }
+
+      async function renderPeakMap(peak, name, canonicalUrl){
+        const { panel, map, title, subtitle, cta } = getPeakMapElements();
+        if(!panel || !map) return;
+
+        const coords = parseCoordinates(peak['Coordinates']);
+        if(!coords){
+          panel.hidden = true;
+          return;
+        }
+
+        panel.hidden = false;
+        map.id = 'peakMap';
+        map.setAttribute('aria-label', `Topographic map near ${name}`);
+        if(title) title.textContent = `${name} trail map`;
+        if(subtitle) subtitle.textContent = 'OpenStreetMap topo tiles with WMNF trail geometry.';
+
+        const trailNames = peak['Trail Names'] || [];
+        const trailLinkName = Array.isArray(trailNames) && trailNames.length ? trailNames[0] : null;
+        if(cta){
+          cta.textContent = 'White Mountain Trails →';
+          cta.href = trailLinkName ? `https://nh48.info/trails?trail=${encodeURIComponent(trailLinkName)}` : 'https://nh48.info/trails';
+          cta.setAttribute('aria-label', 'Explore White Mountain Trails');
+        }
+
+        updatePeakMapStatus('Loading trail map…', true);
+
+        const leafletReady = await ensureLeafletReady();
+        if(!leafletReady){
+          updatePeakMapStatus('Map tiles are unavailable right now.', true);
+          return;
+        }
+
+        const bounds = getPeakMapBounds(coords);
+        peakMapBounds = bounds;
+        const latLngBounds = L.latLngBounds([bounds.south, bounds.west], [bounds.north, bounds.east]);
+
+        if(!peakMap){
+          peakMap = L.map(map, { zoomControl: true, scrollWheelZoom: false });
+          const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors &amp; OpenTopoMap (CC-BY-SA)'
+          });
+          const fallbackLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+          });
+          topoLayer.on('tileerror', () => {
+            if(!peakMap.hasLayer(fallbackLayer)){
+              fallbackLayer.addTo(peakMap);
+            }
+          });
+          topoLayer.addTo(peakMap);
+          peakMapTrailsLayer = L.layerGroup().addTo(peakMap);
+        }else if(peakMapTrailsLayer){
+          peakMapTrailsLayer.clearLayers();
+        }else{
+          peakMapTrailsLayer = L.layerGroup().addTo(peakMap);
+        }
+
+        peakMap.fitBounds(latLngBounds, { padding: [12, 12] });
+        peakMap.setMaxBounds(latLngBounds.pad(0.05));
+        peakMap.setMinZoom(peakMap.getBoundsZoom(latLngBounds));
+        requestAnimationFrame(() => peakMap.invalidateSize());
+
+        if(peakMapMarker){
+          peakMapMarker.setLatLng([coords.lat, coords.lon]);
+        }else{
+          peakMapMarker = L.circleMarker([coords.lat, coords.lon], {
+            radius: 6,
+            color: '#22c55e',
+            fillColor: '#22c55e',
+            fillOpacity: 0.9,
+            weight: 2
+          }).addTo(peakMap);
+        }
+
+        if(peakMapLabel){
+          peakMapLabel.setLatLng([coords.lat, coords.lon]);
+          peakMapLabel.setTooltipContent(escapeHtml(name));
+        }else{
+          peakMapLabel = L.marker([coords.lat, coords.lon], {
+            opacity: 0,
+            interactive: true
+          }).addTo(peakMap);
+          peakMapLabel.bindTooltip(escapeHtml(name), {
+            permanent: true,
+            direction: 'top',
+            className: 'peak-map-tooltip',
+            offset: [0, -12]
+          });
+        }
+
+        const trailData = await fetchTrailData();
+        const candidates = buildTrailNameCandidates(peak['Standard Routes'] || [], trailNames);
+        const matched = trailData.filter(trail => {
+          const normalized = normalizeTrailName(trail.name || trail.trail_name || '');
+          if(!normalized) return false;
+          if(candidates.has(normalized)) return true;
+          for(const candidate of candidates){
+            if(candidate && normalized.includes(candidate)) return true;
+          }
+          return false;
+        });
+
+        const trailsToRender = matched.length
+          ? matched
+          : trailData.filter(trail => trailWithinBounds(trail, bounds));
+
+        trailsToRender.forEach(trail => {
+          if(!Array.isArray(trail.geometry) || trail.geometry.length < 2) return;
+          const latLngs = trail.geometry.map(point => [point.lat, point.lon]);
+          const line = L.polyline(latLngs, {
+            color: '#60a5fa',
+            weight: 3,
+            opacity: 0.9
+          });
+          line.addTo(peakMapTrailsLayer);
+          if(trail.name){
+            line.bindTooltip(escapeHtml(trail.name), { sticky: true, direction: 'top' });
+          }
+        });
+
+        if(!trailsToRender.length){
+          updatePeakMapStatus('No WMNF trail geometry found in this area yet.', true);
+        }else{
+          updatePeakMapStatus('', false);
+        }
+
+        setMapJsonLd(name, canonicalUrl, coords, bounds);
+        trackEvent('peak_map_rendered', { slug: currentSlug, trails: trailsToRender.length });
+      }
+
       function renderTerrain(p){
         const terrainGrid = document.getElementById('terrainGrid');
         if(!terrainGrid) return;
@@ -2767,6 +3173,7 @@
           }
           renderTerrain(p);
           renderConditions(p);
+          renderPeakMap(p, name, canonicalUrl);
 
           buildMountainSchema(p, name, canonicalUrl, currentPrimaryPhoto, descriptionText);
           buildCarousel(imgs, meta, name);
@@ -2805,6 +3212,7 @@
           }
           renderTerrain(currentPeak);
           renderConditions(currentPeak);
+          renderPeakMap(currentPeak, name, canonicalUrl);
           if (currentPrimaryPhoto) {
             buildMountainSchema(currentPeak, name, canonicalUrl, currentPrimaryPhoto, descriptionText);
           }
