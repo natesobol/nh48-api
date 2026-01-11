@@ -1125,28 +1125,28 @@
         <li aria-current="page">White Mountain Trails</li>
       </ol>
     </nav>
-    <h1 data-i18n="trails.title">🏔️ White Mountain Trails API Map Tool</h1>
+    <h1 data-i18n="trails.title">White Mountain Trails API Map Tool</h1>
     <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
     <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>
     <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker">
       <span class="nh48-lang-label" data-i18n="common.language">LANGUAGE</span>
       <button class="nh48-flag" data-lang="en" aria-label="English" title="English">
-        <span class="flag flag-en" aria-hidden="true">🇺🇸</span>
+        <span class="flag flag-en" aria-hidden="true">EN</span>
       </button>
       <button class="nh48-flag" data-lang="es" aria-label="Español" title="Español">
-        <span class="flag flag-es" aria-hidden="true">🇪🇸</span>
+        <span class="flag flag-es" aria-hidden="true">ES</span>
       </button>
       <button class="nh48-flag" data-lang="fr" aria-label="Français" title="Français">
-        <span class="flag flag-fr" aria-hidden="true">🇫🇷</span>
+        <span class="flag flag-fr" aria-hidden="true">FR</span>
       </button>
       <button class="nh48-flag" data-lang="de" aria-label="Deutsch" title="Deutsch">
-        <span class="flag flag-de" aria-hidden="true">🇩🇪</span>
+        <span class="flag flag-de" aria-hidden="true">DE</span>
       </button>
       <button class="nh48-flag" data-lang="zh" aria-label="中文" title="中文">
-        <span class="flag flag-zh" aria-hidden="true">🇨🇳</span>
+        <span class="flag flag-zh" aria-hidden="true">ZH</span>
       </button>
       <button class="nh48-flag" data-lang="ja" aria-label="日本語" title="日本語">
-        <span class="flag flag-ja" aria-hidden="true">🇯🇵</span>
+        <span class="flag flag-ja" aria-hidden="true">JA</span>
       </button>
     </div>
   </header>
@@ -2190,7 +2190,7 @@
         hikeBtn.className = 'hike-btn';
         hikeBtn.title     = t('trails.virtualHike');
         hikeBtn.setAttribute('aria-label', t('trails.virtualHike'));
-        hikeBtn.innerHTML = '🌄';
+        hikeBtn.textContent = 'VH';
         hikeBtn.addEventListener('click', e => {
           e.stopPropagation();
           const encoded = encodeURIComponent(name);
@@ -2249,7 +2249,7 @@
           if (statusData.date) {
             dateContainer.textContent = statusData.date;
           } else {
-            dateContainer.innerHTML   = '<span class="date-icon">📅</span>';
+            dateContainer.innerHTML   = '<span class="date-icon">Date</span>';
           }
         } else {
           dateContainer.style.display = 'none';
@@ -2286,7 +2286,7 @@
           if (newDate) {
             dateContainer.textContent = newDate;
           } else {
-            dateContainer.innerHTML   = '<span class="date-icon">📅</span>';
+            dateContainer.innerHTML   = '<span class="date-icon">Date</span>';
           }
           trackEvent('trails_date_updated', { trail: name, date: newDate });
         });
@@ -2299,7 +2299,7 @@
             if (data.date) {
               dateContainer.textContent = data.date;
             } else {
-              dateContainer.innerHTML   = '<span class="date-icon">📅</span>';
+              dateContainer.innerHTML   = '<span class="date-icon">Date</span>';
             }
             dateContainer.style.display = 'flex';
           } else {
