@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Howker Ridge • Plant Details</title>
 <meta name="description" content="Detailed view for an alpine/subalpine plant observed along Howker Ridge Trail. Explore photos, facts, and notes for the selected species." />
+<script src="/js/unified-footer.js" defer></script>
 
 <style>
 /*
@@ -343,7 +344,35 @@ header p{
 </style>
 
 </head>
-<body>
+<body data-route="plant-catalog" data-page="plant-detail">
+  <div id="nav-placeholder"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+    });
+  </script>
 
 <div class="wrap panel" id="plant-detail">
   <header>
@@ -375,7 +404,7 @@ header p{
   </aside>
 
   <!-- Details content -->
-  <a href="index.html" class="back-link">← Back to Catalog</a>
+  <a href="/pages/plant_catalog.html" class="back-link">← Back to Catalog</a>
   <header>
     <h2 id="d-title"></h2>
     <div class="latin" id="d-latin"></div>
@@ -454,7 +483,7 @@ header p{
   /* ---------- Data source: static JSON from GitHub Pages ---------- */
   async function fetchPlants() {
     const res = await fetch(
-      'https://natesobol.github.io/howker-ridge-plant-catalog/plants.json',
+      '/data/howker-plants',
       { mode: 'cors' }
     );
     if (!res.ok) {
@@ -633,5 +662,6 @@ header p{
     if (e.key === 'ArrowLeft')  { prev(); }
   });
 </script>
+<div id="footer-placeholder"></div>
 </body>
 </html>
