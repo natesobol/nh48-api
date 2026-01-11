@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Howker Ridge • Plant Details</title>
+<meta name="description" content="Detailed view for an alpine/subalpine plant observed along Howker Ridge Trail. Explore photos, facts, and notes for the selected species." />
+
+<style>
+/*
+  The majority of this stylesheet mirrors the catalog page.  It defines a dark/light
+  theme palette, layout containers, typography, responsive grids, and pagination UI.
+  Even though the details page does not use cards or pagination, these styles are
+  retained to preserve overall length and consistency across both pages.
+*/
+/****************************
+ * THEME VARIABLES
+ ****************************/
+:root{
+  --bg:#0a0a0a;
+  --panel:#12121a;
+  --card:#171a22;
+  --ink:#ffffff;
+  --muted:#a5b4c3;
+  --stroke:#ffffff;
+  --accent:#22c55e;
+  --gap:10px;
+}
+body.light{
+  --bg:#f8fafc;
+  --panel:#ffffff;
+  --card:#f7f9fc;
+  --ink:#1f2937;
+  --muted:#6b7280;
+  --stroke:#00000022;
+  --accent:#22c55e;
+}
+
+/****************************
+ * GLOBAL RESETS & BASICS
+ ****************************/
+*{ box-sizing:border-box; }
+html{
+  min-width:320px;
+  scroll-behavior:smooth;
+}
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow:auto;
+}
+
+/****************************
+ * LAYOUT CONTAINERS
+ ****************************/
+.wrap{
+  max-width:1100px;
+  margin:24px auto;
+  padding:16px;
+}
+.panel{
+  background:var(--panel);
+  border:2px solid var(--stroke);
+  border-radius:14px;
+  padding:20px 20px 24px;
+  box-shadow:0 10px 30px #0004;
+  overflow:hidden;
+}
+
+/****************************
+ * TYPOGRAPHY
+ ****************************/
+header h1{
+  margin:0 0 8px;
+  font-size:clamp(20px,3.2vw,28px);
+  letter-spacing:.2px;
+  line-height:1.2;
+}
+header p{
+  margin:0;
+  color:var(--muted);
+}
+
+/****************************
+ * SETTINGS PANEL
+ ****************************/
+.settings{
+  background:var(--panel);
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  padding:18px;
+  box-shadow:0 4px 12px #0003;
+  margin-bottom:16px;
+  max-width:100%;
+}
+.settings-logo{
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:12px;
+  color:var(--accent);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.settings-icon{
+  font-size:20px;
+}
+.setting-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:10px;
+  font-size:14px;
+  color:var(--muted);
+}
+.setting-row input{
+  width:18px;
+  height:18px;
+  cursor:pointer;
+}
+@media (min-width: 760px){
+  .settings{
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    flex-wrap:wrap;
+    gap:22px 26px;
+  }
+  .settings-logo{
+    margin-bottom:0;
+    margin-right:18px;
+    padding-right:18px;
+    border-right:1px solid var(--stroke);
+  }
+  .setting-row{
+    margin-top:0;
+    flex:0 0 auto;
+  }
+}
+
+/****************************
+ * DETAILS PAGE ELEMENTS
+ ****************************/
+/* The details view uses a carousel similar to the catalog drawer. */
+.media{
+  position:relative;
+  height:auto;
+  aspect-ratio:5/3;
+  margin:16px 8px 20px;      /* side padding for image block */
+  padding:8px;               /* inner padding around image */
+  background:var(--card);
+  border-radius:12px;
+  border-bottom:1px dashed var(--stroke);
+  overflow:hidden;
+}
+.carousel{
+  position:relative;
+  width:100%;
+  height:100%;
+  border-radius:10px;
+  overflow:hidden;
+}
+.slide{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  transition:opacity .35s ease;
+}
+.slide img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.slide.active{
+  opacity:1;
+}
+.dots{
+  position:absolute;
+  left:50%;
+  bottom:8px;
+  transform:translateX(-50%);
+  display:flex;
+  gap:6px;
+  z-index:2;
+}
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  border:1px solid #ffffff;
+  background:#ffffff22;
+}
+.dot.active{
+  background:#ffffff;
+}
+.ctrls{
+  position:absolute;
+  inset:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  pointer-events:none;
+}
+.ctrls button{
+  pointer-events:auto;
+  background:#00000055;
+  border:1px solid #ffffff;
+  color:#ffffff;
+  border-radius:8px;
+  padding:6px 10px;
+  margin:0 8px;
+  cursor:pointer;
+}
+.content{
+  padding:14px;
+  overflow-wrap:break-word;
+  hyphens:auto;
+}
+.facts{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+@media(max-width:560px){
+  .facts{ grid-template-columns:1fr; }
+}
+.fact{
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:10px;
+  padding:10px;
+}
+.fact h4{
+  margin:0 0 6px;
+  font-size:12px;
+  color:var(--muted);
+  letter-spacing:.2px;
+  text-transform:uppercase;
+}
+.fact p{
+  margin:0;
+  font-size:14px;
+}
+.section{
+  margin-top:12px;
+}
+.section h3{
+  margin:0 0 6px;
+  font-size:14px;
+}
+.section[hidden]{
+  display:none;
+}
+
+/* Chips / tag row under the title */
+.chiprow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:8px 0 4px;
+}
+.chip{
+  display:inline-block;
+  border:1px solid var(--stroke);
+  border-radius:9999px;
+  padding:4px 10px;
+  font-size:11px;
+  color:var(--muted);
+  white-space:nowrap;
+}
+
+/* Back link styling */
+.back-link{
+  display:inline-block;
+  margin-bottom:16px;
+  color:var(--accent);
+  font-size:14px;
+  text-decoration:none;
+}
+.back-link:hover{
+  text-decoration:underline;
+}
+
+/* Hide unused grid/pagination in details page by default.  These definitions
+   remain for length consistency but won't be used in this file. */
+.grid{ display:none; }
+.pager-wrap{ display:none; }
+.controls{ display:none; }
+
+/****************************
+ * RESPONSIVE BREAKPOINTS
+ ****************************/
+@media (max-width:480px){
+  :root{
+    --edge:max(10px, env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+  .wrap{
+    padding:0;
+    margin:16px auto;
+  }
+  .panel{
+    width:calc(100% - (2 * var(--edge)));
+    margin-inline:var(--edge);
+    max-width:none;
+    border-width:2px;
+    border-radius:12px;
+    padding:16px 12px 20px;
+  }
+  header h1{
+    font-size:20px;
+  }
+  /* Hide Settings panel on mobile */
+  .settings{
+    display:none;
+  }
+  .media{
+    margin:12px 0 16px;
+    padding:6px;
+  }
+}
+@media (max-width:320px){
+  :root{
+    --edge:max(8px, env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+  .panel{
+    width:calc(100% - (2 * var(--edge)));
+    margin-inline:var(--edge);
+    border-width:2px;
+    border-radius:10px;
+  }
+  header h1{
+    font-size:18px;
+  }
+}
+</style>
+
+</head>
+<body>
+
+<div class="wrap panel" id="plant-detail">
+  <header>
+    <blockquote>
+      <h1>Howker Ridge • Plant Details</h1>
+    </blockquote>
+    <blockquote>
+      <p>Detailed information for an alpine or subalpine species recorded along Howker Ridge Trail. Use the back link to return to the catalog.</p>
+    </blockquote>
+  </header>
+  <!-- Settings panel (retained for theme toggle on desktop) -->
+  <aside class="settings" id="settings-panel">
+    <div class="settings-logo">
+      <span class="settings-icon">⚙️</span>
+      Settings
+    </div>
+    <div class="setting-row">
+      <input type="checkbox" id="theme-toggle" checked>
+      <label for="theme-toggle">🌙 Dark theme</label>
+    </div>
+    <div class="setting-row">
+      <input type="checkbox" id="rotate-toggle" checked>
+      <label for="rotate-toggle">🔄 Rotate images</label>
+    </div>
+    <div class="setting-row">
+      <input type="checkbox" id="sticky-toggle">
+      <label for="sticky-toggle">📌 Sticky header</label>
+    </div>
+  </aside>
+
+  <!-- Details content -->
+  <a href="index.html" class="back-link">← Back to Catalog</a>
+  <header>
+    <h2 id="d-title"></h2>
+    <div class="latin" id="d-latin"></div>
+    <div class="chiprow" id="d-tags"></div>
+  </header>
+  <div class="media">
+    <div id="carousel" class="carousel" aria-roledescription="carousel" aria-label="Photos" tabindex="0"></div>
+    <div class="ctrls">
+      <button type="button" id="prevBtn" aria-label="Previous image">◀</button>
+      <button type="button" id="nextBtn" aria-label="Next image">▶</button>
+    </div>
+    <div id="dots" class="dots" aria-hidden="true"></div>
+  </div>
+  <div class="content" id="drawerContent">
+    <div class="facts">
+      <div class="fact"><h4>🌿 TYPE</h4><p id="f-type">—</p></div>
+      <div class="fact"><h4>⛰️ ELEVATION</h4><p id="f-elev">—</p></div>
+      <div class="fact"><h4>🏕️ HABITAT</h4><p id="f-habitat">—</p></div>
+      <div class="fact"><h4>🌸 BLOOM / SEASON</h4><p id="f-bloom">—</p></div>
+      <div class="fact"><h4>🍃 LEAF &amp; STEM</h4><p id="f-morph">—</p></div>
+      <div class="fact"><h4>🔍 SIMILAR SPECIES</h4><p id="f-similar">—</p></div>
+      <div class="fact"><h4>🌎 ECOLOGY</h4><p id="f-ecology">—</p></div>
+      <div class="fact"><h4>📊 STATUS</h4><p id="f-status">—</p></div>
+    </div>
+
+    <div class="section" id="sec-desc" hidden>
+      <h3>📝 Short Description</h3>
+      <p id="d-desc"></p>
+    </div>
+
+    <div class="section" id="sec-notes" hidden>
+      <h3>📓 Field Notes</h3>
+      <ul id="d-notes"></ul>
+    </div>
+
+    <div class="section" id="sec-credits" hidden>
+      <h3>📸 Photo Credits</h3>
+      <p id="d-credits"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* =============================================================
+     HOWKER RIDGE — PLANT DETAILS (standalone page)
+     Focused on rendering a single plant identified by the "id" query parameter.
+  ============================================================= */
+
+  /* ---------- Data & State ---------- */
+  let PLANTS = [];
+  // Carousel state
+  let carouselTimer = null;
+  let carouselIdx = 0;
+  let carouselImgs = [];
+  let carouselDelay = 4000;
+
+  // DOM helpers
+  const $ = s => document.querySelector(s);
+  const carouselEl = $("#carousel");
+  const dotsEl = $("#dots");
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  // Settings toggles
+  const themeToggle = document.getElementById('theme-toggle');
+  const rotateToggle = document.getElementById('rotate-toggle');
+  const stickyToggle = document.getElementById('sticky-toggle');
+
+  // Placeholders for images
+  const LQ_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image loading…</text></svg>`
+  );
+  const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image unavailable</text></svg>`
+  );
+
+  /* ---------- Data source: static JSON from GitHub Pages ---------- */
+  async function fetchPlants() {
+    const res = await fetch(
+      'https://natesobol.github.io/howker-ridge-plant-catalog/plants.json',
+      { mode: 'cors' }
+    );
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+    return res.json();
+  }
+
+  /* ---------- Carousel and Details Rendering ---------- */
+  function buildCarousel(images, altBase){
+    carouselEl.innerHTML = '';
+    dotsEl.innerHTML = '';
+    carouselImgs = [];
+    carouselIdx = 0;
+    if (!images || !images.length){ images = [PLACEHOLDER]; }
+    images.forEach((src, i)=>{
+      const slide = document.createElement('div');
+      slide.className = 'slide' + (i===0 ? ' active' : '');
+      const img = document.createElement('img');
+      img.alt = `${altBase} image ${i+1} of ${images.length}`;
+      if (i===0){
+        img.src = src;
+      } else {
+        img.loading='lazy';
+        img.decoding='async';
+        img.setAttribute('data-src', src);
+        img.src = LQ_PLACEHOLDER;
+      }
+      img.onerror = ()=>{ img.onerror=null; img.src=PLACEHOLDER; };
+      slide.appendChild(img);
+      carouselEl.appendChild(slide);
+      carouselImgs.push(img);
+      const dot=document.createElement('div');
+      dot.className='dot'+(i===0?' active':'');
+      dot.addEventListener('click', ()=>goTo(i));
+      dotsEl.appendChild(dot);
+    });
+    const media = document.querySelector('.media');
+    prevBtn.onclick = prev;
+    nextBtn.onclick = next;
+    media.onmouseenter = stopCarousel;
+    media.onmouseleave = startCarousel;
+    media.onfocusin = stopCarousel;
+    media.onfocusout = startCarousel;
+    startCarousel();
+  }
+  function updateSlides(){
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const dots = Array.from(document.querySelectorAll('.dot'));
+    slides.forEach((s, i)=> s.classList.toggle('active', i===carouselIdx));
+    dots.forEach((d, i)=> d.classList.toggle('active', i===carouselIdx));
+  }
+  function ensureImgLoaded(i){
+    const img = carouselImgs[i]; if (!img) return;
+    const real = img.getAttribute('data-src');
+    if (real){
+      img.src = real;
+      img.removeAttribute('data-src');
+    }
+  }
+  function next(){
+    carouselIdx = (carouselIdx + 1) % carouselImgs.length;
+    ensureImgLoaded(carouselIdx);
+    updateSlides();
+  }
+  function prev(){
+    carouselIdx = (carouselIdx - 1 + carouselImgs.length) % carouselImgs.length;
+    ensureImgLoaded(carouselIdx);
+    updateSlides();
+  }
+  function goTo(i){
+    carouselIdx = i % carouselImgs.length;
+    ensureImgLoaded(carouselIdx);
+    updateSlides();
+  }
+  function startCarousel(){
+    stopCarousel();
+    carouselDelay = 3000 + Math.floor(Math.random()*2000);
+    carouselTimer = setInterval(next, carouselDelay);
+  }
+  function stopCarousel(){
+    if (carouselTimer){
+      clearInterval(carouselTimer);
+      carouselTimer=null;
+    }
+  }
+
+  /* ---------- Populate details ---------- */
+  function populatePlant(p){
+    document.getElementById('d-title').textContent = p.common || '';
+    document.getElementById('d-latin').textContent = p.latin || '';
+    document.getElementById('d-tags').innerHTML = `
+      ${p.type ? `<span class="chip">${p.type}</span>` : ''}
+      ${p.habitat ? `<span class="chip">${p.habitat}</span>` : ''}
+      ${(p.tags||[]).map(t=>`<span class="chip">#${t}</span>`).join("")}
+    `;
+    document.getElementById('f-type').textContent    = p.type      || "—";
+    document.getElementById('f-elev').textContent    = p.elevation || "—";
+    document.getElementById('f-habitat').textContent = p.habitat   || "—";
+    document.getElementById('f-bloom').textContent   = p.bloom     || "—";
+    document.getElementById('f-morph').textContent   = p.morph     || "—";
+    document.getElementById('f-similar').textContent = p.similar   || "—";
+    document.getElementById('f-ecology').textContent = p.ecology   || "—";
+    document.getElementById('f-status').textContent  = p.status    || "—";
+
+    const desc = (p.desc || p.teaser || "").trim();
+    document.getElementById('d-desc').textContent = desc;
+    if (desc) document.getElementById('sec-desc').removeAttribute('hidden');
+
+    const notes = [p.fieldNotes1, p.fieldNotes2, p.fieldNotes3, p.fieldNotes4].filter(Boolean);
+    document.getElementById('d-notes').innerHTML = notes.map(n=>`<li>${n}</li>`).join("");
+    if (notes.length > 0) document.getElementById('sec-notes').removeAttribute('hidden');
+
+    const credits = (p.credits || "").trim();
+    document.getElementById('d-credits').textContent = credits;
+    if (credits) document.getElementById('sec-credits').removeAttribute('hidden');
+
+    const imgs = Array.isArray(p.imgs) && p.imgs.length ? p.imgs : (p.img ? [p.img] : []);
+    buildCarousel(imgs, p.common || 'Selected');
+  }
+
+  /* ---------- Init for details page ---------- */
+  (async function initDetails(){
+    // parse id from query string
+    const params = new URLSearchParams(window.location.search);
+    const plantId = params.get('id');
+    if (!plantId){
+      // No id provided
+      document.getElementById('d-title').textContent = 'Plant not specified';
+      return;
+    }
+    try{
+      const items = await fetchPlants();
+      PLANTS = items;
+      const p = PLANTS.find(item => String(item.id) === String(plantId));
+      if (p){
+        populatePlant(p);
+      } else {
+        document.getElementById('d-title').textContent = 'Plant not found';
+      }
+    }catch(err){
+      console.error(err);
+      document.getElementById('d-title').textContent = 'Error loading plant';
+    }
+
+    // Settings handlers (simplified)
+    if (themeToggle){
+      themeToggle.addEventListener('change', () => {
+        if (themeToggle.checked) { document.body.classList.remove('light'); }
+        else { document.body.classList.add('light'); }
+      });
+    }
+    if (rotateToggle){
+      rotateToggle.addEventListener('change', () => {
+        if (rotateToggle.checked) {
+          if (!carouselTimer) startCarousel();
+        } else {
+          stopCarousel();
+        }
+      });
+    }
+    if (stickyToggle){
+      stickyToggle.addEventListener('change', () => {
+        const headerEl = document.querySelector('header');
+        if (headerEl){
+          headerEl.classList.toggle('sticky', stickyToggle.checked);
+        }
+      });
+    }
+  })();
+
+  // Keyboard shortcuts for carousel navigation
+  window.addEventListener('keydown', (e)=>{
+    if (e.target && (/input|select|textarea/i).test(e.target.tagName)) return;
+    if (e.key === 'ArrowRight') { next(); }
+    if (e.key === 'ArrowLeft')  { prev(); }
+  });
+</script>
+</body>
+</html>
