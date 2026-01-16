@@ -286,7 +286,8 @@
       flex-wrap: wrap;
     }
 
-    .site-nav-links a {
+    .site-nav-links a,
+    .site-nav-links button {
       color: #ffffff;
       text-decoration: none;
       padding: 8px 14px;
@@ -298,7 +299,14 @@
       transition: all 0.2s ease;
     }
 
-    .site-nav-links a:hover {
+    .site-nav-links button {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .site-nav-links a:hover,
+    .site-nav-links button:hover {
       color: #22c55e;
       background: rgba(255, 255, 255, 0.08);
     }
@@ -431,7 +439,8 @@
         padding: 10px 12px;
       }
 
-      .site-nav-links a {
+      .site-nav-links a,
+      .site-nav-links button {
         padding: 6px 10px;
         font-size: 12px;
       }
@@ -448,7 +457,8 @@
     }
 
     @media (max-width: 480px) {
-      .site-nav-links a {
+      .site-nav-links a,
+      .site-nav-links button {
         padding: 6px 8px;
         font-size: 11px;
       }
@@ -950,22 +960,25 @@
     </a>
     <div class="site-nav-links">
       <div class="site-nav-dropdown">
-      <a class="active" href="/" data-route="dataset-home" aria-current="page">NH48 Dataset</a>
+      <button type="button" data-route="dataset-home" data-routes="home,dataset-home">NH48</button>
       <div class="site-nav-submenu" aria-label="NH48 dataset short links">
+        <a class="active" href="/" data-route="dataset-home" data-routes="home,dataset-home" aria-current="page">NH48 Dataset</a>
         <a href="/nh-4000-footers-info.html" data-route="info">NH48 Info</a>
         <a href="/catalog" data-route="catalog">Interactive Catalog</a>
         <a href="/page-sitemap.xml">Browse page sitemap</a>
       </div>
     </div>
     <div class="site-nav-dropdown">
-      <a href="/pages/trails_app.html" data-route="trails" data-i18n="nav.trails">White Mountain Trails</a>
+      <button type="button" data-route="trails" data-i18n="nav.trails">White Mountain Trails</button>
       <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
+        <a href="/pages/trails_app.html" data-route="trails">Trails Map</a>
         <a href="/dataset/wmnf-trails">WMNF Dataset</a>
       </div>
     </div>
     <div class="site-nav-dropdown">
-      <a href="/pages/long_trails_app.html" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
+      <button type="button" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</button>
       <div class="site-nav-submenu" aria-label="Long Trails short links">
+        <a href="/pages/long_trails_app.html" data-route="long-trails">Long Trail Map</a>
         <a href="/dataset/long-trails">Long Trails Dataset</a>
       </div>
     </div>
