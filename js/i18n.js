@@ -264,13 +264,7 @@ import { LANGS } from './langConfig.js';
     const container = document.getElementById('langPicker');
     if (!container) return;
     container.innerHTML = '';
-
-    const label = document.createElement('span');
-    label.className = 'nh48-lang-label';
-    label.setAttribute('data-i18n', 'common.language');
-    label.id = 'langPickerLabel';
-    label.textContent = 'LANGUAGE';
-    container.appendChild(label);
+    const containerLabel = container.getAttribute('aria-label') || 'Language picker';
 
     const menu = document.createElement('div');
     menu.className = 'nh48-lang-menu';
@@ -279,12 +273,13 @@ import { LANGS } from './langConfig.js';
     toggle.type = 'button';
     toggle.setAttribute('aria-haspopup', 'listbox');
     toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', containerLabel);
     menu.appendChild(toggle);
 
     const options = document.createElement('div');
     options.className = 'nh48-lang-options';
     options.setAttribute('role', 'listbox');
-    options.setAttribute('aria-labelledby', label.id);
+    options.setAttribute('aria-label', `${containerLabel} options`);
     LANGS.forEach(({ code, label: langLabel, flag }) => {
       const btn = document.createElement('button');
       btn.className = 'nh48-flag';
