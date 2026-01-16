@@ -333,6 +333,11 @@ import { LANGS } from './langConfig.js';
     initObserver();
   }
 
+  function refreshLangPicker() {
+    renderLangPicker();
+    applyTranslations(document);
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init, { once: true });
   } else {
@@ -343,6 +348,7 @@ import { LANGS } from './langConfig.js';
     t,
     setLang,
     getLang,
-    onLangChange
+    onLangChange,
+    refreshLangPicker
   };
 })();
