@@ -3,6 +3,8 @@ name: Build and deploy Pages
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_run:
     workflows: ["Autogenerate long trail geometries"]
     types: [completed]
@@ -49,12 +51,14 @@ jobs:
           du -sh site
 
       - name: Upload Pages artifact
+        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
   deploy:
     needs: build
+    if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     environment:
       name: github-pages
