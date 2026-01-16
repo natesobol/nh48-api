@@ -1048,6 +1048,117 @@
     stroke: #ffffff;
   }
 
+  .nh48-lang {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: 260px;
+  }
+
+  .nh48-lang-label {
+    font-size: 0.75rem;
+    color: #d6f5df;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-right: 4px;
+  }
+
+  .nh48-lang-menu {
+    position: relative;
+  }
+
+  .nh48-lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 4px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    background: rgba(15, 23, 42, 0.6);
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  .nh48-lang-toggle .flag {
+    font-size: 16px;
+  }
+
+  .nh48-lang-toggle-text {
+    white-space: nowrap;
+  }
+
+  .nh48-lang-caret {
+    font-size: 0.65rem;
+    margin-left: 2px;
+    opacity: 0.8;
+  }
+
+  .nh48-lang-options {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    border-radius: 12px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    min-width: 220px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 20;
+  }
+
+  .nh48-lang-menu.open .nh48-lang-options {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .nh48-flag {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    background: rgba(15, 23, 42, 0.6);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .nh48-flag .flag {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .nh48-flag.active {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 2px rgba(81, 207, 102, 0.25);
+  }
+
+  .nh48-flag:focus-visible {
+    outline: 2px solid #22c55e;
+    outline-offset: 2px;
+  }
+
+  .rtl .nh48-lang {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+  }
+
   @media (max-width: 900px) {
     .site-nav {
       flex-direction: column;
@@ -1110,6 +1221,29 @@
       padding: 6px 10px;
       font-size: 11px;
       justify-content: center;
+    }
+
+    .nh48-lang {
+      justify-content: center;
+      max-width: none;
+      width: 100%;
+    }
+
+    .nh48-lang-options {
+      left: 50%;
+      right: auto;
+      transform: translate(-50%, -6px);
+      min-width: min(320px, 100%);
+    }
+
+    .nh48-lang-menu.open .nh48-lang-options {
+      transform: translate(-50%, 0);
+    }
+
+    .nh48-lang-label {
+      flex-basis: 100%;
+      text-align: center;
+      margin-right: 0;
     }
   }
 
@@ -1178,6 +1312,7 @@
       </svg>
       <span data-i18n="nav.latestPhotos">Latest WMNF Photos</span>
     </a>
+    <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
   </div>
 </nav>
 
