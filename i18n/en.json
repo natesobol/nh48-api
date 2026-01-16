@@ -28,7 +28,22 @@
       "content": "Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains."
     },
     "heroTitle": "NH48 API",
+    "heroTagline": "New Hampshire’s 4,000-foot peaks & trails",
     "heroBody": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.",
+    "cards": {
+      "catalogTitle": "NH48 Catalog",
+      "catalogBody": "Browse New Hampshire's 48 four-thousand-foot peaks with detailed elevation data, route information, and summit photos. Filter by difficulty, range, and completion status.",
+      "catalogCta": "Explore NH48 Peaks",
+      "trailsTitle": "White Mountain Trails",
+      "trailsBody": "Interactive map and trail finder for the White Mountain National Forest. Track completion progress, view trail details, and explore routes with real-time filtering.",
+      "trailsCta": "Explore Trails",
+      "longTrailsTitle": "Long Trails",
+      "longTrailsBody": "Discover long-distance hiking trails across North America. View trail segments, elevation profiles, and route details for scenic thru-hikes and backpacking adventures.",
+      "longTrailsCta": "View Long Trails",
+      "plantsTitle": "Howker Plant Catalog",
+      "plantsBody": "Explore alpine and subalpine plant observations from the Howker Ridge Trail, with species details, habitat notes, and photo references.",
+      "plantsCta": "Browse Plant Catalog"
+    },
     "cta": {
       "catalog": "Open the Peak Catalog",
       "trails": "White Mountain Trails",
@@ -42,6 +57,17 @@
       "reproducible": "Reproducible pipelines backed by source scripts and QA artifacts."
     },
     "author": "Author: Nathan Sobol"
+  },
+  "footer": {
+    "quickBrowseTitle": "Quick browse the White Mountains of New Hampshire",
+    "quickBrowseSubtitle": "Jump directly into every New Hampshire 4,000-footer detail page to quickly find summit info, photos, and route details.",
+    "quickBrowseLinks": {
+      "ariaLabel": "NH48 quick browse footer links"
+    },
+    "navLabel": {
+      "ariaLabel": "Footer navigation links"
+    },
+    "legal": "© 2026 Nathan Sobol · <a href=\"/catalog\" class=\"legal-link nh48-link\">NH 48</a>, <a href=\"/trails\" class=\"legal-link tracing-link\">White Mountain Tracing</a>, <a href=\"/long-trails\" class=\"legal-link long-trail-link\">Scenic &amp; Long Trail</a> – Data, Routes, and Photos"
   },
   "nav": {
     "logoAlt": "NH48 API logo",
