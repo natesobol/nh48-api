@@ -692,15 +692,6 @@
       color: #cfe1ff;
       line-height: 1.5;
     }
-    .lang-bar {
-      position: relative;
-      width: 100%;
-      max-width: 760px;
-      display: flex;
-      justify-content: flex-end;
-      margin: 0 auto 8px;
-      z-index: 2;
-    }
     .nh48-lang {
       display: flex;
       align-items: center;
@@ -728,7 +719,6 @@
       justify-content: center;
       cursor: pointer;
       transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-      margin-bottom: 4px;
     }
     .nh48-flag .flag {
       font-size: 16px;
@@ -780,7 +770,7 @@
       pointer-events: none;
       transform: translateY(-6px);
       transition: opacity 0.15s ease, transform 0.15s ease;
-      z-index: 5;
+      z-index: 20;
     }
     .nh48-lang-menu.open .nh48-lang-options {
       opacity: 1;
@@ -809,12 +799,6 @@
       body {
         padding-top: 0;
         gap: 20px;
-      }
-      .lang-bar {
-        padding: 0 12px;
-        max-width: none;
-        justify-content: center;
-        margin-bottom: 10px;
       }
       .nh48-lang {
         justify-content: center;
@@ -1008,14 +992,12 @@
       </svg>
       <span data-i18n="nav.latestPhotos">Latest WMNF Photos</span>
     </a>
+    <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
   </div>
 </nav>
   <!-- Floating peaks container -->
   <div id="floating-peaks"></div>
   <main>
-    <div class="lang-bar">
-      <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
-    </div>
     <div class="hero-heading" itemscope itemtype="https://schema.org/Brand">
       <link itemprop="url" href="https://nh48.info/">
       <meta itemprop="name" content="NH48 API">
