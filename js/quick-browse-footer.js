@@ -3,6 +3,16 @@
   const STYLE_ATTR = 'data-nh48-quick-footer-style';
   const FOOTER_ATTR = 'data-nh48-quick-footer';
   const PARTIAL_URL = '/pages/footer.html';
+  const THUMBNAIL_CONFIG = {
+    baseUrl: 'https://photos.nh48.info',
+    format: 'webp',
+    quality: 70,
+    size: 28,
+    cdn: 'cloudflare'
+  };
+  const THUMBNAIL_FALLBACK = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${THUMBNAIL_CONFIG.size}" height="${THUMBNAIL_CONFIG.size}"><rect width="100%" height="100%" fill="#0f172a"/></svg>`
+  );
   const FOOTER_LEGAL_TEXT = '© 2026 Nathan Sobol · ' +
     '<a href="/catalog" class="legal-link nh48-link">NH 48</a>, ' +
     '<a href="/trails" class="legal-link tracing-link">White Mountain Tracing</a>, ' +
@@ -130,7 +140,8 @@
   .nh48-quick-footer__link {
     display: inline-flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
+    gap: 8px;
     padding: 8px 10px;
     min-height: 40px;
     text-align: left;
@@ -143,6 +154,23 @@
     line-height: 1.32;
     white-space: normal;
     width: 100%;
+  }
+
+  .nh48-quick-footer__link-label {
+    display: inline-flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .nh48-quick-footer__link-thumb {
+    width: ${THUMBNAIL_CONFIG.size}px;
+    height: ${THUMBNAIL_CONFIG.size}px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: rgba(15, 23, 42, 0.75);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
   }
 
   .nh48-quick-footer__link:hover,
@@ -331,7 +359,8 @@
     }
 
     .nh48-quick-footer__link { 
-      justify-content: center;
+      justify-content: space-between;
+      gap: 10px;
       font-size: 1rem;
       min-height: 44px; 
       padding: 10px 14px; 
@@ -458,7 +487,8 @@
   const normalizeExistingLinks = (container) => {
     if (!container) return;
     container.querySelectorAll('.nh48-quick-footer__link').forEach((link) => {
-      const original = link.textContent.trim();
+      const label = link.querySelector('.nh48-quick-footer__link-label');
+      const original = label ? label.textContent.trim() : link.textContent.trim();
       const cleaned = cleanLinkText(original);
       if (cleaned && cleaned !== original) {
         if (!link.getAttribute('data-full-name')) {
@@ -467,7 +497,11 @@
         if (!link.title) {
           link.title = original;
         }
-        link.textContent = cleaned;
+        if (label) {
+          label.textContent = cleaned;
+        } else {
+          link.textContent = cleaned;
+        }
       }
     });
   };
@@ -502,6 +536,59 @@
 
   const getLabel = (peak) => cleanLinkText(peak.label || peak.name);
 
+  const getPeakSlug = (href = '') => {
+    const cleaned = href.split('/peak/')[1] || '';
+    return cleaned.replace(/\/$/, '');
+  };
+
+  const getThumbnailSrc = (slug) => {
+    if (!slug) return '';
+    return `${THUMBNAIL_CONFIG.baseUrl}/cdn-cgi/image/format=${THUMBNAIL_CONFIG.format},quality=${THUMBNAIL_CONFIG.quality},width=${THUMBNAIL_CONFIG.size}/${slug}/${slug}__001.jpg`;
+  };
+
+  const createThumbnailElement = (peakName, slug) => {
+    const img = document.createElement('img');
+    img.className = 'nh48-quick-footer__link-thumb';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.width = THUMBNAIL_CONFIG.size;
+    img.height = THUMBNAIL_CONFIG.size;
+    img.alt = '';
+    img.setAttribute('aria-hidden', 'true');
+    img.src = getThumbnailSrc(slug);
+    img.setAttribute('data-photo-peak', peakName);
+    img.setAttribute('data-photo-alt', `${peakName} thumbnail`);
+    img.setAttribute('data-photo-slug', slug);
+    img.setAttribute('data-photo-format', THUMBNAIL_CONFIG.format);
+    img.setAttribute('data-photo-quality', String(THUMBNAIL_CONFIG.quality));
+    img.setAttribute('data-photo-width', String(THUMBNAIL_CONFIG.size));
+    img.setAttribute('data-photo-height', String(THUMBNAIL_CONFIG.size));
+    img.setAttribute('data-photo-cdn', THUMBNAIL_CONFIG.cdn);
+    img.setAttribute('data-photo-source', THUMBNAIL_CONFIG.baseUrl);
+    img.addEventListener('error', () => {
+      img.src = THUMBNAIL_FALLBACK;
+    }, { once: true });
+    return img;
+  };
+
+  const createLinkLabel = (text) => {
+    const label = document.createElement('span');
+    label.className = 'nh48-quick-footer__link-label';
+    label.textContent = text;
+    return label;
+  };
+
+  const ensureThumbnailOnLink = (link, displayText) => {
+    if (!link || link.querySelector('.nh48-quick-footer__link-thumb')) return;
+    const labelText = displayText || link.textContent.trim();
+    link.textContent = '';
+    const label = createLinkLabel(labelText);
+    const slug = getPeakSlug(link.getAttribute('href') || '');
+    const thumb = createThumbnailElement(labelText, slug);
+    link.appendChild(label);
+    link.appendChild(thumb);
+  };
+
   const renderGrid = (gridEl, peaks) => {
     gridEl.innerHTML = '';
     peaks.forEach((peak) => {
@@ -509,7 +596,11 @@
       link.className = 'nh48-quick-footer__link';
       link.href = peak.href;
       const displayText = getLabel(peak);
-      link.textContent = displayText;
+      const label = createLinkLabel(displayText);
+      const slug = getPeakSlug(peak.href);
+      const thumb = createThumbnailElement(displayText, slug);
+      link.appendChild(label);
+      link.appendChild(thumb);
       if (peak.name && peak.name !== displayText) {
         link.setAttribute('data-full-name', peak.name);
         link.title = peak.name;
@@ -526,7 +617,14 @@
     const grid = footerEl.querySelector('.nh48-quick-footer__grid');
     normalizeExistingLinks(grid);
     if (!grid) return;
-    if (grid.querySelector('.nh48-quick-footer__group')) return;
+    if (grid.querySelector('.nh48-quick-footer__group')) {
+      grid.querySelectorAll('.nh48-quick-footer__link').forEach((link) => {
+        const label = link.querySelector('.nh48-quick-footer__link-label');
+        const text = label ? label.textContent.trim() : link.textContent.trim();
+        ensureThumbnailOnLink(link, text);
+      });
+      return;
+    }
 
     const hasExistingLinks = grid.querySelectorAll('.nh48-quick-footer__link').length > 0;
     let hasRendered = false;
@@ -541,6 +639,13 @@
 
     if (!hasExistingLinks) {
       renderIfNeeded(true);
+      return;
+    }
+
+    grid.querySelectorAll('.nh48-quick-footer__link').forEach((link) => {
+      const label = link.querySelector('.nh48-quick-footer__link-label');
+      const text = label ? label.textContent.trim() : link.textContent.trim();
+      ensureThumbnailOnLink(link, text);
     }
   };
 
