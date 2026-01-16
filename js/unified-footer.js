@@ -289,13 +289,25 @@
       .nh48-quick-footer__meta {
         display: flex;
         flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
         border-top: 1px solid var(--nh48-footer-border);
-        padding: 12px clamp(16px, 3vw, 32px) 0;
+        padding: 12px clamp(16px, 3vw, 32px) 12px;
         font-size: 14px;
-        text-align: center;
+        text-align: left;
+        width: min(1200px, 98vw);
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+
+      .nh48-quick-footer__meta-main {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+        flex: 1 1 320px;
+        min-width: 0;
       }
 
       .nh48-quick-footer__meta-links {
@@ -341,6 +353,63 @@
         color: #ffffff;
       }
 
+      .nh48-quick-footer__media {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        margin: 0;
+        flex: 0 1 auto;
+        max-width: 520px;
+      }
+
+      .nh48-quick-footer__media-image {
+        width: clamp(144px, 14vw, 256px);
+        height: auto;
+        border-radius: 12px;
+        border: 1px solid color-mix(in srgb, var(--nh48-footer-ink) 30%, transparent);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      .nh48-quick-footer__media-caption {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 12px;
+        color: color-mix(in srgb, var(--nh48-footer-ink) 70%, #cbd5e1 30%);
+      }
+
+      .nh48-quick-footer__media-title {
+        font-weight: 700;
+        color: var(--nh48-footer-ink);
+      }
+
+      .nh48-quick-footer__media-description {
+        line-height: 1.35;
+      }
+
+      .nh48-quick-footer__media-metadata {
+        margin: 0;
+        display: grid;
+        gap: 4px;
+      }
+
+      .nh48-quick-footer__media-metadata div {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 6px;
+      }
+
+      .nh48-quick-footer__media-metadata dt {
+        font-weight: 600;
+        color: color-mix(in srgb, var(--nh48-footer-ink) 85%, #cbd5e1 15%);
+      }
+
+      .nh48-quick-footer__media-metadata dd {
+        margin: 0;
+      }
+
       .nh48-quick-footer__legal {
         color: color-mix(in srgb, var(--nh48-footer-ink) 80%, #cbd5e1 20%);
       }
@@ -368,6 +437,35 @@
         .nh48-quick-footer__link {
           min-height: 38px;
           padding: 8px 9px;
+        }
+
+        .nh48-quick-footer__meta {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+
+        .nh48-quick-footer__meta-main {
+          align-items: center;
+          text-align: center;
+        }
+
+        .nh48-quick-footer__meta-links {
+          justify-content: center;
+        }
+
+        .nh48-quick-footer__media {
+          flex-direction: column;
+          align-items: center;
+          max-width: 100%;
+        }
+
+        .nh48-quick-footer__media-image {
+          width: clamp(144px, 40vw, 220px);
+        }
+
+        .nh48-quick-footer__media-caption {
+          text-align: center;
         }
       }
     `,
@@ -483,7 +581,36 @@
           { href: "https://nh48pics.com", text: "NH48 Pics", external: true },
           { href: "https://nh48.app", text: "Peak Bagger", external: true },
           { href: "https://www.instagram.com/nate_dumps_pics/", text: "@nate_dumps_pics", external: true, className: "nh48-quick-footer__meta-link--instagram" }
-        ]
+        ],
+        featuredImage: {
+          title: "Mount Washington — White Mountain National Forest (New Hampshire)",
+          alt: "Forested mountain ridge and summit of Mount Washington in the White Mountain National Forest under a partly cloudy sky.",
+          description: "A scenic mountain landscape in the White Mountain National Forest of New Hampshire, featuring Mount Washington and surrounding ridgelines. This photograph highlights rugged terrain, forested slopes, and layered White Mountains wilderness popular with hikers and peakbaggers.",
+          extendedDescription: "This photograph features Mount Washington in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.",
+          src: "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=256/mount-washington/mount-washington__001.jpg",
+          srcSet: "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=144/mount-washington/mount-washington__001.jpg 144w, https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=256/mount-washington/mount-washington__001.jpg 256w",
+          sizes: "(max-width: 768px) 144px, 256px",
+          width: 256,
+          height: 171,
+          location: "White Mountain National Forest, New Hampshire, United States",
+          season: "Summer",
+          timeOfDay: "Sunset",
+          orientation: "Landscape",
+          camera: "Canon EOS 5D Mark IV",
+          lens: "35mm F1.4 DG HSM | Art 012",
+          fStop: "f/1.4",
+          shutterSpeed: "0/1 sec",
+          iso: "100",
+          exposureBias: "-1.0 EV",
+          focalLength: "35 mm",
+          captureDate: "2022-07-01T18:04:25",
+          credit: "NATHAN SOBOL",
+          copyright: "NEW HAMPSHIRE PHOTOGRAPHY",
+          dimensions: "6720 × 4480",
+          fileSize: "5.59 MB",
+          tags: "mount-washington, summer, sunset, landscape",
+          keywords: "White Mountain National Forest, WMNF, New Hampshire mountains, Maine mountains, White Mountains, Appalachian Trail, Franconia Range, Pemigewasset Wilderness, Franconia Notch, Kancamagus Highway, 4,000-footers, hiking trails, landscape photography, mountain photography, scenic views, alpine peaks"
+        }
       }
     },
     
@@ -608,12 +735,44 @@
           `).join('')}
         </div>
         <div class="nh48-quick-footer__meta">
-          <div class="nh48-quick-footer__legal">${content.meta.legal}</div>
-          <div class="nh48-quick-footer__meta-links" aria-label="Footer navigation links">
-            ${content.meta.links.map(link => `
-              <a href="${link.href}" ${link.external ? 'target="_blank" rel="noopener"' : ''} ${link.className ? `class="${link.className}"` : ''}>${link.text}</a>
-            `).join('')}
+          <div class="nh48-quick-footer__meta-main">
+            <div class="nh48-quick-footer__legal">${content.meta.legal}</div>
+            <div class="nh48-quick-footer__meta-links" aria-label="Footer navigation links">
+              ${content.meta.links.map(link => `
+                <a href="${link.href}" ${link.external ? 'target="_blank" rel="noopener"' : ''} ${link.className ? `class="${link.className}"` : ''}>${link.text}</a>
+              `).join('')}
+            </div>
           </div>
+          <figure class="nh48-quick-footer__media" aria-label="Featured Mount Washington photo">
+            <img
+              class="nh48-quick-footer__media-image"
+              src="${content.meta.featuredImage.src}"
+              srcset="${content.meta.featuredImage.srcSet}"
+              sizes="${content.meta.featuredImage.sizes}"
+              width="${content.meta.featuredImage.width}"
+              height="${content.meta.featuredImage.height}"
+              alt="${content.meta.featuredImage.alt}"
+              title="${content.meta.featuredImage.title}"
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption class="nh48-quick-footer__media-caption">
+              <div class="nh48-quick-footer__media-title">${content.meta.featuredImage.title}</div>
+              <div class="nh48-quick-footer__media-description">${content.meta.featuredImage.description}</div>
+              <div class="nh48-quick-footer__media-description">${content.meta.featuredImage.extendedDescription}</div>
+              <dl class="nh48-quick-footer__media-metadata">
+                <div><dt>Location</dt><dd>${content.meta.featuredImage.location}</dd></div>
+                <div><dt>Season</dt><dd>${content.meta.featuredImage.season} · ${content.meta.featuredImage.timeOfDay} · ${content.meta.featuredImage.orientation} orientation</dd></div>
+                <div><dt>Camera</dt><dd>${content.meta.featuredImage.camera} · ${content.meta.featuredImage.lens}</dd></div>
+                <div><dt>Exposure</dt><dd>${content.meta.featuredImage.fStop} · ${content.meta.featuredImage.shutterSpeed} · ISO ${content.meta.featuredImage.iso} · ${content.meta.featuredImage.focalLength} · ${content.meta.featuredImage.exposureBias}</dd></div>
+                <div><dt>Captured</dt><dd>${content.meta.featuredImage.captureDate}</dd></div>
+                <div><dt>Credit</dt><dd>${content.meta.featuredImage.credit} · © ${content.meta.featuredImage.copyright}</dd></div>
+                <div><dt>Dimensions</dt><dd>${content.meta.featuredImage.dimensions} · ${content.meta.featuredImage.fileSize}</dd></div>
+                <div><dt>Tags</dt><dd>${content.meta.featuredImage.tags}</dd></div>
+                <div><dt>Keywords</dt><dd>${content.meta.featuredImage.keywords}</dd></div>
+              </dl>
+            </figcaption>
+          </figure>
         </div>
       </footer>
     `;
