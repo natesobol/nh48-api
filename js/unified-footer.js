@@ -1,6 +1,60 @@
 (() => {
   'use strict';
 
+  const THUMBNAIL_CONFIG = {
+    baseUrl: 'https://photos.nh48.info',
+    format: 'webp',
+    quality: 70,
+    size: 28,
+    cdn: 'cloudflare'
+  };
+
+  const THUMBNAIL_FALLBACK = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${THUMBNAIL_CONFIG.size}" height="${THUMBNAIL_CONFIG.size}"><rect width="100%" height="100%" fill="#0f172a"/></svg>`
+  );
+
+  const getPeakSlug = (href = '') => {
+    const cleaned = href.split('/peak/')[1] || '';
+    return cleaned.replace(/\/$/, '');
+  };
+
+  const getThumbnailSrc = (slug) => {
+    if (!slug) return '';
+    return `${THUMBNAIL_CONFIG.baseUrl}/cdn-cgi/image/format=${THUMBNAIL_CONFIG.format},quality=${THUMBNAIL_CONFIG.quality},width=${THUMBNAIL_CONFIG.size}/${slug}/${slug}__001.jpg`;
+  };
+
+  const createThumbnailElement = (peakName, slug) => {
+    const img = document.createElement('img');
+    img.className = 'nh48-quick-footer__link-thumb';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.width = THUMBNAIL_CONFIG.size;
+    img.height = THUMBNAIL_CONFIG.size;
+    img.alt = '';
+    img.setAttribute('aria-hidden', 'true');
+    img.src = getThumbnailSrc(slug);
+    img.setAttribute('data-photo-peak', peakName);
+    img.setAttribute('data-photo-alt', `${peakName} thumbnail`);
+    img.setAttribute('data-photo-slug', slug);
+    img.setAttribute('data-photo-format', THUMBNAIL_CONFIG.format);
+    img.setAttribute('data-photo-quality', String(THUMBNAIL_CONFIG.quality));
+    img.setAttribute('data-photo-width', String(THUMBNAIL_CONFIG.size));
+    img.setAttribute('data-photo-height', String(THUMBNAIL_CONFIG.size));
+    img.setAttribute('data-photo-cdn', THUMBNAIL_CONFIG.cdn);
+    img.setAttribute('data-photo-source', THUMBNAIL_CONFIG.baseUrl);
+    img.addEventListener('error', () => {
+      img.src = THUMBNAIL_FALLBACK;
+    }, { once: true });
+    return img;
+  };
+
+  const createLinkLabel = (text) => {
+    const label = document.createElement('span');
+    label.className = 'nh48-quick-footer__link-label';
+    label.textContent = text;
+    return label;
+  };
+
   // Footer configuration with all data
   const FOOTER_CONFIG = {
     styles: `
@@ -160,8 +214,9 @@
         .nh48-quick-footer__link {
           display: inline-flex;
           align-items: center;
-          justify-content: flex-start;
-          padding: 8px 12px;
+          justify-content: space-between;
+          gap: 8px;
+          padding: 8px 10px;
           min-height: 34px;
           text-align: left;
           border-radius: 8px;
@@ -176,6 +231,23 @@
           font-size: 0.85rem;
           align-self: stretch;
           box-sizing: border-box;
+        }
+
+        .nh48-quick-footer__link-label {
+          display: inline-flex;
+          align-items: center;
+          flex: 1;
+          min-width: 0;
+        }
+
+        .nh48-quick-footer__link-thumb {
+          width: ${THUMBNAIL_CONFIG.size}px;
+          height: ${THUMBNAIL_CONFIG.size}px;
+          border-radius: 6px;
+          object-fit: cover;
+          flex-shrink: 0;
+          background: rgba(15, 23, 42, 0.75);
+          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
         }
 
         .nh48-quick-footer__link:hover,
@@ -260,8 +332,9 @@
       .nh48-quick-footer__link {
         display: inline-flex;
         align-items: center;
-        justify-content: flex-start;
-        padding: 8px 12px;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 10px;
         min-height: 40px;
         text-align: left;
         border-radius: 10px;
@@ -275,6 +348,23 @@
         width: 100%;
         align-self: stretch;
         box-sizing: border-box;
+      }
+
+      .nh48-quick-footer__link-label {
+        display: inline-flex;
+        align-items: center;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .nh48-quick-footer__link-thumb {
+        width: ${THUMBNAIL_CONFIG.size}px;
+        height: ${THUMBNAIL_CONFIG.size}px;
+        border-radius: 6px;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: rgba(15, 23, 42, 0.75);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
       }
 
       .nh48-quick-footer__link:hover,
@@ -434,10 +524,12 @@
           gap: 6px;
         }
 
-        .nh48-quick-footer__link {
-          min-height: 38px;
-          padding: 8px 9px;
-        }
+      .nh48-quick-footer__link {
+        justify-content: space-between;
+        gap: 8px;
+        min-height: 38px;
+        padding: 8px 9px;
+      }
 
         .nh48-quick-footer__meta {
           flex-direction: column;
@@ -667,6 +759,32 @@
     ]
   };
 
+  const buildThumbnailMarkup = (link) => {
+    const slug = getPeakSlug(link.href);
+    const src = getThumbnailSrc(slug);
+    return `
+      <img
+        class="nh48-quick-footer__link-thumb"
+        src="${src}"
+        width="${THUMBNAIL_CONFIG.size}"
+        height="${THUMBNAIL_CONFIG.size}"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+        data-photo-peak="${link.text}"
+        data-photo-alt="${link.text} thumbnail"
+        data-photo-slug="${slug}"
+        data-photo-format="${THUMBNAIL_CONFIG.format}"
+        data-photo-quality="${THUMBNAIL_CONFIG.quality}"
+        data-photo-width="${THUMBNAIL_CONFIG.size}"
+        data-photo-height="${THUMBNAIL_CONFIG.size}"
+        data-photo-cdn="${THUMBNAIL_CONFIG.cdn}"
+        data-photo-source="${THUMBNAIL_CONFIG.baseUrl}"
+      />
+    `;
+  };
+
   // Popularity index for sorting
   const renderGrid = (gridEl) => {
     gridEl.innerHTML = '';
@@ -689,10 +807,14 @@
         const a = document.createElement('a');
         a.className = 'nh48-quick-footer__link';
         a.href = link.href;
-        a.textContent = link.text;
+        const label = createLinkLabel(link.text);
+        const slug = getPeakSlug(link.href);
+        const thumb = createThumbnailElement(link.text, slug);
+        a.appendChild(label);
+        a.appendChild(thumb);
         
         // Add elevation data if available
-        const peak = FOOTER_CONFIG.peaks.find(p => p.slug === link.href.replace('/peak/', ''));
+        const peak = FOOTER_CONFIG.peaks.find(p => p.slug === getPeakSlug(link.href));
         if (peak && peak.elevation) {
           a.setAttribute('data-elevation', peak.elevation);
         }
@@ -728,7 +850,7 @@
               <h2>${group.title}</h2>
               <ul class="nh48-quick-footer__list">
                 ${group.links.map(link => `
-                  <li><a class="nh48-quick-footer__link" href="${link.href}">${link.text}</a></li>
+                  <li><a class="nh48-quick-footer__link" href="${link.href}"><span class="nh48-quick-footer__link-label">${link.text}</span>${buildThumbnailMarkup(link)}</a></li>
                 `).join('')}
               </ul>
             </div>
