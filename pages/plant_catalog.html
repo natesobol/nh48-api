@@ -698,6 +698,9 @@ body.details-open .drawer.open {
                 link.setAttribute('aria-current', 'page');
               }
             });
+            if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+              window.NH48_I18N.refreshLangPicker();
+            }
           })
           .catch(err => console.error('Failed to load navigation:', err));
       }
