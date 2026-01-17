@@ -1228,10 +1228,11 @@ export default {
       });
     }
 
-    // Only handle peak routes.  If the URL does not match, return 404.
+    // Only handle peak routes.  If the URL does not match, passthrough to origin for static assets.
     const ok = (!isFrench && parts[0] === 'peak') || (isFrench && parts[1] === 'peak');
     if (!ok || !slug) {
-      return new Response('Not found', { status: 404 });
+      // Passthrough to origin for static assets (CSS, JS, images, data files, etc.)
+      return fetch(request);
     }
 
     // Find the peak by slug in the loaded dataset
