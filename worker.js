@@ -16,21 +16,6 @@
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    
-    // Debug: Log every request
-    console.log(`[Worker] Request: ${url.pathname} | Origin: ${url.origin} | Method: ${request.method}`);
-    
-    // Quick test - return debug info for homepage
-    if (url.pathname === '/' || url.pathname === '') {
-      console.log(`[Worker] Homepage detected, returning debug response`);
-      return new Response(`<!DOCTYPE html><html><head><title>Worker Debug</title></head><body><h1>Worker is Running!</h1><p><strong>URL:</strong> ${url.href}</p><p><strong>Pathname:</strong> ${url.pathname}</p><p><strong>Origin:</strong> ${url.origin}</p><p><strong>Time:</strong> ${new Date().toISOString()}</p><p><strong>User-Agent:</strong> ${request.headers.get('user-agent') || 'Unknown'}</p><p><strong>CF-Ray:</strong> ${request.headers.get('cf-ray') || 'N/A'}</p></body></html>`, {
-        headers: { 
-          'Content-Type': 'text/html; charset=utf-8',
-          'Cache-Control': 'no-store'
-        }
-      });
-    }
-    
     const parts = url.pathname.split('/').filter(Boolean);
 
     // Determine if the route is French and extract the slug.  We
@@ -143,16 +128,15 @@ export default {
 
     async function loadPartial(name, url) {
       try {
-        console.log(`[loadPartial] Fetching ${name}: ${url}`);
-        const res = await fetch(url, { headers: { 'User-Agent': 'NH48-SSR' } });
-        console.log(`[loadPartial] ${name} response: ${res.status}`);
+        const res = await fetch(url, { 
+          headers: { 'User-Agent': 'NH48-SSR/1.0' },
+          cf: { cacheTtl: 300 }
+        });
         if (res.ok) {
-          const text = await res.text();
-          console.log(`[loadPartial] ${name} loaded: ${text.length} bytes`);
-          return text;
+          return await res.text();
         }
       } catch (err) {
-        console.error(`[loadPartial] Error loading ${name}:`, err.message || err);
+        console.error(`Error loading ${name}:`, err.message);
       }
       return '';
     }
@@ -174,20 +158,24 @@ export default {
       env.__textCache = env.__textCache || {};
       if (env.__textCache[key]) return env.__textCache[key];
       try {
-        console.log(`[loadTextCache] Fetching: ${url}`);
-        const res = await fetch(url, { headers: { 'User-Agent': 'NH48-SSR' } });
-        console.log(`[loadTextCache] Response status: ${res.status} for ${url}`);
+        const res = await fetch(url, { 
+          headers: { 'User-Agent': 'NH48-SSR/1.0' },
+          cf: { cacheTtl: 300 } // Cache for 5 minutes
+        });
         if (!res.ok) {
-          console.error(`[loadTextCache] Failed to fetch ${url}: ${res.status} ${res.statusText}`);
+          console.error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);
           env.__textCache[key] = '';
           return '';
         }
         const text = await res.text();
-        console.log(`[loadTextCache] Fetched ${text.length} bytes from ${url}`);
+        if (text.length < 50) {
+          console.error(`Template too small (${text.length} bytes): ${url}`);
+          return '';
+        }
         env.__textCache[key] = text;
         return text;
       } catch (err) {
-        console.error(`[loadTextCache] Error fetching ${url}:`, err.message || err);
+        console.error(`Error fetching ${url}:`, err.message);
         env.__textCache[key] = '';
         return '';
       }
@@ -762,16 +750,14 @@ export default {
 
     async function serveTemplatePage({ templatePath, pathname, routeId, meta, jsonLd }) {
       const templateUrl = `${RAW_BASE}/${templatePath}`;
-      console.log(`[serveTemplatePage] Serving ${routeId} from ${templateUrl}`);
       const rawHtml = await loadTextCache(`tpl:${templatePath}`, templateUrl);
-      if (!rawHtml) {
+      if (!rawHtml || rawHtml.length < 100) {
         console.error(`[serveTemplatePage] Template empty or unavailable: ${templateUrl}`);
-        return new Response(`<!DOCTYPE html><html><head><title>Error</title></head><body><h1>Template Unavailable</h1><p>Could not load: ${templatePath}</p><p>URL: ${templateUrl}</p></body></html>`, { 
+        return new Response(`<!DOCTYPE html><html><head><title>Error</title></head><body><h1>Template Unavailable</h1><p>Could not load: ${templatePath}</p><p>URL: ${templateUrl}</p><p>Length: ${rawHtml ? rawHtml.length : 0} bytes</p></body></html>`, { 
           status: 500,
           headers: { 'Content-Type': 'text/html; charset=utf-8' }
         });
       }
-      console.log(`[serveTemplatePage] Template loaded: ${rawHtml.length} bytes`);
       const [navHtml, footerHtml] = await Promise.all([
         loadPartial('nav', RAW_NAV_URL),
         loadPartial('footer', RAW_FOOTER_URL)
