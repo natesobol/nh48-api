@@ -212,16 +212,26 @@ export default {
       const tags = [
         `<title>${esc(meta.title)}</title>`,
         `<meta name="description" content="${esc(meta.description)}" />`,
-        `<meta name="robots" content="${meta.robots || 'index,follow,max-image-preview:large'}" />`,
+        `<meta name="robots" content="${meta.robots || 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}" />`,
+        `<meta name="googlebot" content="${meta.robots || 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}" />`,
+        `<meta name="bingbot" content="${meta.robots || 'index, follow, max-image-preview:large'}" />`,
         `<meta name="author" content="${meta.author || 'Nathan Sobol'}" />`,
+        `<meta name="publisher" content="NH48 API" />`,
+        `<meta name="application-name" content="NH48 API" />`,
+        `<meta name="theme-color" content="#0a0a0a" />`,
         `<meta property="og:site_name" content="${meta.siteName || SITE_NAME}" />`,
         `<meta property="og:type" content="${meta.ogType || 'website'}" />`,
+        `<meta property="og:locale" content="${meta.locale || 'en_US'}" />`,
         `<meta property="og:title" content="${esc(meta.title)}" />`,
         `<meta property="og:description" content="${esc(meta.description)}" />`,
         `<meta property="og:image" content="${meta.image || DEFAULT_IMAGE}" />`,
+        `<meta property="og:image:width" content="1200" />`,
+        `<meta property="og:image:height" content="630" />`,
         `<meta property="og:image:alt" content="${esc(meta.imageAlt || meta.title)}" />`,
         `<meta property="og:url" content="${meta.canonical}" />`,
         `<meta name="twitter:card" content="${meta.twitterCard || 'summary_large_image'}" />`,
+        `<meta name="twitter:site" content="@nate_dumps_pics" />`,
+        `<meta name="twitter:creator" content="@nate_dumps_pics" />`,
         `<meta name="twitter:url" content="${meta.canonical}" />`,
         `<meta name="twitter:title" content="${esc(meta.title)}" />`,
         `<meta name="twitter:description" content="${esc(meta.description)}" />`,
@@ -695,6 +705,194 @@ export default {
           'Cache-Control': 'public, max-age=0, s-maxage=86400',
           'X-Robots-Tag': meta.robotsTag || 'index, follow'
         }
+      });
+    }
+
+    // Homepage route handler
+    const isHomepage = pathname === '/' || pathname === '/fr/' || pathname === '/fr';
+    if (isHomepage) {
+      const canonical = isFrench ? `${SITE}/fr/` : `${SITE}/`;
+      const title = isFrench
+        ? 'NH48 API - Données ouvertes pour les sommets de 4 000 pieds du New Hampshire'
+        : 'NH48 API - Open data for New Hampshire\'s 4,000-foot peaks';
+      const description = isFrench
+        ? 'NH48 API fournit des données ouvertes et structurées pour les 48 sommets de 4 000 pieds du New Hampshire. Explorez le catalogue, les sentiers et les photos.'
+        : 'Complete the NH48 challenge: 48 peaks, ~350 miles, ~170,000 feet of elevation gain. Browse difficulty tiers, day trip groupings, and peak progression guides for New Hampshire\'s four-thousand-footers.';
+      const jsonLd = [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          '@id': `${SITE}/#website`,
+          name: 'NH48 API',
+          url: SITE,
+          description,
+          publisher: {
+            '@type': 'Person',
+            name: RIGHTS_DEFAULTS.creatorName,
+            url: 'https://www.nh48pics.com/'
+          },
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: `${SITE}/catalog?q={search_term_string}`,
+            'query-input': 'required name=search_term_string'
+          },
+          inLanguage: isFrench ? 'fr' : 'en'
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          '@id': `${SITE}/#organization`,
+          name: 'NH48 API',
+          url: SITE,
+          logo: `${SITE}/nh48API_logo.png`,
+          sameAs: [
+            'https://github.com/natesobol/nh48-api',
+            'https://www.instagram.com/nate_dumps_pics/'
+          ]
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: isFrench ? 'Accueil' : 'Home', item: canonical }
+          ]
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'SportsActivityLocation',
+          '@id': `${SITE}/#nh48-challenge`,
+          name: 'NH48 Four-Thousand Footer Challenge',
+          description: 'Complete all 48 of New Hampshire\'s four-thousand-foot peaks. A multi-year hiking challenge covering approximately 350 miles of trail and 170,000 feet of cumulative elevation gain.',
+          url: SITE,
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: 44.2706,
+            longitude: -71.3033,
+            name: 'White Mountain National Forest, New Hampshire'
+          },
+          containedInPlace: {
+            '@type': 'AdministrativeArea',
+            name: 'New Hampshire, United States'
+          },
+          amenityFeature: [
+            { '@type': 'LocationFeatureSpecification', name: 'Total Peaks', value: '48' },
+            { '@type': 'LocationFeatureSpecification', name: 'Total Trail Distance', value: '~350 miles' },
+            { '@type': 'LocationFeatureSpecification', name: 'Total Elevation Gain', value: '~170,000 feet' },
+            { '@type': 'LocationFeatureSpecification', name: 'Above Treeline Peaks', value: '15' },
+            { '@type': 'LocationFeatureSpecification', name: 'Minimum Day Hikes', value: '~20 with efficient groupings' },
+            { '@type': 'LocationFeatureSpecification', name: 'Typical Completion Time', value: '1-4 years' }
+          ]
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'HowTo',
+          '@id': `${SITE}/#nh48-howto`,
+          name: 'How to Complete the NH48 Challenge',
+          description: 'A guide to completing New Hampshire\'s 48 four-thousand-foot peaks, from beginner-friendly summits to severe alpine challenges.',
+          totalTime: 'P2Y',
+          estimatedCost: {
+            '@type': 'MonetaryAmount',
+            currency: 'USD',
+            value: '0',
+            description: 'Free to hike (parking fees may apply at some trailheads)'
+          },
+          step: [
+            {
+              '@type': 'HowToStep',
+              position: 1,
+              name: 'Start with Beginner Peaks',
+              text: 'Begin with the 10 easiest peaks: Tecumseh, Hale, Jackson, Pierce, Osceola, Waumbek, Garfield, Eisenhower, Cannon, and Moosilauke.'
+            },
+            {
+              '@type': 'HowToStep',
+              position: 2,
+              name: 'Build Experience with Moderate Peaks',
+              text: 'Progress to the 15 moderate peaks including the Hancocks, Cabot, Galehead, and Passaconaway to build stamina and navigation skills.'
+            },
+            {
+              '@type': 'HowToStep',
+              position: 3,
+              name: 'Take on Challenging Peaks',
+              text: 'Tackle the 15 challenging peaks like Lafayette, Lincoln, Carrigain, Wildcats, and Tripyramids with proper preparation.'
+            },
+            {
+              '@type': 'HowToStep',
+              position: 4,
+              name: 'Summit the Severe Alpine Peaks',
+              text: 'Complete the 8 most difficult peaks including Washington, Adams, Jefferson, Madison, and the Bonds. These require excellent fitness and careful weather planning.'
+            }
+          ],
+          supply: [
+            { '@type': 'HowToSupply', name: 'Hiking boots' },
+            { '@type': 'HowToSupply', name: '2-4 liters of water' },
+            { '@type': 'HowToSupply', name: 'Extra layers for alpine zones' },
+            { '@type': 'HowToSupply', name: 'Map and compass or GPS' },
+            { '@type': 'HowToSupply', name: 'Ten essentials' }
+          ]
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          '@id': `${SITE}/#nh48-faq`,
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: 'How many miles is the NH48 challenge?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'The total distance is approximately 250-500 miles depending on your route choices and how efficiently you group peaks. With optimal groupings, you can cover around 350 miles total.'
+              }
+            },
+            {
+              '@type': 'Question',
+              name: 'How much elevation gain is the NH48?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'The cumulative elevation gain is approximately 170,000 feet - equivalent to climbing Mount Everest from sea level about 6 times.'
+              }
+            },
+            {
+              '@type': 'Question',
+              name: 'How long does it take to complete the NH48?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Most hikers complete the NH48 in 1-4 years. Speed runners may finish in 18-20 day hikes over one year, while scenic hikers may take 4-6+ years enjoying each peak individually.'
+              }
+            },
+            {
+              '@type': 'Question',
+              name: 'What are the easiest NH48 peaks?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'The easiest peaks include Mount Tecumseh (shortest of the 48), Mount Hale, Mount Jackson, Mount Pierce, Mount Osceola, Mount Waumbek, Mount Garfield, Mount Eisenhower, Cannon Mountain, and Mount Moosilauke.'
+              }
+            },
+            {
+              '@type': 'Question',
+              name: 'What are the hardest NH48 peaks?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'The most challenging peaks include Mount Washington (highest, extreme weather), Mount Adams, Mount Jefferson, Mount Madison, Mount Lafayette, Mount Lincoln, Bondcliff, West Bond, Owl\'s Head, and Mount Isolation.'
+              }
+            }
+          ]
+        }
+      ];
+      return serveTemplatePage({
+        templatePath: isFrench ? 'i18n/fr.html' : 'pages/index.html',
+        pathname,
+        routeId: 'home',
+        meta: {
+          title,
+          description,
+          canonical,
+          alternateEn: `${SITE}/`,
+          alternateFr: `${SITE}/fr/`,
+          image: DEFAULT_IMAGE,
+          imageAlt: isFrench ? 'Logo NH48 API' : 'NH48 API Logo',
+          ogType: 'website'
+        },
+        jsonLd
       });
     }
 

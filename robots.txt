@@ -1,6 +1,53 @@
+# NH48 API Robots Configuration
+# Last updated: 2026-01-17
+
+# Allow all crawlers including Google and AI bots
 User-agent: *
 Allow: /
-Disallow: /pages/
 
+# Allow specific important pages in /pages/
+Allow: /pages/trails_app.html
+Allow: /pages/long_trails_app.html
+Allow: /pages/plant_catalog.html
+Allow: /pages/plant.html
+Allow: /pages/nh48_catalog.html
+Allow: /pages/nh48_peak.html
+Allow: /pages/index.html
+
+# Disallow editor/internal pages
+Disallow: /pages/nav.html
+Disallow: /pages/footer.html
+Disallow: /old/
+Disallow: /scripts/
+Disallow: /templates/
+
+# Google AI (Gemini) - allowed
+User-agent: Google-Extended
+Allow: /
+
+# OpenAI GPTBot - allowed
+User-agent: GPTBot
+Allow: /
+
+# Anthropic Claude - allowed
+User-agent: anthropic-ai
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+
+# Common AI assistants - allowed
+User-agent: ChatGPT-User
+Allow: /
+User-agent: Bytespider
+Allow: /
+User-agent: CCBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+
+# Sitemaps
 Sitemap: https://nh48.info/sitemap.xml
+Sitemap: https://nh48.info/page-sitemap.xml
 Sitemap: https://nh48.info/image-sitemap.xml
