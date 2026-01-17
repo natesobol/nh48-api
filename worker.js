@@ -44,30 +44,25 @@ export default {
       acquireLicensePageUrl: 'https://nh48.info/contact'
     };
 
-    // Global caches for translation JSON and mountain description map.  These
-    // persist across requests within the same instance of the Worker.
-    env.__i18n = env.__i18n || {};
-    env.__descMap = env.__descMap || null;
-    env.__peaks = env.__peaks || null;
-    env.__partials = env.__partials || {};
+    const NO_CACHE_FETCH = {
+      cf: { cacheTtl: 0, cacheEverything: true },
+      headers: { 'User-Agent': 'NH48-SSR' }
+    };
 
     // Fetch translation dictionary if needed
     async function loadTranslation(code) {
-      if (!env.__i18n[code]) {
-        const url = code === 'fr' ? FR_TRANS_URL : EN_TRANS_URL;
-        try {
-          const res = await fetch(url, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
-          if (res.ok) {
-            env.__i18n[code] = await res.json();
-          }
-        } catch (_) {}
-      }
-      return env.__i18n[code] || {};
+      const url = code === 'fr' ? FR_TRANS_URL : EN_TRANS_URL;
+      try {
+        const res = await fetch(url, NO_CACHE_FETCH);
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (_) {}
+      return {};
     }
 
     // Load mountain descriptions from R2 or cache
     async function loadDescriptions() {
-      if (env.__descMap) return env.__descMap;
       const map = Object.create(null);
       try {
         if (env.NH48_DATA) {
@@ -87,13 +82,11 @@ export default {
           }
         }
       } catch (_) {}
-      env.__descMap = map;
       return map;
     }
 
     // Load nh48.json from R2 or origin and cache it
     async function loadPeaks() {
-      if (env.__peaks) return env.__peaks;
       let peaks;
       try {
         if (env.NH48_DATA) {
@@ -104,23 +97,20 @@ export default {
         }
       } catch (_) {}
       if (!peaks) {
-        const res = await fetch(`${SITE}/data/nh48.json`, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
+        const res = await fetch(`${SITE}/data/nh48.json`, NO_CACHE_FETCH);
         peaks = await res.json();
       }
-      env.__peaks = peaks;
       return peaks;
     }
 
     async function loadPartial(name, url) {
-      if (env.__partials[name]) return env.__partials[name];
       try {
-        const res = await fetch(url, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
+        const res = await fetch(url, NO_CACHE_FETCH);
         if (res.ok) {
-          env.__partials[name] = await res.text();
+          return await res.text();
         }
       } catch (_) {}
-      env.__partials[name] = env.__partials[name] || '';
-      return env.__partials[name];
+      return '';
     }
 
     // Escape HTML characters
@@ -443,7 +433,7 @@ export default {
         imageObjects
       });
 
-      const tplResp = await fetch(RAW_CATALOG_URL, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
+      const tplResp = await fetch(RAW_CATALOG_URL, NO_CACHE_FETCH);
       if (!tplResp.ok) {
         return new Response('Template unavailable', { status: 500 });
       }
@@ -501,7 +491,7 @@ export default {
       return new Response(html, {
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
-          'Cache-Control': 'public, max-age=0, s-maxage=86400',
+          'Cache-Control': 'no-store',
           'X-Robots-Tag': 'index, follow'
         }
       });
@@ -585,7 +575,7 @@ export default {
     );
 
     // Fetch the raw interactive HTML template from GitHub
-    const tplResp = await fetch(RAW_TEMPLATE_URL, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
+    const tplResp = await fetch(RAW_TEMPLATE_URL, NO_CACHE_FETCH);
     if (!tplResp.ok) {
       return new Response('Template unavailable', { status: 500 });
     }
@@ -662,13 +652,12 @@ export default {
     ].join('\n');
     html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
 
-    // Return the modified interactive page with caching.  Set
-    // appropriate headers for SEO.  Browser cache is short to
-    // encourage fresh translation, edge cache is longer.
+    // Return the modified interactive page with no-store caching for
+    // immediate updates and consistent SEO metadata.
     return new Response(html, {
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, max-age=0, s-maxage=86400',
+        'Cache-Control': 'no-store',
         'X-Robots-Tag': 'index, follow'
       }
     });
