@@ -16,6 +16,21 @@
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    
+    // Debug: Log every request
+    console.log(`[Worker] Request: ${url.pathname} | Origin: ${url.origin} | Method: ${request.method}`);
+    
+    // Quick test - return debug info for homepage
+    if (url.pathname === '/' || url.pathname === '') {
+      console.log(`[Worker] Homepage detected, returning debug response`);
+      return new Response(`<!DOCTYPE html><html><head><title>Worker Debug</title></head><body><h1>Worker is Running!</h1><p><strong>URL:</strong> ${url.href}</p><p><strong>Pathname:</strong> ${url.pathname}</p><p><strong>Origin:</strong> ${url.origin}</p><p><strong>Time:</strong> ${new Date().toISOString()}</p><p><strong>User-Agent:</strong> ${request.headers.get('user-agent') || 'Unknown'}</p><p><strong>CF-Ray:</strong> ${request.headers.get('cf-ray') || 'N/A'}</p></body></html>`, {
+        headers: { 
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-store'
+        }
+      });
+    }
+    
     const parts = url.pathname.split('/').filter(Boolean);
 
     // Determine if the route is French and extract the slug.  We
@@ -1314,6 +1329,8 @@ export default {
     const isPeakRoute = peakRoutes.includes(routeKeyword);
     
     if (!isPeakRoute || !slug) {
+      // Debug: Log passthrough requests
+      console.log(`[Worker] Passthrough request: ${pathname} (not a peak route or no slug)`);
       // Passthrough to origin for static assets (CSS, JS, images, data files, etc.)
       return fetch(request);
     }
