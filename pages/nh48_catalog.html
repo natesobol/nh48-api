@@ -393,6 +393,12 @@
         return null;
       }
 
+      function getPrimaryPhoto(photos){
+        if(!Array.isArray(photos) || photos.length === 0) return null;
+        const primary = photos.find(photo => photo && typeof photo === 'object' && photo.isPrimary);
+        return primary || photos[0];
+      }
+
       // Pagination
       const ITEMS_PER_PAGE = 30;
       let currentPage = 1;
@@ -637,9 +643,9 @@
         let thumbSrc = PLACEHOLDER_DATA_URI;
         let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
-          const first = p.photos[0];
-          const normalizedPhoto = extractPhotoUrl(first);
-          thumbAlt = buildPhotoAlt(p, first);
+          const primaryPhoto = getPrimaryPhoto(p.photos);
+          const normalizedPhoto = extractPhotoUrl(primaryPhoto);
+          thumbAlt = buildPhotoAlt(p, primaryPhoto);
           if(normalizedPhoto){
             thumbSrc = normalizedPhoto;
           }
@@ -689,9 +695,9 @@
         let thumbSrc = PLACEHOLDER_DATA_URI;
         let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
-          const first = p.photos[0];
-          const normalizedPhoto = extractPhotoUrl(first);
-          thumbAlt = buildPhotoAlt(p, first);
+          const primaryPhoto = getPrimaryPhoto(p.photos);
+          const normalizedPhoto = extractPhotoUrl(primaryPhoto);
+          thumbAlt = buildPhotoAlt(p, primaryPhoto);
           if(normalizedPhoto){
             thumbSrc = normalizedPhoto;
           }
