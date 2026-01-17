@@ -3,8 +3,12 @@ main = "worker.js"
 compatibility_date = "2026-01-05"
 
 # Route patterns for the domain - do NOT let Wrangler manage root DNS records
-# Use a wildcard route that matches all paths on the zone. Wrangler will not
+# Use routes for both root and paths. Wrangler will not
 # attempt to create DNS records when only `zone_name` is present.
+[[routes]]
+pattern = "nh48.info/"
+zone_name = "nh48.info"
+
 [[routes]]
 pattern = "nh48.info/*"
 zone_name = "nh48.info"
