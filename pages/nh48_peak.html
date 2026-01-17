@@ -1666,32 +1666,47 @@
       }
 
       async function fetchPeaks(){
+        let lastError = null;
         for(let i=0; i<API_URLS.length; i++){
           const url = API_URLS[i];
           try{
+            console.log(`[Peak Data] Attempting to load from: ${url}`);
             const res = await fetch(url, { mode:'cors' });
             if(!res.ok){
-              console.log(`Attempt ${i+1}: Status ${res.status} ${res.statusText}`);
+              console.warn(`[Peak Data] Attempt ${i+1}/${API_URLS.length}: Status ${res.status} ${res.statusText}`);
+              lastError = `HTTP ${res.status} ${res.statusText}`;
               continue;
             }
             const text = await res.text();
+            console.log(`[Peak Data] Received ${text.length} bytes from ${url}`);
             const cleaned = cleanJSON(text);
             let data;
             try{
               data = JSON.parse(cleaned);
+              const peakCount = Object.keys(data || {}).length;
+              console.log(`[Peak Data] Parsed data: ${peakCount} peaks found`);
+              if(peakCount === 0){
+                console.warn(`[Peak Data] Warning: JSON file is empty or has no peak entries`);
+                lastError = 'Empty data';
+                continue;
+              }
             }catch(err){
-              console.error(`JSON parse error: ${err.message}`);
+              console.error(`[Peak Data] JSON parse error: ${err.message}`);
+              lastError = `Parse error: ${err.message}`;
               continue;
             }
-            console.log(`Loaded peak data from ${url}`);
-            trackEvent('peak_data_loaded', { source: url });
+            console.log(`✓ [Peak Data] Successfully loaded peak data from ${url}`);
+            trackEvent('peak_data_loaded', { source: url, peakCount: Object.keys(data).length });
             return data;
           }catch(err){
-            console.error(`Fetch error: ${err.message || err}`);
-            trackEvent('peak_data_fetch_error', { source: url });
+            console.error(`[Peak Data] Fetch error for ${url}:`, err);
+            lastError = err.message || String(err);
+            trackEvent('peak_data_fetch_error', { source: url, error: lastError });
           }
         }
-        throw new Error('All API endpoints failed');
+        console.error('✗ [Peak Data] All API endpoints failed. Last error:', lastError);
+        console.error('[Peak Data] Attempted URLs:', API_URLS);
+        throw new Error(`All API endpoints failed. Last error: ${lastError || 'Unknown error'}`);
       }
 
       /* CAROUSEL + TIMER STATE ----------------------------------------------- */
@@ -3069,26 +3084,62 @@
       /* INIT ----------------------------------------------------------------- */
       async function init(){
         const slug = getResolvedSlug();
+        console.log('[Peak Init] Starting initialization for slug:', slug);
+        
         if(!slug){
+          console.error('[Peak Init] No slug found in URL');
           trackEvent('peak_missing_slug');
           updatePeakTitle(t('peak.notFound') || 'Peak not found');
+          const mediaEl = document.getElementById('media');
+          if(mediaEl){
+            mediaEl.innerHTML = `
+              <div style="padding: 2rem; background: var(--card); border-radius: 8px; color: var(--ink);">
+                <h2 style="color: #ef4444; margin-bottom: 1rem;">⚠️ Missing Peak Identifier</h2>
+                <p>No peak slug was found in the URL. Peak pages should be accessed via:</p>
+                <ul>
+                  <li><code>/peak/{slug}</code> (e.g., /peak/mount-washington)</li>
+                  <li><code>/fr/peak/{slug}</code> (e.g., /fr/peak/mount-washington)</li>
+                </ul>
+                <p style="margin-top: 1rem;"><a href="/catalog" style="color: var(--accent);">← Browse all peaks</a></p>
+              </div>
+            `;
+            mediaEl.hidden = false;
+          }
           return;
         }
 
         try{
+          console.log('[Peak Init] Loading translation data and peak data...');
           const [ , data ] = await Promise.all([
             waitForI18NReady(),
             fetchPeaks()
           ]);
+          
+          console.log('[Peak Init] Data loaded, looking up peak:', slug);
           const p = data && data[slug];
 
           if(!p){
+            console.error('[Peak Init] Peak not found in data:', slug);
+            console.log('[Peak Init] Available slugs:', Object.keys(data || {}).slice(0, 10).join(', '));
             trackEvent('peak_not_found', { slug });
             updatePeakTitle(t('peak.notFound') || 'Peak not found');
+            const mediaEl = document.getElementById('media');
+            if(mediaEl){
+              mediaEl.innerHTML = `
+                <div style="padding: 2rem; background: var(--card); border-radius: 8px; color: var(--ink);">
+                  <h2 style="color: #ef4444; margin-bottom: 1rem;">⚠️ Peak Not Found</h2>
+                  <p><strong>Requested:</strong> <code>${slug}</code></p>
+                  <p>This peak identifier was not found in our database.</p>
+                  <p style="margin-top: 1rem;"><a href="/catalog" style="color: var(--accent);">← Browse all peaks</a></p>
+                </div>
+              `;
+              mediaEl.hidden = false;
+            }
             return;
           }
 
           const name = p.peakName || p['Peak Name'] || p.name || p['Name'] || p.peak || p['Peak'] || p['PeakName'] || slug;
+          console.log('[Peak Init] ✓ Found peak:', name);
           updatePeakTitle(name);
           currentPeak = p;
           currentSlug = slug;
@@ -3125,6 +3176,7 @@
             primaryIndex = 0;
             primaryMarked = false;
           }
+          console.log('[Peak Init] Photos loaded:', imgs.length);
           currentImages = imgs.slice();
           currentMeta = meta.slice();
 
@@ -3173,12 +3225,39 @@
 
           buildMountainSchema(p, name, canonicalUrl, currentPrimaryPhoto, descriptionText);
           buildCarousel(imgs, meta, name);
+          console.log('[Peak Init] ✓ Initialization complete');
           trackEvent('peak_loaded', { slug, name, photoCount: imgs.length });
 
         }catch(err){
-          console.error('Error loading peak data:', err);
+          console.error('[Peak Init] ✗ Error loading peak data:', err);
+          console.error('[Peak Init] Stack trace:', err.stack);
           trackEvent('peak_load_failed', { slug, message: err.message });
-          updatePeakTitle(t('peak.errorLoading'));
+          
+          // Show user-friendly error
+          updatePeakTitle(t('peak.errorLoading') || 'Error Loading Peak Data');
+          
+          // Display error details
+          const mediaEl = document.getElementById('media');
+          if(mediaEl){
+            mediaEl.innerHTML = `
+              <div style="padding: 2rem; background: var(--card); border-radius: 8px; color: var(--ink);">
+                <h2 style="color: #ef4444; margin-bottom: 1rem;">⚠️ Unable to Load Peak Data</h2>
+                <p><strong>Peak:</strong> <code>${slug}</code></p>
+                <p><strong>Error:</strong> ${err.message}</p>
+                <details style="margin-top: 1rem; padding: 1rem; background: var(--panel); border-radius: 4px;">
+                  <summary style="cursor: pointer; font-weight: 600;">Technical Details</summary>
+                  <p style="margin-top: 0.5rem;"><strong>Attempted Data Sources:</strong></p>
+                  <ul>${API_URLS.map(url => `<li><code style="font-size: 0.85em;">${url}</code></li>`).join('')}</ul>
+                  ${err.stack ? `<pre style="margin-top: 1rem; padding: 0.5rem; background: var(--bg); overflow-x: auto; font-size: 0.85em;">${err.stack}</pre>` : ''}
+                </details>
+                <p style="margin-top: 1rem;">
+                  <a href="/catalog" style="color: var(--accent); text-decoration: none;">← Browse all peaks</a> | 
+                  <a href="javascript:location.reload()" style="color: var(--accent); text-decoration: none; margin-left: 1rem;">↻ Retry</a>
+                </p>
+              </div>
+            `;
+            mediaEl.hidden = false;
+          }
         }
       }
 

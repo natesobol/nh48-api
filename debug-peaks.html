@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NH48 Peak Data Debugger</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #0a0a0a;
+      color: #ffffff;
+    }
+    .section {
+      background: #171a22;
+      border: 1px solid #ffffff33;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .section h2 {
+      margin-top: 0;
+      color: #22c55e;
+    }
+    button {
+      background: #22c55e;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background: #4ade80;
+    }
+    .result {
+      background: #0a0a0a;
+      border: 1px solid #ffffff33;
+      border-radius: 4px;
+      padding: 15px;
+      margin-top: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .success {
+      color: #22c55e;
+    }
+    .error {
+      color: #ef4444;
+    }
+    .warning {
+      color: #f59e0b;
+    }
+    input {
+      background: #0a0a0a;
+      border: 1px solid #ffffff33;
+      color: #ffffff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      width: 300px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏔️ NH48 Peak Data Debugger</h1>
+  <p>Use this page to test peak data loading and diagnose issues.</p>
+
+  <div class="section">
+    <h2>1. Test Data Endpoints</h2>
+    <button onclick="testEndpoint('https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json', 'jsdelivr')">Test JSDelivr CDN</button>
+    <button onclick="testEndpoint('https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json', 'github')">Test GitHub Raw</button>
+    <button onclick="testEndpoint('/data/nh48.json', 'local')">Test Local</button>
+    <div id="endpoint-results"></div>
+  </div>
+
+  <div class="section">
+    <h2>2. Lookup Peak by Slug</h2>
+    <input type="text" id="slug-input" placeholder="mount-washington" value="mount-washington">
+    <button onclick="lookupPeak()">Lookup Peak</button>
+    <div id="lookup-results"></div>
+  </div>
+
+  <div class="section">
+    <h2>3. Current Page Info</h2>
+    <button onclick="showPageInfo()">Show Page Info</button>
+    <div id="page-info"></div>
+  </div>
+
+  <div class="section">
+    <h2>4. List All Peaks</h2>
+    <button onclick="listAllPeaks()">List All Peaks</button>
+    <div id="peaks-list"></div>
+  </div>
+
+  <div class="section">
+    <h2>5. Test fetchPeaks() Function</h2>
+    <button onclick="testFetchPeaksFunction()">Test fetchPeaks()</button>
+    <div id="fetch-function-results"></div>
+  </div>
+
+  <script>
+    let cachedData = null;
+
+    async function testEndpoint(url, name) {
+      const resultsDiv = document.getElementById('endpoint-results');
+      resultsDiv.innerHTML = `<div class="result">Testing ${name} endpoint...\nURL: ${url}</div>`;
+      
+      const startTime = performance.now();
+      try {
+        const response = await fetch(url, { mode: 'cors' });
+        const loadTime = (performance.now() - startTime).toFixed(2);
+        
+        if (!response.ok) {
+          resultsDiv.innerHTML = `<div class="result error">✗ ${name} Failed\nStatus: ${response.status} ${response.statusText}\nTime: ${loadTime}ms</div>`;
+          return;
+        }
+
+        const text = await response.text();
+        const data = JSON.parse(text);
+        const peakCount = Object.keys(data).length;
+        cachedData = data;
+
+        resultsDiv.innerHTML = `<div class="result success">✓ ${name} Success
+URL: ${url}
+Status: ${response.status} ${response.statusText}
+Size: ${(text.length / 1024).toFixed(2)} KB
+Peaks: ${peakCount}
+Load Time: ${loadTime}ms
+First 5 slugs: ${Object.keys(data).slice(0, 5).join(', ')}</div>`;
+      } catch (error) {
+        const loadTime = (performance.now() - startTime).toFixed(2);
+        resultsDiv.innerHTML = `<div class="result error">✗ ${name} Error
+URL: ${url}
+Error: ${error.message}
+Time: ${loadTime}ms</div>`;
+      }
+    }
+
+    async function lookupPeak() {
+      const slug = document.getElementById('slug-input').value.trim();
+      const resultsDiv = document.getElementById('lookup-results');
+      
+      if (!slug) {
+        resultsDiv.innerHTML = `<div class="result warning">Please enter a peak slug</div>`;
+        return;
+      }
+
+      resultsDiv.innerHTML = `<div class="result">Looking up: ${slug}...</div>`;
+
+      try {
+        // Try to load data if not cached
+        if (!cachedData) {
+          const response = await fetch('/data/nh48.json');
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          cachedData = await response.json();
+        }
+
+        const peak = cachedData[slug];
+        
+        if (!peak) {
+          const availableSlugs = Object.keys(cachedData);
+          const similar = availableSlugs.filter(s => s.includes(slug) || slug.includes(s));
+          resultsDiv.innerHTML = `<div class="result error">✗ Peak Not Found
+Slug: ${slug}
+Available peaks: ${availableSlugs.length}
+Similar slugs: ${similar.length > 0 ? similar.join(', ') : 'None'}
+Try: ${availableSlugs.slice(0, 5).join(', ')}</div>`;
+          return;
+        }
+
+        const photos = peak.photos || [];
+        resultsDiv.innerHTML = `<div class="result success">✓ Peak Found
+Slug: ${slug}
+Peak Name: ${peak.peakName || peak['Peak Name'] || 'N/A'}
+Elevation: ${peak['Elevation (ft)'] || peak.elevation_ft || 'N/A'}
+Range: ${peak['Range / Subrange'] || peak.range || 'N/A'}
+Photos: ${photos.length}
+Description: ${peak.description ? (String(peak.description).substring(0, 100) + '...') : 'N/A'}
+${photos.length > 0 ? 'First Photo URL: ' + (photos[0].url || photos[0]) : ''}</div>`;
+      } catch (error) {
+        resultsDiv.innerHTML = `<div class="result error">✗ Error
+Message: ${error.message}
+Stack: ${error.stack}</div>`;
+      }
+    }
+
+    function showPageInfo() {
+      const resultsDiv = document.getElementById('page-info');
+      
+      const routeInfo = window.NH48_ROUTE_INFO || null;
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get('slug');
+      
+      resultsDiv.innerHTML = `<div class="result">Current Page:
+URL: ${window.location.href}
+Pathname: ${window.location.pathname}
+Search: ${window.location.search}
+
+Route Info: ${routeInfo ? JSON.stringify(routeInfo, null, 2) : 'Not available'}
+
+Query Params:
+- slug: ${slug || 'Not set'}
+- lang: ${params.get('lang') || 'Not set'}
+
+I18N Status: ${window.NH48_I18N ? 'Loaded' : 'Not loaded'}
+Analytics: ${window.NH48_INFO_ANALYTICS ? 'Loaded' : 'Not loaded'}
+</div>`;
+    }
+
+    async function listAllPeaks() {
+      const resultsDiv = document.getElementById('peaks-list');
+      resultsDiv.innerHTML = `<div class="result">Loading peaks...</div>`;
+
+      try {
+        if (!cachedData) {
+          const response = await fetch('/data/nh48.json');
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          cachedData = await response.json();
+        }
+
+        const peaks = Object.entries(cachedData).map(([slug, data]) => ({
+          slug,
+          name: data.peakName || data['Peak Name'] || slug,
+          elevation: data['Elevation (ft)'] || data.elevation_ft || '?',
+          photos: (data.photos || []).length
+        }));
+
+        peaks.sort((a, b) => {
+          const elevA = parseInt(String(a.elevation).replace(/,/g, '')) || 0;
+          const elevB = parseInt(String(b.elevation).replace(/,/g, '')) || 0;
+          return elevB - elevA;
+        });
+
+        const list = peaks.map((p, i) => 
+          `${i+1}. ${p.name} (${p.slug}) - ${p.elevation} ft - ${p.photos} photos`
+        ).join('\n');
+
+        resultsDiv.innerHTML = `<div class="result success">✓ Found ${peaks.length} peaks:
+
+${list}</div>`;
+      } catch (error) {
+        resultsDiv.innerHTML = `<div class="result error">✗ Error: ${error.message}</div>`;
+      }
+    }
+
+    async function testFetchPeaksFunction() {
+      const resultsDiv = document.getElementById('fetch-function-results');
+      resultsDiv.innerHTML = `<div class="result">Testing fetchPeaks() function...</div>`;
+
+      // Check if fetchPeaks exists in global scope
+      if (typeof fetchPeaks !== 'function') {
+        resultsDiv.innerHTML = `<div class="result warning">fetchPeaks() function not found in global scope.
+This is expected on this debug page.
+On the actual peak page (pages/nh48_peak.html), this function should exist.</div>`;
+        return;
+      }
+
+      try {
+        const data = await fetchPeaks();
+        const peakCount = Object.keys(data).length;
+        resultsDiv.innerHTML = `<div class="result success">✓ fetchPeaks() Success
+Peaks loaded: ${peakCount}
+First 5 slugs: ${Object.keys(data).slice(0, 5).join(', ')}</div>`;
+      } catch (error) {
+        resultsDiv.innerHTML = `<div class="result error">✗ fetchPeaks() Error
+Message: ${error.message}
+Stack: ${error.stack}</div>`;
+      }
+    }
+
+    // Auto-run page info on load
+    window.addEventListener('DOMContentLoaded', () => {
+      showPageInfo();
+    });
+  </script>
+</body>
+</html>

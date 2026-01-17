@@ -1,4 +1,4 @@
-/peak /catalog 301
-/peak/ /catalog 301
+# Peak routes handled by Cloudflare Worker
+# These redirects serve as fallback if worker is disabled
 /peak/* /pages/nh48_peak.html 200
 /fr/peak/* /pages/nh48_peak.html 200
