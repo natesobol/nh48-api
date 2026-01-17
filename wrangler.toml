@@ -2,13 +2,9 @@ name = "nh48-ssr"
 main = "worker.js"
 compatibility_date = "2026-01-05"
 
-# Custom domain - only the root domain, no paths allowed
-[[routes]]
-pattern = "nh48.info"
-custom_domain = true
-
-# Route patterns with paths - use zone_name instead of custom_domain
-# The wildcard pattern will match all paths on the domain
+# Route patterns for the domain - do NOT let Wrangler manage root DNS records
+# Use a wildcard route that matches all paths on the zone. Wrangler will not
+# attempt to create DNS records when only `zone_name` is present.
 [[routes]]
 pattern = "nh48.info/*"
 zone_name = "nh48.info"
