@@ -26,15 +26,19 @@ export default {
     const slugIdx = isFrench ? 2 : 1;
     const slug = parts[slugIdx] || '';
     const lang = isFrench ? 'fr' : 'en';
+    const pathname = url.pathname;
+    const pathNoLocale = isFrench ? `/${parts.slice(1).join('/')}` || '/' : pathname;
 
     // Constants
-    const SITE = 'https://nh48.info';
-    const RAW_TEMPLATE_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/pages/nh48_peak.html';
-    const RAW_CATALOG_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/pages/nh48_catalog.html';
-    const RAW_NAV_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/pages/nav.html';
-    const RAW_FOOTER_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/pages/footer.html';
-    const EN_TRANS_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/i18n/en.json';
-    const FR_TRANS_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/i18n/fr.json';
+    const SITE = url.origin;
+    const RAW_BASE = 'https://raw.githubusercontent.com/natesobol/nh48-api/main';
+    const RAW_TEMPLATE_URL = `${RAW_BASE}/pages/nh48_peak.html`;
+    const RAW_CATALOG_URL = `${RAW_BASE}/pages/nh48_catalog.html`;
+    const RAW_NAV_URL = `${RAW_BASE}/pages/nav.html`;
+    const RAW_FOOTER_URL = `${RAW_BASE}/pages/footer.html`;
+    const EN_TRANS_URL = `${RAW_BASE}/i18n/en.json`;
+    const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
+    const SITE_NAME = url.hostname;
     const DEFAULT_IMAGE = `${SITE}/nh48-preview.png`;
     const RIGHTS_DEFAULTS = {
       creatorName: 'Nathan Sobol',
@@ -113,6 +117,32 @@ export default {
       return '';
     }
 
+    async function loadJsonCache(key, url) {
+      env.__dataCache = env.__dataCache || {};
+      if (env.__dataCache[key]) return env.__dataCache[key];
+      const res = await fetch(url, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
+      if (!res.ok) {
+        env.__dataCache[key] = null;
+        return null;
+      }
+      const data = await res.json();
+      env.__dataCache[key] = data;
+      return data;
+    }
+
+    async function loadTextCache(key, url) {
+      env.__textCache = env.__textCache || {};
+      if (env.__textCache[key]) return env.__textCache[key];
+      const res = await fetch(url, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
+      if (!res.ok) {
+        env.__textCache[key] = '';
+        return '';
+      }
+      const text = await res.text();
+      env.__textCache[key] = text;
+      return text;
+    }
+
     // Escape HTML characters
     function esc(s) {
       return String(s)
@@ -121,6 +151,94 @@ export default {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+    }
+
+    function stripClientNavScripts(html) {
+      return html
+        .replace(/<script[^>]*>[\s\S]*?nav-placeholder[\s\S]*?<\/script>/gi, '')
+        .replace(/<script[^>]*>[\s\S]*?\/pages\/nav\.html[\s\S]*?<\/script>/gi, '')
+        .replace(/<script[^>]*>[\s\S]*?footer-placeholder[\s\S]*?<\/script>/gi, '');
+    }
+
+    function markNavActive(navHtml, pathname) {
+      if (!navHtml) return navHtml;
+      const normalized = pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
+      return navHtml.replace(/<a\s+([^>]*?)href="([^"]+)"([^>]*)>/gi, (match, pre, href, post) => {
+        const urlPath = href.replace(SITE, '');
+        const normalizedHref = urlPath.endsWith('/') && urlPath.length > 1 ? urlPath.slice(0, -1) : urlPath;
+        if (normalizedHref && (normalizedHref === normalized || normalizedHref === `${normalized}/index.html`)) {
+          if (/class="/i.test(match)) {
+            return `<a ${pre}href="${href}"${post.replace(/class="([^"]*)"/i, 'class="$1 current"')}>`;
+          }
+          return `<a ${pre}href="${href}" class="current"${post}>`;
+        }
+        return match;
+      });
+    }
+
+    function injectNavFooter(html, navHtml, footerHtml, pathname, routeId = '') {
+      let output = stripClientNavScripts(html);
+      if (navHtml) {
+        const markedNav = markNavActive(navHtml, pathname);
+        output = output.replace(/<div id="nav-placeholder"><\/div>/i, markedNav);
+      }
+      if (footerHtml) {
+        output = output.replace(/<div id="footer-placeholder"><\/div>/i, footerHtml);
+      }
+      if (routeId) {
+        output = output.replace(/<body([^>]*)>/i, (match, attrs) => {
+          if (/data-route=/i.test(attrs)) return match;
+          return `<body${attrs} data-route="${routeId}">`;
+        });
+      }
+      return output;
+    }
+
+    function stripHeadMeta(html) {
+      return html
+        .replace(/<title[^>]*>.*?<\/title>/i, '')
+        .replace(/<meta[^>]*name="description"[^>]*>/i, '')
+        .replace(/<meta[^>]*name="keywords"[^>]*>/i, '')
+        .replace(/<meta[^>]*name="robots"[^>]*>/i, '')
+        .replace(/<meta[^>]*property="og:[^"]*"[^>]*>/gi, '')
+        .replace(/<meta[^>]*name="twitter:[^"]*"[^>]*>/gi, '')
+        .replace(/<meta[^>]*property="twitter:[^"]*"[^>]*>/gi, '')
+        .replace(/<link[^>]*rel="canonical"[^>]*>/i, '')
+        .replace(/<link[^>]*rel="alternate"[^>]*>/gi, '')
+        .replace(/<script[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/gi, '');
+    }
+
+    function buildMetaBlock(meta) {
+      const tags = [
+        `<title>${esc(meta.title)}</title>`,
+        `<meta name="description" content="${esc(meta.description)}" />`,
+        `<meta name="robots" content="${meta.robots || 'index,follow,max-image-preview:large'}" />`,
+        `<meta name="author" content="${meta.author || 'Nathan Sobol'}" />`,
+        `<meta property="og:site_name" content="${meta.siteName || SITE_NAME}" />`,
+        `<meta property="og:type" content="${meta.ogType || 'website'}" />`,
+        `<meta property="og:title" content="${esc(meta.title)}" />`,
+        `<meta property="og:description" content="${esc(meta.description)}" />`,
+        `<meta property="og:image" content="${meta.image || DEFAULT_IMAGE}" />`,
+        `<meta property="og:image:alt" content="${esc(meta.imageAlt || meta.title)}" />`,
+        `<meta property="og:url" content="${meta.canonical}" />`,
+        `<meta name="twitter:card" content="${meta.twitterCard || 'summary_large_image'}" />`,
+        `<meta name="twitter:url" content="${meta.canonical}" />`,
+        `<meta name="twitter:title" content="${esc(meta.title)}" />`,
+        `<meta name="twitter:description" content="${esc(meta.description)}" />`,
+        `<meta name="twitter:image" content="${meta.image || DEFAULT_IMAGE}" />`,
+        `<link rel="canonical" href="${meta.canonical}" />`
+      ];
+      if (meta.alternateEn && meta.alternateFr) {
+        tags.push(`<link rel="alternate" hreflang="en" href="${meta.alternateEn}" />`);
+        tags.push(`<link rel="alternate" hreflang="fr" href="${meta.alternateFr}" />`);
+        tags.push(`<link rel="alternate" hreflang="x-default" href="${meta.alternateEn}" />`);
+      }
+      if (meta.jsonLd && meta.jsonLd.length) {
+        for (const block of meta.jsonLd) {
+          tags.push(`<script type="application/ld+json">${JSON.stringify(block).replace(/</g, '<\\/')}</script>`);
+        }
+      }
+      return tags.join('\n');
     }
 
     // Normalize strings for web output. Fixes common mojibake (â€” → —, etc.)
@@ -317,6 +435,81 @@ export default {
       };
     }
 
+    function buildDataCatalogSchema({ canonicalUrl, title, description, datasets }) {
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'DataCatalog',
+        name: title,
+        description,
+        url: canonicalUrl,
+        license: 'https://creativecommons.org/licenses/by/4.0/',
+        dataset: datasets
+      };
+    }
+
+    function buildDatasetSchema({ canonicalUrl, title, description, distribution, keywords, spatialCoverage, license, publisher }) {
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'Dataset',
+        name: title,
+        description,
+        url: canonicalUrl,
+        license: license || 'https://creativecommons.org/licenses/by/4.0/',
+        creator: publisher || { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
+        publisher: publisher || { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
+        keywords,
+        spatialCoverage,
+        distribution
+      };
+    }
+
+    function buildWebAppSchema({ canonicalUrl, title, description, datasetName }) {
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: title,
+        description,
+        url: canonicalUrl,
+        applicationCategory: 'MapApplication',
+        operatingSystem: 'Web',
+        offers: { '@type': 'Offer', price: 0, priceCurrency: 'USD' },
+        isAccessibleForFree: true,
+        about: {
+          '@type': 'Dataset',
+          name: datasetName
+        }
+      };
+    }
+
+    function buildItemList(peaks, canonicalUrl) {
+      const items = peaks.map((peak, idx) => ({
+        '@type': 'ListItem',
+        position: idx + 1,
+        name: peak.name,
+        item: peak.url
+      }));
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'NH 4000-Footers',
+        url: canonicalUrl,
+        itemListElement: items
+      };
+    }
+
+    function countRecords(data) {
+      if (!data) return 0;
+      if (Array.isArray(data)) return data.length;
+      if (Array.isArray(data.features)) return data.features.length;
+      return Object.keys(data).length;
+    }
+
+    function buildAlternatePaths(pathname) {
+      const enPath = isFrench ? (pathname.replace(/^\/fr/, '') || '/') : pathname;
+      const frPath = isFrench ? pathname : `${pathname === '/' ? '/fr' : `/fr${pathname}`}`;
+      return { enPath, frPath };
+    }
+
     // Build JSON-LD for Mountain and Breadcrumb
     function buildJsonLd(
       peakName,
@@ -442,25 +635,7 @@ export default {
         loadPartial('nav', RAW_NAV_URL),
         loadPartial('footer', RAW_FOOTER_URL)
       ]);
-      html = html
-        .replace(/<title[^>]*>.*?<\/title>/i, '')
-        .replace(/<meta[^>]*name="description"[^>]*>/i, '')
-        .replace(/<meta[^>]*name="keywords"[^>]*>/i, '')
-        .replace(/<meta[^>]*name="robots"[^>]*>/i, '')
-        .replace(/<meta[^>]*property="og:[^"]*"[^>]*>/gi, '')
-        .replace(/<meta[^>]*name="twitter:[^"]*"[^>]*>/gi, '')
-        .replace(/<meta[^>]*property="twitter:[^"]*"[^>]*>/gi, '')
-        .replace(/<link[^>]*rel="canonical"[^>]*>/i, '')
-        .replace(/<link[^>]*rel="alternate"[^>]*>/gi, '')
-        .replace(/<script[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/gi, '')
-        .replace(/<script[^>]*>[\s\S]*?\/pages\/nav\.html[\s\S]*?<\/script>/gi, '');
-
-      if (navHtml) {
-        html = html.replace(/<div id="nav-placeholder"><\/div>/i, navHtml);
-      }
-      if (footerHtml) {
-        html = html.replace(/<div id="footer-placeholder"><\/div>/i, footerHtml);
-      }
+      html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'catalog');
 
       const metaBlock = [
         `<title>${esc(title)}</title>`,
@@ -468,7 +643,7 @@ export default {
         `<meta name="keywords" content="NH48 API, NH48 catalog, New Hampshire 4000 footers, peak metadata, hiking data, mountain photos" />`,
         `<meta name="robots" content="index,follow,max-image-preview:large" />`,
         `<meta name="author" content="Nathan Sobol" />`,
-        `<meta property="og:site_name" content="nh48.info" />`,
+        `<meta property="og:site_name" content="${SITE_NAME}" />`,
         `<meta property="og:type" content="website" />`,
         `<meta property="og:title" content="${esc(title)}" />`,
         `<meta property="og:description" content="${esc(description)}" />`,
@@ -497,10 +672,362 @@ export default {
       });
     }
 
+    async function serveTemplatePage({ templatePath, pathname, routeId, meta, jsonLd }) {
+      const templateUrl = `${RAW_BASE}/${templatePath}`;
+      const rawHtml = await loadTextCache(`tpl:${templatePath}`, templateUrl);
+      if (!rawHtml) {
+        return new Response('Template unavailable', { status: 500 });
+      }
+      const [navHtml, footerHtml] = await Promise.all([
+        loadPartial('nav', RAW_NAV_URL),
+        loadPartial('footer', RAW_FOOTER_URL)
+      ]);
+      let html = stripHeadMeta(rawHtml);
+      html = injectNavFooter(html, navHtml, footerHtml, pathname, routeId);
+      const metaBlock = buildMetaBlock({
+        ...meta,
+        jsonLd
+      });
+      html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
+      return new Response(html, {
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, max-age=0, s-maxage=86400',
+          'X-Robots-Tag': meta.robotsTag || 'index, follow'
+        }
+      });
+    }
+
     const isCatalogRoute = (!isFrench && parts[0] === 'catalog' && parts.length === 1)
       || (isFrench && parts[1] === 'catalog' && parts.length === 2);
     if (isCatalogRoute) {
       return serveCatalog();
+    }
+
+    const { enPath, frPath } = buildAlternatePaths(pathname);
+
+    if (pathNoLocale === '/dataset' || pathNoLocale === '/dataset/') {
+      const datasets = [
+        {
+          name: 'NH48 Peaks',
+          description: 'Peak metadata and photo catalog for New Hampshire 4,000-footers.',
+          url: `${SITE}${isFrench ? '/fr' : ''}/catalog`,
+          distribution: [
+            { '@type': 'DataDownload', contentUrl: `${SITE}/data/nh48.json`, encodingFormat: 'application/json' }
+          ]
+        },
+        {
+          name: 'WMNF Trails',
+          description: 'White Mountain National Forest trail geometries and metadata.',
+          url: `${SITE}${isFrench ? '/fr' : ''}/dataset/wmnf-trails`,
+          distribution: [
+            { '@type': 'DataDownload', contentUrl: `${SITE}/data/wmnf-trails/wmnf-main.json`, encodingFormat: 'application/json' }
+          ]
+        },
+        {
+          name: 'Long-Distance Trails',
+          description: 'Index of major long-distance trails with geometries and route stats.',
+          url: `${SITE}${isFrench ? '/fr' : ''}/dataset/long-trails`,
+          distribution: [
+            { '@type': 'DataDownload', contentUrl: `${SITE}/data/long-trails-index.json`, encodingFormat: 'application/json' }
+          ]
+        },
+        {
+          name: 'Howker Alpine Plants',
+          description: 'Alpine plant catalog with photos, descriptions, and habitat notes.',
+          url: `${SITE}${isFrench ? '/fr' : ''}/dataset/howker-plants`,
+          distribution: [
+            { '@type': 'DataDownload', contentUrl: `${SITE}/data/howker-plants`, encodingFormat: 'application/json' }
+          ]
+        }
+      ];
+      const canonical = `${SITE}${pathname.endsWith('/') ? pathname.slice(0, -1) : pathname}`;
+      const jsonLd = [
+        buildDataCatalogSchema({
+          canonicalUrl: canonical,
+          title: isFrench ? 'Catalogue de données NH48' : 'NH48 Data Catalog',
+          description: isFrench
+            ? 'Jeu de données publics pour les sommets, sentiers et plantes alpines des White Mountains.'
+            : 'Public datasets for White Mountains peaks, trails, and alpine plants.',
+          datasets
+        })
+      ];
+      return serveTemplatePage({
+        templatePath: 'dataset/index.html',
+        pathname,
+        routeId: 'dataset',
+        meta: {
+          title: isFrench ? 'Catalogue de données NH48' : 'NH48 Data Catalog',
+          description: isFrench
+            ? 'Explorez les jeux de données NH48 sur les sommets, les sentiers et les plantes alpines.'
+            : 'Explore NH48 datasets for peaks, trails, and alpine plants.',
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: isFrench ? 'Aperçu des jeux de données NH48' : 'NH48 dataset overview',
+          ogType: 'website'
+        },
+        jsonLd
+      });
+    }
+
+    if (pathNoLocale.startsWith('/dataset/')) {
+      const datasetKey = pathNoLocale.split('/')[2];
+      const datasetConfigs = {
+        'wmnf-trails': {
+          title: isFrench ? 'Données des sentiers WMNF' : 'WMNF Trails Dataset',
+          description: isFrench
+            ? 'Géométries et métadonnées des sentiers de la White Mountain National Forest.'
+            : 'Trail geometries and metadata for the White Mountain National Forest.',
+          templatePath: 'dataset/wmnf-trails/index.html',
+          dataUrl: `${SITE}/data/wmnf-trails/wmnf-main.json`
+        },
+        'long-trails': {
+          title: isFrench ? 'Données des longs sentiers' : 'Long-Distance Trails Dataset',
+          description: isFrench
+            ? 'Index des grands sentiers longue distance avec géométries et statistiques.'
+            : 'Index of major long-distance trails with geometries and route stats.',
+          templatePath: 'dataset/long-trails/index.html',
+          dataUrl: `${SITE}/data/long-trails-index.json`
+        },
+        'howker-plants': {
+          title: isFrench ? 'Données des plantes alpines' : 'Howker Alpine Plants Dataset',
+          description: isFrench
+            ? 'Catalogue des plantes alpines avec photos, descriptions et habitats.'
+            : 'Alpine plant catalog with photos, descriptions, and habitats.',
+          templatePath: 'dataset/howker-plants/index.html',
+          dataUrl: `${SITE}/data/howker-plants`
+        }
+      };
+      const config = datasetConfigs[datasetKey];
+      if (config) {
+        const data = await loadJsonCache(`dataset:${datasetKey}`, config.dataUrl);
+        const recordCount = countRecords(data);
+        const canonical = `${SITE}${pathname}`;
+        const jsonLd = [
+          buildDatasetSchema({
+            canonicalUrl: canonical,
+            title: config.title,
+            description: `${config.description} ${recordCount ? `Records: ${recordCount}.` : ''}`.trim(),
+            distribution: [
+              {
+                '@type': 'DataDownload',
+                name: config.title,
+                encodingFormat: 'application/json',
+                contentUrl: config.dataUrl
+              }
+            ],
+            keywords: [datasetKey, 'NH48', 'White Mountains', 'open data'],
+            spatialCoverage: {
+              '@type': 'Place',
+              name: 'White Mountain National Forest'
+            }
+          })
+        ];
+        return serveTemplatePage({
+          templatePath: config.templatePath,
+          pathname,
+          routeId: 'dataset-detail',
+          meta: {
+            title: config.title,
+            description: config.description,
+            canonical,
+            alternateEn: `${SITE}${enPath}`,
+            alternateFr: `${SITE}${frPath}`,
+            image: DEFAULT_IMAGE,
+            imageAlt: config.title,
+            ogType: 'website'
+          },
+          jsonLd
+        });
+      }
+    }
+
+    if (pathNoLocale === '/trails' || pathNoLocale === '/trails/') {
+      const canonical = `${SITE}${pathname}`;
+      return serveTemplatePage({
+        templatePath: 'trails/index.html',
+        pathname,
+        routeId: 'trails',
+        meta: {
+          title: isFrench ? 'Carte des sentiers WMNF' : 'WMNF Trails Map',
+          description: isFrench
+            ? 'Explorez les sentiers de la White Mountain National Forest avec une carte interactive.'
+            : 'Explore White Mountain National Forest trails with an interactive map.',
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: isFrench ? 'Carte des sentiers WMNF' : 'WMNF trails map',
+          ogType: 'website'
+        }
+      });
+    }
+
+    if (pathNoLocale === '/long-trails' || pathNoLocale === '/long-trails/') {
+      const canonical = `${SITE}${pathname}`;
+      return serveTemplatePage({
+        templatePath: 'long-trails/index.html',
+        pathname,
+        routeId: 'long-trails',
+        meta: {
+          title: isFrench ? 'Carte des sentiers longue distance' : 'Long-Distance Trails Map',
+          description: isFrench
+            ? 'Carte interactive des grands sentiers longue distance en Amérique du Nord.'
+            : 'Interactive map of major long-distance trails across North America.',
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: isFrench ? 'Carte des sentiers longue distance' : 'Long-distance trails map',
+          ogType: 'website'
+        }
+      });
+    }
+
+    if (pathNoLocale === '/trails_app.html' || pathNoLocale === '/long_trails_app.html') {
+      const isLong = pathNoLocale.includes('long');
+      const canonical = `${SITE}${pathname}`;
+      const title = isLong
+        ? (isFrench ? 'Application des sentiers longue distance' : 'Long-Distance Trails App')
+        : (isFrench ? 'Application des sentiers WMNF' : 'WMNF Trails App');
+      const description = isLong
+        ? (isFrench ? 'Application cartographique interactive des sentiers longue distance.' : 'Interactive map application for long-distance trails.')
+        : (isFrench ? 'Application cartographique interactive des sentiers de la WMNF.' : 'Interactive map application for WMNF trails.');
+      const datasetName = isLong ? 'Long-Distance Trails' : 'WMNF Trails';
+      const jsonLd = [buildWebAppSchema({ canonicalUrl: canonical, title, description, datasetName })];
+      return serveTemplatePage({
+        templatePath: isLong ? 'pages/long_trails_app.html' : 'pages/trails_app.html',
+        pathname,
+        routeId: isLong ? 'long-trails-app' : 'trails-app',
+        meta: {
+          title,
+          description,
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: title,
+          ogType: 'website'
+        },
+        jsonLd
+      });
+    }
+
+    if (pathNoLocale === '/plant-catalog' || pathNoLocale === '/plant_catalog.html' || pathNoLocale === '/plant_catalog') {
+      const canonical = `${SITE}${pathname}`;
+      const jsonLd = [
+        buildDatasetSchema({
+          canonicalUrl: canonical,
+          title: isFrench ? 'Catalogue des plantes alpines' : 'Alpine Plant Catalog',
+          description: isFrench
+            ? 'Catalogue de plantes alpines avec photos et descriptions détaillées.'
+            : 'Alpine plant catalog with photos and detailed descriptions.',
+          distribution: [
+            { '@type': 'DataDownload', name: 'Howker Plants', encodingFormat: 'application/json', contentUrl: `${SITE}/data/howker-plants` }
+          ],
+          keywords: ['plants', 'alpine', 'NH48', 'White Mountains'],
+          spatialCoverage: { '@type': 'Place', name: 'White Mountain National Forest' }
+        })
+      ];
+      return serveTemplatePage({
+        templatePath: 'pages/plant_catalog.html',
+        pathname,
+        routeId: 'plant-catalog',
+        meta: {
+          title: isFrench ? 'Catalogue des plantes alpines' : 'Alpine Plant Catalog',
+          description: isFrench
+            ? 'Découvrez les plantes alpines des White Mountains avec photos et descriptions.'
+            : 'Discover White Mountains alpine plants with photos and descriptions.',
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: isFrench ? 'Catalogue de plantes alpines' : 'Alpine plant catalog',
+          ogType: 'website'
+        },
+        jsonLd
+      });
+    }
+
+    if (pathNoLocale.startsWith('/plant/') && slug) {
+      const plantData = await loadJsonCache('howker-plants', `${SITE}/data/howker-plants`);
+      const plant = Array.isArray(plantData) ? plantData.find((item) => item.id === slug) : null;
+      if (!plant) {
+        return new Response('<!doctype html><title>404 Not Found</title><h1>Plant not found</h1>', { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      }
+      const canonical = `${SITE}${pathname}`;
+      const title = `${plant.common} (${plant.latin})`;
+      const description = plant.teaser || plant.desc || `Profile for ${plant.common}.`;
+      const image = Array.isArray(plant.imgs) && plant.imgs.length ? plant.imgs[0] : DEFAULT_IMAGE;
+      const jsonLd = [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Species',
+          name: plant.common,
+          scientificName: plant.latin,
+          description,
+          image: plant.imgs || image,
+          url: canonical
+        }
+      ];
+      return serveTemplatePage({
+        templatePath: 'pages/plant.html',
+        pathname,
+        routeId: 'plant-detail',
+        meta: {
+          title,
+          description,
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image,
+          imageAlt: plant.common,
+          ogType: 'article'
+        },
+        jsonLd
+      });
+    }
+
+    if (pathNoLocale === '/nh-4000-footers-guide.html' || pathNoLocale === '/nh-4000-footers-info.html') {
+      const isGuide = pathNoLocale.includes('guide');
+      const canonical = `${SITE}${pathname}`;
+      const title = isGuide
+        ? (isFrench ? 'Guide des 4 000 pieds du New Hampshire' : 'New Hampshire 4,000-Footers Guide')
+        : (isFrench ? 'Infos sur les 4 000 pieds du New Hampshire' : 'NH 4,000-Footers Info');
+      const description = isGuide
+        ? (isFrench
+          ? 'Guide détaillé des sommets de 4 000 pieds du New Hampshire, cartes et conseils.'
+          : 'Detailed guide to New Hampshire 4,000-footers with maps and tips.')
+        : (isFrench
+          ? 'Informations et ressources sur la liste officielle des 4 000 pieds.'
+          : 'Information and resources about the official 4,000-footers list.');
+      const peaks = await loadPeaks();
+      const peakList = Array.isArray(peaks) ? peaks : Object.values(peaks || {});
+      const itemList = buildItemList(
+        peakList.map((peak) => ({
+          name: peak.peakName || peak.name || peak['Peak Name'],
+          url: `${SITE}${isFrench ? '/fr' : ''}/peak/${peak.slug || peak.slug_en || peak.Slug || ''}`
+        })),
+        canonical
+      );
+      return serveTemplatePage({
+        templatePath: isGuide ? 'nh-4000-footers-guide.html' : 'nh-4000-footers-info.html',
+        pathname,
+        routeId: isGuide ? 'nh48-guide' : 'nh48-info',
+        meta: {
+          title,
+          description,
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: title,
+          ogType: isGuide ? 'article' : 'website'
+        },
+        jsonLd: [itemList]
+      });
     }
 
     // Only handle peak routes.  If the URL does not match, return 404.
@@ -594,34 +1121,7 @@ export default {
     html = html.replace(/<script[^>]*>[\s\S]*?window\.location\.replace\([^)]*\)[\s\S]*?<\/script>/gi, '');
 
     // Remove existing placeholders and duplicate head tags.
-    html = html
-      .replace(/<title[^>]*>.*?<\/title>/i, '')
-      .replace(/<meta[^>]*name="description"[^>]*>/i, '')
-      .replace(/<meta[^>]*name="keywords"[^>]*>/i, '')
-      .replace(/<meta[^>]*name="robots"[^>]*>/i, '')
-      .replace(/<meta[^>]*name="twitter:[^"]*"[^>]*>/gi, '')
-      .replace(/<meta[^>]*property="twitter:[^"]*"[^>]*>/gi, '')
-      .replace(/<meta[^>]*property="og:title"[^>]*>/i, '')
-      .replace(/<meta[^>]*property="og:description"[^>]*>/i, '')
-      .replace(/<meta[^>]*property="og:image"[^>]*>/i, '')
-      .replace(/<meta[^>]*property="og:image:alt"[^>]*>/i, '')
-      .replace(/<meta[^>]*property="og:url"[^>]*>/i, '')
-      .replace(/<meta[^>]*property="og:site_name"[^>]*>/i, '')
-      .replace(/<meta[^>]*property="og:type"[^>]*>/i, '')
-      .replace(/<link[^>]*rel="canonical"[^>]*>/i, '')
-      .replace(/<link[^>]*rel="alternate"[^>]*hreflang="en"[^>]*>/gi, '')
-      .replace(/<link[^>]*rel="alternate"[^>]*hreflang="fr"[^>]*>/gi, '')
-      .replace(/<link[^>]*rel="alternate"[^>]*hreflang="x-default"[^>]*>/gi, '')
-      .replace(/<script[^>]*id="peakJsonLd"[^>]*>[\s\S]*?<\/script>/gi, '')
-      .replace(/<script[^>]*id="breadcrumbJsonLd"[^>]*>[\s\S]*?<\/script>/gi, '')
-      .replace(/<script[^>]*>[\s\S]*?\/pages\/nav\.html[\s\S]*?<\/script>/gi, '');
-
-    if (navHtml) {
-      html = html.replace(/<div id="nav-placeholder"><\/div>/i, navHtml);
-    }
-    if (footerHtml) {
-      html = html.replace(/<div id="footer-placeholder"><\/div>/i, footerHtml);
-    }
+    html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'peak');
 
     // Insert our meta tags, canonical links and structured data just
     // before the closing head tag.
@@ -631,7 +1131,7 @@ export default {
       `<meta name="keywords" content="NH48 API, ${esc(peakName)} peak details, New Hampshire 4000 footers, White Mountains routes, hiking data, peak metadata, mountain photos" />`,
       `<meta name="robots" content="index,follow,max-image-preview:large" />`,
       `<meta name="author" content="Nathan Sobol" />`,
-      `<meta property="og:site_name" content="nh48.info" />`,
+      `<meta property="og:site_name" content="${SITE_NAME}" />`,
       `<meta property="og:type" content="website" />`,
       `<meta property="og:title" content="${title}" />`,
       `<meta property="og:description" content="${description}" />`,
