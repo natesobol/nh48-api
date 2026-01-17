@@ -19,11 +19,30 @@ export default {
     const parts = url.pathname.split('/').filter(Boolean);
 
     // Determine if the route is French and extract the slug.  We
-    // support two patterns:
-    //   /peak/{slug}
-    //   /fr/peak/{slug}
+    // support multiple patterns:
+    //   /peak/{slug}, /fr/peak/{slug}
+    //   /guest/{slug}, /fr/guest/{slug} (legacy)
+    //   /peaks/{slug}, /fr/peaks/{slug} (alternative)
     const isFrench = parts[0] === 'fr';
-    const slugIdx = isFrench ? 2 : 1;
+    
+    // Find slug position - look for peak-related keywords
+    const peakKeywords = ['peak', 'peaks', 'guest'];
+    let slugIdx = -1;
+    let routeType = null;
+    
+    for (let i = 0; i < parts.length; i++) {
+      if (peakKeywords.includes(parts[i])) {
+        slugIdx = i + 1;
+        routeType = parts[i];
+        break;
+      }
+    }
+    
+    // Fallback to default position if no keyword found
+    if (slugIdx === -1) {
+      slugIdx = isFrench ? 2 : 1;
+    }
+    
     const slug = parts[slugIdx] || '';
     const lang = isFrench ? 'fr' : 'en';
     const pathname = url.pathname;
@@ -1229,11 +1248,17 @@ export default {
     }
 
     // Only handle peak routes.  If the URL does not match, passthrough to origin for static assets.
-    const ok = (!isFrench && parts[0] === 'peak') || (isFrench && parts[1] === 'peak');
-    if (!ok || !slug) {
+    // Support: /peak/, /peaks/, /guest/, and their French variants
+    const peakRoutes = ['peak', 'peaks', 'guest'];
+    const routeKeyword = isFrench ? parts[1] : parts[0];
+    const isPeakRoute = peakRoutes.includes(routeKeyword);
+    
+    if (!isPeakRoute || !slug) {
       // Passthrough to origin for static assets (CSS, JS, images, data files, etc.)
       return fetch(request);
     }
+    
+    console.log(`[Worker] Processing peak route: ${pathname}, slug: ${slug}, lang: ${lang}, type: ${routeKeyword}`);
 
     // Find the peak by slug in the loaded dataset
     function findPeak(peaks, slugValue) {

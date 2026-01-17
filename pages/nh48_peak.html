@@ -52,7 +52,27 @@
       function getRouteInfo(pathname){
         const parts = pathname.split('/').filter(Boolean);
         const isFrench = parts[0] === 'fr';
-        const slug = parts[isFrench ? 2 : 1] || '';
+        
+        // Support multiple URL patterns:
+        // /peak/{slug}, /fr/peak/{slug}, /guest/{slug}, /peaks/{slug}
+        let slugIndex = -1;
+        const peakKeywords = ['peak', 'peaks', 'guest'];
+        
+        // Find the index after 'peak', 'peaks', or 'guest' keyword
+        for (let i = 0; i < parts.length; i++) {
+          if (peakKeywords.includes(parts[i])) {
+            slugIndex = i + 1;
+            break;
+          }
+        }
+        
+        // If no keyword found, assume structure: [lang]/slug or just slug
+        if (slugIndex === -1) {
+          slugIndex = isFrench ? 1 : 0;
+        }
+        
+        const slug = parts[slugIndex] || '';
+        console.log('[Route Detection]', { pathname, parts, isFrench, slugIndex, slug });
         return { slug, isFrench };
       }
 

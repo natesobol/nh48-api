@@ -1,4 +1,14 @@
 # Peak routes handled by Cloudflare Worker
 # These redirects serve as fallback if worker is disabled
+
+# Legacy /guest/ URLs - redirect to /peak/
+/guest/* /peak/:splat 301
+/fr/guest/* /fr/peak/:splat 301
+
+# Main peak routes
 /peak/* /pages/nh48_peak.html 200
 /fr/peak/* /pages/nh48_peak.html 200
+
+# Alternative /peaks/ URL (plural)
+/peaks/* /peak/:splat 301
+/fr/peaks/* /fr/peak/:splat 301
