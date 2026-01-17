@@ -128,11 +128,17 @@ export default {
 
     async function loadPartial(name, url) {
       try {
-        const res = await fetch(url, NO_CACHE_FETCH);
+        console.log(`[loadPartial] Fetching ${name}: ${url}`);
+        const res = await fetch(url, { headers: { 'User-Agent': 'NH48-SSR' } });
+        console.log(`[loadPartial] ${name} response: ${res.status}`);
         if (res.ok) {
-          return await res.text();
+          const text = await res.text();
+          console.log(`[loadPartial] ${name} loaded: ${text.length} bytes`);
+          return text;
         }
-      } catch (_) {}
+      } catch (err) {
+        console.error(`[loadPartial] Error loading ${name}:`, err.message || err);
+      }
       return '';
     }
 
@@ -152,14 +158,24 @@ export default {
     async function loadTextCache(key, url) {
       env.__textCache = env.__textCache || {};
       if (env.__textCache[key]) return env.__textCache[key];
-      const res = await fetch(url, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
-      if (!res.ok) {
+      try {
+        console.log(`[loadTextCache] Fetching: ${url}`);
+        const res = await fetch(url, { headers: { 'User-Agent': 'NH48-SSR' } });
+        console.log(`[loadTextCache] Response status: ${res.status} for ${url}`);
+        if (!res.ok) {
+          console.error(`[loadTextCache] Failed to fetch ${url}: ${res.status} ${res.statusText}`);
+          env.__textCache[key] = '';
+          return '';
+        }
+        const text = await res.text();
+        console.log(`[loadTextCache] Fetched ${text.length} bytes from ${url}`);
+        env.__textCache[key] = text;
+        return text;
+      } catch (err) {
+        console.error(`[loadTextCache] Error fetching ${url}:`, err.message || err);
         env.__textCache[key] = '';
         return '';
       }
-      const text = await res.text();
-      env.__textCache[key] = text;
-      return text;
     }
 
     // Escape HTML characters
@@ -703,10 +719,16 @@ export default {
 
     async function serveTemplatePage({ templatePath, pathname, routeId, meta, jsonLd }) {
       const templateUrl = `${RAW_BASE}/${templatePath}`;
+      console.log(`[serveTemplatePage] Serving ${routeId} from ${templateUrl}`);
       const rawHtml = await loadTextCache(`tpl:${templatePath}`, templateUrl);
       if (!rawHtml) {
-        return new Response('Template unavailable', { status: 500 });
+        console.error(`[serveTemplatePage] Template empty or unavailable: ${templateUrl}`);
+        return new Response(`<!DOCTYPE html><html><head><title>Error</title></head><body><h1>Template Unavailable</h1><p>Could not load: ${templatePath}</p><p>URL: ${templateUrl}</p></body></html>`, { 
+          status: 500,
+          headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        });
       }
+      console.log(`[serveTemplatePage] Template loaded: ${rawHtml.length} bytes`);
       const [navHtml, footerHtml] = await Promise.all([
         loadPartial('nav', RAW_NAV_URL),
         loadPartial('footer', RAW_FOOTER_URL)
