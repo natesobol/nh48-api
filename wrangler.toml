@@ -2,18 +2,12 @@ name = "nh48-ssr"
 main = "worker.js"
 compatibility_date = "2026-01-05"
 
-# Route patterns for the domain - do NOT let Wrangler manage root DNS records
-# Use routes for both root and paths. Wrangler will not
-# attempt to create DNS records when only `zone_name` is present.
-[[routes]]
-pattern = "nh48.info/"
-zone_name = "nh48.info"
-
+# Single catch-all route for the domain
 [[routes]]
 pattern = "nh48.info/*"
 zone_name = "nh48.info"
 
-# R2 bucket binding for data storage
+# R2 bucket binding for cached data (optional fallback)
 [[r2_buckets]]
 binding = "NH48_DATA"
 bucket_name = "nh48-data"
