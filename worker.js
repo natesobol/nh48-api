@@ -230,17 +230,45 @@ export default {
     }
 
     function stripHeadMeta(html) {
-      return html
-        .replace(/<title[^>]*>.*?<\/title>/i, '')
-        .replace(/<meta[^>]*name="description"[^>]*>/i, '')
-        .replace(/<meta[^>]*name="keywords"[^>]*>/i, '')
-        .replace(/<meta[^>]*name="robots"[^>]*>/i, '')
-        .replace(/<meta[^>]*property="og:[^"]*"[^>]*>/gi, '')
-        .replace(/<meta[^>]*name="twitter:[^"]*"[^>]*>/gi, '')
-        .replace(/<meta[^>]*property="twitter:[^"]*"[^>]*>/gi, '')
-        .replace(/<link[^>]*rel="canonical"[^>]*>/i, '')
-        .replace(/<link[^>]*rel="alternate"[^>]*>/gi, '')
-        .replace(/<script[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/gi, '');
+      // Only strip specific meta tags - be very precise to avoid regex issues
+      // with large files containing big style blocks
+      let result = html;
+      
+      // Remove title tag (single line)
+      result = result.replace(/<title[^>]*>[^<]*<\/title>/gi, '');
+      
+      // Remove specific meta tags (single line each)
+      result = result.replace(/<meta[^>]*name\s*=\s*["']description["'][^>]*>/gi, '');
+      result = result.replace(/<meta[^>]*name\s*=\s*["']keywords["'][^>]*>/gi, '');
+      result = result.replace(/<meta[^>]*name\s*=\s*["']robots["'][^>]*>/gi, '');
+      result = result.replace(/<meta[^>]*property\s*=\s*["']og:[^"']*["'][^>]*>/gi, '');
+      result = result.replace(/<meta[^>]*name\s*=\s*["']twitter:[^"']*["'][^>]*>/gi, '');
+      result = result.replace(/<meta[^>]*property\s*=\s*["']twitter:[^"']*["'][^>]*>/gi, '');
+      
+      // Remove canonical and alternate links (single line each)
+      result = result.replace(/<link[^>]*rel\s*=\s*["']canonical["'][^>]*>/gi, '');
+      result = result.replace(/<link[^>]*rel\s*=\s*["']alternate["'][^>]*>/gi, '');
+      
+      // Remove JSON-LD scripts - be more careful with large content
+      // Split by </script> and reassemble, skipping ld+json blocks
+      const parts = result.split(/<\/script>/gi);
+      const filtered = [];
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        if (/<script[^>]*type\s*=\s*["']application\/ld\+json["']/i.test(part)) {
+          // Remove the script tag opener and content, keep anything before it
+          const idx = part.search(/<script[^>]*type\s*=\s*["']application\/ld\+json["']/i);
+          if (idx > 0) {
+            filtered.push(part.substring(0, idx));
+          }
+        } else {
+          filtered.push(part);
+          if (i < parts.length - 1) {
+            filtered.push('</script>');
+          }
+        }
+      }
+      return filtered.join('');
     }
 
     function buildMetaBlock(meta) {
