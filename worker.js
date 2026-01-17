@@ -31,6 +31,8 @@ export default {
     const SITE = 'https://nh48.info';
     const RAW_TEMPLATE_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/pages/nh48_peak.html';
     const RAW_CATALOG_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/pages/nh48_catalog.html';
+    const RAW_NAV_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/pages/nav.html';
+    const RAW_FOOTER_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/pages/footer.html';
     const EN_TRANS_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/i18n/en.json';
     const FR_TRANS_URL = 'https://raw.githubusercontent.com/natesobol/nh48-api/main/i18n/fr.json';
     const DEFAULT_IMAGE = `${SITE}/nh48-preview.png`;
@@ -47,6 +49,7 @@ export default {
     env.__i18n = env.__i18n || {};
     env.__descMap = env.__descMap || null;
     env.__peaks = env.__peaks || null;
+    env.__partials = env.__partials || {};
 
     // Fetch translation dictionary if needed
     async function loadTranslation(code) {
@@ -106,6 +109,18 @@ export default {
       }
       env.__peaks = peaks;
       return peaks;
+    }
+
+    async function loadPartial(name, url) {
+      if (env.__partials[name]) return env.__partials[name];
+      try {
+        const res = await fetch(url, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
+        if (res.ok) {
+          env.__partials[name] = await res.text();
+        }
+      } catch (_) {}
+      env.__partials[name] = env.__partials[name] || '';
+      return env.__partials[name];
     }
 
     // Escape HTML characters
@@ -433,19 +448,35 @@ export default {
         return new Response('Template unavailable', { status: 500 });
       }
       let html = await tplResp.text();
+      const [navHtml, footerHtml] = await Promise.all([
+        loadPartial('nav', RAW_NAV_URL),
+        loadPartial('footer', RAW_FOOTER_URL)
+      ]);
       html = html
         .replace(/<title[^>]*>.*?<\/title>/i, '')
         .replace(/<meta[^>]*name="description"[^>]*>/i, '')
+        .replace(/<meta[^>]*name="keywords"[^>]*>/i, '')
+        .replace(/<meta[^>]*name="robots"[^>]*>/i, '')
         .replace(/<meta[^>]*property="og:[^"]*"[^>]*>/gi, '')
         .replace(/<meta[^>]*name="twitter:[^"]*"[^>]*>/gi, '')
         .replace(/<meta[^>]*property="twitter:[^"]*"[^>]*>/gi, '')
         .replace(/<link[^>]*rel="canonical"[^>]*>/i, '')
         .replace(/<link[^>]*rel="alternate"[^>]*>/gi, '')
-        .replace(/<script[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/gi, '');
+        .replace(/<script[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/gi, '')
+        .replace(/<script[^>]*>[\s\S]*?\/pages\/nav\.html[\s\S]*?<\/script>/gi, '');
+
+      if (navHtml) {
+        html = html.replace(/<div id="nav-placeholder"><\/div>/i, navHtml);
+      }
+      if (footerHtml) {
+        html = html.replace(/<div id="footer-placeholder"><\/div>/i, footerHtml);
+      }
 
       const metaBlock = [
         `<title>${esc(title)}</title>`,
         `<meta name="description" content="${esc(description)}" />`,
+        `<meta name="keywords" content="NH48 API, NH48 catalog, New Hampshire 4000 footers, peak metadata, hiking data, mountain photos" />`,
+        `<meta name="robots" content="index,follow,max-image-preview:large" />`,
         `<meta name="author" content="Nathan Sobol" />`,
         `<meta property="og:site_name" content="nh48.info" />`,
         `<meta property="og:type" content="website" />`,
@@ -455,6 +486,7 @@ export default {
         `<meta property="og:image:alt" content="${esc(altText)}" />`,
         `<meta property="og:url" content="${canonicalUrl}" />`,
         `<meta name="twitter:card" content="summary_large_image" />`,
+        `<meta name="twitter:url" content="${canonicalUrl}" />`,
         `<meta name="twitter:title" content="${esc(title)}" />`,
         `<meta name="twitter:description" content="${esc(description)}" />`,
         `<meta name="twitter:image" content="${DEFAULT_IMAGE}" />`,
@@ -558,6 +590,10 @@ export default {
       return new Response('Template unavailable', { status: 500 });
     }
     let html = await tplResp.text();
+    const [navHtml, footerHtml] = await Promise.all([
+      loadPartial('nav', RAW_NAV_URL),
+      loadPartial('footer', RAW_FOOTER_URL)
+    ]);
 
     // Remove the client-side redirect logic.  The redirect in the
     // original template checks for missing slug and redirects to
@@ -571,31 +607,52 @@ export default {
     html = html
       .replace(/<title[^>]*>.*?<\/title>/i, '')
       .replace(/<meta[^>]*name="description"[^>]*>/i, '')
+      .replace(/<meta[^>]*name="keywords"[^>]*>/i, '')
+      .replace(/<meta[^>]*name="robots"[^>]*>/i, '')
+      .replace(/<meta[^>]*name="twitter:[^"]*"[^>]*>/gi, '')
+      .replace(/<meta[^>]*property="twitter:[^"]*"[^>]*>/gi, '')
       .replace(/<meta[^>]*property="og:title"[^>]*>/i, '')
       .replace(/<meta[^>]*property="og:description"[^>]*>/i, '')
       .replace(/<meta[^>]*property="og:image"[^>]*>/i, '')
       .replace(/<meta[^>]*property="og:image:alt"[^>]*>/i, '')
       .replace(/<meta[^>]*property="og:url"[^>]*>/i, '')
       .replace(/<meta[^>]*property="og:site_name"[^>]*>/i, '')
+      .replace(/<meta[^>]*property="og:type"[^>]*>/i, '')
       .replace(/<link[^>]*rel="canonical"[^>]*>/i, '')
       .replace(/<link[^>]*rel="alternate"[^>]*hreflang="en"[^>]*>/gi, '')
       .replace(/<link[^>]*rel="alternate"[^>]*hreflang="fr"[^>]*>/gi, '')
       .replace(/<link[^>]*rel="alternate"[^>]*hreflang="x-default"[^>]*>/gi, '')
       .replace(/<script[^>]*id="peakJsonLd"[^>]*>[\s\S]*?<\/script>/gi, '')
-      .replace(/<script[^>]*id="breadcrumbJsonLd"[^>]*>[\s\S]*?<\/script>/gi, '');
+      .replace(/<script[^>]*id="breadcrumbJsonLd"[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<script[^>]*>[\s\S]*?\/pages\/nav\.html[\s\S]*?<\/script>/gi, '');
+
+    if (navHtml) {
+      html = html.replace(/<div id="nav-placeholder"><\/div>/i, navHtml);
+    }
+    if (footerHtml) {
+      html = html.replace(/<div id="footer-placeholder"><\/div>/i, footerHtml);
+    }
 
     // Insert our meta tags, canonical links and structured data just
     // before the closing head tag.
     const metaBlock = [
       `<title>${title}</title>`,
       `<meta name="description" content="${description}" />`,
+      `<meta name="keywords" content="NH48 API, ${esc(peakName)} peak details, New Hampshire 4000 footers, White Mountains routes, hiking data, peak metadata, mountain photos" />`,
+      `<meta name="robots" content="index,follow,max-image-preview:large" />`,
       `<meta name="author" content="Nathan Sobol" />`,
       `<meta property="og:site_name" content="nh48.info" />`,
+      `<meta property="og:type" content="website" />`,
       `<meta property="og:title" content="${title}" />`,
       `<meta property="og:description" content="${description}" />`,
       `<meta property="og:image" content="${heroUrl}" />`,
       `<meta property="og:image:alt" content="${esc(primaryCaption)}" />`,
       `<meta property="og:url" content="${canonical}" />`,
+      `<meta name="twitter:card" content="summary_large_image" />`,
+      `<meta name="twitter:url" content="${canonical}" />`,
+      `<meta name="twitter:title" content="${title}" />`,
+      `<meta name="twitter:description" content="${description}" />`,
+      `<meta name="twitter:image" content="${heroUrl}" />`,
       `<link rel="canonical" href="${canonical}" />`,
       `<link rel="alternate" hreflang="en" href="${canonicalEn}" />`,
       `<link rel="alternate" hreflang="fr" href="${canonicalFr}" />`,
