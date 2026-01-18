@@ -1,5 +1,5 @@
 // Cloudflare Worker for NH48 Peak Guide – Full Template Version
-// Version: 1.1.0 - Auto-deployed via GitHub Actions
+// Version: 1.2.0 - Auto-deployed via GitHub Actions
 //
 // This Worker serves the full interactive peak detail page stored in the
 // GitHub repository (pages/nh48_peak.html) at clean URLs like
@@ -17,7 +17,102 @@
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    const pathname = url.pathname;
     const parts = url.pathname.split('/').filter(Boolean);
+
+    // Constants - defined early for static file serving
+    const SITE = url.origin;
+    const RAW_BASE = 'https://raw.githubusercontent.com/natesobol/nh48-api/main';
+
+    // ============================================================
+    // STATIC FILE SERVING - Proxy static assets from GitHub
+    // Since there's no origin server (GitHub Pages disabled), 
+    // we serve static files directly from GitHub raw URLs
+    // ============================================================
+    const staticExtensions = ['.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.woff', '.woff2', '.ttf', '.eot', '.geojson', '.txt', '.xml', '.webmanifest'];
+    const staticPrefixes = ['/css/', '/js/', '/data/', '/favicons/', '/photos/', '/i18n/', '/UI-Elements/', '/scripts/', '/license/', '/old/', '/templates/'];
+    const staticFiles = ['/manifest.json', '/nh48API_logo.png', '/robots.txt', '/sitemap.xml', '/nh48-preview.png', '/BingSiteAuth.xml', '/image-sitemap.xml', '/page-sitemap.xml'];
+    
+    // Check if this is a static file request (but not an SSR route)
+    const hasStaticExtension = staticExtensions.some(ext => pathname.toLowerCase().endsWith(ext));
+    const hasStaticPrefix = staticPrefixes.some(prefix => pathname.startsWith(prefix));
+    const isStaticFile = staticFiles.includes(pathname);
+    const isSSRRoute = pathname === '/' || pathname === '/fr' || pathname === '/fr/' || 
+                       pathname.startsWith('/peak/') || pathname.startsWith('/fr/peak/') ||
+                       pathname.startsWith('/peaks/') || pathname.startsWith('/fr/peaks/') ||
+                       pathname.startsWith('/guest/') || pathname.startsWith('/fr/guest/') ||
+                       pathname === '/catalog' || pathname === '/catalog/' ||
+                       pathname === '/fr/catalog' || pathname === '/fr/catalog/' ||
+                       pathname === '/trails' || pathname === '/trails/' ||
+                       pathname === '/fr/trails' || pathname === '/fr/trails/' ||
+                       pathname === '/long-trails' || pathname === '/long-trails/' ||
+                       pathname === '/fr/long-trails' || pathname === '/fr/long-trails/' ||
+                       pathname === '/dataset' || pathname === '/dataset/' ||
+                       pathname.startsWith('/dataset/') || pathname.startsWith('/fr/dataset/') ||
+                       pathname === '/plant-catalog' || pathname === '/plant-catalog/' ||
+                       pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
+                       pathname === '/nh-4000-footers-guide.html' || pathname === '/nh-4000-footers-info.html' ||
+                       pathname === '/trails_app.html' || pathname === '/long_trails_app.html' ||
+                       pathname === '/plant_catalog.html' || pathname === '/plant_catalog' ||
+                       pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant)/) !== null;
+    
+    // Serve static files from GitHub (but not SSR routes even if they have extensions)
+    if ((hasStaticPrefix || isStaticFile || hasStaticExtension) && !isSSRRoute) {
+      const githubUrl = `${RAW_BASE}${pathname}`;
+      try {
+        const res = await fetch(githubUrl, {
+          headers: { 'User-Agent': 'NH48-SSR/1.0' },
+          cf: { cacheTtl: 3600, cacheEverything: true }
+        });
+        
+        if (!res.ok) {
+          console.log(`[Static] Not found: ${githubUrl} (${res.status})`);
+          return new Response('Not Found', { status: 404 });
+        }
+        
+        // Determine content type based on file extension
+        const ext = pathname.split('.').pop().toLowerCase();
+        const contentTypes = {
+          'css': 'text/css; charset=utf-8',
+          'js': 'application/javascript; charset=utf-8',
+          'json': 'application/json; charset=utf-8',
+          'geojson': 'application/geo+json; charset=utf-8',
+          'png': 'image/png',
+          'jpg': 'image/jpeg',
+          'jpeg': 'image/jpeg',
+          'gif': 'image/gif',
+          'svg': 'image/svg+xml',
+          'ico': 'image/x-icon',
+          'webp': 'image/webp',
+          'woff': 'font/woff',
+          'woff2': 'font/woff2',
+          'ttf': 'font/ttf',
+          'txt': 'text/plain; charset=utf-8',
+          'xml': 'application/xml; charset=utf-8',
+          'webmanifest': 'application/manifest+json',
+          'html': 'text/html; charset=utf-8'
+        };
+        
+        const contentType = contentTypes[ext] || 'application/octet-stream';
+        const body = await res.arrayBuffer();
+        
+        return new Response(body, {
+          status: 200,
+          headers: {
+            'Content-Type': contentType,
+            'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      } catch (err) {
+        console.error(`[Static] Error: ${err.message}`);
+        return new Response('Internal Server Error', { status: 500 });
+      }
+    }
+
+    // ============================================================
+    // SSR ROUTE HANDLING - Dynamic pages with SEO metadata
+    // ============================================================
 
     // Determine if the route is French and extract the slug.  We
     // support multiple patterns:
@@ -46,12 +141,9 @@ export default {
     
     const slug = parts[slugIdx] || '';
     const lang = isFrench ? 'fr' : 'en';
-    const pathname = url.pathname;
     const pathNoLocale = isFrench ? `/${parts.slice(1).join('/')}` || '/' : pathname;
 
-    // Constants
-    const SITE = url.origin;
-    const RAW_BASE = 'https://raw.githubusercontent.com/natesobol/nh48-api/main';
+    // Template URL constants
     const RAW_TEMPLATE_URL = `${RAW_BASE}/pages/nh48_peak.html`;
     const RAW_CATALOG_URL = `${RAW_BASE}/pages/nh48_catalog.html`;
     const RAW_NAV_URL = `${RAW_BASE}/pages/nav.html`;
@@ -72,6 +164,18 @@ export default {
       cf: { cacheTtl: 0, cacheEverything: true },
       headers: { 'User-Agent': 'NH48-SSR' }
     };
+
+    // ============================================================
+    // HELPER FUNCTIONS
+    // ============================================================
+
+    // Rewrite relative paths to absolute paths in HTML templates
+    // Fixes ../css/ -> /css/, ../js/ -> /js/, etc.
+    function fixRelativePaths(html) {
+      return html
+        .replace(/href="\.\.\//g, 'href="/')
+        .replace(/src="\.\.\//g, 'src="/');
+    }
 
     // Fetch translation dictionary if needed
     async function loadTranslation(code) {
@@ -109,7 +213,7 @@ export default {
       return map;
     }
 
-    // Load nh48.json from R2 or origin and cache it
+    // Load nh48.json from R2 or GitHub raw
     async function loadPeaks() {
       let peaks;
       try {
@@ -121,7 +225,8 @@ export default {
         }
       } catch (_) {}
       if (!peaks) {
-        const res = await fetch(`${SITE}/data/nh48.json`, NO_CACHE_FETCH);
+        // Fallback to GitHub raw URL (not SITE, since there's no origin)
+        const res = await fetch(`${RAW_BASE}/data/nh48.json`, NO_CACHE_FETCH);
         peaks = await res.json();
       }
       return peaks;
@@ -692,6 +797,8 @@ export default {
         return new Response('Template unavailable', { status: 500 });
       }
       let html = await tplResp.text();
+      // Fix relative paths in template (../css/ -> /css/, etc.)
+      html = fixRelativePaths(html);
       const [navHtml, footerHtml] = await Promise.all([
         loadPartial('nav', RAW_NAV_URL),
         loadPartial('footer', RAW_FOOTER_URL)
@@ -747,7 +854,9 @@ export default {
         loadPartial('nav', RAW_NAV_URL),
         loadPartial('footer', RAW_FOOTER_URL)
       ]);
-      let html = stripHeadMeta(rawHtml);
+      // Fix relative paths in template (../css/ -> /css/, etc.)
+      let html = fixRelativePaths(rawHtml);
+      html = stripHeadMeta(html);
       html = injectNavFooter(html, navHtml, footerHtml, pathname, routeId);
       const metaBlock = buildMetaBlock({
         ...meta,
@@ -1034,7 +1143,7 @@ export default {
             ? 'Géométries et métadonnées des sentiers de la White Mountain National Forest.'
             : 'Trail geometries and metadata for the White Mountain National Forest.',
           templatePath: 'dataset/wmnf-trails/index.html',
-          dataUrl: `${SITE}/data/wmnf-trails/wmnf-main.json`
+          dataUrl: `${RAW_BASE}/data/wmnf-trails/wmnf-main.json`
         },
         'long-trails': {
           title: isFrench ? 'Données des longs sentiers' : 'Long-Distance Trails Dataset',
@@ -1042,7 +1151,7 @@ export default {
             ? 'Index des grands sentiers longue distance avec géométries et statistiques.'
             : 'Index of major long-distance trails with geometries and route stats.',
           templatePath: 'dataset/long-trails/index.html',
-          dataUrl: `${SITE}/data/long-trails-index.json`
+          dataUrl: `${RAW_BASE}/data/long-trails-index.json`
         },
         'howker-plants': {
           title: isFrench ? 'Données des plantes alpines' : 'Howker Alpine Plants Dataset',
@@ -1050,7 +1159,7 @@ export default {
             ? 'Catalogue des plantes alpines avec photos, descriptions et habitats.'
             : 'Alpine plant catalog with photos, descriptions, and habitats.',
           templatePath: 'dataset/howker-plants/index.html',
-          dataUrl: `${SITE}/data/howker-plants`
+          dataUrl: `${RAW_BASE}/data/howker-plants`
         }
       };
       const config = datasetConfigs[datasetKey];
@@ -1215,7 +1324,7 @@ export default {
     }
 
     if (pathNoLocale.startsWith('/plant/') && slug) {
-      const plantData = await loadJsonCache('howker-plants', `${SITE}/data/howker-plants`);
+      const plantData = await loadJsonCache('howker-plants', `${RAW_BASE}/data/howker-plants`);
       const plant = Array.isArray(plantData) ? plantData.find((item) => item.id === slug) : null;
       if (!plant) {
         return new Response('<!doctype html><title>404 Not Found</title><h1>Plant not found</h1>', { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
@@ -1293,17 +1402,20 @@ export default {
       });
     }
 
-    // Only handle peak routes.  If the URL does not match, passthrough to origin for static assets.
+    // Only handle peak routes.  If the URL does not match, return 404
+    // (static files are already handled by the static file serving block above)
     // Support: /peak/, /peaks/, /guest/, and their French variants
     const peakRoutes = ['peak', 'peaks', 'guest'];
     const routeKeyword = isFrench ? parts[1] : parts[0];
     const isPeakRoute = peakRoutes.includes(routeKeyword);
     
     if (!isPeakRoute || !slug) {
-      // Debug: Log passthrough requests
-      console.log(`[Worker] Passthrough request: ${pathname} (not a peak route or no slug)`);
-      // Passthrough to origin for static assets (CSS, JS, images, data files, etc.)
-      return fetch(request);
+      // No matching route found - return 404
+      console.log(`[Worker] 404: ${pathname} (not a recognized route)`);
+      return new Response('<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>Page Not Found</h1><p>The requested page could not be found.</p><p><a href="/">Return to homepage</a></p></body></html>', {
+        status: 404,
+        headers: { 'Content-Type': 'text/html; charset=utf-8' }
+      });
     }
     
     console.log(`[Worker] Processing peak route: ${pathname}, slug: ${slug}, lang: ${lang}, type: ${routeKeyword}`);
@@ -1379,6 +1491,8 @@ export default {
       return new Response('Template unavailable', { status: 500 });
     }
     let html = await tplResp.text();
+    // Fix relative paths in template (../css/ -> /css/, etc.)
+    html = fixRelativePaths(html);
     const [navHtml, footerHtml] = await Promise.all([
       loadPartial('nav', RAW_NAV_URL),
       loadPartial('footer', RAW_FOOTER_URL)
