@@ -117,12 +117,12 @@
     {
       "@type": "PropertyValue",
       "name": "Range / Subrange",
-      "value": "Presidential Range  - Southern."
+      "value": "Presidential Range - Southern."
     },
     {
       "@type": "PropertyValue",
       "name": "Trail Type",
-      "value": "Out & back  - common. or small loop including Mt Webster"
+      "value": "Out & back - common. or small loop including Mt Webster"
     }
   ],
   "isPartOf": {
@@ -471,7 +471,7 @@
       "name": "What are the main hiking routes to Mount Jackson?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The main routes to Mount Jackson include: Webster-Jackson Trail  - Jackson Branch., Webster-Jackson Loop  - ascending Jackson, optional Webster then down.."
+        "text": "The main routes to Mount Jackson include: Webster-Jackson Trail - Jackson Branch., Webster-Jackson Loop - ascending Jackson, optional Webster then down.."
       }
     },
     {
@@ -487,7 +487,7 @@
       "name": "How long does it take to hike Mount Jackson?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Typically, hiking Mount Jackson takes 3–5 hours  - round-trip.."
+        "text": "Typically, hiking Mount Jackson takes 3–5 hours - round-trip.."
       }
     }
   ]
@@ -1151,9 +1151,9 @@
     <div class="site-nav-dropdown">
       <button type="button" data-route="dataset-home" data-routes="home,dataset-home">NH48</button>
       <div class="site-nav-submenu" aria-label="NH48 dataset short links">
-        <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48 Dataset</a>
-        <a href="/nh-4000-footers-info.html" data-route="info" data-routes="info,guide">NH48 Info</a>
+        <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Info</a>
         <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Interactive Catalog</a>
+        <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48 Dataset</a>
         <a href="/page-sitemap.xml">Browse page sitemap</a>
       </div>
     </div>
@@ -1226,7 +1226,7 @@
           <div class="hero-meta">
             <span>Elevation: 4,052&#39;</span>
             <span>Prominence: 358 ft</span>
-            <span>Range: Presidential Range  - Southern.</span>
+            <span>Range: Presidential Range - Southern.</span>
           </div>
           <a class="cta" href="https://nh48.info/peak/mount-jackson">View interactive page</a>
           <a class="back-link" href="https://nh48.info/nh-4000-footers-info">← Back to NH48 Info</a>
@@ -1251,7 +1251,7 @@
             </div>
             <div>
               <dt>Range</dt>
-              <dd>Presidential Range  - Southern.</dd>
+              <dd>Presidential Range - Southern.</dd>
             </div>
             <div>
               <dt>Difficulty</dt>
@@ -1259,11 +1259,11 @@
             </div>
             <div>
               <dt>Trail Type</dt>
-              <dd>Out &amp; back  - common. or small loop including Mt Webster</dd>
+              <dd>Out &amp; back - common. or small loop including Mt Webster</dd>
             </div>
             <div>
               <dt>Typical Time</dt>
-              <dd>3–5 hours  - round-trip.</dd>
+              <dd>3–5 hours - round-trip.</dd>
             </div>
             <div>
               <dt>Location</dt>
@@ -1277,8 +1277,8 @@
         <h2 class="section-title" id="routesHeading">Standard Routes</h2>
         <div class="info-card">
           <ul class="routes-list">
-            <li><strong>Webster-Jackson Trail  - Jackson Branch.</strong> — 5.2 mi • 2,150 ft gain • Out &amp; back • Moderate</li>
-<li><strong>Webster-Jackson Loop  - ascending Jackson, optional Webster then down.</strong> — 6.5 mi • 2,500 ft gain • Loop • Moderate</li>
+            <li><strong>Webster-Jackson Trail - Jackson Branch.</strong> — 5.2 mi • 2,150 ft gain • Out &amp; back • Moderate</li>
+<li><strong>Webster-Jackson Loop - ascending Jackson, optional Webster then down.</strong> — 6.5 mi • 2,500 ft gain • Loop • Moderate</li>
           </ul>
         </div>
       </section>
@@ -1573,6 +1573,117 @@
   .nh48-quick-footer__legal a:focus-visible {
     text-decoration: underline;
     outline: none;
+  }
+
+  /* Desktop: Show all cards in one horizontal row */
+  @media (min-width: 1025px) {
+    .nh48-quick-footer .nh48-quick-footer__grid {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      justify-items: stretch;
+      gap: clamp(8px, 1.5vw, 16px);
+      width: 100%;
+      max-width: none;
+      margin: 6px 0 0;
+      padding: 12px clamp(16px, 3vw, 32px);
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-height: none;
+      min-height: 0;
+      flex: 1 1 auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--nh48-footer-accent) color-mix(in srgb, var(--nh48-footer-card) 80%, #000 20%);
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+      scroll-padding: 0 20px;
+    }
+
+    .nh48-quick-footer .nh48-quick-footer__group {
+      flex: 1;
+      min-width: clamp(120px, 12vw, 180px);
+      max-width: clamp(160px, 16vw, 220px);
+      border: 1px solid var(--nh48-footer-border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: var(--nh48-footer-card);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 18px rgba(0, 0, 0, 0.28);
+      text-align: left;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+
+    .nh48-quick-footer__group h2 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      letter-spacing: 0.1px;
+      color: var(--nh48-footer-ink);
+      line-height: 1.2;
+    }
+
+    .nh48-quick-footer__list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .nh48-quick-footer__list li {
+      width: 100%;
+    }
+
+    .nh48-quick-footer__link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 8px 10px;
+      min-height: 34px;
+      text-align: left;
+      border-radius: 8px;
+      border: 1px solid color-mix(in srgb, var(--nh48-footer-accent) 85%, var(--nh48-footer-ink) 15%);
+      color: #ffffff;
+      text-decoration: none;
+      background: color-mix(in srgb, var(--nh48-footer-card) 50%, var(--nh48-footer-accent) 50%);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      line-height: 1.2;
+      white-space: normal;
+      width: 100%;
+      font-size: 0.85rem;
+      align-self: stretch;
+      box-sizing: border-box;
+    }
+
+    .nh48-quick-footer__link:hover,
+    .nh48-quick-footer__link:focus-visible {
+      border-color: var(--nh48-footer-accent);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--nh48-footer-accent) 28%, transparent);
+      background: color-mix(in srgb, var(--nh48-footer-card) 40%, var(--nh48-footer-accent) 60%);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .nh48-quick-footer__grid::-webkit-scrollbar {
+      height: 8px;
+      width: auto;
+    }
+
+    .nh48-quick-footer__grid::-webkit-scrollbar-track {
+      background: color-mix(in srgb, var(--nh48-footer-card) 80%, #000 20%);
+      border-radius: 4px;
+    }
+
+    .nh48-quick-footer__grid::-webkit-scrollbar-thumb {
+      background: var(--nh48-footer-accent);
+      border-radius: 4px;
+      border: 1px solid rgba(26, 26, 46, 0.9);
+    }
   }
 
   @media (max-width: 1024px) {
