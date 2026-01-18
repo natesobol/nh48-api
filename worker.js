@@ -234,11 +234,11 @@ export default {
     }
 
     function stripHeadMeta(html) {
-      // Only strip specific meta tags - be very precise to avoid regex issues
-      // with large files containing big style blocks
+      // Only strip specific meta tags that we'll replace with SSR versions
+      // Keep everything else intact to avoid breaking the page structure
       let result = html;
       
-      // Remove title tag (single line)
+      // Remove title tag
       result = result.replace(/<title[^>]*>[^<]*<\/title>/gi, '');
       
       // Remove specific meta tags (single line each)
@@ -249,30 +249,14 @@ export default {
       result = result.replace(/<meta[^>]*name\s*=\s*["']twitter:[^"']*["'][^>]*>/gi, '');
       result = result.replace(/<meta[^>]*property\s*=\s*["']twitter:[^"']*["'][^>]*>/gi, '');
       
-      // Remove canonical and alternate links (single line each)
+      // Remove canonical and alternate links
       result = result.replace(/<link[^>]*rel\s*=\s*["']canonical["'][^>]*>/gi, '');
       result = result.replace(/<link[^>]*rel\s*=\s*["']alternate["'][^>]*>/gi, '');
       
-      // Remove JSON-LD scripts - be more careful with large content
-      // Split by </script> and reassemble, skipping ld+json blocks
-      const parts = result.split(/<\/script>/gi);
-      const filtered = [];
-      for (let i = 0; i < parts.length; i++) {
-        const part = parts[i];
-        if (/<script[^>]*type\s*=\s*["']application\/ld\+json["']/i.test(part)) {
-          // Remove the script tag opener and content, keep anything before it
-          const idx = part.search(/<script[^>]*type\s*=\s*["']application\/ld\+json["']/i);
-          if (idx > 0) {
-            filtered.push(part.substring(0, idx));
-          }
-        } else {
-          filtered.push(part);
-          if (i < parts.length - 1) {
-            filtered.push('</script>');
-          }
-        }
-      }
-      return filtered.join('');
+      // Note: We intentionally do NOT remove JSON-LD scripts here
+      // Duplicate JSON-LD is harmless and trying to remove it was breaking the page
+      
+      return result;
     }
 
     function buildMetaBlock(meta) {
