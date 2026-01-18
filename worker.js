@@ -52,6 +52,7 @@ export default {
                        pathname === '/plant-catalog' || pathname === '/plant-catalog/' ||
                        pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
                        pathname === '/nh-4000-footers-guide.html' || pathname === '/nh-4000-footers-info.html' ||
+                       pathname === '/nh-4000-footers-guide' || pathname === '/nh-4000-footers-info' ||
                        pathname === '/trails_app.html' || pathname === '/long_trails_app.html' ||
                        pathname === '/plant_catalog.html' || pathname === '/plant_catalog' ||
                        pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant)/) !== null;

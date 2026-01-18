@@ -601,26 +601,27 @@
       color: #9aa8c7;
     }
     .dataset-cards {
-      margin: 32px auto 0;
+      margin: 32px auto 24px;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 20px;
-      max-width: 1200px;
+      max-width: 1000px;
       width: 100%;
+      justify-content: center;
     }
     
     .dataset-card {
       background: rgba(34, 197, 94, 0.08);
       border: 1px solid rgba(34, 197, 94, 0.3);
       border-radius: 16px;
-      padding: 24px;
+      padding: 20px;
       text-align: left;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       text-decoration: none;
       color: inherit;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       min-height: 100%;
     }
     
@@ -633,8 +634,8 @@
     }
     
     .dataset-card h3 {
-      margin: 0 0 12px;
-      font-size: 1.2rem;
+      margin: 0 0 8px;
+      font-size: 1.1rem;
       color: #22c55e;
       font-weight: 700;
       letter-spacing: 0.08em;
@@ -642,15 +643,15 @@
     }
     
     .dataset-card p {
-      margin: 0 0 16px;
+      margin: 0 0 12px;
       color: #cfe1ff;
-      line-height: 1.5;
-      font-size: 0.95rem;
+      line-height: 1.45;
+      font-size: 0.9rem;
     }
     
     .dataset-card .card-icon {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       opacity: 0.8;
       transition: opacity 0.2s ease;
       flex-shrink: 0;
@@ -663,6 +664,7 @@
       align-items: center;
       gap: 8px;
       transition: gap 0.2s ease;
+      font-size: 0.9rem;
     }
 
     .dataset-card:hover .card-link-text {
@@ -682,7 +684,13 @@
     @media (max-width: 1200px) {
       .dataset-cards {
         grid-template-columns: repeat(2, 1fr);
-        max-width: 900px;
+        max-width: 700px;
+      }
+    }
+    @media (max-width: 600px) {
+      .dataset-cards {
+        grid-template-columns: 1fr;
+        max-width: 400px;
       }
     }
     .seo-gallery {
@@ -1780,312 +1788,6 @@
           <span class="card-link-text" data-i18n="landing.cards.plantsCta">Browse Plant Catalog</span>
         </div>
       </a>
-    </section>
-
-    <!-- Section Divider -->
-    <div class="section-divider">
-      <span class="divider-icon">📊</span>
-    </div>
-
-    <!-- Hero Stats Section -->
-    <section class="nh48-hero-stats" aria-label="NH48 Challenge Statistics">
-      <h2>The NH48 Challenge at a Glance</h2>
-      <div class="stats-grid">
-        <div class="stat-box">
-          <span class="stat-number">48</span>
-          <span class="stat-label">Total Peaks</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-number">~350</span>
-          <span class="stat-label">Miles of Trail</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-number">~170K</span>
-          <span class="stat-label">Feet Elevation Gain</span>
-          <span class="stat-comparison comparison-badge">= 6x Everest</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-number">~20</span>
-          <span class="stat-label">Min. Day Hikes</span>
-          <span class="stat-comparison">with groupings</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-number">1-4</span>
-          <span class="stat-label">Years to Complete</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section Divider -->
-    <div class="section-divider">
-      <span class="divider-icon">🥾</span>
-    </div>
-
-    <!-- Physical Commitment Section -->
-    <section class="physical-commitment" aria-label="Physical Commitment Required">
-      <h2>Physical Commitment Required</h2>
-      <p>Completing all 48 peaks demands significant physical effort and time investment. Here's what you're signing up for:</p>
-      
-      <div class="commitment-details">
-        <div class="commitment-item">
-          <h3>📏 Total Distance</h3>
-          <p><strong>~250-500 miles</strong> depending on your route choices and how efficiently you group peaks. Ambitious multi-peak days can reduce total mileage, while enjoying peaks individually adds distance.</p>
-        </div>
-        
-        <div class="commitment-item">
-          <h3>⛰️ Total Elevation Gain</h3>
-          <p><strong>~170,000 feet</strong> of cumulative elevation gain - equivalent to climbing Mount Everest from sea level <strong>6 times</strong>. This is where the real challenge lies.</p>
-        </div>
-        
-        <div class="commitment-item">
-          <h3>⏱️ Time Investment</h3>
-          <p><strong>150-350 hours</strong> of actual hiking time, not including drive time, rest breaks, or time spent enjoying summits. Most completers spend 2-4 years reaching all 48 peaks.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section Divider -->
-    <div class="section-divider">
-      <span class="divider-icon">🎯</span>
-    </div>
-
-    <!-- Difficulty Tiers Section -->
-    <section class="challenge-tiers" aria-label="Peak Difficulty Tiers">
-      <h2>Peak Difficulty Tiers</h2>
-      <p>Not all peaks are created equal. Plan your progression from accessible summits to challenging alpine terrain.</p>
-      
-      <div class="tiers-container">
-        <div class="tier-badge tier-beginner">
-          <span class="tier-count">~10</span>
-          <span class="tier-name">Beginner Friendly</span>
-          <span class="tier-examples">Tecumseh, Pierce, Jackson, Osceola, Waumbek</span>
-        </div>
-        
-        <div class="tier-badge tier-moderate">
-          <span class="tier-count">~15</span>
-          <span class="tier-name">Moderate</span>
-          <span class="tier-examples">Hancocks, Cabot, Galehead, Passaconaway</span>
-        </div>
-        
-        <div class="tier-badge tier-challenging">
-          <span class="tier-count">~15</span>
-          <span class="tier-name">Challenging</span>
-          <span class="tier-examples">Lafayette, Lincoln, Carrigain, Wildcats</span>
-        </div>
-        
-        <div class="tier-badge tier-severe">
-          <span class="tier-count">~8</span>
-          <span class="tier-name">Severe / Alpine</span>
-          <span class="tier-examples">Washington, Adams, Jefferson, Madison, Bonds</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section Divider -->
-    <div class="section-divider">
-      <span class="divider-icon">🗓️</span>
-    </div>
-
-    <!-- Day Trip Groupings Section -->
-    <section class="trip-combos" aria-label="Popular Day Trip Groupings">
-      <h2>Popular Day Trip Groupings</h2>
-      <p>Maximize your summit count with these classic multi-peak routes. Experienced hikers often complete multiple peaks per trip.</p>
-      
-      <div class="combos-grid">
-        <div class="combo-card">
-          <span class="combo-name">Presidential Traverse</span>
-          <span class="combo-peaks">7 Peaks</span>
-          <span class="combo-stats">~23 mi | ~9,000 ft gain</span>
-          <p class="combo-description">Madison, Adams, Jefferson, Washington, Monroe, Eisenhower, Pierce - the ultimate White Mountains challenge.</p>
-        </div>
-        
-        <div class="combo-card">
-          <span class="combo-name">Franconia Ridge Loop</span>
-          <span class="combo-peaks">4 Peaks</span>
-          <span class="combo-stats">~9 mi | ~4,000 ft gain</span>
-          <p class="combo-description">Flume, Liberty, Lincoln, Lafayette - one of the most scenic ridge walks in the Northeast.</p>
-        </div>
-        
-        <div class="combo-card">
-          <span class="combo-name">Pemi Loop Bonds</span>
-          <span class="combo-peaks">3 Peaks</span>
-          <span class="combo-stats">~19 mi | ~5,500 ft gain</span>
-          <p class="combo-description">Bondcliff, Bond, West Bond - remote wilderness peaks in the heart of the Pemigewasset.</p>
-        </div>
-        
-        <div class="combo-card">
-          <span class="combo-name">Twin Range</span>
-          <span class="combo-peaks">3 Peaks</span>
-          <span class="combo-stats">~15 mi | ~4,800 ft gain</span>
-          <p class="combo-description">South Twin, North Twin, Galehead - accessible via multiple routes with AMC hut options.</p>
-        </div>
-        
-        <div class="combo-card">
-          <span class="combo-name">Hancocks Loop</span>
-          <span class="combo-peaks">2 Peaks</span>
-          <span class="combo-stats">~9 mi | ~3,500 ft gain</span>
-          <p class="combo-description">North Hancock, South Hancock - connected by a scenic ridge trail with multiple brook crossings.</p>
-        </div>
-        
-        <div class="combo-card">
-          <span class="combo-name">Kinsmans</span>
-          <span class="combo-peaks">2 Peaks</span>
-          <span class="combo-stats">~10 mi | ~3,800 ft gain</span>
-          <p class="combo-description">North Kinsman, South Kinsman - rugged terrain with beautiful Lonesome Lake along the way.</p>
-        </div>
-        
-        <div class="combo-card">
-          <span class="combo-name">Osceolas</span>
-          <span class="combo-peaks">2 Peaks</span>
-          <span class="combo-stats">~8 mi | ~3,200 ft gain</span>
-          <p class="combo-description">Mount Osceola, East Osceola - beginner-friendly pairing with a fun chimney scramble.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section Divider -->
-    <div class="section-divider">
-      <span class="divider-icon">📈</span>
-    </div>
-
-    <!-- Peak Progression Section -->
-    <section class="progression-section" aria-label="Peak Progression Guide">
-      <h2>Peak Progression: Easiest to Hardest</h2>
-      <p>Build your skills progressively by starting with accessible peaks and working toward the challenging alpine summits.</p>
-      
-      <div class="progression-bar">
-        <div class="progression-labels">
-          <span class="progression-label label-easy">Easiest</span>
-          <span class="progression-label label-middle">Moderate</span>
-          <span class="progression-label label-hard">Hardest</span>
-        </div>
-      </div>
-      
-      <div class="nh48-details">
-        <details>
-          <summary>🟢 Easiest 10 Peaks - Start Here</summary>
-          <div class="details-content">
-            <p>These peaks are ideal for beginners or for building confidence. Shorter distances, well-maintained trails, and moderate elevation gains.</p>
-            <ol>
-              <li><strong>Tecumseh</strong> - Shortest of the 48, ski area approach</li>
-              <li><strong>Hale</strong> - Gentle grades, well-maintained trail</li>
-              <li><strong>Jackson</strong> - Moderate with good views</li>
-              <li><strong>Pierce</strong> - AMC hut nearby, straightforward climb</li>
-              <li><strong>Osceola</strong> - Popular, relatively easy approach</li>
-              <li><strong>Waumbek</strong> - Quiet trails, steady grades</li>
-              <li><strong>Garfield</strong> - AMC hut option, scenic ridge</li>
-              <li><strong>Eisenhower</strong> - Open summit, moderate effort</li>
-              <li><strong>Cannon</strong> - Tramway option for descent</li>
-              <li><strong>Moosilauke</strong> - Beautiful open summit, multiple routes</li>
-            </ol>
-          </div>
-        </details>
-        
-        <details>
-          <summary>🟡 Middle 20 Peaks - Building Experience</summary>
-          <div class="details-content">
-            <p>These peaks require more stamina, navigation skills, and preparation. Mix of terrain types and longer approaches.</p>
-            <ul>
-              <li><strong>Franconia Ridge:</strong> Flume, Liberty, Lincoln, Lafayette</li>
-              <li><strong>Twin Range:</strong> South Twin, North Twin, Galehead</li>
-              <li><strong>Sandwich Range:</strong> Passaconaway, Whiteface, Tripyramids</li>
-              <li><strong>Northern Peaks:</strong> Cabot, Waumbek, Wildcat D, Wildcat A</li>
-              <li><strong>Pemi Wilderness:</strong> Zealand, Carrigain, Hancocks</li>
-              <li><strong>Remote Peaks:</strong> Moriah, Isolation approach routes</li>
-            </ul>
-          </div>
-        </details>
-        
-        <details>
-          <summary>🔴 Hardest 10 Peaks - Alpine Challenges</summary>
-          <div class="details-content">
-            <p>These peaks demand excellent fitness, mountain experience, and careful weather planning. Extended above-treeline exposure and long distances.</p>
-            <ol>
-              <li><strong>Washington</strong> - Highest peak, extreme weather, long exposure</li>
-              <li><strong>Adams</strong> - Second highest, exposed, technical sections</li>
-              <li><strong>Jefferson</strong> - Exposed ridges, demanding terrain</li>
-              <li><strong>Madison</strong> - Rocky, exposed, strenuous approach</li>
-              <li><strong>Lafayette</strong> - Long exposed ridge, high winds</li>
-              <li><strong>Lincoln</strong> - Extended ridgeline exposure</li>
-              <li><strong>Bondcliff</strong> - Remote, long approach, exposed summit</li>
-              <li><strong>West Bond</strong> - Extra distance, remote location</li>
-              <li><strong>Owl's Head</strong> - Very long approach, minimal views</li>
-              <li><strong>Isolation</strong> - Aptly named, long distances any route</li>
-            </ol>
-          </div>
-        </details>
-      </div>
-    </section>
-
-    <!-- Section Divider -->
-    <div class="section-divider">
-      <span class="divider-icon">⚠️</span>
-    </div>
-
-    <!-- Risk & Preparedness Section -->
-    <section class="risk-stats" aria-label="Risk Factors and Preparedness">
-      <h2>Risk Factors &amp; Preparedness</h2>
-      <p>The White Mountains are deceptively dangerous. Conditions can change rapidly, and rescue is often hours away.</p>
-      
-      <div class="risk-grid">
-        <div class="risk-box">
-          <span class="risk-title">🏔️ Above Treeline Exposure</span>
-          <span class="risk-value">15 Peaks</span>
-          <p class="risk-description">Significant stretches above treeline with no shelter from weather. Lightning, high winds, and whiteout conditions are real dangers.</p>
-        </div>
-        
-        <div class="risk-box">
-          <span class="risk-title">🌩️ Severe Weather Risks</span>
-          <span class="risk-value">~10 Peaks</span>
-          <p class="risk-description">Washington holds the record for highest wind speed ever recorded. Presidential Range peaks regularly experience hurricane-force winds.</p>
-        </div>
-        
-        <div class="risk-box">
-          <span class="risk-title">🚶 Long Bailout Distances</span>
-          <span class="risk-value">Up to 9-10 Miles</span>
-          <p class="risk-description">Remote peaks like Owl's Head, Bonds, and Isolation require long approaches. If something goes wrong, help is far away.</p>
-        </div>
-        
-        <div class="risk-box">
-          <span class="risk-title">💧 Limited Water Sources</span>
-          <span class="risk-value">Many Routes Dry</span>
-          <p class="risk-description">Unlike some mountain ranges, many NH trails have no reliable water sources. Carry all water you need - typically 2-4 liters per hike.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section Divider -->
-    <div class="section-divider">
-      <span class="divider-icon">🎯</span>
-    </div>
-
-    <!-- Completion Strategies Section -->
-    <section class="strategy-section" aria-label="Completion Strategies">
-      <h2>Choose Your Completion Strategy</h2>
-      <p>There's no wrong way to complete the 48 - pick the approach that matches your lifestyle and goals.</p>
-      
-      <div class="strategy-tiles">
-        <div class="strategy-tile">
-          <span class="strategy-icon">🚀</span>
-          <span class="strategy-name">Speed Run</span>
-          <span class="strategy-duration">~1 Year | 18-20 Day Hikes</span>
-          <p class="strategy-description">Aggressive multi-peak days, optimal groupings, and dedication to the goal. Best for experienced hikers with flexible schedules.</p>
-        </div>
-        
-        <div class="strategy-tile">
-          <span class="strategy-icon">🗓️</span>
-          <span class="strategy-name">Weekend Warrior</span>
-          <span class="strategy-duration">2-4 Years | 30-40 Day Hikes</span>
-          <p class="strategy-description">Steady progress with 2-3 peaks per trip on weekends. Balance between efficiency and enjoyment. Great for working professionals.</p>
-        </div>
-        
-        <div class="strategy-tile">
-          <span class="strategy-icon">🌄</span>
-          <span class="strategy-name">Scenic Journey</span>
-          <span class="strategy-duration">4-6+ Years | 40+ Day Hikes</span>
-          <p class="strategy-description">Savor each peak individually, explore different routes, and enjoy the journey. Photography and summit experiences take priority.</p>
-        </div>
-      </div>
     </section>
 
     <p class="meta" data-i18n="landing.author">Author: Nathan Sobol</p>
