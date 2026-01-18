@@ -279,6 +279,422 @@
       .cta:hover {
         background: var(--accent-strong);
       }
+
+      /* ============================================================
+         HERO STATS PANEL - Migrated from homepage (index.html)
+         ============================================================ */
+      .section-divider {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin: 40px 0;
+        padding: 0 16px;
+      }
+      .section-divider::before,
+      .section-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.3), transparent);
+      }
+      .section-divider .divider-icon {
+        font-size: 1.5rem;
+        color: var(--accent);
+        opacity: 0.6;
+      }
+
+      .nh48-hero-stats {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        padding: 48px 24px;
+        background: linear-gradient(180deg, rgba(34, 197, 94, 0.08) 0%, transparent 100%);
+        border-radius: 24px;
+        margin: 32px 0;
+      }
+      .nh48-hero-stats h2 {
+        color: var(--ink);
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0 0 12px;
+        text-align: center;
+      }
+      .nh48-hero-stats .stats-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        width: 100%;
+      }
+      .nh48-hero-stats .stat-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 24px 32px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        border-radius: 20px;
+        min-width: 150px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+      .nh48-hero-stats .stat-box:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(34, 197, 94, 0.15);
+        border-color: rgba(34, 197, 94, 0.4);
+      }
+      .nh48-hero-stats .stat-number {
+        font-size: 2.75rem;
+        font-weight: 700;
+        color: var(--accent);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+      }
+      .nh48-hero-stats .stat-label {
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-top: 8px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .nh48-hero-stats .stat-comparison {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-top: 6px;
+        opacity: 0.8;
+      }
+      .comparison-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        background: rgba(34, 197, 94, 0.15);
+        border: 1px solid rgba(34, 197, 94, 0.25);
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--accent-strong);
+        white-space: nowrap;
+      }
+
+      /* Physical Commitment Section */
+      .physical-commitment {
+        padding: 32px 0;
+        text-align: left;
+      }
+      .physical-commitment h2 {
+        color: var(--ink);
+        font-size: 1.5rem;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+      .physical-commitment > p {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .commitment-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+      .commitment-item {
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(203, 213, 245, 0.1);
+        border-radius: 16px;
+      }
+      .commitment-item h3 {
+        color: var(--accent);
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+      }
+      .commitment-item p {
+        margin: 0;
+        font-size: 0.95rem;
+      }
+
+      /* Challenge Tiers Section */
+      .challenge-tiers {
+        padding: 40px 24px;
+        background: rgba(10, 10, 10, 0.6);
+        border-radius: 24px;
+        margin: 32px 0;
+      }
+      .challenge-tiers h2 {
+        text-align: center;
+        color: var(--ink);
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+        font-weight: 700;
+      }
+      .challenge-tiers > p {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+      .challenge-tiers .tiers-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+      }
+      .tier-badge {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 28px;
+        border-radius: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        min-width: 180px;
+        text-align: center;
+      }
+      .tier-badge:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      }
+      .tier-badge .tier-count {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .tier-badge .tier-name {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 8px;
+      }
+      .tier-badge .tier-examples {
+        font-size: 0.75rem;
+        opacity: 0.8;
+        font-weight: 400;
+      }
+      .tier-beginner {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%);
+        border: 1px solid rgba(34, 197, 94, 0.4);
+        color: #4ade80;
+      }
+      .tier-moderate {
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(251, 191, 36, 0.1) 100%);
+        border: 1px solid rgba(251, 191, 36, 0.4);
+        color: #fbbf24;
+      }
+      .tier-challenging {
+        background: linear-gradient(135deg, rgba(249, 115, 22, 0.2) 0%, rgba(249, 115, 22, 0.1) 100%);
+        border: 1px solid rgba(249, 115, 22, 0.4);
+        color: #fb923c;
+      }
+      .tier-severe {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        color: #f87171;
+      }
+
+      /* Trip Combos Section */
+      .trip-combos {
+        padding: 40px 0;
+        margin: 32px 0;
+      }
+      .trip-combos h2 {
+        color: var(--ink);
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+        font-weight: 700;
+        text-align: center;
+      }
+      .trip-combos > p {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .trip-combos .combos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+      .combo-card {
+        position: relative;
+        padding: 24px;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+        border: 1px solid rgba(203, 213, 245, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        text-align: left;
+      }
+      .combo-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .combo-card:hover {
+        border-color: rgba(34, 197, 94, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+      }
+      .combo-card:hover::before {
+        opacity: 1;
+      }
+      .combo-card .combo-name {
+        display: block;
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 6px;
+      }
+      .combo-card .combo-peaks {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--accent);
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+      .combo-card .combo-stats {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 12px;
+        opacity: 0.8;
+      }
+      .combo-card .combo-description {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      /* Risk Stats Section */
+      .risk-stats {
+        padding: 32px 0;
+      }
+      .risk-stats h2 {
+        color: var(--ink);
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+        text-align: center;
+      }
+      .risk-stats > p {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .risk-stats .risk-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+      }
+      .risk-stats .risk-box {
+        padding: 24px;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+        text-align: left;
+      }
+      .risk-stats .risk-box .risk-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #f87171;
+        margin-bottom: 8px;
+      }
+      .risk-stats .risk-box .risk-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #fca5a5;
+        margin-bottom: 8px;
+      }
+      .risk-stats .risk-box .risk-description {
+        font-size: 0.9rem;
+        color: var(--muted);
+        line-height: 1.5;
+        margin: 0;
+      }
+
+      /* Strategy Tiles Section */
+      .strategy-section {
+        padding: 32px 0;
+      }
+      .strategy-section h2 {
+        color: var(--ink);
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+        text-align: center;
+      }
+      .strategy-section > p {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .strategy-tiles {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+      }
+      .strategy-tile {
+        padding: 28px 24px;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+        border: 1px solid rgba(203, 213, 245, 0.12);
+        border-radius: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+      .strategy-tile:hover {
+        border-color: rgba(34, 197, 94, 0.4);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(34, 197, 94, 0.1);
+      }
+      .strategy-tile .strategy-icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+        display: block;
+      }
+      .strategy-tile .strategy-name {
+        display: block;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 8px;
+      }
+      .strategy-tile .strategy-duration {
+        display: block;
+        font-size: 1rem;
+        color: var(--accent);
+        font-weight: 500;
+        margin-bottom: 12px;
+      }
+      .strategy-tile .strategy-description {
+        font-size: 0.9rem;
+        color: var(--muted);
+        line-height: 1.5;
+        margin: 0;
+      }
+
+      /* Responsive adjustments for migrated sections */
+      @media (max-width: 900px) {
+        .nh48-hero-stats {
+          padding: 32px 16px;
+        }
+        .nh48-hero-stats .stat-box {
+          padding: 20px 24px;
+          min-width: 130px;
+        }
+        .nh48-hero-stats .stat-number {
+          font-size: 2.25rem;
+        }
+        .tier-badge {
+          min-width: 160px;
+          padding: 16px 20px;
+        }
+      }
+
       @media (max-width: 700px) {
         th,
         td {
@@ -286,6 +702,73 @@
         }
         .range-filters {
           gap: 6px;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .nh48-hero-stats .stats-grid {
+          flex-direction: column;
+          align-items: center;
+        }
+        .nh48-hero-stats .stat-box {
+          width: 100%;
+          max-width: 280px;
+          flex-direction: row;
+          justify-content: space-between;
+          padding: 16px 20px;
+        }
+        .nh48-hero-stats .stat-number {
+          font-size: 2rem;
+          order: 2;
+        }
+        .nh48-hero-stats .stat-label {
+          margin-top: 0;
+          text-align: left;
+        }
+        .nh48-hero-stats .stat-comparison {
+          display: none;
+        }
+        .challenge-tiers .tiers-container {
+          flex-direction: column;
+          align-items: center;
+        }
+        .tier-badge {
+          width: 100%;
+          max-width: 280px;
+          flex-direction: row;
+          justify-content: space-between;
+          padding: 14px 18px;
+        }
+        .tier-badge .tier-count {
+          order: 2;
+        }
+        .tier-badge .tier-examples {
+          display: none;
+        }
+        .trip-combos .combos-grid {
+          grid-template-columns: 1fr;
+        }
+        .risk-stats .risk-grid {
+          grid-template-columns: 1fr;
+        }
+        .strategy-tiles {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .nh48-hero-stats {
+          padding: 20px 12px;
+          margin: 20px 0;
+        }
+        .nh48-hero-stats h2 {
+          font-size: 1.4rem;
+        }
+        .nh48-hero-stats .stat-number {
+          font-size: 1.75rem;
+        }
+        .challenge-tiers {
+          padding: 24px 16px;
         }
       }
     </style>
@@ -362,6 +845,167 @@
           </div>
         </div>
       </header>
+
+      <!-- Section Divider -->
+      <div class="section-divider">
+        <span class="divider-icon">📊</span>
+      </div>
+
+      <!-- Hero Stats Section - Migrated from homepage -->
+      <section class="nh48-hero-stats" aria-label="NH48 Challenge Statistics">
+        <h2>The NH48 Challenge at a Glance</h2>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-number">48</span>
+            <span class="stat-label">Total Peaks</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-number">~350</span>
+            <span class="stat-label">Miles of Trail</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-number">~170K</span>
+            <span class="stat-label">Feet Elevation Gain</span>
+            <span class="stat-comparison comparison-badge">= 6x Everest</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-number">~20</span>
+            <span class="stat-label">Min. Day Hikes</span>
+            <span class="stat-comparison">with groupings</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-number">1-4</span>
+            <span class="stat-label">Years to Complete</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section Divider -->
+      <div class="section-divider">
+        <span class="divider-icon">🥾</span>
+      </div>
+
+      <!-- Physical Commitment Section - Migrated from homepage -->
+      <section class="physical-commitment" aria-label="Physical Commitment Required">
+        <h2>Physical Commitment Required</h2>
+        <p>Completing all 48 peaks demands significant physical effort and time investment. Here's what you're signing up for:</p>
+        
+        <div class="commitment-details">
+          <div class="commitment-item">
+            <h3>📏 Total Distance</h3>
+            <p><strong>~250-500 miles</strong> depending on your route choices and how efficiently you group peaks. Ambitious multi-peak days can reduce total mileage, while enjoying peaks individually adds distance.</p>
+          </div>
+          
+          <div class="commitment-item">
+            <h3>⛰️ Total Elevation Gain</h3>
+            <p><strong>~170,000 feet</strong> of cumulative elevation gain - equivalent to climbing Mount Everest from sea level <strong>6 times</strong>. This is where the real challenge lies.</p>
+          </div>
+          
+          <div class="commitment-item">
+            <h3>⏱️ Time Investment</h3>
+            <p><strong>150-350 hours</strong> of actual hiking time, not including drive time, rest breaks, or time spent enjoying summits. Most completers spend 2-4 years reaching all 48 peaks.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section Divider -->
+      <div class="section-divider">
+        <span class="divider-icon">🎯</span>
+      </div>
+
+      <!-- Difficulty Tiers Section - Migrated from homepage -->
+      <section class="challenge-tiers" aria-label="Peak Difficulty Tiers">
+        <h2>Peak Difficulty Tiers</h2>
+        <p>Not all peaks are created equal. Plan your progression from accessible summits to challenging alpine terrain.</p>
+        
+        <div class="tiers-container">
+          <div class="tier-badge tier-beginner">
+            <span class="tier-count">~10</span>
+            <span class="tier-name">Beginner Friendly</span>
+            <span class="tier-examples">Tecumseh, Pierce, Jackson, Osceola, Waumbek</span>
+          </div>
+          
+          <div class="tier-badge tier-moderate">
+            <span class="tier-count">~15</span>
+            <span class="tier-name">Moderate</span>
+            <span class="tier-examples">Hancocks, Cabot, Galehead, Passaconaway</span>
+          </div>
+          
+          <div class="tier-badge tier-challenging">
+            <span class="tier-count">~15</span>
+            <span class="tier-name">Challenging</span>
+            <span class="tier-examples">Lafayette, Lincoln, Carrigain, Wildcats</span>
+          </div>
+          
+          <div class="tier-badge tier-severe">
+            <span class="tier-count">~8</span>
+            <span class="tier-name">Severe / Alpine</span>
+            <span class="tier-examples">Washington, Adams, Jefferson, Madison, Bonds</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section Divider -->
+      <div class="section-divider">
+        <span class="divider-icon">🗓️</span>
+      </div>
+
+      <!-- Day Trip Groupings Section - Migrated from homepage -->
+      <section class="trip-combos" aria-label="Popular Day Trip Groupings">
+        <h2>Popular Day Trip Groupings</h2>
+        <p>Maximize your summit count with these classic multi-peak routes. Experienced hikers often complete multiple peaks per trip.</p>
+        
+        <div class="combos-grid">
+          <div class="combo-card">
+            <span class="combo-name">Presidential Traverse</span>
+            <span class="combo-peaks">7 Peaks</span>
+            <span class="combo-stats">~23 mi | ~9,000 ft gain</span>
+            <p class="combo-description">Madison, Adams, Jefferson, Washington, Monroe, Eisenhower, Pierce - the ultimate White Mountains challenge.</p>
+          </div>
+          
+          <div class="combo-card">
+            <span class="combo-name">Franconia Ridge Loop</span>
+            <span class="combo-peaks">4 Peaks</span>
+            <span class="combo-stats">~9 mi | ~4,000 ft gain</span>
+            <p class="combo-description">Flume, Liberty, Lincoln, Lafayette - one of the most scenic ridge walks in the Northeast.</p>
+          </div>
+          
+          <div class="combo-card">
+            <span class="combo-name">Pemi Loop Bonds</span>
+            <span class="combo-peaks">3 Peaks</span>
+            <span class="combo-stats">~19 mi | ~5,500 ft gain</span>
+            <p class="combo-description">Bondcliff, Bond, West Bond - remote wilderness peaks in the heart of the Pemigewasset.</p>
+          </div>
+          
+          <div class="combo-card">
+            <span class="combo-name">Twin Range</span>
+            <span class="combo-peaks">3 Peaks</span>
+            <span class="combo-stats">~15 mi | ~4,800 ft gain</span>
+            <p class="combo-description">South Twin, North Twin, Galehead - accessible via multiple routes with AMC hut options.</p>
+          </div>
+          
+          <div class="combo-card">
+            <span class="combo-name">Hancocks Loop</span>
+            <span class="combo-peaks">2 Peaks</span>
+            <span class="combo-stats">~9 mi | ~3,500 ft gain</span>
+            <p class="combo-description">North Hancock, South Hancock - connected by a scenic ridge trail with multiple brook crossings.</p>
+          </div>
+          
+          <div class="combo-card">
+            <span class="combo-name">Kinsmans</span>
+            <span class="combo-peaks">2 Peaks</span>
+            <span class="combo-stats">~10 mi | ~3,800 ft gain</span>
+            <p class="combo-description">North Kinsman, South Kinsman - rugged terrain with beautiful Lonesome Lake along the way.</p>
+          </div>
+          
+          <div class="combo-card">
+            <span class="combo-name">Osceolas</span>
+            <span class="combo-peaks">2 Peaks</span>
+            <span class="combo-stats">~8 mi | ~3,200 ft gain</span>
+            <p class="combo-description">Mount Osceola, East Osceola - beginner-friendly pairing with a fun chimney scramble.</p>
+          </div>
+        </div>
+      </section>
 
       <section id="what-is-nh48">
         <h2>What is the NH48?</h2>
@@ -482,35 +1126,6 @@
         </div>
       </section>
 
-      <section id="meta-stats">
-        <h2>High-Value NH48 Meta Stats</h2>
-        <p>
-          Think of the NH48 as one mega-hike. The big-picture stats below help communicate the scale to newcomers and non-hikers alike.
-        </p>
-        <div class="quick-facts">
-          <div class="fact-card">
-            <span class="fact-label">Total Trail Miles</span>
-            <span class="fact-value">≈250 miles</span>
-            <small class="muted">Comparable to Boston → Montreal</small>
-          </div>
-          <div class="fact-card">
-            <span class="fact-label">Total Elevation Gain</span>
-            <span class="fact-value">≈80,000 ft</span>
-            <small class="muted">~3× Mount Everest</small>
-          </div>
-          <div class="fact-card">
-            <span class="fact-label">Mt. Washington Equiv.</span>
-            <span class="fact-value">≈13 summits</span>
-            <small class="muted">6,288 ft climb × ~13</small>
-          </div>
-          <div class="fact-card">
-            <span class="fact-label">Typical Hiking Time</span>
-            <span class="fact-value">≈200–250 hrs</span>
-            <small class="muted">Moving time only</small>
-          </div>
-        </div>
-      </section>
-
       <section id="time-effort">
         <h2>Time &amp; Effort Estimates</h2>
         <div class="content-grid">
@@ -582,51 +1197,73 @@
         </div>
       </section>
 
-      <section id="risk-preparedness">
-        <h2>Risk &amp; Preparedness Stats</h2>
-        <div class="content-grid">
-          <div class="panel">
-            <h3>Exposure &amp; Weather</h3>
-            <ul>
-              <li><strong>~15 peaks</strong> include above-treeline alpine exposure.</li>
-              <li>Presidential summits are famous for rapid weather swings and extreme wind.</li>
-            </ul>
+      <!-- Section Divider -->
+      <div class="section-divider">
+        <span class="divider-icon">⚠️</span>
+      </div>
+
+      <!-- Risk & Preparedness Section - Migrated from homepage -->
+      <section class="risk-stats" id="risk-preparedness" aria-label="Risk Factors and Preparedness">
+        <h2>Risk Factors &amp; Preparedness</h2>
+        <p>The White Mountains are deceptively dangerous. Conditions can change rapidly, and rescue is often hours away.</p>
+        
+        <div class="risk-grid">
+          <div class="risk-box">
+            <span class="risk-title">🏔️ Above Treeline Exposure</span>
+            <span class="risk-value">15 Peaks</span>
+            <p class="risk-description">Significant stretches above treeline with no shelter from weather. Lightning, high winds, and whiteout conditions are real dangers.</p>
           </div>
-          <div class="panel">
-            <h3>Remote, No-Bailout Days</h3>
-            <ul>
-              <li><strong>Owl’s Head</strong> and <strong>The Bonds</strong> often exceed 18–20 miles round-trip.</li>
-              <li><strong>Isolation</strong> is a long out-and-back with limited exit options.</li>
-            </ul>
+          
+          <div class="risk-box">
+            <span class="risk-title">🌩️ Severe Weather Risks</span>
+            <span class="risk-value">~10 Peaks</span>
+            <p class="risk-description">Washington holds the record for highest wind speed ever recorded. Presidential Range peaks regularly experience hurricane-force winds.</p>
           </div>
-          <div class="panel">
-            <h3>Water Planning</h3>
-            <ul>
-              <li>Several routes have no reliable water beyond trailheads.</li>
-              <li>Plan to carry 2–3 liters on exposed or remote trips.</li>
-            </ul>
+          
+          <div class="risk-box">
+            <span class="risk-title">🚶 Long Bailout Distances</span>
+            <span class="risk-value">Up to 9-10 Miles</span>
+            <p class="risk-description">Remote peaks like Owl's Head, Bonds, and Isolation require long approaches. If something goes wrong, help is far away.</p>
+          </div>
+          
+          <div class="risk-box">
+            <span class="risk-title">💧 Limited Water Sources</span>
+            <span class="risk-value">Many Routes Dry</span>
+            <p class="risk-description">Unlike some mountain ranges, many NH trails have no reliable water sources. Carry all water you need - typically 2-4 liters per hike.</p>
           </div>
         </div>
       </section>
 
-      <section id="completion-strategies">
-        <h2>Completion Strategy Highlights</h2>
-        <p>There is no single “right” way to finish the NH48. Pick the approach that matches your goals and schedule.</p>
-        <div class="content-grid">
-          <div class="panel">
-            <h3>Fast-Track Plan</h3>
-            <p><strong>~12 high-efficiency hikes</strong> combining multiple peaks per outing.</p>
-            <p>Expect big traverses like Presidential Range days and a Pemi-style loop.</p>
+      <!-- Section Divider -->
+      <div class="section-divider">
+        <span class="divider-icon">🎯</span>
+      </div>
+
+      <!-- Completion Strategies Section - Migrated from homepage -->
+      <section class="strategy-section" id="completion-strategies" aria-label="Completion Strategies">
+        <h2>Choose Your Completion Strategy</h2>
+        <p>There's no wrong way to complete the 48 - pick the approach that matches your lifestyle and goals.</p>
+        
+        <div class="strategy-tiles">
+          <div class="strategy-tile">
+            <span class="strategy-icon">🚀</span>
+            <span class="strategy-name">Speed Run</span>
+            <span class="strategy-duration">~1 Year | 18-20 Day Hikes</span>
+            <p class="strategy-description">Aggressive multi-peak days, optimal groupings, and dedication to the goal. Best for experienced hikers with flexible schedules.</p>
           </div>
-          <div class="panel">
-            <h3>Weekend Warrior</h3>
-            <p><strong>~20–30 trips</strong>, averaging 2 peaks per hike.</p>
-            <p>Finishes in roughly 2–4 years with steady weekend hikes.</p>
+          
+          <div class="strategy-tile">
+            <span class="strategy-icon">🗓️</span>
+            <span class="strategy-name">Weekend Warrior</span>
+            <span class="strategy-duration">2-4 Years | 30-40 Day Hikes</span>
+            <p class="strategy-description">Steady progress with 2-3 peaks per trip on weekends. Balance between efficiency and enjoyment. Great for working professionals.</p>
           </div>
-          <div class="panel">
-            <h3>Scenic &amp; Slow</h3>
-            <p><strong>~30–40 hikes</strong> with flexible pacing and weather chasing.</p>
-            <p>Prioritize prime conditions and classic loops over efficiency.</p>
+          
+          <div class="strategy-tile">
+            <span class="strategy-icon">🌄</span>
+            <span class="strategy-name">Scenic Journey</span>
+            <span class="strategy-duration">4-6+ Years | 40+ Day Hikes</span>
+            <p class="strategy-description">Savor each peak individually, explore different routes, and enjoy the journey. Photography and summit experiences take priority.</p>
           </div>
         </div>
       </section>
