@@ -1,335 +1,335 @@
 {
-  "common": {
-    "language": "भाषा",
-    "languagePicker": "भाषा चयनकर्ता",
-    "loading": "लोड हो रहा है…",
-    "errorLoading": "डेटा लोड करने में त्रुटि",
-    "noResults": "कोई परिणाम नहीं मिला।",
-    "noImage": "कोई छवि नहीं",
-    "unknown": "अज्ञात",
-    "notAvailable": "उपलब्ध नहीं",
-    "units": {
-      "ariaLabel": "इकाइयाँ चुनें"
-    },
-    "unitsLabel": "इकाइयाँ",
-    "unitsFeet": "फ़ीट",
-    "unitsMeters": "मीटर"
-  },
-  "landing": {
-    "title": "NH48 API: न्यू हैम्पशायर की 4,000‑फुट चोटियों और लंबी ट्रेल्स के लिए ओपन डेटा",
-    "metaDescription": {
-      "content": "NH48 API न्यू हैम्पशायर की 48 चार‑हज़ार‑फुट चोटियों के लिए खुला, संरचित डेटा और फोटो प्रदान करता है। कैटलॉग, रूट्स और White Mountain ट्रेल्स देखें।"
-    },
-    "ogTitle": {
-      "content": "NH48 API – ओपन ट्रेल्स और पीक डेटा"
-    },
-    "ogDescription": {
-      "content": "पीक कैटलॉग देखें, White Mountain ट्रेल्स एक्सप्लोर करें, और न्यू हैम्पशायर के पहाड़ों के लिए लंबी दूरी के रूट डेटा तक पहुँचें।"
-    },
-    "heroTitle": "NH48 API",
-    "heroBody": "न्यू हैम्पशायर की 48 चार‑हज़ार‑फुट चोटियों के लिए ओपन डेटा, रूट्स और फोटो मेटाडेटा। कैटलॉग देखें, White Mountain ट्रेल्स एक्सप्लोर करें, और डेटासेट पर निर्माण करें।",
-    "cta": {
-      "catalog": "पीक कैटलॉग खोलें",
-      "trails": "White Mountain ट्रेल्स",
-      "campaigns": "ट्रेल अभियान"
-    },
-    "notesTitle": "डेटासेट नोट्स",
-    "notes": {
-      "versioned": "चेंजलॉग और उद्धरण‑योग्य मेटाडेटा सहित संस्करणीकृत रिलीज़।",
-      "methodology": "पीक, रूट्स और ट्रेल सेगमेंट के लिए स्रोत और संग्रह पद्धति दर्ज।",
-      "validation": "ऊँचाई सीमा, दूरी और ज्यामिति संगति के लिए सत्यापन जाँच।",
-      "reproducible": "स्रोत स्क्रिप्ट्स और QA आर्टिफैक्ट्स द्वारा समर्थित पुनरुत्पादनीय पाइपलाइन्स।"
-    },
-    "author": "लेखक: Nathan Sobol"
-  },
-  "nav": {
-    "logoAlt": "NH48 API लोगो",
-    "tagline": "न्यू हैम्पशायर की 4,000‑फुट चोटियों के लिए ओपन डेटा और संरचित मेटाडेटा।",
-    "catalog": "कैटलॉग",
-    "trails": "WMNF ट्रेल्स",
-    "longTrails": "लंबी ट्रेल्स",
-    "pics": "NH48 फ़ोटो",
-    "peakBagger": "Peak Bagger",
-    "latestPhotos": "ताज़ा WMNF फ़ोटो",
-    "login": "लॉग इन",
-    "viewProfile": "प्रोफ़ाइल देखें"
-  },
-  "catalog": {
-    "title": "NH48 पीक कैटलॉग",
-    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
-    "search": {
-      "placeholder": "नाम से चोटियाँ खोजें…",
-      "ariaLabel": "नाम से चोटियाँ खोजें"
-    },
-    "sort": {
-      "label": "इसके अनुसार क्रमबद्ध करें:",
-      "ariaLabel": "गुण के अनुसार चोटियाँ क्रमबद्ध करें",
-      "name": "नाम (A–Z)",
-      "elevAsc": "ऊँचाई ↑",
-      "elevDesc": "ऊँचाई ↓",
-      "promAsc": "उभार ↑",
-      "promDesc": "उभार ↓",
-      "diffAsc": "कठिनाई A–Z",
-      "diffDesc": "कठिनाई Z–A",
-      "rangeAsc": "रेंज A–Z",
-      "trailAsc": "ट्रेल प्रकार A–Z",
-      "exposureAsc": "एक्सपोज़र A–Z"
-    },
-    "filter": {
-      "label": "फ़िल्टर करें:",
-      "ariaLabel": "चोटियाँ फ़िल्टर करने के लिए फ़ील्ड चुनें",
-      "none": "कोई नहीं",
-      "range": "रेंज",
-      "difficulty": "कठिनाई",
-      "trail": "ट्रेल प्रकार",
-      "exposure": "एक्सपोज़र"
-    },
-    "value": {
-      "label": "मान:",
-      "ariaLabel": "चुने गए फ़िल्टर के लिए मान चुनें",
-      "all": "सभी"
-    },
-    "columns": {
-      "label": "स्तंभ:",
-      "ariaLabel": "कैटलॉग के स्तंभों की संख्या चुनें"
-    },
-    "empty": "कोई चोटी नहीं मिली।",
-    "error": "चोटियाँ लोड करने में त्रुटि",
-    "card": {
-      "elevation": "ऊँचाई",
-      "prominence": "उभार",
-      "range": "रेंज",
-      "trailType": "ट्रेल प्रकार",
-      "difficulty": "कठिनाई",
-      "exposure": "एक्सपोज़र"
-    }
-  },
-  "photo": {
-    "altTemplate": "{peak} फ़ोटो — {season} {timeOfDay}"
-  },
-  "season": {
-    "spring": "वसंत",
-    "summer": "गर्मी",
-    "fall": "पतझड़",
-    "autumn": "शरद",
-    "winter": "सर्दी"
-  },
-  "time": {
-    "sunrise": "सूर्योदय",
-    "sunset": "सूर्यास्त",
-    "morning": "सुबह",
-    "afternoon": "दोपहर",
-    "evening": "शाम",
-    "night": "रात",
-    "day": "दिन",
-    "dawn": "भोर",
-    "dusk": "गोधूलि"
-  },
-  "values": {
-    "trailType": {
-      "loop": "लूप",
-      "loop_or_out_back": "लूप या आगे‑पीछे",
-      "loop_or_traverse": "लूप या ट्रैवर्स",
-      "loop_or_traverse_along_ridge": "लूप या रिज के साथ ट्रैवर्स",
-      "out_back": "आगे‑पीछे",
-      "out_back_common": "आगे‑पीछे - सामान्य",
-      "out_back_common_or_long_traverse": "आगे‑पीछे - सामान्य या लंबा ट्रैवर्स",
-      "out_back_common_or_loop_with_connector_trails": "आगे‑पीछे - सामान्य या कनेक्टर ट्रेल्स के साथ लूप",
-      "out_back_common_or_small_loop_including_mt_webster": "आगे‑पीछे - सामान्य या Mt Webster सहित छोटा लूप",
-      "out_back_commonly": "आगे‑पीछे - आमतौर पर",
-      "out_back_or_loop": "आगे‑पीछे या लूप",
-      "out_back_or_loop_with_tom_and_willey": "आगे‑पीछे या लूप - Tom और Willey के साथ",
-      "out_back_or_loop_combining_trails": "आगे‑पीछे या ट्रेल्स जोड़कर लूप",
-      "out_back_or_loop_options": "आगे‑पीछे या लूप विकल्प",
-      "out_back_or_point_to_point_traverse": "आगे‑पीछे या बिंदु‑से‑बिंदु ट्रैवर्स",
-      "out_back_or_traverse": "आगे‑पीछे या ट्रैवर्स"
-    },
-    "difficulty": {
-      "moderate": "मध्यम",
-      "moderate_difficult": "मध्यम/कठिन",
-      "difficult": "कठिन",
-      "very_difficult": "बहुत कठिन",
-      "extremely_difficult": "अत्यंत कठिन"
-    },
-    "exposure": {
-      "high": "उच्च",
-      "medium": "मध्यम",
-      "low": "कम",
-      "low_to_medium": "कम से मध्यम"
-    }
-  },
-  "peak": {
-    "back": "NH48 पीक कैटलॉग पर वापस",
-    "loading": "लोड हो रहा है…",
-    "relatedTrails": {
-      "title": "संबंधित ट्रेल्स और रूट्स",
-      "none": "अभी कोई संबंधित ट्रेल सूचीबद्ध नहीं है।",
-      "link": "{name} रूट"
-    },
-    "section": {
-      "routes": "हाइकिंग रूट्स",
-      "trails": "संबंधित ट्रेल्स",
-      "terrain": "ट्रेल और भूभाग",
-      "conditions": "स्थितियाँ और पहुँच"
-    },
-    "carousel": {
-      "prev": "पिछली छवि",
-      "next": "अगली छवि"
-    },
-    "metadata": {
-      "title": "वर्तमान फ़ोटो मेटाडेटा",
-      "notAvailable": "उपलब्ध नहीं",
-      "moreDetails": "और विवरण ▾",
-      "lessDetails": "कम विवरण ▴",
-      "labels": {
-        "season": "मौसम",
-        "timeOfDay": "समय",
-        "orientation": "दिशा",
-        "captureDate": "कैप्चर तिथि",
-        "cameraMaker": "कैमरा निर्माता",
-        "cameraModel": "कैमरा मॉडल",
-        "camera": "कैमरा",
-        "lens": "लेंस",
-        "fStop": "एफ़-स्टॉप",
-        "shutterSpeed": "शटर स्पीड",
-        "iso": "ISO",
-        "exposureBias": "एक्सपोज़र बायस",
-        "focalLength": "फोकल लेंथ",
-        "flashMode": "फ्लैश मोड",
-        "meteringMode": "मीटरिंग मोड",
-        "maxAperture": "अधिकतम अपर्चर",
-        "author": "लेखक",
-        "dimensions": "आयाम",
-        "fileSize": "फ़ाइल आकार",
-        "fileCreateDate": "फ़ाइल निर्माण तिथि",
-        "fileModifiedDate": "फ़ाइल संशोधन तिथि",
-        "rating": "रेटिंग",
-        "metadata": "मेटाडेटा",
-        "creditLine": "साभार पंक्ति",
-        "source": "स्रोत",
-        "copyrightNotice": "कॉपीराइट नोटिस",
-        "copyrightStatus": "कॉपीराइट स्थिति",
-        "rightsUsageTerms": "अधिकार और उपयोग की शर्तें",
-        "altText": "Alt टेक्स्ट",
-        "alt": "Alt",
-        "extendedAlt": "विस्तारित Alt टेक्स्ट",
-        "caption": "कैप्शन",
-        "headline": "हेडलाइन",
-        "extendedDescription": "विस्तारित विवरण",
-        "description": "विवरण"
-      }
-    },
-    "generalInfo": {
-      "title": "सामान्य पीक जानकारी",
-      "elevation": "ऊँचाई",
-      "prominence": "उभार",
-      "range": "रेंज",
-      "trailType": "ट्रेल प्रकार",
-      "difficulty": "कठिनाई",
-      "exposure": "एक्सपोज़र"
-    },
-    "routes": {
-      "distance": "दूरी",
-      "gain": "ऊँचाई वृद्धि",
-      "difficulty": "कठिनाई"
-    },
-    "trailList": {
-      "title": "ट्रेल सूची"
-    },
-    "terrain": {
-      "terrain": "भूभाग",
-      "scramble": "स्क्रैम्बल",
-      "view": "दृश्य"
-    },
-    "conditions": {
-      "bestSeasons": "सर्वोत्तम मौसम",
-      "waterAvailability": "पानी की उपलब्धता",
-      "cellReception": "सेल रिसेप्शन",
-      "weatherExposure": "मौसम एक्सपोज़र",
-      "emergencyBailout": "आपातकालीन निकासी",
-      "dogFriendly": "कुत्तों के लिए अनुकूल",
-      "nearbyFeatures": "निकट सुविधाएँ"
-    },
-    "errorLoading": "पीक लोड करने में त्रुटि",
-    "meta": {
-      "titleTemplate": "{name} ({elevation} फ़ीट) – NH48",
-      "descriptionTemplate": "{name} – {elevation} फ़ीट ऊँचा, {prominence} फ़ीट उभार, {range} में। इस 4,000‑फ़ुटर के लिए रूट्स, कठिनाई और फ़ोटो।"
-    }
-  },
-  "trails": {
-    "title": "White Mountain Trails API मानचित्र उपकरण",
-    "subtitle": "White Mountains के लिए ओपन पीक, ट्रेल और रूट डेटा संरचना।",
-    "intro": "White Mountain National Forest — Nate Sobol द्वारा संकलित। इसे त्वरित ट्रेल फ़ाइंडर और पूर्णता ट्रैकर के रूप में उपयोग करें। न्यू हैम्पशायर की 4,000‑फुट पहाड़ियों के लिए ओपन API और डेटासेट।",
-    "details": {
-      "title": "ट्रेल विवरण",
-      "empty": "दूरी, ऊँचाई और OpenStreetMap विवरण देखने के लिए ट्रेल चुनें।"
-    },
-    "search": {
-      "placeholder": "ट्रेल्स खोजें…"
-    },
-    "sort": {
-      "az": "A → Z क्रम",
-      "za": "Z → A क्रम"
-    },
-    "jumpTo": "यहाँ जाएँ:",
-    "list": {
-      "headerName": "ट्रेल नाम",
-      "headerCompleted": "पूर्ण",
-      "noMatches": "कोई ट्रेल नहीं मिली। अलग खोज आज़माएँ।",
-      "noTrails": "कोई ट्रेल उपलब्ध नहीं।"
-    },
-    "loading": "ट्रेल्स लोड हो रही हैं...",
-    "about": {
-      "title": "इस सूची के बारे में",
-      "body": "NH Tracing, Redlining और White Mountain Trails सभी गाइडबुक में वर्णित उसी ट्रेल संग्रह को दर्शाते हैं। नाम कोई भी हो, लक्ष्य एक ही है—इन पगडंडियों का अनुभव करना।"
-    },
-    "disclaimer": {
-      "title": "अस्वीकरण",
-      "body": "यह साइट <strong>योजना या नेविगेशन</strong> के लिए नहीं है। ट्रेल डेटा में छोटी त्रुटियाँ हो सकती हैं, और यह संग्रह आधिकारिक सूची नहीं है (हालाँकि इसमें अधिकांश ज्ञात ट्रेल्स शामिल हैं)। कृपया आधिकारिक स्रोत देखें और बैककंट्री में सावधानी बरतें।"
-    },
-    "howto": {
-      "title": "कैसे उपयोग करें",
-      "body": "हरे गोले का उपयोग करके किसी ट्रेल को पूर्ण के रूप में चिह्नित करें। चिह्नित करने के बाद, पूर्णता तिथि जोड़ने के लिए कैलेंडर आइकन टैप करें — तिथि आइकन की जगह ले लेगी और फिर से टैप कर संशोधित की जा सकती है। आपकी प्रगति आपके ब्राउज़र में स्थानीय रूप से संग्रहीत होती है। आप नीचे दिए गए बटन से प्रगति निर्यात या आयात कर सकते हैं।"
-    },
-    "settings": {
-      "title": "सेटिंग्स",
-      "hideCompleted": "पूर्ण ट्रेल्स छिपाएँ",
-      "clearProgress": "सारी प्रगति साफ़ करें"
-    },
-    "export": "CSV निर्यात करें",
-    "import": "आयात",
-    "viewApi": "API देखें",
-    "resizePanels": "पैनल का आकार बदलें",
-    "info": {
-      "noProperties": "अभी अतिरिक्त ट्रेल गुण उपलब्ध नहीं हैं। गुण OpenStreetMap डेटा से भरे जाएँगे।",
-      "loadingProperties": "OpenStreetMap से अतिरिक्त ट्रेल गुण लोड हो रहे हैं...",
-      "sourceNote": "जहाँ उपलब्ध हो, जानकारी OpenStreetMap से ली गई है।",
-      "distance": "दूरी",
-      "elevationGain": "ऊँचाई वृद्धि",
-      "minElevation": "न्यूनतम ऊँचाई",
-      "maxElevation": "अधिकतम ऊँचाई",
-      "surface": "सतह",
-      "trailType": "ट्रेल प्रकार",
-      "difficulty": "कठिनाई",
-      "visibility": "दृश्यता",
-      "width": "चौड़ाई",
-      "allowedUses": "अनुमत उपयोग",
-      "season": "मौसम",
-      "maintainer": "रखरखावकर्ता",
-      "source": "स्रोत"
-    },
-    "virtualHike": "वर्चुअल हाइक",
-    "unnamedTrail": "अनाम ट्रेल",
-    "confirmClear": "क्या आप वाकई सारी प्रगति साफ़ करना चाहते हैं?",
-    "alertLoadFail": "ट्रेल डेटा लोड नहीं हो पाया। कृपया इंटरनेट कनेक्शन जांचें और पेज रीफ़्रेश करें।",
-    "csv": {
-      "headerTrail": "ट्रेल",
-      "headerCompleted": "पूर्ण",
-      "headerDate": "तारीख",
-      "filename": "trail-progress.csv"
-    },
-    "map": {
-      "attribution": "मानचित्र डेटा: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | मानचित्र शैली: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
-    }
-  }
+ "common": {
+ "language": "भाषा",
+ "languagePicker": "भाषा चयनकर्ता",
+ "loading": "लोड हो रहा है…",
+ "errorLoading": "डेटा लोड करने में त्रुटि",
+ "noResults": "कोई परिणाम नहीं मिला।",
+ "noImage": "कोई छवि नहीं",
+ "unknown": "अज्ञात",
+ "notAvailable": "उपलब्ध नहीं",
+ "units": {
+ "ariaLabel": "इकाइयाँ चुनें"
+ },
+ "unitsLabel": "इकाइयाँ",
+ "unitsFeet": "फ़ीट",
+ "unitsMeters": "मीटर"
+ },
+ "landing": {
+ "title": "NH48 API: न्यू हैम्पशायर की 4,000‑फुट चोटियों और लंबी ट्रेल्स के लिए ओपन डेटा",
+ "metaDescription": {
+ "content": "NH48 API न्यू हैम्पशायर की 48 चार‑हज़ार‑फुट चोटियों के लिए खुला, संरचित डेटा और फोटो प्रदान करता है। कैटलॉग, रूट्स और White Mountain ट्रेल्स देखें।"
+ },
+ "ogTitle": {
+ "content": "NH48 API – ओपन ट्रेल्स और पीक डेटा"
+ },
+ "ogDescription": {
+ "content": "पीक कैटलॉग देखें, White Mountain ट्रेल्स एक्सप्लोर करें, और न्यू हैम्पशायर के पहाड़ों के लिए लंबी दूरी के रूट डेटा तक पहुँचें।"
+ },
+ "heroTitle": "NH48 API",
+ "heroBody": "न्यू हैम्पशायर की 48 चार‑हज़ार‑फुट चोटियों के लिए ओपन डेटा, रूट्स और फोटो मेटाडेटा। कैटलॉग देखें, White Mountain ट्रेल्स एक्सप्लोर करें, और डेटासेट पर निर्माण करें।",
+ "cta": {
+ "catalog": "पीक कैटलॉग खोलें",
+ "trails": "White Mountain ट्रेल्स",
+ "campaigns": "ट्रेल अभियान"
+ },
+ "notesTitle": "डेटासेट नोट्स",
+ "notes": {
+ "versioned": "चेंजलॉग और उद्धरण‑योग्य मेटाडेटा सहित संस्करणीकृत रिलीज़।",
+ "methodology": "पीक, रूट्स और ट्रेल सेगमेंट के लिए स्रोत और संग्रह पद्धति दर्ज।",
+ "validation": "ऊँचाई सीमा, दूरी और ज्यामिति संगति के लिए सत्यापन जाँच।",
+ "reproducible": "स्रोत स्क्रिप्ट्स और QA आर्टिफैक्ट्स द्वारा समर्थित पुनरुत्पादनीय पाइपलाइन्स।"
+ },
+ "author": "लेखक: Nathan Sobol"
+ },
+ "nav": {
+ "logoAlt": "NH48 API लोगो",
+ "tagline": "न्यू हैम्पशायर की 4,000‑फुट चोटियों के लिए ओपन डेटा और संरचित मेटाडेटा।",
+ "catalog": "कैटलॉग",
+ "trails": "WMNF ट्रेल्स",
+ "longTrails": "लंबी ट्रेल्स",
+ "pics": "NH48 फ़ोटो",
+ "peakBagger": "Peak Bagger",
+ "latestPhotos": "ताज़ा WMNF फ़ोटो",
+ "login": "लॉग इन",
+ "viewProfile": "प्रोफ़ाइल देखें"
+ },
+ "catalog": {
+ "title": "NH48 पीक कैटलॉग",
+ "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
+ "search": {
+ "placeholder": "नाम से चोटियाँ खोजें…",
+ "ariaLabel": "नाम से चोटियाँ खोजें"
+ },
+ "sort": {
+ "label": "इसके अनुसार क्रमबद्ध करें:",
+ "ariaLabel": "गुण के अनुसार चोटियाँ क्रमबद्ध करें",
+ "name": "नाम (A–Z)",
+ "elevAsc": "ऊँचाई ↑",
+ "elevDesc": "ऊँचाई ↓",
+ "promAsc": "उभार ↑",
+ "promDesc": "उभार ↓",
+ "diffAsc": "कठिनाई A–Z",
+ "diffDesc": "कठिनाई Z–A",
+ "rangeAsc": "रेंज A–Z",
+ "trailAsc": "ट्रेल प्रकार A–Z",
+ "exposureAsc": "एक्सपोज़र A–Z"
+ },
+ "filter": {
+ "label": "फ़िल्टर करें:",
+ "ariaLabel": "चोटियाँ फ़िल्टर करने के लिए फ़ील्ड चुनें",
+ "none": "कोई नहीं",
+ "range": "रेंज",
+ "difficulty": "कठिनाई",
+ "trail": "ट्रेल प्रकार",
+ "exposure": "एक्सपोज़र"
+ },
+ "value": {
+ "label": "मान:",
+ "ariaLabel": "चुने गए फ़िल्टर के लिए मान चुनें",
+ "all": "सभी"
+ },
+ "columns": {
+ "label": "स्तंभ:",
+ "ariaLabel": "कैटलॉग के स्तंभों की संख्या चुनें"
+ },
+ "empty": "कोई चोटी नहीं मिली।",
+ "error": "चोटियाँ लोड करने में त्रुटि",
+ "card": {
+ "elevation": "ऊँचाई",
+ "prominence": "उभार",
+ "range": "रेंज",
+ "trailType": "ट्रेल प्रकार",
+ "difficulty": "कठिनाई",
+ "exposure": "एक्सपोज़र"
+ }
+ },
+ "photo": {
+ "altTemplate": "{peak} फ़ोटो — {season} {timeOfDay}"
+ },
+ "season": {
+ "spring": "वसंत",
+ "summer": "गर्मी",
+ "fall": "पतझड़",
+ "autumn": "शरद",
+ "winter": "सर्दी"
+ },
+ "time": {
+ "sunrise": "सूर्योदय",
+ "sunset": "सूर्यास्त",
+ "morning": "सुबह",
+ "afternoon": "दोपहर",
+ "evening": "शाम",
+ "night": "रात",
+ "day": "दिन",
+ "dawn": "भोर",
+ "dusk": "गोधूलि"
+ },
+ "values": {
+ "trailType": {
+ "loop": "लूप",
+ "loop_or_out_back": "लूप या आगे‑पीछे",
+ "loop_or_traverse": "लूप या ट्रैवर्स",
+ "loop_or_traverse_along_ridge": "लूप या रिज के साथ ट्रैवर्स",
+ "out_back": "आगे‑पीछे",
+ "out_back_common": "आगे‑पीछे - सामान्य",
+ "out_back_common_or_long_traverse": "आगे‑पीछे - सामान्य या लंबा ट्रैवर्स",
+ "out_back_common_or_loop_with_connector_trails": "आगे‑पीछे - सामान्य या कनेक्टर ट्रेल्स के साथ लूप",
+ "out_back_common_or_small_loop_including_mt_webster": "आगे‑पीछे - सामान्य या Mt Webster सहित छोटा लूप",
+ "out_back_commonly": "आगे‑पीछे - आमतौर पर",
+ "out_back_or_loop": "आगे‑पीछे या लूप",
+ "out_back_or_loop_with_tom_and_willey": "आगे‑पीछे या लूप - Tom और Willey के साथ",
+ "out_back_or_loop_combining_trails": "आगे‑पीछे या ट्रेल्स जोड़कर लूप",
+ "out_back_or_loop_options": "आगे‑पीछे या लूप विकल्प",
+ "out_back_or_point_to_point_traverse": "आगे‑पीछे या बिंदु‑से‑बिंदु ट्रैवर्स",
+ "out_back_or_traverse": "आगे‑पीछे या ट्रैवर्स"
+ },
+ "difficulty": {
+ "moderate": "मध्यम",
+ "moderate_difficult": "मध्यम/कठिन",
+ "difficult": "कठिन",
+ "very_difficult": "बहुत कठिन",
+ "extremely_difficult": "अत्यंत कठिन"
+ },
+ "exposure": {
+ "high": "उच्च",
+ "medium": "मध्यम",
+ "low": "कम",
+ "low_to_medium": "कम से मध्यम"
+ }
+ },
+ "peak": {
+ "back": "NH48 पीक कैटलॉग पर वापस",
+ "loading": "लोड हो रहा है…",
+ "relatedTrails": {
+ "title": "संबंधित ट्रेल्स और रूट्स",
+ "none": "अभी कोई संबंधित ट्रेल सूचीबद्ध नहीं है।",
+ "link": "{name} रूट"
+ },
+ "section": {
+ "routes": "हाइकिंग रूट्स",
+ "trails": "संबंधित ट्रेल्स",
+ "terrain": "ट्रेल और भूभाग",
+ "conditions": "स्थितियाँ और पहुँच"
+ },
+ "carousel": {
+ "prev": "पिछली छवि",
+ "next": "अगली छवि"
+ },
+ "metadata": {
+ "title": "वर्तमान फ़ोटो मेटाडेटा",
+ "notAvailable": "उपलब्ध नहीं",
+ "moreDetails": "और विवरण ▾",
+ "lessDetails": "कम विवरण ▴",
+ "labels": {
+ "season": "मौसम",
+ "timeOfDay": "समय",
+ "orientation": "दिशा",
+ "captureDate": "कैप्चर तिथि",
+ "cameraMaker": "कैमरा निर्माता",
+ "cameraModel": "कैमरा मॉडल",
+ "camera": "कैमरा",
+ "lens": "लेंस",
+ "fStop": "एफ़-स्टॉप",
+ "shutterSpeed": "शटर स्पीड",
+ "iso": "ISO",
+ "exposureBias": "एक्सपोज़र बायस",
+ "focalLength": "फोकल लेंथ",
+ "flashMode": "फ्लैश मोड",
+ "meteringMode": "मीटरिंग मोड",
+ "maxAperture": "अधिकतम अपर्चर",
+ "author": "लेखक",
+ "dimensions": "आयाम",
+ "fileSize": "फ़ाइल आकार",
+ "fileCreateDate": "फ़ाइल निर्माण तिथि",
+ "fileModifiedDate": "फ़ाइल संशोधन तिथि",
+ "rating": "रेटिंग",
+ "metadata": "मेटाडेटा",
+ "creditLine": "साभार पंक्ति",
+ "source": "स्रोत",
+ "copyrightNotice": "कॉपीराइट नोटिस",
+ "copyrightStatus": "कॉपीराइट स्थिति",
+ "rightsUsageTerms": "अधिकार और उपयोग की शर्तें",
+ "altText": "Alt टेक्स्ट",
+ "alt": "Alt",
+ "extendedAlt": "विस्तारित Alt टेक्स्ट",
+ "caption": "कैप्शन",
+ "headline": "हेडलाइन",
+ "extendedDescription": "विस्तारित विवरण",
+ "description": "विवरण"
+ }
+ },
+ "generalInfo": {
+ "title": "सामान्य पीक जानकारी",
+ "elevation": "ऊँचाई",
+ "prominence": "उभार",
+ "range": "रेंज",
+ "trailType": "ट्रेल प्रकार",
+ "difficulty": "कठिनाई",
+ "exposure": "एक्सपोज़र"
+ },
+ "routes": {
+ "distance": "दूरी",
+ "gain": "ऊँचाई वृद्धि",
+ "difficulty": "कठिनाई"
+ },
+ "trailList": {
+ "title": "ट्रेल सूची"
+ },
+ "terrain": {
+ "terrain": "भूभाग",
+ "scramble": "स्क्रैम्बल",
+ "view": "दृश्य"
+ },
+ "conditions": {
+ "bestSeasons": "सर्वोत्तम मौसम",
+ "waterAvailability": "पानी की उपलब्धता",
+ "cellReception": "सेल रिसेप्शन",
+ "weatherExposure": "मौसम एक्सपोज़र",
+ "emergencyBailout": "आपातकालीन निकासी",
+ "dogFriendly": "कुत्तों के लिए अनुकूल",
+ "nearbyFeatures": "निकट सुविधाएँ"
+ },
+ "errorLoading": "पीक लोड करने में त्रुटि",
+ "meta": {
+ "titleTemplate": "{name} ({elevation} फ़ीट) – NH48",
+ "descriptionTemplate": "{name} – {elevation} फ़ीट ऊँचा, {prominence} फ़ीट उभार, {range} में। इस 4,000‑फ़ुटर के लिए रूट्स, कठिनाई और फ़ोटो।"
+ }
+ },
+ "trails": {
+ "title": "White Mountain Trails API मानचित्र उपकरण",
+ "subtitle": "White Mountains के लिए ओपन पीक, ट्रेल और रूट डेटा संरचना।",
+ "intro": "White Mountain National Forest — Nate Sobol द्वारा संकलित। इसे त्वरित ट्रेल फ़ाइंडर और पूर्णता ट्रैकर के रूप में उपयोग करें। न्यू हैम्पशायर की 4,000‑फुट पहाड़ियों के लिए ओपन API और डेटासेट।",
+ "details": {
+ "title": "ट्रेल विवरण",
+ "empty": "दूरी, ऊँचाई और OpenStreetMap विवरण देखने के लिए ट्रेल चुनें।"
+ },
+ "search": {
+ "placeholder": "ट्रेल्स खोजें…"
+ },
+ "sort": {
+ "az": "A → Z क्रम",
+ "za": "Z → A क्रम"
+ },
+ "jumpTo": "यहाँ जाएँ:",
+ "list": {
+ "headerName": "ट्रेल नाम",
+ "headerCompleted": "पूर्ण",
+ "noMatches": "कोई ट्रेल नहीं मिली। अलग खोज आज़माएँ।",
+ "noTrails": "कोई ट्रेल उपलब्ध नहीं।"
+ },
+ "loading": "ट्रेल्स लोड हो रही हैं...",
+ "about": {
+ "title": "इस सूची के बारे में",
+ "body": "NH Tracing, Redlining और White Mountain Trails सभी गाइडबुक में वर्णित उसी ट्रेल संग्रह को दर्शाते हैं। नाम कोई भी हो, लक्ष्य एक ही है—इन पगडंडियों का अनुभव करना।"
+ },
+ "disclaimer": {
+ "title": "अस्वीकरण",
+ "body": "यह साइट <strong>योजना या नेविगेशन</strong> के लिए नहीं है। ट्रेल डेटा में छोटी त्रुटियाँ हो सकती हैं, और यह संग्रह आधिकारिक सूची नहीं है (हालाँकि इसमें अधिकांश ज्ञात ट्रेल्स शामिल हैं)। कृपया आधिकारिक स्रोत देखें और बैककंट्री में सावधानी बरतें।"
+ },
+ "howto": {
+ "title": "कैसे उपयोग करें",
+ "body": "हरे गोले का उपयोग करके किसी ट्रेल को पूर्ण के रूप में चिह्नित करें। चिह्नित करने के बाद, पूर्णता तिथि जोड़ने के लिए कैलेंडर आइकन टैप करें — तिथि आइकन की जगह ले लेगी और फिर से टैप कर संशोधित की जा सकती है। आपकी प्रगति आपके ब्राउज़र में स्थानीय रूप से संग्रहीत होती है। आप नीचे दिए गए बटन से प्रगति निर्यात या आयात कर सकते हैं।"
+ },
+ "settings": {
+ "title": "सेटिंग्स",
+ "hideCompleted": "पूर्ण ट्रेल्स छिपाएँ",
+ "clearProgress": "सारी प्रगति साफ़ करें"
+ },
+ "export": "CSV निर्यात करें",
+ "import": "आयात",
+ "viewApi": "API देखें",
+ "resizePanels": "पैनल का आकार बदलें",
+ "info": {
+ "noProperties": "अभी अतिरिक्त ट्रेल गुण उपलब्ध नहीं हैं। गुण OpenStreetMap डेटा से भरे जाएँगे।",
+ "loadingProperties": "OpenStreetMap से अतिरिक्त ट्रेल गुण लोड हो रहे हैं...",
+ "sourceNote": "जहाँ उपलब्ध हो, जानकारी OpenStreetMap से ली गई है।",
+ "distance": "दूरी",
+ "elevationGain": "ऊँचाई वृद्धि",
+ "minElevation": "न्यूनतम ऊँचाई",
+ "maxElevation": "अधिकतम ऊँचाई",
+ "surface": "सतह",
+ "trailType": "ट्रेल प्रकार",
+ "difficulty": "कठिनाई",
+ "visibility": "दृश्यता",
+ "width": "चौड़ाई",
+ "allowedUses": "अनुमत उपयोग",
+ "season": "मौसम",
+ "maintainer": "रखरखावकर्ता",
+ "source": "स्रोत"
+ },
+ "virtualHike": "वर्चुअल हाइक",
+ "unnamedTrail": "अनाम ट्रेल",
+ "confirmClear": "क्या आप वाकई सारी प्रगति साफ़ करना चाहते हैं?",
+ "alertLoadFail": "ट्रेल डेटा लोड नहीं हो पाया। कृपया इंटरनेट कनेक्शन जांचें और पेज रीफ़्रेश करें।",
+ "csv": {
+ "headerTrail": "ट्रेल",
+ "headerCompleted": "पूर्ण",
+ "headerDate": "तारीख",
+ "filename": "trail-progress.csv"
+ },
+ "map": {
+ "attribution": "मानचित्र डेटा: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | मानचित्र शैली: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+ }
+ }
 }

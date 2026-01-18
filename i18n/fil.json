@@ -1,335 +1,335 @@
 {
-  "common": {
-    "language": "Wika",
-    "languagePicker": "Pampili ng wika",
-    "loading": "Naglo-load…",
-    "errorLoading": "Error sa pag-load ng data",
-    "noResults": "Walang nahanap na resulta.",
-    "noImage": "walang larawan",
-    "unknown": "Hindi alam",
-    "notAvailable": "Hindi available",
-    "units": {
-      "ariaLabel": "Pumili ng unit"
-    },
-    "unitsLabel": "Mga unit",
-    "unitsFeet": "Talampakan",
-    "unitsMeters": "Metro"
-  },
-  "landing": {
-    "title": "NH48 API: Bukas na datos para sa 4,000-foot na mga tuktok at mahahabang trail ng New Hampshire",
-    "metaDescription": {
-      "content": "Nagbibigay ang NH48 API ng bukas, istrukturadong datos at mga larawan para sa 48 na apat-na-libong talampakang tuktok ng New Hampshire. Tuklasin ang katalogo, mga ruta, at mga trail ng White Mountain."
-    },
-    "ogTitle": {
-      "content": "NH48 API – Bukas na datos ng mga trail at tuktok"
-    },
-    "ogDescription": {
-      "content": "Suriin ang katalogo ng mga tuktok, tuklasin ang mga trail ng White Mountain, at i-access ang datos ng mahahabang ruta para sa mga bundok ng New Hampshire."
-    },
-    "heroTitle": "NH48 API",
-    "heroBody": "Bukas na datos, mga ruta, at metadata ng larawan para sa 48 na apat-na-libong talampakang tuktok ng New Hampshire. Suriin ang katalogo, tuklasin ang mga trail ng White Mountain, at bumuo gamit ang dataset.",
-    "cta": {
-      "catalog": "Buksan ang Katalogo ng mga Tuktok",
-      "trails": "Mga Trail ng White Mountain",
-      "campaigns": "Mga Kampanya ng Trail"
-    },
-    "notesTitle": "Mga tala sa dataset",
-    "notes": {
-      "versioned": "Mga bersyong may changelog at metadata na handa sa pagsipi.",
-      "methodology": "Naka-tala ang pinagmulan at paraan ng pangangalap para sa mga tuktok, ruta, at mga segment ng trail.",
-      "validation": "Mga pagsusuri sa bisa para sa saklaw ng elevasyon, mileage, at pagkakatugma ng geometry.",
-      "reproducible": "Mga pipeline na mauulit na suportado ng source scripts at QA artifacts."
-    },
-    "author": "May-akda: Nathan Sobol"
-  },
-  "nav": {
-    "logoAlt": "Logo ng NH48 API",
-    "tagline": "Bukas na datos at nakabalangkas na metadata para sa 4,000-talampakang mga tuktok ng New Hampshire.",
-    "catalog": "Katalogo",
-    "trails": "Mga Trail ng WMNF",
-    "longTrails": "Mahahabang Trail",
-    "pics": "Mga Larawan ng NH48",
-    "peakBagger": "Peak Bagger",
-    "latestPhotos": "Pinakabagong mga Larawan ng WMNF",
-    "login": "Mag-log in",
-    "viewProfile": "Tingnan ang profile"
-  },
-  "catalog": {
-    "title": "Katalogo ng mga Tuktok ng NH48",
-    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
-    "search": {
-      "placeholder": "Maghanap ng tuktok ayon sa pangalan…",
-      "ariaLabel": "Maghanap ng tuktok ayon sa pangalan"
-    },
-    "sort": {
-      "label": "Ayusin ayon sa:",
-      "ariaLabel": "Ayusin ang mga tuktok ayon sa katangian",
-      "name": "Pangalan (A–Z)",
-      "elevAsc": "Taas ↑",
-      "elevDesc": "Taas ↓",
-      "promAsc": "Prominensya ↑",
-      "promDesc": "Prominensya ↓",
-      "diffAsc": "Hirap A–Z",
-      "diffDesc": "Hirap Z–A",
-      "rangeAsc": "Saklaw A–Z",
-      "trailAsc": "Uri ng Trail A–Z",
-      "exposureAsc": "Pagkalantad A–Z"
-    },
-    "filter": {
-      "label": "Salain ayon sa:",
-      "ariaLabel": "Pumili ng field para salain ang mga tuktok",
-      "none": "Wala",
-      "range": "Saklaw",
-      "difficulty": "Hirap",
-      "trail": "Uri ng Trail",
-      "exposure": "Pagkalantad"
-    },
-    "value": {
-      "label": "Halaga:",
-      "ariaLabel": "Pumili ng halaga para sa napiling filter",
-      "all": "Lahat"
-    },
-    "columns": {
-      "label": "Mga Kolum:",
-      "ariaLabel": "Pumili ng bilang ng kolum ng katalogo"
-    },
-    "empty": "Walang natagpuang mga tuktok.",
-    "error": "Error sa pag-load ng mga tuktok",
-    "card": {
-      "elevation": "Taas",
-      "prominence": "Prominensya",
-      "range": "Saklaw",
-      "trailType": "Uri ng Trail",
-      "difficulty": "Hirap",
-      "exposure": "Pagkalantad"
-    }
-  },
-  "photo": {
-    "altTemplate": "{peak} photo — {season} {timeOfDay}"
-  },
-  "season": {
-    "spring": "spring",
-    "summer": "summer",
-    "fall": "fall",
-    "autumn": "autumn",
-    "winter": "winter"
-  },
-  "time": {
-    "sunrise": "sunrise",
-    "sunset": "sunset",
-    "morning": "morning",
-    "afternoon": "afternoon",
-    "evening": "evening",
-    "night": "night",
-    "day": "day",
-    "dawn": "dawn",
-    "dusk": "dusk"
-  },
-  "values": {
-    "trailType": {
-      "loop": "Loop",
-      "loop_or_out_back": "Loop or out & back",
-      "loop_or_traverse": "Loop or traverse",
-      "loop_or_traverse_along_ridge": "Loop or traverse along ridge",
-      "out_back": "Out & back",
-      "out_back_common": "Out & back - common",
-      "out_back_common_or_long_traverse": "Out & back - common or long traverse",
-      "out_back_common_or_loop_with_connector_trails": "Out & back - common or loop with connector trails",
-      "out_back_common_or_small_loop_including_mt_webster": "Out & back - common or small loop including Mt Webster",
-      "out_back_commonly": "Out & back - commonly",
-      "out_back_or_loop": "Out & back or loop",
-      "out_back_or_loop_with_tom_and_willey": "Out & back or loop - with Tom and Willey",
-      "out_back_or_loop_combining_trails": "Out & back or loop combining trails",
-      "out_back_or_loop_options": "Out & back or loop options",
-      "out_back_or_point_to_point_traverse": "Out & back or point-to-point traverse",
-      "out_back_or_traverse": "Out & back or traverse"
-    },
-    "difficulty": {
-      "moderate": "Moderate",
-      "moderate_difficult": "Moderate/Difficult",
-      "difficult": "Difficult",
-      "very_difficult": "Very Difficult",
-      "extremely_difficult": "Extremely Difficult"
-    },
-    "exposure": {
-      "high": "High",
-      "medium": "Medium",
-      "low": "Low",
-      "low_to_medium": "Low to Medium"
-    }
-  },
-  "peak": {
-    "back": "Back to NH48 Peak Catalog",
-    "loading": "Loading…",
-    "relatedTrails": {
-      "title": "Related Trails & Routes",
-      "none": "No related trails listed yet.",
-      "link": "{name} route"
-    },
-    "section": {
-      "routes": "Hiking Routes",
-      "trails": "Associated Trails",
-      "terrain": "Trail & Terrain",
-      "conditions": "Conditions & Access"
-    },
-    "carousel": {
-      "prev": "Previous image",
-      "next": "Next image"
-    },
-    "metadata": {
-      "title": "Current Photo Metadata",
-      "notAvailable": "Not available",
-      "moreDetails": "More details ▾",
-      "lessDetails": "Less details ▴",
-      "labels": {
-        "season": "Season",
-        "timeOfDay": "Time of Day",
-        "orientation": "Orientation",
-        "captureDate": "Capture Date",
-        "cameraMaker": "Camera Maker",
-        "cameraModel": "Camera Model",
-        "camera": "Camera",
-        "lens": "Lens",
-        "fStop": "F Stop",
-        "shutterSpeed": "Shutter Speed",
-        "iso": "ISO",
-        "exposureBias": "Exposure Bias",
-        "focalLength": "Focal Length",
-        "flashMode": "Flash Mode",
-        "meteringMode": "Metering Mode",
-        "maxAperture": "Max Aperture",
-        "author": "Author",
-        "dimensions": "Dimensions",
-        "fileSize": "File Size",
-        "fileCreateDate": "File Create Date",
-        "fileModifiedDate": "File Modified Date",
-        "rating": "Rating",
-        "metadata": "metadata",
-        "creditLine": "linya ng kredito",
-        "source": "pinagmulan",
-        "copyrightNotice": "paunawa sa copyright",
-        "copyrightStatus": "katayuan ng copyright",
-        "rightsUsageTerms": "mga tuntunin sa karapatan at paggamit",
-        "altText": "alt na teksto",
-        "alt": "Alt",
-        "extendedAlt": "pinalawak na alt na teksto",
-        "caption": "caption",
-        "headline": "headline",
-        "extendedDescription": "pinalawak na paglalarawan",
-        "description": "paglalarawan"
-      }
-    },
-    "generalInfo": {
-      "title": "General Peak Info",
-      "elevation": "Elevation",
-      "prominence": "Prominence",
-      "range": "Range",
-      "trailType": "Trail Type",
-      "difficulty": "Difficulty",
-      "exposure": "Exposure"
-    },
-    "routes": {
-      "distance": "Distance",
-      "gain": "Gain",
-      "difficulty": "Difficulty"
-    },
-    "trailList": {
-      "title": "Trail List"
-    },
-    "terrain": {
-      "terrain": "Terrain",
-      "scramble": "Scramble",
-      "view": "View"
-    },
-    "conditions": {
-      "bestSeasons": "Best Seasons",
-      "waterAvailability": "Water Availability",
-      "cellReception": "Cell Reception",
-      "weatherExposure": "Weather Exposure",
-      "emergencyBailout": "Emergency Bailout",
-      "dogFriendly": "Dog Friendly",
-      "nearbyFeatures": "Nearby Features"
-    },
-    "errorLoading": "Error loading peak",
-    "meta": {
-      "titleTemplate": "{name} ({elevation} ft) – NH48",
-      "descriptionTemplate": "{name} – {elevation} ft high, {prominence} ft prominence, in the {range}. Routes, difficulty, and photos for this 4,000-footer."
-    }
-  },
-  "trails": {
-    "title": "White Mountain Trails API Map Tool",
-    "subtitle": "Open peak, trail, and route data structure for the White Mountains.",
-    "intro": "White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.",
-    "details": {
-      "title": "Trail details",
-      "empty": "Select a trail to view distance, elevation, and OpenStreetMap details."
-    },
-    "search": {
-      "placeholder": "Search trails…"
-    },
-    "sort": {
-      "az": "Sort A → Z",
-      "za": "Sort Z → A"
-    },
-    "jumpTo": "Jump To:",
-    "list": {
-      "headerName": "Trail Name",
-      "headerCompleted": "Completed",
-      "noMatches": "No trails found. Try a different search.",
-      "noTrails": "No trails available."
-    },
-    "loading": "Loading trails...",
-    "about": {
-      "title": "About this list",
-      "body": "NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths."
-    },
-    "disclaimer": {
-      "title": "Disclaimer",
-      "body": "This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry."
-    },
-    "howto": {
-      "title": "How to use",
-      "body": "Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below."
-    },
-    "settings": {
-      "title": "Settings",
-      "hideCompleted": "Hide completed trails",
-      "clearProgress": "Clear all progress"
-    },
-    "export": "Export CSV",
-    "import": "Import",
-    "viewApi": "View API",
-    "resizePanels": "Resize panels",
-    "info": {
-      "noProperties": "No additional trail properties available yet. Properties will be populated from OpenStreetMap data.",
-      "loadingProperties": "Loading additional trail properties from OpenStreetMap...",
-      "sourceNote": "Information sourced from OpenStreetMap where available.",
-      "distance": "Distance",
-      "elevationGain": "Elevation Gain",
-      "minElevation": "Min Elevation",
-      "maxElevation": "Max Elevation",
-      "surface": "Surface",
-      "trailType": "Trail Type",
-      "difficulty": "Difficulty",
-      "visibility": "Visibility",
-      "width": "Width",
-      "allowedUses": "Allowed Uses",
-      "season": "Season",
-      "maintainer": "Maintainer",
-      "source": "Source"
-    },
-    "virtualHike": "Virtual Hike",
-    "unnamedTrail": "Unnamed trail",
-    "confirmClear": "Are you sure you want to clear all progress?",
-    "alertLoadFail": "Unable to load trail data. Please ensure you have internet connectivity and try refreshing the page.",
-    "csv": {
-      "headerTrail": "Trail",
-      "headerCompleted": "Completed",
-      "headerDate": "Date",
-      "filename": "trail-progress.csv"
-    },
-    "map": {
-      "attribution": "Map data: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
-    }
-  }
+ "common": {
+ "language": "Wika",
+ "languagePicker": "Pampili ng wika",
+ "loading": "Naglo-load…",
+ "errorLoading": "Error sa pag-load ng data",
+ "noResults": "Walang nahanap na resulta.",
+ "noImage": "walang larawan",
+ "unknown": "Hindi alam",
+ "notAvailable": "Hindi available",
+ "units": {
+ "ariaLabel": "Pumili ng unit"
+ },
+ "unitsLabel": "Mga unit",
+ "unitsFeet": "Talampakan",
+ "unitsMeters": "Metro"
+ },
+ "landing": {
+ "title": "NH48 API: Bukas na datos para sa 4,000-foot na mga tuktok at mahahabang trail ng New Hampshire",
+ "metaDescription": {
+ "content": "Nagbibigay ang NH48 API ng bukas, istrukturadong datos at mga larawan para sa 48 na apat-na-libong talampakang tuktok ng New Hampshire. Tuklasin ang katalogo, mga ruta, at mga trail ng White Mountain."
+ },
+ "ogTitle": {
+ "content": "NH48 API – Bukas na datos ng mga trail at tuktok"
+ },
+ "ogDescription": {
+ "content": "Suriin ang katalogo ng mga tuktok, tuklasin ang mga trail ng White Mountain, at i-access ang datos ng mahahabang ruta para sa mga bundok ng New Hampshire."
+ },
+ "heroTitle": "NH48 API",
+ "heroBody": "Bukas na datos, mga ruta, at metadata ng larawan para sa 48 na apat-na-libong talampakang tuktok ng New Hampshire. Suriin ang katalogo, tuklasin ang mga trail ng White Mountain, at bumuo gamit ang dataset.",
+ "cta": {
+ "catalog": "Buksan ang Katalogo ng mga Tuktok",
+ "trails": "Mga Trail ng White Mountain",
+ "campaigns": "Mga Kampanya ng Trail"
+ },
+ "notesTitle": "Mga tala sa dataset",
+ "notes": {
+ "versioned": "Mga bersyong may changelog at metadata na handa sa pagsipi.",
+ "methodology": "Naka-tala ang pinagmulan at paraan ng pangangalap para sa mga tuktok, ruta, at mga segment ng trail.",
+ "validation": "Mga pagsusuri sa bisa para sa saklaw ng elevasyon, mileage, at pagkakatugma ng geometry.",
+ "reproducible": "Mga pipeline na mauulit na suportado ng source scripts at QA artifacts."
+ },
+ "author": "May-akda: Nathan Sobol"
+ },
+ "nav": {
+ "logoAlt": "Logo ng NH48 API",
+ "tagline": "Bukas na datos at nakabalangkas na metadata para sa 4,000-talampakang mga tuktok ng New Hampshire.",
+ "catalog": "Katalogo",
+ "trails": "Mga Trail ng WMNF",
+ "longTrails": "Mahahabang Trail",
+ "pics": "Mga Larawan ng NH48",
+ "peakBagger": "Peak Bagger",
+ "latestPhotos": "Pinakabagong mga Larawan ng WMNF",
+ "login": "Mag-log in",
+ "viewProfile": "Tingnan ang profile"
+ },
+ "catalog": {
+ "title": "Katalogo ng mga Tuktok ng NH48",
+ "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
+ "search": {
+ "placeholder": "Maghanap ng tuktok ayon sa pangalan…",
+ "ariaLabel": "Maghanap ng tuktok ayon sa pangalan"
+ },
+ "sort": {
+ "label": "Ayusin ayon sa:",
+ "ariaLabel": "Ayusin ang mga tuktok ayon sa katangian",
+ "name": "Pangalan (A–Z)",
+ "elevAsc": "Taas ↑",
+ "elevDesc": "Taas ↓",
+ "promAsc": "Prominensya ↑",
+ "promDesc": "Prominensya ↓",
+ "diffAsc": "Hirap A–Z",
+ "diffDesc": "Hirap Z–A",
+ "rangeAsc": "Saklaw A–Z",
+ "trailAsc": "Uri ng Trail A–Z",
+ "exposureAsc": "Pagkalantad A–Z"
+ },
+ "filter": {
+ "label": "Salain ayon sa:",
+ "ariaLabel": "Pumili ng field para salain ang mga tuktok",
+ "none": "Wala",
+ "range": "Saklaw",
+ "difficulty": "Hirap",
+ "trail": "Uri ng Trail",
+ "exposure": "Pagkalantad"
+ },
+ "value": {
+ "label": "Halaga:",
+ "ariaLabel": "Pumili ng halaga para sa napiling filter",
+ "all": "Lahat"
+ },
+ "columns": {
+ "label": "Mga Kolum:",
+ "ariaLabel": "Pumili ng bilang ng kolum ng katalogo"
+ },
+ "empty": "Walang natagpuang mga tuktok.",
+ "error": "Error sa pag-load ng mga tuktok",
+ "card": {
+ "elevation": "Taas",
+ "prominence": "Prominensya",
+ "range": "Saklaw",
+ "trailType": "Uri ng Trail",
+ "difficulty": "Hirap",
+ "exposure": "Pagkalantad"
+ }
+ },
+ "photo": {
+ "altTemplate": "{peak} photo — {season} {timeOfDay}"
+ },
+ "season": {
+ "spring": "spring",
+ "summer": "summer",
+ "fall": "fall",
+ "autumn": "autumn",
+ "winter": "winter"
+ },
+ "time": {
+ "sunrise": "sunrise",
+ "sunset": "sunset",
+ "morning": "morning",
+ "afternoon": "afternoon",
+ "evening": "evening",
+ "night": "night",
+ "day": "day",
+ "dawn": "dawn",
+ "dusk": "dusk"
+ },
+ "values": {
+ "trailType": {
+ "loop": "Loop",
+ "loop_or_out_back": "Loop or out & back",
+ "loop_or_traverse": "Loop or traverse",
+ "loop_or_traverse_along_ridge": "Loop or traverse along ridge",
+ "out_back": "Out & back",
+ "out_back_common": "Out & back - common",
+ "out_back_common_or_long_traverse": "Out & back - common or long traverse",
+ "out_back_common_or_loop_with_connector_trails": "Out & back - common or loop with connector trails",
+ "out_back_common_or_small_loop_including_mt_webster": "Out & back - common or small loop including Mt Webster",
+ "out_back_commonly": "Out & back - commonly",
+ "out_back_or_loop": "Out & back or loop",
+ "out_back_or_loop_with_tom_and_willey": "Out & back or loop - with Tom and Willey",
+ "out_back_or_loop_combining_trails": "Out & back or loop combining trails",
+ "out_back_or_loop_options": "Out & back or loop options",
+ "out_back_or_point_to_point_traverse": "Out & back or point-to-point traverse",
+ "out_back_or_traverse": "Out & back or traverse"
+ },
+ "difficulty": {
+ "moderate": "Moderate",
+ "moderate_difficult": "Moderate/Difficult",
+ "difficult": "Difficult",
+ "very_difficult": "Very Difficult",
+ "extremely_difficult": "Extremely Difficult"
+ },
+ "exposure": {
+ "high": "High",
+ "medium": "Medium",
+ "low": "Low",
+ "low_to_medium": "Low to Medium"
+ }
+ },
+ "peak": {
+ "back": "Back to NH48 Peak Catalog",
+ "loading": "Loading…",
+ "relatedTrails": {
+ "title": "Related Trails & Routes",
+ "none": "No related trails listed yet.",
+ "link": "{name} route"
+ },
+ "section": {
+ "routes": "Hiking Routes",
+ "trails": "Associated Trails",
+ "terrain": "Trail & Terrain",
+ "conditions": "Conditions & Access"
+ },
+ "carousel": {
+ "prev": "Previous image",
+ "next": "Next image"
+ },
+ "metadata": {
+ "title": "Current Photo Metadata",
+ "notAvailable": "Not available",
+ "moreDetails": "More details ▾",
+ "lessDetails": "Less details ▴",
+ "labels": {
+ "season": "Season",
+ "timeOfDay": "Time of Day",
+ "orientation": "Orientation",
+ "captureDate": "Capture Date",
+ "cameraMaker": "Camera Maker",
+ "cameraModel": "Camera Model",
+ "camera": "Camera",
+ "lens": "Lens",
+ "fStop": "F Stop",
+ "shutterSpeed": "Shutter Speed",
+ "iso": "ISO",
+ "exposureBias": "Exposure Bias",
+ "focalLength": "Focal Length",
+ "flashMode": "Flash Mode",
+ "meteringMode": "Metering Mode",
+ "maxAperture": "Max Aperture",
+ "author": "Author",
+ "dimensions": "Dimensions",
+ "fileSize": "File Size",
+ "fileCreateDate": "File Create Date",
+ "fileModifiedDate": "File Modified Date",
+ "rating": "Rating",
+ "metadata": "metadata",
+ "creditLine": "linya ng kredito",
+ "source": "pinagmulan",
+ "copyrightNotice": "paunawa sa copyright",
+ "copyrightStatus": "katayuan ng copyright",
+ "rightsUsageTerms": "mga tuntunin sa karapatan at paggamit",
+ "altText": "alt na teksto",
+ "alt": "Alt",
+ "extendedAlt": "pinalawak na alt na teksto",
+ "caption": "caption",
+ "headline": "headline",
+ "extendedDescription": "pinalawak na paglalarawan",
+ "description": "paglalarawan"
+ }
+ },
+ "generalInfo": {
+ "title": "General Peak Info",
+ "elevation": "Elevation",
+ "prominence": "Prominence",
+ "range": "Range",
+ "trailType": "Trail Type",
+ "difficulty": "Difficulty",
+ "exposure": "Exposure"
+ },
+ "routes": {
+ "distance": "Distance",
+ "gain": "Gain",
+ "difficulty": "Difficulty"
+ },
+ "trailList": {
+ "title": "Trail List"
+ },
+ "terrain": {
+ "terrain": "Terrain",
+ "scramble": "Scramble",
+ "view": "View"
+ },
+ "conditions": {
+ "bestSeasons": "Best Seasons",
+ "waterAvailability": "Water Availability",
+ "cellReception": "Cell Reception",
+ "weatherExposure": "Weather Exposure",
+ "emergencyBailout": "Emergency Bailout",
+ "dogFriendly": "Dog Friendly",
+ "nearbyFeatures": "Nearby Features"
+ },
+ "errorLoading": "Error loading peak",
+ "meta": {
+ "titleTemplate": "{name} ({elevation} ft) – NH48",
+ "descriptionTemplate": "{name} – {elevation} ft high, {prominence} ft prominence, in the {range}. Routes, difficulty, and photos for this 4,000-footer."
+ }
+ },
+ "trails": {
+ "title": "White Mountain Trails API Map Tool",
+ "subtitle": "Open peak, trail, and route data structure for the White Mountains.",
+ "intro": "White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.",
+ "details": {
+ "title": "Trail details",
+ "empty": "Select a trail to view distance, elevation, and OpenStreetMap details."
+ },
+ "search": {
+ "placeholder": "Search trails…"
+ },
+ "sort": {
+ "az": "Sort A → Z",
+ "za": "Sort Z → A"
+ },
+ "jumpTo": "Jump To:",
+ "list": {
+ "headerName": "Trail Name",
+ "headerCompleted": "Completed",
+ "noMatches": "No trails found. Try a different search.",
+ "noTrails": "No trails available."
+ },
+ "loading": "Loading trails...",
+ "about": {
+ "title": "About this list",
+ "body": "NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths."
+ },
+ "disclaimer": {
+ "title": "Disclaimer",
+ "body": "This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry."
+ },
+ "howto": {
+ "title": "How to use",
+ "body": "Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below."
+ },
+ "settings": {
+ "title": "Settings",
+ "hideCompleted": "Hide completed trails",
+ "clearProgress": "Clear all progress"
+ },
+ "export": "Export CSV",
+ "import": "Import",
+ "viewApi": "View API",
+ "resizePanels": "Resize panels",
+ "info": {
+ "noProperties": "No additional trail properties available yet. Properties will be populated from OpenStreetMap data.",
+ "loadingProperties": "Loading additional trail properties from OpenStreetMap...",
+ "sourceNote": "Information sourced from OpenStreetMap where available.",
+ "distance": "Distance",
+ "elevationGain": "Elevation Gain",
+ "minElevation": "Min Elevation",
+ "maxElevation": "Max Elevation",
+ "surface": "Surface",
+ "trailType": "Trail Type",
+ "difficulty": "Difficulty",
+ "visibility": "Visibility",
+ "width": "Width",
+ "allowedUses": "Allowed Uses",
+ "season": "Season",
+ "maintainer": "Maintainer",
+ "source": "Source"
+ },
+ "virtualHike": "Virtual Hike",
+ "unnamedTrail": "Unnamed trail",
+ "confirmClear": "Are you sure you want to clear all progress?",
+ "alertLoadFail": "Unable to load trail data. Please ensure you have internet connectivity and try refreshing the page.",
+ "csv": {
+ "headerTrail": "Trail",
+ "headerCompleted": "Completed",
+ "headerDate": "Date",
+ "filename": "trail-progress.csv"
+ },
+ "map": {
+ "attribution": "Map data: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+ }
+ }
 }

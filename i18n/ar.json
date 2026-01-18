@@ -1,335 +1,335 @@
 {
-  "common": {
-    "language": "اللغة",
-    "languagePicker": "محدد اللغة",
-    "loading": "جارٍ التحميل…",
-    "errorLoading": "خطأ في تحميل البيانات",
-    "noResults": "لا توجد نتائج.",
-    "noImage": "لا توجد صورة",
-    "unknown": "غير معروف",
-    "notAvailable": "غير متاح",
-    "units": {
-      "ariaLabel": "اختر الوحدات"
-    },
-    "unitsLabel": "الوحدات",
-    "unitsFeet": "قدم",
-    "unitsMeters": "متر"
-  },
-  "landing": {
-    "title": "NH48 API: بيانات مفتوحة لقمم نيوهامبشير البالغ ارتفاعها 4,000 قدم والمسارات الطويلة",
-    "metaDescription": {
-      "content": "توفّر NH48 API بيانات مفتوحة ومنظمة وصورًا لقمم نيوهامبشير الثماني والأربعين بارتفاع 4,000 قدم. استكشف الكتالوج والمسارات وطرق White Mountain."
-    },
-    "ogTitle": {
-      "content": "NH48 API – بيانات مفتوحة للمسارات والقمم"
-    },
-    "ogDescription": {
-      "content": "تصفح كتالوج القمم، واستكشف مسارات White Mountain، واطلع على بيانات المسارات الطويلة لجبال نيوهامبشير."
-    },
-    "heroTitle": "NH48 API",
-    "heroBody": "بيانات مفتوحة ومسارات وبيانات وصفية للصور لقمم نيوهامبشير الـ48 بارتفاع 4,000 قدم. تصفح الكتالوج، واستكشف مسارات White Mountain، وابنِ على مجموعة البيانات.",
-    "cta": {
-      "catalog": "افتح كتالوج القمم",
-      "trails": "مسارات White Mountain",
-      "campaigns": "حملات المسارات"
-    },
-    "notesTitle": "ملاحظات مجموعة البيانات",
-    "notes": {
-      "versioned": "إصدارات مُرقّمة مع سجل تغييرات وبيانات وصفية جاهزة للاستشهاد.",
-      "methodology": "توثيق المصدر ومنهجية الجمع للقمم والمسارات وأقسام الدروب.",
-      "validation": "فحوصات تحقق لمدى الارتفاع والمسافة وتناسق الهندسة.",
-      "reproducible": "مسارات معالجة قابلة لإعادة الإنتاج مدعومة بالسكربتات الأصلية ونتائج ضمان الجودة."
-    },
-    "author": "المؤلف: Nathan Sobol"
-  },
-  "nav": {
-    "logoAlt": "شعار NH48 API",
-    "tagline": "بيانات مفتوحة وبيانات وصفية منظمة لقمم نيوهامبشير بارتفاع 4,000 قدم.",
-    "catalog": "الكتالوج",
-    "trails": "مسارات WMNF",
-    "longTrails": "المسارات الطويلة",
-    "pics": "صور NH48",
-    "peakBagger": "Peak Bagger",
-    "latestPhotos": "أحدث صور WMNF",
-    "login": "تسجيل الدخول",
-    "viewProfile": "عرض الملف الشخصي"
-  },
-  "catalog": {
-    "title": "كتالوج قمم NH48",
-    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
-    "search": {
-      "placeholder": "ابحث عن القمم بالاسم…",
-      "ariaLabel": "ابحث عن القمم بالاسم"
-    },
-    "sort": {
-      "label": "الترتيب حسب:",
-      "ariaLabel": "رتّب القمم حسب السمة",
-      "name": "الاسم (أ–ي)",
-      "elevAsc": "الارتفاع ↑",
-      "elevDesc": "الارتفاع ↓",
-      "promAsc": "البروز ↑",
-      "promDesc": "البروز ↓",
-      "diffAsc": "الصعوبة أ–ي",
-      "diffDesc": "الصعوبة ي–أ",
-      "rangeAsc": "السلسلة أ–ي",
-      "trailAsc": "نوع المسار أ–ي",
-      "exposureAsc": "درجة التعرض أ–ي"
-    },
-    "filter": {
-      "label": "التصفية حسب:",
-      "ariaLabel": "اختر الحقل لتصفية القمم",
-      "none": "بدون",
-      "range": "السلسلة",
-      "difficulty": "الصعوبة",
-      "trail": "نوع المسار",
-      "exposure": "درجة التعرض"
-    },
-    "value": {
-      "label": "القيمة:",
-      "ariaLabel": "اختر قيمة للفِلتر المحدد",
-      "all": "الكل"
-    },
-    "columns": {
-      "label": "الأعمدة:",
-      "ariaLabel": "اختر عدد أعمدة الكتالوج"
-    },
-    "empty": "لم يتم العثور على قمم.",
-    "error": "خطأ في تحميل القمم",
-    "card": {
-      "elevation": "الارتفاع",
-      "prominence": "البروز",
-      "range": "السلسلة",
-      "trailType": "نوع المسار",
-      "difficulty": "الصعوبة",
-      "exposure": "درجة التعرض"
-    }
-  },
-  "photo": {
-    "altTemplate": "{peak} صورة — {season} {timeOfDay}"
-  },
-  "season": {
-    "spring": "الربيع",
-    "summer": "الصيف",
-    "fall": "الخريف",
-    "autumn": "الخريف",
-    "winter": "الشتاء"
-  },
-  "time": {
-    "sunrise": "شروق الشمس",
-    "sunset": "غروب الشمس",
-    "morning": "الصباح",
-    "afternoon": "بعد الظهر",
-    "evening": "المساء",
-    "night": "الليل",
-    "day": "النهار",
-    "dawn": "الفجر",
-    "dusk": "الغسق"
-  },
-  "values": {
-    "trailType": {
-      "loop": "حلقة",
-      "loop_or_out_back": "حلقة أو ذهاب وإياب",
-      "loop_or_traverse": "حلقة أو عبور",
-      "loop_or_traverse_along_ridge": "حلقة أو عبور على طول الحافة",
-      "out_back": "ذهاب وإياب",
-      "out_back_common": "ذهاب وإياب - شائع",
-      "out_back_common_or_long_traverse": "ذهاب وإياب - شائع أو عبور طويل",
-      "out_back_common_or_loop_with_connector_trails": "ذهاب وإياب - شائع أو حلقة مع مسارات ربط",
-      "out_back_common_or_small_loop_including_mt_webster": "ذهاب وإياب - شائع أو حلقة صغيرة تشمل Mt Webster",
-      "out_back_commonly": "ذهاب وإياب - عادةً",
-      "out_back_or_loop": "ذهاب وإياب أو حلقة",
-      "out_back_or_loop_with_tom_and_willey": "ذهاب وإياب أو حلقة - مع Tom و Willey",
-      "out_back_or_loop_combining_trails": "ذهاب وإياب أو حلقة تجمع المسارات",
-      "out_back_or_loop_options": "ذهاب وإياب أو خيارات حلقة",
-      "out_back_or_point_to_point_traverse": "ذهاب وإياب أو عبور من نقطة إلى نقطة",
-      "out_back_or_traverse": "ذهاب وإياب أو عبور"
-    },
-    "difficulty": {
-      "moderate": "متوسط",
-      "moderate_difficult": "متوسط/صعب",
-      "difficult": "صعب",
-      "very_difficult": "صعب جدًا",
-      "extremely_difficult": "صعب للغاية"
-    },
-    "exposure": {
-      "high": "مرتفع",
-      "medium": "متوسط",
-      "low": "منخفض",
-      "low_to_medium": "منخفض إلى متوسط"
-    }
-  },
-  "peak": {
-    "back": "العودة إلى كتالوج قمم NH48",
-    "loading": "جارٍ التحميل…",
-    "relatedTrails": {
-      "title": "المسارات والطرق ذات الصلة",
-      "none": "لا توجد مسارات ذات صلة بعد.",
-      "link": "{name} مسار"
-    },
-    "section": {
-      "routes": "مسارات المشي",
-      "trails": "المسارات المرتبطة",
-      "terrain": "المسار والتضاريس",
-      "conditions": "الظروف والوصول"
-    },
-    "carousel": {
-      "prev": "الصورة السابقة",
-      "next": "الصورة التالية"
-    },
-    "metadata": {
-      "title": "البيانات الوصفية للصورة الحالية",
-      "notAvailable": "غير متاح",
-      "moreDetails": "مزيد من التفاصيل ▾",
-      "lessDetails": "تفاصيل أقل ▴",
-      "labels": {
-        "season": "الموسم",
-        "timeOfDay": "وقت اليوم",
-        "orientation": "الاتجاه",
-        "captureDate": "تاريخ الالتقاط",
-        "cameraMaker": "الشركة المصنعة للكاميرا",
-        "cameraModel": "طراز الكاميرا",
-        "camera": "الكاميرا",
-        "lens": "العدسة",
-        "fStop": "فتحة العدسة",
-        "shutterSpeed": "سرعة الغالق",
-        "iso": "ISO",
-        "exposureBias": "تعويض التعريض",
-        "focalLength": "البعد البؤري",
-        "flashMode": "وضع الفلاش",
-        "meteringMode": "وضع القياس",
-        "maxAperture": "أقصى فتحة",
-        "author": "المؤلف",
-        "dimensions": "الأبعاد",
-        "fileSize": "حجم الملف",
-        "fileCreateDate": "تاريخ إنشاء الملف",
-        "fileModifiedDate": "تاريخ تعديل الملف",
-        "rating": "التقييم",
-        "metadata": "البيانات الوصفية",
-        "creditLine": "سطر الاعتماد",
-        "source": "المصدر",
-        "copyrightNotice": "إشعار حقوق النشر",
-        "copyrightStatus": "حالة حقوق النشر",
-        "rightsUsageTerms": "شروط الحقوق والاستخدام",
-        "altText": "نص بديل",
-        "alt": "بديل",
-        "extendedAlt": "نص بديل ممتد",
-        "caption": "تسمية توضيحية",
-        "headline": "عنوان رئيسي",
-        "extendedDescription": "وصف موسع",
-        "description": "الوصف"
-      }
-    },
-    "generalInfo": {
-      "title": "معلومات عامة عن القمة",
-      "elevation": "الارتفاع",
-      "prominence": "البروز",
-      "range": "السلسلة",
-      "trailType": "نوع المسار",
-      "difficulty": "الصعوبة",
-      "exposure": "درجة التعرض"
-    },
-    "routes": {
-      "distance": "المسافة",
-      "gain": "الارتفاع المكتسب",
-      "difficulty": "الصعوبة"
-    },
-    "trailList": {
-      "title": "قائمة المسارات"
-    },
-    "terrain": {
-      "terrain": "التضاريس",
-      "scramble": "تسلق صخري",
-      "view": "الإطلالة"
-    },
-    "conditions": {
-      "bestSeasons": "أفضل المواسم",
-      "waterAvailability": "توفر المياه",
-      "cellReception": "استقبال الهاتف",
-      "weatherExposure": "التعرض للطقس",
-      "emergencyBailout": "مسار طوارئ",
-      "dogFriendly": "مناسب للكلاب",
-      "nearbyFeatures": "معالم قريبة"
-    },
-    "errorLoading": "خطأ في تحميل القمة",
-    "meta": {
-      "titleTemplate": "{name} ({elevation} قدم) – NH48",
-      "descriptionTemplate": "{name} – بارتفاع {elevation} قدم وبروز {prominence} قدم، في سلسلة {range}. مسارات وصعوبة وصور لهذه القمة ذات 4,000 قدم."
-    }
-  },
-  "trails": {
-    "title": "أداة خريطة واجهة White Mountain Trails",
-    "subtitle": "هيكل بيانات مفتوح للقمم والمسارات والطرق لجبال White Mountains.",
-    "intro": "غابة وايت ماونتن الوطنية — جمعها Nate Sobol. استخدمها كأداة سريعة للعثور على المسارات وتتبع الإنجاز. واجهة API مفتوحة ومجموعات بيانات لجبال نيوهامبشير بارتفاع 4,000 قدم.",
-    "details": {
-      "title": "تفاصيل المسار",
-      "empty": "اختر مسارًا لعرض المسافة والارتفاع وتفاصيل OpenStreetMap."
-    },
-    "search": {
-      "placeholder": "ابحث عن المسارات…"
-    },
-    "sort": {
-      "az": "ترتيب أ → ي",
-      "za": "ترتيب ي → أ"
-    },
-    "jumpTo": "انتقل إلى:",
-    "list": {
-      "headerName": "اسم المسار",
-      "headerCompleted": "مكتمل",
-      "noMatches": "لم يتم العثور على مسارات. جرّب بحثًا مختلفًا.",
-      "noTrails": "لا توجد مسارات متاحة."
-    },
-    "loading": "جارٍ تحميل المسارات...",
-    "about": {
-      "title": "حول هذه القائمة",
-      "body": "NH Tracing و Redlining و White Mountain Trails تشير جميعها إلى نفس مجموعة المسارات الموصوفة في الدليل. بغض النظر عن الاسم، فأنت تعمل لتحقيق نفس الهدف وهو تجربة هذه المسارات."
-    },
-    "disclaimer": {
-      "title": "تنويه",
-      "body": "هذا الموقع <strong>غير مخصص للتخطيط أو الملاحة</strong>. قد تحتوي بيانات المسارات على أخطاء أو عدم دقة بسيطة، وهذه المجموعة ليست القائمة الرسمية (على الرغم من أنها تشمل معظم المسارات المعروفة). يرجى الرجوع إلى المصادر الرسمية واستخدام الحكم السليم في البرية."
-    },
-    "howto": {
-      "title": "كيفية الاستخدام",
-      "body": "استخدم الدوائر الخضراء لوضع علامة على مسار كمكتمل. بعد وضع العلامة، اضغط على أيقونة التقويم لإضافة تاريخ الإكمال — سيحل التاريخ محل الأيقونة ويمكن تعديله بالضغط مرة أخرى. يتم تخزين تقدمك محليًا في متصفحك. يمكنك تصدير أو استيراد تقدمك باستخدام الأزرار أدناه."
-    },
-    "settings": {
-      "title": "الإعدادات",
-      "hideCompleted": "إخفاء المسارات المكتملة",
-      "clearProgress": "مسح كل التقدم"
-    },
-    "export": "تصدير CSV",
-    "import": "استيراد",
-    "viewApi": "عرض API",
-    "resizePanels": "تغيير حجم اللوحات",
-    "info": {
-      "noProperties": "لا توجد خصائص إضافية للمسار بعد. ستتم تعبئة الخصائص من بيانات OpenStreetMap.",
-      "loadingProperties": "جارٍ تحميل خصائص المسار الإضافية من OpenStreetMap...",
-      "sourceNote": "المعلومات مصدرها OpenStreetMap عند توفرها.",
-      "distance": "المسافة",
-      "elevationGain": "مكسب الارتفاع",
-      "minElevation": "أدنى ارتفاع",
-      "maxElevation": "أعلى ارتفاع",
-      "surface": "السطح",
-      "trailType": "نوع المسار",
-      "difficulty": "الصعوبة",
-      "visibility": "الرؤية",
-      "width": "العرض",
-      "allowedUses": "الاستخدامات المسموح بها",
-      "season": "الموسم",
-      "maintainer": "الجهة المشرفة",
-      "source": "المصدر"
-    },
-    "virtualHike": "مسار افتراضي",
-    "unnamedTrail": "مسار بدون اسم",
-    "confirmClear": "هل أنت متأكد أنك تريد مسح كل التقدم؟",
-    "alertLoadFail": "تعذر تحميل بيانات المسارات. يرجى التأكد من اتصالك بالإنترنت ثم تحديث الصفحة.",
-    "csv": {
-      "headerTrail": "المسار",
-      "headerCompleted": "مكتمل",
-      "headerDate": "التاريخ",
-      "filename": "trail-progress.csv"
-    },
-    "map": {
-      "attribution": "بيانات الخريطة: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | نمط الخريطة: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
-    }
-  }
+ "common": {
+ "language": "اللغة",
+ "languagePicker": "محدد اللغة",
+ "loading": "جارٍ التحميل…",
+ "errorLoading": "خطأ في تحميل البيانات",
+ "noResults": "لا توجد نتائج.",
+ "noImage": "لا توجد صورة",
+ "unknown": "غير معروف",
+ "notAvailable": "غير متاح",
+ "units": {
+ "ariaLabel": "اختر الوحدات"
+ },
+ "unitsLabel": "الوحدات",
+ "unitsFeet": "قدم",
+ "unitsMeters": "متر"
+ },
+ "landing": {
+ "title": "NH48 API: بيانات مفتوحة لقمم نيوهامبشير البالغ ارتفاعها 4,000 قدم والمسارات الطويلة",
+ "metaDescription": {
+ "content": "توفّر NH48 API بيانات مفتوحة ومنظمة وصورًا لقمم نيوهامبشير الثماني والأربعين بارتفاع 4,000 قدم. استكشف الكتالوج والمسارات وطرق White Mountain."
+ },
+ "ogTitle": {
+ "content": "NH48 API – بيانات مفتوحة للمسارات والقمم"
+ },
+ "ogDescription": {
+ "content": "تصفح كتالوج القمم، واستكشف مسارات White Mountain، واطلع على بيانات المسارات الطويلة لجبال نيوهامبشير."
+ },
+ "heroTitle": "NH48 API",
+ "heroBody": "بيانات مفتوحة ومسارات وبيانات وصفية للصور لقمم نيوهامبشير الـ48 بارتفاع 4,000 قدم. تصفح الكتالوج، واستكشف مسارات White Mountain، وابنِ على مجموعة البيانات.",
+ "cta": {
+ "catalog": "افتح كتالوج القمم",
+ "trails": "مسارات White Mountain",
+ "campaigns": "حملات المسارات"
+ },
+ "notesTitle": "ملاحظات مجموعة البيانات",
+ "notes": {
+ "versioned": "إصدارات مُرقّمة مع سجل تغييرات وبيانات وصفية جاهزة للاستشهاد.",
+ "methodology": "توثيق المصدر ومنهجية الجمع للقمم والمسارات وأقسام الدروب.",
+ "validation": "فحوصات تحقق لمدى الارتفاع والمسافة وتناسق الهندسة.",
+ "reproducible": "مسارات معالجة قابلة لإعادة الإنتاج مدعومة بالسكربتات الأصلية ونتائج ضمان الجودة."
+ },
+ "author": "المؤلف: Nathan Sobol"
+ },
+ "nav": {
+ "logoAlt": "شعار NH48 API",
+ "tagline": "بيانات مفتوحة وبيانات وصفية منظمة لقمم نيوهامبشير بارتفاع 4,000 قدم.",
+ "catalog": "الكتالوج",
+ "trails": "مسارات WMNF",
+ "longTrails": "المسارات الطويلة",
+ "pics": "صور NH48",
+ "peakBagger": "Peak Bagger",
+ "latestPhotos": "أحدث صور WMNF",
+ "login": "تسجيل الدخول",
+ "viewProfile": "عرض الملف الشخصي"
+ },
+ "catalog": {
+ "title": "كتالوج قمم NH48",
+ "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
+ "search": {
+ "placeholder": "ابحث عن القمم بالاسم…",
+ "ariaLabel": "ابحث عن القمم بالاسم"
+ },
+ "sort": {
+ "label": "الترتيب حسب:",
+ "ariaLabel": "رتّب القمم حسب السمة",
+ "name": "الاسم (أ–ي)",
+ "elevAsc": "الارتفاع ↑",
+ "elevDesc": "الارتفاع ↓",
+ "promAsc": "البروز ↑",
+ "promDesc": "البروز ↓",
+ "diffAsc": "الصعوبة أ–ي",
+ "diffDesc": "الصعوبة ي–أ",
+ "rangeAsc": "السلسلة أ–ي",
+ "trailAsc": "نوع المسار أ–ي",
+ "exposureAsc": "درجة التعرض أ–ي"
+ },
+ "filter": {
+ "label": "التصفية حسب:",
+ "ariaLabel": "اختر الحقل لتصفية القمم",
+ "none": "بدون",
+ "range": "السلسلة",
+ "difficulty": "الصعوبة",
+ "trail": "نوع المسار",
+ "exposure": "درجة التعرض"
+ },
+ "value": {
+ "label": "القيمة:",
+ "ariaLabel": "اختر قيمة للفِلتر المحدد",
+ "all": "الكل"
+ },
+ "columns": {
+ "label": "الأعمدة:",
+ "ariaLabel": "اختر عدد أعمدة الكتالوج"
+ },
+ "empty": "لم يتم العثور على قمم.",
+ "error": "خطأ في تحميل القمم",
+ "card": {
+ "elevation": "الارتفاع",
+ "prominence": "البروز",
+ "range": "السلسلة",
+ "trailType": "نوع المسار",
+ "difficulty": "الصعوبة",
+ "exposure": "درجة التعرض"
+ }
+ },
+ "photo": {
+ "altTemplate": "{peak} صورة — {season} {timeOfDay}"
+ },
+ "season": {
+ "spring": "الربيع",
+ "summer": "الصيف",
+ "fall": "الخريف",
+ "autumn": "الخريف",
+ "winter": "الشتاء"
+ },
+ "time": {
+ "sunrise": "شروق الشمس",
+ "sunset": "غروب الشمس",
+ "morning": "الصباح",
+ "afternoon": "بعد الظهر",
+ "evening": "المساء",
+ "night": "الليل",
+ "day": "النهار",
+ "dawn": "الفجر",
+ "dusk": "الغسق"
+ },
+ "values": {
+ "trailType": {
+ "loop": "حلقة",
+ "loop_or_out_back": "حلقة أو ذهاب وإياب",
+ "loop_or_traverse": "حلقة أو عبور",
+ "loop_or_traverse_along_ridge": "حلقة أو عبور على طول الحافة",
+ "out_back": "ذهاب وإياب",
+ "out_back_common": "ذهاب وإياب - شائع",
+ "out_back_common_or_long_traverse": "ذهاب وإياب - شائع أو عبور طويل",
+ "out_back_common_or_loop_with_connector_trails": "ذهاب وإياب - شائع أو حلقة مع مسارات ربط",
+ "out_back_common_or_small_loop_including_mt_webster": "ذهاب وإياب - شائع أو حلقة صغيرة تشمل Mt Webster",
+ "out_back_commonly": "ذهاب وإياب - عادةً",
+ "out_back_or_loop": "ذهاب وإياب أو حلقة",
+ "out_back_or_loop_with_tom_and_willey": "ذهاب وإياب أو حلقة - مع Tom و Willey",
+ "out_back_or_loop_combining_trails": "ذهاب وإياب أو حلقة تجمع المسارات",
+ "out_back_or_loop_options": "ذهاب وإياب أو خيارات حلقة",
+ "out_back_or_point_to_point_traverse": "ذهاب وإياب أو عبور من نقطة إلى نقطة",
+ "out_back_or_traverse": "ذهاب وإياب أو عبور"
+ },
+ "difficulty": {
+ "moderate": "متوسط",
+ "moderate_difficult": "متوسط/صعب",
+ "difficult": "صعب",
+ "very_difficult": "صعب جدًا",
+ "extremely_difficult": "صعب للغاية"
+ },
+ "exposure": {
+ "high": "مرتفع",
+ "medium": "متوسط",
+ "low": "منخفض",
+ "low_to_medium": "منخفض إلى متوسط"
+ }
+ },
+ "peak": {
+ "back": "العودة إلى كتالوج قمم NH48",
+ "loading": "جارٍ التحميل…",
+ "relatedTrails": {
+ "title": "المسارات والطرق ذات الصلة",
+ "none": "لا توجد مسارات ذات صلة بعد.",
+ "link": "{name} مسار"
+ },
+ "section": {
+ "routes": "مسارات المشي",
+ "trails": "المسارات المرتبطة",
+ "terrain": "المسار والتضاريس",
+ "conditions": "الظروف والوصول"
+ },
+ "carousel": {
+ "prev": "الصورة السابقة",
+ "next": "الصورة التالية"
+ },
+ "metadata": {
+ "title": "البيانات الوصفية للصورة الحالية",
+ "notAvailable": "غير متاح",
+ "moreDetails": "مزيد من التفاصيل ▾",
+ "lessDetails": "تفاصيل أقل ▴",
+ "labels": {
+ "season": "الموسم",
+ "timeOfDay": "وقت اليوم",
+ "orientation": "الاتجاه",
+ "captureDate": "تاريخ الالتقاط",
+ "cameraMaker": "الشركة المصنعة للكاميرا",
+ "cameraModel": "طراز الكاميرا",
+ "camera": "الكاميرا",
+ "lens": "العدسة",
+ "fStop": "فتحة العدسة",
+ "shutterSpeed": "سرعة الغالق",
+ "iso": "ISO",
+ "exposureBias": "تعويض التعريض",
+ "focalLength": "البعد البؤري",
+ "flashMode": "وضع الفلاش",
+ "meteringMode": "وضع القياس",
+ "maxAperture": "أقصى فتحة",
+ "author": "المؤلف",
+ "dimensions": "الأبعاد",
+ "fileSize": "حجم الملف",
+ "fileCreateDate": "تاريخ إنشاء الملف",
+ "fileModifiedDate": "تاريخ تعديل الملف",
+ "rating": "التقييم",
+ "metadata": "البيانات الوصفية",
+ "creditLine": "سطر الاعتماد",
+ "source": "المصدر",
+ "copyrightNotice": "إشعار حقوق النشر",
+ "copyrightStatus": "حالة حقوق النشر",
+ "rightsUsageTerms": "شروط الحقوق والاستخدام",
+ "altText": "نص بديل",
+ "alt": "بديل",
+ "extendedAlt": "نص بديل ممتد",
+ "caption": "تسمية توضيحية",
+ "headline": "عنوان رئيسي",
+ "extendedDescription": "وصف موسع",
+ "description": "الوصف"
+ }
+ },
+ "generalInfo": {
+ "title": "معلومات عامة عن القمة",
+ "elevation": "الارتفاع",
+ "prominence": "البروز",
+ "range": "السلسلة",
+ "trailType": "نوع المسار",
+ "difficulty": "الصعوبة",
+ "exposure": "درجة التعرض"
+ },
+ "routes": {
+ "distance": "المسافة",
+ "gain": "الارتفاع المكتسب",
+ "difficulty": "الصعوبة"
+ },
+ "trailList": {
+ "title": "قائمة المسارات"
+ },
+ "terrain": {
+ "terrain": "التضاريس",
+ "scramble": "تسلق صخري",
+ "view": "الإطلالة"
+ },
+ "conditions": {
+ "bestSeasons": "أفضل المواسم",
+ "waterAvailability": "توفر المياه",
+ "cellReception": "استقبال الهاتف",
+ "weatherExposure": "التعرض للطقس",
+ "emergencyBailout": "مسار طوارئ",
+ "dogFriendly": "مناسب للكلاب",
+ "nearbyFeatures": "معالم قريبة"
+ },
+ "errorLoading": "خطأ في تحميل القمة",
+ "meta": {
+ "titleTemplate": "{name} ({elevation} قدم) – NH48",
+ "descriptionTemplate": "{name} – بارتفاع {elevation} قدم وبروز {prominence} قدم، في سلسلة {range}. مسارات وصعوبة وصور لهذه القمة ذات 4,000 قدم."
+ }
+ },
+ "trails": {
+ "title": "أداة خريطة واجهة White Mountain Trails",
+ "subtitle": "هيكل بيانات مفتوح للقمم والمسارات والطرق لجبال White Mountains.",
+ "intro": "غابة وايت ماونتن الوطنية — جمعها Nate Sobol. استخدمها كأداة سريعة للعثور على المسارات وتتبع الإنجاز. واجهة API مفتوحة ومجموعات بيانات لجبال نيوهامبشير بارتفاع 4,000 قدم.",
+ "details": {
+ "title": "تفاصيل المسار",
+ "empty": "اختر مسارًا لعرض المسافة والارتفاع وتفاصيل OpenStreetMap."
+ },
+ "search": {
+ "placeholder": "ابحث عن المسارات…"
+ },
+ "sort": {
+ "az": "ترتيب أ → ي",
+ "za": "ترتيب ي → أ"
+ },
+ "jumpTo": "انتقل إلى:",
+ "list": {
+ "headerName": "اسم المسار",
+ "headerCompleted": "مكتمل",
+ "noMatches": "لم يتم العثور على مسارات. جرّب بحثًا مختلفًا.",
+ "noTrails": "لا توجد مسارات متاحة."
+ },
+ "loading": "جارٍ تحميل المسارات...",
+ "about": {
+ "title": "حول هذه القائمة",
+ "body": "NH Tracing و Redlining و White Mountain Trails تشير جميعها إلى نفس مجموعة المسارات الموصوفة في الدليل. بغض النظر عن الاسم، فأنت تعمل لتحقيق نفس الهدف وهو تجربة هذه المسارات."
+ },
+ "disclaimer": {
+ "title": "تنويه",
+ "body": "هذا الموقع <strong>غير مخصص للتخطيط أو الملاحة</strong>. قد تحتوي بيانات المسارات على أخطاء أو عدم دقة بسيطة، وهذه المجموعة ليست القائمة الرسمية (على الرغم من أنها تشمل معظم المسارات المعروفة). يرجى الرجوع إلى المصادر الرسمية واستخدام الحكم السليم في البرية."
+ },
+ "howto": {
+ "title": "كيفية الاستخدام",
+ "body": "استخدم الدوائر الخضراء لوضع علامة على مسار كمكتمل. بعد وضع العلامة، اضغط على أيقونة التقويم لإضافة تاريخ الإكمال — سيحل التاريخ محل الأيقونة ويمكن تعديله بالضغط مرة أخرى. يتم تخزين تقدمك محليًا في متصفحك. يمكنك تصدير أو استيراد تقدمك باستخدام الأزرار أدناه."
+ },
+ "settings": {
+ "title": "الإعدادات",
+ "hideCompleted": "إخفاء المسارات المكتملة",
+ "clearProgress": "مسح كل التقدم"
+ },
+ "export": "تصدير CSV",
+ "import": "استيراد",
+ "viewApi": "عرض API",
+ "resizePanels": "تغيير حجم اللوحات",
+ "info": {
+ "noProperties": "لا توجد خصائص إضافية للمسار بعد. ستتم تعبئة الخصائص من بيانات OpenStreetMap.",
+ "loadingProperties": "جارٍ تحميل خصائص المسار الإضافية من OpenStreetMap...",
+ "sourceNote": "المعلومات مصدرها OpenStreetMap عند توفرها.",
+ "distance": "المسافة",
+ "elevationGain": "مكسب الارتفاع",
+ "minElevation": "أدنى ارتفاع",
+ "maxElevation": "أعلى ارتفاع",
+ "surface": "السطح",
+ "trailType": "نوع المسار",
+ "difficulty": "الصعوبة",
+ "visibility": "الرؤية",
+ "width": "العرض",
+ "allowedUses": "الاستخدامات المسموح بها",
+ "season": "الموسم",
+ "maintainer": "الجهة المشرفة",
+ "source": "المصدر"
+ },
+ "virtualHike": "مسار افتراضي",
+ "unnamedTrail": "مسار بدون اسم",
+ "confirmClear": "هل أنت متأكد أنك تريد مسح كل التقدم؟",
+ "alertLoadFail": "تعذر تحميل بيانات المسارات. يرجى التأكد من اتصالك بالإنترنت ثم تحديث الصفحة.",
+ "csv": {
+ "headerTrail": "المسار",
+ "headerCompleted": "مكتمل",
+ "headerDate": "التاريخ",
+ "filename": "trail-progress.csv"
+ },
+ "map": {
+ "attribution": "بيانات الخريطة: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | نمط الخريطة: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+ }
+ }
 }

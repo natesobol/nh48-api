@@ -1,335 +1,335 @@
 {
-  "common": {
-    "language": "Bahasa",
-    "languagePicker": "Pemilih bahasa",
-    "loading": "Memuat…",
-    "errorLoading": "Gagal memuat data",
-    "noResults": "Tidak ada hasil ditemukan.",
-    "noImage": "tanpa gambar",
-    "unknown": "Tidak diketahui",
-    "notAvailable": "Tidak tersedia",
-    "units": {
-      "ariaLabel": "Pilih satuan"
-    },
-    "unitsLabel": "Satuan",
-    "unitsFeet": "Kaki",
-    "unitsMeters": "Meter"
-  },
-  "landing": {
-    "title": "NH48 API: Data terbuka untuk puncak 4.000 kaki dan jalur panjang di New Hampshire",
-    "metaDescription": {
-      "content": "NH48 API menyediakan data terbuka, terstruktur, dan foto untuk 48 puncak setinggi 4.000 kaki di New Hampshire. Jelajahi katalog, rute, dan jalur White Mountain."
-    },
-    "ogTitle": {
-      "content": "NH48 API – Data terbuka jalur dan puncak"
-    },
-    "ogDescription": {
-      "content": "Telusuri katalog puncak, jelajahi jalur White Mountain, dan akses data rute jarak jauh untuk pegunungan New Hampshire."
-    },
-    "heroTitle": "NH48 API",
-    "heroBody": "Data terbuka, rute, dan metadata foto untuk 48 puncak 4.000 kaki di New Hampshire. Jelajahi katalog, telusuri jalur White Mountain, dan bangun di atas dataset ini.",
-    "cta": {
-      "catalog": "Buka Katalog Puncak",
-      "trails": "Jalur White Mountain",
-      "campaigns": "Kampanye Jalur"
-    },
-    "notesTitle": "Catatan dataset",
-    "notes": {
-      "versioned": "Rilis berversi dengan changelog dan metadata siap kutip.",
-      "methodology": "Asal-usul + metodologi pengumpulan dicatat untuk puncak, rute, dan segmen jalur.",
-      "validation": "Pemeriksaan validasi untuk rentang elevasi, jarak, dan konsistensi geometri.",
-      "reproducible": "Pipeline yang dapat direproduksi didukung oleh skrip sumber dan artefak QA."
-    },
-    "author": "Penulis: Nathan Sobol"
-  },
-  "nav": {
-    "logoAlt": "Logo NH48 API",
-    "tagline": "Data terbuka & metadata terstruktur untuk puncak 4.000 kaki di New Hampshire.",
-    "catalog": "Katalog",
-    "trails": "Jalur WMNF",
-    "longTrails": "Jalur Panjang",
-    "pics": "Foto NH48",
-    "peakBagger": "Peak Bagger",
-    "latestPhotos": "Foto WMNF terbaru",
-    "login": "Masuk",
-    "viewProfile": "Lihat profil"
-  },
-  "catalog": {
-    "title": "Katalog Puncak NH48",
-    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
-    "search": {
-      "placeholder": "Cari puncak berdasarkan nama…",
-      "ariaLabel": "Cari puncak berdasarkan nama"
-    },
-    "sort": {
-      "label": "Urutkan berdasarkan:",
-      "ariaLabel": "Urutkan puncak berdasarkan atribut",
-      "name": "Nama (A–Z)",
-      "elevAsc": "Ketinggian ↑",
-      "elevDesc": "Ketinggian ↓",
-      "promAsc": "Prominensi ↑",
-      "promDesc": "Prominensi ↓",
-      "diffAsc": "Kesulitan A–Z",
-      "diffDesc": "Kesulitan Z–A",
-      "rangeAsc": "Rangkaian A–Z",
-      "trailAsc": "Jenis jalur A–Z",
-      "exposureAsc": "Paparan A–Z"
-    },
-    "filter": {
-      "label": "Saring berdasarkan:",
-      "ariaLabel": "Pilih bidang untuk menyaring puncak",
-      "none": "Tidak ada",
-      "range": "Rangkaian",
-      "difficulty": "Kesulitan",
-      "trail": "Jenis jalur",
-      "exposure": "Paparan"
-    },
-    "value": {
-      "label": "Nilai:",
-      "ariaLabel": "Pilih nilai untuk filter yang dipilih",
-      "all": "Semua"
-    },
-    "columns": {
-      "label": "Kolom:",
-      "ariaLabel": "Pilih jumlah kolom katalog"
-    },
-    "empty": "Tidak ada puncak ditemukan.",
-    "error": "Gagal memuat puncak",
-    "card": {
-      "elevation": "Ketinggian",
-      "prominence": "Prominensi",
-      "range": "Rangkaian",
-      "trailType": "Jenis jalur",
-      "difficulty": "Kesulitan",
-      "exposure": "Paparan"
-    }
-  },
-  "photo": {
-    "altTemplate": "Foto {peak} — {season} {timeOfDay}"
-  },
-  "season": {
-    "spring": "musim semi",
-    "summer": "musim panas",
-    "fall": "musim gugur",
-    "autumn": "musim gugur",
-    "winter": "musim dingin"
-  },
-  "time": {
-    "sunrise": "matahari terbit",
-    "sunset": "matahari terbenam",
-    "morning": "pagi",
-    "afternoon": "siang",
-    "evening": "sore",
-    "night": "malam",
-    "day": "siang",
-    "dawn": "fajar",
-    "dusk": "senja"
-  },
-  "values": {
-    "trailType": {
-      "loop": "Loop",
-      "loop_or_out_back": "Loop atau pulang-pergi",
-      "loop_or_traverse": "Loop atau traverse",
-      "loop_or_traverse_along_ridge": "Loop atau traverse sepanjang punggungan",
-      "out_back": "Pulang-pergi",
-      "out_back_common": "Pulang-pergi - umum",
-      "out_back_common_or_long_traverse": "Pulang-pergi - umum atau traverse panjang",
-      "out_back_common_or_loop_with_connector_trails": "Pulang-pergi - umum atau loop dengan jalur penghubung",
-      "out_back_common_or_small_loop_including_mt_webster": "Pulang-pergi - umum atau loop kecil termasuk Mt Webster",
-      "out_back_commonly": "Pulang-pergi - biasanya",
-      "out_back_or_loop": "Pulang-pergi atau loop",
-      "out_back_or_loop_with_tom_and_willey": "Pulang-pergi atau loop - dengan Tom dan Willey",
-      "out_back_or_loop_combining_trails": "Pulang-pergi atau loop menggabungkan jalur",
-      "out_back_or_loop_options": "Pulang-pergi atau opsi loop",
-      "out_back_or_point_to_point_traverse": "Pulang-pergi atau traverse titik-ke-titik",
-      "out_back_or_traverse": "Pulang-pergi atau traverse"
-    },
-    "difficulty": {
-      "moderate": "Sedang",
-      "moderate_difficult": "Sedang/Sulit",
-      "difficult": "Sulit",
-      "very_difficult": "Sangat sulit",
-      "extremely_difficult": "Sangat amat sulit"
-    },
-    "exposure": {
-      "high": "Tinggi",
-      "medium": "Sedang",
-      "low": "Rendah",
-      "low_to_medium": "Rendah hingga sedang"
-    }
-  },
-  "peak": {
-    "back": "Kembali ke Katalog Puncak NH48",
-    "loading": "Memuat…",
-    "relatedTrails": {
-      "title": "Jalur & Rute Terkait",
-      "none": "Belum ada jalur terkait.",
-      "link": "rute {name}"
-    },
-    "section": {
-      "routes": "Rute Pendakian",
-      "trails": "Jalur Terkait",
-      "terrain": "Jalur & Medan",
-      "conditions": "Kondisi & Akses"
-    },
-    "carousel": {
-      "prev": "Gambar sebelumnya",
-      "next": "Gambar berikutnya"
-    },
-    "metadata": {
-      "title": "Metadata Foto Saat Ini",
-      "notAvailable": "Tidak tersedia",
-      "moreDetails": "Detail lebih lanjut ▾",
-      "lessDetails": "Detail lebih sedikit ▴",
-      "labels": {
-        "season": "Musim",
-        "timeOfDay": "Waktu hari",
-        "orientation": "Orientasi",
-        "captureDate": "Tanggal pengambilan",
-        "cameraMaker": "Pembuat kamera",
-        "cameraModel": "Model kamera",
-        "camera": "Kamera",
-        "lens": "Lensa",
-        "fStop": "F Stop",
-        "shutterSpeed": "Kecepatan rana",
-        "iso": "ISO",
-        "exposureBias": "Kompensasi eksposur",
-        "focalLength": "Panjang fokus",
-        "flashMode": "Mode flash",
-        "meteringMode": "Mode pengukuran",
-        "maxAperture": "Bukaan maksimum",
-        "author": "Penulis",
-        "dimensions": "Dimensi",
-        "fileSize": "Ukuran file",
-        "fileCreateDate": "Tanggal pembuatan file",
-        "fileModifiedDate": "Tanggal modifikasi file",
-        "rating": "Penilaian",
-        "metadata": "metadata",
-        "creditLine": "baris kredit",
-        "source": "sumber",
-        "copyrightNotice": "pemberitahuan hak cipta",
-        "copyrightStatus": "status hak cipta",
-        "rightsUsageTerms": "syarat penggunaan hak",
-        "altText": "teks alt",
-        "alt": "alt",
-        "extendedAlt": "teks alt diperluas",
-        "caption": "keterangan",
-        "headline": "tajuk",
-        "extendedDescription": "deskripsi diperluas",
-        "description": "deskripsi"
-      }
-    },
-    "generalInfo": {
-      "title": "Info Puncak Umum",
-      "elevation": "Ketinggian",
-      "prominence": "Prominensi",
-      "range": "Rangkaian",
-      "trailType": "Jenis jalur",
-      "difficulty": "Kesulitan",
-      "exposure": "Paparan"
-    },
-    "routes": {
-      "distance": "Jarak",
-      "gain": "Kenaikan",
-      "difficulty": "Kesulitan"
-    },
-    "trailList": {
-      "title": "Daftar Jalur"
-    },
-    "terrain": {
-      "terrain": "Medan",
-      "scramble": "Scramble",
-      "view": "Pemandangan"
-    },
-    "conditions": {
-      "bestSeasons": "Musim terbaik",
-      "waterAvailability": "Ketersediaan air",
-      "cellReception": "Sinyal seluler",
-      "weatherExposure": "Paparan cuaca",
-      "emergencyBailout": "Rute darurat",
-      "dogFriendly": "Ramah anjing",
-      "nearbyFeatures": "Fitur terdekat"
-    },
-    "errorLoading": "Gagal memuat puncak",
-    "meta": {
-      "titleTemplate": "{name} ({elevation} kaki) – NH48",
-      "descriptionTemplate": "{name} — setinggi {elevation} kaki, prominensi {prominence} kaki, di {range}. Rute, kesulitan, dan foto untuk puncak 4.000 kaki ini."
-    }
-  },
-  "trails": {
-    "title": "Alat Peta API White Mountain Trails",
-    "subtitle": "Struktur data terbuka untuk puncak, jalur, dan rute di White Mountains.",
-    "intro": "White Mountain National Forest — disusun oleh Nate Sobol. Gunakan sebagai pencari jalur cepat dan pelacak penyelesaian. API terbuka dan dataset untuk gunung 4.000 kaki di New Hampshire.",
-    "details": {
-      "title": "Detail jalur",
-      "empty": "Pilih jalur untuk melihat jarak, elevasi, dan detail OpenStreetMap."
-    },
-    "search": {
-      "placeholder": "Cari jalur…"
-    },
-    "sort": {
-      "az": "Urutkan A → Z",
-      "za": "Urutkan Z → A"
-    },
-    "jumpTo": "Lompat ke:",
-    "list": {
-      "headerName": "Nama jalur",
-      "headerCompleted": "Selesai",
-      "noMatches": "Tidak ada jalur ditemukan. Coba pencarian lain.",
-      "noTrails": "Tidak ada jalur tersedia."
-    },
-    "loading": "Memuat jalur...",
-    "about": {
-      "title": "Tentang daftar ini",
-      "body": "NH Tracing, Redlining, dan White Mountain Trails merujuk pada kumpulan jalur yang sama seperti yang dijelaskan di buku panduan. Apa pun namanya, Anda menuju tujuan yang sama: menikmati jalur-jalur ini."
-    },
-    "disclaimer": {
-      "title": "Penafian",
-      "body": "Situs ini <strong>tidak dimaksudkan untuk perencanaan atau navigasi</strong>. Data jalur dapat mengandung kesalahan kecil atau ketidakakuratan, dan koleksi ini bukan daftar resmi (meskipun mencakup sebagian besar jalur yang diketahui). Silakan rujuk sumber resmi dan gunakan penilaian yang baik di alam terbuka."
-    },
-    "howto": {
-      "title": "Cara menggunakan",
-      "body": "Gunakan lingkaran hijau untuk menandai jalur sebagai selesai. Setelah menandai jalur, ketuk ikon kalender untuk menambahkan tanggal penyelesaian — tanggal akan menggantikan ikon dan bisa diedit dengan mengetuk lagi. Progres Anda disimpan secara lokal di peramban. Anda dapat mengekspor atau mengimpor progres menggunakan tombol di bawah."
-    },
-    "settings": {
-      "title": "Pengaturan",
-      "hideCompleted": "Sembunyikan jalur yang selesai",
-      "clearProgress": "Hapus semua progres"
-    },
-    "export": "Ekspor CSV",
-    "import": "Impor",
-    "viewApi": "Lihat API",
-    "resizePanels": "Ubah ukuran panel",
-    "info": {
-      "noProperties": "Belum ada properti tambahan untuk jalur. Properti akan diisi dari data OpenStreetMap.",
-      "loadingProperties": "Memuat properti jalur tambahan dari OpenStreetMap...",
-      "sourceNote": "Informasi bersumber dari OpenStreetMap jika tersedia.",
-      "distance": "Jarak",
-      "elevationGain": "Kenaikan elevasi",
-      "minElevation": "Elevasi minimum",
-      "maxElevation": "Elevasi maksimum",
-      "surface": "Permukaan",
-      "trailType": "Jenis jalur",
-      "difficulty": "Kesulitan",
-      "visibility": "Visibilitas",
-      "width": "Lebar",
-      "allowedUses": "Penggunaan yang diizinkan",
-      "season": "Musim",
-      "maintainer": "Pemelihara",
-      "source": "Sumber"
-    },
-    "virtualHike": "Pendakian virtual",
-    "unnamedTrail": "Jalur tanpa nama",
-    "confirmClear": "Apakah Anda yakin ingin menghapus semua progres?",
-    "alertLoadFail": "Tidak dapat memuat data jalur. Pastikan Anda memiliki koneksi internet dan segarkan halaman.",
-    "csv": {
-      "headerTrail": "Jalur",
-      "headerCompleted": "Selesai",
-      "headerDate": "Tanggal",
-      "filename": "trail-progress.csv"
-    },
-    "map": {
-      "attribution": "Data peta: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Gaya peta: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
-    }
-  }
+ "common": {
+ "language": "Bahasa",
+ "languagePicker": "Pemilih bahasa",
+ "loading": "Memuat…",
+ "errorLoading": "Gagal memuat data",
+ "noResults": "Tidak ada hasil ditemukan.",
+ "noImage": "tanpa gambar",
+ "unknown": "Tidak diketahui",
+ "notAvailable": "Tidak tersedia",
+ "units": {
+ "ariaLabel": "Pilih satuan"
+ },
+ "unitsLabel": "Satuan",
+ "unitsFeet": "Kaki",
+ "unitsMeters": "Meter"
+ },
+ "landing": {
+ "title": "NH48 API: Data terbuka untuk puncak 4.000 kaki dan jalur panjang di New Hampshire",
+ "metaDescription": {
+ "content": "NH48 API menyediakan data terbuka, terstruktur, dan foto untuk 48 puncak setinggi 4.000 kaki di New Hampshire. Jelajahi katalog, rute, dan jalur White Mountain."
+ },
+ "ogTitle": {
+ "content": "NH48 API – Data terbuka jalur dan puncak"
+ },
+ "ogDescription": {
+ "content": "Telusuri katalog puncak, jelajahi jalur White Mountain, dan akses data rute jarak jauh untuk pegunungan New Hampshire."
+ },
+ "heroTitle": "NH48 API",
+ "heroBody": "Data terbuka, rute, dan metadata foto untuk 48 puncak 4.000 kaki di New Hampshire. Jelajahi katalog, telusuri jalur White Mountain, dan bangun di atas dataset ini.",
+ "cta": {
+ "catalog": "Buka Katalog Puncak",
+ "trails": "Jalur White Mountain",
+ "campaigns": "Kampanye Jalur"
+ },
+ "notesTitle": "Catatan dataset",
+ "notes": {
+ "versioned": "Rilis berversi dengan changelog dan metadata siap kutip.",
+ "methodology": "Asal-usul + metodologi pengumpulan dicatat untuk puncak, rute, dan segmen jalur.",
+ "validation": "Pemeriksaan validasi untuk rentang elevasi, jarak, dan konsistensi geometri.",
+ "reproducible": "Pipeline yang dapat direproduksi didukung oleh skrip sumber dan artefak QA."
+ },
+ "author": "Penulis: Nathan Sobol"
+ },
+ "nav": {
+ "logoAlt": "Logo NH48 API",
+ "tagline": "Data terbuka & metadata terstruktur untuk puncak 4.000 kaki di New Hampshire.",
+ "catalog": "Katalog",
+ "trails": "Jalur WMNF",
+ "longTrails": "Jalur Panjang",
+ "pics": "Foto NH48",
+ "peakBagger": "Peak Bagger",
+ "latestPhotos": "Foto WMNF terbaru",
+ "login": "Masuk",
+ "viewProfile": "Lihat profil"
+ },
+ "catalog": {
+ "title": "Katalog Puncak NH48",
+ "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
+ "search": {
+ "placeholder": "Cari puncak berdasarkan nama…",
+ "ariaLabel": "Cari puncak berdasarkan nama"
+ },
+ "sort": {
+ "label": "Urutkan berdasarkan:",
+ "ariaLabel": "Urutkan puncak berdasarkan atribut",
+ "name": "Nama (A–Z)",
+ "elevAsc": "Ketinggian ↑",
+ "elevDesc": "Ketinggian ↓",
+ "promAsc": "Prominensi ↑",
+ "promDesc": "Prominensi ↓",
+ "diffAsc": "Kesulitan A–Z",
+ "diffDesc": "Kesulitan Z–A",
+ "rangeAsc": "Rangkaian A–Z",
+ "trailAsc": "Jenis jalur A–Z",
+ "exposureAsc": "Paparan A–Z"
+ },
+ "filter": {
+ "label": "Saring berdasarkan:",
+ "ariaLabel": "Pilih bidang untuk menyaring puncak",
+ "none": "Tidak ada",
+ "range": "Rangkaian",
+ "difficulty": "Kesulitan",
+ "trail": "Jenis jalur",
+ "exposure": "Paparan"
+ },
+ "value": {
+ "label": "Nilai:",
+ "ariaLabel": "Pilih nilai untuk filter yang dipilih",
+ "all": "Semua"
+ },
+ "columns": {
+ "label": "Kolom:",
+ "ariaLabel": "Pilih jumlah kolom katalog"
+ },
+ "empty": "Tidak ada puncak ditemukan.",
+ "error": "Gagal memuat puncak",
+ "card": {
+ "elevation": "Ketinggian",
+ "prominence": "Prominensi",
+ "range": "Rangkaian",
+ "trailType": "Jenis jalur",
+ "difficulty": "Kesulitan",
+ "exposure": "Paparan"
+ }
+ },
+ "photo": {
+ "altTemplate": "Foto {peak} — {season} {timeOfDay}"
+ },
+ "season": {
+ "spring": "musim semi",
+ "summer": "musim panas",
+ "fall": "musim gugur",
+ "autumn": "musim gugur",
+ "winter": "musim dingin"
+ },
+ "time": {
+ "sunrise": "matahari terbit",
+ "sunset": "matahari terbenam",
+ "morning": "pagi",
+ "afternoon": "siang",
+ "evening": "sore",
+ "night": "malam",
+ "day": "siang",
+ "dawn": "fajar",
+ "dusk": "senja"
+ },
+ "values": {
+ "trailType": {
+ "loop": "Loop",
+ "loop_or_out_back": "Loop atau pulang-pergi",
+ "loop_or_traverse": "Loop atau traverse",
+ "loop_or_traverse_along_ridge": "Loop atau traverse sepanjang punggungan",
+ "out_back": "Pulang-pergi",
+ "out_back_common": "Pulang-pergi - umum",
+ "out_back_common_or_long_traverse": "Pulang-pergi - umum atau traverse panjang",
+ "out_back_common_or_loop_with_connector_trails": "Pulang-pergi - umum atau loop dengan jalur penghubung",
+ "out_back_common_or_small_loop_including_mt_webster": "Pulang-pergi - umum atau loop kecil termasuk Mt Webster",
+ "out_back_commonly": "Pulang-pergi - biasanya",
+ "out_back_or_loop": "Pulang-pergi atau loop",
+ "out_back_or_loop_with_tom_and_willey": "Pulang-pergi atau loop - dengan Tom dan Willey",
+ "out_back_or_loop_combining_trails": "Pulang-pergi atau loop menggabungkan jalur",
+ "out_back_or_loop_options": "Pulang-pergi atau opsi loop",
+ "out_back_or_point_to_point_traverse": "Pulang-pergi atau traverse titik-ke-titik",
+ "out_back_or_traverse": "Pulang-pergi atau traverse"
+ },
+ "difficulty": {
+ "moderate": "Sedang",
+ "moderate_difficult": "Sedang/Sulit",
+ "difficult": "Sulit",
+ "very_difficult": "Sangat sulit",
+ "extremely_difficult": "Sangat amat sulit"
+ },
+ "exposure": {
+ "high": "Tinggi",
+ "medium": "Sedang",
+ "low": "Rendah",
+ "low_to_medium": "Rendah hingga sedang"
+ }
+ },
+ "peak": {
+ "back": "Kembali ke Katalog Puncak NH48",
+ "loading": "Memuat…",
+ "relatedTrails": {
+ "title": "Jalur & Rute Terkait",
+ "none": "Belum ada jalur terkait.",
+ "link": "rute {name}"
+ },
+ "section": {
+ "routes": "Rute Pendakian",
+ "trails": "Jalur Terkait",
+ "terrain": "Jalur & Medan",
+ "conditions": "Kondisi & Akses"
+ },
+ "carousel": {
+ "prev": "Gambar sebelumnya",
+ "next": "Gambar berikutnya"
+ },
+ "metadata": {
+ "title": "Metadata Foto Saat Ini",
+ "notAvailable": "Tidak tersedia",
+ "moreDetails": "Detail lebih lanjut ▾",
+ "lessDetails": "Detail lebih sedikit ▴",
+ "labels": {
+ "season": "Musim",
+ "timeOfDay": "Waktu hari",
+ "orientation": "Orientasi",
+ "captureDate": "Tanggal pengambilan",
+ "cameraMaker": "Pembuat kamera",
+ "cameraModel": "Model kamera",
+ "camera": "Kamera",
+ "lens": "Lensa",
+ "fStop": "F Stop",
+ "shutterSpeed": "Kecepatan rana",
+ "iso": "ISO",
+ "exposureBias": "Kompensasi eksposur",
+ "focalLength": "Panjang fokus",
+ "flashMode": "Mode flash",
+ "meteringMode": "Mode pengukuran",
+ "maxAperture": "Bukaan maksimum",
+ "author": "Penulis",
+ "dimensions": "Dimensi",
+ "fileSize": "Ukuran file",
+ "fileCreateDate": "Tanggal pembuatan file",
+ "fileModifiedDate": "Tanggal modifikasi file",
+ "rating": "Penilaian",
+ "metadata": "metadata",
+ "creditLine": "baris kredit",
+ "source": "sumber",
+ "copyrightNotice": "pemberitahuan hak cipta",
+ "copyrightStatus": "status hak cipta",
+ "rightsUsageTerms": "syarat penggunaan hak",
+ "altText": "teks alt",
+ "alt": "alt",
+ "extendedAlt": "teks alt diperluas",
+ "caption": "keterangan",
+ "headline": "tajuk",
+ "extendedDescription": "deskripsi diperluas",
+ "description": "deskripsi"
+ }
+ },
+ "generalInfo": {
+ "title": "Info Puncak Umum",
+ "elevation": "Ketinggian",
+ "prominence": "Prominensi",
+ "range": "Rangkaian",
+ "trailType": "Jenis jalur",
+ "difficulty": "Kesulitan",
+ "exposure": "Paparan"
+ },
+ "routes": {
+ "distance": "Jarak",
+ "gain": "Kenaikan",
+ "difficulty": "Kesulitan"
+ },
+ "trailList": {
+ "title": "Daftar Jalur"
+ },
+ "terrain": {
+ "terrain": "Medan",
+ "scramble": "Scramble",
+ "view": "Pemandangan"
+ },
+ "conditions": {
+ "bestSeasons": "Musim terbaik",
+ "waterAvailability": "Ketersediaan air",
+ "cellReception": "Sinyal seluler",
+ "weatherExposure": "Paparan cuaca",
+ "emergencyBailout": "Rute darurat",
+ "dogFriendly": "Ramah anjing",
+ "nearbyFeatures": "Fitur terdekat"
+ },
+ "errorLoading": "Gagal memuat puncak",
+ "meta": {
+ "titleTemplate": "{name} ({elevation} kaki) – NH48",
+ "descriptionTemplate": "{name} — setinggi {elevation} kaki, prominensi {prominence} kaki, di {range}. Rute, kesulitan, dan foto untuk puncak 4.000 kaki ini."
+ }
+ },
+ "trails": {
+ "title": "Alat Peta API White Mountain Trails",
+ "subtitle": "Struktur data terbuka untuk puncak, jalur, dan rute di White Mountains.",
+ "intro": "White Mountain National Forest — disusun oleh Nate Sobol. Gunakan sebagai pencari jalur cepat dan pelacak penyelesaian. API terbuka dan dataset untuk gunung 4.000 kaki di New Hampshire.",
+ "details": {
+ "title": "Detail jalur",
+ "empty": "Pilih jalur untuk melihat jarak, elevasi, dan detail OpenStreetMap."
+ },
+ "search": {
+ "placeholder": "Cari jalur…"
+ },
+ "sort": {
+ "az": "Urutkan A → Z",
+ "za": "Urutkan Z → A"
+ },
+ "jumpTo": "Lompat ke:",
+ "list": {
+ "headerName": "Nama jalur",
+ "headerCompleted": "Selesai",
+ "noMatches": "Tidak ada jalur ditemukan. Coba pencarian lain.",
+ "noTrails": "Tidak ada jalur tersedia."
+ },
+ "loading": "Memuat jalur...",
+ "about": {
+ "title": "Tentang daftar ini",
+ "body": "NH Tracing, Redlining, dan White Mountain Trails merujuk pada kumpulan jalur yang sama seperti yang dijelaskan di buku panduan. Apa pun namanya, Anda menuju tujuan yang sama: menikmati jalur-jalur ini."
+ },
+ "disclaimer": {
+ "title": "Penafian",
+ "body": "Situs ini <strong>tidak dimaksudkan untuk perencanaan atau navigasi</strong>. Data jalur dapat mengandung kesalahan kecil atau ketidakakuratan, dan koleksi ini bukan daftar resmi (meskipun mencakup sebagian besar jalur yang diketahui). Silakan rujuk sumber resmi dan gunakan penilaian yang baik di alam terbuka."
+ },
+ "howto": {
+ "title": "Cara menggunakan",
+ "body": "Gunakan lingkaran hijau untuk menandai jalur sebagai selesai. Setelah menandai jalur, ketuk ikon kalender untuk menambahkan tanggal penyelesaian — tanggal akan menggantikan ikon dan bisa diedit dengan mengetuk lagi. Progres Anda disimpan secara lokal di peramban. Anda dapat mengekspor atau mengimpor progres menggunakan tombol di bawah."
+ },
+ "settings": {
+ "title": "Pengaturan",
+ "hideCompleted": "Sembunyikan jalur yang selesai",
+ "clearProgress": "Hapus semua progres"
+ },
+ "export": "Ekspor CSV",
+ "import": "Impor",
+ "viewApi": "Lihat API",
+ "resizePanels": "Ubah ukuran panel",
+ "info": {
+ "noProperties": "Belum ada properti tambahan untuk jalur. Properti akan diisi dari data OpenStreetMap.",
+ "loadingProperties": "Memuat properti jalur tambahan dari OpenStreetMap...",
+ "sourceNote": "Informasi bersumber dari OpenStreetMap jika tersedia.",
+ "distance": "Jarak",
+ "elevationGain": "Kenaikan elevasi",
+ "minElevation": "Elevasi minimum",
+ "maxElevation": "Elevasi maksimum",
+ "surface": "Permukaan",
+ "trailType": "Jenis jalur",
+ "difficulty": "Kesulitan",
+ "visibility": "Visibilitas",
+ "width": "Lebar",
+ "allowedUses": "Penggunaan yang diizinkan",
+ "season": "Musim",
+ "maintainer": "Pemelihara",
+ "source": "Sumber"
+ },
+ "virtualHike": "Pendakian virtual",
+ "unnamedTrail": "Jalur tanpa nama",
+ "confirmClear": "Apakah Anda yakin ingin menghapus semua progres?",
+ "alertLoadFail": "Tidak dapat memuat data jalur. Pastikan Anda memiliki koneksi internet dan segarkan halaman.",
+ "csv": {
+ "headerTrail": "Jalur",
+ "headerCompleted": "Selesai",
+ "headerDate": "Tanggal",
+ "filename": "trail-progress.csv"
+ },
+ "map": {
+ "attribution": "Data peta: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Gaya peta: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+ }
+ }
 }

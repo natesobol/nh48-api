@@ -1,335 +1,335 @@
 {
-  "common": {
-    "language": "Idioma",
-    "languagePicker": "Seletor de idioma",
-    "loading": "Carregando…",
-    "errorLoading": "Erro ao carregar dados",
-    "noResults": "Nenhum resultado encontrado.",
-    "noImage": "sem imagem",
-    "unknown": "Desconhecido",
-    "notAvailable": "Não disponível",
-    "units": {
-      "ariaLabel": "Selecionar unidades"
-    },
-    "unitsLabel": "Unidades",
-    "unitsFeet": "Pés",
-    "unitsMeters": "Metros"
-  },
-  "landing": {
-    "title": "NH48 API: Dados abertos para os picos de 4.000 pés e trilhas longas de New Hampshire",
-    "metaDescription": {
-      "content": "A NH48 API fornece dados abertos e estruturados e fotos dos 48 picos de 4.000 pés de New Hampshire. Explore o catálogo, rotas e trilhas de White Mountain."
-    },
-    "ogTitle": {
-      "content": "NH48 API – Dados abertos de trilhas e picos"
-    },
-    "ogDescription": {
-      "content": "Navegue pelo catálogo de picos, explore as trilhas de White Mountain e acesse dados de rotas de longa distância das montanhas de New Hampshire."
-    },
-    "heroTitle": "NH48 API",
-    "heroBody": "Dados abertos, rotas e metadados de fotos para os 48 picos de 4.000 pés de New Hampshire. Navegue pelo catálogo, explore as trilhas de White Mountain e construa sobre o conjunto de dados.",
-    "cta": {
-      "catalog": "Abrir o Catálogo de Picos",
-      "trails": "Trilhas de White Mountain",
-      "campaigns": "Campanhas de Trilhas"
-    },
-    "notesTitle": "Notas do conjunto de dados",
-    "notes": {
-      "versioned": "Lançamentos versionados com changelog e metadados prontos para citação.",
-      "methodology": "Proveniência + metodologia de coleta anotadas para picos, rotas e segmentos de trilha.",
-      "validation": "Verificações de validação para faixas de elevação, quilometragem e consistência geométrica.",
-      "reproducible": "Pipelines reproduzíveis respaldados por scripts de origem e artefatos de QA."
-    },
-    "author": "Autor: Nathan Sobol"
-  },
-  "nav": {
-    "logoAlt": "Logotipo da NH48 API",
-    "tagline": "Dados abertos e metadados estruturados para os picos de 4.000 pés de New Hampshire.",
-    "catalog": "Catálogo",
-    "trails": "Trilhas WMNF",
-    "longTrails": "Trilhas Longas",
-    "pics": "Fotos NH48",
-    "peakBagger": "Peak Bagger",
-    "latestPhotos": "Últimas fotos da WMNF",
-    "login": "Entrar",
-    "viewProfile": "Ver perfil"
-  },
-  "catalog": {
-    "title": "Catálogo de Picos NH48",
-    "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
-    "search": {
-      "placeholder": "Pesquisar picos pelo nome…",
-      "ariaLabel": "Pesquisar picos pelo nome"
-    },
-    "sort": {
-      "label": "Ordenar por:",
-      "ariaLabel": "Ordenar picos por atributo",
-      "name": "Nome (A–Z)",
-      "elevAsc": "Elevação ↑",
-      "elevDesc": "Elevação ↓",
-      "promAsc": "Proeminência ↑",
-      "promDesc": "Proeminência ↓",
-      "diffAsc": "Dificuldade A–Z",
-      "diffDesc": "Dificuldade Z–A",
-      "rangeAsc": "Cadeia A–Z",
-      "trailAsc": "Tipo de trilha A–Z",
-      "exposureAsc": "Exposição A–Z"
-    },
-    "filter": {
-      "label": "Filtrar por:",
-      "ariaLabel": "Selecionar campo para filtrar picos",
-      "none": "Nenhum",
-      "range": "Cadeia",
-      "difficulty": "Dificuldade",
-      "trail": "Tipo de trilha",
-      "exposure": "Exposição"
-    },
-    "value": {
-      "label": "Valor:",
-      "ariaLabel": "Selecionar valor para o filtro escolhido",
-      "all": "Todos"
-    },
-    "columns": {
-      "label": "Colunas:",
-      "ariaLabel": "Selecionar número de colunas do catálogo"
-    },
-    "empty": "Nenhum pico encontrado.",
-    "error": "Erro ao carregar picos",
-    "card": {
-      "elevation": "Elevação",
-      "prominence": "Proeminência",
-      "range": "Cadeia",
-      "trailType": "Tipo de trilha",
-      "difficulty": "Dificuldade",
-      "exposure": "Exposição"
-    }
-  },
-  "photo": {
-    "altTemplate": "{peak} foto — {season} {timeOfDay}"
-  },
-  "season": {
-    "spring": "primavera",
-    "summer": "verão",
-    "fall": "outono",
-    "autumn": "outono",
-    "winter": "inverno"
-  },
-  "time": {
-    "sunrise": "nascer do sol",
-    "sunset": "pôr do sol",
-    "morning": "manhã",
-    "afternoon": "tarde",
-    "evening": "noite",
-    "night": "noite",
-    "day": "dia",
-    "dawn": "alvorada",
-    "dusk": "crepúsculo"
-  },
-  "values": {
-    "trailType": {
-      "loop": "Loop",
-      "loop_or_out_back": "Loop ou ida e volta",
-      "loop_or_traverse": "Loop ou travessia",
-      "loop_or_traverse_along_ridge": "Loop ou travessia pela crista",
-      "out_back": "Ida e volta",
-      "out_back_common": "Ida e volta - comum",
-      "out_back_common_or_long_traverse": "Ida e volta - comum ou travessia longa",
-      "out_back_common_or_loop_with_connector_trails": "Ida e volta - comum ou loop com trilhas conectoras",
-      "out_back_common_or_small_loop_including_mt_webster": "Ida e volta - comum ou loop pequeno incluindo o Mt Webster",
-      "out_back_commonly": "Ida e volta - comumente",
-      "out_back_or_loop": "Ida e volta ou loop",
-      "out_back_or_loop_with_tom_and_willey": "Ida e volta ou loop - com Tom e Willey",
-      "out_back_or_loop_combining_trails": "Ida e volta ou loop combinando trilhas",
-      "out_back_or_loop_options": "Ida e volta ou opções de loop",
-      "out_back_or_point_to_point_traverse": "Ida e volta ou travessia ponto a ponto",
-      "out_back_or_traverse": "Ida e volta ou travessia"
-    },
-    "difficulty": {
-      "moderate": "Moderado",
-      "moderate_difficult": "Moderado/Difícil",
-      "difficult": "Difícil",
-      "very_difficult": "Muito difícil",
-      "extremely_difficult": "Extremamente difícil"
-    },
-    "exposure": {
-      "high": "Alta",
-      "medium": "Média",
-      "low": "Baixa",
-      "low_to_medium": "Baixa a média"
-    }
-  },
-  "peak": {
-    "back": "Voltar ao Catálogo de Picos NH48",
-    "loading": "Carregando…",
-    "relatedTrails": {
-      "title": "Trilhas e Rotas Relacionadas",
-      "none": "Nenhuma trilha relacionada listada ainda.",
-      "link": "rota {name}"
-    },
-    "section": {
-      "routes": "Rotas de Caminhada",
-      "trails": "Trilhas Associadas",
-      "terrain": "Trilha e Terreno",
-      "conditions": "Condições e Acesso"
-    },
-    "carousel": {
-      "prev": "Imagem anterior",
-      "next": "Próxima imagem"
-    },
-    "metadata": {
-      "title": "Metadados da Foto Atual",
-      "notAvailable": "Não disponível",
-      "moreDetails": "Mais detalhes ▾",
-      "lessDetails": "Menos detalhes ▴",
-      "labels": {
-        "season": "Estação",
-        "timeOfDay": "Hora do dia",
-        "orientation": "Orientação",
-        "captureDate": "Data de captura",
-        "cameraMaker": "Fabricante da câmera",
-        "cameraModel": "Modelo da câmera",
-        "camera": "Câmera",
-        "lens": "Lente",
-        "fStop": "Abertura (f)",
-        "shutterSpeed": "Velocidade do obturador",
-        "iso": "ISO",
-        "exposureBias": "Compensação de exposição",
-        "focalLength": "Distância focal",
-        "flashMode": "Modo do flash",
-        "meteringMode": "Modo de medição",
-        "maxAperture": "Abertura máxima",
-        "author": "Autor",
-        "dimensions": "Dimensões",
-        "fileSize": "Tamanho do arquivo",
-        "fileCreateDate": "Data de criação do arquivo",
-        "fileModifiedDate": "Data de modificação do arquivo",
-        "rating": "Avaliação",
-        "metadata": "metadados",
-        "creditLine": "linha de crédito",
-        "source": "fonte",
-        "copyrightNotice": "aviso de direitos autorais",
-        "copyrightStatus": "status de direitos autorais",
-        "rightsUsageTerms": "termos de uso e direitos",
-        "altText": "texto alternativo",
-        "alt": "alt",
-        "extendedAlt": "texto alternativo estendido",
-        "caption": "legenda",
-        "headline": "título",
-        "extendedDescription": "descrição estendida",
-        "description": "descrição"
-      }
-    },
-    "generalInfo": {
-      "title": "Informações Gerais do Pico",
-      "elevation": "Elevação",
-      "prominence": "Proeminência",
-      "range": "Cadeia",
-      "trailType": "Tipo de trilha",
-      "difficulty": "Dificuldade",
-      "exposure": "Exposição"
-    },
-    "routes": {
-      "distance": "Distância",
-      "gain": "Ganho",
-      "difficulty": "Dificuldade"
-    },
-    "trailList": {
-      "title": "Lista de Trilhas"
-    },
-    "terrain": {
-      "terrain": "Terreno",
-      "scramble": "Escalada",
-      "view": "Vista"
-    },
-    "conditions": {
-      "bestSeasons": "Melhores estações",
-      "waterAvailability": "Disponibilidade de água",
-      "cellReception": "Recepção de celular",
-      "weatherExposure": "Exposição ao clima",
-      "emergencyBailout": "Saída de emergência",
-      "dogFriendly": "Aceita cães",
-      "nearbyFeatures": "Recursos próximos"
-    },
-    "errorLoading": "Erro ao carregar pico",
-    "meta": {
-      "titleTemplate": "{name} ({elevation} pés) – NH48",
-      "descriptionTemplate": "{name} – {elevation} pés de altura, {prominence} pés de proeminência, na {range}. Rotas, dificuldade e fotos para esta montanha de 4.000 pés."
-    }
-  },
-  "trails": {
-    "title": "Ferramenta de Mapa da API White Mountain Trails",
-    "subtitle": "Estrutura de dados aberta de picos, trilhas e rotas para as White Mountains.",
-    "intro": "White Mountain National Forest — compilado por Nate Sobol. Use como um localizador rápido de trilhas e rastreador de conclusão. API aberta e conjuntos de dados para as montanhas de 4.000 pés de New Hampshire.",
-    "details": {
-      "title": "Detalhes da trilha",
-      "empty": "Selecione uma trilha para ver distância, elevação e detalhes do OpenStreetMap."
-    },
-    "search": {
-      "placeholder": "Pesquisar trilhas…"
-    },
-    "sort": {
-      "az": "Ordenar A → Z",
-      "za": "Ordenar Z → A"
-    },
-    "jumpTo": "Ir para:",
-    "list": {
-      "headerName": "Nome da trilha",
-      "headerCompleted": "Concluída",
-      "noMatches": "Nenhuma trilha encontrada. Tente outra busca.",
-      "noTrails": "Nenhuma trilha disponível."
-    },
-    "loading": "Carregando trilhas...",
-    "about": {
-      "title": "Sobre esta lista",
-      "body": "NH Tracing, Redlining e White Mountain Trails referem-se ao mesmo conjunto de trilhas descrito no guia. Não importa o nome que você use, você está trabalhando rumo ao mesmo objetivo de vivenciar essas trilhas."
-    },
-    "disclaimer": {
-      "title": "Aviso",
-      "body": "Este site <strong>não é destinado a planejamento ou navegação</strong>. Os dados de trilha podem conter pequenos erros ou imprecisões, e esta coleção não é a lista oficial (embora inclua a maioria das trilhas conhecidas). Consulte fontes oficiais e use bom senso no interior."
-    },
-    "howto": {
-      "title": "Como usar",
-      "body": "Use os círculos verdes para marcar uma trilha como concluída. Depois de marcar uma trilha, toque no ícone do calendário para adicionar uma data de conclusão — a data substituirá o ícone e poderá ser editada tocando novamente. Seu progresso é armazenado localmente no navegador. Você pode exportar ou importar seu progresso usando os botões abaixo."
-    },
-    "settings": {
-      "title": "Configurações",
-      "hideCompleted": "Ocultar trilhas concluídas",
-      "clearProgress": "Limpar todo o progresso"
-    },
-    "export": "Exportar CSV",
-    "import": "Importar",
-    "viewApi": "Ver API",
-    "resizePanels": "Redimensionar painéis",
-    "info": {
-      "noProperties": "Nenhuma propriedade adicional da trilha disponível ainda. As propriedades serão preenchidas com dados do OpenStreetMap.",
-      "loadingProperties": "Carregando propriedades adicionais da trilha do OpenStreetMap...",
-      "sourceNote": "Informações obtidas do OpenStreetMap quando disponíveis.",
-      "distance": "Distância",
-      "elevationGain": "Ganho de elevação",
-      "minElevation": "Elevação mínima",
-      "maxElevation": "Elevação máxima",
-      "surface": "Superfície",
-      "trailType": "Tipo de trilha",
-      "difficulty": "Dificuldade",
-      "visibility": "Visibilidade",
-      "width": "Largura",
-      "allowedUses": "Usos permitidos",
-      "season": "Estação",
-      "maintainer": "Responsável",
-      "source": "Fonte"
-    },
-    "virtualHike": "Caminhada virtual",
-    "unnamedTrail": "Trilha sem nome",
-    "confirmClear": "Tem certeza de que deseja limpar todo o progresso?",
-    "alertLoadFail": "Não foi possível carregar os dados de trilhas. Verifique sua conexão com a internet e atualize a página.",
-    "csv": {
-      "headerTrail": "Trilha",
-      "headerCompleted": "Concluída",
-      "headerDate": "Data",
-      "filename": "trail-progress.csv"
-    },
-    "map": {
-      "attribution": "Dados do mapa: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Estilo do mapa: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
-    }
-  }
+ "common": {
+ "language": "Idioma",
+ "languagePicker": "Seletor de idioma",
+ "loading": "Carregando…",
+ "errorLoading": "Erro ao carregar dados",
+ "noResults": "Nenhum resultado encontrado.",
+ "noImage": "sem imagem",
+ "unknown": "Desconhecido",
+ "notAvailable": "Não disponível",
+ "units": {
+ "ariaLabel": "Selecionar unidades"
+ },
+ "unitsLabel": "Unidades",
+ "unitsFeet": "Pés",
+ "unitsMeters": "Metros"
+ },
+ "landing": {
+ "title": "NH48 API: Dados abertos para os picos de 4.000 pés e trilhas longas de New Hampshire",
+ "metaDescription": {
+ "content": "A NH48 API fornece dados abertos e estruturados e fotos dos 48 picos de 4.000 pés de New Hampshire. Explore o catálogo, rotas e trilhas de White Mountain."
+ },
+ "ogTitle": {
+ "content": "NH48 API – Dados abertos de trilhas e picos"
+ },
+ "ogDescription": {
+ "content": "Navegue pelo catálogo de picos, explore as trilhas de White Mountain e acesse dados de rotas de longa distância das montanhas de New Hampshire."
+ },
+ "heroTitle": "NH48 API",
+ "heroBody": "Dados abertos, rotas e metadados de fotos para os 48 picos de 4.000 pés de New Hampshire. Navegue pelo catálogo, explore as trilhas de White Mountain e construa sobre o conjunto de dados.",
+ "cta": {
+ "catalog": "Abrir o Catálogo de Picos",
+ "trails": "Trilhas de White Mountain",
+ "campaigns": "Campanhas de Trilhas"
+ },
+ "notesTitle": "Notas do conjunto de dados",
+ "notes": {
+ "versioned": "Lançamentos versionados com changelog e metadados prontos para citação.",
+ "methodology": "Proveniência + metodologia de coleta anotadas para picos, rotas e segmentos de trilha.",
+ "validation": "Verificações de validação para faixas de elevação, quilometragem e consistência geométrica.",
+ "reproducible": "Pipelines reproduzíveis respaldados por scripts de origem e artefatos de QA."
+ },
+ "author": "Autor: Nathan Sobol"
+ },
+ "nav": {
+ "logoAlt": "Logotipo da NH48 API",
+ "tagline": "Dados abertos e metadados estruturados para os picos de 4.000 pés de New Hampshire.",
+ "catalog": "Catálogo",
+ "trails": "Trilhas WMNF",
+ "longTrails": "Trilhas Longas",
+ "pics": "Fotos NH48",
+ "peakBagger": "Peak Bagger",
+ "latestPhotos": "Últimas fotos da WMNF",
+ "login": "Entrar",
+ "viewProfile": "Ver perfil"
+ },
+ "catalog": {
+ "title": "Catálogo de Picos NH48",
+ "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
+ "search": {
+ "placeholder": "Pesquisar picos pelo nome…",
+ "ariaLabel": "Pesquisar picos pelo nome"
+ },
+ "sort": {
+ "label": "Ordenar por:",
+ "ariaLabel": "Ordenar picos por atributo",
+ "name": "Nome (A–Z)",
+ "elevAsc": "Elevação ↑",
+ "elevDesc": "Elevação ↓",
+ "promAsc": "Proeminência ↑",
+ "promDesc": "Proeminência ↓",
+ "diffAsc": "Dificuldade A–Z",
+ "diffDesc": "Dificuldade Z–A",
+ "rangeAsc": "Cadeia A–Z",
+ "trailAsc": "Tipo de trilha A–Z",
+ "exposureAsc": "Exposição A–Z"
+ },
+ "filter": {
+ "label": "Filtrar por:",
+ "ariaLabel": "Selecionar campo para filtrar picos",
+ "none": "Nenhum",
+ "range": "Cadeia",
+ "difficulty": "Dificuldade",
+ "trail": "Tipo de trilha",
+ "exposure": "Exposição"
+ },
+ "value": {
+ "label": "Valor:",
+ "ariaLabel": "Selecionar valor para o filtro escolhido",
+ "all": "Todos"
+ },
+ "columns": {
+ "label": "Colunas:",
+ "ariaLabel": "Selecionar número de colunas do catálogo"
+ },
+ "empty": "Nenhum pico encontrado.",
+ "error": "Erro ao carregar picos",
+ "card": {
+ "elevation": "Elevação",
+ "prominence": "Proeminência",
+ "range": "Cadeia",
+ "trailType": "Tipo de trilha",
+ "difficulty": "Dificuldade",
+ "exposure": "Exposição"
+ }
+ },
+ "photo": {
+ "altTemplate": "{peak} foto — {season} {timeOfDay}"
+ },
+ "season": {
+ "spring": "primavera",
+ "summer": "verão",
+ "fall": "outono",
+ "autumn": "outono",
+ "winter": "inverno"
+ },
+ "time": {
+ "sunrise": "nascer do sol",
+ "sunset": "pôr do sol",
+ "morning": "manhã",
+ "afternoon": "tarde",
+ "evening": "noite",
+ "night": "noite",
+ "day": "dia",
+ "dawn": "alvorada",
+ "dusk": "crepúsculo"
+ },
+ "values": {
+ "trailType": {
+ "loop": "Loop",
+ "loop_or_out_back": "Loop ou ida e volta",
+ "loop_or_traverse": "Loop ou travessia",
+ "loop_or_traverse_along_ridge": "Loop ou travessia pela crista",
+ "out_back": "Ida e volta",
+ "out_back_common": "Ida e volta - comum",
+ "out_back_common_or_long_traverse": "Ida e volta - comum ou travessia longa",
+ "out_back_common_or_loop_with_connector_trails": "Ida e volta - comum ou loop com trilhas conectoras",
+ "out_back_common_or_small_loop_including_mt_webster": "Ida e volta - comum ou loop pequeno incluindo o Mt Webster",
+ "out_back_commonly": "Ida e volta - comumente",
+ "out_back_or_loop": "Ida e volta ou loop",
+ "out_back_or_loop_with_tom_and_willey": "Ida e volta ou loop - com Tom e Willey",
+ "out_back_or_loop_combining_trails": "Ida e volta ou loop combinando trilhas",
+ "out_back_or_loop_options": "Ida e volta ou opções de loop",
+ "out_back_or_point_to_point_traverse": "Ida e volta ou travessia ponto a ponto",
+ "out_back_or_traverse": "Ida e volta ou travessia"
+ },
+ "difficulty": {
+ "moderate": "Moderado",
+ "moderate_difficult": "Moderado/Difícil",
+ "difficult": "Difícil",
+ "very_difficult": "Muito difícil",
+ "extremely_difficult": "Extremamente difícil"
+ },
+ "exposure": {
+ "high": "Alta",
+ "medium": "Média",
+ "low": "Baixa",
+ "low_to_medium": "Baixa a média"
+ }
+ },
+ "peak": {
+ "back": "Voltar ao Catálogo de Picos NH48",
+ "loading": "Carregando…",
+ "relatedTrails": {
+ "title": "Trilhas e Rotas Relacionadas",
+ "none": "Nenhuma trilha relacionada listada ainda.",
+ "link": "rota {name}"
+ },
+ "section": {
+ "routes": "Rotas de Caminhada",
+ "trails": "Trilhas Associadas",
+ "terrain": "Trilha e Terreno",
+ "conditions": "Condições e Acesso"
+ },
+ "carousel": {
+ "prev": "Imagem anterior",
+ "next": "Próxima imagem"
+ },
+ "metadata": {
+ "title": "Metadados da Foto Atual",
+ "notAvailable": "Não disponível",
+ "moreDetails": "Mais detalhes ▾",
+ "lessDetails": "Menos detalhes ▴",
+ "labels": {
+ "season": "Estação",
+ "timeOfDay": "Hora do dia",
+ "orientation": "Orientação",
+ "captureDate": "Data de captura",
+ "cameraMaker": "Fabricante da câmera",
+ "cameraModel": "Modelo da câmera",
+ "camera": "Câmera",
+ "lens": "Lente",
+ "fStop": "Abertura (f)",
+ "shutterSpeed": "Velocidade do obturador",
+ "iso": "ISO",
+ "exposureBias": "Compensação de exposição",
+ "focalLength": "Distância focal",
+ "flashMode": "Modo do flash",
+ "meteringMode": "Modo de medição",
+ "maxAperture": "Abertura máxima",
+ "author": "Autor",
+ "dimensions": "Dimensões",
+ "fileSize": "Tamanho do arquivo",
+ "fileCreateDate": "Data de criação do arquivo",
+ "fileModifiedDate": "Data de modificação do arquivo",
+ "rating": "Avaliação",
+ "metadata": "metadados",
+ "creditLine": "linha de crédito",
+ "source": "fonte",
+ "copyrightNotice": "aviso de direitos autorais",
+ "copyrightStatus": "status de direitos autorais",
+ "rightsUsageTerms": "termos de uso e direitos",
+ "altText": "texto alternativo",
+ "alt": "alt",
+ "extendedAlt": "texto alternativo estendido",
+ "caption": "legenda",
+ "headline": "título",
+ "extendedDescription": "descrição estendida",
+ "description": "descrição"
+ }
+ },
+ "generalInfo": {
+ "title": "Informações Gerais do Pico",
+ "elevation": "Elevação",
+ "prominence": "Proeminência",
+ "range": "Cadeia",
+ "trailType": "Tipo de trilha",
+ "difficulty": "Dificuldade",
+ "exposure": "Exposição"
+ },
+ "routes": {
+ "distance": "Distância",
+ "gain": "Ganho",
+ "difficulty": "Dificuldade"
+ },
+ "trailList": {
+ "title": "Lista de Trilhas"
+ },
+ "terrain": {
+ "terrain": "Terreno",
+ "scramble": "Escalada",
+ "view": "Vista"
+ },
+ "conditions": {
+ "bestSeasons": "Melhores estações",
+ "waterAvailability": "Disponibilidade de água",
+ "cellReception": "Recepção de celular",
+ "weatherExposure": "Exposição ao clima",
+ "emergencyBailout": "Saída de emergência",
+ "dogFriendly": "Aceita cães",
+ "nearbyFeatures": "Recursos próximos"
+ },
+ "errorLoading": "Erro ao carregar pico",
+ "meta": {
+ "titleTemplate": "{name} ({elevation} pés) – NH48",
+ "descriptionTemplate": "{name} – {elevation} pés de altura, {prominence} pés de proeminência, na {range}. Rotas, dificuldade e fotos para esta montanha de 4.000 pés."
+ }
+ },
+ "trails": {
+ "title": "Ferramenta de Mapa da API White Mountain Trails",
+ "subtitle": "Estrutura de dados aberta de picos, trilhas e rotas para as White Mountains.",
+ "intro": "White Mountain National Forest — compilado por Nate Sobol. Use como um localizador rápido de trilhas e rastreador de conclusão. API aberta e conjuntos de dados para as montanhas de 4.000 pés de New Hampshire.",
+ "details": {
+ "title": "Detalhes da trilha",
+ "empty": "Selecione uma trilha para ver distância, elevação e detalhes do OpenStreetMap."
+ },
+ "search": {
+ "placeholder": "Pesquisar trilhas…"
+ },
+ "sort": {
+ "az": "Ordenar A → Z",
+ "za": "Ordenar Z → A"
+ },
+ "jumpTo": "Ir para:",
+ "list": {
+ "headerName": "Nome da trilha",
+ "headerCompleted": "Concluída",
+ "noMatches": "Nenhuma trilha encontrada. Tente outra busca.",
+ "noTrails": "Nenhuma trilha disponível."
+ },
+ "loading": "Carregando trilhas...",
+ "about": {
+ "title": "Sobre esta lista",
+ "body": "NH Tracing, Redlining e White Mountain Trails referem-se ao mesmo conjunto de trilhas descrito no guia. Não importa o nome que você use, você está trabalhando rumo ao mesmo objetivo de vivenciar essas trilhas."
+ },
+ "disclaimer": {
+ "title": "Aviso",
+ "body": "Este site <strong>não é destinado a planejamento ou navegação</strong>. Os dados de trilha podem conter pequenos erros ou imprecisões, e esta coleção não é a lista oficial (embora inclua a maioria das trilhas conhecidas). Consulte fontes oficiais e use bom senso no interior."
+ },
+ "howto": {
+ "title": "Como usar",
+ "body": "Use os círculos verdes para marcar uma trilha como concluída. Depois de marcar uma trilha, toque no ícone do calendário para adicionar uma data de conclusão — a data substituirá o ícone e poderá ser editada tocando novamente. Seu progresso é armazenado localmente no navegador. Você pode exportar ou importar seu progresso usando os botões abaixo."
+ },
+ "settings": {
+ "title": "Configurações",
+ "hideCompleted": "Ocultar trilhas concluídas",
+ "clearProgress": "Limpar todo o progresso"
+ },
+ "export": "Exportar CSV",
+ "import": "Importar",
+ "viewApi": "Ver API",
+ "resizePanels": "Redimensionar painéis",
+ "info": {
+ "noProperties": "Nenhuma propriedade adicional da trilha disponível ainda. As propriedades serão preenchidas com dados do OpenStreetMap.",
+ "loadingProperties": "Carregando propriedades adicionais da trilha do OpenStreetMap...",
+ "sourceNote": "Informações obtidas do OpenStreetMap quando disponíveis.",
+ "distance": "Distância",
+ "elevationGain": "Ganho de elevação",
+ "minElevation": "Elevação mínima",
+ "maxElevation": "Elevação máxima",
+ "surface": "Superfície",
+ "trailType": "Tipo de trilha",
+ "difficulty": "Dificuldade",
+ "visibility": "Visibilidade",
+ "width": "Largura",
+ "allowedUses": "Usos permitidos",
+ "season": "Estação",
+ "maintainer": "Responsável",
+ "source": "Fonte"
+ },
+ "virtualHike": "Caminhada virtual",
+ "unnamedTrail": "Trilha sem nome",
+ "confirmClear": "Tem certeza de que deseja limpar todo o progresso?",
+ "alertLoadFail": "Não foi possível carregar os dados de trilhas. Verifique sua conexão com a internet e atualize a página.",
+ "csv": {
+ "headerTrail": "Trilha",
+ "headerCompleted": "Concluída",
+ "headerDate": "Data",
+ "filename": "trail-progress.csv"
+ },
+ "map": {
+ "attribution": "Dados do mapa: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Estilo do mapa: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+ }
+ }
 }
