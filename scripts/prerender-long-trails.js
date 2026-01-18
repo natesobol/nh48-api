@@ -6,6 +6,16 @@ const path = require('path');
 const DATA_PATH = path.join(__dirname, '..', 'data', 'long-trails-full.json');
 const OUTPUT_ROOT = path.join(__dirname, '..', 'trails');
 
+process.on('uncaughtException', (err) => {
+  console.error('Unhandled error during long-trails prerender:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled promise rejection during long-trails prerender:', err);
+  process.exit(1);
+});
+
 function ensureDir(dir){
   fs.mkdirSync(dir, { recursive: true });
 }
@@ -176,5 +186,10 @@ function buildPages(){
   });
 }
 
-buildPages();
-console.log('Rendered long trail section pages.');
+try {
+  buildPages();
+  console.log('Rendered long trail section pages.');
+} catch (err) {
+  console.error('Error during long-trails prerender:', err);
+  process.exit(1);
+}

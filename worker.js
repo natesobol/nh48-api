@@ -32,6 +32,22 @@ export default {
     const staticExtensions = ['.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.woff', '.woff2', '.ttf', '.eot', '.geojson', '.txt', '.xml', '.webmanifest'];
     const staticPrefixes = ['/css/', '/js/', '/data/', '/favicons/', '/photos/', '/i18n/', '/UI-Elements/', '/scripts/', '/license/', '/old/', '/templates/'];
     const staticFiles = ['/manifest.json', '/nh48API_logo.png', '/robots.txt', '/sitemap.xml', '/nh48-preview.png', '/BingSiteAuth.xml', '/image-sitemap.xml', '/page-sitemap.xml'];
+
+    const legacyRedirectMap = {
+      '/trails_app.html': '/trails',
+      '/long_trails_app.html': '/long-trails',
+      '/plant_catalog.html': '/plant-catalog',
+      '/plant_catalog': '/plant-catalog',
+      '/nh-4000-footers-guide': '/nh-4000-footers-info',
+      '/nh-4000-footers-guide.html': '/nh-4000-footers-info',
+      '/nh-4000-footers-info.html': '/nh-4000-footers-info'
+    };
+
+    const legacyKey = pathname.startsWith('/fr/') ? pathname.replace(/^\/fr/, '') : pathname;
+    if (legacyRedirectMap[legacyKey]) {
+      const targetPath = pathname.startsWith('/fr/') ? `/fr${legacyRedirectMap[legacyKey]}` : legacyRedirectMap[legacyKey];
+      return Response.redirect(`${SITE}${targetPath}`, 301);
+    }
     
     // Check if this is a static file request (but not an SSR route)
     const hasStaticExtension = staticExtensions.some(ext => pathname.toLowerCase().endsWith(ext));
@@ -49,12 +65,9 @@ export default {
                        pathname === '/fr/long-trails' || pathname === '/fr/long-trails/' ||
                        pathname === '/dataset' || pathname === '/dataset/' ||
                        pathname.startsWith('/dataset/') || pathname.startsWith('/fr/dataset/') ||
-                       pathname === '/plant-catalog' || pathname === '/plant-catalog/' ||
-                       pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
-                       pathname === '/nh-4000-footers-guide.html' || pathname === '/nh-4000-footers-info.html' ||
-                       pathname === '/nh-4000-footers-guide' || pathname === '/nh-4000-footers-info' ||
-                       pathname === '/trails_app.html' || pathname === '/long_trails_app.html' ||
-                       pathname === '/plant_catalog.html' || pathname === '/plant_catalog' ||
+               pathname === '/plant-catalog' || pathname === '/plant-catalog/' ||
+               pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
+               pathname === '/nh-4000-footers-info.html' || pathname === '/nh-4000-footers-info' ||
                        pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant)/) !== null;
     
     // Serve static files from GitHub (but not SSR routes even if they have extensions)
@@ -1255,36 +1268,7 @@ export default {
       });
     }
 
-    if (pathNoLocale === '/trails_app.html' || pathNoLocale === '/long_trails_app.html') {
-      const isLong = pathNoLocale.includes('long');
-      const canonical = `${SITE}${pathname}`;
-      const title = isLong
-        ? (isFrench ? 'Application des sentiers longue distance' : 'Long-Distance Trails App')
-        : (isFrench ? 'Application des sentiers WMNF' : 'WMNF Trails App');
-      const description = isLong
-        ? (isFrench ? 'Application cartographique interactive des sentiers longue distance.' : 'Interactive map application for long-distance trails.')
-        : (isFrench ? 'Application cartographique interactive des sentiers de la WMNF.' : 'Interactive map application for WMNF trails.');
-      const datasetName = isLong ? 'Long-Distance Trails' : 'WMNF Trails';
-      const jsonLd = [buildWebAppSchema({ canonicalUrl: canonical, title, description, datasetName })];
-      return serveTemplatePage({
-        templatePath: isLong ? 'pages/long_trails_app.html' : 'pages/trails_app.html',
-        pathname,
-        routeId: isLong ? 'long-trails-app' : 'trails-app',
-        meta: {
-          title,
-          description,
-          canonical,
-          alternateEn: `${SITE}${enPath}`,
-          alternateFr: `${SITE}${frPath}`,
-          image: DEFAULT_IMAGE,
-          imageAlt: title,
-          ogType: 'website'
-        },
-        jsonLd
-      });
-    }
-
-    if (pathNoLocale === '/plant-catalog' || pathNoLocale === '/plant_catalog.html' || pathNoLocale === '/plant_catalog') {
+    if (pathNoLocale === '/plant-catalog' || pathNoLocale === '/plant-catalog/') {
       const canonical = `${SITE}${pathname}`;
       const plantCatalogTitle = isFrench ? 'Catalogue des plantes alpines' : 'Alpine Plant Catalog';
       const plantCatalogDesc = isFrench
@@ -1363,19 +1347,12 @@ export default {
       });
     }
 
-    if (pathNoLocale === '/nh-4000-footers-guide.html' || pathNoLocale === '/nh-4000-footers-info.html') {
-      const isGuide = pathNoLocale.includes('guide');
+    if (pathNoLocale === '/nh-4000-footers-info' || pathNoLocale === '/nh-4000-footers-info/') {
       const canonical = `${SITE}${pathname}`;
-      const title = isGuide
-        ? (isFrench ? 'Guide des 4 000 pieds du New Hampshire' : 'New Hampshire 4,000-Footers Guide')
-        : (isFrench ? 'Infos sur les 4 000 pieds du New Hampshire' : 'NH 4,000-Footers Info');
-      const description = isGuide
-        ? (isFrench
-          ? 'Guide détaillé des sommets de 4 000 pieds du New Hampshire, cartes et conseils.'
-          : 'Detailed guide to New Hampshire 4,000-footers with maps and tips.')
-        : (isFrench
-          ? 'Informations et ressources sur la liste officielle des 4 000 pieds.'
-          : 'Information and resources about the official 4,000-footers list.');
+      const title = isFrench ? 'Infos sur les 4 000 pieds du New Hampshire' : 'NH 4,000-Footers Info';
+      const description = isFrench
+        ? 'Informations et ressources sur la liste officielle des 4 000 pieds.'
+        : 'Information and resources about the official 4,000-footers list.';
       const peaks = await loadPeaks();
       const peakList = Array.isArray(peaks) ? peaks : Object.values(peaks || {});
       const itemList = buildItemList(
@@ -1386,9 +1363,9 @@ export default {
         canonical
       );
       return serveTemplatePage({
-        templatePath: isGuide ? 'nh-4000-footers-guide.html' : 'nh-4000-footers-info.html',
+        templatePath: 'nh-4000-footers-info.html',
         pathname,
-        routeId: isGuide ? 'nh48-guide' : 'nh48-info',
+        routeId: 'nh48-info',
         meta: {
           title,
           description,
@@ -1397,7 +1374,7 @@ export default {
           alternateFr: `${SITE}${frPath}`,
           image: DEFAULT_IMAGE,
           imageAlt: title,
-          ogType: isGuide ? 'article' : 'website'
+          ogType: 'website'
         },
         jsonLd: [itemList]
       });

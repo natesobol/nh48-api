@@ -16,7 +16,10 @@ const PHOTO_PATH_PREFIX = '/nh48-photos/';
 const STATIC_PAGE_ENTRIES = [
   { loc: 'https://nh48.info/', file: 'index.html' },
   { loc: 'https://nh48.info/catalog', file: 'catalog.html' },
-  { loc: 'https://nh48.info/nh-4000-footers-guide', file: 'nh-4000-footers-guide.html' },
+  { loc: 'https://nh48.info/trails', file: 'trails/index.html' },
+  { loc: 'https://nh48.info/long-trails', file: 'long-trails/index.html' },
+  { loc: 'https://nh48.info/plant-catalog', file: 'pages/plant_catalog.html' },
+  { loc: 'https://nh48.info/nh-4000-footers-info', file: 'nh-4000-footers-info.html' },
 ];
 const IMAGE_LICENSE_URL = 'https://nh48.info/licensing';
 
@@ -226,11 +229,11 @@ const buildPageSitemap = () => {
   );
   slugs.forEach((slug) => {
     urls.push({
-      loc: `${PEAK_BASE}/${slug}/`,
+      loc: `${PEAK_BASE}/${slug}`,
       lastmod: getGitLastmod(path.join('peaks', slug, 'index.html')),
     });
     urls.push({
-      loc: `${PEAK_BASE_FR}/${slug}/`,
+      loc: `${PEAK_BASE_FR}/${slug}`,
       lastmod: getGitLastmod(path.join('fr', 'peaks', slug, 'index.html')),
     });
   });
@@ -260,7 +263,7 @@ const buildImageSitemap = () => {
     const name = peak.peakName || peak['Peak Name'] || slug;
     const images = dedupeImages(buildImageEntries(peak.photos, name));
     if (!images.length) return;
-    urlEntries.push({ loc: `${PEAK_BASE}/${slug}/`, images });
+    urlEntries.push({ loc: `${PEAK_BASE}/${slug}`, images });
   });
 
   const xmlParts = [];
@@ -303,6 +306,11 @@ const buildSitemapIndex = () => {
   console.log(`Wrote sitemap index to ${SITEMAP_INDEX_OUTPUT}`);
 };
 
-buildPageSitemap();
-buildImageSitemap();
-buildSitemapIndex();
+try {
+  buildPageSitemap();
+  buildImageSitemap();
+  buildSitemapIndex();
+} catch (err) {
+  console.error('Error while generating sitemaps:', err);
+  process.exit(1);
+}

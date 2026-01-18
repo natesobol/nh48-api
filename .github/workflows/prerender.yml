@@ -25,9 +25,19 @@ jobs:
 
       - name: Generate static pages and sitemaps
         run: |
-          node scripts/prerender-peaks.js
-          node scripts/prerender-long-trails.js
-          node scripts/generate-sitemaps.js
+          set -euo pipefail
+          scripts=(
+            scripts/prerender-peaks.js
+            scripts/prerender-long-trails.js
+            scripts/generate-sitemaps.js
+          )
+          for script in "${scripts[@]}"; do
+            echo "=== Running ${script} ==="
+            if ! node "${script}"; then
+              echo "Script failed: ${script}"
+              exit 1
+            fi
+          done
 
       - name: Show generated file diffs (debug)
         if: github.event_name == 'pull_request'

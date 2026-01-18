@@ -194,7 +194,7 @@ const formatFeet = (value) => {
   const numeric = numberFrom(value);
   if (numeric === null || Number.isNaN(numeric)) return "";
   const formatted = numeric.toLocaleString("en-US");
-  return `${formatted}'`;
+  return `${formatted} ft`;
 };
 
 const escapeHtml = (value) =>

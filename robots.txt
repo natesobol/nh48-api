@@ -5,14 +5,13 @@
 User-agent: *
 Allow: /
 
-# Allow specific important pages in /pages/
-Allow: /pages/trails_app.html
-Allow: /pages/long_trails_app.html
-Allow: /pages/plant_catalog.html
-Allow: /pages/plant.html
-Allow: /pages/nh48_catalog.html
-Allow: /pages/nh48_peak.html
-Allow: /pages/index.html
+# Allow specific important routes
+Allow: /catalog
+Allow: /trails
+Allow: /long-trails
+Allow: /plant-catalog
+Allow: /dataset
+Allow: /nh-4000-footers-info
 
 # Disallow editor/internal pages
 Disallow: /pages/nav.html
