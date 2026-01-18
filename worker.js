@@ -880,7 +880,7 @@ export default {
       return new Response(html, {
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
-          'Cache-Control': 'public, max-age=0, s-maxage=86400',
+          'Cache-Control': 'no-store',
           'X-Robots-Tag': meta.robotsTag || 'index, follow'
         }
       });
