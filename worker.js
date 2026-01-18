@@ -193,10 +193,10 @@ export default {
     }
 
     function stripClientNavScripts(html) {
-      return html
-        .replace(/<script[^>]*>[\s\S]*?nav-placeholder[\s\S]*?<\/script>/gi, '')
-        .replace(/<script[^>]*>[\s\S]*?\/pages\/nav\.html[\s\S]*?<\/script>/gi, '')
-        .replace(/<script[^>]*>[\s\S]*?footer-placeholder[\s\S]*?<\/script>/gi, '');
+      // Don't strip any scripts - the template's nav/footer loading scripts
+      // are harmless and trying to remove them was breaking the page
+      // The server-injected nav/footer will take precedence if placeholders exist
+      return html;
     }
 
     function markNavActive(navHtml, pathname) {
