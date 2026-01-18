@@ -76,7 +76,7 @@ export default {
       try {
         const res = await fetch(githubUrl, {
           headers: { 'User-Agent': 'NH48-SSR/1.0' },
-          cf: { cacheTtl: 3600, cacheEverything: true }
+          cf: { cacheTtl: 0, cacheEverything: false }
         });
         
         if (!res.ok) {
@@ -114,7 +114,7 @@ export default {
           status: 200,
           headers: {
             'Content-Type': contentType,
-            'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+            'Cache-Control': 'no-store',
             'Access-Control-Allow-Origin': '*'
           }
         });
@@ -175,7 +175,7 @@ export default {
     };
 
     const NO_CACHE_FETCH = {
-      cf: { cacheTtl: 0, cacheEverything: true },
+      cf: { cacheTtl: 0, cacheEverything: false },
       headers: { 'User-Agent': 'NH48-SSR' }
     };
 
@@ -250,7 +250,7 @@ export default {
       try {
         const res = await fetch(url, { 
           headers: { 'User-Agent': 'NH48-SSR/1.0' },
-          cf: { cacheTtl: 300 }
+          cf: { cacheTtl: 0, cacheEverything: false }
         });
         if (res.ok) {
           return await res.text();
@@ -262,29 +262,21 @@ export default {
     }
 
     async function loadJsonCache(key, url) {
-      env.__dataCache = env.__dataCache || {};
-      if (env.__dataCache[key]) return env.__dataCache[key];
-      const res = await fetch(url, { cf: { cacheTtl: 86400, cacheEverything: true }, headers: { 'User-Agent': 'NH48-SSR' } });
+      const res = await fetch(url, { cf: { cacheTtl: 0, cacheEverything: false }, headers: { 'User-Agent': 'NH48-SSR' } });
       if (!res.ok) {
-        env.__dataCache[key] = null;
         return null;
       }
-      const data = await res.json();
-      env.__dataCache[key] = data;
-      return data;
+      return await res.json();
     }
 
     async function loadTextCache(key, url) {
-      env.__textCache = env.__textCache || {};
-      if (env.__textCache[key]) return env.__textCache[key];
       try {
         const res = await fetch(url, { 
           headers: { 'User-Agent': 'NH48-SSR/1.0' },
-          cf: { cacheTtl: 300 } // Cache for 5 minutes
+          cf: { cacheTtl: 0, cacheEverything: false }
         });
         if (!res.ok) {
           console.error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);
-          env.__textCache[key] = '';
           return '';
         }
         const text = await res.text();
@@ -292,11 +284,9 @@ export default {
           console.error(`Template too small (${text.length} bytes): ${url}`);
           return '';
         }
-        env.__textCache[key] = text;
         return text;
       } catch (err) {
         console.error(`Error fetching ${url}:`, err.message);
-        env.__textCache[key] = '';
         return '';
       }
     }
