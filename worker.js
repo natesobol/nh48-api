@@ -1,4 +1,5 @@
 // Cloudflare Worker for NH48 Peak Guide – Full Template Version
+// Version: 1.1.0 - Auto-deployed via GitHub Actions
 //
 // This Worker serves the full interactive peak detail page stored in the
 // GitHub repository (pages/nh48_peak.html) at clean URLs like
