@@ -46,8 +46,14 @@
         --ink:#ffffff;
         --muted:#cbd5e1;
 
-        /* pure white border style from catalog */
-        --stroke:#ffffff33;
+        /* softened separators */
+        --stroke: rgba(255, 255, 255, 0.15);
+
+        /* hero card styling */
+        --card-gradient: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+        --card-border: rgba(203, 213, 245, 0.12);
+        --card-radius: 20px;
+        --card-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
 
         /* green accent */
         --accent:#22c55e;
@@ -79,11 +85,11 @@
         padding: 16px 18px 64px;
       }
       header.hero {
-        background: var(--panel);
-        border: 2px solid #ffffff;
-        border-radius: 18px;
+        background: var(--card-gradient);
+        border: 1px solid var(--card-border);
+        border-radius: var(--card-radius);
         padding: 28px;
-        box-shadow: none;
+        box-shadow: var(--card-shadow);
         margin: 14px 0 28px;
       }
       header.hero h1 {
@@ -102,11 +108,23 @@
         gap: 12px;
         margin-top: 18px;
       }
+      .hero-card {
+        background: var(--card-gradient);
+        border: 1px solid var(--card-border);
+        border-radius: var(--card-radius);
+        box-shadow: var(--card-shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+      .hero-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(34, 197, 94, 0.3);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      }
       .fact-card {
-        background: var(--card);
-        border: 2px solid #ffffff;
+        background: var(--card-gradient);
+        border: 1px solid var(--card-border);
         padding: 14px;
-        border-radius: 12px;
+        border-radius: var(--card-radius);
         display: flex;
         flex-direction: column;
         gap: 6px;
@@ -141,11 +159,11 @@
         align-items: start;
       }
       .panel {
-        background: var(--panel);
-        border: 2px solid #ffffff;
-        border-radius: 14px;
+        background: var(--card-gradient);
+        border: 1px solid var(--card-border);
+        border-radius: var(--card-radius);
         padding: 16px;
-        box-shadow: none;
+        box-shadow: var(--card-shadow);
       }
       .range-filters {
         display: flex;
@@ -156,8 +174,8 @@
       .chip {
         padding: 8px 12px;
         border-radius: 999px;
-        border: 2px solid #ffffff;
-        background: var(--card);
+        border: 1px solid rgba(203, 213, 245, 0.2);
+        background: rgba(255, 255, 255, 0.03);
         color: var(--ink);
         cursor: pointer;
         font-weight: 700;
@@ -174,8 +192,8 @@
       }
       .table-scroll {
         overflow-x: auto;
-        border-radius: 14px;
-        border: 2px solid #ffffff;
+        border-radius: var(--card-radius);
+        border: 1px solid var(--card-border);
       }
       table {
         width: 100%;
@@ -199,17 +217,17 @@
         background: rgba(255, 255, 255, 0.03);
       }
       .map-shell {
-        background: var(--panel);
-        border: 2px solid #ffffff;
-        border-radius: 14px;
+        background: var(--card-gradient);
+        border: 1px solid var(--card-border);
+        border-radius: var(--card-radius);
         padding: 12px;
       }
       #peakMap {
         width: 100%;
         height: 360px;
-        background: var(--card);
-        border-radius: 12px;
-        border: 2px solid #ffffff;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 16px;
+        border: 1px solid rgba(203, 213, 245, 0.18);
       }
       .map-legend {
         display: flex;
@@ -233,14 +251,14 @@
         margin-top: 8px;
       }
       .range-card {
-        background: var(--panel);
-        border: 2px solid #ffffff;
+        background: var(--card-gradient);
+        border: 1px solid var(--card-border);
         padding: 12px;
-        border-radius: 12px;
+        border-radius: var(--card-radius);
       }
       .toggle-group {
         display: inline-flex;
-        border: 2px solid #ffffff;
+        border: 1px solid rgba(203, 213, 245, 0.2);
         border-radius: 999px;
         overflow: hidden;
       }
@@ -268,16 +286,18 @@
         gap: 10px;
         padding: 12px 16px;
         background: var(--accent);
-        border: 2px solid #ffffff;
+        border: 1px solid var(--accent);
         color: var(--bg);
         border-radius: 10px;
         font-weight: 800;
         text-decoration: none;
         text-transform: uppercase;
         letter-spacing: 0.6px;
+        box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
       }
       .cta:hover {
         background: var(--accent-strong);
+        border-color: var(--accent-strong);
       }
 
       /* ============================================================
@@ -823,22 +843,22 @@
           Community members gathered these notes on the AMC Four-Thousand-Footer peaks—routes, ranges, seasonality patterns, and developer tools—to make browsing easier. Details are not fully verified; please cross-check against the Appalachian Mountain Club’s official resources before you go.
         </p>
         <div class="quick-facts" id="quickFacts">
-          <div class="fact-card">
+          <div class="fact-card hero-card">
             <span class="fact-label">Total Peaks</span>
             <span class="fact-value" id="factCount">48</span>
             <small class="muted">AMC-recognized 4,000-footers (confirm for updates)</small>
           </div>
-          <div class="fact-card">
+          <div class="fact-card hero-card">
             <span class="fact-label">Highest Summit</span>
             <span class="fact-value" id="factHigh">Mount Washington – 6,288 ft</span>
             <small class="muted">Presidential Range</small>
           </div>
-          <div class="fact-card">
+          <div class="fact-card hero-card">
             <span class="fact-label">Cumulative Elevation</span>
             <span class="fact-value" id="factTotal">Calculating…</span>
             <small class="muted">Sum of all summit elevations</small>
           </div>
-          <div class="fact-card">
+          <div class="fact-card hero-card">
             <span class="fact-label">API Ready</span>
             <span class="fact-value">JSON, GeoJSON, Images</span>
             <small class="muted">Open data for maps, apps, and trackers</small>
@@ -1050,14 +1070,14 @@
       </section>
 
       <section id="range-map" class="content-grid">
-        <div class="panel map-shell">
+        <div class="panel hero-card map-shell">
           <h2>Peaks by Mountain Range</h2>
           <p>
             The NH48 spans eight major clusters. Use the quick chips to jump straight to a filtered list: the Presidential Range’s alpine zone, the Franconia Ridge views, the remote Bonds inside the Pemigewasset Wilderness, and the Sandwich Range approaches. Conditions and difficulty vary by season; consult route guides before you go.
           </p>
           <div class="range-list" id="rangeList"></div>
         </div>
-        <div class="panel map-shell">
+        <div class="panel hero-card map-shell">
           <h2>Interactive Map</h2>
           <p>Zoom with your mousewheel or tap each pin to see peak names. All coordinates load from the same manifest that powers the catalog and should be cross-checked with official maps.</p>
           <svg id="peakMap" role="img" aria-label="Map of all 48 New Hampshire 4,000 foot peaks"></svg>
@@ -1073,7 +1093,7 @@
           Difficulty is subjective and conditions change quickly. The notes below reflect commonly shared hiker experiences, not official designations. Plan carefully and consult AMC trail guides and forecasts before committing to any route.
         </p>
         <div class="content-grid">
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Intro / Friendly (≈10 peaks)</h3>
             <p>Shorter mileage, moderate elevation gain, and generally forgiving terrain.</p>
             <ul>
@@ -1081,7 +1101,7 @@
               <li><strong>Mt. Jackson</strong>, <strong>Mt. Pierce</strong>, <strong>Mt. Osceola</strong> (Tripoli approach)</li>
             </ul>
           </div>
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Moderate Day Hikes (≈15 peaks)</h3>
             <p>Longer mileage or steeper grades with occasional rough footing.</p>
             <ul>
@@ -1089,7 +1109,7 @@
               <li><strong>Cannon Mountain</strong>, <strong>North Twin</strong>, <strong>Cabot</strong></li>
             </ul>
           </div>
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Challenging (≈15 peaks)</h3>
             <p>Long days, sustained climbs, and rugged sections that test endurance.</p>
             <ul>
@@ -1097,7 +1117,7 @@
               <li><strong>Whiteface &amp; Passaconaway</strong>, <strong>Wildcat Range</strong></li>
             </ul>
           </div>
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Severe / Alpine (≈8 peaks)</h3>
             <p>Above-treeline exposure, high winds, and the most rugged terrain.</p>
             <ul>
@@ -1107,7 +1127,7 @@
           </div>
         </div>
         <div class="content-grid">
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Beginner-Friendly choices</h3>
             <ul>
               <li><strong>Mt. Tecumseh</strong> — many hikers find this short, direct trail to be the gentlest ascent on the list.</li>
@@ -1115,7 +1135,7 @@
               <li><strong>Mt. Pierce</strong> — provides Crawford Path views with less exposure than some Presidential neighbors.</li>
             </ul>
           </div>
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Advanced &amp; committing</h3>
             <ul>
               <li><strong>The Bonds</strong> (Bond, West Bond, Bondcliff) — often tackled as a 19–23 mile day or an overnight traverse.</li>
@@ -1129,7 +1149,7 @@
       <section id="time-effort">
         <h2>Time &amp; Effort Estimates</h2>
         <div class="content-grid">
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Total Hiking Time</h3>
             <ul>
               <li><strong>Conservative pace:</strong> ~200–250 hours of hiking time.</li>
@@ -1137,7 +1157,7 @@
               <li>Actual elapsed time will be higher with breaks, overnights, and logistics.</li>
             </ul>
           </div>
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Typical Completion Timeline</h3>
             <ul>
               <li><strong>Fast finish:</strong> 1–2 years (or a single intense season).</li>
@@ -1154,7 +1174,7 @@
           The NH48 doesn’t need 48 separate outings. With smart planning, many peaks are commonly paired or traversed in a single day.
         </p>
         <div class="content-grid">
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Trip Count Targets</h3>
             <ul>
               <li><strong>Minimum logical trips:</strong> ~12–15 day hikes for ultra-efficient linkups.</li>
@@ -1162,7 +1182,7 @@
               <li><strong>Average outing:</strong> ~8–12 miles, ~3,000–4,000 ft gain.</li>
             </ul>
           </div>
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Classic Combos</h3>
             <ul>
               <li><strong>Pairs:</strong> Pierce + Eisenhower, Liberty + Flume, North + South Kinsman.</li>
@@ -1179,17 +1199,17 @@
           A progression-based approach helps hikers build skills and confidence. Treat this as guidance, not a rule.
         </p>
         <div class="content-grid">
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Easiest 10</h3>
             <p>Start with shorter mileage and forgiving trails.</p>
             <p><em>Tecumseh, Waumbek, Hale, Jackson, Pierce, Osceola</em> and other low-commitment peaks.</p>
           </div>
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Middle 20</h3>
             <p>Longer hikes and moderate combos build endurance.</p>
             <p><em>Garfield, Kinsmans, Hancocks, Cannon, Wildcats</em> and similar mid-range efforts.</p>
           </div>
-          <div class="panel">
+          <div class="panel hero-card">
             <h3>Hardest 10</h3>
             <p>Save the most rugged and exposed summits for last.</p>
             <p><em>Washington, Adams, Jefferson, Madison, Bonds, Isolation, Owl’s Head</em>.</p>
@@ -1493,7 +1513,7 @@
         };
         rangeOrder.filter((r) => r !== 'All').forEach((range) => {
           const card = document.createElement('div');
-          card.className = 'range-card';
+          card.className = 'range-card hero-card';
           const title = document.createElement('div');
           title.style.display = 'flex';
           title.style.justifyContent = 'space-between';
