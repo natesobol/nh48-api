@@ -133,9 +133,9 @@
         align-items: stretch;
         justify-items: stretch;
         gap: clamp(12px, 2vw, 18px);
-        width: 100%;
+        width: min(1200px, 98vw);
         max-width: none;
-        margin: 6px 0 0;
+        margin: 6px auto 0;
         padding: clamp(8px, 2vw, 14px) clamp(12px, 2.5vw, 18px);
         overflow-x: hidden;
         overflow-y: auto;
@@ -149,16 +149,17 @@
       }
 
       /* Desktop: Show all cards in one horizontal row */
-      @media (min-width: 1025px) {
+      @media (min-width: 801px) {
         .nh48-quick-footer .nh48-quick-footer__grid {
           display: flex;
           flex-direction: row;
+          flex-wrap: nowrap;
           align-items: stretch;
-          justify-items: stretch;
+          justify-content: center;
           gap: clamp(8px, 1.5vw, 16px);
-          width: 100%;
+          width: min(1400px, 96vw);
           max-width: none;
-          margin: 6px 0 0;
+          margin: 6px auto 0;
           padding: 12px clamp(16px, 3vw, 32px);
           overflow-x: auto;
           overflow-y: hidden;
@@ -173,9 +174,9 @@
         }
 
         .nh48-quick-footer .nh48-quick-footer__group {
-          flex: 1;
-          min-width: clamp(120px, 12vw, 180px);
-          max-width: clamp(160px, 16vw, 220px);
+          flex: 0 1 clamp(150px, 11vw, 210px);
+          min-width: clamp(140px, 11vw, 190px);
+          max-width: clamp(170px, 13vw, 230px);
           border: 1px solid var(--nh48-footer-border);
           border-radius: 14px;
           padding: 12px 14px;
@@ -277,7 +278,7 @@
       }
 
       /* Mobile/Tablet: Keep original stacked layout */
-      @media (max-width: 1024px) {
+      @media (max-width: 800px) {
         .nh48-quick-footer .nh48-quick-footer__grid {
           grid-template-columns: 1fr;
           max-height: 500px;
