@@ -1,341 +1,467 @@
 {
  "common": {
- "home": "ہوم",
- "language": "زبان",
- "languagePicker": "زبان منتخب کریں",
- "loading": "لوڈ ہو رہا ہے…",
- "errorLoading": "ڈیٹا لوڈ کرنے میں خرابی",
- "noResults": "کوئی نتائج نہیں ملے۔",
- "noImage": "کوئی تصویر نہیں",
- "unknown": "نامعلوم",
- "notAvailable": "دستیاب نہیں",
- "units": {
- "ariaLabel": "اکائیاں منتخب کریں"
- },
- "unitsLabel": "اکائیاں",
- "unitsFeet": "فٹ",
- "unitsMeters": "میٹر"
+  "home": "ہوم",
+  "language": "زبان",
+  "languagePicker": "زبان منتخب کریں",
+  "loading": "لوڈ ہو رہا ہے…",
+  "errorLoading": "ڈیٹا لوڈ کرنے میں خرابی",
+  "noResults": "کوئی نتائج نہیں ملے۔",
+  "noImage": "کوئی تصویر نہیں",
+  "unknown": "نامعلوم",
+  "notAvailable": "دستیاب نہیں",
+  "units": {
+   "ariaLabel": "اکائیاں منتخب کریں"
+  },
+  "unitsLabel": "اکائیاں",
+  "unitsFeet": "فٹ",
+  "unitsMeters": "میٹر"
  },
  "landing": {
- "title": "NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails",
- "metaDescription": {
- "content": "NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Explore the catalog, routes, and White Mountain trails."
- },
- "ogTitle": {
- "content": "NH48 API – Open Trails and Peaks Data"
- },
- "ogDescription": {
- "content": "Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains."
- },
- "heroTitle": "NH48 API",
- "heroBody": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.",
- "cta": {
- "catalog": "Open the Peak Catalog",
- "trails": "White Mountain Trails",
- "campaigns": "Trail Campaigns"
- },
- "notesTitle": "Dataset notes",
- "notes": {
- "versioned": "Versioned releases with changelog and citation-ready metadata.",
- "methodology": "Provenance + collection methodology noted for peaks, routes, and trail segments.",
- "validation": "Validation checks for elevation ranges, mileage, and geometry consistency.",
- "reproducible": "Reproducible pipelines backed by source scripts and QA artifacts."
- },
- "author": "Author: Nathan Sobol"
+  "title": "NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails",
+  "metaDescription": {
+   "content": "NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Explore the catalog, routes, and White Mountain trails."
+  },
+  "ogTitle": {
+   "content": "NH48 API – Open Trails and Peaks Data"
+  },
+  "ogDescription": {
+   "content": "Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains."
+  },
+  "heroTitle": "NH48 API",
+  "heroBody": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.",
+  "cta": {
+   "catalog": "Open the Peak Catalog",
+   "trails": "White Mountain Trails",
+   "campaigns": "Trail Campaigns"
+  },
+  "notesTitle": "Dataset notes",
+  "notes": {
+   "versioned": "Versioned releases with changelog and citation-ready metadata.",
+   "methodology": "Provenance + collection methodology noted for peaks, routes, and trail segments.",
+   "validation": "Validation checks for elevation ranges, mileage, and geometry consistency.",
+   "reproducible": "Reproducible pipelines backed by source scripts and QA artifacts."
+  },
+  "author": "Author: Nathan Sobol"
  },
  "nav": {
- "logoAlt": "NH48 API logo",
- "tagline": "Open data & structured metadata for New Hampshire’s 4,000-foot peaks.",
- "catalog": "Catalog",
- "trails": "White Mountain Trails",
- "longTrails": "Long Trails",
- "pics": "NH48 Pics",
- "peakBagger": "Peak Bagger",
- "latestPhotos": "Latest WMNF Photos",
- "login": "Log in",
- "viewProfile": "View profile"
+  "logoAlt": "NH48 API logo",
+  "tagline": "Open data & structured metadata for New Hampshire’s 4,000-foot peaks.",
+  "catalog": "Catalog",
+  "trails": "White Mountain Trails",
+  "longTrails": "Long Trails",
+  "pics": "NH48 Pics",
+  "peakBagger": "Peak Bagger",
+  "latestPhotos": "Latest WMNF Photos",
+  "login": "Log in",
+  "viewProfile": "View profile"
  },
  "catalog": {
- "title": "NH48 Peak Catalog",
- "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
- "search": {
- "placeholder": "Search peaks by name…",
- "ariaLabel": "Search peaks by name"
- },
- "sort": {
- "label": "Sort by:",
- "ariaLabel": "Sort peaks by attribute",
- "name": "Name (A–Z)",
- "elevAsc": "Elevation ↑",
- "elevDesc": "Elevation ↓",
- "promAsc": "Prominence ↑",
- "promDesc": "Prominence ↓",
- "diffAsc": "Difficulty A–Z",
- "diffDesc": "Difficulty Z–A",
- "rangeAsc": "Range A–Z",
- "trailAsc": "Trail Type A–Z",
- "exposureAsc": "Exposure A–Z"
- },
- "filter": {
- "label": "Filter by:",
- "ariaLabel": "Select field to filter peaks",
- "none": "None",
- "range": "Range",
- "difficulty": "Difficulty",
- "trail": "Trail Type",
- "exposure": "Exposure"
- },
- "value": {
- "label": "Value:",
- "ariaLabel": "Select value for chosen filter",
- "all": "All"
- },
- "columns": {
- "label": "Columns:",
- "ariaLabel": "Select number of catalog columns"
- },
- "empty": "No peaks found.",
- "error": "Error loading peaks",
- "card": {
- "elevation": "Elevation",
- "prominence": "Prominence",
- "range": "Range",
- "trailType": "Trail Type",
- "difficulty": "Difficulty",
- "exposure": "Exposure"
- }
+  "title": "NH48 Peak Catalog",
+  "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
+  "search": {
+   "placeholder": "Search peaks by name…",
+   "ariaLabel": "Search peaks by name"
+  },
+  "sort": {
+   "label": "Sort by:",
+   "ariaLabel": "Sort peaks by attribute",
+   "name": "Name (A–Z)",
+   "elevAsc": "Elevation ↑",
+   "elevDesc": "Elevation ↓",
+   "promAsc": "Prominence ↑",
+   "promDesc": "Prominence ↓",
+   "diffAsc": "Difficulty A–Z",
+   "diffDesc": "Difficulty Z–A",
+   "rangeAsc": "Range A–Z",
+   "trailAsc": "Trail Type A–Z",
+   "exposureAsc": "Exposure A–Z"
+  },
+  "filter": {
+   "label": "Filter by:",
+   "ariaLabel": "Select field to filter peaks",
+   "none": "None",
+   "range": "Range",
+   "difficulty": "Difficulty",
+   "trail": "Trail Type",
+   "exposure": "Exposure"
+  },
+  "value": {
+   "label": "Value:",
+   "ariaLabel": "Select value for chosen filter",
+   "all": "All"
+  },
+  "columns": {
+   "label": "Columns:",
+   "ariaLabel": "Select number of catalog columns"
+  },
+  "empty": "No peaks found.",
+  "error": "Error loading peaks",
+  "card": {
+   "elevation": "Elevation",
+   "prominence": "Prominence",
+   "range": "Range",
+   "trailType": "Trail Type",
+   "difficulty": "Difficulty",
+   "exposure": "Exposure"
+  }
  },
  "photo": {
- "altTemplate": "{peak} photo — {season} {timeOfDay}"
+  "altTemplate": "{peak} photo — {season} {timeOfDay}"
  },
  "season": {
- "spring": "spring",
- "summer": "summer",
- "fall": "fall",
- "autumn": "autumn",
- "winter": "winter"
+  "spring": "spring",
+  "summer": "summer",
+  "fall": "fall",
+  "autumn": "autumn",
+  "winter": "winter"
  },
  "time": {
- "sunrise": "sunrise",
- "sunset": "sunset",
- "morning": "morning",
- "afternoon": "afternoon",
- "evening": "evening",
- "night": "night",
- "day": "day",
- "dawn": "dawn",
- "dusk": "dusk"
+  "sunrise": "sunrise",
+  "sunset": "sunset",
+  "morning": "morning",
+  "afternoon": "afternoon",
+  "evening": "evening",
+  "night": "night",
+  "day": "day",
+  "dawn": "dawn",
+  "dusk": "dusk"
  },
  "values": {
- "trailType": {
- "loop": "Loop",
- "loop_or_out_back": "Loop or out & back",
- "loop_or_traverse": "Loop or traverse",
- "loop_or_traverse_along_ridge": "Loop or traverse along ridge",
- "out_back": "Out & back",
- "out_back_common": "Out & back - common",
- "out_back_common_or_long_traverse": "Out & back - common or long traverse",
- "out_back_common_or_loop_with_connector_trails": "Out & back - common or loop with connector trails",
- "out_back_common_or_small_loop_including_mt_webster": "Out & back - common or small loop including Mt Webster",
- "out_back_commonly": "Out & back - commonly",
- "out_back_or_loop": "Out & back or loop",
- "out_back_or_loop_with_tom_and_willey": "Out & back or loop - with Tom and Willey",
- "out_back_or_loop_combining_trails": "Out & back or loop combining trails",
- "out_back_or_loop_options": "Out & back or loop options",
- "out_back_or_point_to_point_traverse": "Out & back or point-to-point traverse",
- "out_back_or_traverse": "Out & back or traverse"
- },
- "difficulty": {
- "moderate": "Moderate",
- "moderate_difficult": "Moderate/Difficult",
- "difficult": "Difficult",
- "very_difficult": "Very Difficult",
- "extremely_difficult": "Extremely Difficult"
- },
- "exposure": {
- "high": "High",
- "medium": "Medium",
- "low": "Low",
- "low_to_medium": "Low to Medium"
- }
+  "trailType": {
+   "loop": "Loop",
+   "loop_or_out_back": "Loop or out & back",
+   "loop_or_traverse": "Loop or traverse",
+   "loop_or_traverse_along_ridge": "Loop or traverse along ridge",
+   "out_back": "Out & back",
+   "out_back_common": "Out & back - common",
+   "out_back_common_or_long_traverse": "Out & back - common or long traverse",
+   "out_back_common_or_loop_with_connector_trails": "Out & back - common or loop with connector trails",
+   "out_back_common_or_small_loop_including_mt_webster": "Out & back - common or small loop including Mt Webster",
+   "out_back_commonly": "Out & back - commonly",
+   "out_back_or_loop": "Out & back or loop",
+   "out_back_or_loop_with_tom_and_willey": "Out & back or loop - with Tom and Willey",
+   "out_back_or_loop_combining_trails": "Out & back or loop combining trails",
+   "out_back_or_loop_options": "Out & back or loop options",
+   "out_back_or_point_to_point_traverse": "Out & back or point-to-point traverse",
+   "out_back_or_traverse": "Out & back or traverse"
+  },
+  "difficulty": {
+   "moderate": "Moderate",
+   "moderate_difficult": "Moderate/Difficult",
+   "difficult": "Difficult",
+   "very_difficult": "Very Difficult",
+   "extremely_difficult": "Extremely Difficult"
+  },
+  "exposure": {
+   "high": "High",
+   "medium": "Medium",
+   "low": "Low",
+   "low_to_medium": "Low to Medium"
+  }
  },
  "peak": {
- "back": "Back to NH48 Peak Catalog",
- "catalog": "Peak Catalog",
- "loading": "Loading…",
- "relatedTrails": {
- "title": "Related Trails & Routes",
- "none": "No related trails listed yet.",
- "link": "{name} route"
- },
- "section": {
- "routes": "Hiking Routes",
- "trails": "Associated Trails",
- "terrain": "Trail & Terrain",
- "conditions": "Conditions & Access"
- },
- "carousel": {
- "prev": "Previous image",
- "next": "Next image"
- },
- "metadata": {
- "title": "Current Photo Metadata",
- "notAvailable": "Not available",
- "moreDetails": "More details ▾",
- "lessDetails": "Less details ▴",
- "labels": {
- "season": "Season",
- "timeOfDay": "Time of Day",
- "orientation": "Orientation",
- "captureDate": "Capture Date",
- "cameraMaker": "Camera Maker",
- "cameraModel": "Camera Model",
- "camera": "Camera",
- "lens": "Lens",
- "fStop": "F Stop",
- "shutterSpeed": "Shutter Speed",
- "iso": "ISO",
- "exposureBias": "Exposure Bias",
- "focalLength": "Focal Length",
- "flashMode": "Flash Mode",
- "meteringMode": "Metering Mode",
- "maxAperture": "Max Aperture",
- "author": "Author",
- "dimensions": "Dimensions",
- "fileSize": "File Size",
- "fileCreateDate": "File Create Date",
- "fileModifiedDate": "File Modified Date",
- "rating": "Rating",
- "metadata": "میٹا ڈیٹا",
- "creditLine": "کریڈٹ لائن",
- "source": "ماخذ",
- "copyrightNotice": "کاپی رائٹ نوٹس",
- "copyrightStatus": "کاپی رائٹ حیثیت",
- "rightsUsageTerms": "حقوق اور استعمال کی شرائط",
- "altText": "متبادل متن",
- "alt": "آلٹ",
- "extendedAlt": "وسیع متبادل متن",
- "caption": "کیپشن",
- "headline": "سرخی",
- "extendedDescription": "موسع تفصیل",
- "description": "تفصیل"
- }
- },
- "generalInfo": {
- "title": "General Peak Info",
- "elevation": "Elevation",
- "prominence": "Prominence",
- "range": "Range",
- "trailType": "Trail Type",
- "difficulty": "Difficulty",
- "exposure": "Exposure"
- },
- "routes": {
- "distance": "Distance",
- "gain": "Gain",
- "difficulty": "Difficulty"
- },
- "trailList": {
- "title": "Trail List"
- },
- "terrain": {
- "terrain": "Terrain",
- "scramble": "Scramble",
- "view": "View"
- },
- "conditions": {
- "bestSeasons": "Best Seasons",
- "waterAvailability": "Water Availability",
- "cellReception": "Cell Reception",
- "weatherExposure": "Weather Exposure",
- "emergencyBailout": "Emergency Bailout",
- "dogFriendly": "Dog Friendly",
- "nearbyFeatures": "Nearby Features"
- },
- "errorLoading": "Error loading peak",
- "meta": {
- "titleTemplate": "{name} ({elevationFormatted}) – {suffix}",
- "descriptionTemplate": "{name} – {elevation} ft high, {prominence} ft prominence, in the {range}. Routes, difficulty, and photos for this 4,000-footer."
- }
+  "back": "Back to NH48 Peak Catalog",
+  "catalog": "Peak Catalog",
+  "loading": "Loading…",
+  "relatedTrails": {
+   "title": "Related Trails & Routes",
+   "none": "No related trails listed yet.",
+   "link": "{name} route"
+  },
+  "section": {
+   "routes": "Hiking Routes",
+   "trails": "Associated Trails",
+   "terrain": "Trail & Terrain",
+   "conditions": "Conditions & Access"
+  },
+  "carousel": {
+   "prev": "Previous image",
+   "next": "Next image"
+  },
+  "metadata": {
+   "title": "Current Photo Metadata",
+   "notAvailable": "Not available",
+   "moreDetails": "More details ▾",
+   "lessDetails": "Less details ▴",
+   "labels": {
+    "season": "Season",
+    "timeOfDay": "Time of Day",
+    "orientation": "Orientation",
+    "captureDate": "Capture Date",
+    "cameraMaker": "Camera Maker",
+    "cameraModel": "Camera Model",
+    "camera": "Camera",
+    "lens": "Lens",
+    "fStop": "F Stop",
+    "shutterSpeed": "Shutter Speed",
+    "iso": "ISO",
+    "exposureBias": "Exposure Bias",
+    "focalLength": "Focal Length",
+    "flashMode": "Flash Mode",
+    "meteringMode": "Metering Mode",
+    "maxAperture": "Max Aperture",
+    "author": "Author",
+    "dimensions": "Dimensions",
+    "fileSize": "File Size",
+    "fileCreateDate": "File Create Date",
+    "fileModifiedDate": "File Modified Date",
+    "rating": "Rating",
+    "metadata": "میٹا ڈیٹا",
+    "creditLine": "کریڈٹ لائن",
+    "source": "ماخذ",
+    "copyrightNotice": "کاپی رائٹ نوٹس",
+    "copyrightStatus": "کاپی رائٹ حیثیت",
+    "rightsUsageTerms": "حقوق اور استعمال کی شرائط",
+    "altText": "متبادل متن",
+    "alt": "آلٹ",
+    "extendedAlt": "وسیع متبادل متن",
+    "caption": "کیپشن",
+    "headline": "سرخی",
+    "extendedDescription": "موسع تفصیل",
+    "description": "تفصیل"
+   }
+  },
+  "generalInfo": {
+   "title": "General Peak Info",
+   "elevation": "Elevation",
+   "prominence": "Prominence",
+   "range": "Range",
+   "trailType": "Trail Type",
+   "difficulty": "Difficulty",
+   "exposure": "Exposure"
+  },
+  "routes": {
+   "distance": "Distance",
+   "gain": "Gain",
+   "difficulty": "Difficulty"
+  },
+  "trailList": {
+   "title": "Trail List"
+  },
+  "terrain": {
+   "terrain": "Terrain",
+   "scramble": "Scramble",
+   "view": "View"
+  },
+  "conditions": {
+   "bestSeasons": "Best Seasons",
+   "waterAvailability": "Water Availability",
+   "cellReception": "Cell Reception",
+   "weatherExposure": "Weather Exposure",
+   "emergencyBailout": "Emergency Bailout",
+   "dogFriendly": "Dog Friendly",
+   "nearbyFeatures": "Nearby Features"
+  },
+  "errorLoading": "Error loading peak",
+  "meta": {
+   "titleTemplate": "{name} ({elevationFormatted}) – {suffix}",
+   "descriptionTemplate": "{name} – {elevation} ft high, {prominence} ft prominence, in the {range}. Routes, difficulty, and photos for this 4,000-footer."
+  }
  },
  "trails": {
- "title": "White Mountains Trails Map & List",
- "subtitle": "Interactive WMNF trail map with GPX-backed route details.",
- "intro": "Use this as a quick trail finder and completion tracker for the White Mountain National Forest. Open datasets and telemetry for New Hampshire’s 4,000-foot mountains.",
- "details": {
- "title": "Trail details",
- "empty": "Select a trail to view distance, elevation, and OpenStreetMap details."
+  "title": "White Mountains Trails Map & List",
+  "subtitle": "Interactive WMNF trail map with GPX-backed route details.",
+  "intro": "Use this as a quick trail finder and completion tracker for the White Mountain National Forest. Open datasets and telemetry for New Hampshire’s 4,000-foot mountains.",
+  "details": {
+   "title": "Trail details",
+   "empty": "Select a trail to view distance, elevation, and OpenStreetMap details."
+  },
+  "search": {
+   "placeholder": "Search trails…"
+  },
+  "sort": {
+   "az": "Sort A → Z",
+   "za": "Sort Z → A"
+  },
+  "jumpTo": "Jump To:",
+  "list": {
+   "headerName": "Trail Name",
+   "headerCompleted": "Completed",
+   "noMatches": "No trails found. Try a different search.",
+   "noTrails": "No trails available."
+  },
+  "loading": "Loading trails...",
+  "about": {
+   "title": "About this list",
+   "body": "NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths."
+  },
+  "disclaimer": {
+   "title": "Disclaimer",
+   "body": "This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry."
+  },
+  "howto": {
+   "title": "How to use",
+   "body": "Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below."
+  },
+  "settings": {
+   "title": "Settings",
+   "hideCompleted": "Hide completed trails",
+   "clearProgress": "Clear all progress"
+  },
+  "export": "Export CSV",
+  "import": "Import",
+  "viewApi": "View API",
+  "resizePanels": "Resize panels",
+  "info": {
+   "noProperties": "No additional trail properties available yet. Properties will be populated from OpenStreetMap data.",
+   "loadingProperties": "Loading additional trail properties from OpenStreetMap...",
+   "sourceNote": "Information sourced from OpenStreetMap where available.",
+   "distance": "Distance",
+   "elevationGain": "Elevation Gain",
+   "minElevation": "Min Elevation",
+   "maxElevation": "Max Elevation",
+   "surface": "Surface",
+   "trailType": "Trail Type",
+   "difficulty": "Difficulty",
+   "visibility": "Visibility",
+   "width": "Width",
+   "allowedUses": "Allowed Uses",
+   "season": "Season",
+   "maintainer": "Maintainer",
+   "source": "Source"
+  },
+  "virtualHike": "Virtual Hike",
+  "unnamedTrail": "Unnamed trail",
+  "confirmClear": "Are you sure you want to clear all progress?",
+  "alertLoadFail": "Unable to load trail data. Please ensure you have internet connectivity and try refreshing the page.",
+  "csv": {
+   "headerTrail": "Trail",
+   "headerCompleted": "Completed",
+   "headerDate": "Date",
+   "filename": "trail-progress.csv"
+  },
+  "map": {
+   "attribution": "Map data: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+  },
+  "telemetry": {
+   "label": "{mapped}/{total} trails with GPX telemetry",
+   "loading": "Loading GPX telemetry coverage…"
+  }
  },
- "search": {
- "placeholder": "Search trails…"
- },
- "sort": {
- "az": "Sort A → Z",
- "za": "Sort Z → A"
- },
- "jumpTo": "Jump To:",
- "list": {
- "headerName": "Trail Name",
- "headerCompleted": "Completed",
- "noMatches": "No trails found. Try a different search.",
- "noTrails": "No trails available."
- },
- "loading": "Loading trails...",
- "about": {
- "title": "About this list",
- "body": "NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths."
- },
- "disclaimer": {
- "title": "Disclaimer",
- "body": "This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry."
- },
- "howto": {
- "title": "How to use",
- "body": "Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below."
- },
- "settings": {
- "title": "Settings",
- "hideCompleted": "Hide completed trails",
- "clearProgress": "Clear all progress"
- },
- "export": "Export CSV",
- "import": "Import",
- "viewApi": "View API",
- "resizePanels": "Resize panels",
- "info": {
- "noProperties": "No additional trail properties available yet. Properties will be populated from OpenStreetMap data.",
- "loadingProperties": "Loading additional trail properties from OpenStreetMap...",
- "sourceNote": "Information sourced from OpenStreetMap where available.",
- "distance": "Distance",
- "elevationGain": "Elevation Gain",
- "minElevation": "Min Elevation",
- "maxElevation": "Max Elevation",
- "surface": "Surface",
- "trailType": "Trail Type",
- "difficulty": "Difficulty",
- "visibility": "Visibility",
- "width": "Width",
- "allowedUses": "Allowed Uses",
- "season": "Season",
- "maintainer": "Maintainer",
- "source": "Source"
- },
- "virtualHike": "Virtual Hike",
- "unnamedTrail": "Unnamed trail",
- "confirmClear": "Are you sure you want to clear all progress?",
- "alertLoadFail": "Unable to load trail data. Please ensure you have internet connectivity and try refreshing the page.",
- "csv": {
- "headerTrail": "Trail",
- "headerCompleted": "Completed",
- "headerDate": "Date",
- "filename": "trail-progress.csv"
- },
- "map": {
- "attribution": "Map data: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
- },
- "telemetry": {
- "label": "{mapped}/{total} trails with GPX telemetry",
- "loading": "Loading GPX telemetry coverage…"
- }
- }
+ "nav.tagline": "نیو ہیمپشائر کے 4 000 فٹ کے چوٹیوں کے لیے کھلے ڈیٹا اور ساختہ میٹا ڈیٹا۔",
+ "nav.catalog": "کتابچہ",
+ "nav.trails": "وائٹ ماؤنٹین راستے",
+ "nav.longTrails": "لمبے راستے",
+ "nav.pics": "NH48 تصاویر",
+ "nav.peakBagger": "پیک بیگر",
+ "nav.latestPhotos": "تازہ ترین WMNF تصاویر",
+ "common.languagePicker": "زبان منتخب کریں",
+ "landing.title": "NH48 API – نیو ہیمپشائر کے 4 000 فٹ چوٹیوں اور راستے",
+ "landing.ogTitle": "NH48 API – نیو ہیمپشائر کے 4 000 فٹ چوٹیوں اور راستے",
+ "landing.metaDescription": "نیو ہیمپشائر کے وائٹ ماؤنٹین نیشنل فارسٹ کی 48 چار ہزار فٹ چوٹیوں کے لیے کھلے ڈیٹا، راستے اور تصاویر کا میٹا ڈیٹا فراہم کرتا ہے۔ کتابچہ براؤز کریں، راستوں کو دریافت کریں اور اس ڈیٹا سیٹ کا استعمال کریں۔",
+ "landing.ogDescription": "نیو ہیمپشائر کے وائٹ ماؤنٹین نیشنل فارسٹ کی 48 چار ہزار فٹ چوٹیوں کے لیے کھلے ڈیٹا، راستے اور تصاویر کا میٹا ڈیٹا فراہم کرتا ہے۔ کتابچہ براؤز کریں، راستوں کو دریافت کریں اور اس ڈیٹا سیٹ کا استعمال کریں۔",
+ "landing.heroTitle": "NH48 API",
+ "landing.heroTagline": "نیو ہیمپشائر کے 4 000 فٹ چوٹیوں اور راستے",
+ "landing.heroBody": "وائٹ ماؤنٹین نیشنل فارسٹ کی 48 چار ہزار فٹ چوٹیوں کے بارے میں کھلے ڈیٹا، راستے اور تصاویر کا میٹا ڈیٹا فراہم کرتا ہے۔ کتابچہ براؤز کریں، وائٹ ماؤنٹین راستوں کو دریافت کریں اور اس ڈیٹا سیٹ سے ایپس بنائیں۔",
+ "landing.cards.catalogTitle": "چوٹیوں کا کتابچہ",
+ "landing.cards.catalogBody": "تمام 48 چار ہزار فٹ چوٹیوں کی تفصیلات دیکھیں، بشمول اونچائی، نمایاں پن، دشواری اور تصاویر کے تھمب نیلز۔",
+ "landing.cards.catalogCta": "کتابچہ دیکھیں",
+ "landing.cards.trailsTitle": "راستے کا ایکسپلورر",
+ "landing.cards.trailsBody": "وائٹ ماؤنٹین راستوں کی تلاش کیلئے ایک انٹرایکٹو نقشہ استعمال کریں اور کھلا ڈیٹا سیٹ ڈاؤن لوڈ کریں۔",
+ "landing.cards.trailsCta": "راستے دیکھیں",
+ "landing.cards.longTrailsTitle": "لمبے راستے",
+ "landing.cards.longTrailsBody": "اپالاچیان ٹریل جیسے لمبے راستوں کے بارے میں سیکھیں۔",
+ "landing.cards.longTrailsCta": "لمبے راستے دریافت کریں",
+ "landing.cards.plantsTitle": "پودوں کا کتابچہ",
+ "landing.cards.plantsBody": "وائٹ ماؤنٹین کے الپائن پودوں اور اہم پودوں کی فہرست دیکھیں۔",
+ "landing.cards.plantsCta": "پودے دیکھیں",
+ "landing.notesTitle": "ڈیٹا سیٹ نوٹس",
+ "landing.notes.versioned": "تبدیلیوں کی تاریخ کے ساتھ ورژن ریلیز۔",
+ "landing.notes.methodology": "جمع اور پروسیسنگ کو سمجھانے والی دستاویزات۔",
+ "landing.notes.validation": "ذرائع اور کوالٹی کنٹرول کی توثیق شدہ۔",
+ "landing.notes.reproducible": "دوہرائی جانے والی اعداد و نتائج۔",
+ "landing.author": "مصنف: Nathan Sobol",
+ "footer.quickBrowseTitle": "نیو ہیمپشائر کی وائٹ ماؤنٹینز کو تیزی سے براؤز کریں",
+ "footer.quickBrowseSubtitle": "ہر چار ہزار فٹ چوٹی کے تفصیلی صفحے پر براہ راست جائیں تاکہ چوٹی کی معلومات، تصاویر اور راستے کی تفصیلات جلدی حاصل کی جا سکیں۔",
+ "footer.quickBrowseLinks": "فوری براؤز لنکس",
+ "footer.legal": "© 2026 Nathan Sobol · NH 48، وائٹ ماؤنٹین ٹریسنگ، مناظر اور لمبے راستے – ڈیٹا، راستے، اور تصاویر",
+ "footer.navLabel": "فوٹر نیویگیشن لنکس",
+ "common.home": "ہوم",
+ "common.loading": "لوڈ ہو رہا ہے…",
+ "common.unitsLabel": "اکائیاں:",
+ "common.unitsFeet": "فٹ",
+ "common.unitsMeters": "میٹر",
+ "common.noImage": "کوئی تصویر نہیں",
+ "catalog.error": "کیٹلاگ لوڈ کرنے میں خرابی۔",
+ "peak.catalog": "چوٹیوں کا فہرست",
+ "peak.loading": "لوڈ ہو رہا ہے…",
+ "peak.back": "واپس",
+ "peak.carousel.prev": "پچھلا",
+ "peak.carousel.next": "اگلا",
+ "peak.section.routes": "راستے",
+ "peak.section.trails": "ٹریلز",
+ "peak.section.terrain": "خطہ",
+ "peak.section.conditions": "حالات",
+ "peak.relatedTrails.title": "متعلقہ ٹریلز",
+ "peak.relatedTrails.link": "تمام ٹریلز دیکھیں",
+ "peak.relatedTrails.none": "کوئی متعلقہ ٹریل نہیں",
+ "peak.description.title": "تفصیل",
+ "peak.generalInfo.title": "عمومی معلومات",
+ "peak.generalInfo.elevation": "بلندی",
+ "peak.generalInfo.prominence": "نمایاں",
+ "peak.generalInfo.range": "سلسلہ",
+ "peak.generalInfo.trailType": "ٹریل کی قسم",
+ "peak.generalInfo.difficulty": "دشواری",
+ "peak.generalInfo.exposure": "نمائش",
+ "peak.terrain.terrain": "خطہ",
+ "peak.terrain.scramble": "آسان چڑھائی",
+ "peak.terrain.view": "منظر",
+ "peak.conditions.bestSeasons": "بہترین موسم",
+ "peak.conditions.waterAvailability": "پانی کی دستیابی",
+ "peak.conditions.cellReception": "موبائل سگنل",
+ "peak.conditions.weatherExposure": "موسم کی زد",
+ "peak.conditions.emergencyBailout": "ہنگامی راستہ",
+ "peak.conditions.dogFriendly": "کتوں کے لئے دوستانہ",
+ "peak.conditions.nearbyFeatures": "قریبی خصوصیات",
+ "peak.routes.distance": "فاصلہ",
+ "peak.routes.gain": "بلندی میں اضافہ",
+ "peak.routes.difficulty": "دشواری",
+ "peak.metadata.title": "تصویر کا میٹا ڈیٹا",
+ "peak.metadata.labels.season": "موسم",
+ "peak.metadata.labels.timeOfDay": "دن کا وقت",
+ "peak.metadata.labels.orientation": "سمت",
+ "peak.metadata.labels.captureDate": "تاریخ گرفتاری",
+ "peak.metadata.labels.cameraMaker": "کیمرہ بنانے والا",
+ "peak.metadata.labels.cameraModel": "کیمرہ ماڈل",
+ "peak.metadata.labels.camera": "کیمرہ",
+ "peak.metadata.labels.lens": "لینس",
+ "peak.metadata.labels.fStop": "ایف اسٹاپ",
+ "peak.metadata.labels.shutterSpeed": "شٹر کی رفتار",
+ "peak.metadata.labels.iso": "ISO",
+ "peak.metadata.labels.exposureBias": "ایکسپوژر بایس",
+ "peak.metadata.labels.focalLength": "فوکل لمبائی",
+ "peak.metadata.labels.flashMode": "فلیش موڈ",
+ "peak.metadata.labels.meteringMode": "میٹرنگ موڈ",
+ "peak.metadata.labels.maxAperture": "زیادہ سے زیادہ اپرچر",
+ "peak.metadata.labels.author": "مصنف",
+ "peak.metadata.labels.dimensions": "ابعاد",
+ "peak.metadata.labels.fileSize": "فائل سائز",
+ "peak.metadata.labels.fileCreateDate": "بنانے کی تاریخ",
+ "peak.metadata.labels.fileModifiedDate": "ترمیم کی تاریخ",
+ "peak.metadata.labels.rating": "درجہ بندی",
+ "peak.metadata.labels.metadata": "میٹا ڈیٹا",
+ "peak.metadata.labels.creditLine": "کریڈٹ لائن",
+ "peak.metadata.labels.source": "ماخذ",
+ "peak.metadata.labels.copyrightNotice": "حق اشاعت نوٹس",
+ "peak.metadata.labels.copyrightStatus": "حق اشاعت کی حالت",
+ "peak.metadata.labels.rightsUsageTerms": "حقوق استعمال کی شرائط",
+ "peak.metadata.labels.altText": "متبادل متن",
+ "peak.metadata.labels.extendedAlt": "وسیع متبادل متن",
+ "peak.metadata.labels.caption": "کیپشن",
+ "peak.metadata.labels.headline": "سرخی",
+ "peak.metadata.labels.extendedDescription": "وسیع وضاحت",
+ "peak.metadata.labels.description": "وضاحت",
+ "peak.metadata.lessDetails": "کم تفصیل",
+ "peak.metadata.moreDetails": "زیادہ تفصیل",
+ "peak.metadata.notAvailable": "دستیاب نہیں",
+ "peak.notFound": "چوٹی نہیں ملی",
+ "peak.errorLoading": "ڈیٹا لوڈ کرنے میں خرابی",
+ "peak.meta.descriptionTemplate": "{{peak}} کے لئے معلومات، راستے، حالات اور تصویر کا میٹا ڈیٹا۔",
+ "trails.settings.clearProgress": "پیشرفت صاف کریں",
+ "trails.settings.hideCompleted": "مکمل ٹریلز چھپائیں",
+ "trails.export": "برآمد",
+ "trails.virtualHike": "مجازی ہائیک",
+ "trails.list.headerName": "نام",
+ "trails.list.headerCompleted": "مکمل",
+ "trails.resizePanels": "پینل کا سائز تبدیل کریں"
 }

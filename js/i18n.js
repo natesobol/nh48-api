@@ -61,6 +61,9 @@ import { LANGS } from './langConfig.js';
 
   function getValue(dict, key) {
     if (!dict) return undefined;
+    if (Object.prototype.hasOwnProperty.call(dict, key)) {
+      return dict[key];
+    }
     return key.split('.').reduce((acc, part) => (acc && acc[part] != null ? acc[part] : undefined), dict);
   }
 
