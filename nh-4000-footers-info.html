@@ -27,14 +27,91 @@
       name="keywords"
       content="NH48 info, New Hampshire 4000 footers, AMC 4000 footer list, White Mountains hiking, Presidential Range, Franconia Ridge, NH48 data API"
     />
+    <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://nh48.info/nh-4000-footers-info" />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="NH48 Info" />
     <meta property="og:title" content="NH 48 4,000-Footers: Unofficial Community Information" />
     <meta property="og:description" content="Friendly, community-compiled info on New Hampshire's 4,000-footers with live data, maps, and planning notes. Always confirm with the AMC." />
     <meta property="og:url" content="https://nh48.info/nh-4000-footers-info" />
     <meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__001.jpg" />
     <meta property="og:image:alt" content="Mount Madison summit boulders under dramatic skies in the Presidential Range" />
     <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": ["Article", "Guide"],
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://nh48.info/nh-4000-footers-info"
+        },
+        "headline": "NH 48 4,000-Footers Information – Unofficial Community Resource",
+        "description": "Community-curated overview of New Hampshire's 4,000-footers with routes, ranges, season tips and API resources.",
+        "image": {
+          "@type": "ImageObject",
+          "url": "https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__001.jpg",
+          "width": 1200,
+          "height": 800
+        },
+        "author": {
+          "@type": "Organization",
+          "name": "NH48 Community"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "NH48 Info",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://nh48.info/favicons/favicon-96.png",
+            "width": 96,
+            "height": 96
+          }
+        },
+        "datePublished": "2023-10-01",
+        "dateModified": "2025-01-19"
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which NH 4,000 footer is the easiest?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Mt. Tecumseh and Mt. Waumbek are considered the easiest NH48 summits due to short mileage, moderate elevation gain and sheltered routes."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do winter ascents count toward the NH48 list?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Winter climbs (December 21 – March 21) count toward the primary NH48 completion and also the AMC Winter Four-Thousand-Footer award."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which range has the most dangerous weather?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The Presidential Range is the most weather-exposed; expect rapid temperature changes, high winds and long above-treeline stretches."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I find individual peak details?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Use the links in the Current NH 4,000-Footer List. Each row links to /peak/slug/ and the peak pages link back to this info page."
+            }
+          }
+        ]
+      }
+    </script>
     <link rel="stylesheet" href="/css/quick-browse-footer.css" />
     <script src="/js/quick-browse-footer.js" defer></script>
     <style>
@@ -791,6 +868,29 @@
           padding: 24px 16px;
         }
       }
+
+      @media print {
+        body {
+          background: #ffffff;
+          color: #000000;
+        }
+        a {
+          color: #000000;
+          text-decoration: underline;
+        }
+        header.hero,
+        .panel,
+        .hero-card,
+        .map-shell {
+          box-shadow: none;
+          background: #ffffff;
+          border-color: #e2e8f0;
+        }
+        .section-divider,
+        .toggle-group {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body data-route="info" data-page="info">
@@ -1293,12 +1393,12 @@
         <p>
           Strategies shift every year as trailheads, roads, and weather patterns change. The AMC tracks winter finishers separately because road closures, avalanche zones, and snowpack reshape the effort. Use the toggle to switch between summer and winter planning and verify access and forecasts with official sources.
         </p>
-        <div class="toggle-group" role="group" aria-label="Toggle hiking season">
-          <button id="summerBtn" class="active" type="button">Summer</button>
-          <button id="winterBtn" type="button">Winter</button>
+        <div class="toggle-group" role="tablist" aria-label="Toggle hiking season">
+          <button id="summerBtn" class="active" type="button" role="tab" aria-pressed="true" aria-selected="true" aria-controls="seasonTable">Summer</button>
+          <button id="winterBtn" type="button" role="tab" aria-pressed="false" aria-selected="false" aria-controls="seasonTable">Winter</button>
         </div>
         <div class="table-scroll season-table">
-          <table>
+          <table id="seasonTable">
             <thead>
               <tr>
                 <th>Focus</th>
@@ -1343,7 +1443,7 @@
           These responses summarize common hiker opinions and may not reflect official AMC guidance. For definitive answers, <a href="https://www.amc4000footer.org/faq" target="_blank" rel="noopener">visit the official AMC FAQ</a>.
         </p>
         <div class="faq-item">
-          <strong>What is the easiest 4,000 footer in New Hampshire?</strong>
+          <strong>Which NH 4,000 footer is the easiest?</strong>
           <p>Mt. Tecumseh and Mt. Waumbek are widely considered the most approachable thanks to short mileage, steady grades, and sheltered routes; however, experiences vary.</p>
         </div>
         <div class="faq-item">
@@ -1351,7 +1451,7 @@
           <p>Many hikers count winter ascents toward the primary list and separately for the Winter NH48 award. December 21–March 21 is the commonly accepted window; review AMC criteria to be sure.</p>
         </div>
         <div class="faq-item">
-          <strong>Which range has the most challenging weather?</strong>
+          <strong>Which range has the most dangerous weather?</strong>
           <p>The Presidential Range is often cited for challenging weather. Above-treeline exposure, fast-moving storms, and wind chills make even summer days serious—plan conservatively.</p>
         </div>
         <div class="faq-item">
@@ -1488,6 +1588,8 @@
           btn.type = 'button';
           btn.textContent = label;
           btn.dataset.range = label;
+          btn.setAttribute('aria-pressed', currentRange === label ? 'true' : 'false');
+          btn.setAttribute('aria-controls', 'peakTableBody');
           btn.addEventListener('click', () => {
             currentRange = label;
             renderRangeFilters();
@@ -1525,6 +1627,8 @@
           filterBtn.className = 'chip';
           filterBtn.textContent = 'Filter';
           filterBtn.type = 'button';
+          filterBtn.setAttribute('aria-controls', 'peakTableBody');
+          filterBtn.setAttribute('aria-label', `Filter peaks to ${range}`);
           filterBtn.addEventListener('click', () => {
             currentRange = range;
             renderRangeFilters();
@@ -1573,6 +1677,11 @@
       }
 
       function renderQuickFacts() {
+        if (!peaks.length) {
+          document.getElementById('factTotal').textContent = 'Unavailable';
+          document.getElementById('factHigh').textContent = 'Unavailable';
+          return;
+        }
         const totalElevation = peaks.reduce((sum, p) => sum + (p.elevation || 0), 0);
         document.getElementById('factTotal').textContent = `${totalElevation.toLocaleString()} ft`;
         const highest = [...peaks].sort((a, b) => (b.elevation || 0) - (a.elevation || 0))[0];
@@ -1596,13 +1705,15 @@
         const minLon = Math.min(...lons);
         const maxLon = Math.max(...lons);
         const padding = 20;
-        const width = map.clientWidth || 800;
-        const height = map.clientHeight || 360;
+        const width = map.clientWidth && map.clientWidth > 0 ? map.clientWidth : 800;
+        const height = map.clientHeight && map.clientHeight > 0 ? map.clientHeight : 360;
         map.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        const latSpan = maxLat - minLat || 1;
+        const lonSpan = maxLon - minLon || 1;
 
         function project(lat, lon) {
-          const x = ((lon - minLon) / (maxLon - minLon)) * (width - padding * 2) + padding;
-          const y = ((maxLat - lat) / (maxLat - minLat)) * (height - padding * 2) + padding;
+          const x = ((lon - minLon) / lonSpan) * (width - padding * 2) + padding;
+          const y = ((maxLat - lat) / latSpan) * (height - padding * 2) + padding;
           return { x, y };
         }
 
@@ -1646,6 +1757,26 @@
         });
       }
 
+      function updateSeasonToggle(season) {
+        const isSummer = season === 'summer';
+        const summerBtn = document.getElementById('summerBtn');
+        const winterBtn = document.getElementById('winterBtn');
+        summerBtn.classList.toggle('active', isSummer);
+        winterBtn.classList.toggle('active', !isSummer);
+        summerBtn.setAttribute('aria-pressed', isSummer ? 'true' : 'false');
+        winterBtn.setAttribute('aria-pressed', !isSummer ? 'true' : 'false');
+        summerBtn.setAttribute('aria-selected', isSummer ? 'true' : 'false');
+        winterBtn.setAttribute('aria-selected', !isSummer ? 'true' : 'false');
+      }
+
+      function renderDataLoadError(message) {
+        document.getElementById('peakTableBody').innerHTML = `<tr><td colspan="4">${message}</td></tr>`;
+        document.getElementById('factTotal').textContent = 'Unavailable';
+        document.getElementById('factHigh').textContent = 'Unavailable';
+        const map = document.getElementById('peakMap');
+        map.innerHTML = '<text x="10" y="30" fill="#cbd5e1">Map data unavailable.</text>';
+      }
+
       function renderItemListSchema() {
         if (itemListSchemaEl) itemListSchemaEl.remove();
         const script = document.createElement('script');
@@ -1670,54 +1801,6 @@
         itemListSchemaEl = script;
       }
 
-      function injectFAQSchema() {
-        const faqScript = document.createElement('script');
-        faqScript.type = 'application/ld+json';
-        faqScript.textContent = JSON.stringify(
-          {
-            '@context': 'https://schema.org',
-            '@type': 'FAQPage',
-            mainEntity: [
-              {
-                '@type': 'Question',
-                name: 'What is the easiest 4000 footer in New Hampshire?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'Mt. Tecumseh and Mt. Waumbek offer short mileage, modest elevation gain, and sheltered forest routes, making them the gentlest NH48 summits.'
-                }
-              },
-              {
-                '@type': 'Question',
-                name: 'Do winter ascents count toward the NH48 list?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'Yes. Winter climbs (December 21 through March 21) count toward the primary NH48 completion and separately for the AMC Winter Four-Thousand-Footer award.'
-                }
-              },
-              {
-                '@type': 'Question',
-                name: 'Which NH48 range has the most dangerous weather?',
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: 'The Presidential Range is the most weather-exposed: rapid temperature swings, alpine winds, and long above-treeline stretches demand conservative decision-making.'
-                }
-              },
-              {
-                '@type': 'Question',
-                name: 'How do I find individual peak details?',
-                acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Follow the links in the Current NH 4,000-Footer List to /peak/slug/. Each peak page includes a Back to the NH48 Info link for reciprocal navigation.'
-            }
-          }
-        ]
-      },
-          null,
-          2
-        );
-        document.body.appendChild(faqScript);
-      }
-
       function hydratePeaks(data) {
         peaks = Object.values(data).map((entry) => {
           const slug = entry.slug || entry.peakName?.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -1737,14 +1820,13 @@
         renderRangeFilters();
         renderRangeList();
         renderSeasonTable('summer');
+        updateSeasonToggle('summer');
         document.getElementById('summerBtn').addEventListener('click', () => {
-          document.getElementById('summerBtn').classList.add('active');
-          document.getElementById('winterBtn').classList.remove('active');
+          updateSeasonToggle('summer');
           renderSeasonTable('summer');
         });
         document.getElementById('winterBtn').addEventListener('click', () => {
-          document.getElementById('winterBtn').classList.add('active');
-          document.getElementById('summerBtn').classList.remove('active');
+          updateSeasonToggle('winter');
           renderSeasonTable('winter');
         });
 
@@ -1759,10 +1841,8 @@
           })
           .catch((err) => {
             console.error('Failed to load peak data', err);
-            document.getElementById('peakTableBody').innerHTML = '<tr><td colspan="4">Unable to load peaks right now.</td></tr>';
+            renderDataLoadError('Unable to load peaks right now.');
           });
-
-        injectFAQSchema();
       }
 
       document.addEventListener('DOMContentLoaded', init);
