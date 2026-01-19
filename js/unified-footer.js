@@ -133,7 +133,7 @@
         align-items: stretch;
         justify-items: stretch;
         gap: clamp(12px, 2vw, 18px);
-        width: min(1200px, 98vw);
+        width: min(1400px, 98vw);
         max-width: none;
         margin: 6px auto 0;
         padding: clamp(8px, 2vw, 14px) clamp(12px, 2.5vw, 18px);
@@ -157,7 +157,7 @@
           align-items: stretch;
           justify-content: center;
           gap: clamp(8px, 1.5vw, 16px);
-          width: min(1400px, 96vw);
+          width: min(1800px, 98vw);
           max-width: none;
           margin: 6px auto 0;
           padding: 12px clamp(16px, 3vw, 32px);
