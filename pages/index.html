@@ -1607,59 +1607,40 @@
 
   </style>
 </head>
-<body>
+<body data-route="dataset-home" data-page="home">
   <div id="splash-background" aria-hidden="true"></div>
   <div id="splash-mask" aria-hidden="true"></div>
-  <nav class="site-nav" aria-label="Site navigation">
-    <a class="site-nav-logo" href="/">
-      <div class="logo-wrap">
-        <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async">
-      </div>
-      <div class="site-nav-title-wrap">
-        <span class="site-nav-title">NH48 API</span>
-        <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
-      </div>
-    </a>
-    <div class="site-nav-links">
-      <div class="site-nav-dropdown">
-      <a class="active" href="/" data-route="dataset-home" aria-current="page">NH48 Dataset</a>
-      <div class="site-nav-submenu" aria-label="NH48 dataset short links">
-        <a href="/nh-4000-footers-info.html" data-route="info">NH48 Info</a>
-        <a href="/catalog" data-route="catalog">Interactive Catalog</a>
-        <a href="/page-sitemap.xml">Browse page sitemap</a>
-      </div>
-    </div>
-    <div class="site-nav-dropdown">
-      <a href="/trails" data-route="trails" data-i18n="nav.trails">White Mountain Trails</a>
-      <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
-        <a href="/dataset/wmnf-trails">WMNF Dataset</a>
-      </div>
-    </div>
-    <div class="site-nav-dropdown">
-      <a href="/long-trails" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</a>
-      <div class="site-nav-submenu" aria-label="Long Trails short links">
-        <a href="/dataset/long-trails">Long Trails Dataset</a>
-      </div>
-    </div>
-    <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
-    <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
-    <a
-      class="site-nav-cta"
-      href="https://www.instagram.com/nate_dumps_pics/"
-      target="_blank"
-      rel="noopener"
-      aria-label="Latest WMNF Photos"
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
-        <circle cx="12" cy="12" r="3.5"></circle>
-        <circle cx="17" cy="7" r="1.2" fill="#ffffff" stroke="none"></circle>
-      </svg>
-      <span data-i18n="nav.latestPhotos">Latest WMNF Photos</span>
-    </a>
-    <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
-  </div>
-</nav>
+  <div id="nav-placeholder"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+            if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+              window.NH48_I18N.refreshLangPicker();
+            }
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+    });
+  </script>
   <!-- Floating peaks container -->
   <div id="floating-peaks"></div>
   <main>
