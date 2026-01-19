@@ -1,335 +1,461 @@
 {
  "common": {
- "language": "Lingua",
- "languagePicker": "Selettore lingua",
- "loading": "Caricamento…",
- "errorLoading": "Errore nel caricamento dei dati",
- "noResults": "Nessun risultato trovato.",
- "noImage": "nessuna immagine",
- "unknown": "Sconosciuto",
- "notAvailable": "Non disponibile",
- "units": {
- "ariaLabel": "Seleziona unità"
- },
- "unitsLabel": "Unità",
- "unitsFeet": "Piedi",
- "unitsMeters": "Metri"
+  "language": "Lingua",
+  "languagePicker": "Selettore lingua",
+  "loading": "Caricamento…",
+  "errorLoading": "Errore nel caricamento dei dati",
+  "noResults": "Nessun risultato trovato.",
+  "noImage": "nessuna immagine",
+  "unknown": "Sconosciuto",
+  "notAvailable": "Non disponibile",
+  "units": {
+   "ariaLabel": "Seleziona unità"
+  },
+  "unitsLabel": "Unità",
+  "unitsFeet": "Piedi",
+  "unitsMeters": "Metri"
  },
  "landing": {
- "title": "NH48 API: Dati aperti per le cime da 4.000 piedi e i lunghi sentieri del New Hampshire",
- "metaDescription": {
- "content": "NH48 API fornisce dati aperti e strutturati e foto per le 48 cime da 4.000 piedi del New Hampshire. Esplora catalogo, percorsi e sentieri delle White Mountain."
- },
- "ogTitle": {
- "content": "NH48 API – Dati aperti su sentieri e cime"
- },
- "ogDescription": {
- "content": "Sfoglia il catalogo delle cime, esplora i sentieri delle White Mountain e accedi ai dati dei percorsi a lunga distanza del New Hampshire."
- },
- "heroTitle": "NH48 API",
- "heroBody": "Dati aperti, percorsi e metadati fotografici per le 48 cime da 4.000 piedi del New Hampshire. Sfoglia il catalogo, esplora i sentieri delle White Mountain e costruisci sopra il dataset.",
- "cta": {
- "catalog": "Apri il Catalogo delle Cime",
- "trails": "Sentieri delle White Mountain",
- "campaigns": "Campagne dei Sentieri"
- },
- "notesTitle": "Note sul dataset",
- "notes": {
- "versioned": "Rilasci versionati con changelog e metadati pronti per la citazione.",
- "methodology": "Provenienza e metodologia di raccolta annotate per cime, percorsi e segmenti di sentiero.",
- "validation": "Controlli di validazione per range di elevazione, chilometraggio e coerenza geometrica.",
- "reproducible": "Pipeline riproducibili supportate da script sorgente e artefatti QA."
- },
- "author": "Autore: Nathan Sobol"
+  "title": "NH48 API: Dati aperti per le cime da 4.000 piedi e i lunghi sentieri del New Hampshire",
+  "metaDescription": {
+   "content": "NH48 API fornisce dati aperti e strutturati e foto per le 48 cime da 4.000 piedi del New Hampshire. Esplora catalogo, percorsi e sentieri delle White Mountain."
+  },
+  "ogTitle": {
+   "content": "NH48 API – Dati aperti su sentieri e cime"
+  },
+  "ogDescription": {
+   "content": "Sfoglia il catalogo delle cime, esplora i sentieri delle White Mountain e accedi ai dati dei percorsi a lunga distanza del New Hampshire."
+  },
+  "heroTitle": "NH48 API",
+  "heroBody": "Dati aperti, percorsi e metadati fotografici per le 48 cime da 4.000 piedi del New Hampshire. Sfoglia il catalogo, esplora i sentieri delle White Mountain e costruisci sopra il dataset.",
+  "cta": {
+   "catalog": "Apri il Catalogo delle Cime",
+   "trails": "Sentieri delle White Mountain",
+   "campaigns": "Campagne dei Sentieri"
+  },
+  "notesTitle": "Note sul dataset",
+  "notes": {
+   "versioned": "Rilasci versionati con changelog e metadati pronti per la citazione.",
+   "methodology": "Provenienza e metodologia di raccolta annotate per cime, percorsi e segmenti di sentiero.",
+   "validation": "Controlli di validazione per range di elevazione, chilometraggio e coerenza geometrica.",
+   "reproducible": "Pipeline riproducibili supportate da script sorgente e artefatti QA."
+  },
+  "author": "Autore: Nathan Sobol"
  },
  "nav": {
- "logoAlt": "Logo NH48 API",
- "tagline": "Dati aperti e metadati strutturati per le cime da 4.000 piedi del New Hampshire.",
- "catalog": "Catalogo",
- "trails": "Sentieri WMNF",
- "longTrails": "Sentieri Lunghi",
- "pics": "Foto NH48",
- "peakBagger": "Peak Bagger",
- "latestPhotos": "Ultime foto WMNF",
- "login": "Accedi",
- "viewProfile": "Visualizza profilo"
+  "logoAlt": "Logo NH48 API",
+  "tagline": "Dati aperti e metadati strutturati per le cime da 4.000 piedi del New Hampshire.",
+  "catalog": "Catalogo",
+  "trails": "Sentieri WMNF",
+  "longTrails": "Sentieri Lunghi",
+  "pics": "Foto NH48",
+  "peakBagger": "Peak Bagger",
+  "latestPhotos": "Ultime foto WMNF",
+  "login": "Accedi",
+  "viewProfile": "Visualizza profilo"
  },
  "catalog": {
- "title": "Catalogo delle Cime NH48",
- "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
- "search": {
- "placeholder": "Cerca cime per nome…",
- "ariaLabel": "Cerca cime per nome"
- },
- "sort": {
- "label": "Ordina per:",
- "ariaLabel": "Ordina le cime per attributo",
- "name": "Nome (A–Z)",
- "elevAsc": "Quota ↑",
- "elevDesc": "Quota ↓",
- "promAsc": "Prominenza ↑",
- "promDesc": "Prominenza ↓",
- "diffAsc": "Difficoltà A–Z",
- "diffDesc": "Difficoltà Z–A",
- "rangeAsc": "Catena A–Z",
- "trailAsc": "Tipo di sentiero A–Z",
- "exposureAsc": "Esposizione A–Z"
- },
- "filter": {
- "label": "Filtra per:",
- "ariaLabel": "Seleziona il campo per filtrare le cime",
- "none": "Nessuno",
- "range": "Catena",
- "difficulty": "Difficoltà",
- "trail": "Tipo di sentiero",
- "exposure": "Esposizione"
- },
- "value": {
- "label": "Valore:",
- "ariaLabel": "Seleziona il valore per il filtro scelto",
- "all": "Tutti"
- },
- "columns": {
- "label": "Colonne:",
- "ariaLabel": "Seleziona il numero di colonne del catalogo"
- },
- "empty": "Nessuna cima trovata.",
- "error": "Errore nel caricamento delle cime",
- "card": {
- "elevation": "Quota",
- "prominence": "Prominenza",
- "range": "Catena",
- "trailType": "Tipo di sentiero",
- "difficulty": "Difficoltà",
- "exposure": "Esposizione"
- }
+  "title": "Catalogo delle Cime NH48",
+  "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
+  "search": {
+   "placeholder": "Cerca cime per nome…",
+   "ariaLabel": "Cerca cime per nome"
+  },
+  "sort": {
+   "label": "Ordina per:",
+   "ariaLabel": "Ordina le cime per attributo",
+   "name": "Nome (A–Z)",
+   "elevAsc": "Quota ↑",
+   "elevDesc": "Quota ↓",
+   "promAsc": "Prominenza ↑",
+   "promDesc": "Prominenza ↓",
+   "diffAsc": "Difficoltà A–Z",
+   "diffDesc": "Difficoltà Z–A",
+   "rangeAsc": "Catena A–Z",
+   "trailAsc": "Tipo di sentiero A–Z",
+   "exposureAsc": "Esposizione A–Z"
+  },
+  "filter": {
+   "label": "Filtra per:",
+   "ariaLabel": "Seleziona il campo per filtrare le cime",
+   "none": "Nessuno",
+   "range": "Catena",
+   "difficulty": "Difficoltà",
+   "trail": "Tipo di sentiero",
+   "exposure": "Esposizione"
+  },
+  "value": {
+   "label": "Valore:",
+   "ariaLabel": "Seleziona il valore per il filtro scelto",
+   "all": "Tutti"
+  },
+  "columns": {
+   "label": "Colonne:",
+   "ariaLabel": "Seleziona il numero di colonne del catalogo"
+  },
+  "empty": "Nessuna cima trovata.",
+  "error": "Errore nel caricamento delle cime",
+  "card": {
+   "elevation": "Quota",
+   "prominence": "Prominenza",
+   "range": "Catena",
+   "trailType": "Tipo di sentiero",
+   "difficulty": "Difficoltà",
+   "exposure": "Esposizione"
+  }
  },
  "photo": {
- "altTemplate": "Foto di {peak} — {season} {timeOfDay}"
+  "altTemplate": "Foto di {peak} — {season} {timeOfDay}"
  },
  "season": {
- "spring": "primavera",
- "summer": "estate",
- "fall": "autunno",
- "autumn": "autunno",
- "winter": "inverno"
+  "spring": "primavera",
+  "summer": "estate",
+  "fall": "autunno",
+  "autumn": "autunno",
+  "winter": "inverno"
  },
  "time": {
- "sunrise": "alba",
- "sunset": "tramonto",
- "morning": "mattina",
- "afternoon": "pomeriggio",
- "evening": "sera",
- "night": "notte",
- "day": "giorno",
- "dawn": "albeggiare",
- "dusk": "crepuscolo"
+  "sunrise": "alba",
+  "sunset": "tramonto",
+  "morning": "mattina",
+  "afternoon": "pomeriggio",
+  "evening": "sera",
+  "night": "notte",
+  "day": "giorno",
+  "dawn": "albeggiare",
+  "dusk": "crepuscolo"
  },
  "values": {
- "trailType": {
- "loop": "Anello",
- "loop_or_out_back": "Anello o andata e ritorno",
- "loop_or_traverse": "Anello o traversata",
- "loop_or_traverse_along_ridge": "Anello o traversata lungo la cresta",
- "out_back": "Andata e ritorno",
- "out_back_common": "Andata e ritorno - comune",
- "out_back_common_or_long_traverse": "Andata e ritorno - comune o lunga traversata",
- "out_back_common_or_loop_with_connector_trails": "Andata e ritorno - comune o anello con sentieri di collegamento",
- "out_back_common_or_small_loop_including_mt_webster": "Andata e ritorno - comune o piccolo anello includendo Mt Webster",
- "out_back_commonly": "Andata e ritorno - di solito",
- "out_back_or_loop": "Andata e ritorno o anello",
- "out_back_or_loop_with_tom_and_willey": "Andata e ritorno o anello - con Tom e Willey",
- "out_back_or_loop_combining_trails": "Andata e ritorno o anello combinando sentieri",
- "out_back_or_loop_options": "Andata e ritorno o opzioni ad anello",
- "out_back_or_point_to_point_traverse": "Andata e ritorno o traversata punto‑punto",
- "out_back_or_traverse": "Andata e ritorno o traversata"
- },
- "difficulty": {
- "moderate": "Moderata",
- "moderate_difficult": "Moderata/Difficile",
- "difficult": "Difficile",
- "very_difficult": "Molto difficile",
- "extremely_difficult": "Estremamente difficile"
- },
- "exposure": {
- "high": "Alta",
- "medium": "Media",
- "low": "Bassa",
- "low_to_medium": "Bassa‑Media"
- }
+  "trailType": {
+   "loop": "Anello",
+   "loop_or_out_back": "Anello o andata e ritorno",
+   "loop_or_traverse": "Anello o traversata",
+   "loop_or_traverse_along_ridge": "Anello o traversata lungo la cresta",
+   "out_back": "Andata e ritorno",
+   "out_back_common": "Andata e ritorno - comune",
+   "out_back_common_or_long_traverse": "Andata e ritorno - comune o lunga traversata",
+   "out_back_common_or_loop_with_connector_trails": "Andata e ritorno - comune o anello con sentieri di collegamento",
+   "out_back_common_or_small_loop_including_mt_webster": "Andata e ritorno - comune o piccolo anello includendo Mt Webster",
+   "out_back_commonly": "Andata e ritorno - di solito",
+   "out_back_or_loop": "Andata e ritorno o anello",
+   "out_back_or_loop_with_tom_and_willey": "Andata e ritorno o anello - con Tom e Willey",
+   "out_back_or_loop_combining_trails": "Andata e ritorno o anello combinando sentieri",
+   "out_back_or_loop_options": "Andata e ritorno o opzioni ad anello",
+   "out_back_or_point_to_point_traverse": "Andata e ritorno o traversata punto‑punto",
+   "out_back_or_traverse": "Andata e ritorno o traversata"
+  },
+  "difficulty": {
+   "moderate": "Moderata",
+   "moderate_difficult": "Moderata/Difficile",
+   "difficult": "Difficile",
+   "very_difficult": "Molto difficile",
+   "extremely_difficult": "Estremamente difficile"
+  },
+  "exposure": {
+   "high": "Alta",
+   "medium": "Media",
+   "low": "Bassa",
+   "low_to_medium": "Bassa‑Media"
+  }
  },
  "peak": {
- "back": "Torna al Catalogo delle Cime NH48",
- "loading": "Caricamento…",
- "relatedTrails": {
- "title": "Sentieri e percorsi correlati",
- "none": "Nessun sentiero correlato ancora elencato.",
- "link": "percorso {name}"
- },
- "section": {
- "routes": "Percorsi escursionistici",
- "trails": "Sentieri associati",
- "terrain": "Sentiero e terreno",
- "conditions": "Condizioni e accesso"
- },
- "carousel": {
- "prev": "Immagine precedente",
- "next": "Immagine successiva"
- },
- "metadata": {
- "title": "Metadati della foto corrente",
- "notAvailable": "Non disponibile",
- "moreDetails": "Più dettagli ▾",
- "lessDetails": "Meno dettagli ▴",
- "labels": {
- "season": "Stagione",
- "timeOfDay": "Ora del giorno",
- "orientation": "Orientamento",
- "captureDate": "Data di scatto",
- "cameraMaker": "Produttore fotocamera",
- "cameraModel": "Modello fotocamera",
- "camera": "Fotocamera",
- "lens": "Obiettivo",
- "fStop": "F Stop",
- "shutterSpeed": "Tempo di scatto",
- "iso": "ISO",
- "exposureBias": "Compensazione esposizione",
- "focalLength": "Lunghezza focale",
- "flashMode": "Modalità flash",
- "meteringMode": "Modalità di misurazione",
- "maxAperture": "Apertura massima",
- "author": "Autore",
- "dimensions": "Dimensioni",
- "fileSize": "Dimensione file",
- "fileCreateDate": "Data creazione file",
- "fileModifiedDate": "Data modifica file",
- "rating": "Valutazione",
- "metadata": "metadati",
- "creditLine": "riga di credito",
- "source": "fonte",
- "copyrightNotice": "avviso sul copyright",
- "copyrightStatus": "stato del copyright",
- "rightsUsageTerms": "termini di utilizzo dei diritti",
- "altText": "testo alternativo",
- "alt": "alt",
- "extendedAlt": "testo alternativo esteso",
- "caption": "didascalia",
- "headline": "titolo",
- "extendedDescription": "descrizione estesa",
- "description": "descrizione"
- }
- },
- "generalInfo": {
- "title": "Info generali sulla cima",
- "elevation": "Quota",
- "prominence": "Prominenza",
- "range": "Catena",
- "trailType": "Tipo di sentiero",
- "difficulty": "Difficoltà",
- "exposure": "Esposizione"
- },
- "routes": {
- "distance": "Distanza",
- "gain": "Dislivello",
- "difficulty": "Difficoltà"
- },
- "trailList": {
- "title": "Elenco sentieri"
- },
- "terrain": {
- "terrain": "Terreno",
- "scramble": "Scramble",
- "view": "Vista"
- },
- "conditions": {
- "bestSeasons": "Stagioni migliori",
- "waterAvailability": "Disponibilità acqua",
- "cellReception": "Copertura cellulare",
- "weatherExposure": "Esposizione meteo",
- "emergencyBailout": "Via di fuga d'emergenza",
- "dogFriendly": "Adatto ai cani",
- "nearbyFeatures": "Caratteristiche vicine"
- },
- "errorLoading": "Errore nel caricamento della cima",
- "meta": {
- "titleTemplate": "{name} ({elevation} ft) – NH48",
- "descriptionTemplate": "{name} – alto {elevation} ft, prominenza {prominence} ft, nella {range}. Percorsi, difficoltà e foto per questo 4.000 piedi."
- }
+  "back": "Torna al Catalogo delle Cime NH48",
+  "loading": "Caricamento…",
+  "relatedTrails": {
+   "title": "Sentieri e percorsi correlati",
+   "none": "Nessun sentiero correlato ancora elencato.",
+   "link": "percorso {name}"
+  },
+  "section": {
+   "routes": "Percorsi escursionistici",
+   "trails": "Sentieri associati",
+   "terrain": "Sentiero e terreno",
+   "conditions": "Condizioni e accesso"
+  },
+  "carousel": {
+   "prev": "Immagine precedente",
+   "next": "Immagine successiva"
+  },
+  "metadata": {
+   "title": "Metadati della foto corrente",
+   "notAvailable": "Non disponibile",
+   "moreDetails": "Più dettagli ▾",
+   "lessDetails": "Meno dettagli ▴",
+   "labels": {
+    "season": "Stagione",
+    "timeOfDay": "Ora del giorno",
+    "orientation": "Orientamento",
+    "captureDate": "Data di scatto",
+    "cameraMaker": "Produttore fotocamera",
+    "cameraModel": "Modello fotocamera",
+    "camera": "Fotocamera",
+    "lens": "Obiettivo",
+    "fStop": "F Stop",
+    "shutterSpeed": "Tempo di scatto",
+    "iso": "ISO",
+    "exposureBias": "Compensazione esposizione",
+    "focalLength": "Lunghezza focale",
+    "flashMode": "Modalità flash",
+    "meteringMode": "Modalità di misurazione",
+    "maxAperture": "Apertura massima",
+    "author": "Autore",
+    "dimensions": "Dimensioni",
+    "fileSize": "Dimensione file",
+    "fileCreateDate": "Data creazione file",
+    "fileModifiedDate": "Data modifica file",
+    "rating": "Valutazione",
+    "metadata": "metadati",
+    "creditLine": "riga di credito",
+    "source": "fonte",
+    "copyrightNotice": "avviso sul copyright",
+    "copyrightStatus": "stato del copyright",
+    "rightsUsageTerms": "termini di utilizzo dei diritti",
+    "altText": "testo alternativo",
+    "alt": "alt",
+    "extendedAlt": "testo alternativo esteso",
+    "caption": "didascalia",
+    "headline": "titolo",
+    "extendedDescription": "descrizione estesa",
+    "description": "descrizione"
+   }
+  },
+  "generalInfo": {
+   "title": "Info generali sulla cima",
+   "elevation": "Quota",
+   "prominence": "Prominenza",
+   "range": "Catena",
+   "trailType": "Tipo di sentiero",
+   "difficulty": "Difficoltà",
+   "exposure": "Esposizione"
+  },
+  "routes": {
+   "distance": "Distanza",
+   "gain": "Dislivello",
+   "difficulty": "Difficoltà"
+  },
+  "trailList": {
+   "title": "Elenco sentieri"
+  },
+  "terrain": {
+   "terrain": "Terreno",
+   "scramble": "Scramble",
+   "view": "Vista"
+  },
+  "conditions": {
+   "bestSeasons": "Stagioni migliori",
+   "waterAvailability": "Disponibilità acqua",
+   "cellReception": "Copertura cellulare",
+   "weatherExposure": "Esposizione meteo",
+   "emergencyBailout": "Via di fuga d'emergenza",
+   "dogFriendly": "Adatto ai cani",
+   "nearbyFeatures": "Caratteristiche vicine"
+  },
+  "errorLoading": "Errore nel caricamento della cima",
+  "meta": {
+   "titleTemplate": "{name} ({elevation} ft) – NH48",
+   "descriptionTemplate": "{name} – alto {elevation} ft, prominenza {prominence} ft, nella {range}. Percorsi, difficoltà e foto per questo 4.000 piedi."
+  }
  },
  "trails": {
- "title": "Strumento mappa API White Mountain Trails",
- "subtitle": "Struttura dati aperta di cime, sentieri e percorsi per le White Mountains.",
- "intro": "White Mountain National Forest — compilato da Nate Sobol. Usalo come strumento rapido per trovare sentieri e tracciare i completamenti. API aperta e dataset per le montagne da 4.000 piedi del New Hampshire.",
- "details": {
- "title": "Dettagli del sentiero",
- "empty": "Seleziona un sentiero per vedere distanza, dislivello e dettagli OpenStreetMap."
+  "title": "Strumento mappa API White Mountain Trails",
+  "subtitle": "Struttura dati aperta di cime, sentieri e percorsi per le White Mountains.",
+  "intro": "White Mountain National Forest — compilato da Nate Sobol. Usalo come strumento rapido per trovare sentieri e tracciare i completamenti. API aperta e dataset per le montagne da 4.000 piedi del New Hampshire.",
+  "details": {
+   "title": "Dettagli del sentiero",
+   "empty": "Seleziona un sentiero per vedere distanza, dislivello e dettagli OpenStreetMap."
+  },
+  "search": {
+   "placeholder": "Cerca sentieri…"
+  },
+  "sort": {
+   "az": "Ordina A → Z",
+   "za": "Ordina Z → A"
+  },
+  "jumpTo": "Vai a:",
+  "list": {
+   "headerName": "Nome del sentiero",
+   "headerCompleted": "Completato",
+   "noMatches": "Nessun sentiero trovato. Prova un'altra ricerca.",
+   "noTrails": "Nessun sentiero disponibile."
+  },
+  "loading": "Caricamento sentieri...",
+  "about": {
+   "title": "Informazioni su questa lista",
+   "body": "NH Tracing, Redlining e White Mountain Trails si riferiscono alla stessa raccolta di sentieri descritta nella guida. Qualunque nome si usi, l'obiettivo è lo stesso: vivere questi percorsi."
+  },
+  "disclaimer": {
+   "title": "Avvertenza",
+   "body": "Questo sito <strong>non è destinato alla pianificazione o alla navigazione</strong>. I dati dei sentieri possono contenere errori o imprecisioni e questa raccolta non è l'elenco ufficiale (anche se include la maggior parte dei sentieri noti). Fare riferimento alle fonti ufficiali e usare buon senso in montagna."
+  },
+  "howto": {
+   "title": "Come usare",
+   "body": "Usa i cerchi verdi per segnare un sentiero come completato. Dopo averlo segnato, tocca l'icona del calendario per aggiungere una data di completamento — la data sostituirà l'icona e può essere modificata toccando di nuovo. I progressi sono salvati localmente nel browser. Puoi esportare o importare i tuoi progressi usando i pulsanti sotto."
+  },
+  "settings": {
+   "title": "Impostazioni",
+   "hideCompleted": "Nascondi sentieri completati",
+   "clearProgress": "Cancella tutti i progressi"
+  },
+  "export": "Esporta CSV",
+  "import": "Importa",
+  "viewApi": "Vedi API",
+  "resizePanels": "Ridimensiona pannelli",
+  "info": {
+   "noProperties": "Nessuna proprietà aggiuntiva disponibile al momento. Le proprietà saranno popolate da OpenStreetMap.",
+   "loadingProperties": "Caricamento delle proprietà aggiuntive da OpenStreetMap...",
+   "sourceNote": "Informazioni provenienti da OpenStreetMap quando disponibili.",
+   "distance": "Distanza",
+   "elevationGain": "Dislivello positivo",
+   "minElevation": "Quota minima",
+   "maxElevation": "Quota massima",
+   "surface": "Superficie",
+   "trailType": "Tipo di sentiero",
+   "difficulty": "Difficoltà",
+   "visibility": "Visibilità",
+   "width": "Larghezza",
+   "allowedUses": "Usi consentiti",
+   "season": "Stagione",
+   "maintainer": "Manutentore",
+   "source": "Fonte"
+  },
+  "virtualHike": "Escursione virtuale",
+  "unnamedTrail": "Sentiero senza nome",
+  "confirmClear": "Sei sicuro di voler cancellare tutti i progressi?",
+  "alertLoadFail": "Impossibile caricare i dati dei sentieri. Assicurati di avere una connessione internet e aggiorna la pagina.",
+  "csv": {
+   "headerTrail": "Sentiero",
+   "headerCompleted": "Completato",
+   "headerDate": "Data",
+   "filename": "trail-progress.csv"
+  },
+  "map": {
+   "attribution": "Dati mappa: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Stile mappa: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+  }
  },
- "search": {
- "placeholder": "Cerca sentieri…"
- },
- "sort": {
- "az": "Ordina A → Z",
- "za": "Ordina Z → A"
- },
- "jumpTo": "Vai a:",
- "list": {
- "headerName": "Nome del sentiero",
- "headerCompleted": "Completato",
- "noMatches": "Nessun sentiero trovato. Prova un'altra ricerca.",
- "noTrails": "Nessun sentiero disponibile."
- },
- "loading": "Caricamento sentieri...",
- "about": {
- "title": "Informazioni su questa lista",
- "body": "NH Tracing, Redlining e White Mountain Trails si riferiscono alla stessa raccolta di sentieri descritta nella guida. Qualunque nome si usi, l'obiettivo è lo stesso: vivere questi percorsi."
- },
- "disclaimer": {
- "title": "Avvertenza",
- "body": "Questo sito <strong>non è destinato alla pianificazione o alla navigazione</strong>. I dati dei sentieri possono contenere errori o imprecisioni e questa raccolta non è l'elenco ufficiale (anche se include la maggior parte dei sentieri noti). Fare riferimento alle fonti ufficiali e usare buon senso in montagna."
- },
- "howto": {
- "title": "Come usare",
- "body": "Usa i cerchi verdi per segnare un sentiero come completato. Dopo averlo segnato, tocca l'icona del calendario per aggiungere una data di completamento — la data sostituirà l'icona e può essere modificata toccando di nuovo. I progressi sono salvati localmente nel browser. Puoi esportare o importare i tuoi progressi usando i pulsanti sotto."
- },
- "settings": {
- "title": "Impostazioni",
- "hideCompleted": "Nascondi sentieri completati",
- "clearProgress": "Cancella tutti i progressi"
- },
- "export": "Esporta CSV",
- "import": "Importa",
- "viewApi": "Vedi API",
- "resizePanels": "Ridimensiona pannelli",
- "info": {
- "noProperties": "Nessuna proprietà aggiuntiva disponibile al momento. Le proprietà saranno popolate da OpenStreetMap.",
- "loadingProperties": "Caricamento delle proprietà aggiuntive da OpenStreetMap...",
- "sourceNote": "Informazioni provenienti da OpenStreetMap quando disponibili.",
- "distance": "Distanza",
- "elevationGain": "Dislivello positivo",
- "minElevation": "Quota minima",
- "maxElevation": "Quota massima",
- "surface": "Superficie",
- "trailType": "Tipo di sentiero",
- "difficulty": "Difficoltà",
- "visibility": "Visibilità",
- "width": "Larghezza",
- "allowedUses": "Usi consentiti",
- "season": "Stagione",
- "maintainer": "Manutentore",
- "source": "Fonte"
- },
- "virtualHike": "Escursione virtuale",
- "unnamedTrail": "Sentiero senza nome",
- "confirmClear": "Sei sicuro di voler cancellare tutti i progressi?",
- "alertLoadFail": "Impossibile caricare i dati dei sentieri. Assicurati di avere una connessione internet e aggiorna la pagina.",
- "csv": {
- "headerTrail": "Sentiero",
- "headerCompleted": "Completato",
- "headerDate": "Data",
- "filename": "trail-progress.csv"
- },
- "map": {
- "attribution": "Dati mappa: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Stile mappa: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
- }
- }
+ "nav.tagline": "Dati aperti e metadati strutturati per le vette di 4 000 piedi del New Hampshire.",
+ "nav.catalog": "Catalogo",
+ "nav.trails": "Sentieri delle White Mountains",
+ "nav.longTrails": "Lunghe percorrenze",
+ "nav.pics": "Foto NH48",
+ "nav.peakBagger": "Peak Bagger",
+ "nav.latestPhotos": "Ultime foto WMNF",
+ "common.languagePicker": "Selettore lingua",
+ "landing.title": "NH48 API – Vette e sentieri di 4 000 piedi del New Hampshire",
+ "landing.ogTitle": "NH48 API – Vette e sentieri di 4 000 piedi del New Hampshire",
+ "landing.metaDescription": "Offre dati aperti, percorsi e metadati fotografici per le 48 vette di 4 000 piedi nella Foresta Nazionale delle White Mountains del New Hampshire. Sfoglia il catalogo, esplora i sentieri e utilizza il dataset.",
+ "landing.ogDescription": "Offre dati aperti, percorsi e metadati fotografici per le 48 vette di 4 000 piedi nella Foresta Nazionale delle White Mountains del New Hampshire. Sfoglia il catalogo, esplora i sentieri e utilizza il dataset.",
+ "landing.heroTitle": "NH48 API",
+ "landing.heroTagline": "Vette e sentieri di 4 000 piedi del New Hampshire",
+ "landing.heroBody": "Offre dati aperti, percorsi e metadati delle foto per le 48 vette di 4 000 piedi nella Foresta Nazionale delle White Mountains. Sfoglia il catalogo, esplora i sentieri delle White Mountains e usa questo dataset per sviluppare applicazioni.",
+ "landing.cards.catalogTitle": "Catalogo vette",
+ "landing.cards.catalogBody": "Vedi i dettagli di tutte le 48 vette di 4 000 piedi, inclusa l'altitudine, la prominenza, la difficoltà e le miniature delle foto.",
+ "landing.cards.catalogCta": "Esplora il catalogo",
+ "landing.cards.trailsTitle": "Esploratore di sentieri",
+ "landing.cards.trailsBody": "Usa una mappa interattiva per esplorare i sentieri delle White Mountains e scarica il dataset aperto.",
+ "landing.cards.trailsCta": "Vedi i sentieri",
+ "landing.cards.longTrailsTitle": "Lunghe percorrenze",
+ "landing.cards.longTrailsBody": "Scopri percorsi di lunga distanza come l'Appalachian Trail.",
+ "landing.cards.longTrailsCta": "Esplora le lunghe percorrenze",
+ "landing.cards.plantsTitle": "Catalogo piante",
+ "landing.cards.plantsBody": "Esplora l'elenco delle piante alpine e importanti delle White Mountains.",
+ "landing.cards.plantsCta": "Vedi piante",
+ "landing.notesTitle": "Note sul dataset",
+ "landing.notes.versioned": "Versione rilasciata con storia delle modifiche.",
+ "landing.notes.methodology": "Documentazione che spiega la raccolta e l'elaborazione.",
+ "landing.notes.validation": "Fonte e controllo qualità verificati.",
+ "landing.notes.reproducible": "Numeri e risultati riproducibili.",
+ "landing.author": "Autore: Nathan Sobol",
+ "footer.quickBrowseTitle": "Navigazione rapida delle White Mountains del New Hampshire",
+ "footer.quickBrowseSubtitle": "Accedi direttamente alla pagina dei dettagli di ogni vetta di 4 000 piedi per trovare rapidamente informazioni sulla cima, foto e dettagli dei percorsi.",
+ "footer.quickBrowseLinks": "Link di navigazione rapida",
+ "footer.legal": "© 2026 Nathan Sobol · NH 48, White Mountain Tracing, Scenic & Long Trail – Dati, percorsi e foto",
+ "footer.navLabel": "Link di navigazione nel piè di pagina",
+ "common.home": "Home",
+ "common.loading": "Caricamento…",
+ "common.unitsLabel": "Unità:",
+ "common.unitsFeet": "Piedi",
+ "common.unitsMeters": "Metri",
+ "common.noImage": "Nessuna immagine",
+ "catalog.error": "Errore nel caricamento del catalogo.",
+ "peak.catalog": "Catalogo delle vette",
+ "peak.loading": "Caricamento…",
+ "peak.back": "Indietro",
+ "peak.carousel.prev": "Precedente",
+ "peak.carousel.next": "Successiva",
+ "peak.section.routes": "Percorsi",
+ "peak.section.trails": "Sentieri",
+ "peak.section.terrain": "Terreno",
+ "peak.section.conditions": "Condizioni",
+ "peak.relatedTrails.title": "Sentieri correlati",
+ "peak.relatedTrails.link": "Visualizza tutti i sentieri",
+ "peak.relatedTrails.none": "Nessun sentiero correlato",
+ "peak.description.title": "Descrizione",
+ "peak.generalInfo.title": "Informazioni generali",
+ "peak.generalInfo.elevation": "Altitudine",
+ "peak.generalInfo.prominence": "Prominenza",
+ "peak.generalInfo.range": "Catena",
+ "peak.generalInfo.trailType": "Tipo di percorso",
+ "peak.generalInfo.difficulty": "Difficoltà",
+ "peak.generalInfo.exposure": "Esposizione",
+ "peak.terrain.terrain": "Terreno",
+ "peak.terrain.scramble": "Arrampicata facile",
+ "peak.terrain.view": "Vista",
+ "peak.conditions.bestSeasons": "Stagioni migliori",
+ "peak.conditions.waterAvailability": "Disponibilità di acqua",
+ "peak.conditions.cellReception": "Copertura mobile",
+ "peak.conditions.weatherExposure": "Esposizione climatica",
+ "peak.conditions.emergencyBailout": "Uscita d’emergenza",
+ "peak.conditions.dogFriendly": "Cani ammessi",
+ "peak.conditions.nearbyFeatures": "Caratteristiche vicine",
+ "peak.routes.distance": "Distanza",
+ "peak.routes.gain": "Dislivello",
+ "peak.routes.difficulty": "Difficoltà",
+ "peak.metadata.title": "Metadati della foto",
+ "peak.metadata.labels.season": "Stagione",
+ "peak.metadata.labels.timeOfDay": "Momento del giorno",
+ "peak.metadata.labels.orientation": "Orientamento",
+ "peak.metadata.labels.captureDate": "Data di scatto",
+ "peak.metadata.labels.cameraMaker": "Produttore della fotocamera",
+ "peak.metadata.labels.cameraModel": "Modello della fotocamera",
+ "peak.metadata.labels.camera": "Fotocamera",
+ "peak.metadata.labels.lens": "Obiettivo",
+ "peak.metadata.labels.fStop": "Diaframma (f)",
+ "peak.metadata.labels.shutterSpeed": "Velocità dell’otturatore",
+ "peak.metadata.labels.iso": "ISO",
+ "peak.metadata.labels.exposureBias": "Compensazione esposizione",
+ "peak.metadata.labels.focalLength": "Lunghezza focale",
+ "peak.metadata.labels.flashMode": "Modalità flash",
+ "peak.metadata.labels.meteringMode": "Modalità esposimetrica",
+ "peak.metadata.labels.maxAperture": "Apertura massima",
+ "peak.metadata.labels.author": "Autore",
+ "peak.metadata.labels.dimensions": "Dimensioni",
+ "peak.metadata.labels.fileSize": "Dimensione del file",
+ "peak.metadata.labels.fileCreateDate": "Data di creazione",
+ "peak.metadata.labels.fileModifiedDate": "Data di modifica",
+ "peak.metadata.labels.rating": "Valutazione",
+ "peak.metadata.labels.metadata": "Metadati",
+ "peak.metadata.labels.creditLine": "Linea di credito",
+ "peak.metadata.labels.source": "Fonte",
+ "peak.metadata.labels.copyrightNotice": "Avviso di copyright",
+ "peak.metadata.labels.copyrightStatus": "Stato del copyright",
+ "peak.metadata.labels.rightsUsageTerms": "Termini di utilizzo",
+ "peak.metadata.labels.altText": "Testo alternativo",
+ "peak.metadata.labels.extendedAlt": "Testo alternativo esteso",
+ "peak.metadata.labels.caption": "Didascalia",
+ "peak.metadata.labels.headline": "Titolo",
+ "peak.metadata.labels.extendedDescription": "Descrizione estesa",
+ "peak.metadata.labels.description": "Descrizione",
+ "peak.metadata.lessDetails": "Meno dettagli",
+ "peak.metadata.moreDetails": "Più dettagli",
+ "peak.metadata.notAvailable": "Non disponibile",
+ "peak.notFound": "Vetta non trovata",
+ "peak.errorLoading": "Errore nel caricamento dei dati",
+ "peak.meta.descriptionTemplate": "Informazioni, percorsi, condizioni e metadati delle foto per {{peak}}.",
+ "trails.settings.clearProgress": "Cancella progresso",
+ "trails.settings.hideCompleted": "Nascondi i sentieri completati",
+ "trails.export": "Esporta",
+ "trails.virtualHike": "Escursione virtuale",
+ "trails.list.headerName": "Nome",
+ "trails.list.headerCompleted": "Completato",
+ "trails.resizePanels": "Ridimensiona i pannelli"
 }

@@ -1,341 +1,467 @@
 {
  "common": {
- "home": "Nyumbani",
- "language": "Lugha",
- "languagePicker": "Kiteuzi cha lugha",
- "loading": "Inapakia…",
- "errorLoading": "Hitilafu wakati wa kupakia data",
- "noResults": "Hakuna matokeo yaliyopatikana.",
- "noImage": "hakuna picha",
- "unknown": "Haijulikani",
- "notAvailable": "Haipatikani",
- "units": {
- "ariaLabel": "Chagua vitengo"
- },
- "unitsLabel": "Vitengo",
- "unitsFeet": "Futi",
- "unitsMeters": "Mita"
+  "home": "Nyumbani",
+  "language": "Lugha",
+  "languagePicker": "Kiteuzi cha lugha",
+  "loading": "Inapakia…",
+  "errorLoading": "Hitilafu wakati wa kupakia data",
+  "noResults": "Hakuna matokeo yaliyopatikana.",
+  "noImage": "hakuna picha",
+  "unknown": "Haijulikani",
+  "notAvailable": "Haipatikani",
+  "units": {
+   "ariaLabel": "Chagua vitengo"
+  },
+  "unitsLabel": "Vitengo",
+  "unitsFeet": "Futi",
+  "unitsMeters": "Mita"
  },
  "landing": {
- "title": "NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails",
- "metaDescription": {
- "content": "NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Explore the catalog, routes, and White Mountain trails."
- },
- "ogTitle": {
- "content": "NH48 API – Open Trails and Peaks Data"
- },
- "ogDescription": {
- "content": "Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains."
- },
- "heroTitle": "NH48 API",
- "heroBody": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.",
- "cta": {
- "catalog": "Open the Peak Catalog",
- "trails": "White Mountain Trails",
- "campaigns": "Trail Campaigns"
- },
- "notesTitle": "Dataset notes",
- "notes": {
- "versioned": "Versioned releases with changelog and citation-ready metadata.",
- "methodology": "Provenance + collection methodology noted for peaks, routes, and trail segments.",
- "validation": "Validation checks for elevation ranges, mileage, and geometry consistency.",
- "reproducible": "Reproducible pipelines backed by source scripts and QA artifacts."
- },
- "author": "Author: Nathan Sobol"
+  "title": "NH48 API: Open data for New Hampshire’s 4,000-foot peaks and long trails",
+  "metaDescription": {
+   "content": "NH48 API provides open, structured data and photos for New Hampshire’s 48 four-thousand-foot peaks. Explore the catalog, routes, and White Mountain trails."
+  },
+  "ogTitle": {
+   "content": "NH48 API – Open Trails and Peaks Data"
+  },
+  "ogDescription": {
+   "content": "Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains."
+  },
+  "heroTitle": "NH48 API",
+  "heroBody": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, and build on top of the dataset.",
+  "cta": {
+   "catalog": "Open the Peak Catalog",
+   "trails": "White Mountain Trails",
+   "campaigns": "Trail Campaigns"
+  },
+  "notesTitle": "Dataset notes",
+  "notes": {
+   "versioned": "Versioned releases with changelog and citation-ready metadata.",
+   "methodology": "Provenance + collection methodology noted for peaks, routes, and trail segments.",
+   "validation": "Validation checks for elevation ranges, mileage, and geometry consistency.",
+   "reproducible": "Reproducible pipelines backed by source scripts and QA artifacts."
+  },
+  "author": "Author: Nathan Sobol"
  },
  "nav": {
- "logoAlt": "NH48 API logo",
- "tagline": "Open data & structured metadata for New Hampshire’s 4,000-foot peaks.",
- "catalog": "Catalog",
- "trails": "White Mountain Trails",
- "longTrails": "Long Trails",
- "pics": "NH48 Pics",
- "peakBagger": "Peak Bagger",
- "latestPhotos": "Latest WMNF Photos",
- "login": "Log in",
- "viewProfile": "View profile"
+  "logoAlt": "NH48 API logo",
+  "tagline": "Open data & structured metadata for New Hampshire’s 4,000-foot peaks.",
+  "catalog": "Catalog",
+  "trails": "White Mountain Trails",
+  "longTrails": "Long Trails",
+  "pics": "NH48 Pics",
+  "peakBagger": "Peak Bagger",
+  "latestPhotos": "Latest WMNF Photos",
+  "login": "Log in",
+  "viewProfile": "View profile"
  },
  "catalog": {
- "title": "NH48 Peak Catalog",
- "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
- "search": {
- "placeholder": "Search peaks by name…",
- "ariaLabel": "Search peaks by name"
- },
- "sort": {
- "label": "Sort by:",
- "ariaLabel": "Sort peaks by attribute",
- "name": "Name (A–Z)",
- "elevAsc": "Elevation ↑",
- "elevDesc": "Elevation ↓",
- "promAsc": "Prominence ↑",
- "promDesc": "Prominence ↓",
- "diffAsc": "Difficulty A–Z",
- "diffDesc": "Difficulty Z–A",
- "rangeAsc": "Range A–Z",
- "trailAsc": "Trail Type A–Z",
- "exposureAsc": "Exposure A–Z"
- },
- "filter": {
- "label": "Filter by:",
- "ariaLabel": "Select field to filter peaks",
- "none": "None",
- "range": "Range",
- "difficulty": "Difficulty",
- "trail": "Trail Type",
- "exposure": "Exposure"
- },
- "value": {
- "label": "Value:",
- "ariaLabel": "Select value for chosen filter",
- "all": "All"
- },
- "columns": {
- "label": "Columns:",
- "ariaLabel": "Select number of catalog columns"
- },
- "empty": "No peaks found.",
- "error": "Error loading peaks",
- "card": {
- "elevation": "Elevation",
- "prominence": "Prominence",
- "range": "Range",
- "trailType": "Trail Type",
- "difficulty": "Difficulty",
- "exposure": "Exposure"
- }
+  "title": "NH48 Peak Catalog",
+  "intro": "Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.",
+  "search": {
+   "placeholder": "Search peaks by name…",
+   "ariaLabel": "Search peaks by name"
+  },
+  "sort": {
+   "label": "Sort by:",
+   "ariaLabel": "Sort peaks by attribute",
+   "name": "Name (A–Z)",
+   "elevAsc": "Elevation ↑",
+   "elevDesc": "Elevation ↓",
+   "promAsc": "Prominence ↑",
+   "promDesc": "Prominence ↓",
+   "diffAsc": "Difficulty A–Z",
+   "diffDesc": "Difficulty Z–A",
+   "rangeAsc": "Range A–Z",
+   "trailAsc": "Trail Type A–Z",
+   "exposureAsc": "Exposure A–Z"
+  },
+  "filter": {
+   "label": "Filter by:",
+   "ariaLabel": "Select field to filter peaks",
+   "none": "None",
+   "range": "Range",
+   "difficulty": "Difficulty",
+   "trail": "Trail Type",
+   "exposure": "Exposure"
+  },
+  "value": {
+   "label": "Value:",
+   "ariaLabel": "Select value for chosen filter",
+   "all": "All"
+  },
+  "columns": {
+   "label": "Columns:",
+   "ariaLabel": "Select number of catalog columns"
+  },
+  "empty": "No peaks found.",
+  "error": "Error loading peaks",
+  "card": {
+   "elevation": "Elevation",
+   "prominence": "Prominence",
+   "range": "Range",
+   "trailType": "Trail Type",
+   "difficulty": "Difficulty",
+   "exposure": "Exposure"
+  }
  },
  "photo": {
- "altTemplate": "{peak} photo — {season} {timeOfDay}"
+  "altTemplate": "{peak} photo — {season} {timeOfDay}"
  },
  "season": {
- "spring": "spring",
- "summer": "summer",
- "fall": "fall",
- "autumn": "autumn",
- "winter": "winter"
+  "spring": "spring",
+  "summer": "summer",
+  "fall": "fall",
+  "autumn": "autumn",
+  "winter": "winter"
  },
  "time": {
- "sunrise": "sunrise",
- "sunset": "sunset",
- "morning": "morning",
- "afternoon": "afternoon",
- "evening": "evening",
- "night": "night",
- "day": "day",
- "dawn": "dawn",
- "dusk": "dusk"
+  "sunrise": "sunrise",
+  "sunset": "sunset",
+  "morning": "morning",
+  "afternoon": "afternoon",
+  "evening": "evening",
+  "night": "night",
+  "day": "day",
+  "dawn": "dawn",
+  "dusk": "dusk"
  },
  "values": {
- "trailType": {
- "loop": "Loop",
- "loop_or_out_back": "Loop or out & back",
- "loop_or_traverse": "Loop or traverse",
- "loop_or_traverse_along_ridge": "Loop or traverse along ridge",
- "out_back": "Out & back",
- "out_back_common": "Out & back - common",
- "out_back_common_or_long_traverse": "Out & back - common or long traverse",
- "out_back_common_or_loop_with_connector_trails": "Out & back - common or loop with connector trails",
- "out_back_common_or_small_loop_including_mt_webster": "Out & back - common or small loop including Mt Webster",
- "out_back_commonly": "Out & back - commonly",
- "out_back_or_loop": "Out & back or loop",
- "out_back_or_loop_with_tom_and_willey": "Out & back or loop - with Tom and Willey",
- "out_back_or_loop_combining_trails": "Out & back or loop combining trails",
- "out_back_or_loop_options": "Out & back or loop options",
- "out_back_or_point_to_point_traverse": "Out & back or point-to-point traverse",
- "out_back_or_traverse": "Out & back or traverse"
- },
- "difficulty": {
- "moderate": "Moderate",
- "moderate_difficult": "Moderate/Difficult",
- "difficult": "Difficult",
- "very_difficult": "Very Difficult",
- "extremely_difficult": "Extremely Difficult"
- },
- "exposure": {
- "high": "High",
- "medium": "Medium",
- "low": "Low",
- "low_to_medium": "Low to Medium"
- }
+  "trailType": {
+   "loop": "Loop",
+   "loop_or_out_back": "Loop or out & back",
+   "loop_or_traverse": "Loop or traverse",
+   "loop_or_traverse_along_ridge": "Loop or traverse along ridge",
+   "out_back": "Out & back",
+   "out_back_common": "Out & back - common",
+   "out_back_common_or_long_traverse": "Out & back - common or long traverse",
+   "out_back_common_or_loop_with_connector_trails": "Out & back - common or loop with connector trails",
+   "out_back_common_or_small_loop_including_mt_webster": "Out & back - common or small loop including Mt Webster",
+   "out_back_commonly": "Out & back - commonly",
+   "out_back_or_loop": "Out & back or loop",
+   "out_back_or_loop_with_tom_and_willey": "Out & back or loop - with Tom and Willey",
+   "out_back_or_loop_combining_trails": "Out & back or loop combining trails",
+   "out_back_or_loop_options": "Out & back or loop options",
+   "out_back_or_point_to_point_traverse": "Out & back or point-to-point traverse",
+   "out_back_or_traverse": "Out & back or traverse"
+  },
+  "difficulty": {
+   "moderate": "Moderate",
+   "moderate_difficult": "Moderate/Difficult",
+   "difficult": "Difficult",
+   "very_difficult": "Very Difficult",
+   "extremely_difficult": "Extremely Difficult"
+  },
+  "exposure": {
+   "high": "High",
+   "medium": "Medium",
+   "low": "Low",
+   "low_to_medium": "Low to Medium"
+  }
  },
  "peak": {
- "back": "Back to NH48 Peak Catalog",
- "catalog": "Peak Catalog",
- "loading": "Loading…",
- "relatedTrails": {
- "title": "Related Trails & Routes",
- "none": "No related trails listed yet.",
- "link": "{name} route"
- },
- "section": {
- "routes": "Hiking Routes",
- "trails": "Associated Trails",
- "terrain": "Trail & Terrain",
- "conditions": "Conditions & Access"
- },
- "carousel": {
- "prev": "Previous image",
- "next": "Next image"
- },
- "metadata": {
- "title": "Current Photo Metadata",
- "notAvailable": "Not available",
- "moreDetails": "More details ▾",
- "lessDetails": "Less details ▴",
- "labels": {
- "season": "Season",
- "timeOfDay": "Time of Day",
- "orientation": "Orientation",
- "captureDate": "Capture Date",
- "cameraMaker": "Camera Maker",
- "cameraModel": "Camera Model",
- "camera": "Camera",
- "lens": "Lens",
- "fStop": "F Stop",
- "shutterSpeed": "Shutter Speed",
- "iso": "ISO",
- "exposureBias": "Exposure Bias",
- "focalLength": "Focal Length",
- "flashMode": "Flash Mode",
- "meteringMode": "Metering Mode",
- "maxAperture": "Max Aperture",
- "author": "Author",
- "dimensions": "Dimensions",
- "fileSize": "File Size",
- "fileCreateDate": "File Create Date",
- "fileModifiedDate": "File Modified Date",
- "rating": "Rating",
- "metadata": "metadata",
- "creditLine": "mstari wa mkopo",
- "source": "chanzo",
- "copyrightNotice": "ilani ya hakimiliki",
- "copyrightStatus": "hali ya hakimiliki",
- "rightsUsageTerms": "masharti ya matumizi ya haki",
- "altText": "maandishi mbadala",
- "alt": "alt",
- "extendedAlt": "maandishi mbadala yaliyopanuliwa",
- "caption": "maelezo mafupi",
- "headline": "kichwa cha habari",
- "extendedDescription": "maelezo yaliyopanuliwa",
- "description": "maelezo"
- }
- },
- "generalInfo": {
- "title": "General Peak Info",
- "elevation": "Elevation",
- "prominence": "Prominence",
- "range": "Range",
- "trailType": "Trail Type",
- "difficulty": "Difficulty",
- "exposure": "Exposure"
- },
- "routes": {
- "distance": "Distance",
- "gain": "Gain",
- "difficulty": "Difficulty"
- },
- "trailList": {
- "title": "Trail List"
- },
- "terrain": {
- "terrain": "Terrain",
- "scramble": "Scramble",
- "view": "View"
- },
- "conditions": {
- "bestSeasons": "Best Seasons",
- "waterAvailability": "Water Availability",
- "cellReception": "Cell Reception",
- "weatherExposure": "Weather Exposure",
- "emergencyBailout": "Emergency Bailout",
- "dogFriendly": "Dog Friendly",
- "nearbyFeatures": "Nearby Features"
- },
- "errorLoading": "Error loading peak",
- "meta": {
- "titleTemplate": "{name} ({elevationFormatted}) – {suffix}",
- "descriptionTemplate": "{name} – {elevation} ft high, {prominence} ft prominence, in the {range}. Routes, difficulty, and photos for this 4,000-footer."
- }
+  "back": "Back to NH48 Peak Catalog",
+  "catalog": "Peak Catalog",
+  "loading": "Loading…",
+  "relatedTrails": {
+   "title": "Related Trails & Routes",
+   "none": "No related trails listed yet.",
+   "link": "{name} route"
+  },
+  "section": {
+   "routes": "Hiking Routes",
+   "trails": "Associated Trails",
+   "terrain": "Trail & Terrain",
+   "conditions": "Conditions & Access"
+  },
+  "carousel": {
+   "prev": "Previous image",
+   "next": "Next image"
+  },
+  "metadata": {
+   "title": "Current Photo Metadata",
+   "notAvailable": "Not available",
+   "moreDetails": "More details ▾",
+   "lessDetails": "Less details ▴",
+   "labels": {
+    "season": "Season",
+    "timeOfDay": "Time of Day",
+    "orientation": "Orientation",
+    "captureDate": "Capture Date",
+    "cameraMaker": "Camera Maker",
+    "cameraModel": "Camera Model",
+    "camera": "Camera",
+    "lens": "Lens",
+    "fStop": "F Stop",
+    "shutterSpeed": "Shutter Speed",
+    "iso": "ISO",
+    "exposureBias": "Exposure Bias",
+    "focalLength": "Focal Length",
+    "flashMode": "Flash Mode",
+    "meteringMode": "Metering Mode",
+    "maxAperture": "Max Aperture",
+    "author": "Author",
+    "dimensions": "Dimensions",
+    "fileSize": "File Size",
+    "fileCreateDate": "File Create Date",
+    "fileModifiedDate": "File Modified Date",
+    "rating": "Rating",
+    "metadata": "metadata",
+    "creditLine": "mstari wa mkopo",
+    "source": "chanzo",
+    "copyrightNotice": "ilani ya hakimiliki",
+    "copyrightStatus": "hali ya hakimiliki",
+    "rightsUsageTerms": "masharti ya matumizi ya haki",
+    "altText": "maandishi mbadala",
+    "alt": "alt",
+    "extendedAlt": "maandishi mbadala yaliyopanuliwa",
+    "caption": "maelezo mafupi",
+    "headline": "kichwa cha habari",
+    "extendedDescription": "maelezo yaliyopanuliwa",
+    "description": "maelezo"
+   }
+  },
+  "generalInfo": {
+   "title": "General Peak Info",
+   "elevation": "Elevation",
+   "prominence": "Prominence",
+   "range": "Range",
+   "trailType": "Trail Type",
+   "difficulty": "Difficulty",
+   "exposure": "Exposure"
+  },
+  "routes": {
+   "distance": "Distance",
+   "gain": "Gain",
+   "difficulty": "Difficulty"
+  },
+  "trailList": {
+   "title": "Trail List"
+  },
+  "terrain": {
+   "terrain": "Terrain",
+   "scramble": "Scramble",
+   "view": "View"
+  },
+  "conditions": {
+   "bestSeasons": "Best Seasons",
+   "waterAvailability": "Water Availability",
+   "cellReception": "Cell Reception",
+   "weatherExposure": "Weather Exposure",
+   "emergencyBailout": "Emergency Bailout",
+   "dogFriendly": "Dog Friendly",
+   "nearbyFeatures": "Nearby Features"
+  },
+  "errorLoading": "Error loading peak",
+  "meta": {
+   "titleTemplate": "{name} ({elevationFormatted}) – {suffix}",
+   "descriptionTemplate": "{name} – {elevation} ft high, {prominence} ft prominence, in the {range}. Routes, difficulty, and photos for this 4,000-footer."
+  }
  },
  "trails": {
- "title": "White Mountains Trails Map & List",
- "subtitle": "Interactive WMNF trail map with GPX-backed route details.",
- "intro": "Use this as a quick trail finder and completion tracker for the White Mountain National Forest. Open datasets and telemetry for New Hampshire’s 4,000-foot mountains.",
- "details": {
- "title": "Trail details",
- "empty": "Select a trail to view distance, elevation, and OpenStreetMap details."
+  "title": "White Mountains Trails Map & List",
+  "subtitle": "Interactive WMNF trail map with GPX-backed route details.",
+  "intro": "Use this as a quick trail finder and completion tracker for the White Mountain National Forest. Open datasets and telemetry for New Hampshire’s 4,000-foot mountains.",
+  "details": {
+   "title": "Trail details",
+   "empty": "Select a trail to view distance, elevation, and OpenStreetMap details."
+  },
+  "search": {
+   "placeholder": "Search trails…"
+  },
+  "sort": {
+   "az": "Sort A → Z",
+   "za": "Sort Z → A"
+  },
+  "jumpTo": "Jump To:",
+  "list": {
+   "headerName": "Trail Name",
+   "headerCompleted": "Completed",
+   "noMatches": "No trails found. Try a different search.",
+   "noTrails": "No trails available."
+  },
+  "loading": "Loading trails...",
+  "about": {
+   "title": "About this list",
+   "body": "NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths."
+  },
+  "disclaimer": {
+   "title": "Disclaimer",
+   "body": "This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry."
+  },
+  "howto": {
+   "title": "How to use",
+   "body": "Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below."
+  },
+  "settings": {
+   "title": "Settings",
+   "hideCompleted": "Hide completed trails",
+   "clearProgress": "Clear all progress"
+  },
+  "export": "Export CSV",
+  "import": "Import",
+  "viewApi": "View API",
+  "resizePanels": "Resize panels",
+  "info": {
+   "noProperties": "No additional trail properties available yet. Properties will be populated from OpenStreetMap data.",
+   "loadingProperties": "Loading additional trail properties from OpenStreetMap...",
+   "sourceNote": "Information sourced from OpenStreetMap where available.",
+   "distance": "Distance",
+   "elevationGain": "Elevation Gain",
+   "minElevation": "Min Elevation",
+   "maxElevation": "Max Elevation",
+   "surface": "Surface",
+   "trailType": "Trail Type",
+   "difficulty": "Difficulty",
+   "visibility": "Visibility",
+   "width": "Width",
+   "allowedUses": "Allowed Uses",
+   "season": "Season",
+   "maintainer": "Maintainer",
+   "source": "Source"
+  },
+  "virtualHike": "Virtual Hike",
+  "unnamedTrail": "Unnamed trail",
+  "confirmClear": "Are you sure you want to clear all progress?",
+  "alertLoadFail": "Unable to load trail data. Please ensure you have internet connectivity and try refreshing the page.",
+  "csv": {
+   "headerTrail": "Trail",
+   "headerCompleted": "Completed",
+   "headerDate": "Date",
+   "filename": "trail-progress.csv"
+  },
+  "map": {
+   "attribution": "Map data: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+  },
+  "telemetry": {
+   "label": "{mapped}/{total} trails with GPX telemetry",
+   "loading": "Loading GPX telemetry coverage…"
+  }
  },
- "search": {
- "placeholder": "Search trails…"
- },
- "sort": {
- "az": "Sort A → Z",
- "za": "Sort Z → A"
- },
- "jumpTo": "Jump To:",
- "list": {
- "headerName": "Trail Name",
- "headerCompleted": "Completed",
- "noMatches": "No trails found. Try a different search.",
- "noTrails": "No trails available."
- },
- "loading": "Loading trails...",
- "about": {
- "title": "About this list",
- "body": "NH Tracing, Redlining, and White Mountain Trails all refer to the same collection of trails described in the guidebook. No matter which name you use, you’re working towards the same goal of experiencing these paths."
- },
- "disclaimer": {
- "title": "Disclaimer",
- "body": "This site is <strong>not intended for planning or navigation</strong>. Trail data may contain minor errors or inaccuracies, and this collection is not the official list (though it includes most of the known trails). Please refer to official sources and use good judgement in the backcountry."
- },
- "howto": {
- "title": "How to use",
- "body": "Use the green circles to mark a trail as completed. After marking a trail, tap the calendar icon to add a date of completion — the date will replace the icon once selected and can be edited by tapping again. Your progress is stored locally in your browser. You can export or import your progress using the buttons below."
- },
- "settings": {
- "title": "Settings",
- "hideCompleted": "Hide completed trails",
- "clearProgress": "Clear all progress"
- },
- "export": "Export CSV",
- "import": "Import",
- "viewApi": "View API",
- "resizePanels": "Resize panels",
- "info": {
- "noProperties": "No additional trail properties available yet. Properties will be populated from OpenStreetMap data.",
- "loadingProperties": "Loading additional trail properties from OpenStreetMap...",
- "sourceNote": "Information sourced from OpenStreetMap where available.",
- "distance": "Distance",
- "elevationGain": "Elevation Gain",
- "minElevation": "Min Elevation",
- "maxElevation": "Max Elevation",
- "surface": "Surface",
- "trailType": "Trail Type",
- "difficulty": "Difficulty",
- "visibility": "Visibility",
- "width": "Width",
- "allowedUses": "Allowed Uses",
- "season": "Season",
- "maintainer": "Maintainer",
- "source": "Source"
- },
- "virtualHike": "Virtual Hike",
- "unnamedTrail": "Unnamed trail",
- "confirmClear": "Are you sure you want to clear all progress?",
- "alertLoadFail": "Unable to load trail data. Please ensure you have internet connectivity and try refreshing the page.",
- "csv": {
- "headerTrail": "Trail",
- "headerCompleted": "Completed",
- "headerDate": "Date",
- "filename": "trail-progress.csv"
- },
- "map": {
- "attribution": "Map data: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
- },
- "telemetry": {
- "label": "{mapped}/{total} trails with GPX telemetry",
- "loading": "Loading GPX telemetry coverage…"
- }
- }
+ "nav.tagline": "Takwimu wazi na metadata iliyopangwa kwa vilele vya futi 4 000 vya New Hampshire.",
+ "nav.catalog": "Katalogi",
+ "nav.trails": "Njia za White Mountain",
+ "nav.longTrails": "Njia ndefu",
+ "nav.pics": "Picha NH48",
+ "nav.peakBagger": "Mkusanyaji wa kilele",
+ "nav.latestPhotos": "Picha mpya za WMNF",
+ "common.languagePicker": "Chagua lugha",
+ "landing.title": "NH48 API – Vilele na njia za futi 4 000 za New Hampshire",
+ "landing.ogTitle": "NH48 API – Vilele na njia za futi 4 000 za New Hampshire",
+ "landing.metaDescription": "Inatoa takwimu wazi, njia, na metadata ya picha kwa vilele 48 vya futi 4 000 katika Msitu wa Kitaifa wa White Mountain wa New Hampshire. Vinjari orodha, chunguza njia na tumia seti ya data.",
+ "landing.ogDescription": "Inatoa takwimu wazi, njia, na metadata ya picha kwa vilele 48 vya futi 4 000 katika Msitu wa Kitaifa wa White Mountain wa New Hampshire. Vinjari orodha, chunguza njia na tumia seti ya data.",
+ "landing.heroTitle": "NH48 API",
+ "landing.heroTagline": "Vilele na njia za futi 4 000 za New Hampshire",
+ "landing.heroBody": "Inatoa takwimu wazi, njia, na metadata ya picha kuhusu vilele 48 vya futi 4 000 katika Msitu wa Kitaifa wa White Mountain. Vinjari orodha, chunguza njia za White Mountain, na tumia seti hii ya data kujenga programu.",
+ "landing.cards.catalogTitle": "Katalogi ya vilele",
+ "landing.cards.catalogBody": "Tazama maelezo ya vilele vyote 48 vya futi 4 000, pamoja na kimo, umaarufu, ugumu na viduara vya picha.",
+ "landing.cards.catalogCta": "Chunguza katalogi",
+ "landing.cards.trailsTitle": "Mchunguzi wa njia",
+ "landing.cards.trailsBody": "Tumia ramani shirikishi kuchunguza njia za White Mountain na pakua seti ya data wazi.",
+ "landing.cards.trailsCta": "Tazama njia",
+ "landing.cards.longTrailsTitle": "Njia ndefu",
+ "landing.cards.longTrailsBody": "Jifunze kuhusu njia ndefu kama Appalachian Trail.",
+ "landing.cards.longTrailsCta": "Chunguza njia ndefu",
+ "landing.cards.plantsTitle": "Katalogi ya mimea",
+ "landing.cards.plantsBody": "Chunguza orodha ya mimea ya juu na muhimu ya White Mountain.",
+ "landing.cards.plantsCta": "Tazama mimea",
+ "landing.notesTitle": "Maelezo ya seti ya data",
+ "landing.notes.versioned": "Toleo lenye historia ya mabadiliko.",
+ "landing.notes.methodology": "Nyaraka zinazoeleza ukusanyaji na usindikaji.",
+ "landing.notes.validation": "Chanzo na udhibiti wa ubora vimehakikishwa.",
+ "landing.notes.reproducible": "Nambari na matokeo yanayoweza kurejelewa.",
+ "landing.author": "Mwandishi: Nathan Sobol",
+ "footer.quickBrowseTitle": "Vinjari haraka Milima Nyeupe ya New Hampshire",
+ "footer.quickBrowseSubtitle": "Nenda moja kwa moja kwenye ukurasa wa maelezo ya kila kilele cha futi 4 000 ili kupata haraka maelezo ya kilele, picha na maelezo ya njia.",
+ "footer.quickBrowseLinks": "Viungo vya kuvinjari haraka",
+ "footer.legal": "© 2026 Nathan Sobol · NH 48, White Mountain Tracing, Scenic & Long Trail – Data, njia, na picha",
+ "footer.navLabel": "Viungo vya urambazaji wa kijachini",
+ "common.home": "Nyumbani",
+ "common.loading": "Inapakia…",
+ "common.unitsLabel": "Vitengo:",
+ "common.unitsFeet": "Futi",
+ "common.unitsMeters": "Mita",
+ "common.noImage": "Hakuna picha",
+ "catalog.error": "Hitilafu kupakia katalogi.",
+ "peak.catalog": "Orodha ya vilele",
+ "peak.loading": "Inapakia…",
+ "peak.back": "Nyuma",
+ "peak.carousel.prev": "Iliyopita",
+ "peak.carousel.next": "Inayofuata",
+ "peak.section.routes": "Njia",
+ "peak.section.trails": "Mikwara",
+ "peak.section.terrain": "Mandhari",
+ "peak.section.conditions": "Hali",
+ "peak.relatedTrails.title": "Mikwara husika",
+ "peak.relatedTrails.link": "Tazama mikwara yote",
+ "peak.relatedTrails.none": "Hakuna mikwara inayohusiana",
+ "peak.description.title": "Maelezo",
+ "peak.generalInfo.title": "Taarifa za jumla",
+ "peak.generalInfo.elevation": "Urefu",
+ "peak.generalInfo.prominence": "Umuhimu",
+ "peak.generalInfo.range": "Mlima",
+ "peak.generalInfo.trailType": "Aina ya mkondo",
+ "peak.generalInfo.difficulty": "Ugumu",
+ "peak.generalInfo.exposure": "Ufunuo",
+ "peak.terrain.terrain": "Mandhari",
+ "peak.terrain.scramble": "Kupanda",
+ "peak.terrain.view": "Mwonekano",
+ "peak.conditions.bestSeasons": "Msimu bora",
+ "peak.conditions.waterAvailability": "Upatikanaji wa maji",
+ "peak.conditions.cellReception": "Mawasiliano ya simu",
+ "peak.conditions.weatherExposure": "Kufunuliwa na hali ya hewa",
+ "peak.conditions.emergencyBailout": "Njia ya dharura",
+ "peak.conditions.dogFriendly": "Inamruhusu mbwa",
+ "peak.conditions.nearbyFeatures": "Vitu vya karibu",
+ "peak.routes.distance": "Umbali",
+ "peak.routes.gain": "Kuongezeka",
+ "peak.routes.difficulty": "Ugumu",
+ "peak.metadata.title": "Metadata ya picha",
+ "peak.metadata.labels.season": "Msimu",
+ "peak.metadata.labels.timeOfDay": "Wakati wa siku",
+ "peak.metadata.labels.orientation": "Mwelekeo",
+ "peak.metadata.labels.captureDate": "Tarehe ya kupiga",
+ "peak.metadata.labels.cameraMaker": "Mtengenezaji wa kamera",
+ "peak.metadata.labels.cameraModel": "Aina ya kamera",
+ "peak.metadata.labels.camera": "Kamera",
+ "peak.metadata.labels.lens": "Lenzi",
+ "peak.metadata.labels.fStop": "F‑stop",
+ "peak.metadata.labels.shutterSpeed": "Kasi ya shutter",
+ "peak.metadata.labels.iso": "ISO",
+ "peak.metadata.labels.exposureBias": "Ubadilishaji mwanga",
+ "peak.metadata.labels.focalLength": "Urefu wa fokasi",
+ "peak.metadata.labels.flashMode": "Hali ya flash",
+ "peak.metadata.labels.meteringMode": "Hali ya kupima",
+ "peak.metadata.labels.maxAperture": "Ufunguzi mkubwa",
+ "peak.metadata.labels.author": "Mwandishi",
+ "peak.metadata.labels.dimensions": "Vipimo",
+ "peak.metadata.labels.fileSize": "Ukubwa wa faili",
+ "peak.metadata.labels.fileCreateDate": "Tarehe ya kuunda",
+ "peak.metadata.labels.fileModifiedDate": "Tarehe ya kuhariri",
+ "peak.metadata.labels.rating": "Kiwango",
+ "peak.metadata.labels.metadata": "Metadata",
+ "peak.metadata.labels.creditLine": "Mstari wa mkopo",
+ "peak.metadata.labels.source": "Chanzo",
+ "peak.metadata.labels.copyrightNotice": "Taarifa ya hakimiliki",
+ "peak.metadata.labels.copyrightStatus": "Hali ya hakimiliki",
+ "peak.metadata.labels.rightsUsageTerms": "Masharti ya matumizi ya haki",
+ "peak.metadata.labels.altText": "Maandishi mbadala",
+ "peak.metadata.labels.extendedAlt": "Maandishi mbadala yaliyopanuliwa",
+ "peak.metadata.labels.caption": "Maandishi ya chini ya picha",
+ "peak.metadata.labels.headline": "Kichwa cha habari",
+ "peak.metadata.labels.extendedDescription": "Maelezo ya kuongezwa",
+ "peak.metadata.labels.description": "Maelezo",
+ "peak.metadata.lessDetails": "Maelezo machache",
+ "peak.metadata.moreDetails": "Maelezo mengi",
+ "peak.metadata.notAvailable": "Haipatikani",
+ "peak.notFound": "Kilele hakipatikani",
+ "peak.errorLoading": "Hitilafu ya kupakia data",
+ "peak.meta.descriptionTemplate": "Habari, njia, hali na metadata ya picha kwa {{peak}}.",
+ "trails.settings.clearProgress": "Futa maendeleo",
+ "trails.settings.hideCompleted": "Ficha mikwara iliyokamilishwa",
+ "trails.export": "Hamisha",
+ "trails.virtualHike": "Safari ya mtandaoni",
+ "trails.list.headerName": "Jina",
+ "trails.list.headerCompleted": "Imekamilika",
+ "trails.resizePanels": "Badilisha ukubwa wa paneli"
 }
