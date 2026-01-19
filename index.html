@@ -25,6 +25,8 @@
   <meta name="author" content="Nathan Sobol">
   <meta name="creator" content="Nathan Sobol">
   <meta name="publisher" content="NH48 API">
+  <meta name="article:published_time" content="2025-12-06T00:00:00Z">
+  <meta name="article:modified_time" content="2026-01-19T00:00:00Z">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <meta name="application-name" content="NH48 API">
@@ -127,6 +129,12 @@
           "description": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Quick Browse NH48 peaks of the White Mountains of New Hampshire, explore White Mountain trails, and build on the dataset.",
           "inLanguage": "en",
           "isPartOf": { "@id": "https://nh48.info/#website" },
+          "hasPart": [
+            { "@id": "https://nh48.info/#dataset-nh48-peaks" },
+            { "@id": "https://nh48.info/#dataset-white-mountain-trails" },
+            { "@id": "https://nh48.info/#dataset-long-trails" },
+            { "@id": "https://nh48.info/#dataset-howker-plants" }
+          ],
           "primaryImageOfPage": {
             "@type": "ImageObject",
             "url": "https://nh48.info/UI-Elements/og-cover.png",
@@ -134,11 +142,22 @@
           }
         },
         {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://nh48.info/"
+            }
+          ]
+        },
+        {
           "@type": "Dataset",
-          "@id": "https://nh48.info/#nh48-dataset",
-          "name": "NH48 API – New Hampshire 4,000-Footers Dataset",
+          "@id": "https://nh48.info/#dataset-nh48-peaks",
+          "name": "NH48 Peaks Dataset",
           "description": "Structured data for 48 New Hampshire four-thousand-foot peaks with 101 tagged photos, elevations, prominence, difficulty, and geo context in JSON format.",
-          "url": "https://nh48.info/data/nh48.json",
+          "url": "https://nh48.info/catalog",
           "license": "https://creativecommons.org/licenses/by/4.0/",
           "creator": {
             "@type": "Person",
@@ -188,6 +207,87 @@
             "name": "White Mountain National Forest",
             "geo": { "@type": "GeoShape", "circle": "44.15 -71.34 50km" }
           }
+        },
+        {
+          "@type": "Dataset",
+          "@id": "https://nh48.info/#dataset-white-mountain-trails",
+          "name": "White Mountain Trails Dataset",
+          "description": "Trail geometry, attributes, and completion data for the White Mountain National Forest.",
+          "url": "https://nh48.info/trails",
+          "license": "https://creativecommons.org/licenses/by/4.0/",
+          "creator": {
+            "@type": "Person",
+            "name": "Nathan Sobol",
+            "url": "https://www.nh48pics.com/"
+          },
+          "distribution": [
+            {
+              "@type": "DataDownload",
+              "contentUrl": "https://nh48.info/data/wmnf-trails/wmnf-main.json",
+              "encodingFormat": "application/json"
+            },
+            {
+              "@type": "DataDownload",
+              "contentUrl": "https://nh48.info/data/trails_with_osm.json",
+              "encodingFormat": "application/json"
+            }
+          ],
+          "includedInDataCatalog": "NH48 API",
+          "isAccessibleForFree": true,
+          "spatialCoverage": {
+            "@type": "Place",
+            "name": "White Mountain National Forest",
+            "geo": { "@type": "GeoShape", "circle": "44.15 -71.34 50km" }
+          }
+        },
+        {
+          "@type": "Dataset",
+          "@id": "https://nh48.info/#dataset-long-trails",
+          "name": "Long Trails Dataset",
+          "description": "Long-distance hiking routes across North America with segmented trail data.",
+          "url": "https://nh48.info/long-trails",
+          "license": "https://creativecommons.org/licenses/by/4.0/",
+          "creator": {
+            "@type": "Person",
+            "name": "Nathan Sobol",
+            "url": "https://www.nh48pics.com/"
+          },
+          "distribution": [
+            {
+              "@type": "DataDownload",
+              "contentUrl": "https://nh48.info/data/long-trails-index.json",
+              "encodingFormat": "application/json"
+            },
+            {
+              "@type": "DataDownload",
+              "contentUrl": "https://nh48.info/data/long-trails-full.json",
+              "encodingFormat": "application/json"
+            }
+          ],
+          "includedInDataCatalog": "NH48 API",
+          "isAccessibleForFree": true
+        },
+        {
+          "@type": "Dataset",
+          "@id": "https://nh48.info/#dataset-howker-plants",
+          "name": "Howker Ridge Plant Catalog Dataset",
+          "description": "Alpine and subalpine plant observations from the Howker Ridge Trail with species notes and habitat context.",
+          "url": "https://nh48.info/plant-catalog",
+          "license": "https://creativecommons.org/licenses/by/4.0/",
+          "creator": {
+            "@type": "Person",
+            "name": "Nathan Sobol",
+            "url": "https://www.nh48pics.com/"
+          },
+          "distribution": [
+            {
+              "@type": "DataDownload",
+              "contentUrl": "https://nh48.info/data/howker-plants",
+              "encodingFormat": "application/json"
+            }
+          ],
+          "includedInDataCatalog": "NH48 API",
+          "isAccessibleForFree": true
         }
       ]
     }
@@ -1695,18 +1795,6 @@
             <span itemprop="name">Home</span>
           </a>
           <meta itemprop="position" content="1">
-        </li>
-        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-          <a itemprop="item" href="/dataset/">
-            <span itemprop="name">Datasets</span>
-          </a>
-          <meta itemprop="position" content="2">
-        </li>
-        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-          <a itemprop="item" href="/" aria-current="page">
-            <span itemprop="name">NH48 API Dataset</span>
-          </a>
-          <meta itemprop="position" content="3">
         </li>
       </ol>
     </nav>
