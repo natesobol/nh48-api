@@ -344,7 +344,7 @@ header p{
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  min-height:220px;
+  min-height:260px;
   cursor:pointer;
   transition:transform .12s ease, box-shadow .12s ease;
   position:relative; /* anchor for arrow icon */
@@ -393,15 +393,23 @@ header p{
 }
 .chip{
   display:inline-block;
-  border:1px solid var(--stroke);
-  border-radius:9999px;
-  padding:6px 10px;
+  border:none;
+  border-radius:0;
+  padding:0;
   font-size:11.5px;
   line-height:1.25;
   color:var(--muted);
-  max-width:100%;
-  word-break:break-word;
-  white-space:normal;
+}
+.subtitle{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:4px;
+  margin-bottom:2px;
+  text-transform:uppercase;
+}
+.teaser{
+  margin:6px 0 0;
+  font-size:13px;
 }
 /* Arrow indicator pinned bottom right of card */
 .card .more{
@@ -442,11 +450,10 @@ body.compact .card .body{
   padding:8px;
 }
 body.compact .chip{
-  padding:4px 8px;
   font-size:11px;
 }
 body.compact .card{
-  min-height:200px;
+  min-height:220px;
 }
 /* Apply to the whole page so no horizontal scroll is possible */
 html, body {
@@ -624,7 +631,6 @@ body.details-open .drawer.open {
   }
   .chip{
     font-size:11px;
-    padding:6px 11px;
   }
   /* Pagination on mobile: reduce button sizes and spacing */
   .pager-wrap{
@@ -675,7 +681,6 @@ body.details-open .drawer.open {
   }
   .chip{
     font-size:10.5px;
-    padding:6px 10px;
   }
 }
 
@@ -805,23 +810,6 @@ body.details-open .drawer.open {
     </div>
   </div>
 
-  <section class="catalog-meta" aria-label="About the catalog">
-    <div>
-      <h2>About the Project</h2>
-      <p>This catalog is part of a personal trail-adoption project for Howker Ridge, performed as a volunteer with the Randolph Mountain Club. The species list is a living document—continuously refined with real observations, field notes, and ecological references.</p>
-      <p>All content is displayed with a dark, high-contrast UI optimized for low-light conditions often encountered on trail.</p>
-    </div>
-    <div>
-      <h3>Catalog Features</h3>
-      <ul>
-        <li>Search by common name, latin name, tags, habitat, and text fields.</li>
-        <li>Filter by type, habitat, and bloom season with pagination for stable scrolling.</li>
-        <li>Rotate high-quality thumbnails with lazy-loading for responsive browsing.</li>
-        <li>Open detailed species views with carousels, notes, and photo credits.</li>
-      </ul>
-    </div>
-  </section>
-
   <div class="footer">
     <span>Unofficial &amp; volunteer • Howker Ridge Trail Sub &amp; Alpine Plant Catalog</span>
     <span>© <span id="year"></span> Nathan Sobol • NH48pics</span>
@@ -915,6 +903,7 @@ body.details-open .drawer.open {
   /* ---------- Card templating (uses data-src for lazy images) ---------- */
   function cardHTML(p){
     const src = (Array.isArray(p.imgs) && p.imgs.length ? p.imgs[0] : (p.img || PLACEHOLDER));
+    const category = [p.type, p.habitat].filter(Boolean).join(' – ');
     return `
       <div class="thumb">
         <img src="${LQ_PLACEHOLDER}" data-src="${src}"
@@ -928,9 +917,10 @@ body.details-open .drawer.open {
         <div class="chiprow">
           ${p.type ? `<span class="chip">${p.type}</span>` : ''}
           ${p.habitat ? `<span class="chip">${p.habitat}</span>` : ''}
-          ${(p.tags||[]).slice(0,3).map(t=>`<span class=\"chip\">#${t}</span>`).join("")}
+          ${(p.tags||[]).slice(0,3).map(t=>`<span class="chip">${t}</span>`).join("")}
         </div>
-        ${p.teaser ? `<p style="margin:6px 0 0;color:var(--muted);font-size:13px">${p.teaser}</p>` : ''}
+        ${category ? `<div class="subtitle">${category}</div>` : ''}
+        ${p.teaser ? `<p class="teaser">${p.teaser}</p>` : ''}
         <div class="more">›</div>
       </div>`;
   }
