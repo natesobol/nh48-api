@@ -589,13 +589,26 @@
       font-size: 0.9rem;
       color: #9aa8c7;
     }
+    .cards-section-title {
+      color: #cbd5f5;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 24px auto 12px;
+      text-align: center;
+    }
     .dataset-cards {
       margin: 32px auto 0;
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 20px;
       max-width: 1200px;
       width: 100%;
+    }
+    .dataset-divider {
+      grid-column: 1 / -1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.4), transparent);
+      margin: 10px 0;
     }
     
     .dataset-card {
@@ -667,6 +680,32 @@
       align-items: center;
       gap: 10px;
       margin-top: auto;
+    }
+    .card-action a.card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(34, 197, 94, 0.5);
+      color: #22c55e;
+      text-decoration: none;
+      font-weight: 600;
+      background: rgba(34, 197, 94, 0.08);
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .card-action a.card-link:hover {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: rgba(34, 197, 94, 0.7);
+    }
+    .card-action a.card-link.secondary {
+      border-color: rgba(59, 130, 246, 0.5);
+      color: #38bdf8;
+      background: rgba(59, 130, 246, 0.08);
+    }
+    .card-action a.card-link.secondary:hover {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.7);
     }
     .seo-gallery {
       position: absolute;
@@ -1686,6 +1725,7 @@
       </ol>
     </nav>
     <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, discover long-distance hiking routes, and learn about alpine flora.</p>
+    <h2 class="cards-section-title">NH48 &amp; Howker Ridge Tools</h2>
 
     <section class="dataset-cards">
       <a href="/catalog" class="dataset-card">
@@ -1723,17 +1763,32 @@
         </div>
       </a>
 
-      <a href="/plant-catalog" class="dataset-card">
-        <h3 data-i18n="landing.cards.plantsTitle">Howker Plant Catalog</h3>
-        <p data-i18n="landing.cards.plantsBody">Explore alpine and subalpine plant observations from the Howker Ridge Trail, with species details, habitat notes, and photo references.</p>
+      <div class="dataset-divider" aria-hidden="true"></div>
+
+      <div class="dataset-card">
+        <h3>Howker Plant Catalog</h3>
+        <p>Explore alpine and subalpine plant observations from the Howker Ridge Trail, with species details, habitat notes and photo references.</p>
         <div class="card-action">
-          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2c-4.5 4-6 8-6 12 0 4 3 8 6 8s6-4 6-8c0-4-1.5-8-6-12Z"></path>
-            <path d="M12 6v16"></path>
-          </svg>
-          <span class="card-link-text" data-i18n="landing.cards.plantsCta">Browse Plant Catalog</span>
+          <a href="/plant-catalog" class="card-link">Browse Plant Catalog</a>
         </div>
-      </a>
+      </div>
+
+      <div class="dataset-card">
+        <h3>Howker Ridge Trail Info</h3>
+        <p>Learn about the Howker Ridge Trail, including its history, elevation profiles, segments and points of interest.</p>
+        <div class="card-action">
+          <a href="/projects/hrt-info" class="card-link">Read Trail Info</a>
+          <a href="/howker-ridge" class="card-link secondary">Interactive Map</a>
+        </div>
+      </div>
+
+      <div class="dataset-card">
+        <h3>Plant Log Map</h3>
+        <p>View and record plant logs along the Howker Ridge Trail on an interactive map.</p>
+        <div class="card-action">
+          <a href="/projects/plant-map" class="card-link">Open Plant Log Map</a>
+        </div>
+      </div>
     </section>
     <p class="meta" data-i18n="landing.author">Author: Nathan Sobol</p>
   </main>
