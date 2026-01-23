@@ -687,6 +687,11 @@ body,
   color:#ffffff;
 }
 
+/* Hide pagination controls when showing all plants on a single page */
+.pager-wrap{
+  display:none !important;
+}
+
 /* Hide the main catalog when details pane is open */
 body.details-open #howker-plants {
   display: none;
@@ -963,8 +968,10 @@ body.details-open .drawer.open {
   let PLANTS = [];
   let CURRENT = [];           // filtered list
   let PAGE = 1;               // 1-based
-  const DEFAULT_PAGE_SIZE = 20;  // Step #1: fixed 20 to hold height steady
-  let PAGE_SIZE = DEFAULT_PAGE_SIZE; // could be made user-selectable later
+  // Show all entries on one continuous page by using a very large page size.
+  // Number.MAX_SAFE_INTEGER ensures PAGE_SIZE exceeds the number of catalog items.
+  const DEFAULT_PAGE_SIZE = Number.MAX_SAFE_INTEGER;
+  let PAGE_SIZE = DEFAULT_PAGE_SIZE;
   let TOTAL_PAGES = 1;
 
   // Mapping: page => [start,end) indices
