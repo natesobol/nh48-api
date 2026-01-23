@@ -38,6 +38,8 @@ export default {
       '/long_trails_app.html': '/long-trails',
       '/plant_catalog.html': '/plant-catalog',
       '/plant_catalog': '/plant-catalog',
+      '/hrt_info.html': '/projects/hrt-info',
+      '/pages/hrt_info.html': '/projects/hrt-info',
       '/nh-4000-footers-guide': '/nh-4000-footers-info',
       '/nh-4000-footers-guide.html': '/nh-4000-footers-info',
       '/nh-4000-footers-info.html': '/nh-4000-footers-info'
@@ -66,6 +68,7 @@ export default {
                        pathname === '/dataset' || pathname === '/dataset/' ||
                        pathname.startsWith('/dataset/') || pathname.startsWith('/fr/dataset/') ||
                pathname === '/plant-catalog' || pathname === '/plant-catalog/' ||
+               pathname === '/projects/hrt-info' || pathname === '/projects/hrt-info/' ||
                pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
                pathname === '/nh-4000-footers-info.html' || pathname === '/nh-4000-footers-info' ||
                        pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant)/) !== null;
@@ -1295,6 +1298,28 @@ export default {
           ogType: 'website'
         },
         jsonLd
+      });
+    }
+
+    if (pathNoLocale === '/projects/hrt-info' || pathNoLocale === '/projects/hrt-info/') {
+      const canonical = `${SITE}${pathname}`;
+      return serveTemplatePage({
+        templatePath: 'pages/hrt_info.html',
+        pathname,
+        routeId: 'hrt-info',
+        meta: {
+          title: isFrench ? 'Infos sur le sentier Howker Ridge' : 'Howker Ridge Trail Info',
+          description: isFrench
+            ? 'Informations détaillées sur le sentier Howker Ridge : statistiques, terrain, accès et sécurité.'
+            : 'Detailed information about the Howker Ridge Trail: stats, terrain, access, and safety.',
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: isFrench ? 'Vue du Mount Madison' : 'Mount Madison ridge view',
+          ogType: 'website'
+        },
+        jsonLd: []
       });
     }
 
