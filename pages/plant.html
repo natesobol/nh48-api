@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
 <link rel="manifest" href="/manifest.json" />
-<title>Howker Ridge • Plant Details</title>
+<title>Howker Ridge • Plant</title>
 <meta id="meta-description" name="description" content="Detailed view for an alpine/subalpine plant observed along Howker Ridge Trail. Explore photos, facts, and notes for the selected species." />
 <link rel="canonical" href="https://nh48.info/pages/plant.html" />
 <meta property="og:type" content="article" />
@@ -28,15 +28,15 @@
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lincoln/mount-lincoln__001.jpg" />
 <meta name="twitter:image:alt" content="Rocky alpine summit area on Mount Lincoln in the White Mountains" />
-<meta id="og-title" property="og:title" content="Howker Ridge • Plant Details" />
+<meta id="og-title" property="og:title" content="Howker Ridge • Plant" />
 <meta id="og-description" property="og:description" content="Detailed species view for alpine and subalpine plants observed along the Howker Ridge Trail." />
-<meta id="twitter-title" name="twitter:title" content="Howker Ridge • Plant Details" />
+<meta id="twitter-title" name="twitter:title" content="Howker Ridge • Plant" />
 <meta id="twitter-description" name="twitter:description" content="Explore species facts, field notes, and photo credits for alpine plants along Howker Ridge." />
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "Howker Ridge Plant Details",
+    "name": "Howker Ridge Plant",
     "description": "Detailed species view for alpine and subalpine plants observed along the Howker Ridge Trail.",
     "url": "https://nh48.info/pages/plant.html",
     "isPartOf": {
@@ -68,7 +68,7 @@
         {
           "@type": "ListItem",
           "position": 4,
-          "name": "Plant Details",
+          "name": "Plant",
           "item": "https://nh48.info/pages/plant.html"
         }
       ]
@@ -138,7 +138,7 @@ body{
 }
 .panel{
   background:var(--panel);
-  border:2px solid var(--stroke);
+  border:none;
   border-radius:14px;
   padding:20px 20px 24px;
   box-shadow:0 10px 30px #0004;
@@ -186,63 +186,6 @@ header p{
 }
 .page-breadcrumbs a:hover{
   color:var(--accent);
-}
-
-/****************************
- * SETTINGS PANEL
- ****************************/
-.settings{
-  background:var(--panel);
-  border:1px solid var(--stroke);
-  border-radius:12px;
-  padding:18px;
-  box-shadow:0 4px 12px #0003;
-  margin-bottom:16px;
-  max-width:100%;
-}
-.settings-logo{
-  font-size:18px;
-  font-weight:bold;
-  margin-bottom:12px;
-  color:var(--accent);
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-.settings-icon{
-  font-size:20px;
-}
-.setting-row{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-top:10px;
-  font-size:14px;
-  color:var(--muted);
-}
-.setting-row input{
-  width:18px;
-  height:18px;
-  cursor:pointer;
-}
-@media (min-width: 760px){
-  .settings{
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
-    flex-wrap:wrap;
-    gap:22px 26px;
-  }
-  .settings-logo{
-    margin-bottom:0;
-    margin-right:18px;
-    padding-right:18px;
-    border-right:1px solid var(--stroke);
-  }
-  .setting-row{
-    margin-top:0;
-    flex:0 0 auto;
-  }
 }
 
 /****************************
@@ -412,16 +355,11 @@ header p{
     width:calc(100% - (2 * var(--edge)));
     margin-inline:var(--edge);
     max-width:none;
-    border-width:2px;
     border-radius:12px;
     padding:16px 12px 20px;
   }
   header h1{
     font-size:20px;
-  }
-  /* Hide Settings panel on mobile */
-  .settings{
-    display:none;
   }
   .media{
     margin:12px 0 16px;
@@ -435,7 +373,6 @@ header p{
   .panel{
     width:calc(100% - (2 * var(--edge)));
     margin-inline:var(--edge);
-    border-width:2px;
     border-radius:10px;
   }
   header h1{
@@ -481,7 +418,7 @@ header p{
 <div class="wrap panel" id="plant-detail">
   <header>
     <blockquote>
-      <h1>Howker Ridge • Plant Details</h1>
+      <h1 id="detail-title">Howker Ridge • Plant</h1>
     </blockquote>
     <blockquote>
       <p>Detailed information for an alpine or subalpine species recorded along Howker Ridge Trail. Use the back link to return to the catalog.</p>
@@ -492,25 +429,9 @@ header p{
       <li><a href="/">Home</a></li>
       <li><a href="/plant-catalog">Projects</a></li>
       <li><a href="/plant-catalog">Howker Ridge Plant Catalog</a></li>
-      <li>Plant Details</li>
+      <li><span id="detail-breadcrumb">Plant</span></li>
     </ol>
   </nav>
-  <!-- Settings panel (retained for theme toggle on desktop) -->
-  <aside class="settings" id="settings-panel">
-    <div class="settings-logo">Settings</div>
-    <div class="setting-row">
-      <input type="checkbox" id="theme-toggle" checked>
-      <label for="theme-toggle">Dark theme</label>
-    </div>
-    <div class="setting-row">
-      <input type="checkbox" id="rotate-toggle" checked>
-      <label for="rotate-toggle">Rotate images</label>
-    </div>
-    <div class="setting-row">
-      <input type="checkbox" id="sticky-toggle">
-      <label for="sticky-toggle">Sticky header</label>
-    </div>
-  </aside>
 
   <!-- Details content -->
   <a href="/plant-catalog" class="back-link">← Back to Catalog</a>
@@ -576,10 +497,8 @@ header p{
   const dotsEl = $("#dots");
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
-  // Settings toggles
-  const themeToggle = document.getElementById('theme-toggle');
-  const rotateToggle = document.getElementById('rotate-toggle');
-  const stickyToggle = document.getElementById('sticky-toggle');
+  const detailTitle = document.getElementById('detail-title');
+  const detailBreadcrumb = document.getElementById('detail-breadcrumb');
 
   // Placeholders for images
   const LQ_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
@@ -689,7 +608,9 @@ header p{
 
   /* ---------- Populate details ---------- */
   function populatePlant(p){
-    const titleText = `${p.common || 'Plant'} • Howker Ridge Plant Details`;
+    const detailName = p.common || 'Plant';
+    const titleText = `${detailName} • Howker Ridge Plant Catalog`;
+    const headerText = `Howker Ridge • ${detailName}`;
     const descText = `Details for ${p.common || 'a plant'}${p.latin ? ` (${p.latin})` : ''} observed along the Howker Ridge Trail in the White Mountains of New Hampshire.`;
     document.title = titleText;
     updateMeta('meta-description', descText);
@@ -697,6 +618,12 @@ header p{
     updateMeta('og-description', descText);
     updateMeta('twitter-title', titleText);
     updateMeta('twitter-description', descText);
+    if (detailTitle){
+      detailTitle.textContent = headerText;
+    }
+    if (detailBreadcrumb){
+      detailBreadcrumb.textContent = detailName;
+    }
 
     document.getElementById('d-title').textContent = p.common || '';
     document.getElementById('d-latin').textContent = p.latin || '';
@@ -739,7 +666,13 @@ header p{
     if (!plantId){
       // No id provided
       document.getElementById('d-title').textContent = 'Plant not specified';
-      document.title = 'Plant not specified • Howker Ridge Plant Details';
+      document.title = 'Plant not specified • Howker Ridge Plant Catalog';
+      if (detailTitle){
+        detailTitle.textContent = 'Howker Ridge • Plant not specified';
+      }
+      if (detailBreadcrumb){
+        detailBreadcrumb.textContent = 'Plant not specified';
+      }
       return;
     }
     try{
@@ -750,37 +683,24 @@ header p{
         populatePlant(p);
       } else {
         document.getElementById('d-title').textContent = 'Plant not found';
-        document.title = 'Plant not found • Howker Ridge Plant Details';
+        document.title = 'Plant not found • Howker Ridge Plant Catalog';
+        if (detailTitle){
+          detailTitle.textContent = 'Howker Ridge • Plant not found';
+        }
+        if (detailBreadcrumb){
+          detailBreadcrumb.textContent = 'Plant not found';
+        }
       }
     }catch(err){
       console.error(err);
       document.getElementById('d-title').textContent = 'Error loading plant';
-      document.title = 'Error loading plant • Howker Ridge Plant Details';
-    }
-
-    // Settings handlers (simplified)
-    if (themeToggle){
-      themeToggle.addEventListener('change', () => {
-        if (themeToggle.checked) { document.body.classList.remove('light'); }
-        else { document.body.classList.add('light'); }
-      });
-    }
-    if (rotateToggle){
-      rotateToggle.addEventListener('change', () => {
-        if (rotateToggle.checked) {
-          if (!carouselTimer) startCarousel();
-        } else {
-          stopCarousel();
-        }
-      });
-    }
-    if (stickyToggle){
-      stickyToggle.addEventListener('change', () => {
-        const headerEl = document.querySelector('header');
-        if (headerEl){
-          headerEl.classList.toggle('sticky', stickyToggle.checked);
-        }
-      });
+      document.title = 'Error loading plant • Howker Ridge Plant Catalog';
+      if (detailTitle){
+        detailTitle.textContent = 'Howker Ridge • Error loading plant';
+      }
+      if (detailBreadcrumb){
+        detailBreadcrumb.textContent = 'Error loading plant';
+      }
     }
   })();
 
