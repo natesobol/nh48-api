@@ -267,6 +267,42 @@ header p{
   padding:12px 14px;
   background:rgba(18, 18, 26, 0.7);
 }
+.updates-dropdown .update-entry.latest{
+  border-color:rgba(143, 233, 255, 0.7);
+  background:linear-gradient(140deg, rgba(27, 53, 68, 0.9), rgba(18, 18, 26, 0.8));
+  box-shadow:0 0 0 1px rgba(143, 233, 255, 0.3);
+}
+.updates-dropdown .update-marker{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-left:10px;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  padding:2px 8px;
+  border-radius:999px;
+  background:rgba(143, 233, 255, 0.18);
+  color:#bfefff;
+}
+.updates-dropdown .updates-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  margin:2px 2px 0;
+}
+.updates-dropdown .updates-divider::before,
+.updates-dropdown .updates-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:rgba(255, 255, 255, 0.18);
+}
 .updates-dropdown .update-entry h3{
   margin:0 0 6px;
   font-size:14px;
@@ -858,17 +894,18 @@ body.details-open .drawer.open {
       <a class="summary-action" href="https://nh48.info/projects/hrt-info" target="_blank" rel="noopener">Trail Info</a>
     </summary>
     <div class="updates-body">
-      <article class="update-entry">
-        <h3>Jan 23 2026 — Migration to nh48.info &amp; recent improvements</h3>
-        <p>We migrated the Howker Ridge plant catalog to <strong>nh48.info</strong> and centralized edits for faster updates and public access. Recent improvements include expanded species metadata, refined habitat tags, higher-quality photo references, and a cleaner browsing layout. Late summer and autumn 2025 entries are finalized, with spring and summer additions planned as the catalog grows.</p>
+      <article class="update-entry latest">
+        <h3>Jan 23 2026 — Migration to nh48.info &amp; recent improvements <span class="update-marker">Most recent</span></h3>
+        <p>Migrated the Howker Ridge plant catalog to <strong>nh48.info</strong> and centralized photo database for faster loading and public access into another dataset. Recent improvements include expanded species metadata, refined habitat tags, higher-quality photo references, and a cleaner browsing layout.</p>
       </article>
+      <div class="updates-divider" aria-hidden="true">Earlier updates</div>
       <article class="update-entry">
         <h3>Nov 12 2025 — Late-season alpine updates</h3>
-        <p>Added late fall plant observations, cleaned up field notes, and refreshed habitat tags based on recent trail surveys and photo reviews.</p>
+        <p>Added late fall plant observations, cleaned up notes, and refreshed habitat tags based on recent trail surveys and photo reviews.</p>
       </article>
       <article class="update-entry">
         <h3>Sept 1 2025 — Why this catalog exists</h3>
-        <p>After hiking the Howker Ridge Trail on Mount Madison, I became captivated by how life persists above treeline and around shadowy waterfalls like Stairs and Hitchcock Falls. This project documents those alpine and subalpine plants to celebrate their resilience and remind visitors to tread lightly in the fragile White Mountain tundra.</p>
+        <p>After hiking the Howker Ridge Trail on Mount Madison, I became captivated by the unique geology and location of the Howker Ridge Trail. Traversing an incredibly diverse set of ecosystems ascending Mt. Madison, the trail hosts a uniquely diverse set of ecosystems I’d argue, hard to find this close together anywhere in New England, I’m working on photographing, documenting, and in the future recording exact locations of some of these plants with conservation and alpine regulations in mind. Howker Ridge, like many areas in the White Mountains was subject to different levels of logging which adds a layer of complexity.</p>
       </article>
     </div>
   </details>
