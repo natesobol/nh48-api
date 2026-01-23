@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<!-- Favicons - ICO format preferred for Google compatibility -->
+<link rel="icon" href="/favicons/favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/x-icon" href="/favicons/favicon.ico" />
+<link rel="shortcut icon" href="/favicons/favicon.ico" />
+<link rel="icon" type="image/x-icon" sizes="16x16" href="/favicons/favicon-16x16.ico" />
+<link rel="icon" type="image/x-icon" sizes="32x32" href="/favicons/favicon-32x32.ico" />
+<link rel="icon" type="image/x-icon" sizes="48x48" href="/favicons/favicon-48x48.ico" />
+<link rel="icon" type="image/x-icon" sizes="96x96" href="/favicons/favicon-96x96.ico" />
+<!-- PNG fallbacks for browsers that prefer PNG -->
+<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+<link rel="manifest" href="/manifest.json" />
+<title>Howker Ridge Trail – Map & Data | NH48.info</title>
+<meta name="description" content="Interactive map, downloads, trail metadata, and current conditions for the Howker Ridge Trail on Mount Madison." />
+<link rel="canonical" href="https://nh48.info/howker-ridge" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Howker Ridge Trail – Map & Data" />
+<meta property="og:description" content="Interactive map, downloads, trail metadata, and live weather details for the Howker Ridge Trail." />
+<meta property="og:url" content="https://nh48.info/howker-ridge" />
+<meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg" />
+<meta property="og:image:alt" content="Mount Madison ridge view with alpine terrain and distant peaks" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Howker Ridge Trail – Map & Data" />
+<meta name="twitter:description" content="Interactive trail map, downloads, trail metadata, and weather updates for the Howker Ridge Trail." />
+<meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg" />
+<meta name="twitter:image:alt" content="Mount Madison ridge view with alpine terrain and distant peaks" />
+<script src="/js/unified-footer.js" defer></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-R2LWWz+nFQvUd/2jPnThbDYFNQbOysH8MNLoEpQa6P/o0y0yJgZLK4R16FHoL5gs" crossorigin="" />
+<style>
+:root{
+  --bg:#0a0a0a;
+  --panel:#12121a;
+  --card:#171a22;
+  --ink:#ffffff;
+  --muted:#a5b4c3;
+  --stroke:#ffffff;
+  --accent:#22c55e;
+  --accent-2:#38bdf8;
+  --gap:16px;
+}
+body.light{
+  --bg:#f8fafc;
+  --panel:#ffffff;
+  --card:#f7f9fc;
+  --ink:#1f2937;
+  --muted:#6b7280;
+  --stroke:#00000022;
+  --accent:#22c55e;
+  --accent-2:#0ea5e9;
+}
+*{ box-sizing:border-box; }
+html{ min-width:320px; scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.wrap{
+  max-width:1200px;
+  margin:0 auto;
+  padding:12px;
+}
+.panel{
+  background:var(--panel);
+  border:2px solid #ffffff;
+  border-radius:10px;
+  padding:20px;
+  box-shadow:0 10px 30px #0004;
+}
+header h1{
+  margin:0 0 8px;
+  font-size:clamp(24px,3vw,34px);
+  letter-spacing:.2px;
+}
+header p{
+  margin:0;
+  color:var(--muted);
+}
+.page-breadcrumbs{
+  margin:10px 0 18px;
+  font-size:13px;
+  color:var(--muted);
+}
+.page-breadcrumbs ol{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.page-breadcrumbs li::after{
+  content:"/";
+  margin-left:6px;
+  color:var(--muted);
+}
+.page-breadcrumbs li:last-child::after{
+  content:"";
+}
+.page-breadcrumbs a{
+  color:inherit;
+  text-decoration:none;
+}
+.page-breadcrumbs a:hover{
+  color:var(--accent);
+}
+.section{
+  margin-top:28px;
+}
+.section h2{
+  margin:0 0 10px;
+  font-size:clamp(18px,2vw,24px);
+}
+.section h3{
+  margin:16px 0 8px;
+  font-size:clamp(16px,1.6vw,20px);
+}
+.section p{
+  margin:0 0 12px;
+  color:var(--muted);
+  line-height:1.6;
+}
+.section ul{
+  margin:0;
+  padding-left:20px;
+  color:var(--muted);
+  line-height:1.6;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:var(--gap);
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  padding:16px;
+}
+.card p,
+.card li,
+.card td{
+  color:var(--muted);
+}
+#map{
+  height:520px;
+  width:100%;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid var(--stroke);
+}
+.table-wrap{
+  overflow-x:auto;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+th, td{
+  padding:10px 12px;
+  border-bottom:1px solid var(--stroke);
+  text-align:left;
+}
+th{
+  color:var(--ink);
+  font-weight:600;
+}
+.small{
+  font-size:13px;
+  color:var(--muted);
+}
+.badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.badge{
+  padding:6px 12px;
+  border:1px solid var(--stroke);
+  border-radius:999px;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  background:var(--card);
+}
+.link-list a{
+  color:var(--ink);
+  text-decoration:none;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--stroke);
+  background:transparent;
+}
+.link-list a:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+.forecast-box{
+  display:grid;
+  gap:12px;
+}
+.alerts{
+  border-left:3px solid var(--accent-2);
+  padding-left:12px;
+}
+@media (max-width: 700px){
+  .panel{ padding:16px; }
+  #map{ height:360px; }
+}
+</style>
+</head>
+<body data-route="howker-ridge" data-page="howker-ridge">
+  <div id="nav-placeholder"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+            if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+              window.NH48_I18N.refreshLangPicker();
+            }
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+    });
+  </script>
+
+  <div class="wrap panel">
+    <header>
+      <h1>Howker Ridge Trail: Map &amp; Data Hub</h1>
+      <p>Interactive route map, downloads, and trip-planning details for the Howker Ridge Trail on Mount Madison.</p>
+    </header>
+
+    <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/plant-catalog">Projects</a></li>
+        <li>Howker Ridge Trail</li>
+      </ol>
+    </nav>
+
+    <section class="section card" id="overview">
+      <h2>Overview</h2>
+      <p>The Howker Ridge Trail is a steep, classic ascent of Mount Madison. Use this page for interactive mapping, GPS downloads, trail metadata, and current weather/alerts to support responsible planning.</p>
+      <div class="badges">
+        <span class="badge">~4.5 mi one-way</span>
+        <span class="badge">~3,900 ft gain</span>
+        <span class="badge">Strenuous</span>
+        <span class="badge">Northern Presidential Range</span>
+      </div>
+    </section>
+
+    <section class="section card" id="map-section">
+      <h2>Interactive Trail Map</h2>
+      <div id="map" aria-label="Howker Ridge Trail map"></div>
+      <p class="small">Trail line and waypoint markers are loaded from the NH48 GeoJSON dataset. Tap markers for details and use the zoom controls to explore ridge features.</p>
+    </section>
+
+    <section class="section grid" id="map-links">
+      <div class="card">
+        <h2>External Trail Maps</h2>
+        <div class="link-list">
+          <a href="https://www.onxmaps.com/offroad/map?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">OnX Maps <span aria-hidden="true">↗</span></a>
+          <a href="https://www.alltrails.com/explore?lat=44.334&lng=-71.266&zoom=12" target="_blank" rel="noopener">AllTrails <span aria-hidden="true">↗</span></a>
+          <a href="https://www.gaiagps.com/map/?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">Gaia GPS <span aria-hidden="true">↗</span></a>
+          <a href="https://caltopo.com/map.html#ll=44.334,-71.266&z=12" target="_blank" rel="noopener">CalTopo <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="card">
+        <h2>GPS &amp; Navigation Downloads</h2>
+        <ul>
+          <li><a href="/downloads/howker-ridge-trail.gpx" download>Download GPX (trail + POIs)</a></li>
+          <li><a href="/downloads/howker-ridge-trail.kml" download>Download KML</a></li>
+        </ul>
+        <p class="small">Files are formatted for GPS apps and GIS tools. Always carry a paper map and backup navigation.</p>
+      </div>
+    </section>
+
+    <section class="section card" id="poi">
+      <h2>Points of Interest</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Elevation (ft)</th>
+              <th>Latitude</th>
+              <th>Longitude</th>
+            </tr>
+          </thead>
+          <tbody id="poiTableBody"></tbody>
+        </table>
+      </div>
+      <p class="small">Coordinates are approximate. Confirm with official maps before travel.</p>
+    </section>
+
+    <section class="section grid" id="metadata">
+      <div class="card">
+        <h2>Trail Metadata</h2>
+        <table>
+          <tr><th>Length</th><td>≈ 4.5 mi (7.2 km) one-way</td></tr>
+          <tr><th>Elevation Gain</th><td>≈ 3,900 ft (1,190 m)</td></tr>
+          <tr><th>Typical Time</th><td>5–7 hours round-trip</td></tr>
+          <tr><th>Difficulty</th><td>Strenuous / hard</td></tr>
+          <tr><th>Terrain</th><td>Steep ridgeline, rocky scrambles, alpine exposure above treeline</td></tr>
+          <tr><th>Water</th><td>Bumpus Brook early on; spring near Pine Link junction (seasonal)</td></tr>
+          <tr><th>Trailhead</th><td>Randolph East (Dolly Copp / Pinkham B), winter access via US-2</td></tr>
+          <tr><th>Land Manager</th><td>White Mountain National Forest / Randolph Mountain Club</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h2>Mount Madison Snapshot</h2>
+        <p><strong>Elevation:</strong> 5,367 ft (1,636 m)<br>
+        <strong>Prominence:</strong> 366 ft<br>
+        <strong>Features:</strong> Alpine ridgeline views, cairn-marked summit cone, quick access to Madison Spring Hut.</p>
+        <div class="forecast-box">
+          <div id="forecast"><em>Loading forecast…</em></div>
+          <div id="alerts" class="alerts"><em>Loading alerts…</em></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section grid" id="conditions">
+      <div class="card">
+        <h2>Approximate Trail Brushing Status</h2>
+        <p>Brushing coverage updates are being refreshed for the new nh48.info page. Check the Randolph Mountain Club and trail adopter updates for the latest maintenance status.</p>
+        <ul>
+          <li><a href="https://www.randolphmountainclub.org/trails" target="_blank" rel="noopener">Randolph Mountain Club trail updates</a></li>
+          <li><a href="https://www.outdoors.org/trip-planning/trail-conditions/" target="_blank" rel="noopener">AMC trail conditions</a></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Safety &amp; Responsibility</h2>
+        <ul>
+          <li>Plan for rapid weather changes and alpine exposure above treeline.</li>
+          <li>Carry layers, food, water, and the 10 essentials.</li>
+          <li>Check recent trail conditions and be prepared to turn around.</li>
+          <li>Practice Leave No Trace and respect trail closures or reroutes.</li>
+        </ul>
+        <h3>Helpful Links</h3>
+        <ul>
+          <li><a href="https://www.mountwashington.org/experience-the-weather/higher-summit-forecast.aspx" target="_blank" rel="noopener">Mount Washington Observatory Forecast</a></li>
+          <li><a href="https://mountwashingtonavalanchecenter.org/" target="_blank" rel="noopener">Mount Washington Avalanche Center</a></li>
+          <li><a href="https://mesowest.utah.edu" target="_blank" rel="noopener">MesoWest Observations</a></li>
+          <li><a href="https://waterdata.usgs.gov" target="_blank" rel="noopener">USGS River Gauges</a></li>
+          <li><a href="https://www.randolphmountainclub.org" target="_blank" rel="noopener">Randolph Mountain Club</a></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-X9ym16bbfW0g9aElxolBsnZwyYBZv5gVAzpe5RQh2ukbVbX90P88XKdC6kZ7wYFY" crossorigin=""></script>
+  <script>
+    const map = L.map('map').setView([44.336, -71.266], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const poiTableBody = document.getElementById('poiTableBody');
+
+    function formatDMS(value, isLat) {
+      const absVal = Math.abs(value);
+      const deg = Math.floor(absVal);
+      const minFloat = (absVal - deg) * 60;
+      const min = Math.floor(minFloat);
+      const sec = Math.round((minFloat - min) * 60);
+      const hemi = isLat ? (value >= 0 ? 'N' : 'S') : (value >= 0 ? 'E' : 'W');
+      return `${deg}°${min}'${sec}" ${hemi}`;
+    }
+
+    fetch('/data/howker-ridge.geojson')
+      .then(resp => resp.json())
+      .then(data => {
+        const trailLayer = L.geoJSON(data, {
+          style: feature => {
+            if (feature.geometry.type === 'LineString') {
+              return { color: '#38bdf8', weight: 4, opacity: 0.9 };
+            }
+            return {};
+          },
+          pointToLayer: (feature, latlng) => {
+            return L.circleMarker(latlng, {
+              radius: 6,
+              color: '#22c55e',
+              weight: 2,
+              fillColor: '#22c55e',
+              fillOpacity: 0.8
+            });
+          },
+          onEachFeature: (feature, layer) => {
+            if (feature.geometry.type === 'Point') {
+              const props = feature.properties || {};
+              const details = [
+                `<strong>${props.name || 'Waypoint'}</strong>`,
+                props.category ? `<span>${props.category}</span>` : '',
+                props.elevation_ft ? `<span>${props.elevation_ft} ft</span>` : '',
+                props.description ? `<em>${props.description}</em>` : ''
+              ].filter(Boolean).join('<br />');
+              layer.bindPopup(details);
+            }
+          }
+        }).addTo(map);
+
+        map.fitBounds(trailLayer.getBounds(), { padding: [20, 20] });
+
+        const pointFeatures = data.features.filter(f => f.geometry.type === 'Point');
+        pointFeatures.forEach(feature => {
+          const props = feature.properties || {};
+          const [lon, lat] = feature.geometry.coordinates;
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${props.name || ''}</td>
+            <td>${props.elevation_ft || ''}</td>
+            <td>${formatDMS(lat, true)}</td>
+            <td>${formatDMS(lon, false)}</td>
+          `;
+          poiTableBody.appendChild(row);
+        });
+      })
+      .catch(err => {
+        console.error('Failed to load trail data', err);
+        const row = document.createElement('tr');
+        row.innerHTML = '<td colspan="4">Trail data unavailable.</td>';
+        poiTableBody.appendChild(row);
+      });
+
+    const forecastContainer = document.getElementById('forecast');
+    const alertsContainer = document.getElementById('alerts');
+
+    fetch('https://api.weather.gov/points/44.328,-71.279/forecast')
+      .then(resp => resp.ok ? resp.json() : Promise.reject(resp))
+      .then(data => {
+        const period = data.properties.periods[0];
+        forecastContainer.innerHTML = `<strong>${period.name}:</strong> ${period.detailedForecast}`;
+      })
+      .catch(() => {
+        forecastContainer.textContent = 'Forecast not available at the moment.';
+      });
+
+    fetch('https://api.weather.gov/alerts/active?point=44.328,-71.279')
+      .then(resp => resp.ok ? resp.json() : Promise.reject(resp))
+      .then(data => {
+        const alerts = data.features || [];
+        if (!alerts.length) {
+          alertsContainer.textContent = 'No active NWS alerts for this area.';
+          return;
+        }
+        const list = document.createElement('ul');
+        alerts.forEach(alert => {
+          const item = document.createElement('li');
+          const props = alert.properties || {};
+          item.textContent = props.headline || props.event || 'Active alert';
+          list.appendChild(item);
+        });
+        alertsContainer.innerHTML = '';
+        alertsContainer.appendChild(list);
+      })
+      .catch(() => {
+        alertsContainer.textContent = 'Alerts unavailable at the moment.';
+      });
+  </script>
+</body>
+</html>

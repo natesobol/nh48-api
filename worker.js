@@ -30,7 +30,7 @@ export default {
     // we serve static files directly from GitHub raw URLs
     // ============================================================
     const staticExtensions = ['.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.woff', '.woff2', '.ttf', '.eot', '.geojson', '.txt', '.xml', '.webmanifest'];
-    const staticPrefixes = ['/css/', '/js/', '/data/', '/favicons/', '/photos/', '/i18n/', '/UI-Elements/', '/scripts/', '/license/', '/old/', '/templates/'];
+    const staticPrefixes = ['/css/', '/js/', '/data/', '/downloads/', '/images/', '/favicons/', '/photos/', '/i18n/', '/UI-Elements/', '/scripts/', '/license/', '/old/', '/templates/'];
     const staticFiles = ['/manifest.json', '/nh48API_logo.png', '/robots.txt', '/sitemap.xml', '/nh48-preview.png', '/BingSiteAuth.xml', '/image-sitemap.xml', '/page-sitemap.xml'];
 
     const legacyRedirectMap = {
@@ -40,6 +40,8 @@ export default {
       '/plant_catalog': '/plant-catalog',
       '/hrt_info.html': '/projects/hrt-info',
       '/pages/hrt_info.html': '/projects/hrt-info',
+      '/howker_ridge.html': '/howker-ridge',
+      '/pages/howker_ridge.html': '/howker-ridge',
       '/nh-4000-footers-guide': '/nh-4000-footers-info',
       '/nh-4000-footers-guide.html': '/nh-4000-footers-info',
       '/nh-4000-footers-info.html': '/nh-4000-footers-info'
@@ -69,6 +71,7 @@ export default {
                        pathname.startsWith('/dataset/') || pathname.startsWith('/fr/dataset/') ||
                pathname === '/plant-catalog' || pathname === '/plant-catalog/' ||
                pathname === '/projects/hrt-info' || pathname === '/projects/hrt-info/' ||
+               pathname === '/howker-ridge' || pathname === '/howker-ridge/' ||
                pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
                pathname === '/nh-4000-footers-info.html' || pathname === '/nh-4000-footers-info' ||
                        pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant)/) !== null;
@@ -1312,6 +1315,28 @@ export default {
           description: isFrench
             ? 'Informations détaillées sur le sentier Howker Ridge : statistiques, terrain, accès et sécurité.'
             : 'Detailed information about the Howker Ridge Trail: stats, terrain, access, and safety.',
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: isFrench ? 'Vue du Mount Madison' : 'Mount Madison ridge view',
+          ogType: 'website'
+        },
+        jsonLd: []
+      });
+    }
+
+    if (pathNoLocale === '/howker-ridge' || pathNoLocale === '/howker-ridge/') {
+      const canonical = `${SITE}${pathname}`;
+      return serveTemplatePage({
+        templatePath: 'pages/howker_ridge.html',
+        pathname,
+        routeId: 'howker-ridge',
+        meta: {
+          title: isFrench ? 'Howker Ridge : carte et données' : 'Howker Ridge Trail – Map & Data',
+          description: isFrench
+            ? 'Carte interactive, téléchargements GPS et météo actuelle pour le sentier Howker Ridge.'
+            : 'Interactive map, GPS downloads, and current weather for the Howker Ridge Trail.',
           canonical,
           alternateEn: `${SITE}${enPath}`,
           alternateFr: `${SITE}${frPath}`,
