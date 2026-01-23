@@ -201,6 +201,85 @@ header p{
   color:var(--accent);
 }
 
+/****************************
+ * LATEST UPDATES DROPDOWN
+ ****************************/
+.updates-dropdown{
+  margin:16px 0 20px;
+  border:2px solid var(--stroke);
+  border-radius:12px;
+  overflow:hidden;
+  background:linear-gradient(180deg, #0f121a 0%, #0b0d14 100%);
+}
+.updates-dropdown summary{
+  list-style:none;
+  cursor:pointer;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  font-weight:700;
+  color:var(--accent);
+}
+.updates-dropdown summary::-webkit-details-marker{
+  display:none;
+}
+.updates-dropdown summary::before{
+  content:"▸";
+  display:inline-block;
+  transform:rotate(0deg);
+  transition:transform 0.2s ease;
+  color:var(--accent);
+  margin-right:8px;
+}
+.updates-dropdown[open] summary::before{
+  transform:rotate(90deg);
+}
+.updates-dropdown summary .summary-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.updates-dropdown .summary-action{
+  font-size:12px;
+  padding:6px 14px;
+  border-radius:999px;
+  border:1px solid transparent;
+  background:var(--accent);
+  color:#0a0a0a;
+  text-decoration:none;
+  font-weight:700;
+  white-space:nowrap;
+}
+.updates-dropdown .summary-action:hover{
+  filter:brightness(0.95);
+}
+.updates-dropdown .updates-body{
+  border-top:1px solid #ffffff33;
+  padding:8px 16px 16px;
+  display:grid;
+  gap:12px;
+}
+.updates-dropdown .update-entry{
+  border:1px solid #ffffff33;
+  border-radius:10px;
+  padding:12px 14px;
+  background:rgba(18, 18, 26, 0.7);
+}
+.updates-dropdown .update-entry h3{
+  margin:0 0 6px;
+  font-size:14px;
+}
+.updates-dropdown .update-entry p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.5;
+}
+.updates-dropdown .update-entry strong{
+  color:var(--ink);
+}
+
 .catalog-meta{
   margin-top:24px;
   border-top:1px dashed var(--stroke);
@@ -736,6 +815,22 @@ body.details-open .drawer.open {
       <li>Howker Ridge Plant Catalog</li>
     </ol>
   </nav>
+  <details class="updates-dropdown" open>
+    <summary>
+      <span class="summary-title">Latest Plant Log Updates</span>
+      <a class="summary-action" href="https://github.com/nh48/nh48-api" target="_blank" rel="noopener">View on GitHub</a>
+    </summary>
+    <div class="updates-body">
+      <article class="update-entry">
+        <h3>Jan 23 2026 — Migration to NH48pics &amp; recent improvements</h3>
+        <p>We migrated the Howker Ridge plant catalog into <strong>NH48pics</strong> and centralized edits in GitHub for faster updates and public access. Recent improvements include expanded species metadata, refined habitat tags, higher-quality photo references, and a cleaner browsing layout. Late summer and autumn 2025 entries are finalized, with spring and summer additions planned as the catalog grows.</p>
+      </article>
+      <article class="update-entry">
+        <h3>Sept 1 2025 — Why this catalog exists</h3>
+        <p>After hiking the Howker Ridge Trail on Mount Madison, I became captivated by how life persists above treeline and around shadowy waterfalls like Stairs and Hitchcock Falls. This project documents those alpine and subalpine plants to celebrate their resilience and remind visitors to tread lightly in the fragile White Mountain tundra.</p>
+      </article>
+    </div>
+  </details>
   <!-- Settings panel -->
 <aside class="settings" id="settings-panel">
   <div class="settings-logo">Settings</div>
