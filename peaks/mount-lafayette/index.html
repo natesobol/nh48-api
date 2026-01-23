@@ -1025,6 +1025,11 @@
     z-index: 10;
   }
 
+  /* Widen Projects dropdown to ~50% more than the default */
+  .projects-submenu {
+    min-width: 300px;
+  }
+
   .site-nav-dropdown:hover .site-nav-submenu,
   .site-nav-dropdown:focus-within .site-nav-submenu {
     display: flex;
@@ -1316,11 +1321,11 @@
     </div>
     <div class="site-nav-dropdown">
       <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Projects</a>
-      <div class="site-nav-submenu" aria-label="Projects short links">
-        <a href="/plant-catalog">Howker Plant Catalog</a>
-        <a href="/howker-ridge" data-route="howker-ridge" data-routes="howker-ridge">Howker Ridge Trail Map &amp; Data</a>
-        <a href="/projects/hrt-info" data-route="hrt-info" data-routes="hrt-info">Howker Ridge Trail Info</a>
-        <a href="/dataset/howker-plants">Howker Plant Dataset</a>
+      <div class="site-nav-submenu projects-submenu" aria-label="Projects short links">
+        <a href="/plant-catalog">Plant Catalog</a>
+        <a href="/howker-ridge" data-route="howker-ridge" data-routes="howker-ridge">Trail Map &amp; Data</a>
+        <a href="/projects/hrt-info" data-route="hrt-info" data-routes="hrt-info">Trail Info</a>
+        <a href="/dataset/howker-plants">Plant Data &amp; API</a>
       </div>
     </div>
     <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
