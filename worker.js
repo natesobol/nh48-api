@@ -23,6 +23,114 @@ export default {
     // Constants - defined early for static file serving
     const SITE = url.origin;
     const RAW_BASE = 'https://raw.githubusercontent.com/natesobol/nh48-api/main';
+    const HOWKER_ORIGIN = 'https://nh48.info';
+
+    if (pathname.startsWith('/api/howker/plant-reports')) {
+      const corsHeaders = {
+        'Access-Control-Allow-Origin': HOWKER_ORIGIN,
+        'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      };
+
+      const jsonResponse = (status, payload) => {
+        return new Response(JSON.stringify(payload), {
+          status,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          }
+        });
+      };
+
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: corsHeaders });
+      }
+
+      if (request.method === 'GET') {
+        const bboxParam = url.searchParams.get('bbox');
+        if (!bboxParam) {
+          return jsonResponse(400, { error: 'Missing bbox parameter.' });
+        }
+
+        const bboxParts = bboxParam.split(',').map((value) => Number.parseFloat(value));
+        if (bboxParts.length !== 4 || bboxParts.some((value) => Number.isNaN(value))) {
+          return jsonResponse(400, { error: 'Invalid bbox parameter.' });
+        }
+
+        const [minLng, minLat, maxLng, maxLat] = bboxParts;
+        const plantSlug = url.searchParams.get('plantSlug');
+        const params = [minLng, maxLng, minLat, maxLat];
+        let sql = `SELECT\n  id,\n  plant_slug AS plantSlug,\n  lat,\n  lng,\n  accuracy_m AS accuracyM,\n  elevation_m AS elevationM,\n  observed_at AS observedAt,\n  notes,\n  created_at AS createdAt\nFROM plant_reports\nWHERE status = 'approved'\n  AND lng BETWEEN ?1 AND ?2\n  AND lat BETWEEN ?3 AND ?4`;
+
+        if (plantSlug) {
+          sql += '\n  AND plant_slug = ?5';
+          params.push(plantSlug);
+        }
+
+        sql += '\nLIMIT 2000;';
+        const results = await env.HOWKER_DB.prepare(sql).bind(...params).all();
+        return jsonResponse(200, { reports: results?.results ?? [] });
+      }
+
+      if (request.method === 'POST') {
+        let payload;
+        try {
+          payload = await request.json();
+        } catch (err) {
+          return jsonResponse(400, { error: 'Invalid JSON body.' });
+        }
+
+        const plantSlug = typeof payload?.plantSlug === 'string' ? payload.plantSlug.trim() : '';
+        const lat = Number.parseFloat(payload?.lat);
+        const lng = Number.parseFloat(payload?.lng);
+        const accuracyMValue = payload?.accuracyM ?? null;
+        const elevationMValue = payload?.elevationM ?? null;
+        const observedAt = payload?.observedAt ?? null;
+        const notes = typeof payload?.notes === 'string' ? payload.notes : null;
+
+        if (!plantSlug) {
+          return jsonResponse(400, { error: 'plantSlug is required.' });
+        }
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+          return jsonResponse(400, { error: 'lat/lng must be valid coordinates.' });
+        }
+
+        if (notes && notes.length > 2000) {
+          return jsonResponse(400, { error: 'notes must be 2000 characters or fewer.' });
+        }
+
+        if (accuracyMValue !== null && accuracyMValue !== undefined && !Number.isFinite(Number.parseFloat(accuracyMValue))) {
+          return jsonResponse(400, { error: 'accuracyM must be a number.' });
+        }
+
+        if (elevationMValue !== null && elevationMValue !== undefined && !Number.isFinite(Number.parseFloat(elevationMValue))) {
+          return jsonResponse(400, { error: 'elevationM must be a number.' });
+        }
+
+        const id = crypto.randomUUID();
+        const createdBy = payload?.createdBy ?? null;
+        const accuracyM = accuracyMValue === null || accuracyMValue === undefined ? null : Number.parseFloat(accuracyMValue);
+        const elevationM = elevationMValue === null || elevationMValue === undefined ? null : Number.parseFloat(elevationMValue);
+        await env.HOWKER_DB.prepare(
+          `INSERT INTO plant_reports\n(id, plant_slug, lat, lng, accuracy_m, elevation_m, observed_at, notes, status, source, created_by)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'web', ?);`
+        ).bind(
+          id,
+          plantSlug,
+          lat,
+          lng,
+          accuracyM,
+          elevationM,
+          observedAt,
+          notes,
+          createdBy
+        ).run();
+
+        return jsonResponse(201, { ok: true, id });
+      }
+
+      return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+    }
 
     // ============================================================
     // STATIC FILE SERVING - Proxy static assets from GitHub
