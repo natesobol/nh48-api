@@ -732,9 +732,10 @@ header p{
 
   /* ---------- Init for details page ---------- */
   (async function initDetails(){
-    // parse id from query string
+    // parse id from query string or path (/plant/{id})
     const params = new URLSearchParams(window.location.search);
-    const plantId = params.get('id');
+    const pathMatch = window.location.pathname.match(/\/plant\/([^/]+)\/?$/);
+    const plantId = params.get('id') || (pathMatch ? decodeURIComponent(pathMatch[1]) : null);
     if (!plantId){
       // No id provided
       document.getElementById('d-title').textContent = 'Plant not specified';

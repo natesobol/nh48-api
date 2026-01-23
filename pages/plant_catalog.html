@@ -971,7 +971,7 @@ body.details-open .drawer.open {
       // Instead of opening a drawer, redirect to details page
       el.addEventListener("click", () => {
         const id = p.id;
-        window.location.href = `/pages/plant.html?id=${encodeURIComponent(id)}`;
+        window.location.href = `/plant/${encodeURIComponent(id)}`;
       });
 
 
