@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<!-- Favicons - ICO format preferred for Google compatibility -->
+<link rel="icon" href="/favicons/favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/x-icon" href="/favicons/favicon.ico" />
+<link rel="shortcut icon" href="/favicons/favicon.ico" />
+<link rel="icon" type="image/x-icon" sizes="16x16" href="/favicons/favicon-16x16.ico" />
+<link rel="icon" type="image/x-icon" sizes="32x32" href="/favicons/favicon-32x32.ico" />
+<link rel="icon" type="image/x-icon" sizes="48x48" href="/favicons/favicon-48x48.ico" />
+<link rel="icon" type="image/x-icon" sizes="96x96" href="/favicons/favicon-96x96.ico" />
+<!-- PNG fallbacks for browsers that prefer PNG -->
+<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+<link rel="manifest" href="/manifest.json" />
+<title>Howker Ridge Plant Sightings – NH48.info</title>
+<meta name="description" content="Interactive map to explore and log alpine plant sightings along the Howker Ridge Trail." />
+<link rel="canonical" href="https://nh48.info/projects/plant-map" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Howker Ridge Plant Sightings – NH48.info" />
+<meta property="og:description" content="Interactive map to explore and log alpine plant sightings along the Howker Ridge Trail." />
+<meta property="og:url" content="https://nh48.info/projects/plant-map" />
+<meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg" />
+<meta property="og:image:alt" content="Mount Madison ridge view with alpine terrain and distant peaks" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Howker Ridge Plant Sightings – NH48.info" />
+<meta name="twitter:description" content="Interactive map to explore and log alpine plant sightings along the Howker Ridge Trail." />
+<meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg" />
+<meta name="twitter:image:alt" content="Mount Madison ridge view with alpine terrain and distant peaks" />
+<script src="/js/unified-footer.js" defer></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-R2LWWz+nFQvUd/2jPnThbDYFNQbOysH8MNLoEpQa6P/o0y0yJgZLK4R16FHoL5gs" crossorigin="" />
+<style>
+:root{
+  --bg:#0a0a0a;
+  --panel:#12121a;
+  --card:#171a22;
+  --ink:#ffffff;
+  --muted:#a5b4c3;
+  --stroke:#ffffff;
+  --accent:#22c55e;
+  --accent-2:#38bdf8;
+  --gap:16px;
+}
+body.light{
+  --bg:#f8fafc;
+  --panel:#ffffff;
+  --card:#f7f9fc;
+  --ink:#1f2937;
+  --muted:#6b7280;
+  --stroke:#00000022;
+  --accent:#22c55e;
+  --accent-2:#0ea5e9;
+}
+*{ box-sizing:border-box; }
+html{ min-width:320px; scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.wrap{
+  max-width:1200px;
+  margin:0 auto;
+  padding:12px;
+}
+.panel{
+  background:var(--panel);
+  border:2px solid #ffffff;
+  border-radius:10px;
+  padding:20px;
+  box-shadow:0 10px 30px #0004;
+}
+header h1{
+  margin:0 0 8px;
+  font-size:clamp(24px,3vw,34px);
+  letter-spacing:.2px;
+}
+header p{
+  margin:0;
+  color:var(--muted);
+}
+.page-breadcrumbs{
+  margin:10px 0 18px;
+  font-size:13px;
+  color:var(--muted);
+}
+.page-breadcrumbs ol{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.page-breadcrumbs li::after{
+  content:"/";
+  margin-left:6px;
+  color:var(--muted);
+}
+.page-breadcrumbs li:last-child::after{
+  content:"";
+}
+.page-breadcrumbs a{
+  color:inherit;
+  text-decoration:none;
+}
+.page-breadcrumbs a:hover{
+  color:var(--accent);
+}
+.section{
+  margin-top:28px;
+}
+.section h2{
+  margin:0 0 10px;
+  font-size:clamp(18px,2vw,24px);
+}
+.section p{
+  margin:0 0 12px;
+  color:var(--muted);
+  line-height:1.6;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  padding:16px;
+}
+.map-wrap{
+  position:relative;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid var(--stroke);
+}
+#map{
+  height:80vh;
+  width:100%;
+}
+#reportForm{
+  position:absolute;
+  top:16px;
+  right:16px;
+  z-index:1000;
+  background:var(--panel);
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  padding:16px;
+  width:min(320px, 90vw);
+  box-shadow:0 10px 25px #0005;
+  display:none;
+}
+#reportForm label{
+  display:block;
+  margin-bottom:10px;
+  font-size:14px;
+  color:var(--muted);
+}
+#reportForm select,
+#reportForm input,
+#reportForm textarea{
+  width:100%;
+  margin-top:6px;
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid var(--stroke);
+  background:var(--card);
+  color:var(--ink);
+  font-size:14px;
+}
+#reportForm textarea{
+  min-height:80px;
+  resize:vertical;
+}
+.form-actions{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+.form-actions button{
+  flex:1;
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid var(--stroke);
+  background:var(--accent);
+  color:#0a0a0a;
+  font-weight:600;
+  cursor:pointer;
+}
+.form-actions button[type="button"]{
+  background:transparent;
+  color:var(--ink);
+}
+.small{
+  font-size:13px;
+  color:var(--muted);
+}
+.status-message{
+  margin-top:12px;
+}
+@media (max-width: 700px){
+  .panel{ padding:16px; }
+  #map{ height:60vh; }
+  #reportForm{
+    position:static;
+    width:100%;
+    margin-top:12px;
+  }
+}
+</style>
+</head>
+<body data-route="plant-map" data-page="plant-map">
+  <div id="nav-placeholder"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+            if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+              window.NH48_I18N.refreshLangPicker();
+            }
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+    });
+  </script>
+
+  <div class="wrap panel">
+    <header>
+      <h1>Howker Ridge Plant Sightings Map</h1>
+      <p>Explore existing plant observations and add your own sightings along the Howker Ridge Trail.</p>
+    </header>
+
+    <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/plant-catalog">Howker Ridge Info</a></li>
+        <li>Plant Sightings Map</li>
+      </ol>
+    </nav>
+
+    <section class="section card">
+      <h2>Plant Sightings</h2>
+      <p>Click the map to log a sighting near the trail. Reports are reviewed before appearing on the map.</p>
+      <div class="map-wrap">
+        <div id="map" aria-label="Plant sightings map"></div>
+        <form id="reportForm">
+          <label>Plant species:
+            <select id="speciesSelect" required>
+              <option value="">Select a species</option>
+            </select>
+          </label>
+          <label>Latitude:
+            <input type="number" id="latInput" step="0.000001" required />
+          </label>
+          <label>Longitude:
+            <input type="number" id="lngInput" step="0.000001" required />
+          </label>
+          <label>Elevation (ft, optional):
+            <input type="number" id="elevInput" step="1" />
+          </label>
+          <label>Notes (optional):
+            <textarea id="notesInput" maxlength="2000"></textarea>
+          </label>
+          <div class="form-actions">
+            <button type="submit">Submit Sighting</button>
+            <button type="button" id="cancelBtn">Cancel</button>
+          </div>
+          <p id="formMessage" class="small"></p>
+        </form>
+      </div>
+      <p id="statusMessage" class="small status-message" role="status"></p>
+    </section>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-X9ym16bbfW0g9aElxolBsnZwyYBZv5gVAzpe5RQh2ukbVbX90P88XKdC6kZ7wYFY" crossorigin=""></script>
+  <script>
+    const map = L.map('map').setView([44.336, -71.266], 13);
+    const reportLayer = L.layerGroup().addTo(map);
+    const speciesSelect = document.getElementById('speciesSelect');
+    const reportForm = document.getElementById('reportForm');
+    const latInput = document.getElementById('latInput');
+    const lngInput = document.getElementById('lngInput');
+    const elevInput = document.getElementById('elevInput');
+    const notesInput = document.getElementById('notesInput');
+    const formMessage = document.getElementById('formMessage');
+    const statusMessage = document.getElementById('statusMessage');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const speciesBySlug = new Map();
+    let trailSegments = [];
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    function distanceToSegment(point, start, end) {
+      const x = point.lng;
+      const y = point.lat;
+      const x1 = start.lng;
+      const y1 = start.lat;
+      const x2 = end.lng;
+      const y2 = end.lat;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      if (dx === 0 && dy === 0) {
+        return Math.hypot(x - x1, y - y1);
+      }
+      const t = ((x - x1) * dx + (y - y1) * dy) / (dx * dx + dy * dy);
+      const clamped = Math.max(0, Math.min(1, t));
+      const projX = x1 + clamped * dx;
+      const projY = y1 + clamped * dy;
+      return Math.hypot(x - projX, y - projY);
+    }
+
+    function minDistanceToTrail(point) {
+      let minDistance = Infinity;
+      trailSegments.forEach(segment => {
+        for (let i = 0; i < segment.length - 1; i += 1) {
+          const dist = distanceToSegment(point, segment[i], segment[i + 1]);
+          if (dist < minDistance) {
+            minDistance = dist;
+          }
+        }
+      });
+      return minDistance;
+    }
+
+    function setFormMessage(message, isError = false) {
+      formMessage.textContent = message;
+      formMessage.style.color = isError ? '#f87171' : '';
+    }
+
+    function resetForm() {
+      reportForm.reset();
+      setFormMessage('');
+    }
+
+    function closeForm() {
+      reportForm.style.display = 'none';
+      resetForm();
+    }
+
+    function openForm(latlng) {
+      latInput.value = latlng.lat.toFixed(6);
+      lngInput.value = latlng.lng.toFixed(6);
+      reportForm.style.display = 'block';
+      statusMessage.textContent = '';
+      setFormMessage('');
+    }
+
+    cancelBtn.addEventListener('click', () => {
+      closeForm();
+    });
+
+    function addTrailLayers(data) {
+      L.geoJSON(data, {
+        style: feature => {
+          if (feature.geometry.type === 'LineString') {
+            return { color: '#38bdf8', weight: 4, opacity: 0.9 };
+          }
+          return {};
+        },
+        pointToLayer: (feature, latlng) => {
+          return L.circleMarker(latlng, {
+            radius: 6,
+            color: '#22c55e',
+            weight: 2,
+            fillColor: '#22c55e',
+            fillOpacity: 0.8
+          });
+        },
+        onEachFeature: (feature, layer) => {
+          if (feature.geometry.type === 'Point') {
+            const props = feature.properties || {};
+            const details = [
+              `<strong>${props.name || 'Waypoint'}</strong>`,
+              props.category ? `<span>${props.category}</span>` : '',
+              props.elevation_ft ? `<span>${props.elevation_ft} ft</span>` : '',
+              props.description ? `<em>${props.description}</em>` : ''
+            ].filter(Boolean).join('<br />');
+            layer.bindPopup(details);
+          }
+        }
+      }).addTo(map);
+
+      trailSegments = data.features
+        .filter(feature => ['LineString', 'MultiLineString'].includes(feature.geometry.type))
+        .flatMap(feature => {
+          if (feature.geometry.type === 'LineString') {
+            return [feature.geometry.coordinates.map(([lng, lat]) => L.latLng(lat, lng))];
+          }
+          return feature.geometry.coordinates.map(line => line.map(([lng, lat]) => L.latLng(lat, lng)));
+        });
+    }
+
+    function loadTrail() {
+      fetch('/data/howker-ridge.geojson', {
+        mode: 'cors',
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(resp => resp.ok ? resp.json() : Promise.reject(resp))
+        .then(data => {
+          addTrailLayers(data);
+          map.fitBounds(L.geoJSON(data).getBounds(), { padding: [20, 20] });
+        })
+        .catch(err => {
+          console.error('Failed to load trail data', err);
+        });
+    }
+
+    function loadSpecies() {
+      fetch('/data/howker-plants', {
+        mode: 'cors',
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(resp => resp.ok ? resp.json() : Promise.reject(resp))
+        .then(data => {
+          data.forEach(plant => {
+            speciesBySlug.set(plant.id, plant);
+            const option = document.createElement('option');
+            option.value = plant.id;
+            option.textContent = plant.common;
+            speciesSelect.appendChild(option);
+          });
+        })
+        .catch(err => {
+          console.error('Failed to load plant list', err);
+          setFormMessage('Unable to load plant list right now.', true);
+        });
+    }
+
+    function renderReports(reports) {
+      reportLayer.clearLayers();
+      reports.forEach(report => {
+        const plant = speciesBySlug.get(report.plantSlug);
+        const plantName = plant ? plant.common : report.plantSlug;
+        const notes = report.notes ? `<p>${report.notes}</p>` : '';
+        const observed = report.observedAt ? new Date(report.observedAt).toLocaleString() : 'Unknown date';
+        const popup = `
+          <strong>${plantName}</strong><br />
+          <span>${observed}</span>
+          ${notes}
+        `;
+        L.circleMarker([report.lat, report.lng], {
+          radius: 5,
+          color: '#22c55e',
+          weight: 2,
+          fillColor: '#22c55e',
+          fillOpacity: 0.9
+        }).bindPopup(popup).addTo(reportLayer);
+      });
+    }
+
+    function loadReports() {
+      const bounds = map.getBounds();
+      const southWest = bounds.getSouthWest();
+      const northEast = bounds.getNorthEast();
+      const bbox = `${southWest.lng},${southWest.lat},${northEast.lng},${northEast.lat}`;
+      fetch(`/api/howker/plant-reports?bbox=${bbox}`, {
+        mode: 'cors',
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(resp => resp.ok ? resp.json() : Promise.reject(resp))
+        .then(data => {
+          const reports = data.reports || [];
+          renderReports(reports);
+        })
+        .catch(err => {
+          console.error('Failed to load plant reports', err);
+        });
+    }
+
+    map.on('moveend', () => {
+      loadReports();
+    });
+
+    map.on('click', event => {
+      if (!trailSegments.length) {
+        return;
+      }
+      const distance = minDistanceToTrail(event.latlng);
+      if (distance > 0.001) {
+        alert('Please log sightings within roughly 100 meters of the Howker Ridge Trail.');
+        return;
+      }
+      openForm(event.latlng);
+    });
+
+    reportForm.addEventListener('submit', event => {
+      event.preventDefault();
+      setFormMessage('');
+
+      const plantSlug = speciesSelect.value;
+      const lat = Number.parseFloat(latInput.value);
+      const lng = Number.parseFloat(lngInput.value);
+      const elevValue = elevInput.value ? Number.parseFloat(elevInput.value) : null;
+
+      if (!plantSlug) {
+        setFormMessage('Please choose a plant species.', true);
+        return;
+      }
+
+      if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        setFormMessage('Please enter valid latitude and longitude values.', true);
+        return;
+      }
+
+      const payload = {
+        plantSlug,
+        lat,
+        lng,
+        elevationM: elevValue ? Math.round(elevValue * 0.3048) : null,
+        notes: notesInput.value || null,
+        observedAt: new Date().toISOString()
+      };
+
+      fetch('/api/howker/plant-reports', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(resp => resp.ok ? resp.json() : Promise.reject(resp))
+        .then(() => {
+          closeForm();
+          statusMessage.textContent = 'Sighting logged! Reports appear after review and approval.';
+          loadReports();
+        })
+        .catch(err => {
+          console.error('Failed to submit report', err);
+          setFormMessage('Unable to submit right now. Please try again later.', true);
+        });
+    });
+
+    loadTrail();
+    loadSpecies();
+    loadReports();
+  </script>
+</body>
+</html>
