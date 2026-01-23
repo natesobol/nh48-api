@@ -154,8 +154,8 @@ export default {
         pathname,
         routeId: 'plant-map',
         meta: {
-          title: 'Howker Ridge Plant Sightings – NH48.info',
-          description: 'Interactive map to explore and log alpine plant sightings along the Howker Ridge Trail.',
+          title: 'Howker Ridge Plant Log Map – NH48.info',
+          description: 'Interactive map to explore and record alpine plant observations along the Howker Ridge Trail.',
           canonical,
           image: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg',
           imageAlt: 'Mount Madison ridge view with alpine terrain and distant peaks',

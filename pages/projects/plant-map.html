@@ -18,18 +18,18 @@
 <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
 <link rel="manifest" href="/manifest.json" />
-<title>Howker Ridge Plant Sightings – NH48.info</title>
-<meta name="description" content="Interactive map to explore and log alpine plant sightings along the Howker Ridge Trail." />
+<title>Howker Ridge Plant Log Map – NH48.info</title>
+<meta name="description" content="Interactive map to explore and record alpine plant observations along the Howker Ridge Trail." />
 <link rel="canonical" href="https://nh48.info/projects/plant-map" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Howker Ridge Plant Sightings – NH48.info" />
-<meta property="og:description" content="Interactive map to explore and log alpine plant sightings along the Howker Ridge Trail." />
+<meta property="og:title" content="Howker Ridge Plant Log Map – NH48.info" />
+<meta property="og:description" content="Interactive map to explore and record alpine plant observations along the Howker Ridge Trail." />
 <meta property="og:url" content="https://nh48.info/projects/plant-map" />
 <meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg" />
 <meta property="og:image:alt" content="Mount Madison ridge view with alpine terrain and distant peaks" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Howker Ridge Plant Sightings – NH48.info" />
-<meta name="twitter:description" content="Interactive map to explore and log alpine plant sightings along the Howker Ridge Trail." />
+<meta name="twitter:title" content="Howker Ridge Plant Log Map – NH48.info" />
+<meta name="twitter:description" content="Interactive map to explore and record alpine plant observations along the Howker Ridge Trail." />
 <meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg" />
 <meta name="twitter:image:alt" content="Mount Madison ridge view with alpine terrain and distant peaks" />
 <script src="/js/unified-footer.js" defer></script>
@@ -253,23 +253,23 @@ header p{
 
   <div class="wrap panel">
     <header>
-      <h1>Howker Ridge Plant Sightings Map</h1>
-      <p>Explore existing plant observations and add your own sightings along the Howker Ridge Trail.</p>
+      <h1>Howker Ridge Plant Log Map</h1>
+      <p>Explore existing plant observations and add your own logs along the Howker Ridge Trail.</p>
     </header>
 
     <nav class="page-breadcrumbs" aria-label="Breadcrumb">
       <ol>
         <li><a href="/">Home</a></li>
         <li><a href="/plant-catalog">Howker Ridge Info</a></li>
-        <li>Plant Sightings Map</li>
+        <li>Plant Log Map</li>
       </ol>
     </nav>
 
     <section class="section card">
-      <h2>Plant Sightings</h2>
-      <p>Click the map to log a sighting near the trail. Reports are reviewed before appearing on the map.</p>
+      <h2>Plant Log</h2>
+      <p>Click the map to record a plant observation near the trail. Reports are reviewed before appearing on the map.</p>
       <div class="map-wrap">
-        <div id="map" aria-label="Plant sightings map"></div>
+        <div id="map" aria-label="Plant log map"></div>
         <form id="reportForm">
           <label>Plant species:
             <select id="speciesSelect" required>
@@ -289,7 +289,7 @@ header p{
             <textarea id="notesInput" maxlength="2000"></textarea>
           </label>
           <div class="form-actions">
-            <button type="submit">Submit Sighting</button>
+            <button type="submit">Submit Log</button>
             <button type="button" id="cancelBtn">Cancel</button>
           </div>
           <p id="formMessage" class="small"></p>
@@ -506,7 +506,7 @@ header p{
       }
       const distance = minDistanceToTrail(event.latlng);
       if (distance > 0.001) {
-        alert('Please log sightings within roughly 100 meters of the Howker Ridge Trail.');
+        alert('Please record observations within roughly 100 meters of the Howker Ridge Trail.');
         return;
       }
       openForm(event.latlng);
@@ -552,7 +552,7 @@ header p{
         .then(resp => resp.ok ? resp.json() : Promise.reject(resp))
         .then(() => {
           closeForm();
-          statusMessage.textContent = 'Sighting logged! Reports appear after review and approval.';
+          statusMessage.textContent = 'Log recorded! Reports appear after review and approval.';
           loadReports();
         })
         .catch(err => {
