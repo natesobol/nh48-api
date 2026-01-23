@@ -24,6 +24,21 @@ export default {
     const SITE = url.origin;
     const RAW_BASE = 'https://raw.githubusercontent.com/natesobol/nh48-api/main';
     const HOWKER_ORIGIN = 'https://nh48.info';
+    const RAW_TEMPLATE_URL = `${RAW_BASE}/pages/nh48_peak.html`;
+    const RAW_CATALOG_URL = `${RAW_BASE}/pages/nh48_catalog.html`;
+    const RAW_NAV_URL = `${RAW_BASE}/pages/nav.html`;
+    const RAW_FOOTER_URL = `${RAW_BASE}/pages/footer.html`;
+    const EN_TRANS_URL = `${RAW_BASE}/i18n/en.json`;
+    const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
+    const SITE_NAME = url.hostname;
+    const DEFAULT_IMAGE = `${SITE}/nh48-preview.png`;
+    const RIGHTS_DEFAULTS = {
+      creatorName: 'Nathan Sobol',
+      creditText: '© Nathan Sobol / NH48pics.com',
+      copyrightNotice: '© Nathan Sobol',
+      licenseUrl: 'https://nh48.info/license',
+      acquireLicensePageUrl: 'https://nh48.info/contact'
+    };
 
     if (pathname.startsWith('/api/howker/plant-reports')) {
       const corsHeaders = {
@@ -132,6 +147,24 @@ export default {
       return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
     }
 
+    if (pathname === '/projects/plant-map' || pathname === '/projects/plant-map/') {
+      const canonical = `${SITE}${pathname}`;
+      return serveTemplatePage({
+        templatePath: 'pages/projects/plant-map.html',
+        pathname,
+        routeId: 'plant-map',
+        meta: {
+          title: 'Howker Ridge Plant Sightings – NH48.info',
+          description: 'Interactive map to explore and log alpine plant sightings along the Howker Ridge Trail.',
+          canonical,
+          image: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg',
+          imageAlt: 'Mount Madison ridge view with alpine terrain and distant peaks',
+          ogType: 'website'
+        },
+        jsonLd: []
+      });
+    }
+
     // ============================================================
     // STATIC FILE SERVING - Proxy static assets from GitHub
     // Since there's no origin server (GitHub Pages disabled), 
@@ -178,6 +211,7 @@ export default {
                        pathname === '/dataset' || pathname === '/dataset/' ||
                        pathname.startsWith('/dataset/') || pathname.startsWith('/fr/dataset/') ||
                pathname === '/plant-catalog' || pathname === '/plant-catalog/' ||
+               pathname === '/projects/plant-map' || pathname === '/projects/plant-map/' ||
                pathname === '/projects/hrt-info' || pathname === '/projects/hrt-info/' ||
                pathname === '/howker-ridge' || pathname === '/howker-ridge/' ||
                pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
@@ -270,23 +304,6 @@ export default {
     const slug = parts[slugIdx] || '';
     const lang = isFrench ? 'fr' : 'en';
     const pathNoLocale = isFrench ? `/${parts.slice(1).join('/')}` || '/' : pathname;
-
-    // Template URL constants
-    const RAW_TEMPLATE_URL = `${RAW_BASE}/pages/nh48_peak.html`;
-    const RAW_CATALOG_URL = `${RAW_BASE}/pages/nh48_catalog.html`;
-    const RAW_NAV_URL = `${RAW_BASE}/pages/nav.html`;
-    const RAW_FOOTER_URL = `${RAW_BASE}/pages/footer.html`;
-    const EN_TRANS_URL = `${RAW_BASE}/i18n/en.json`;
-    const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
-    const SITE_NAME = url.hostname;
-    const DEFAULT_IMAGE = `${SITE}/nh48-preview.png`;
-    const RIGHTS_DEFAULTS = {
-      creatorName: 'Nathan Sobol',
-      creditText: '© Nathan Sobol / NH48pics.com',
-      copyrightNotice: '© Nathan Sobol',
-      licenseUrl: 'https://nh48.info/license',
-      acquireLicensePageUrl: 'https://nh48.info/contact'
-    };
 
     const NO_CACHE_FETCH = {
       cf: { cacheTtl: 0, cacheEverything: false },
