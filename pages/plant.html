@@ -371,9 +371,9 @@ header p{
 }
 .chip{
   display:inline-block;
-  border:1px solid var(--stroke);
-  border-radius:9999px;
-  padding:4px 10px;
+  border:none;
+  border-radius:0;
+  padding:0;
   font-size:11px;
   color:var(--muted);
   white-space:nowrap;
@@ -703,7 +703,7 @@ header p{
     document.getElementById('d-tags').innerHTML = `
       ${p.type ? `<span class="chip">${p.type}</span>` : ''}
       ${p.habitat ? `<span class="chip">${p.habitat}</span>` : ''}
-      ${(p.tags||[]).map(t=>`<span class="chip">#${t}</span>`).join("")}
+      ${(p.tags||[]).map(t=>`<span class="chip">${t}</span>`).join("")}
     `;
     document.getElementById('f-type').textContent    = p.type      || "—";
     document.getElementById('f-elev').textContent    = p.elevation || "—";
