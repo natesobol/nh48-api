@@ -1110,6 +1110,12 @@
     border-radius: 8px;
   }
 
+  .site-nav-submenu a + a {
+    border-top: 1px dotted rgba(255, 255, 255, 0.3);
+    padding-top: 6px;
+    margin-top: 4px;
+  }
+
   .site-nav-cta {
     display: inline-flex;
     align-items: center;
@@ -1358,10 +1364,9 @@
     <div class="site-nav-dropdown">
       <button type="button" data-route="dataset-home" data-routes="home,dataset-home">NH48</button>
       <div class="site-nav-submenu" aria-label="NH48 dataset short links">
-        <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Info</a>
-        <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Interactive Catalog</a>
-        <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48 Dataset</a>
-        <a href="/page-sitemap.xml">Browse page sitemap</a>
+        <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Guide</a>
+        <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
+        <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48 Data &amp; API</a>
       </div>
     </div>
     <div class="site-nav-dropdown">
