@@ -423,7 +423,7 @@ header p{
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  min-height:260px;
+  min-height:280px;
   cursor:pointer;
   transition:transform .12s ease, box-shadow .12s ease;
   position:relative; /* anchor for arrow icon */
@@ -450,7 +450,7 @@ header p{
   padding:12px;
   display:flex;
   flex-direction:column;
-  gap:6px;
+  gap:8px;
   overflow-wrap:break-word;
   hyphens:auto;
 }
@@ -464,31 +464,67 @@ header p{
   font-style:italic;
   font-size:13px;
 }
-.chiprow{
+.meta{
+  display:grid;
+  gap:6px;
+  margin-top:4px;
+  padding-top:6px;
+  border-top:1px dashed #ffffff33;
+}
+.meta-row{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  font-size:12px;
+  color:var(--muted);
+  border-bottom:1px dotted #ffffff26;
+  padding-bottom:6px;
+}
+.meta-row:last-child{
+  border-bottom:none;
+  padding-bottom:0;
+}
+.meta-label{
+  min-width:72px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:10px;
+  color:var(--accent);
+}
+.meta-value{
+  color:var(--ink);
+  font-weight:600;
+  flex:1;
+}
+.meta-tags{
   display:flex;
   flex-wrap:wrap;
   gap:6px;
-  margin-top:4px;
 }
-.chip{
-  display:inline-block;
-  border:none;
-  border-radius:0;
-  padding:0;
-  font-size:11.5px;
-  line-height:1.25;
-  color:var(--muted);
-}
-.subtitle{
-  font-size:12px;
-  color:var(--muted);
-  margin-top:4px;
-  margin-bottom:2px;
+.tag-pill{
+  border:1px solid #22c55e66;
+  color:#22c55e;
+  padding:2px 6px;
+  border-radius:999px;
+  font-size:10px;
+  letter-spacing:.02em;
   text-transform:uppercase;
 }
+.teaser-block{
+  margin-top:6px;
+  padding-top:6px;
+  border-top:1px dashed #ffffff26;
+}
+.teaser-label{
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:10px;
+  color:var(--accent);
+}
 .teaser{
-  margin:6px 0 0;
-  font-size:13px;
+  margin:4px 0 0;
+  font-size:12.5px;
+  color:var(--ink);
 }
 /* Arrow indicator pinned bottom right of card */
 .card .more{
@@ -521,18 +557,15 @@ body.list-view .thumb{
 body.list-view .body{
   flex:1;
 }
-body.list-view .chiprow{
-  margin-top:4px;
-}
 /* Compact mode reduces padding and chip sizes */
 body.compact .card .body{
   padding:8px;
 }
-body.compact .chip{
-  font-size:11px;
+body.compact .tag-pill{
+  font-size:9px;
 }
 body.compact .card{
-  min-height:220px;
+  min-height:240px;
 }
 /* Apply to the whole page so no horizontal scroll is possible */
 html, body {
@@ -815,15 +848,15 @@ body.details-open .drawer.open {
       <li>Howker Ridge Plant Catalog</li>
     </ol>
   </nav>
-  <details class="updates-dropdown" open>
+  <details class="updates-dropdown">
     <summary>
       <span class="summary-title">Latest Plant Log Updates</span>
       <a class="summary-action" href="https://nh48.info/projects/hrt-info" target="_blank" rel="noopener">Trail Info</a>
     </summary>
     <div class="updates-body">
       <article class="update-entry">
-        <h3>Jan 23 2026 — Migration to NH48pics &amp; recent improvements</h3>
-        <p>We migrated the Howker Ridge plant catalog into <strong>NH48pics</strong> and centralized edits in GitHub for faster updates and public access. Recent improvements include expanded species metadata, refined habitat tags, higher-quality photo references, and a cleaner browsing layout. Late summer and autumn 2025 entries are finalized, with spring and summer additions planned as the catalog grows.</p>
+        <h3>Jan 23 2026 — Migration to nh48.info &amp; recent improvements</h3>
+        <p>We migrated the Howker Ridge plant catalog to <strong>nh48.info</strong> and centralized edits for faster updates and public access. Recent improvements include expanded species metadata, refined habitat tags, higher-quality photo references, and a cleaner browsing layout. Late summer and autumn 2025 entries are finalized, with spring and summer additions planned as the catalog grows.</p>
       </article>
       <article class="update-entry">
         <h3>Nov 12 2025 — Late-season alpine updates</h3>
@@ -1002,7 +1035,7 @@ body.details-open .drawer.open {
   /* ---------- Card templating (uses data-src for lazy images) ---------- */
   function cardHTML(p){
     const src = (Array.isArray(p.imgs) && p.imgs.length ? p.imgs[0] : (p.img || PLACEHOLDER));
-    const category = [p.type, p.habitat].filter(Boolean).join(' – ');
+    const tags = (p.tags || []).slice(0, 4);
     return `
       <div class="thumb">
         <img src="${LQ_PLACEHOLDER}" data-src="${src}"
@@ -1013,13 +1046,14 @@ body.details-open .drawer.open {
       <div class="body">
         <h3>${p.common}</h3>
         <div class="latin">${p.latin || ''}</div>
-        <div class="chiprow">
-          ${p.type ? `<span class="chip">${p.type}</span>` : ''}
-          ${p.habitat ? `<span class="chip">${p.habitat}</span>` : ''}
-          ${(p.tags||[]).slice(0,3).map(t=>`<span class="chip">${t}</span>`).join("")}
+        <div class="meta">
+          ${p.type ? `<div class="meta-row"><span class="meta-label">Type</span><span class="meta-value">${p.type}</span></div>` : ''}
+          ${p.habitat ? `<div class="meta-row"><span class="meta-label">Habitat</span><span class="meta-value">${p.habitat}</span></div>` : ''}
+          ${p.elevation ? `<div class="meta-row"><span class="meta-label">Elevation</span><span class="meta-value">${p.elevation}</span></div>` : ''}
+          ${p.bloom ? `<div class="meta-row"><span class="meta-label">Season</span><span class="meta-value">${p.bloom}</span></div>` : ''}
+          ${tags.length ? `<div class="meta-row"><span class="meta-label">Tags</span><span class="meta-value"><span class="meta-tags">${tags.map(t=>`<span class="tag-pill">${t}</span>`).join("")}</span></span></div>` : ''}
         </div>
-        ${category ? `<div class="subtitle">${category}</div>` : ''}
-        ${p.teaser ? `<p class="teaser">${p.teaser}</p>` : ''}
+        ${p.teaser ? `<div class="teaser-block"><span class="teaser-label">Overview</span><p class="teaser">${p.teaser}</p></div>` : ''}
         <div class="more">›</div>
       </div>`;
   }
