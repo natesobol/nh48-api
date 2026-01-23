@@ -444,6 +444,7 @@ header p{
   height:100%;
   object-fit:cover;
   display:block;
+  transition: opacity 0.6s ease;
 }
 /* Card body content */
 .card .body{
@@ -1172,18 +1173,39 @@ body.details-open .drawer.open {
   function setHidden(id, hidden){ const el = document.getElementById(id); if (!el) return; hidden ? el.setAttribute('hidden','') : el.removeAttribute('hidden'); }
 
   /* ---------- Card image rotation ---------- */
-  function rotateCardImages(){
-    const cards = document.querySelectorAll('#grid .card[data-imgs]');
-    cards.forEach(card => {
-      const imgs = card.dataset.imgs.split('|');
-      let idx = parseInt(card.dataset.idx || '0', 10);
-      idx = (idx + 1) % imgs.length;
-      const imgEl = card.querySelector('.thumb img');
-      if (imgEl) {
+  function rotateSingle(card){
+    const imgs = card.dataset.imgs.split('|');
+    let idx   = parseInt(card.dataset.idx || '0', 10);
+    idx       = (idx + 1) % imgs.length;
+    const imgEl = card.querySelector('.thumb img');
+    if (imgEl) {
+      imgEl.style.opacity = '0';
+      setTimeout(() => {
         imgEl.src = imgs[idx];
         imgEl.removeAttribute('data-src');
-      }
-      card.dataset.idx = idx;
+        imgEl.style.opacity = '1';
+      }, 250);
+    }
+    card.dataset.idx = idx;
+  }
+
+  function rotateCardImages(){
+    const cards = document.querySelectorAll('#grid .card[data-imgs]');
+    let colCount = 1;
+    try {
+      const cols  = getComputedStyle(grid).gridTemplateColumns;
+      const parts = cols.split(' ');
+      colCount    = parts.filter(p => p.trim().length > 0).length || 1;
+    } catch(e) {}
+    const rowDelay = 500;
+    const colDelay = 200;
+    cards.forEach((card, i) => {
+      const row   = Math.floor(i / colCount);
+      const col   = i % colCount;
+      const delay = row * rowDelay + col * colDelay;
+      setTimeout(() => {
+        rotateSingle(card);
+      }, delay);
     });
   }
 
