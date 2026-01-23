@@ -1178,6 +1178,28 @@ export default {
       });
     }
 
+    if (pathNoLocale === '/projects/hrt-info' || pathNoLocale === '/projects/hrt-info/') {
+      const canonical = `${SITE}${pathname}`;
+      return serveTemplatePage({
+        templatePath: 'pages/hrt_info.html',
+        pathname,
+        routeId: 'hrt-info',
+        meta: {
+          title: isFrench ? 'Infos sur le sentier Howker Ridge' : 'Howker Ridge Trail Info',
+          description: isFrench
+            ? 'Informations détaillées sur le sentier Howker Ridge : statistiques, terrain, accès et sécurité.'
+            : 'Detailed information about the Howker Ridge Trail: stats, terrain, access, and safety.',
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: isFrench ? 'Vue du Mount Madison' : 'Mount Madison ridge view',
+          ogType: 'website'
+        },
+        jsonLd: []
+      });
+    }
+
     if (pathNoLocale.startsWith('/plant/') && slug) {
       const plantData = await loadJsonCache('howker-plants', `${SITE}/data/howker-plants`);
       const plant = Array.isArray(plantData) ? plantData.find((item) => item.id === slug) : null;
