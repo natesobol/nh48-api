@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "data/nh48.json"
-      - "mountain-descriptions.txt"
+      - "data/nh48/mountain-descriptions.txt"
       - ".github/workflows/sync-r2-data.yml"
   workflow_dispatch: {}
 
@@ -38,7 +38,7 @@ jobs:
           R2_DATA_BUCKET: ${{ secrets.R2_DATA_BUCKET }}
           AWS_DEFAULT_REGION: us-east-1
         run: |
-          aws s3 cp mountain-descriptions.txt "s3://${R2_DATA_BUCKET}/mountain-descriptions.txt" \
+          aws s3 cp data/nh48/mountain-descriptions.txt "s3://${R2_DATA_BUCKET}/mountain-descriptions.txt" \
             --endpoint-url "${R2_ENDPOINT}" \
             --cache-control "no-cache, max-age=0, must-revalidate" \
             --content-type "text/plain; charset=utf-8"
