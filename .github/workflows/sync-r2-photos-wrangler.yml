@@ -1,0 +1,29 @@
+name: Sync R2 photos with Wrangler
+
+# This workflow runs whenever files in the photos directory change on the default branch
+on:
+  push:
+    paths:
+      - 'photos/**'
+
+jobs:
+  upload-to-r2:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout your repository so the workflow has access to the photos directory
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Install Wrangler globally
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      # Upload photos to R2
+      - name: Upload photos with Wrangler
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          # The --exclude ".*" will skip hidden files (like .DS_Store on macOS)
+          wrangler r2 bucket upload ${{ secrets.R2_BUCKET_NAME }} --directory ./photos --exclude ".*"
