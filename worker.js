@@ -165,6 +165,84 @@ export default {
       });
     }
 
+    if (pathname === '/submit-edit' || pathname === '/submit-edit/' || pathname === '/fr/submit-edit' || pathname === '/fr/submit-edit/') {
+      if (request.method === 'POST') {
+        const form = await request.formData();
+        const name = form.get('name')?.toString().trim() || '';
+        const email = form.get('email')?.toString().trim() || '';
+        const peak = form.get('peak')?.toString().trim() || '';
+        const plant = form.get('plant')?.toString().trim() || '';
+        const body = form.get('body')?.toString().trim() || '';
+        const token = form.get('cf-turnstile-response')?.toString() || '';
+
+        const redirectWithStatus = (status, message, statusCode = 303) => {
+          const redirectUrl = new URL('/submit-edit', url.origin);
+          redirectUrl.searchParams.set('status', status);
+          if (message) {
+            redirectUrl.searchParams.set('message', message);
+          }
+          return Response.redirect(redirectUrl.toString(), statusCode);
+        };
+
+        if (!name || !email || !body) {
+          return redirectWithStatus('error', 'Please complete all required fields.');
+        }
+
+        if (!isValidEmail(email)) {
+          return redirectWithStatus('error', 'Please enter a valid email address.');
+        }
+
+        if (env.TURNSTILE_SECRET) {
+          if (!token) {
+            return redirectWithStatus('error', 'Please complete the CAPTCHA.');
+          }
+          const ip = request.headers.get('CF-Connecting-IP') || '';
+          const verification = await verifyTurnstileToken(token, ip, env);
+          if (!verification.success) {
+            return redirectWithStatus('error', 'CAPTCHA verification failed.');
+          }
+        } else {
+          const mathAnswer = form.get('math')?.toString().trim() || '';
+          if (mathAnswer !== '8') {
+            return redirectWithStatus('error', 'Please solve the math challenge.');
+          }
+        }
+
+        if (!env.EMAIL || !env.EMAIL_FROM || !env.EMAIL_TO) {
+          return redirectWithStatus('error', 'Email delivery is not configured.');
+        }
+
+        const subjectTags = [];
+        if (peak) subjectTags.push(`Peak: ${peak}`);
+        if (plant) subjectTags.push(`Plant: ${plant}`);
+        const subjectSuffix = subjectTags.length ? ` – ${subjectTags.join(', ')}` : '';
+        const subject = `Edit submission from ${name}${subjectSuffix}`;
+        const sanitizedBody = stripHtml(body);
+        const content = [
+          `Name: ${name}`,
+          `Email: ${email}`,
+          peak ? `NH48 Peak: ${peak}` : null,
+          plant ? `Plant: ${plant}` : null,
+          '',
+          'Message:',
+          sanitizedBody || '(no message provided)'
+        ].filter(Boolean).join('\n');
+
+        await env.EMAIL.send({
+          to: env.EMAIL_TO,
+          from: env.EMAIL_FROM,
+          subject,
+          content
+        });
+
+        return redirectWithStatus('success', 'Thanks! Your report has been sent.');
+      }
+
+      if (request.method !== 'GET') {
+        return new Response('Method Not Allowed', { status: 405 });
+      }
+    }
+
     // ============================================================
     // STATIC FILE SERVING - Proxy static assets from GitHub
     // Since there's no origin server (GitHub Pages disabled), 
@@ -332,6 +410,38 @@ export default {
         }
       } catch (_) {}
       return {};
+    }
+
+    async function verifyTurnstileToken(token, ip, env) {
+      const formData = new FormData();
+      formData.append('secret', env.TURNSTILE_SECRET);
+      formData.append('response', token);
+      if (ip) {
+        formData.append('remoteip', ip);
+      }
+      const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        body: formData
+      });
+      if (!res.ok) {
+        return { success: false };
+      }
+      return res.json();
+    }
+
+    function isValidEmail(value) {
+      return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value);
+    }
+
+    function stripHtml(value) {
+      return value
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/\\s+/g, ' ')
+        .trim();
     }
 
     // Load mountain descriptions from R2 or cache
@@ -1202,6 +1312,26 @@ export default {
     }
 
     const { enPath, frPath } = buildAlternatePaths(pathname);
+
+    if (pathNoLocale === '/submit-edit' || pathNoLocale === '/submit-edit/') {
+      const canonical = `${SITE}${pathname.endsWith('/') ? pathname.slice(0, -1) : pathname}`;
+      return serveTemplatePage({
+        templatePath: 'pages/submit_edit.html',
+        pathname,
+        routeId: 'submit-edit',
+        meta: {
+          title: 'Submit Edit to Author',
+          description: 'Report incorrect or outdated information for NH48 peaks or the Howker Ridge plant catalog.',
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: 'NH48 API logo',
+          ogType: 'website'
+        },
+        jsonLd: []
+      });
+    }
 
     if (pathNoLocale === '/dataset' || pathNoLocale === '/dataset/') {
       const datasets = [
