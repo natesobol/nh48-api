@@ -6,6 +6,9 @@ on:
     paths:
       - 'photos/**'
 
+permissions:
+  contents: write
+
 jobs:
   upload-to-r2:
     runs-on: ubuntu-latest
@@ -48,3 +51,47 @@ jobs:
             --endpoint-url "${ENDPOINT}" \
             --exclude ".*" \
             --exclude "*/.*"
+
+  update-manifest-and-pages:
+    needs: upload-to-r2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install manifest generator dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pillow
+          sudo apt-get update -y
+          sudo apt-get install -y libimage-exiftool-perl
+
+      - name: Generate photo manifest
+        run: |
+          python scripts/manifest_generator.py \
+            --api data/nh48.json \
+            --photos photos \
+            --base-url https://photos.nh48.info \
+            --output data/nh48.json
+
+      - name: Prerender peak pages
+        run: node scripts/prerender-peaks.js
+
+      - name: Commit updated data and pages
+        run: |
+          git config user.name "NH48 Automation Bot"
+          git config user.email "bot@example.com"
+          git add data/nh48.json peaks fr/peaks
+          git commit -m "Auto-update manifest and prerendered pages after photo upload" || echo "No changes to commit"
+          git push
