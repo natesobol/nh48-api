@@ -581,49 +581,6 @@
       position: relative;
       z-index: 2;
     }
-    .hero-pattern {
-      background-color: #0f172a;
-      background-image:
-        radial-gradient(circle, rgba(34, 197, 94, 0.15) 1px, transparent 1px),
-        radial-gradient(circle, rgba(15, 23, 42, 0.3) 1px, transparent 1px);
-      background-size: 4px 4px, 8px 8px;
-      background-position: 0 0, 1px 1px;
-    }
-    .hero-pattern-dark {
-      background-color: #020617;
-      background-image:
-        radial-gradient(circle, rgba(34, 197, 94, 0.1) 1px, transparent 1px),
-        radial-gradient(circle, rgba(2, 6, 23, 0.25) 1px, transparent 1px);
-      background-size: 3px 3px, 6px 6px;
-      background-position: 0 0, 1px 1px;
-    }
-    .hero-pattern-panel {
-      padding: clamp(20px, 4vw, 32px);
-      border-radius: 20px;
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      box-shadow: inset 0 0 0 1px rgba(2, 6, 23, 0.15);
-    }
-    .hero-pattern-strip {
-      padding: 12px 18px;
-      border-radius: 16px;
-    }
-    .hero-pattern h1,
-    .hero-pattern h2,
-    .hero-pattern p {
-      color: #f1f5f9;
-    }
-    .hero-pattern a {
-      color: #22c55e;
-      text-decoration: underline;
-    }
-    .hero-pattern a:hover,
-    .hero-pattern a:focus-visible {
-      color: #4ade80;
-    }
-    .hero-pattern .dataset-card {
-      color: inherit;
-      text-decoration: none;
-    }
     h1 {
       font-size: clamp(28px, 4vw, 40px);
       margin: 0;
@@ -1918,7 +1875,7 @@
         </li>
       </ol>
     </nav>
-    <section class="hero-pattern hero-pattern-panel hero-intro">
+    <section class="hero-intro">
       <div class="hero-heading" itemscope itemtype="https://schema.org/Brand">
         <link itemprop="url" href="https://nh48.info/">
         <meta itemprop="name" content="NH48 API">
@@ -1940,7 +1897,7 @@
       </div>
       <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, discover long-distance hiking routes, and learn about alpine flora.</p>
     </section>
-    <div class="hero-pattern hero-pattern-panel dataset-overview">
+    <div class="dataset-overview">
       <h2 class="cards-section-title">NH48 &amp; Howker Ridge Tools</h2>
 
       <section class="dataset-cards">
@@ -2284,7 +2241,7 @@
   <script type="module" src="/js/i18n.js"></script>
   <script src="/js/splash.js" defer></script>
 
-  <div id="footer-placeholder" class="hero-pattern-dark"></div>
+  <div id="footer-placeholder"></div>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
