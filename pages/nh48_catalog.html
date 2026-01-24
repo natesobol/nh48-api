@@ -121,6 +121,33 @@
         }
       }
     </script>
+    <script type="application/ld+json" class="peak-list">
+      {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "NH48 4000-footers List",
+        "itemListElement": []
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "NH48 – White Mountains Hiking Guide",
+        "url": "https://nh48.info/",
+        "publisher": {
+          "@type": "Organization",
+          "name": "NH48 Project",
+          "url": "https://nh48.info/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://nh48.info/assets/logo.png",
+            "width": 512,
+            "height": 512
+          }
+        }
+      }
+    </script>
     <!--
       Enhanced catalog page for the NH48 peak list.
 
@@ -809,6 +836,25 @@
         setupLazyLoading();
       }
 
+      function updatePeakItemList(list){
+        const ldScript = document.querySelector('script.peak-list');
+        if (!ldScript) {
+          return;
+        }
+        try {
+          const itemList = JSON.parse(ldScript.textContent);
+          itemList.itemListElement = list.map((peak, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "name": peak.peakName,
+            "url": `https://nh48.info/peak/${encodeURIComponent(peak.slug)}`
+          }));
+          ldScript.textContent = JSON.stringify(itemList);
+        } catch (err) {
+          console.error('Failed to update ItemList structured data', err);
+        }
+      }
+
       // Build suggestions list, stripping common words
       function updateSuggestions(){
         const list = peaks.map(p => p.peakName.replace(/\b(Mount|Mountain|Peak)\b/gi, '').trim()).filter(Boolean);
@@ -924,6 +970,7 @@
         try{
           setCatalogLoading(true);
           peaks = await fetchPeaks();
+          updatePeakItemList(peaks);
           updateSuggestions();
           updateDisplay();
           trackEvent('catalog_render_complete', { peakCount: peaks.length });

@@ -20,6 +20,9 @@ const STATIC_PAGE_ENTRIES = [
   { loc: 'https://nh48.info/long-trails', file: 'long-trails/index.html' },
   { loc: 'https://nh48.info/plant-catalog', file: 'pages/plant_catalog.html' },
   { loc: 'https://nh48.info/projects/hrt-info', file: 'pages/hrt_info.html' },
+  { loc: 'https://nh48.info/projects/plant-map', file: 'pages/projects/plant-map.html' },
+  { loc: 'https://nh48.info/howker-ridge', file: 'pages/howker_ridge.html' },
+  { loc: 'https://nh48.info/virtual-hike', file: 'pages/virtual_hike.html' },
   { loc: 'https://nh48.info/nh-4000-footers-info', file: 'nh-4000-footers-info.html' },
 ];
 const IMAGE_LICENSE_URL = 'https://nh48.info/licensing';
