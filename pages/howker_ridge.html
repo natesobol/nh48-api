@@ -77,8 +77,9 @@ body{
 }
 .panel{
   background:var(--panel);
-  border:2px solid #ffffff;
+  border:none;
   border-radius:10px;
+  margin-top:1.5rem;
   padding:20px;
   box-shadow:0 10px 30px #0004;
 }
@@ -119,6 +120,13 @@ header p{
 .page-breadcrumbs a:hover{
   color:var(--accent);
 }
+.text-guide{
+  font-size:0.9rem;
+  margin:0 0 1rem;
+}
+.text-green{ color:#388e3c; }
+.text-yellow{ color:#fbc02d; }
+.text-red{ color:#d32f2f; }
 .section{
   margin-top:28px;
 }
@@ -335,6 +343,12 @@ th{
         <li>Howker Ridge Trail</li>
       </ol>
     </nav>
+
+    <p class="text-guide">
+      <span class="text-green">Green</span> = good/easy/common;
+      <span class="text-yellow">Yellow</span> = caution/medium/uncommon;
+      <span class="text-red">Red</span> = bad/difficult/rare. Use these sparingly to call attention to important notes.
+    </p>
 
     <section class="section card" id="overview">
       <h2>Overview</h2>

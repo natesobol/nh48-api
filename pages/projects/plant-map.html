@@ -77,8 +77,9 @@ body{
 }
 .panel{
   background:var(--panel);
-  border:2px solid #ffffff;
+  border:none;
   border-radius:10px;
+  margin-top:1.5rem;
   padding:20px;
   box-shadow:0 10px 30px #0004;
 }
@@ -119,6 +120,25 @@ header p{
 .page-breadcrumbs a:hover{
   color:var(--accent);
 }
+.breadcrumb{
+  margin:10px 0 18px;
+  font-size:13px;
+  color:var(--muted);
+}
+.breadcrumb a{
+  color:inherit;
+  text-decoration:none;
+}
+.breadcrumb a:hover{
+  color:var(--accent);
+}
+.text-guide{
+  font-size:0.9rem;
+  margin:0 0 1rem;
+}
+.text-green{ color:#388e3c; }
+.text-yellow{ color:#fbc02d; }
+.text-red{ color:#d32f2f; }
 .section{
   margin-top:28px;
 }
@@ -279,7 +299,7 @@ header p{
   }
 </script>
 </head>
-<body data-route="plant-map" data-page="plant-map">
+<body data-route="plant-catalog" data-page="plant-map">
   <div id="nav-placeholder"></div>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -318,13 +338,17 @@ header p{
       <p>Explore existing plant observations and add your own logs along the Howker Ridge Trail.</p>
     </header>
 
-    <nav class="page-breadcrumbs" aria-label="Breadcrumb">
-      <ol>
-        <li><a href="/">Home</a></li>
-        <li><a href="/plant-catalog">Plant Catalog</a></li>
-        <li>Plant Log Map</li>
-      </ol>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a> &gt;
+      <a href="/plant-catalog" data-route="plant-catalog">Howker Ridge Plant Catalog</a> &gt;
+      <span>Plant Log Map</span>
     </nav>
+
+    <p class="text-guide">
+      <span class="text-green">Green</span> = good/easy/common;
+      <span class="text-yellow">Yellow</span> = caution/medium/uncommon;
+      <span class="text-red">Red</span> = bad/difficult/rare. Use these sparingly to call attention to important notes.
+    </p>
 
     <section class="section card">
       <h2>Plant Log</h2>
