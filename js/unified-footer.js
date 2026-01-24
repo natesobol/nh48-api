@@ -30,8 +30,7 @@
     img.decoding = 'async';
     img.width = THUMBNAIL_CONFIG.size;
     img.height = THUMBNAIL_CONFIG.size;
-    img.alt = '';
-    img.setAttribute('aria-hidden', 'true');
+    img.alt = `${peakName} thumbnail`;
     img.src = getThumbnailSrc(slug);
     img.setAttribute('data-photo-peak', peakName);
     img.setAttribute('data-photo-alt', `${peakName} thumbnail`);
@@ -671,8 +670,7 @@
         src="${src}"
         width="${THUMBNAIL_CONFIG.size}"
         height="${THUMBNAIL_CONFIG.size}"
-        alt=""
-        aria-hidden="true"
+        alt="${link.text} thumbnail"
         loading="lazy"
         decoding="async"
         data-photo-peak="${link.text}"
