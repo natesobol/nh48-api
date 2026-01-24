@@ -279,6 +279,11 @@
       function revealImage(img){
         img.classList.add('is-visible');
         img.removeAttribute('data-src');
+        // hide spinner overlay when the image becomes visible
+        const loadingOverlay = img.parentElement.querySelector('.thumb-loading');
+        if (loadingOverlay) {
+          loadingOverlay.classList.add('hidden');
+        }
       }
 
       function loadNextImage(){
@@ -663,6 +668,7 @@
         if(!shouldLazyLoad){
           thumbClasses.push('is-visible');
         }
+        const loadingClass = shouldLazyLoad ? 'thumb-loading' : 'thumb-loading hidden';
 
         const elev = p['Elevation (ft)'];
         const prom = p['Prominence (ft)'];
@@ -673,6 +679,8 @@
 
         card.innerHTML = `
           <div class="thumb">
+            <!-- small loading spinner overlay -->
+            <div class="${loadingClass}" aria-hidden="true"><span class="loading-spinner"></span></div>
             <img class="${thumbClasses.join(' ')}" src="${PLACEHOLDER_DATA_URI}" ${shouldLazyLoad ? `data-src="${thumbSrc}"` : ''} alt="${thumbAlt}" loading="lazy" decoding="async">
           </div>
           <div class="body">
@@ -715,6 +723,7 @@
         if(!shouldLazyLoad){
           thumbClasses.push('is-visible');
         }
+        const loadingClass = shouldLazyLoad ? 'thumb-loading' : 'thumb-loading hidden';
 
         const elev = p['Elevation (ft)'];
         const range = p['Range / Subrange'] || '—';
@@ -722,6 +731,8 @@
 
         item.innerHTML = `
           <div class="list-thumb">
+            <!-- small loading spinner overlay for list view -->
+            <div class="${loadingClass}" aria-hidden="true"><span class="loading-spinner"></span></div>
             <img class="${thumbClasses.join(' ')}" src="${PLACEHOLDER_DATA_URI}" ${shouldLazyLoad ? `data-src="${thumbSrc}"` : ''} alt="${thumbAlt}" loading="lazy" decoding="async">
           </div>
           <div class="list-content">
