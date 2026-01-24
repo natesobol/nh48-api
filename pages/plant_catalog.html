@@ -502,6 +502,7 @@ header p{
   height:auto;
   overflow:hidden;
   border-bottom:1px dashed var(--stroke);
+  position:relative;
 }
 .thumb img{
   width:100%;
@@ -864,6 +865,31 @@ body.details-open .drawer.open {
   }
 }
 
+/* Spinner overlay for plant catalog thumbnails */
+.thumb-loading{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+}
+.thumb-loading.hidden{ display:none; }
+/* Small green loading wheel (25px) — matches peak spinner style */
+.thumb-loading .loading-spinner{
+  width:25px;
+  height:25px;
+  border-radius:50%;
+  border:3px solid rgba(34, 197, 94, 0.25);
+  border-top-color:var(--accent);
+  animation:spin 0.9s linear infinite;
+}
+/* Spinner keyframes (if not already defined) */
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
 </style>
 
 </head>
@@ -1109,6 +1135,7 @@ body.details-open .drawer.open {
     const tags = (p.tags || []).slice(0, 4);
     return `
       <div class="thumb">
+        <div class="thumb-loading" aria-hidden="true"><span class="loading-spinner"></span></div>
         <img src="${LQ_PLACEHOLDER}" data-src="${src}"
              alt="${p.common} plant observed on Howker Ridge Trail" loading="lazy" decoding="async" fetchpriority="low"
              referrerpolicy="no-referrer"
@@ -1160,6 +1187,12 @@ body.details-open .drawer.open {
       const img = el.querySelector('img');
       if (img) {
         imgObserver && imgObserver.observe(img);
+        img.addEventListener('load', () => {
+          const overlay = img.previousElementSibling;
+          if (overlay && overlay.classList.contains('thumb-loading')) {
+            overlay.classList.add('hidden');
+          }
+        }, { once: true });
         img.addEventListener('load', schedule, {once:true});
       }
       // Instead of opening a drawer, redirect to details page
