@@ -6,6 +6,7 @@ const { execSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
+const PLANTS_PATH = path.join(ROOT, 'data', 'howker-plants');
 const SITEMAP_INDEX_OUTPUT = path.join(ROOT, 'sitemap.xml');
 const PAGE_SITEMAP_OUTPUT = path.join(ROOT, 'page-sitemap.xml');
 const IMAGE_SITEMAP_OUTPUT = path.join(ROOT, 'image-sitemap.xml');
@@ -28,6 +29,7 @@ const STATIC_PAGE_ENTRIES = [
 const IMAGE_LICENSE_URL = 'https://nh48.info/licensing';
 
 const data = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
+const plantData = JSON.parse(fs.readFileSync(PLANTS_PATH, 'utf8'));
 
 // Normalize strings for web output. Fixes common mojibake (â€” → —, etc.)
 // and replaces em/en dashes with a simple hyphen for XML.
@@ -226,6 +228,21 @@ const dedupeImages = (images) => {
 
 const slugs = Object.keys(data).sort();
 
+const buildPlantImageEntries = () => {
+  const entries = [];
+  if (!Array.isArray(plantData)) return entries;
+  for (const plant of plantData) {
+    if (!plant) continue;
+    const name = normalizeTextForWeb(plant.common || plant.latin || plant.id || 'Plant');
+    const imgs = Array.isArray(plant.imgs) && plant.imgs.length ? plant.imgs : (plant.img ? [plant.img] : []);
+    const images = dedupeImages(buildImageEntries(imgs, name));
+    if (images.length) {
+      entries.push({ loc: `https://nh48.info/plant/${encodeURIComponent(plant.id)}`, images });
+    }
+  }
+  return entries;
+};
+
 const buildPageSitemap = () => {
   const urls = [];
   STATIC_PAGE_ENTRIES.forEach((entry) =>
@@ -269,6 +286,9 @@ const buildImageSitemap = () => {
     if (!images.length) return;
     urlEntries.push({ loc: `${PEAK_BASE}/${slug}`, images });
   });
+
+  const plantEntries = buildPlantImageEntries();
+  urlEntries.push(...plantEntries);
 
   const xmlParts = [];
   xmlParts.push('<?xml version="1.0" encoding="UTF-8"?>');

@@ -1162,13 +1162,21 @@ body.details-open .drawer.open {
   function cardHTML(p){
     const src = (Array.isArray(p.imgs) && p.imgs.length ? p.imgs[0] : (p.img || PLACEHOLDER));
     const tags = (p.tags || []).slice(0, 4);
+    const titleText = (p.teaser || p.desc || p.morph || '').slice(0, 160).replace(/"/g,'&quot;');
+    const descText = (p.desc || '').replace(/"/g,'&quot;');
+    const creditText = (p.credits || '').replace(/"/g,'&quot;');
     return `
       <div class="thumb">
         <div class="thumb-loading" aria-hidden="true"><span class="loading-spinner"></span></div>
         <img src="${LQ_PLACEHOLDER}" data-src="${src}"
-             alt="${p.common} plant observed on Howker Ridge Trail" loading="lazy" decoding="async" fetchpriority="low"
+             alt="${p.common} plant observed on Howker Ridge Trail"
+             title="${titleText}"
+             data-desc="${descText}"
+             data-credits="${creditText}"
+             loading="lazy" decoding="async" fetchpriority="low"
              referrerpolicy="no-referrer"
              onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
+        <div class="sr-only">${p.desc || p.teaser || ''}</div>
       </div>
       <div class="body">
         <h3>${p.common}</h3>

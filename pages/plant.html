@@ -23,11 +23,11 @@
 <link rel="canonical" href="https://nh48.info/pages/plant.html" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nh48.info/pages/plant.html" />
-<meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lincoln/mount-lincoln__001.jpg" />
-<meta property="og:image:alt" content="Rocky alpine summit area on Mount Lincoln in the White Mountains" />
+<meta id="og-image" property="og:image" content="" />
+<meta id="og-image-alt" property="og:image:alt" content="" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lincoln/mount-lincoln__001.jpg" />
-<meta name="twitter:image:alt" content="Rocky alpine summit area on Mount Lincoln in the White Mountains" />
+<meta id="twitter-image" name="twitter:image" content="" />
+<meta id="twitter-image-alt" name="twitter:image:alt" content="" />
 <meta id="og-title" property="og:title" content="Howker Ridge • Plant" />
 <meta id="og-description" property="og:description" content="Detailed species view for alpine and subalpine plants observed along the Howker Ridge Trail." />
 <meta id="twitter-title" name="twitter:title" content="Howker Ridge • Plant" />
@@ -75,6 +75,7 @@
     }
   }
 </script>
+<script id="plant-images-jsonld" type="application/ld+json"></script>
 <script src="/js/unified-footer.js" defer></script>
 
 <style>
@@ -508,9 +509,29 @@ header p{
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image unavailable</text></svg>`
   );
 
+  const normalizeTextForWeb = (input) => {
+    if (!input) return '';
+    let s = String(input);
+    s = s
+      .replace(/â€”/g, '—')
+      .replace(/â€“/g, '–')
+      .replace(/â€˜|â€™/g, "'")
+      .replace(/â€œ|â€�/g, '"')
+      .replace(/Â/g, '');
+    s = s.replace(/[—–]/g, ' - ');
+    return s.replace(/\s+/g, ' ').trim();
+  };
+
   function updateMeta(id, content){
-    const el = document.getElementById(id);
-    if (el && content) {
+    if (!content) return;
+    let el = document.getElementById(id);
+    if (!el) {
+      el = document.querySelector(`meta[name="${id}"]`) || document.querySelector(`meta[id="${id}"]`);
+    }
+    if (!el) {
+      el = document.querySelector(`meta[property="${id}"]`);
+    }
+    if (el) {
       el.setAttribute('content', content);
     }
   }
@@ -528,7 +549,7 @@ header p{
   }
 
   /* ---------- Carousel and Details Rendering ---------- */
-  function buildCarousel(images, altBase){
+  function buildCarousel(images, p){
     carouselEl.innerHTML = '';
     dotsEl.innerHTML = '';
     carouselImgs = [];
@@ -538,17 +559,27 @@ header p{
       const slide = document.createElement('div');
       slide.className = 'slide' + (i===0 ? ' active' : '');
       const img = document.createElement('img');
-      img.alt = `${altBase} image ${i+1} of ${images.length}`;
+      const altBase = (p && p.common) ? p.common : 'Plant';
+      const descSnippet = (p && (p.morph || p.teaser || p.desc) || '').trim();
+      const altDetail = descSnippet ? ` – ${descSnippet.slice(0, 100)}` : '';
+      img.alt = `${altBase}${altDetail} (image ${i+1} of ${images.length})`;
+      img.title = (p && (p.desc || p.teaser || p.morph) || '').trim().slice(0, 160);
+      img.dataset.desc = (p && p.desc) || '';
+      img.dataset.credits = (p && p.credits) || '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
       if (i===0){
         img.src = src;
       } else {
-        img.loading='lazy';
-        img.decoding='async';
         img.setAttribute('data-src', src);
         img.src = LQ_PLACEHOLDER;
       }
       img.onerror = ()=>{ img.onerror=null; img.src=PLACEHOLDER; };
       slide.appendChild(img);
+      const caption = document.createElement('p');
+      caption.className = 'sr-only';
+      caption.textContent = (p && (p.desc || p.teaser) || '').trim();
+      slide.appendChild(caption);
       carouselEl.appendChild(slide);
       carouselImgs.push(img);
       const dot=document.createElement('div');
@@ -654,7 +685,35 @@ header p{
     if (credits) document.getElementById('sec-credits').removeAttribute('hidden');
 
     const imgs = Array.isArray(p.imgs) && p.imgs.length ? p.imgs : (p.img ? [p.img] : []);
-    buildCarousel(imgs, p.common || 'Selected');
+    buildCarousel(imgs, p);
+
+    const firstImage = Array.isArray(p.imgs) && p.imgs.length ? p.imgs[0] : (p.img || '');
+    const caption = normalizeTextForWeb(`${p.common || ''} - ${p.teaser || p.desc || p.morph || ''}`.trim());
+    if (firstImage){
+      updateMeta('og-image', firstImage);
+      updateMeta('twitter-image', firstImage);
+    }
+    if (caption){
+      updateMeta('og-image-alt', caption);
+      updateMeta('twitter-image-alt', caption);
+    }
+
+    const imagesList = imgs.map(src => ({
+      '@type': 'ImageObject',
+      'url': src,
+      'caption': normalizeTextForWeb(p.desc || p.teaser || p.morph || ''),
+      'license': 'https://creativecommons.org/licenses/by/4.0/'
+    }));
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      'name': document.title,
+      'image': imagesList
+    };
+    const jsonLdEl = document.getElementById('plant-images-jsonld');
+    if (jsonLdEl) {
+      jsonLdEl.textContent = JSON.stringify(jsonLd);
+    }
   }
 
   /* ---------- Init for details page ---------- */
