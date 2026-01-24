@@ -867,6 +867,8 @@ export default {
       const breadcrumb = {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
+        '@id': `${canonicalUrl}#breadcrumbs`,
+        name: isFrench ? `Fil d’ariane ${peakName}` : `${peakName} breadcrumb trail`,
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: isFrench ? 'Accueil' : 'Home', item: isFrench ? `${SITE}/fr/` : `${SITE}/` },
           { '@type': 'ListItem', position: 2, name: isFrench ? 'Catalogue des sommets' : 'Peak Catalog', item: isFrench ? `${SITE}/fr/catalog` : `${SITE}/catalog` },
@@ -1052,6 +1054,8 @@ export default {
         {
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
+          '@id': `${canonical}#breadcrumbs`,
+          name: isFrench ? 'Fil d’ariane NH48' : 'NH48 API breadcrumb trail',
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: isFrench ? 'Accueil' : 'Home', item: canonical }
           ]
