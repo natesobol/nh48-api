@@ -20,6 +20,7 @@
 <link rel="manifest" href="/manifest.json" />
 <title>Howker Ridge Trail – Map & Data | NH48.info</title>
 <meta name="description" content="Interactive map, downloads, trail metadata, and current conditions for the Howker Ridge Trail on Mount Madison." />
+<meta name="keywords" content="Howker Ridge Trail, trail map, Mount Madison, New Hampshire, White Mountains, GPX downloads, trail data, hiking maps, trail points of interest" />
 <link rel="canonical" href="https://nh48.info/howker-ridge" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Howker Ridge Trail – Map & Data" />
@@ -227,6 +228,66 @@ th{
   #map{ height:360px; }
 }
 </style>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "name": "Howker Ridge Trail – Map & Data",
+        "description": "Interactive map, downloads, trail metadata, and current conditions for the Howker Ridge Trail on Mount Madison.",
+        "url": "https://nh48.info/howker-ridge",
+        "breadcrumb": {
+          "@id": "https://nh48.info/howker-ridge#breadcrumb"
+        },
+        "about": {
+          "@id": "https://nh48.info/howker-ridge#place"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://nh48.info/howker-ridge#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://nh48.info/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Projects",
+            "item": "https://nh48.info/projects"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Howker Ridge Trail – Map & Data",
+            "item": "https://nh48.info/howker-ridge"
+          }
+        ]
+      },
+      {
+        "@type": "Place",
+        "@id": "https://nh48.info/howker-ridge#place",
+        "name": "Howker Ridge Trail",
+        "description": "Steep ridge trail on Mount Madison in the White Mountains of New Hampshire.",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Randolph",
+          "addressRegion": "NH",
+          "addressCountry": "US"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.334951,
+          "longitude": -71.266614
+        }
+      }
+    ]
+  }
+</script>
 </head>
 <body data-route="howker-ridge" data-page="howker-ridge">
   <div id="nav-placeholder"></div>

@@ -20,6 +20,7 @@
 <link rel="manifest" href="/manifest.json" />
 <title>Howker Ridge • Trail Plant Catalog</title>
 <meta name="description" content="Interactive alpine plant catalog for Howker Ridge (Mount Madison, NH). Browse quick facts, habitats, elevation ranges, and seasonal notes. Click a plant for details." />
+<meta name="keywords" content="Howker Ridge Trail plant catalog, alpine plants, subalpine flora, Mount Madison, New Hampshire, White Mountains, plant catalog, NH48" />
 <link rel="canonical" href="https://nh48.info/plant-catalog" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Howker Ridge • Alpine &amp; Subalpine Plant Catalog" />
@@ -57,7 +58,7 @@
           "@type": "ListItem",
           "position": 2,
           "name": "Projects",
-          "item": "https://nh48.info/plant-catalog"
+          "item": "https://nh48.info/projects"
         },
         {
           "@type": "ListItem",
@@ -79,6 +80,25 @@
           "contentUrl": "https://nh48.info/data/howker-plants"
         }
       ]
+    }
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Place",
+    "name": "Howker Ridge Trail",
+    "description": "Steep ridge trail on Mount Madison in the White Mountains of New Hampshire.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Randolph",
+      "addressRegion": "NH",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 44.334951,
+      "longitude": -71.266614
     }
   }
 </script>
@@ -1082,7 +1102,7 @@ body.details-open .drawer.open {
     return `
       <div class="thumb">
         <img src="${LQ_PLACEHOLDER}" data-src="${src}"
-             alt="${p.common} thumbnail" loading="lazy" decoding="async" fetchpriority="low"
+             alt="${p.common} plant observed on Howker Ridge Trail" loading="lazy" decoding="async" fetchpriority="low"
              referrerpolicy="no-referrer"
              onerror="this.onerror=null;this.src='${PLACEHOLDER}'">
       </div>
