@@ -6,6 +6,7 @@
   --muted:#ffffff;
   --stroke:#ffffff33;
   --accent:#22c55e;
+  --accent-strong:#4ade80;
   --gap:10px;
 }
 html, body{
@@ -180,6 +181,34 @@ input[list]::-webkit-list-button {
   gap:12px;
   margin-bottom:14px;
   align-items:center;
+}
+.submit-edit-control{
+  margin-left:auto;
+}
+.submit-edit-link{
+  display:inline-block;
+  padding:8px 16px;
+  border-radius:10px;
+  background:var(--accent);
+  color:#ffffff;
+  text-decoration:none;
+  font-weight:600;
+  transition:background 0.2s ease, transform 0.2s ease;
+}
+.submit-edit-link:hover,
+.submit-edit-link:focus-visible{
+  background:#16a34a;
+  transform:translateY(-1px);
+}
+@media(max-width:640px){
+  .submit-edit-control{
+    width:100%;
+    margin-left:0;
+  }
+  .submit-edit-link{
+    width:100%;
+    text-align:center;
+  }
 }
 .controls .control.is-disabled{
   opacity:0.65;

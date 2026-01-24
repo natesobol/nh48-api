@@ -382,7 +382,7 @@
       }
       .seo-links{
         display:flex;
-        flex-direction:column;
+        flex-wrap:wrap;
         gap:6px;
         margin-bottom:16px;
       }
@@ -390,6 +390,9 @@
         color:var(--accent);
         text-decoration:none;
         font-size:0.95rem;
+      }
+      .ml-3{
+        margin-left:0.75rem;
       }
       .back-guide{
         display:inline-flex;
@@ -975,6 +978,7 @@
       </nav>
       <div class="seo-links">
         <a href="/catalog" data-i18n="peak.back">Back to NH48 Peak Catalog</a>
+        <a href="/submit-edit-to-author" class="ml-3" data-i18n="peak.edit-report">Submit Edit to Author</a>
       </div>
       <div class="controls-row">
         <div class="units-control">

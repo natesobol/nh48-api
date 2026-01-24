@@ -89,6 +89,24 @@ header p{
   margin:0;
   color:var(--muted);
 }
+.submit-edit-cta{
+  margin:12px 0 0;
+}
+.submit-edit-link{
+  display:inline-block;
+  padding:8px 16px;
+  border-radius:10px;
+  background:var(--accent);
+  color:#ffffff;
+  text-decoration:none;
+  font-weight:600;
+  transition:background 0.2s ease, transform 0.2s ease;
+}
+.submit-edit-link:hover,
+.submit-edit-link:focus-visible{
+  background:#16a34a;
+  transform:translateY(-1px);
+}
 blockquote{
   margin:0 0 12px;
   padding:12px 16px;
@@ -324,6 +342,9 @@ blockquote{
     <header>
       <h1>Howker Ridge Trail Info</h1>
       <p>Detailed information about the Howker Ridge Trail — length, elevation gain, terrain, water sources, and historical context for trip planning.</p>
+      <p class="submit-edit-cta">
+        <a href="/submit-edit-to-author" class="submit-edit-link">Submit Edit to Author</a>
+      </p>
     </header>
 
     <div class="info-blurb" role="note">
