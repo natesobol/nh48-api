@@ -22,6 +22,8 @@
 <meta name="description" content="Interactive alpine plant catalog for Howker Ridge (Mount Madison, NH). Browse quick facts, habitats, elevation ranges, and seasonal notes. Click a plant for details." />
 <meta name="keywords" content="Howker Ridge Trail plant catalog, alpine plants, subalpine flora, Mount Madison, New Hampshire, White Mountains, plant catalog, NH48" />
 <link rel="canonical" href="https://nh48.info/plant-catalog" />
+<link rel="alternate" hreflang="en" href="https://nh48.info/plant-catalog" />
+<link rel="alternate" hreflang="fr" href="https://nh48.info/fr/plant-catalog" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Howker Ridge • Alpine &amp; Subalpine Plant Catalog" />
 <meta property="og:description" content="Interactive catalog documenting alpine and subalpine plants along the Howker Ridge Trail on Mount Madison, NH." />
@@ -83,6 +85,14 @@
     }
   }
 </script>
+<script type="application/ld+json" class="plant-list">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Howker Ridge Plant Catalog",
+    "itemListElement": []
+  }
+</script>
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -99,6 +109,25 @@
       "@type": "GeoCoordinates",
       "latitude": 44.334951,
       "longitude": -71.266614
+    }
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "NH48 – White Mountains Hiking Guide",
+    "url": "https://nh48.info/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "NH48 Project",
+      "url": "https://nh48.info/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://nh48.info/assets/logo.png",
+        "width": 512,
+        "height": 512
+      }
     }
   }
 </script>
@@ -1214,6 +1243,25 @@ body.details-open .drawer.open {
     schedule();
   }
 
+  function updatePlantItemList(plants){
+    const plantListScript = document.querySelector('script.plant-list');
+    if (!plantListScript) {
+      return;
+    }
+    try {
+      const plantItemList = JSON.parse(plantListScript.textContent);
+      plantItemList.itemListElement = plants.map((plant, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "name": plant.common,
+        "url": `https://nh48.info/plant/${encodeURIComponent(plant.id)}`
+      }));
+      plantListScript.textContent = JSON.stringify(plantItemList);
+    } catch (err) {
+      console.error('Failed to update plant ItemList structured data', err);
+    }
+  }
+
   /* ---------- Pagination UI ---------- */
   function updatePager(total, from, to){
     const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE) || 1);
@@ -1341,6 +1389,7 @@ body.details-open .drawer.open {
       PLANTS = items;
       CURRENT = PLANTS.slice();
       PAGE = 1; TOTAL_PAGES = Math.max(1, Math.ceil(CURRENT.length / PAGE_SIZE));
+      updatePlantItemList(PLANTS);
       renderPage();
       // start rotating card images only if rotateToggle checked
       if (rotateToggle.checked) { rotateInterval = setInterval(rotateCardImages, 5000); }
