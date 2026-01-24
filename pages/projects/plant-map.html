@@ -20,6 +20,7 @@
 <link rel="manifest" href="/manifest.json" />
 <title>Howker Ridge Plant Log Map – NH48.info</title>
 <meta name="description" content="Interactive map to explore and record alpine plant observations along the Howker Ridge Trail." />
+<meta name="keywords" content="Howker Ridge Trail plant log, plant log map, alpine plant observations, Mount Madison, New Hampshire, White Mountains, plant logs, interactive map, plant sightings map" />
 <link rel="canonical" href="https://nh48.info/projects/plant-map" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Howker Ridge Plant Log Map – NH48.info" />
@@ -237,6 +238,66 @@ header p{
   }
 }
 </style>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "name": "Howker Ridge Plant Log Map",
+        "description": "Interactive map to explore and record alpine plant observations along the Howker Ridge Trail.",
+        "url": "https://nh48.info/projects/plant-map",
+        "breadcrumb": {
+          "@id": "https://nh48.info/projects/plant-map#breadcrumb"
+        },
+        "about": {
+          "@id": "https://nh48.info/projects/plant-map#place"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://nh48.info/projects/plant-map#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://nh48.info/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Plant Catalog",
+            "item": "https://nh48.info/plant-catalog"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Plant Log Map",
+            "item": "https://nh48.info/projects/plant-map"
+          }
+        ]
+      },
+      {
+        "@type": "Place",
+        "@id": "https://nh48.info/projects/plant-map#place",
+        "name": "Howker Ridge Trail",
+        "description": "Steep ridge trail on Mount Madison in the White Mountains of New Hampshire.",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Randolph",
+          "addressRegion": "NH",
+          "addressCountry": "US"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.334951,
+          "longitude": -71.266614
+        }
+      }
+    ]
+  }
+</script>
 </head>
 <body data-route="plant-catalog" data-page="plant-map">
   <div id="nav-placeholder"></div>
