@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" href="/favicons/favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/x-icon" href="/favicons/favicon.ico" />
+<link rel="shortcut icon" href="/favicons/favicon.ico" />
+<link rel="icon" type="image/x-icon" sizes="16x16" href="/favicons/favicon-16x16.ico" />
+<link rel="icon" type="image/x-icon" sizes="32x32" href="/favicons/favicon-32x32.ico" />
+<link rel="icon" type="image/x-icon" sizes="48x48" href="/favicons/favicon-48x48.ico" />
+<link rel="icon" type="image/x-icon" sizes="96x96" href="/favicons/favicon-96x96.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48x48.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+<link rel="manifest" href="/manifest.json" />
+<link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet" />
+<script src="/js/unified-footer.js" defer></script>
+<style>
+:root{
+  --bg:#0a0a0a;
+  --panel:#12121a;
+  --card:#171a22;
+  --ink:#ffffff;
+  --muted:#a5b4c3;
+  --stroke:#ffffff;
+  --accent:#22c55e;
+  --danger:#ef4444;
+  --gap:14px;
+}
+body.light{
+  --bg:#f8fafc;
+  --panel:#ffffff;
+  --card:#f7f9fc;
+  --ink:#1f2937;
+  --muted:#6b7280;
+  --stroke:#00000022;
+  --accent:#22c55e;
+  --danger:#dc2626;
+}
+*{ box-sizing:border-box; }
+html{ min-width:320px; scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.wrap{
+  max-width:1100px;
+  margin:0 auto;
+  padding:12px;
+}
+.panel{
+  background:var(--panel);
+  border:none;
+  border-radius:12px;
+  margin-top:1.5rem;
+  padding:24px;
+  box-shadow:0 10px 30px #0004;
+}
+header h1{
+  margin:0 0 8px;
+  font-size:clamp(22px,3vw,32px);
+  letter-spacing:.2px;
+}
+header p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.6;
+}
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+  gap:16px;
+  margin-top:20px;
+}
+label{
+  display:block;
+  font-size:0.9rem;
+  margin-bottom:6px;
+  color:var(--muted);
+}
+input, select, textarea{
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--stroke);
+  background:var(--card);
+  color:var(--ink);
+  font-size:0.95rem;
+}
+textarea{
+  min-height:140px;
+  resize:vertical;
+}
+.helper{
+  font-size:0.8rem;
+  color:var(--muted);
+  margin-top:6px;
+}
+.editor-shell{
+  margin-top:8px;
+  border:1px solid var(--stroke);
+  border-radius:10px;
+  overflow:hidden;
+  background:var(--card);
+}
+#editor{
+  min-height:160px;
+}
+#toolbar{
+  border-bottom:1px solid var(--stroke);
+  background:rgba(255,255,255,0.03);
+}
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-items:center;
+  margin-top:20px;
+}
+button{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:12px 20px;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+}
+button:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+.alert{
+  margin-top:16px;
+  padding:12px 14px;
+  border-radius:10px;
+  background:rgba(34,197,94,0.12);
+  border:1px solid rgba(34,197,94,0.3);
+  color:var(--ink);
+}
+.alert.error{
+  background:rgba(239,68,68,0.12);
+  border-color:rgba(239,68,68,0.35);
+}
+.captcha-shell{
+  margin-top:14px;
+  display:grid;
+  gap:12px;
+}
+.select-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+  gap:16px;
+}
+.small-note{
+  font-size:0.85rem;
+  color:var(--muted);
+  margin-top:8px;
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <header>
+        <h1>Submit Edit to Author</h1>
+        <p>Use this form to report incorrect or outdated information across the NH48 peaks or the Howker Ridge plant catalog. Please include as much detail as you can so we can follow up quickly.</p>
+      </header>
+
+      <div id="statusMessage" class="alert" hidden></div>
+
+      <form id="editForm" method="POST" action="/submit-edit">
+        <div class="form-grid">
+          <div>
+            <label for="name">Name (required)</label>
+            <input id="name" name="name" type="text" required placeholder="Your full name" />
+          </div>
+          <div>
+            <label for="email">Email (required)</label>
+            <input id="email" name="email" type="email" required placeholder="you@example.com" />
+          </div>
+        </div>
+
+        <div class="select-row" style="margin-top:20px;">
+          <div>
+            <label for="peakSelect">NH48 Peak (optional)</label>
+            <select id="peakSelect" name="peak">
+              <option value="">— None —</option>
+            </select>
+            <div class="helper" id="peakHelp">Loading NH48 peak list…</div>
+          </div>
+          <div>
+            <label for="plantSelect">Plant catalog entry (optional)</label>
+            <select id="plantSelect" name="plant">
+              <option value="">— None —</option>
+            </select>
+            <div class="helper" id="plantHelp">Loading plant catalog…</div>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <label for="editor">Message (required)</label>
+          <div class="editor-shell">
+            <div id="toolbar">
+              <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+              </span>
+            </div>
+            <div id="editor"></div>
+          </div>
+          <div class="helper">You can format your message with bold, italics, or bullet lists.</div>
+          <input type="hidden" id="bodyField" name="body" />
+        </div>
+
+        <div class="captcha-shell">
+          <div>
+            <label>Bot prevention (recommended)</label>
+            <div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY"></div>
+            <div class="small-note">Turnstile runs silently in most browsers. If it does not load, please complete the math challenge below.</div>
+          </div>
+          <div>
+            <label for="math">Math check (fallback)</label>
+            <input id="math" name="math" type="text" placeholder="What is 3 + 5?" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit">Send report</button>
+          <span class="helper">Reports are emailed to the site author for review.</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script>
+    const statusMessage = document.getElementById('statusMessage');
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('status');
+    const message = params.get('message');
+    if (status) {
+      statusMessage.hidden = false;
+      statusMessage.textContent = message || (status === 'success'
+        ? 'Thanks! Your report has been sent.'
+        : 'Something went wrong. Please try again.');
+      if (status !== 'success') {
+        statusMessage.classList.add('error');
+      }
+    }
+
+    const quill = new Quill('#editor', {
+      theme: 'snow',
+      modules: { toolbar: '#toolbar' }
+    });
+
+    const peakSelect = document.getElementById('peakSelect');
+    const plantSelect = document.getElementById('plantSelect');
+    const peakHelp = document.getElementById('peakHelp');
+    const plantHelp = document.getElementById('plantHelp');
+
+    const uniqueSorted = (values) => Array.from(new Set(values)).sort((a, b) => a.localeCompare(b));
+
+    async function loadPeaks() {
+      try {
+        const res = await fetch('/data/nh48.json', { cache: 'no-store' });
+        if (!res.ok) {
+          throw new Error('Unable to load peak list');
+        }
+        const text = await res.text();
+        const matches = Array.from(text.matchAll(/"name"\s*:\s*"([^"]+)"/g));
+        const names = uniqueSorted(matches.map(match => match[1].trim()).filter(Boolean));
+        names.forEach((name) => {
+          const option = document.createElement('option');
+          option.value = name;
+          option.textContent = name;
+          peakSelect.appendChild(option);
+        });
+        peakHelp.textContent = `${names.length} peaks loaded.`;
+      } catch (err) {
+        peakHelp.textContent = 'Unable to load peaks.';
+      }
+    }
+
+    async function loadPlants() {
+      try {
+        const res = await fetch('/data/howker-plants', { cache: 'no-store' });
+        if (!res.ok) {
+          throw new Error('Unable to load plants');
+        }
+        const data = await res.json();
+        const names = uniqueSorted((Array.isArray(data) ? data : [])
+          .map((plant) => plant?.common)
+          .filter(Boolean));
+        names.forEach((name) => {
+          const option = document.createElement('option');
+          option.value = name;
+          option.textContent = name;
+          plantSelect.appendChild(option);
+        });
+        plantHelp.textContent = `${names.length} plants loaded.`;
+      } catch (err) {
+        plantHelp.textContent = 'Unable to load plant catalog.';
+      }
+    }
+
+    loadPeaks();
+    loadPlants();
+
+    const form = document.getElementById('editForm');
+    form.addEventListener('submit', (event) => {
+      const bodyField = document.getElementById('bodyField');
+      const plainText = quill.getText().trim();
+      if (!plainText) {
+        event.preventDefault();
+        alert('Please enter a message before submitting.');
+        return;
+      }
+      bodyField.value = quill.root.innerHTML;
+    });
+  </script>
+</body>
+</html>
