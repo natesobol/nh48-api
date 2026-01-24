@@ -65,6 +65,41 @@
       padding: 32px clamp(16px, 3vw, 36px) 8px;
       text-align: center;
     }
+    .hero-pattern {
+      background-color: #0f172a;
+      background-image:
+        radial-gradient(circle, rgba(34, 197, 94, 0.15) 1px, transparent 1px),
+        radial-gradient(circle, rgba(15, 23, 42, 0.3) 1px, transparent 1px);
+      background-size: 4px 4px, 8px 8px;
+      background-position: 0 0, 1px 1px;
+    }
+    .hero-pattern-dark {
+      background-color: #020617;
+      background-image:
+        radial-gradient(circle, rgba(34, 197, 94, 0.1) 1px, transparent 1px),
+        radial-gradient(circle, rgba(2, 6, 23, 0.25) 1px, transparent 1px);
+      background-size: 3px 3px, 6px 6px;
+      background-position: 0 0, 1px 1px;
+    }
+    .hero-pattern-strip {
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: inset 0 0 0 1px rgba(2, 6, 23, 0.15);
+    }
+    .hero-pattern h1,
+    .hero-pattern h2,
+    .hero-pattern p {
+      color: #f1f5f9;
+    }
+    .hero-pattern a {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+    .hero-pattern a:hover,
+    .hero-pattern a:focus-visible {
+      color: #4ade80;
+    }
 
     header h1 {
       margin: 0 0 10px;
@@ -212,7 +247,7 @@
   </script>
 </head>
 <body>
-  <header>
+  <header class="hero-pattern hero-pattern-strip">
     <div class="eyebrow">White Mountain Trails API</div>
     <h1>White Mountain Trails – WMNF Trail List &amp; Map Redirect</h1>
     <p>SEO-friendly landing page that enumerates every White Mountain National Forest trail name for bots and visitors, with a human redirect to the live WMNF Trails experience.</p>
@@ -225,13 +260,15 @@
   <main>
     <section aria-labelledby="trail-heading">
       <span class="visually-hidden">Search engine friendly trail index</span>
-      <h2 id="trail-heading">Complete White Mountain National Forest Trail List</h2>
-      <p class="intro">Pre-rendered list of WMNF trail names to assist SEO crawlers and users. Data is sourced from <code>trails_with_osm.json</code> and kept in alphabetical order. <span class="trail-count" id="trailCount" aria-live="polite"></span></p>
+      <div class="hero-pattern hero-pattern-strip">
+        <h2 id="trail-heading">Complete White Mountain National Forest Trail List</h2>
+        <p class="intro">Pre-rendered list of WMNF trail names to assist SEO crawlers and users. Data is sourced from <code>trails_with_osm.json</code> and kept in alphabetical order. <span class="trail-count" id="trailCount" aria-live="polite"></span></p>
+      </div>
       <ol class="trail-grid" id="trailGrid"></ol>
     </section>
   </main>
 
-  <footer>
+  <footer class="hero-pattern-dark">
     <p>White Mountain Trails App · WMNF trail data, segments, and peak overlays</p>
   </footer>
 

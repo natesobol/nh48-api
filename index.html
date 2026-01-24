@@ -592,6 +592,49 @@
       position: relative;
       z-index: 2;
     }
+    .hero-pattern {
+      background-color: #0f172a;
+      background-image:
+        radial-gradient(circle, rgba(34, 197, 94, 0.15) 1px, transparent 1px),
+        radial-gradient(circle, rgba(15, 23, 42, 0.3) 1px, transparent 1px);
+      background-size: 4px 4px, 8px 8px;
+      background-position: 0 0, 1px 1px;
+    }
+    .hero-pattern-dark {
+      background-color: #020617;
+      background-image:
+        radial-gradient(circle, rgba(34, 197, 94, 0.1) 1px, transparent 1px),
+        radial-gradient(circle, rgba(2, 6, 23, 0.25) 1px, transparent 1px);
+      background-size: 3px 3px, 6px 6px;
+      background-position: 0 0, 1px 1px;
+    }
+    .hero-pattern-panel {
+      padding: clamp(20px, 4vw, 32px);
+      border-radius: 20px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: inset 0 0 0 1px rgba(2, 6, 23, 0.15);
+    }
+    .hero-pattern-strip {
+      padding: 12px 18px;
+      border-radius: 16px;
+    }
+    .hero-pattern h1,
+    .hero-pattern h2,
+    .hero-pattern p {
+      color: #f1f5f9;
+    }
+    .hero-pattern a {
+      color: #22c55e;
+      text-decoration: underline;
+    }
+    .hero-pattern a:hover,
+    .hero-pattern a:focus-visible {
+      color: #4ade80;
+    }
+    .hero-pattern .dataset-card {
+      color: inherit;
+      text-decoration: none;
+    }
     h1 {
       font-size: clamp(28px, 4vw, 40px);
       margin: 0;
@@ -1771,25 +1814,6 @@
   <!-- Floating peaks container -->
   <div id="floating-peaks"></div>
   <main>
-    <div class="hero-heading" itemscope itemtype="https://schema.org/Brand">
-      <link itemprop="url" href="https://nh48.info/">
-      <meta itemprop="name" content="NH48 API">
-      <meta itemprop="logo" content="/nh48API_logo.png">
-      <img
-        src="/nh48API_logo.png"
-        alt="NH48 API logo featuring a stylized White Mountains badge"
-        width="72"
-        height="72"
-        class="hero-logo"
-        itemprop="logo"
-        decoding="async"
-        fetchpriority="high"
-      >
-      <div class="hero-title-group">
-        <h1 data-i18n="landing.heroTitle">NH48 API</h1>
-        <p class="hero-title-meta" aria-hidden="true" data-i18n="landing.heroTagline">New Hampshire’s 4,000-foot peaks &amp; trails</p>
-      </div>
-    </div>
     <nav aria-label="Breadcrumb">
       <ol class="breadcrumbs" itemscope itemtype="https://schema.org/BreadcrumbList">
         <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
@@ -1800,56 +1824,79 @@
         </li>
       </ol>
     </nav>
-    <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, discover long-distance hiking routes, and learn about alpine flora.</p>
-
-    <section class="dataset-cards">
-      <a href="/catalog" class="dataset-card">
-        <h3 data-i18n="landing.cards.catalogTitle">NH48 Catalog</h3>
-        <p data-i18n="landing.cards.catalogBody">Browse New Hampshire's 48 four-thousand-foot peaks with detailed elevation data, route information, and summit photos. Filter by difficulty, range, and completion status.</p>
-        <div class="card-action">
-          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-          </svg>
-          <span class="card-link-text" data-i18n="landing.cards.catalogCta">Explore NH48 Peaks</span>
+    <section class="hero-pattern hero-pattern-panel hero-intro">
+      <div class="hero-heading" itemscope itemtype="https://schema.org/Brand">
+        <link itemprop="url" href="https://nh48.info/">
+        <meta itemprop="name" content="NH48 API">
+        <meta itemprop="logo" content="/nh48API_logo.png">
+        <img
+          src="/nh48API_logo.png"
+          alt="NH48 API logo featuring a stylized White Mountains badge"
+          width="72"
+          height="72"
+          class="hero-logo"
+          itemprop="logo"
+          decoding="async"
+          fetchpriority="high"
+        >
+        <div class="hero-title-group">
+          <h1 data-i18n="landing.heroTitle">NH48 API</h1>
+          <p class="hero-title-meta" aria-hidden="true" data-i18n="landing.heroTagline">New Hampshire’s 4,000-foot peaks &amp; trails</p>
         </div>
-      </a>
-      
-      <a href="/trails" class="dataset-card">
-        <h3 data-i18n="landing.cards.trailsTitle">White Mountain Trails</h3>
-        <p data-i18n="landing.cards.trailsBody">Interactive map and trail finder for the White Mountain National Forest. Track completion progress, view trail details, and explore routes with real-time filtering.</p>
-        <div class="card-action">
-          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          <span class="card-link-text" data-i18n="landing.cards.trailsCta">Explore Trails</span>
-        </div>
-      </a>
-      
-      <a href="/long-trails" class="dataset-card">
-        <h3 data-i18n="landing.cards.longTrailsTitle">Long Trails</h3>
-        <p data-i18n="landing.cards.longTrailsBody">Discover long-distance hiking trails across North America. View trail segments, elevation profiles, and route details for scenic thru-hikes and backpacking adventures.</p>
-        <div class="card-action">
-          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-          </svg>
-          <span class="card-link-text" data-i18n="landing.cards.longTrailsCta">View Long Trails</span>
-        </div>
-      </a>
-
-      <a href="/plant-catalog" class="dataset-card">
-        <h3 data-i18n="landing.cards.plantsTitle">Howker Plant Catalog</h3>
-        <p data-i18n="landing.cards.plantsBody">Explore alpine and subalpine plant observations from the Howker Ridge Trail, with species details, habitat notes, and photo references.</p>
-        <div class="card-action">
-          <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2c-4.5 4-6 8-6 12 0 4 3 8 6 8s6-4 6-8c0-4-1.5-8-6-12Z"></path>
-            <path d="M12 6v16"></path>
-          </svg>
-          <span class="card-link-text" data-i18n="landing.cards.plantsCta">Browse Plant Catalog</span>
-        </div>
-      </a>
+      </div>
+      <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, discover long-distance hiking routes, and learn about alpine flora.</p>
     </section>
+
+    <div class="hero-pattern hero-pattern-panel dataset-overview">
+      <section class="dataset-cards">
+        <a href="/catalog" class="dataset-card">
+          <h3 data-i18n="landing.cards.catalogTitle">NH48 Catalog</h3>
+          <p data-i18n="landing.cards.catalogBody">Browse New Hampshire's 48 four-thousand-foot peaks with detailed elevation data, route information, and summit photos. Filter by difficulty, range, and completion status.</p>
+          <div class="card-action">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span class="card-link-text" data-i18n="landing.cards.catalogCta">Explore NH48 Peaks</span>
+          </div>
+        </a>
+        
+        <a href="/trails" class="dataset-card">
+          <h3 data-i18n="landing.cards.trailsTitle">White Mountain Trails</h3>
+          <p data-i18n="landing.cards.trailsBody">Interactive map and trail finder for the White Mountain National Forest. Track completion progress, view trail details, and explore routes with real-time filtering.</p>
+          <div class="card-action">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span class="card-link-text" data-i18n="landing.cards.trailsCta">Explore Trails</span>
+          </div>
+        </a>
+        
+        <a href="/long-trails" class="dataset-card">
+          <h3 data-i18n="landing.cards.longTrailsTitle">Long Trails</h3>
+          <p data-i18n="landing.cards.longTrailsBody">Discover long-distance hiking trails across North America. View trail segments, elevation profiles, and route details for scenic thru-hikes and backpacking adventures.</p>
+          <div class="card-action">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+            </svg>
+            <span class="card-link-text" data-i18n="landing.cards.longTrailsCta">View Long Trails</span>
+          </div>
+        </a>
+
+        <a href="/plant-catalog" class="dataset-card">
+          <h3 data-i18n="landing.cards.plantsTitle">Howker Plant Catalog</h3>
+          <p data-i18n="landing.cards.plantsBody">Explore alpine and subalpine plant observations from the Howker Ridge Trail, with species details, habitat notes, and photo references.</p>
+          <div class="card-action">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2c-4.5 4-6 8-6 12 0 4 3 8 6 8s6-4 6-8c0-4-1.5-8-6-12Z"></path>
+              <path d="M12 6v16"></path>
+            </svg>
+            <span class="card-link-text" data-i18n="landing.cards.plantsCta">Browse Plant Catalog</span>
+          </div>
+        </a>
+      </section>
+    </div>
 
     <p class="meta" data-i18n="landing.author">Author: Nathan Sobol</p>
   </main>
@@ -2100,7 +2147,7 @@
   <script type="module" src="/js/i18n.js"></script>
   <script src="/js/splash.js" defer></script>
 
-  <div id="footer-placeholder"></div>
+  <div id="footer-placeholder" class="hero-pattern-dark"></div>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
