@@ -1066,10 +1066,11 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script>
       /* API endpoints */
+      const CDN_CACHE_BUST = `?ts=${Date.now()}`;
       const API_URLS = [
-        'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
-        'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json',
-        '/data/nh48.json'
+        '/data/nh48.json',
+        `https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json${CDN_CACHE_BUST}`,
+        `https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json${CDN_CACHE_BUST}`
       ];
       const TRAIL_API_URLS = [
         '/data/wmnf-trails/wmnf-normalized.json',
