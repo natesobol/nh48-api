@@ -834,17 +834,18 @@
 
     .seo-content {
       margin: 32px auto;
-      max-width: 800px;
+      max-width: 1200px;
+      width: 100%;
       text-align: left;
       font-size: 0.95rem;
       color: #cfe1ff;
     }
 
     .seo-content details {
-      border: 1px solid rgba(34, 197, 94, 0.2);
+      border: 1px solid rgba(34, 197, 94, 0.3);
       border-radius: 16px;
-      padding: 16px;
-      background: rgba(255, 255, 255, 0.04);
+      padding: 24px;
+      background: rgba(34, 197, 94, 0.08);
     }
 
     .seo-content summary {
@@ -861,6 +862,34 @@
     .seo-content .seo-text {
       margin-top: 12px;
       line-height: 1.6;
+    }
+
+    .seo-content .seo-text h2 {
+      margin: 0 0 12px;
+      font-size: 1.35rem;
+      color: #22c55e;
+      font-weight: 700;
+    }
+
+    .seo-content .seo-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(34, 197, 94, 0.5);
+      color: #22c55e;
+      text-decoration: none;
+      font-weight: 600;
+      background: rgba(34, 197, 94, 0.08);
+      margin-bottom: 8px;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .seo-content .seo-cta:hover,
+    .seo-content .seo-cta:focus-visible {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: rgba(34, 197, 94, 0.7);
     }
 
     .seo-links {
@@ -1935,11 +1964,15 @@
       <details>
         <summary>About NH48 and our datasets</summary>
         <div class="seo-text">
-          <p>NH48.info is my unofficial, volunteer-run hub for everything related to New Hampshire’s forty-eight 4,000-foot peaks and the broader White Mountain trail network. It serves as both a public reference and a personal archive, offering open data, maps and photography to hikers, naturalists and anyone who loves the White Mountains. Because this project is maintained in my spare time, information can change without notice, and I always encourage visitors to double-check route conditions and regulations with official sources. A future “Send Edit to Author” feature will make it even easier for you to submit corrections or improvements.</p>
-          <p>At the heart of the site is the NH48 Peak Catalog. This interactive index invites you to explore all forty-eight of New Hampshire’s 4,000-footers, with each entry linking to summit information, route options, difficulty ratings and photos that include creator credits. A quick-browse section lets you jump directly into any peak detail page to find summit info, photos and route details. You can sort peaks by elevation, prominence or trail exposure, filter by range (Presidential, Franconia Ridge, Twins &amp; Bonds, Carter-Moriah and Wildcats, Kinsman, Osceolas &amp; Trips, etc.), and view them in grid or list format.</p>
-          <p>Beyond the peaks, NH48.info covers hundreds of miles of trails. The White Mountain Trails Explorer hosts segment-level metadata for maintained and unofficial paths in the White Mountain National Forest, including distances, elevation profiles, permitted uses and trailhead connections. The Long Trails Dataset extends that data to long-distance hiking routes across North America, such as the Appalachian and Pacific Crest trails. For plant enthusiasts, the Howker Ridge Plant Catalog documents alpine and subalpine flora along the Howker Ridge Trail, capturing species names, bloom timing, elevation ranges and habitat notes. A companion Plant Log Map (found under Howker Ridge Info → Plant Sightings Map) allows you to log your own plant sightings by clicking the map or entering GPS coordinates; observations are moderated before appearing on the map.</p>
-          <p>NH48.info also features a virtual-hike page, high-resolution trail maps, and trail-info articles to help you prepare for real-world adventures. All these tools are provided freely; however, please remember that I operate this as an unofficial, personal project. Information is subject to change, and there is no guarantee of completeness or accuracy. I encourage responsible use and feedback.</p>
-          <p>Finally, every photo on NH48.info is made available for non-commercial and non-monetized reuse. You are welcome to view, share and learn from them, but please respect the copyright: the images remain my property and may not be reproduced, monetized, printed for sale or otherwise exploited without permission. For more visual inspiration and prints, you can visit my sister sites: <a href="https://www.nh48pics.com/">NH48pics.com</a> for galleries and printed photos, and <a href="https://nh48.app/">NH48.app</a> for a personal peak-bagging tracker. These external links provide ways to enjoy the beauty of the White Mountains while supporting the project.</p>
+          <h2>About NH48 and our datasets</h2>
+          <p>NH48.info is my volunteer-run resource for New Hampshire’s 48 4,000-foot peaks and the wider White Mountain trail system. I maintain it as both a public reference and a personal archive, publishing open datasets, GPS maps, elevation profiles, species observations and high-resolution photos for hikers, naturalists and researchers. Because I curate the content in my spare time, conditions and regulations may change. Please verify route status with official sources, and if you spot an error or omission, use the Send Edit to Author link to submit corrections.</p>
+          <a class="seo-cta" href="/submit-edit-to-author">Send Edit to Author</a>
+          <p><strong>NH48 Peak Catalog</strong> – An interactive index with entries for every 4,000-footer. Each record provides summit coordinates, route descriptions, difficulty grades, elevation and prominence data, trail exposure, range categorization and photo sets with credit. You can sort by elevation, prominence or trail exposure; filter by range (Presidential, Franconia Ridge, Twins &amp; Bonds, Carter-Moriah &amp; Wildcats, Kinsman, Osceola &amp; Tripyramids, etc.); and view results in grid or list format.</p>
+          <p><strong>White Mountain Trails Explorer</strong> – A segment-level database of maintained and unofficial trails across the White Mountains. Each segment includes distance, elevation gain, permitted uses, surface type and trailhead coordinates.</p>
+          <p><strong>Long Trails Dataset</strong> – Extends coverage to multi-state hiking routes such as the Appalachian Trail and Pacific Crest Trail.</p>
+          <p><strong>Howker Ridge Plant Catalog</strong> – Documents alpine and subalpine species along the Howker Ridge Trail with common and Latin names, habitat notes, bloom windows, elevation bands and photo references. The companion <strong>Plant Log Map</strong> lets you log sightings via map clicks or GPS coordinates; submissions are moderated before publication.</p>
+          <p>Additional features include a virtual-hike simulator, high-resolution trail maps and trail-info articles to support trip planning. This is an unofficial, personal project; data may be incomplete or outdated. Use it responsibly and send feedback.</p>
+          <p><strong>Photo use:</strong> Images are offered for non-commercial and educational use only; they remain my property and may not be sold or printed without permission. For curated galleries and prints see <a href="https://www.nh48pics.com/">NH48pics.com</a>, and for a personal peak-bagging tracker see <a href="https://nh48.app/">NH48.app</a>.</p>
           <ul class="seo-links">
             <li><a href="/">Home</a></li>
             <li><a href="/catalog">NH48 Peak Catalog</a></li>
