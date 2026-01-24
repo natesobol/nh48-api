@@ -1432,7 +1432,7 @@ export default {
     if (pathNoLocale === '/projects/hrt-info' || pathNoLocale === '/projects/hrt-info/') {
       const canonical = `${SITE}${pathname}`;
       return serveTemplatePage({
-        templatePath: 'pages/hrt_info.html',
+        templatePath: isFrench ? 'pages/hrt_info.fr.html' : 'pages/hrt_info.html',
         pathname,
         routeId: 'hrt-info',
         meta: {
