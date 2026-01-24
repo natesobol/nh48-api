@@ -411,6 +411,24 @@
         font-size: 17px;
         line-height: 1.6;
       }
+      .submit-edit-cta{
+        margin: 16px 0 0;
+      }
+      .submit-edit-link{
+        display: inline-block;
+        padding: 10px 18px;
+        border-radius: 12px;
+        background: var(--accent);
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.2s ease, transform 0.2s ease;
+      }
+      .submit-edit-link:hover,
+      .submit-edit-link:focus-visible{
+        background: var(--accent-strong);
+        transform: translateY(-1px);
+      }
       .quick-facts {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -1173,6 +1191,9 @@
         <h1>NH 48 4,000-Footers: Unofficial Information Hub</h1>
         <p>
           Community members gathered these notes on the AMC Four-Thousand-Footer peaks—routes, ranges, seasonality patterns, and developer tools—to make browsing easier. Details are not fully verified; please cross-check against the Appalachian Mountain Club’s official resources before you go.
+        </p>
+        <p class="submit-edit-cta">
+          <a href="/submit-edit-to-author" class="submit-edit-link">Submit Edit to Author</a>
         </p>
         <div class="quick-facts" id="quickFacts">
           <div class="fact-card hero-card">
