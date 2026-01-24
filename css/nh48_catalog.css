@@ -22,42 +22,6 @@ body{
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
 }
-.hero-pattern{
-  background-color:#0f172a;
-  background-image:
-    radial-gradient(circle, rgba(34, 197, 94, 0.15) 1px, transparent 1px),
-    radial-gradient(circle, rgba(15, 23, 42, 0.3) 1px, transparent 1px);
-  background-size:4px 4px, 8px 8px;
-  background-position:0 0, 1px 1px;
-}
-.hero-pattern-dark{
-  background-color:#020617;
-  background-image:
-    radial-gradient(circle, rgba(34, 197, 94, 0.1) 1px, transparent 1px),
-    radial-gradient(circle, rgba(2, 6, 23, 0.25) 1px, transparent 1px);
-  background-size:3px 3px, 6px 6px;
-  background-position:0 0, 1px 1px;
-}
-.hero-pattern-strip{
-  padding:14px 18px;
-  border-radius:16px;
-  border:1px solid rgba(148, 163, 184, 0.2);
-  box-shadow:inset 0 0 0 1px rgba(2, 6, 23, 0.15);
-  margin-bottom:12px;
-}
-.hero-pattern h1,
-.hero-pattern h2,
-.hero-pattern p{
-  color:#f1f5f9;
-}
-.hero-pattern a{
-  color:var(--accent);
-  text-decoration:underline;
-}
-.hero-pattern a:hover,
-.hero-pattern a:focus-visible{
-  color:var(--accent-strong);
-}
 
 /* Navigation Menu */
 .top-nav{
@@ -220,12 +184,6 @@ input[list]::-webkit-list-button {
 }
 .submit-edit-control{
   margin-left:auto;
-}
-.submit-edit-control.hero-pattern-dark{
-  padding:6px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
 }
 .submit-edit-link{
   display:inline-block;
