@@ -1583,6 +1583,58 @@
         );
       }
 
+      function buildKeywordList(meta){
+        const raw = [];
+        if(meta && typeof meta === 'object'){
+          if(Array.isArray(meta.keywords)) raw.push(...meta.keywords);
+          if(Array.isArray(meta.tags)) raw.push(...meta.tags);
+          if(meta.iptc && Array.isArray(meta.iptc.keywords)) raw.push(...meta.iptc.keywords);
+        }
+        const clean = raw
+          .map(value => safeText(value))
+          .map(value => value && value.trim())
+          .filter(Boolean);
+        const seen = new Set();
+        const out = [];
+        clean.forEach((value) => {
+          if(!seen.has(value)){
+            seen.add(value);
+            out.push(value);
+          }
+        });
+        return out;
+      }
+
+      function buildContentLocation(meta){
+        if(!meta || typeof meta !== 'object') return null;
+        const loc = meta.locationShown || meta.locationCreated;
+        if(!loc || typeof loc !== 'object') return null;
+        const locality = safeText(loc.city);
+        const region = safeText(loc.provinceState);
+        const country = safeText(loc.countryName || loc.countryIsoCode);
+        const sublocation = safeText(loc.sublocation);
+        const worldRegion = safeText(loc.worldRegion);
+        if(!(locality || region || country || sublocation || worldRegion)) return null;
+        const nameParts = [sublocation, locality, region, country].filter(Boolean);
+        const address = {};
+        if(locality) address.addressLocality = locality;
+        if(region) address.addressRegion = region;
+        if(country) address.addressCountry = country;
+        const place = {
+          '@type': 'Place',
+          name: nameParts.length ? nameParts.join(', ') : undefined,
+          address: Object.keys(address).length ? {
+            '@type': 'PostalAddress',
+            ...address
+          } : undefined
+        };
+        if(worldRegion) place.containedInPlace = { '@type': 'Place', name: worldRegion };
+        Object.keys(place).forEach(key => {
+          if(place[key] === undefined) delete place[key];
+        });
+        return place;
+      }
+
       function deferImageSrcSwap(root){
         if(!root) return;
         const imgs = Array.from(root.querySelectorAll('img[data-src]'));
@@ -1612,6 +1664,11 @@
         const photoDescription = primaryPhoto ? buildPhotoExtendedDescription(primaryPhoto) : null;
         const photoUrl = primaryPhoto && (primaryPhoto.originalUrl || primaryPhoto.url);
         const photoContentUrl = primaryPhoto && primaryPhoto.url;
+        const photoKeywords = buildKeywordList(primaryPhoto || {});
+        const photoLocation = buildContentLocation(enriched || primaryPhoto);
+        const photoCreated = primaryPhoto
+          ? pickFirstNonEmpty(primaryPhoto.captureDate, primaryPhoto.fileCreateDate)
+          : '';
         const imageObject = primaryPhoto && primaryPhoto.url
           ? {
             '@type': 'ImageObject',
@@ -1622,7 +1679,12 @@
             creditText: (enriched && enriched.creditLine) || '© Nathan Sobol',
             creator: enriched && enriched.creator ? { '@type': 'Person', name: enriched.creator } : undefined,
             license: (enriched && enriched.rightsUsageTerms) || undefined,
+            acquireLicensePage: 'https://nh48.info/licensing',
+            copyrightNotice: enriched && enriched.copyrightNotice ? enriched.copyrightNotice : undefined,
             alternateName: photoAlt ? photoAlt.text : undefined,
+            keywords: photoKeywords.length ? photoKeywords.join(', ') : undefined,
+            contentLocation: photoLocation || undefined,
+            dateCreated: photoCreated || undefined,
             width: primaryPhoto.width || undefined,
             height: primaryPhoto.height || undefined
           }

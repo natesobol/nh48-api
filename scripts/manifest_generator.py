@@ -199,6 +199,8 @@ def _write_photo_metadata(
     description: str,
     alt_text: str,
     extended_description: str,
+    curated_iptc: Dict[str, object],
+    tags: Optional[List[str]] = None,
 ) -> None:
     """
     Persist the selected headline/description/alt/extendedDescription into the photo file.
@@ -207,8 +209,17 @@ def _write_photo_metadata(
     downloaded. Missing ExifTool or write failures are logged but do not halt generation.
     """
 
+    def _listify(value: object) -> List[str]:
+        if value is None:
+            return []
+        if isinstance(value, list):
+            return [str(item).strip() for item in value if str(item).strip()]
+        if isinstance(value, str):
+            return [value.strip()] if value.strip() else []
+        return [str(value).strip()] if str(value).strip() else []
+
     # Only write when at least one field is present
-    if not any([headline, description, alt_text, extended_description]):
+    if not any([headline, description, alt_text, extended_description, curated_iptc, tags]):
         return
 
     args = ["exiftool", "-overwrite_original"]
@@ -232,6 +243,115 @@ def _write_photo_metadata(
         args.append(f"-XMP-iptcCore:AltTextAccessibility={alt_text}")
     if extended_description:
         args.append(f"-XMP-iptcCore:ExtDescrAccessibility={extended_description}")
+
+    keywords = _listify(curated_iptc.get("keywords"))
+    if tags:
+        keywords.extend(_listify(tags))
+    seen_keywords = set()
+    for keyword in keywords:
+        if keyword not in seen_keywords:
+            seen_keywords.add(keyword)
+            args.append(f"-IPTC:Keywords={keyword}")
+            args.append(f"-XMP-dc:Subject={keyword}")
+
+    creator_list = _listify(curated_iptc.get("creator"))
+    for creator in creator_list:
+        args.append(f"-XMP-dc:Creator={creator}")
+        args.append(f"-IPTC:By-line={creator}")
+
+    creator_job_title = curated_iptc.get("creatorJobTitle")
+    if creator_job_title:
+        args.append(f"-IPTC:By-lineTitle={creator_job_title}")
+
+    credit_line = curated_iptc.get("creditLine")
+    if credit_line:
+        args.append(f"-XMP-photoshop:Credit={credit_line}")
+        args.append(f"-IPTC:Credit={credit_line}")
+
+    source = curated_iptc.get("source")
+    if source:
+        args.append(f"-XMP-photoshop:Source={source}")
+        args.append(f"-IPTC:Source={source}")
+
+    rights = curated_iptc.get("copyrightNotice")
+    if rights:
+        args.append(f"-XMP-dc:Rights={rights}")
+        args.append(f"-IPTC:CopyrightNotice={rights}")
+
+    usage_terms = curated_iptc.get("rightsUsageTerms")
+    if usage_terms:
+        args.append(f"-XMP-xmpRights:UsageTerms={usage_terms}")
+
+    marked = curated_iptc.get("copyrightStatus")
+    if marked:
+        args.append(f"-XMP-xmpRights:Marked={marked}")
+
+    intellectual_genre = curated_iptc.get("intellectualGenre")
+    if intellectual_genre:
+        args.append(f"-IPTC:IntellectualGenre={intellectual_genre}")
+        args.append(f"-XMP-iptcCore:IntellectualGenre={intellectual_genre}")
+
+    subject_code = curated_iptc.get("iptcSubjectCode")
+    if subject_code:
+        args.append(f"-IPTC:SubjectReference={subject_code}")
+        args.append(f"-XMP-iptcExt:SubjectCode={subject_code}")
+
+    location_created = curated_iptc.get("locationCreated") or {}
+    if isinstance(location_created, dict):
+        if location_created.get("sublocation"):
+            args.append(
+                f"-XMP-iptcExt:LocationCreatedSublocation={location_created['sublocation']}"
+            )
+        if location_created.get("city"):
+            args.append(f"-XMP-iptcExt:LocationCreatedCity={location_created['city']}")
+            args.append(f"-XMP-photoshop:City={location_created['city']}")
+        if location_created.get("provinceState"):
+            args.append(
+                f"-XMP-iptcExt:LocationCreatedProvinceState={location_created['provinceState']}"
+            )
+            args.append(f"-XMP-photoshop:State={location_created['provinceState']}")
+        if location_created.get("countryName"):
+            args.append(
+                f"-XMP-iptcExt:LocationCreatedCountryName={location_created['countryName']}"
+            )
+            args.append(f"-XMP-photoshop:Country={location_created['countryName']}")
+        if location_created.get("countryIsoCode"):
+            args.append(
+                f"-XMP-iptcExt:LocationCreatedCountryCode={location_created['countryIsoCode']}"
+            )
+        if location_created.get("worldRegion"):
+            args.append(
+                f"-XMP-iptcExt:LocationCreatedWorldRegion={location_created['worldRegion']}"
+            )
+
+    location_shown = curated_iptc.get("locationShown") or {}
+    if isinstance(location_shown, dict):
+        if location_shown.get("sublocation"):
+            args.append(
+                f"-XMP-iptcExt:LocationShownSublocation={location_shown['sublocation']}"
+            )
+        if location_shown.get("city"):
+            args.append(f"-XMP-iptcExt:LocationShownCity={location_shown['city']}")
+        if location_shown.get("provinceState"):
+            args.append(
+                f"-XMP-iptcExt:LocationShownProvinceState={location_shown['provinceState']}"
+            )
+        if location_shown.get("countryName"):
+            args.append(
+                f"-XMP-iptcExt:LocationShownCountryName={location_shown['countryName']}"
+            )
+        if location_shown.get("countryIsoCode"):
+            args.append(
+                f"-XMP-iptcExt:LocationShownCountryCode={location_shown['countryIsoCode']}"
+            )
+        if location_shown.get("worldRegion"):
+            args.append(
+                f"-XMP-iptcExt:LocationShownWorldRegion={location_shown['worldRegion']}"
+            )
+
+    featured_org = curated_iptc.get("featuredOrgName")
+    if featured_org:
+        args.append(f"-XMP-iptcExt:OrganisationInImageName={featured_org}")
 
     args.append(file_path)
 
@@ -568,6 +688,8 @@ def _extract_photo_metadata(file_path: str) -> Dict[str, Optional[str]]:
         'subject': None,
         'rating': None,
         'dimensions': None,
+        'width': None,
+        'height': None,
         'fileSize': None,
         'fileCreateDate': None,
         'fileModifiedDate': None,
@@ -575,6 +697,8 @@ def _extract_photo_metadata(file_path: str) -> Dict[str, Optional[str]]:
     try:
         with Image.open(file_path) as img:
             width, height = img.size
+            meta['width'] = width
+            meta['height'] = height
             if width == height:
                 meta['orientation'] = 'square'
             elif width > height:
@@ -889,7 +1013,7 @@ def generate_manifest(
                         'captureDate', 'cameraMaker', 'cameraModel', 'camera', 'lens',
                         'fStop', 'shutterSpeed', 'iso', 'exposureBias', 'focalLength', 'flashMode',
                         'meteringMode', 'maxAperture', 'focalLength35mm', 'author', 'title',
-                        'subject', 'rating', 'dimensions', 'fileSize', 'fileCreateDate', 'fileModifiedDate'
+                        'subject', 'rating', 'dimensions', 'width', 'height', 'fileSize', 'fileCreateDate', 'fileModifiedDate'
                     ):
                         value = meta.get(key)
                         if value is not None:
@@ -906,6 +1030,8 @@ def generate_manifest(
                             description or "",
                             alt_text or "",
                             extended_description or "",
+                            curated_iptc,
+                            tags,
                         )
 
                     found_entries.append(photo_entry)
@@ -970,6 +1096,11 @@ def main():
         action="store_true",
         help="Print debug information (raw ExifTool output and key summaries).",
     )
+    parser.add_argument(
+        "--update-sitemaps",
+        action="store_true",
+        help="Regenerate sitemap.xml and image-sitemap.xml after updating the manifest.",
+    )
     args = parser.parse_args()
     updated = generate_manifest(
         args.api,
@@ -985,6 +1116,22 @@ def main():
     with open(output_path, 'w') as out_file:
         json.dump(updated, out_file, indent=2)
     print(f"Manifest updated successfully. Output written to {output_path}")
+    if args.update_sitemaps:
+        try:
+            result = subprocess.run(
+                ["node", os.path.join(os.path.dirname(__file__), "generate-sitemaps.js")],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=False,
+            )
+            if result.returncode != 0:
+                print(
+                    "Sitemap generation failed: "
+                    f"{result.stderr.strip() or 'unknown error'}"
+                )
+        except FileNotFoundError:
+            print("Node is not installed; skipping sitemap generation.")
 
 
 if __name__ == "__main__":
