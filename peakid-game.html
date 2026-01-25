@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Favicons - ICO format preferred for Google compatibility -->
+  <link rel="icon" href="/favicons/favicon.ico" sizes="48x48">
+  <link rel="icon" type="image/x-icon" href="/favicons/favicon.ico">
+  <link rel="shortcut icon" href="/favicons/favicon.ico">
+  <link rel="icon" type="image/x-icon" sizes="16x16" href="/favicons/favicon-16x16.ico">
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="/favicons/favicon-32x32.ico">
+  <link rel="icon" type="image/x-icon" sizes="48x48" href="/favicons/favicon-48x48.ico">
+  <link rel="icon" type="image/x-icon" sizes="96x96" href="/favicons/favicon-96x96.ico">
+  <!-- PNG fallbacks for browsers that prefer PNG -->
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="peakid.title">NH48 PeakID Game</title>
+  <meta name="description" data-i18n="peakid.metaDescription" data-i18n-attr="content" content="Play the NH48 PeakID Game and match summit photos to the 48 New Hampshire four-thousand-foot peaks across eight rounds.">
+  <meta name="keywords" content="NH48, PeakID game, New Hampshire 4000 footers, mountain photo quiz, hiking game, summit photos">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://nh48.info/peakid-game">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <script type="module" src="/js/i18n.js"></script>
+  <script src="/js/unified-footer.js" defer></script>
+  <script src="/js/splash.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js" defer></script>
+  <link rel="stylesheet" href="/css/peakid-game.css">
+</head>
+<body data-route="peakid-game" data-page="peakid-game">
+  <div id="splash-background" class="peakid-splash" aria-hidden="true"></div>
+  <div id="splash-mask" class="peakid-splash-mask" aria-hidden="true"></div>
+  <div id="nav-placeholder"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+            if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+              window.NH48_I18N.refreshLangPicker();
+            }
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+    });
+  </script>
+
+  <main class="peakid-main" role="main">
+    <section class="peakid-hero">
+      <h1 data-i18n="peakid.heroTitle">NH48 PeakID Game</h1>
+      <p data-i18n="peakid.heroBody">Drag and drop the summit photos onto the correct peak names. Complete eight rounds to cover all 48 four-thousand-footers.</p>
+    </section>
+
+    <section class="peakid-scoreboard" aria-label="Scoreboard">
+      <div class="peakid-score-card">
+        <span id="peakid-round-label" data-i18n="peakid.roundLabel">Round 1 of 8</span>
+        <div class="peakid-progress" aria-hidden="true">
+          <div id="peakid-progress-bar" class="peakid-progress-bar"></div>
+        </div>
+      </div>
+      <div class="peakid-score-card">
+        <span data-i18n="peakid.correctLabel">Correct</span>
+        <strong id="peakid-total-correct">0</strong>
+      </div>
+      <div class="peakid-score-card">
+        <span data-i18n="peakid.incorrectLabel">Incorrect</span>
+        <strong id="peakid-total-incorrect">0</strong>
+      </div>
+    </section>
+
+    <section class="peakid-round">
+      <p class="peakid-instructions" data-i18n="peakid.instructions">Drag and drop the photos onto the correct names.</p>
+      <div class="peakid-round-grid">
+        <div>
+          <div id="peakid-cards" class="peakid-card-grid" role="list" aria-label="Summit photo cards"></div>
+        </div>
+        <div>
+          <div id="peakid-slots" class="peakid-slot-grid" role="list" aria-label="Peak name slots"></div>
+        </div>
+      </div>
+      <div class="peakid-actions">
+        <button id="peakid-submit" type="button" data-i18n="peakid.submit" disabled>Submit</button>
+        <div id="peakid-round-summary" class="peakid-summary" role="status" aria-live="polite"></div>
+      </div>
+      <div id="peakid-live" class="visually-hidden" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <section id="peakid-final" class="peakid-final" aria-hidden="true">
+    <div class="peakid-final-content">
+      <header class="peakid-final-header">
+        <h2 data-i18n="peakid.finalScore">Final Score</h2>
+        <p id="peakid-final-score">0 / 48</p>
+        <p id="peakid-final-message" data-i18n="peakid.finalMessage">Great job! You matched 42 of 48 peaks.</p>
+        <div class="peakid-final-actions">
+          <button id="peakid-restart" class="peakid-primary-button" type="button" data-i18n="peakid.restartGame">Restart Game</button>
+          <a class="peakid-secondary-button" href="/catalog" data-i18n="peakid.returnCatalog">Return to Catalog</a>
+        </div>
+      </header>
+
+      <div class="peakid-social-panel" aria-label="Social share card">
+        <div class="peakid-social-controls">
+          <span data-i18n="peakid.socialOrientation">Card orientation</span>
+          <div class="peakid-toggle-group" role="group" aria-label="Card orientation">
+            <button type="button" class="active" data-orientation="landscape" data-i18n="peakid.landscape">Landscape</button>
+            <button type="button" data-orientation="portrait" data-i18n="peakid.portrait">Portrait</button>
+          </div>
+          <button id="peakid-regenerate-card" class="peakid-secondary-button" type="button" data-i18n="peakid.generateAnotherImage">Generate Another Image</button>
+          <button id="peakid-download-card" class="peakid-secondary-button" type="button" data-i18n="peakid.downloadCard">Download Social Card</button>
+        </div>
+        <div class="peakid-social-preview">
+          <div id="peakid-social-card" class="peakid-social-card landscape" role="img" aria-label="PeakID social card preview">
+            <h3 id="peakid-social-title" data-i18n="peakid.socialTitle">NH48 PeakID Game</h3>
+            <p id="peakid-social-score">Score: 0 / 48</p>
+            <p id="peakid-social-timestamp">Generated: Today</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="/js/peakid-game.js"></script>
+</body>
+</html>
