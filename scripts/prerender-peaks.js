@@ -736,6 +736,28 @@ const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImag
   2
 );
 
+const DATASET_LICENSE_URL = "https://nh48.info/license";
+
+const buildDatasetSchema = (peakName, descriptionText, slug, langCode) => JSON.stringify(
+  {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    name: `NH48 Peak Dataset — ${peakName}`,
+    description: descriptionText,
+    identifier: slug,
+    inLanguage: langCode === "fr" ? "fr-FR" : "en-US",
+    includedInDataCatalog: DEFAULT_CATALOG_URL,
+    distribution: {
+      "@type": "DataDownload",
+      contentUrl: "/data/nh48.json",
+      encodingFormat: "application/json",
+    },
+    license: DATASET_LICENSE_URL || undefined,
+  },
+  null,
+  2
+);
+
 const buildFAQSchema = (peakName, routes, difficulty, time, langCode) => {
   const isEnglish = langCode === 'en';
   const faqs = [];
@@ -1276,6 +1298,9 @@ const main = () => {
           ),
           WEBPAGE_SCHEMA: escapeScriptJson(
             buildWebPageSchema(localizedName, canonicalUrl, descriptionText, primaryPhoto, lang.code)
+          ),
+          DATASET_SCHEMA: escapeScriptJson(
+            buildDatasetSchema(localizedName, descriptionText, slug, lang.code)
           ),
           FAQ_SCHEMA: (() => {
             const faqJson = buildFAQSchema(localizedName, peak["Standard Routes"], difficulty, time, lang.code);
