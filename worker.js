@@ -1076,9 +1076,11 @@ export default {
           };
         })
         .filter(Boolean);
+      const mountainId = `${canonicalUrl}#mountain`;
       const mountain = {
         '@context': 'https://schema.org',
         '@type': 'Mountain',
+        '@id': mountainId,
         name: peakName,
         description: summaryText,
         image: imageObjects.length ? imageObjects : imageUrl,
@@ -1154,6 +1156,20 @@ export default {
       if (!mountain.additionalProperty.length) {
         delete mountain.additionalProperty;
       }
+      if (dogFriendly) {
+        trailAdditionalProps.push({ '@type': 'PropertyValue', name: 'Dog Friendly', value: dogFriendly });
+      }
+      const hikingTrail = {
+        '@context': 'https://schema.org',
+        '@type': 'HikingTrail',
+        '@id': `${canonicalUrl}#trail`,
+        name: trailNames.length ? trailNames.join(' / ') : `${peakName} hiking trail`,
+        alternateName: trailNames.length > 1 ? trailNames : undefined,
+        trailType: trailType || undefined,
+        timeRequired: typicalCompletionTime || undefined,
+        additionalProperty: trailAdditionalProps,
+        about: { '@id': mountainId }
+      };
       const breadcrumb = {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
@@ -1165,7 +1181,7 @@ export default {
           { '@type': 'ListItem', position: 3, name: peakName, item: canonicalUrl }
         ]
       };
-      return { mountain, breadcrumb };
+      return { mountain, hikingTrail, breadcrumb };
     }
 
     async function serveCatalog() {
@@ -1943,8 +1959,7 @@ export default {
       heroUrl,
       summaryVal,
       photos,
-      trailheadName,
-      parkingNotes
+      peak
     );
 
     // Fetch the raw interactive HTML template from GitHub
@@ -1996,6 +2011,7 @@ export default {
       `<link rel="alternate" hreflang="fr" href="${canonicalFr}" />`,
       `<link rel="alternate" hreflang="x-default" href="${canonicalX}" />`,
       `<script type="application/ld+json">${JSON.stringify(mountain).replace(/</g, '<\/')}</script>`,
+      `<script type="application/ld+json">${JSON.stringify(hikingTrail).replace(/</g, '<\/')}</script>`,
       `<script type="application/ld+json">${JSON.stringify(breadcrumb).replace(/</g, '<\/')}</script>`
     ].join('\n');
     html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
