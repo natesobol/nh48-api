@@ -12,3 +12,7 @@
 # Alternative /peaks/ URL (plural)
 /peaks/* /peak/:splat 301
 /fr/peaks/* /fr/peak/:splat 301
+
+# Game routes
+/peakid-game /peakid-game.html 200
+/timed-peakid-game /timed-peakid-game.html 200
