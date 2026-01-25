@@ -688,6 +688,8 @@ def _extract_photo_metadata(file_path: str) -> Dict[str, Optional[str]]:
         'subject': None,
         'rating': None,
         'dimensions': None,
+        'width': None,
+        'height': None,
         'fileSize': None,
         'fileCreateDate': None,
         'fileModifiedDate': None,
@@ -695,6 +697,8 @@ def _extract_photo_metadata(file_path: str) -> Dict[str, Optional[str]]:
     try:
         with Image.open(file_path) as img:
             width, height = img.size
+            meta['width'] = width
+            meta['height'] = height
             if width == height:
                 meta['orientation'] = 'square'
             elif width > height:
@@ -1009,7 +1013,7 @@ def generate_manifest(
                         'captureDate', 'cameraMaker', 'cameraModel', 'camera', 'lens',
                         'fStop', 'shutterSpeed', 'iso', 'exposureBias', 'focalLength', 'flashMode',
                         'meteringMode', 'maxAperture', 'focalLength35mm', 'author', 'title',
-                        'subject', 'rating', 'dimensions', 'fileSize', 'fileCreateDate', 'fileModifiedDate'
+                        'subject', 'rating', 'dimensions', 'width', 'height', 'fileSize', 'fileCreateDate', 'fileModifiedDate'
                     ):
                         value = meta.get(key)
                         if value is not None:
@@ -1092,6 +1096,11 @@ def main():
         action="store_true",
         help="Print debug information (raw ExifTool output and key summaries).",
     )
+    parser.add_argument(
+        "--update-sitemaps",
+        action="store_true",
+        help="Regenerate sitemap.xml and image-sitemap.xml after updating the manifest.",
+    )
     args = parser.parse_args()
     updated = generate_manifest(
         args.api,
@@ -1107,6 +1116,22 @@ def main():
     with open(output_path, 'w') as out_file:
         json.dump(updated, out_file, indent=2)
     print(f"Manifest updated successfully. Output written to {output_path}")
+    if args.update_sitemaps:
+        try:
+            result = subprocess.run(
+                ["node", os.path.join(os.path.dirname(__file__), "generate-sitemaps.js")],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=False,
+            )
+            if result.returncode != 0:
+                print(
+                    "Sitemap generation failed: "
+                    f"{result.stderr.strip() or 'unknown error'}"
+                )
+        except FileNotFoundError:
+            print("Node is not installed; skipping sitemap generation.")
 
 
 if __name__ == "__main__":
