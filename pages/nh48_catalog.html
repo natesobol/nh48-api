@@ -121,6 +121,26 @@
         }
       }
     </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://nh48.info/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Catalog",
+            "item": "https://nh48.info/catalog"
+          }
+        ]
+      }
+    </script>
     <script type="application/ld+json" class="peak-list">
       {
         "@context": "https://schema.org",
@@ -194,14 +214,28 @@
     <div class="wrap">
       <nav class="page-breadcrumbs" aria-label="Breadcrumb">
         <ol>
-          <li><a href="/">Home</a></li>
-          <li>Catalog</li>
+          <li><a href="/"><span data-i18n="common.home">Home</span></a></li>
+          <li><span data-i18n="nav.catalog">Catalog</span></li>
         </ol>
       </nav>
       <header>
         <h1 data-i18n="catalog.title">NH48 Peak Catalog</h1>
         <p data-i18n="catalog.intro">Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.</p>
       </header>
+      <nav class="range-jump" aria-label="Jump to range" itemscope itemtype="https://schema.org/SiteNavigationElement">
+        <div class="range-jump__label">Jump to range:</div>
+        <ul class="range-jump__list">
+          <li><a itemprop="url" href="#presidential-range"><span itemprop="name">Presidential Range</span></a></li>
+          <li><a itemprop="url" href="#franconia-ridge"><span itemprop="name">Franconia Ridge</span></a></li>
+          <li><a itemprop="url" href="#twins-bonds"><span itemprop="name">Twins &amp; Bonds</span></a></li>
+          <li><a itemprop="url" href="#carter-moriah-wildcats"><span itemprop="name">Carter-Moriah &amp; Wildcats</span></a></li>
+          <li><a itemprop="url" href="#kinsman-range"><span itemprop="name">Kinsman Range</span></a></li>
+          <li><a itemprop="url" href="#osceolas-trips"><span itemprop="name">Osceolas &amp; Trips</span></a></li>
+          <li><a itemprop="url" href="#pemigewasset"><span itemprop="name">Pemigewasset</span></a></li>
+          <li><a itemprop="url" href="#northern-summits"><span itemprop="name">Northern Summits</span></a></li>
+          <li><a itemprop="url" href="#western-outlying"><span itemprop="name">Western &amp; Outlying</span></a></li>
+        </ul>
+      </nav>
 
       <!-- search with datalist for suggestions -->
       <div class="search">
