@@ -237,6 +237,9 @@ const buildKeywords = (photo) => {
   };
 
   (photo.tags || []).forEach(add);
+  add(photo.season);
+  add(photo.timeOfDay);
+  add(photo.orientation);
   (photo.iptc?.keywords || []).forEach(add);
 
   return Array.from(keywords);
@@ -262,6 +265,30 @@ const buildExifSummary = (photo) => {
   add('Max Aperture', photo.maxAperture);
 
   return parts.join('; ');
+};
+
+const flattenMetaToPropertyValues = (prefix, obj, out) => {
+  if (!obj || typeof obj !== 'object') return;
+  for (const [key, val] of Object.entries(obj)) {
+    if (val === undefined || val === null) continue;
+    if (['url', 'photoId', 'filename', 'isPrimary'].includes(key)) continue;
+    const name = prefix ? `${prefix}.${key}` : key;
+    if (Array.isArray(val)) {
+      const text = val.map((item) => cleanText(item)).filter(Boolean).join(', ');
+      if (text) out.push({ '@type': 'PropertyValue', name, value: text });
+    } else if (typeof val === 'object') {
+      flattenMetaToPropertyValues(name, val, out);
+    } else {
+      const text = cleanText(val);
+      if (text) out.push({ '@type': 'PropertyValue', name, value: text });
+    }
+  }
+};
+
+const buildPhotoPropertyValues = (photo) => {
+  const out = [];
+  flattenMetaToPropertyValues('', photo || {}, out);
+  return out;
 };
 
 const buildContentLocation = (photo) => {
@@ -311,6 +338,7 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
   const licenseUrl = IMAGE_LICENSE_URL;
   const keywords = buildKeywords(photo);
   const exifData = buildExifSummary(photo);
+  const propertyValues = buildPhotoPropertyValues(photo);
   const imageObject = {
     '@type': 'ImageObject',
     '@id': imageId,
@@ -334,6 +362,7 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
     datePublished: cleanText(photo.captureDate),
     exifData: exifData || undefined,
     keywords: keywords.length ? keywords : undefined,
+    additionalProperty: propertyValues.length ? propertyValues : undefined,
     representativeOfPage: !!isPrimary,
     width,
     height,
@@ -768,6 +797,79 @@ const buildFAQSchema = (peakName, routes, difficulty, time, langCode) => {
   );
 };
 
+const formatRouteSummary = (route) => {
+  if (!route || typeof route !== "object") return "";
+  const name = cleanText(route["Route Name"] || route.name || "");
+  const distance = cleanText(route["Distance (mi)"] || route.distance || "");
+  const gain = cleanText(route["Elevation Gain (ft)"] || route.elevationGain || "");
+  const difficulty = cleanText(route["Difficulty"] || route.difficulty || "");
+  const trailType = cleanText(route["Trail Type"] || route.trailType || "");
+  const details = [distance && `${distance} mi`, gain && `${gain} ft gain`, trailType, difficulty]
+    .filter(Boolean)
+    .join(" • ");
+  if (!name && !details) return "";
+  return details ? `${name || "Route"} (${details})` : name;
+};
+
+const normalizePeakValue = (value) => {
+  if (value === null || value === undefined) return "";
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => normalizePeakValue(item))
+      .filter(Boolean)
+      .join("; ");
+  }
+  if (typeof value === "object") {
+    if (
+      "Route Name" in value ||
+      "Distance (mi)" in value ||
+      "Elevation Gain (ft)" in value ||
+      "Trail Type" in value
+    ) {
+      return formatRouteSummary(value);
+    }
+    return Object.entries(value)
+      .map(([key, val]) => {
+        const text = normalizePeakValue(val);
+        return text ? `${key}: ${text}` : "";
+      })
+      .filter(Boolean)
+      .join(", ");
+  }
+  return cleanText(value);
+};
+
+const buildPeakAdditionalProperties = (peak) => {
+  const properties = [];
+  const addProperty = (name, value) => {
+    const text = normalizePeakValue(value);
+    if (!text) return;
+    properties.push({ "@type": "PropertyValue", name, value: text });
+  };
+
+  addProperty("Standard Routes", peak["Standard Routes"]);
+  addProperty("Typical Completion Time", peak["Typical Completion Time"]);
+  addProperty("Best Seasons to Hike", peak["Best Seasons to Hike"]);
+  addProperty("Exposure Level", peak["Exposure Level"]);
+  addProperty("Terrain Character", peak["Terrain Character"]);
+  addProperty("Scramble Sections", peak["Scramble Sections"]);
+  addProperty("Water Availability", peak["Water Availability"]);
+  addProperty("Cell Reception Quality", peak["Cell Reception Quality"]);
+  addProperty("Weather Exposure Rating", peak["Weather Exposure Rating"]);
+  addProperty("Emergency Bailout Options", peak["Emergency Bailout Options"]);
+  addProperty("Dog Friendly", peak["Dog Friendly"]);
+  addProperty("Summit Marker Type", peak["Summit Marker Type"]);
+  addProperty("View Type", peak["View Type"]);
+  addProperty("Flora/Environment Zones", peak["Flora/Environment Zones"]);
+  addProperty("Nearby Notable Features", peak["Nearby Notable Features"]);
+  addProperty("Nearby 4000-footer Connections", peak["Nearby 4000-footer Connections"]);
+  addProperty("Trail Names", peak["Trail Names"]);
+  addProperty("Most Common Trailhead", peak["Most Common Trailhead"]);
+  addProperty("Parking Notes", peak["Parking Notes"]);
+
+  return properties;
+};
+
 const buildJsonLd = (
   peak,
   canonicalUrl,
@@ -819,6 +921,7 @@ const buildJsonLd = (
         value: trailType,
       }
       : null,
+    ...buildPeakAdditionalProperties(peak),
   ].filter(Boolean);
 
   const imageObjects = Array.isArray(photoSet?.imageObjects) && photoSet.imageObjects.length
@@ -902,6 +1005,15 @@ const buildJsonLd = (
       : undefined,
     containedInPlace: { "@type": "Place", name: "White Mountain National Forest" },
     additionalProperty: additionalProperty.length ? additionalProperty : undefined,
+    containsPlace: (() => {
+      const trailhead = cleanText(peak["Most Common Trailhead"] || "");
+      const parking = cleanText(peak["Parking Notes"] || "");
+      if (!trailhead && !parking) return undefined;
+      const place = { "@type": "Place" };
+      if (trailhead) place.name = trailhead;
+      if (parking) place.description = parking;
+      return place;
+    })(),
     isPartOf: {
       "@type": "DataCatalog",
       name: "NH48 Peak Dataset",

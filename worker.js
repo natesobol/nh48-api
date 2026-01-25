@@ -759,10 +759,15 @@ export default {
 
     function buildPhotoKeywords(photo) {
       const tags = Array.isArray(photo?.tags) ? photo.tags.map(normalizeTextForWeb).filter(Boolean) : [];
-      const iptcKeywords = Array.isArray(photo?.iptc?.keywords) ? photo.iptc.keywords.map((item) => String(item).trim()).filter(Boolean) : [];
+      const iptcKeywords = Array.isArray(photo?.iptc?.keywords)
+        ? photo.iptc.keywords.map((item) => String(item).trim()).filter(Boolean)
+        : [];
+      const contextual = [photo?.season, photo?.timeOfDay, photo?.orientation]
+        .map(normalizeTextForWeb)
+        .filter(Boolean);
       const combined = [];
       const seen = new Set();
-      for (const item of [...tags, ...iptcKeywords]) {
+      for (const item of [...tags, ...iptcKeywords, ...contextual]) {
         if (!item) continue;
         const key = item.toLowerCase();
         if (seen.has(key)) continue;
@@ -981,6 +986,25 @@ export default {
     }
 
     // Build JSON-LD for Mountain and Breadcrumb
+    function formatRouteSummary(route) {
+      if (!route || typeof route !== 'object') return '';
+      const name = pickFirstNonEmpty(route['Route Name'], route.name);
+      const distance = pickFirstNonEmpty(route['Distance (mi)'], route.distance);
+      const gain = pickFirstNonEmpty(route['Elevation Gain (ft)'], route.elevationGain);
+      const difficulty = pickFirstNonEmpty(route['Difficulty'], route.difficulty);
+      const trailType = pickFirstNonEmpty(route['Trail Type'], route.trailType);
+      const details = [
+        distance ? `${distance} mi` : '',
+        gain ? `${gain} ft gain` : '',
+        trailType || '',
+        difficulty || ''
+      ]
+        .filter(Boolean)
+        .join(' • ');
+      if (!name && !details) return '';
+      return details ? `${name || 'Route'} (${details})` : name;
+    }
+
     function normalizePropertyValue(value) {
       if (value === null || value === undefined) return '';
       if (Array.isArray(value)) {
@@ -990,6 +1014,14 @@ export default {
         return values.join('; ');
       }
       if (typeof value === 'object') {
+        if (
+          'Route Name' in value ||
+          'Distance (mi)' in value ||
+          'Elevation Gain (ft)' in value ||
+          'Trail Type' in value
+        ) {
+          return formatRouteSummary(value);
+        }
         const entries = Object.entries(value)
           .map(([key, val]) => {
             const text = normalizePropertyValue(val);
@@ -1002,6 +1034,7 @@ export default {
     }
 
     function buildJsonLd(
+      peakData,
       peakName,
       elevation,
       prominence,
@@ -1010,9 +1043,7 @@ export default {
       canonicalUrl,
       imageUrl,
       summaryText,
-      photos = [],
-      trailheadName = '',
-      parkingNotes = ''
+      photos = []
     ) {
       const imageObjects = (Array.isArray(photos) ? photos : [])
         .slice(0, 10)
@@ -1070,42 +1101,58 @@ export default {
         addPropertyValue('Range', rangeVal);
       }
 
-      const peakProperties = [
-        ['Difficulty', peakData['Difficulty']],
-        ['Trail Type', peakData['Trail Type']],
-        ['Standard Routes', peakData['Standard Routes']],
-        ['Best Seasons to Hike', peakData['Best Seasons to Hike']],
-        ['Exposure Level', peakData['Exposure Level']],
-        ['Terrain Character', peakData['Terrain Character']],
-        ['Scramble Sections', peakData['Scramble Sections']],
-        ['Water Availability', peakData['Water Availability']],
-        ['Cell Reception Quality', peakData['Cell Reception Quality']],
-        ['Weather Exposure Rating', peakData['Weather Exposure Rating']],
-        ['Summit Marker Type', peakData['Summit Marker Type']],
-        ['View Type', peakData['View Type']],
-        ['Flora/Environment Zones', peakData['Flora/Environment Zones']],
-        ['Nearby Notable Features', peakData['Nearby Notable Features']],
-        ['Nearby 4000-footer Connections', peakData['Nearby 4000-footer Connections']],
-        ['Trail Names', peakData['Trail Names']]
-      ];
+      if (peakData && typeof peakData === 'object') {
+        const peakProperties = [
+          ['Difficulty', peakData['Difficulty']],
+          ['Trail Type', peakData['Trail Type']],
+          ['Standard Routes', peakData['Standard Routes']],
+          ['Typical Completion Time', peakData['Typical Completion Time']],
+          ['Best Seasons to Hike', peakData['Best Seasons to Hike']],
+          ['Exposure Level', peakData['Exposure Level']],
+          ['Terrain Character', peakData['Terrain Character']],
+          ['Scramble Sections', peakData['Scramble Sections']],
+          ['Water Availability', peakData['Water Availability']],
+          ['Cell Reception Quality', peakData['Cell Reception Quality']],
+          ['Weather Exposure Rating', peakData['Weather Exposure Rating']],
+          ['Emergency Bailout Options', peakData['Emergency Bailout Options']],
+          ['Dog Friendly', peakData['Dog Friendly']],
+          ['Summit Marker Type', peakData['Summit Marker Type']],
+          ['View Type', peakData['View Type']],
+          ['Flora/Environment Zones', peakData['Flora/Environment Zones']],
+          ['Nearby Notable Features', peakData['Nearby Notable Features']],
+          ['Nearby 4000-footer Connections', peakData['Nearby 4000-footer Connections']],
+          ['Trail Names', peakData['Trail Names']],
+          ['Most Common Trailhead', peakData['Most Common Trailhead']],
+          ['Parking Notes', peakData['Parking Notes']]
+        ];
 
-      for (const [name, value] of peakProperties) {
-        addPropertyValue(name, value);
+        for (const [name, value] of peakProperties) {
+          addPropertyValue(name, value);
+        }
       }
       if (coords.lat && coords.lon) {
         mountain.geo = { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon };
       }
-      const trailheadValue = typeof trailheadName === 'string' ? trailheadName.trim() : '';
-      const parkingValue = typeof parkingNotes === 'string' ? parkingNotes.trim() : '';
-      if (trailheadValue || parkingValue) {
-        const placeDetails = { '@type': 'Place' };
-        if (trailheadValue) {
-          placeDetails.name = trailheadValue;
+      if (peakData && typeof peakData === 'object') {
+        const trailheadValue = typeof peakData['Most Common Trailhead'] === 'string'
+          ? peakData['Most Common Trailhead'].trim()
+          : '';
+        const parkingValue = typeof peakData['Parking Notes'] === 'string'
+          ? peakData['Parking Notes'].trim()
+          : '';
+        if (trailheadValue || parkingValue) {
+          const placeDetails = { '@type': 'Place' };
+          if (trailheadValue) {
+            placeDetails.name = trailheadValue;
+          }
+          if (parkingValue) {
+            placeDetails.description = parkingValue;
+          }
+          mountain.containsPlace = placeDetails;
         }
-        if (parkingValue) {
-          placeDetails.description = parkingValue;
-        }
-        mountain.containsPlace = placeDetails;
+      }
+      if (!mountain.additionalProperty.length) {
+        delete mountain.additionalProperty;
       }
       const breadcrumb = {
         '@context': 'https://schema.org',
@@ -1886,6 +1933,7 @@ export default {
       ? buildPhotoCaptionUnique(peakName, primaryPhoto)
       : peakName;
     const { mountain, breadcrumb } = buildJsonLd(
+      peak,
       peakName,
       elevation,
       prominence,
