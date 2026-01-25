@@ -447,6 +447,12 @@
         color: color-mix(in srgb, var(--nh48-footer-ink) 80%, #cbd5e1 20%);
       }
 
+      .nh48-quick-footer__status {
+        font-size: 12px;
+        color: color-mix(in srgb, var(--nh48-footer-ink) 70%, #cbd5e1 30%);
+        margin-top: 4px;
+      }
+
       @media (max-width: 768px) {
         .nh48-quick-footer {
           margin: 24px auto 10px;
@@ -736,6 +742,20 @@
     renderGrid(grid);
   };
 
+  const setBuildStatus = (footerEl) => {
+    const statusEl = footerEl.querySelector('.nh48-quick-footer__status');
+    if (!statusEl) return;
+    const isoString = window.NH48_BUILD_DATE;
+    if (!isoString) return;
+    const date = new Date(isoString);
+    const formatted = date.toLocaleString('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone: 'America/New_York'
+    });
+    statusEl.textContent = `Last updated: ${formatted}`;
+  };
+
   const generateFooterHTML = () => {
     const content = FOOTER_CONFIG.content;
     
@@ -765,6 +785,7 @@
                 <a href="${link.href}" ${link.external ? 'target="_blank" rel="noopener"' : ''} ${link.className ? `class="${link.className}"` : ''}>${link.text}</a>
               `).join('')}
             </div>
+            <div class="nh48-quick-footer__status" aria-live="polite"></div>
           </div>
         </div>
       </footer>
@@ -811,6 +832,7 @@
 
     // Enhance with interactive features
     enhanceFooter(footer);
+    setBuildStatus(footer);
   };
 
   // Initialize when DOM is ready
