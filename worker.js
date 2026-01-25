@@ -981,6 +981,26 @@ export default {
     }
 
     // Build JSON-LD for Mountain and Breadcrumb
+    function normalizePropertyValue(value) {
+      if (value === null || value === undefined) return '';
+      if (Array.isArray(value)) {
+        const values = value
+          .map((item) => normalizePropertyValue(item))
+          .filter(Boolean);
+        return values.join('; ');
+      }
+      if (typeof value === 'object') {
+        const entries = Object.entries(value)
+          .map(([key, val]) => {
+            const text = normalizePropertyValue(val);
+            return text ? `${key}: ${text}` : '';
+          })
+          .filter(Boolean);
+        return entries.join(', ');
+      }
+      return String(value).trim();
+    }
+
     function buildJsonLd(
       peakName,
       elevation,
@@ -990,7 +1010,8 @@ export default {
       canonicalUrl,
       imageUrl,
       summaryText,
-      photos = []
+      photos = [],
+      peakData = {}
     ) {
       const imageObjects = (Array.isArray(photos) ? photos : [])
         .slice(0, 10)
@@ -1032,14 +1053,43 @@ export default {
         url: canonicalUrl,
         additionalProperty: []
       };
+      const addPropertyValue = (name, value) => {
+        const text = normalizePropertyValue(value);
+        if (!text) return;
+        mountain.additionalProperty.push({ '@type': 'PropertyValue', name, value: text });
+      };
+
       if (elevation) {
-        mountain.additionalProperty.push({ '@type': 'PropertyValue', name: 'Elevation (ft)', value: elevation.replace(/ ft$/, '') });
+        addPropertyValue('Elevation (ft)', elevation.replace(/ ft$/, ''));
       }
       if (prominence) {
-        mountain.additionalProperty.push({ '@type': 'PropertyValue', name: 'Prominence (ft)', value: prominence.replace(/ ft$/, '') });
+        addPropertyValue('Prominence (ft)', prominence.replace(/ ft$/, ''));
       }
       if (rangeVal) {
-        mountain.additionalProperty.push({ '@type': 'PropertyValue', name: 'Range', value: rangeVal });
+        addPropertyValue('Range', rangeVal);
+      }
+
+      const peakProperties = [
+        ['Difficulty', peakData['Difficulty']],
+        ['Trail Type', peakData['Trail Type']],
+        ['Standard Routes', peakData['Standard Routes']],
+        ['Best Seasons to Hike', peakData['Best Seasons to Hike']],
+        ['Exposure Level', peakData['Exposure Level']],
+        ['Terrain Character', peakData['Terrain Character']],
+        ['Scramble Sections', peakData['Scramble Sections']],
+        ['Water Availability', peakData['Water Availability']],
+        ['Cell Reception Quality', peakData['Cell Reception Quality']],
+        ['Weather Exposure Rating', peakData['Weather Exposure Rating']],
+        ['Summit Marker Type', peakData['Summit Marker Type']],
+        ['View Type', peakData['View Type']],
+        ['Flora/Environment Zones', peakData['Flora/Environment Zones']],
+        ['Nearby Notable Features', peakData['Nearby Notable Features']],
+        ['Nearby 4000-footer Connections', peakData['Nearby 4000-footer Connections']],
+        ['Trail Names', peakData['Trail Names']]
+      ];
+
+      for (const [name, value] of peakProperties) {
+        addPropertyValue(name, value);
       }
       if (coords.lat && coords.lon) {
         mountain.geo = { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon };
@@ -1829,7 +1879,8 @@ export default {
       canonical,
       heroUrl,
       summaryVal,
-      photos
+      photos,
+      peak
     );
 
     // Fetch the raw interactive HTML template from GitHub
