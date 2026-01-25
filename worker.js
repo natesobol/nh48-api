@@ -1076,6 +1076,27 @@ export default {
           };
         })
         .filter(Boolean);
+      // Extract trail metadata from peakData
+      const dogFriendly = peakData && typeof peakData === 'object'
+        ? (peakData['Dog Friendly'] || peakData.dogFriendly || '')
+        : '';
+      const rawTrailNames = peakData && typeof peakData === 'object'
+        ? (peakData['Trail Names'] || peakData.trailNames || '')
+        : '';
+      const trailNames = Array.isArray(rawTrailNames)
+        ? rawTrailNames.map((name) => String(name).trim()).filter(Boolean)
+        : String(rawTrailNames)
+          .split(',')
+          .map((name) => name.trim())
+          .filter(Boolean);
+      const trailType = peakData && typeof peakData === 'object'
+        ? (peakData['Trail Type'] || peakData.trailType || '')
+        : '';
+      const typicalCompletionTime = peakData && typeof peakData === 'object'
+        ? (peakData['Typical Completion Time'] || peakData.typicalCompletionTime || '')
+        : '';
+      const trailAdditionalProps = [];
+
       const mountainId = `${canonicalUrl}#mountain`;
       const mountain = {
         '@context': 'https://schema.org',
@@ -1156,9 +1177,6 @@ export default {
       if (!mountain.additionalProperty.length) {
         delete mountain.additionalProperty;
       }
-      if (dogFriendly) {
-        trailAdditionalProps.push({ '@type': 'PropertyValue', name: 'Dog Friendly', value: dogFriendly });
-      }
       const hikingTrail = {
         '@context': 'https://schema.org',
         '@type': 'HikingTrail',
@@ -1167,7 +1185,13 @@ export default {
         alternateName: trailNames.length > 1 ? trailNames : undefined,
         trailType: trailType || undefined,
         timeRequired: typicalCompletionTime || undefined,
-        additionalProperty: trailAdditionalProps,
+        additionalProperty: (dogFriendly
+          ? trailAdditionalProps.concat({
+            '@type': 'PropertyValue',
+            name: 'Dog Friendly',
+            value: dogFriendly,
+          })
+          : trailAdditionalProps),
         about: { '@id': mountainId }
       };
       const breadcrumb = {
