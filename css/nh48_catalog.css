@@ -147,7 +147,7 @@ header p{
   height:40px;
   padding:0 14px;
   font-size:16px;
-  border:2px solid #ffffff;
+  border:1px solid #ffffff;
   border-radius:10px;
   background:var(--card);
   color:var(--ink);
@@ -221,7 +221,7 @@ input[list]::-webkit-list-button {
 .controls select{
   background:var(--card);
   color:var(--ink);
-  border:2px solid #ffffff;
+  border:1px solid #ffffff;
   border-radius:10px;
   padding:6px 10px;
   font-size:0.9rem;
@@ -279,7 +279,7 @@ input[list]::-webkit-list-button {
   min-height:36px;
   padding:4px 10px;
   border-radius:10px;
-  border:2px solid #ffffff;
+  border:1px solid #ffffff;
   background:var(--card);
   color:var(--ink);
   cursor:pointer;
@@ -303,7 +303,7 @@ input[list]::-webkit-list-button {
   right:0;
   top:calc(100% + 8px);
   background:var(--card);
-  border:2px solid #ffffff;
+  border:1px solid #ffffff;
   border-radius:12px;
   padding:8px;
   display:grid;
@@ -333,7 +333,7 @@ input[list]::-webkit-list-button {
   width:34px;
   height:34px;
   border-radius:8px;
-  border:2px solid #ffffff;
+  border:1px solid #ffffff;
   background:var(--card);
   color:var(--ink);
   display:flex;
