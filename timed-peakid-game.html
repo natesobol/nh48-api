@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicons/favicon.ico" sizes="48x48">
+  <link rel="icon" type="image/x-icon" href="/favicons/favicon.ico">
+  <link rel="shortcut icon" href="/favicons/favicon.ico">
+  <link rel="icon" type="image/x-icon" sizes="16x16" href="/favicons/favicon-16x16.ico">
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="/favicons/favicon-32x32.ico">
+  <link rel="icon" type="image/x-icon" sizes="48x48" href="/favicons/favicon-48x48.ico">
+  <link rel="icon" type="image/x-icon" sizes="96x96" href="/favicons/favicon-96x96.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="timedGame.title">Timed PeakID Game</title>
+  <meta name="description" content="Match falling NH48 summit photos to their peak names before time runs out in this timed PeakID game.">
+  <link rel="canonical" href="https://nh48.info/timed-peakid-game">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Timed PeakID Game – NH48">
+  <meta property="og:description" content="Race the clock by matching falling NH48 summit photos to peak names.">
+  <meta property="og:url" content="https://nh48.info/timed-peakid-game">
+  <meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__002.jpg">
+  <meta property="og:image:alt" content="Franconia Ridge trail climbing toward the Mount Lafayette summit cone">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Timed PeakID Game – NH48">
+  <meta name="twitter:description" content="Race the clock by matching falling NH48 summit photos to peak names.">
+  <meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__002.jpg">
+  <meta name="twitter:image:alt" content="Franconia Ridge trail climbing toward the Mount Lafayette summit cone">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/timed-peakid-game.css">
+  <script src="/js/unified-footer.js" defer></script>
+</head>
+<body data-route="timed-peakid-game" data-page="timed-peakid-game">
+  <div id="nav-placeholder"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+            if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+              window.NH48_I18N.refreshLangPicker();
+            }
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+    });
+  </script>
+  <main>
+    <section class="timed-hero">
+      <h1 data-i18n="timedGame.title">Timed PeakID Game</h1>
+      <p>Match each falling summit photo with the correct NH48 peak name before it hits the bottom. Drag or use arrow keys to position a photo, then drop it onto the matching label.</p>
+      <button class="timed-cta" data-action="play" data-i18n="timedGame.play">Play Timed PeakID Game</button>
+    </section>
+
+    <section class="timed-layout">
+      <div class="timed-scoreboard" aria-live="polite">
+        <div class="timed-score-card">
+          <span data-i18n="timedGame.score">Score</span>
+          <strong data-score>0</strong>
+        </div>
+        <div class="timed-score-card">
+          <span data-i18n="timedGame.lives">Lives</span>
+          <strong data-lives>5</strong>
+        </div>
+        <div class="timed-score-card">
+          <span data-i18n="timedGame.timeRemaining">Time Remaining</span>
+          <strong data-time>120s</strong>
+        </div>
+      </div>
+
+      <div class="timed-game-shell">
+        <div class="timed-game-area" aria-label="Timed PeakID game area"></div>
+        <div class="timed-game-zones" aria-label="Peak name drop zones"></div>
+        <p class="timed-status" aria-live="polite"></p>
+
+        <div class="timed-game-over" role="dialog" aria-modal="true" aria-live="polite">
+          <div class="timed-game-over-card">
+            <h2 data-i18n="timedGame.gameOver">Game Over</h2>
+            <div class="timed-game-over-stats">
+              <div class="timed-game-over-row">
+                <span data-i18n="timedGame.finalScore">Final Score</span>
+                <strong data-final-score>0</strong>
+              </div>
+              <div class="timed-game-over-row">
+                <span data-i18n="timedGame.matches">Matches</span>
+                <strong data-final-matches>0</strong>
+              </div>
+              <div class="timed-game-over-row">
+                <span data-i18n="timedGame.misses">Misses</span>
+                <strong data-final-misses>0</strong>
+              </div>
+              <div class="timed-game-over-row">
+                <span data-i18n="timedGame.accuracy">Accuracy</span>
+                <strong data-final-accuracy>0%</strong>
+              </div>
+            </div>
+            <div class="timed-game-actions">
+              <button class="timed-cta" data-action="replay" data-i18n="timedGame.playAgain">Play Again</button>
+              <a class="timed-secondary-btn" href="/catalog" data-i18n="nav.catalog">Catalog</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script type="module" src="/js/i18n.js"></script>
+  <script src="/js/timed-peakid-game.js" defer></script>
+</body>
+</html>
