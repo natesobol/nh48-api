@@ -980,27 +980,7 @@ export default {
       return { enPath, frPath };
     }
 
-    // Build JSON-LD for Mountain and Breadcrumb
-    function normalizePropertyValue(value) {
-      if (value === null || value === undefined) return '';
-      if (Array.isArray(value)) {
-        const values = value
-          .map((item) => normalizePropertyValue(item))
-          .filter(Boolean);
-        return values.join('; ');
-      }
-      if (typeof value === 'object') {
-        const entries = Object.entries(value)
-          .map(([key, val]) => {
-            const text = normalizePropertyValue(val);
-            return text ? `${key}: ${text}` : '';
-          })
-          .filter(Boolean);
-        return entries.join(', ');
-      }
-      return String(value).trim();
-    }
-
+    // Build JSON-LD for Mountain, HikingTrail, and Breadcrumb
     function buildJsonLd(
       peakName,
       elevation,
@@ -1011,8 +991,7 @@ export default {
       imageUrl,
       summaryText,
       photos = [],
-      trailheadName = '',
-      parkingNotes = ''
+      trailData = {}
     ) {
       const imageObjects = (Array.isArray(photos) ? photos : [])
         .slice(0, 10)
@@ -1045,9 +1024,11 @@ export default {
           };
         })
         .filter(Boolean);
+      const mountainId = `${canonicalUrl}#mountain`;
       const mountain = {
         '@context': 'https://schema.org',
         '@type': 'Mountain',
+        '@id': mountainId,
         name: peakName,
         description: summaryText,
         image: imageObjects.length ? imageObjects : imageUrl,
@@ -1095,18 +1076,34 @@ export default {
       if (coords.lat && coords.lon) {
         mountain.geo = { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon };
       }
-      const trailheadValue = typeof trailheadName === 'string' ? trailheadName.trim() : '';
-      const parkingValue = typeof parkingNotes === 'string' ? parkingNotes.trim() : '';
-      if (trailheadValue || parkingValue) {
-        const placeDetails = { '@type': 'Place' };
-        if (trailheadValue) {
-          placeDetails.name = trailheadValue;
+      const trailNames = Array.isArray(trailData['Trail Names']) ? trailData['Trail Names'] : [];
+      const standardRoutes = Array.isArray(trailData['Standard Routes']) ? trailData['Standard Routes'] : [];
+      const trailType = trailData['Trail Type'] || '';
+      const typicalCompletionTime = trailData['Typical Completion Time'] || '';
+      const dogFriendly = trailData['Dog Friendly'] || '';
+      const trailAdditionalProps = [];
+      if (standardRoutes.length) {
+        const routeSummaries = standardRoutes
+          .map((route) => (route && route['Route Name'] ? route['Route Name'] : null))
+          .filter(Boolean);
+        if (routeSummaries.length) {
+          trailAdditionalProps.push({ '@type': 'PropertyValue', name: 'Standard Routes', value: routeSummaries.join('; ') });
         }
-        if (parkingValue) {
-          placeDetails.description = parkingValue;
-        }
-        mountain.containsPlace = placeDetails;
       }
+      if (dogFriendly) {
+        trailAdditionalProps.push({ '@type': 'PropertyValue', name: 'Dog Friendly', value: dogFriendly });
+      }
+      const hikingTrail = {
+        '@context': 'https://schema.org',
+        '@type': 'HikingTrail',
+        '@id': `${canonicalUrl}#trail`,
+        name: trailNames.length ? trailNames.join(' / ') : `${peakName} hiking trail`,
+        alternateName: trailNames.length > 1 ? trailNames : undefined,
+        trailType: trailType || undefined,
+        timeRequired: typicalCompletionTime || undefined,
+        additionalProperty: trailAdditionalProps,
+        about: { '@id': mountainId }
+      };
       const breadcrumb = {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
@@ -1118,7 +1115,7 @@ export default {
           { '@type': 'ListItem', position: 3, name: peakName, item: canonicalUrl }
         ]
       };
-      return { mountain, breadcrumb };
+      return { mountain, hikingTrail, breadcrumb };
     }
 
     async function serveCatalog() {
@@ -1885,7 +1882,7 @@ export default {
     const primaryCaption = primaryPhoto
       ? buildPhotoCaptionUnique(peakName, primaryPhoto)
       : peakName;
-    const { mountain, breadcrumb } = buildJsonLd(
+    const { mountain, hikingTrail, breadcrumb } = buildJsonLd(
       peakName,
       elevation,
       prominence,
@@ -1895,8 +1892,7 @@ export default {
       heroUrl,
       summaryVal,
       photos,
-      trailheadName,
-      parkingNotes
+      peak
     );
 
     // Fetch the raw interactive HTML template from GitHub
@@ -1948,6 +1944,7 @@ export default {
       `<link rel="alternate" hreflang="fr" href="${canonicalFr}" />`,
       `<link rel="alternate" hreflang="x-default" href="${canonicalX}" />`,
       `<script type="application/ld+json">${JSON.stringify(mountain).replace(/</g, '<\/')}</script>`,
+      `<script type="application/ld+json">${JSON.stringify(hikingTrail).replace(/</g, '<\/')}</script>`,
       `<script type="application/ld+json">${JSON.stringify(breadcrumb).replace(/</g, '<\/')}</script>`
     ].join('\n');
     html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
