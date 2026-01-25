@@ -494,8 +494,15 @@ export default {
       } catch (_) {}
       if (!peaks) {
         // Fallback to GitHub raw URL (not SITE, since there's no origin)
-        const res = await fetch(`${RAW_BASE}/data/nh48.json`, NO_CACHE_FETCH);
-        peaks = await res.json();
+        try {
+          const res = await fetch(`${RAW_BASE}/data/nh48.json`, NO_CACHE_FETCH);
+          if (!res.ok) {
+            return null;
+          }
+          peaks = await res.json();
+        } catch (_) {
+          return null;
+        }
       }
       return peaks;
     }
@@ -1933,6 +1940,16 @@ export default {
       loadDescriptions(),
       loadTranslation(lang)
     ]);
+
+    if (!peaks) {
+      return new Response('Peak data unavailable', { status: 500 });
+    }
+    if ((Array.isArray(peaks) && peaks.length === 0) || (!Array.isArray(peaks) && Object.keys(peaks).length === 0)) {
+      return new Response('<!doctype html><title>404 Not Found</title><h1>Peak data not found</h1>', {
+        status: 404,
+        headers: { 'Content-Type': 'text/html; charset=utf-8' }
+      });
+    }
 
     const peak = findPeak(peaks, slug);
     if (!peak) {
