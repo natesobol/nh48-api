@@ -1011,7 +1011,8 @@ export default {
       imageUrl,
       summaryText,
       photos = [],
-      peakData = {}
+      trailheadName = '',
+      parkingNotes = ''
     ) {
       const imageObjects = (Array.isArray(photos) ? photos : [])
         .slice(0, 10)
@@ -1093,6 +1094,18 @@ export default {
       }
       if (coords.lat && coords.lon) {
         mountain.geo = { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon };
+      }
+      const trailheadValue = typeof trailheadName === 'string' ? trailheadName.trim() : '';
+      const parkingValue = typeof parkingNotes === 'string' ? parkingNotes.trim() : '';
+      if (trailheadValue || parkingValue) {
+        const placeDetails = { '@type': 'Place' };
+        if (trailheadValue) {
+          placeDetails.name = trailheadValue;
+        }
+        if (parkingValue) {
+          placeDetails.description = parkingValue;
+        }
+        mountain.containsPlace = placeDetails;
       }
       const breadcrumb = {
         '@context': 'https://schema.org',
@@ -1848,6 +1861,8 @@ export default {
     const prominence = formatFeet(peak['Prominence (ft)'] || peak.prominence_ft || '');
     const rangeVal = peak['Range / Subrange'] || peak.range || '';
     const coords = parseCoords(peak.lat || peak.latitude || peak['Coordinates'] || '');
+    const trailheadName = peak['Most Common Trailhead'] || peak.mostCommonTrailhead || '';
+    const parkingNotes = peak['Parking Notes'] || peak.parkingNotes || '';
     let photos = [];
     if (Array.isArray(peak.photos)) {
       photos = peak.photos
@@ -1880,7 +1895,8 @@ export default {
       heroUrl,
       summaryVal,
       photos,
-      peak
+      trailheadName,
+      parkingNotes
     );
 
     // Fetch the raw interactive HTML template from GitHub
