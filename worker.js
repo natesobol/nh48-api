@@ -1076,7 +1076,7 @@ export default {
           };
         })
         .filter(Boolean);
-      // Extract trail metadata from peakData
+      // Guard against missing fields in peakData to avoid undefined errors
       const dogFriendly = peakData && typeof peakData === 'object'
         ? (peakData['Dog Friendly'] || peakData.dogFriendly || '')
         : '';
@@ -1096,7 +1096,6 @@ export default {
         ? (peakData['Typical Completion Time'] || peakData.typicalCompletionTime || '')
         : '';
       const trailAdditionalProps = [];
-
       const mountainId = `${canonicalUrl}#mountain`;
       const mountain = {
         '@context': 'https://schema.org',
@@ -1185,13 +1184,13 @@ export default {
         alternateName: trailNames.length > 1 ? trailNames : undefined,
         trailType: trailType || undefined,
         timeRequired: typicalCompletionTime || undefined,
-        additionalProperty: (dogFriendly
+        additionalProperty: dogFriendly
           ? trailAdditionalProps.concat({
             '@type': 'PropertyValue',
             name: 'Dog Friendly',
-            value: dogFriendly,
+            value: dogFriendly
           })
-          : trailAdditionalProps),
+          : trailAdditionalProps,
         about: { '@id': mountainId }
       };
       const breadcrumb = {
