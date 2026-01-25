@@ -271,7 +271,7 @@ const flattenMetaToPropertyValues = (prefix, obj, out) => {
   if (!obj || typeof obj !== 'object') return;
   for (const [key, val] of Object.entries(obj)) {
     if (val === undefined || val === null) continue;
-    if (['url', 'photoId', 'filename', 'isPrimary'].includes(key)) continue;
+    if (['url', 'photoId', 'filename', 'isPrimary', 'instagramProfileEmbedLink'].includes(key)) continue;
     const name = prefix ? `${prefix}.${key}` : key;
     if (Array.isArray(val)) {
       const text = val.map((item) => cleanText(item)).filter(Boolean).join(', ');
