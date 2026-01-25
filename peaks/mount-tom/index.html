@@ -220,6 +220,58 @@
       "value": "Park at Crawford Depot or Highland Center lot; plenty of space typically"
     }
   ],
+  "hasPart": [
+    {
+      "@type": "HikingTrail",
+      "@id": "https://nh48.info/peak/mount-tom/#route-01",
+      "name": "Avalon Trail > A-Z Trail > Mount Tom Spur",
+      "distance": {
+        "@type": "QuantitativeValue",
+        "value": 5.8,
+        "unitText": "MI"
+      },
+      "difficulty": "Moderate",
+      "estimatedDuration": "PT3H",
+      "additionalProperty": [
+        {
+          "@type": "PropertyValue",
+          "name": "Elevation Gain (ft)",
+          "value": 2,
+          "unitText": "FT"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Trail Type",
+          "value": "Out & back - or loop with Field & Willey."
+        }
+      ]
+    },
+    {
+      "@type": "HikingTrail",
+      "@id": "https://nh48.info/peak/mount-tom/#route-02",
+      "name": "Willey Range Traverse - see Mount Field description, includes Tom spur.",
+      "distance": {
+        "@type": "QuantitativeValue",
+        "value": 10,
+        "unitText": "MI"
+      },
+      "difficulty": "Difficult",
+      "estimatedDuration": "PT3H",
+      "additionalProperty": [
+        {
+          "@type": "PropertyValue",
+          "name": "Elevation Gain (ft)",
+          "value": 3,
+          "unitText": "FT"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Trail Type",
+          "value": "Loop"
+        }
+      ]
+    }
+  ],
   "containsPlace": {
     "@type": "Place",
     "name": "AMC Crawford Depot/Highland Center - Avalon/A-Z Trail start.",
@@ -1414,10 +1466,28 @@
     "width": 6000,
     "height": 4000
   },
+  "breadcrumb": {
+    "@id": "https://nh48.info/peak/mount-tom/#breadcrumb"
+  },
   "potentialAction": {
     "@type": "ReadAction",
     "target": "https://nh48.info/peak/mount-tom/"
   }
+}</script>
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "NH48 Peak Dataset — Mount Tom",
+  "description": "This photograph features Mount Tom in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.",
+  "identifier": "mount-tom",
+  "inLanguage": "en-US",
+  "includedInDataCatalog": "https://nh48.info/catalog",
+  "distribution": {
+    "@type": "DataDownload",
+    "contentUrl": "/data/nh48.json",
+    "encodingFormat": "application/json"
+  },
+  "license": "https://nh48.info/license"
 }</script>
     <script type="application/ld+json">{
   "@context": "https://schema.org",

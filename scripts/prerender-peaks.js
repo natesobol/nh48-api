@@ -190,6 +190,41 @@ const numberFrom = (value) => {
   return match ? Number(match[0]) : null;
 };
 
+const parseEstimatedDuration = (value) => {
+  const cleaned = cleanText(value);
+  if (!cleaned) return null;
+  const lower = cleaned.toLowerCase();
+  const rangeSplit = lower.split(/(?:-|–|to)/).map((entry) => entry.trim());
+  const target = rangeSplit[0] || lower;
+  const numberMatch = target.match(/(\d+(?:\.\d+)?)/);
+  if (!numberMatch) return null;
+  const quantity = Number(numberMatch[1]);
+  if (Number.isNaN(quantity)) return null;
+  if (lower.includes("day")) {
+    if (Number.isInteger(quantity)) {
+      return `P${quantity}D`;
+    }
+    const hours = Math.round(quantity * 24);
+    return `P${Math.floor(hours / 24)}DT${hours % 24}H`;
+  }
+  if (lower.includes("hour") || lower.includes("hr")) {
+    if (Number.isInteger(quantity)) {
+      return `PT${quantity}H`;
+    }
+    const hours = Math.floor(quantity);
+    const minutes = Math.round((quantity - hours) * 60);
+    const hourPart = hours ? `${hours}H` : "";
+    const minutePart = minutes ? `${minutes}M` : "";
+    if (!hourPart && !minutePart) return null;
+    return `PT${hourPart}${minutePart}`;
+  }
+  if (lower.includes("min")) {
+    const minutes = Math.round(quantity);
+    return `PT${minutes}M`;
+  }
+  return null;
+};
+
 const formatFeet = (value) => {
   const numeric = numberFrom(value);
   if (numeric === null || Number.isNaN(numeric)) return "";
@@ -604,6 +639,70 @@ const buildRoutesList = (routes, labels) => {
     .join("\n");
 };
 
+const buildRouteEntities = (routes, peak, canonicalUrl) => {
+  if (!Array.isArray(routes) || routes.length === 0) return [];
+  return routes
+    .map((route, index) => {
+      if (!route || typeof route !== "object") return null;
+      const name = cleanText(route["Route Name"] || route.name || `Route ${index + 1}`);
+      const distanceValue = numberFrom(route["Distance (mi)"]);
+      const elevationGainValue = numberFrom(route["Elevation Gain (ft)"]);
+      const difficulty = cleanText(route["Difficulty"] || "");
+      const trailType = cleanText(route["Trail Type"] || "");
+      const durationSource = cleanText(route["Typical Completion Time"] || peak?.["Typical Completion Time"] || "");
+      const estimatedDuration = parseEstimatedDuration(durationSource);
+      const isHikingTrail = [name, trailType]
+        .filter(Boolean)
+        .some((entry) => new RegExp(`\\b(${TRAIL_KEYWORDS.join("|")})\\b`, "i").test(entry));
+      const additionalProperty = [];
+
+      if (elevationGainValue !== null) {
+        additionalProperty.push({
+          "@type": "PropertyValue",
+          name: "Elevation Gain (ft)",
+          value: elevationGainValue,
+          unitText: "FT",
+        });
+      }
+      if (trailType) {
+        additionalProperty.push({
+          "@type": "PropertyValue",
+          name: "Trail Type",
+          value: trailType,
+        });
+      }
+      if (durationSource && !estimatedDuration) {
+        additionalProperty.push({
+          "@type": "PropertyValue",
+          name: "Typical Completion Time",
+          value: durationSource,
+        });
+      }
+
+      const routeEntity = {
+        "@type": isHikingTrail ? "HikingTrail" : "Route",
+        "@id": `${canonicalUrl}#route-${String(index + 1).padStart(2, "0")}`,
+        name,
+        distance:
+          distanceValue !== null
+            ? {
+              "@type": "QuantitativeValue",
+              value: distanceValue,
+              unitText: "MI",
+            }
+            : undefined,
+        difficulty: difficulty || undefined,
+        description: undefined,
+        estimatedDuration: estimatedDuration || undefined,
+        additionalProperty: additionalProperty.length ? additionalProperty : undefined,
+      };
+
+      Object.keys(routeEntity).forEach((key) => routeEntity[key] === undefined && delete routeEntity[key]);
+      return routeEntity;
+    })
+    .filter(Boolean);
+};
+
 const buildGallery = (photos, peakName, fallbackAlt, langCode) => {
   if (!Array.isArray(photos) || photos.length === 0) {
     const descriptionText = `${peakName} in the White Mountains`;
@@ -728,6 +827,9 @@ const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImag
       width: primaryImage.width,
       height: primaryImage.height
     } : undefined,
+    breadcrumb: {
+      "@id": `${canonicalUrl}#breadcrumb`
+    },
     potentialAction: {
       "@type": "ReadAction",
       target: canonicalUrl
@@ -910,6 +1012,7 @@ const buildJsonLd = (
   const prominenceFt = numberFrom(peak["Prominence (ft)"]);
   const difficulty = cleanText(peak["Difficulty"]);
   const trailType = cleanText(peak["Trail Type"]);
+  const routeEntities = buildRouteEntities(peak["Standard Routes"], peak, canonicalUrl);
   const sameAsLinks = Array.isArray(peak.sameAs)
     ? peak.sameAs.filter(Boolean)
     : peak.sameAs
@@ -1029,6 +1132,7 @@ const buildJsonLd = (
       : undefined,
     containedInPlace: { "@type": "Place", name: "White Mountain National Forest" },
     additionalProperty: additionalProperty.length ? additionalProperty : undefined,
+    hasPart: routeEntities.length ? routeEntities : undefined,
     containsPlace: (() => {
       const trailhead = cleanText(peak["Most Common Trailhead"] || "");
       const parking = cleanText(peak["Parking Notes"] || "");
