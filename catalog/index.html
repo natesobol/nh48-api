@@ -292,7 +292,6 @@
         <span class="loading-text" data-i18n="common.loading">Loading…</span>
       </div>
       <div id="grid" class="grid"></div>
-      <nav id="pagination" class="pagination"></nav>
       <div id="emptyMessage" class="empty" data-i18n="catalog.empty" hidden>No peaks found.</div>
     </div>
 
@@ -380,10 +379,6 @@
         }
         return applyImageTransform(normalized);
       }
-
-      // Pagination
-      const ITEMS_PER_PAGE = 30;
-      let currentPage = 1;
 
       let peaks = [];
       let activeSort = 'name';
@@ -651,6 +646,12 @@
         return t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
       }
 
+      function getPrimaryPhoto(photos){
+        if(!Array.isArray(photos) || photos.length === 0) return null;
+        const primary = photos.find(photo => photo && typeof photo === 'object' && photo.isPrimary);
+        return primary || photos[0];
+      }
+
       function createCard(p){
         const card = document.createElement('article');
         card.className = 'card';
@@ -660,12 +661,12 @@
         let thumbSrc = placeholder;
         let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
-          const first = p.photos[0];
-          thumbAlt = buildPhotoAlt(p, first);
-          if (typeof first === 'string') {
-            thumbSrc = toTransformedPhotoUrl(first);
-          } else if (first && first.url) {
-            thumbSrc = toTransformedPhotoUrl(first.url);
+          const primaryPhoto = getPrimaryPhoto(p.photos);
+          thumbAlt = buildPhotoAlt(p, primaryPhoto);
+          if (typeof primaryPhoto === 'string') {
+            thumbSrc = toTransformedPhotoUrl(primaryPhoto);
+          } else if (primaryPhoto && primaryPhoto.url) {
+            thumbSrc = toTransformedPhotoUrl(primaryPhoto.url);
           }
         }
 
@@ -709,12 +710,12 @@
         let thumbSrc = placeholder;
         let thumbAlt = t('photo.altTemplate', { peak: p.peakName, season: '', timeOfDay: '' }).replace(/\s+/g, ' ').replace(/\s—\s$/, '').trim();
         if (Array.isArray(p.photos) && p.photos.length > 0) {
-          const first = p.photos[0];
-          thumbAlt = buildPhotoAlt(p, first);
-          if (typeof first === 'string') {
-            thumbSrc = toTransformedPhotoUrl(first);
-          } else if (first && first.url) {
-            thumbSrc = toTransformedPhotoUrl(first.url);
+          const primaryPhoto = getPrimaryPhoto(p.photos);
+          thumbAlt = buildPhotoAlt(p, primaryPhoto);
+          if (typeof primaryPhoto === 'string') {
+            thumbSrc = toTransformedPhotoUrl(primaryPhoto);
+          } else if (primaryPhoto && primaryPhoto.url) {
+            thumbSrc = toTransformedPhotoUrl(primaryPhoto.url);
           }
         }
 
@@ -859,42 +860,6 @@
         return arr;
       }
 
-      // Render pagination controls
-      function renderPagination(totalPages){
-        const nav = document.getElementById('pagination');
-        nav.innerHTML = '';
-        if(totalPages <= 1){
-          return;
-        }
-        const makeBtn = (label, page) => {
-          const btn = document.createElement('button');
-          btn.textContent = label;
-          if(page === currentPage){
-            btn.disabled = true;
-            btn.classList.add('active');
-          }
-          btn.addEventListener('click', () => {
-            currentPage = page;
-            trackEvent('catalog_pagination_click', { label, page });
-            updateDisplay();
-          });
-          return btn;
-        };
-        // First and previous
-        nav.appendChild(makeBtn('«', 1));
-        nav.appendChild(makeBtn('‹', Math.max(1, currentPage - 1)));
-        // Window of pages
-        const delta = 2;
-        const start = Math.max(1, currentPage - delta);
-        const end = Math.min(totalPages, currentPage + delta);
-        for(let i=start; i<=end; i++){
-          nav.appendChild(makeBtn(i.toString(), i));
-        }
-        // Next and last
-        nav.appendChild(makeBtn('›', Math.min(totalPages, currentPage + 1)));
-        nav.appendChild(makeBtn('»', totalPages));
-      }
-
       function updateDisplay(){
         let list = peaks;
 
@@ -906,21 +871,11 @@
 
         list = sortPeaks(list);
 
-        // Pagination
-        const totalPages = Math.ceil(list.length / ITEMS_PER_PAGE);
-        if(currentPage > totalPages){
-          currentPage = totalPages || 1;
-        }
-        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
-        const endIdx = startIdx + ITEMS_PER_PAGE;
-        const pageItems = list.slice(startIdx, endIdx);
-
         if(currentView === 'list'){
-          renderList(pageItems);
+          renderList(list);
         }else{
-          renderGrid(pageItems);
+          renderGrid(list);
         }
-        renderPagination(totalPages);
       }
 
       async function init(){
@@ -946,7 +901,6 @@
         if (searchInput) {
           let searchDebounce;
           searchInput.addEventListener('input', () => {
-            currentPage = 1;
             updateDisplay();
             clearTimeout(searchDebounce);
             searchDebounce = setTimeout(() => {
@@ -959,7 +913,6 @@
         if (sortSelect) {
           sortSelect.addEventListener('change', (e) => {
             activeSort = e.target.value;
-            currentPage = 1;
             updateDisplay();
             trackEvent('catalog_sort_change', { sort: activeSort });
           });
@@ -1047,7 +1000,6 @@
 
       viewSelect.addEventListener('change', function() {
         applyView(this.value);
-        currentPage = 1;
         updateDisplay();
         trackEvent('catalog_view_change', { view: currentView });
       });

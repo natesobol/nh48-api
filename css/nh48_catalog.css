@@ -619,31 +619,6 @@ input[list]::-webkit-list-button {
   font-size:1rem;
 }
 
-/* Pagination styles */
-.pagination{
-  display:flex;
-  gap:4px;
-  justify-content:center;
-  margin-top:12px;
-  flex-wrap:wrap;
-}
-.pagination button{
-  background:var(--card);
-  color:var(--ink);
-  border:1px solid var(--stroke);
-  border-radius:8px;
-  padding:4px 8px;
-  cursor:pointer;
-}
-.pagination button.active{
-  background:var(--accent);
-  color:#0a0a0a;
-}
-.pagination button:disabled{
-  opacity:0.5;
-  cursor:default;
-}
-
 @keyframes spin{
   to{ transform:rotate(360deg); }
 }
