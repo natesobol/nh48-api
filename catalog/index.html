@@ -888,7 +888,7 @@
         }
 
         // Render each range section with heading and per-range grid
-        sortedRanges.forEach(range => {
+        sortedRanges.forEach((range, index) => {
           const rangeData = rangeGroups[range];
           const peakCount = rangeData.peaks.length;
 
@@ -911,6 +911,12 @@
 
           section.appendChild(rangeGrid);
           grid.appendChild(section);
+
+          if(index < sortedRanges.length - 1){
+            const divider = document.createElement('div');
+            divider.className = 'range-divider';
+            grid.appendChild(divider);
+          }
         });
 
         deferInitialImageLoads();
@@ -998,12 +1004,21 @@
         }
 
         if(currentView === 'list'){
+          if(grid){
+            grid.classList.remove('range-view');
+          }
           renderList(list);
         }else{
           // Use segmented range view only when sorting by range
           if(activeSort === 'range-asc'){
+            if(grid){
+              grid.classList.add('range-view');
+            }
             renderGridByRange(list);
           }else{
+            if(grid){
+              grid.classList.remove('range-view');
+            }
             renderGrid(list);
           }
         }

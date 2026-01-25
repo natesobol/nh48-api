@@ -357,6 +357,7 @@ header p{
 /* Range Sections */
 .range-section{
   margin-bottom:32px;
+  scroll-margin-top:100px; /* Account for nav bar height */
 }
 .range-section:last-child{
   margin-bottom:0;
@@ -651,6 +652,9 @@ input[list]::-webkit-list-button {
   gap:16px;
   grid-template-columns:repeat(3,minmax(0,1fr));
 }
+.grid.range-view{
+  display:block;
+}
 .grid[data-view="list"]{
   display:flex;
   flex-direction:column;
@@ -921,4 +925,3 @@ input[list]::-webkit-list-button {
   background:var(--stroke);
   margin:32px 0;
 }
-
