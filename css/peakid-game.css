@@ -1,0 +1,414 @@
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
+  background: #0b0f1a;
+  color: #f8fafc;
+}
+
+.peakid-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+  position: relative;
+  z-index: 2;
+}
+
+.peakid-hero {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(14, 116, 144, 0.1));
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 24px;
+  padding: 28px 28px 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+}
+
+.peakid-hero h1 {
+  margin: 0 0 12px;
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  letter-spacing: 0.5px;
+}
+
+.peakid-hero p {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #d6e3f1;
+}
+
+.peakid-scoreboard {
+  margin-top: 24px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.peakid-score-card {
+  background: #111827;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 18px;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.2);
+}
+
+.peakid-score-card span {
+  display: block;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+}
+
+.peakid-score-card strong {
+  font-size: 1.6rem;
+  color: #f8fafc;
+}
+
+.peakid-progress {
+  margin-top: 8px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+  overflow: hidden;
+}
+
+.peakid-progress-bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #22c55e, #0ea5a8);
+  transition: width 0.4s ease;
+}
+
+.peakid-round {
+  margin-top: 28px;
+}
+
+.peakid-instructions {
+  font-size: 1rem;
+  color: #cbd5f5;
+  margin-bottom: 16px;
+}
+
+.peakid-round-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+}
+
+.peakid-card-grid,
+.peakid-slot-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  position: relative;
+}
+
+.peakid-card {
+  background: #0f172a;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 10px;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: grab;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transform: translate3d(0, 0, 0);
+  touch-action: none;
+}
+
+.peakid-card:focus-visible {
+  outline: 2px solid #22c55e;
+  outline-offset: 4px;
+}
+
+.peakid-card.dragging {
+  cursor: grabbing;
+  box-shadow: 0 18px 40px rgba(34, 197, 94, 0.35);
+  z-index: 5;
+}
+
+.peakid-card img {
+  width: 100%;
+  border-radius: 12px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.peakid-card-caption {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.peakid-card.selected {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.4);
+}
+
+.peakid-slot {
+  background: #0b1224;
+  border-radius: 18px;
+  border: 2px dashed rgba(34, 197, 94, 0.35);
+  padding: 16px;
+  min-height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #e2e8f0;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.peakid-slot.highlight {
+  border-color: #22c55e;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+}
+
+.peakid-slot.correct {
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.16);
+}
+
+.peakid-slot.incorrect {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.18);
+}
+
+.peakid-actions {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.peakid-actions button,
+.peakid-primary-button {
+  background: linear-gradient(135deg, #22c55e, #0ea5a8);
+  border: none;
+  color: #0b0f1a;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 12px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.peakid-actions button[disabled],
+.peakid-primary-button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.peakid-actions button:not([disabled]):hover,
+.peakid-primary-button:not([disabled]):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(34, 197, 94, 0.4);
+}
+
+.peakid-summary {
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+.peakid-final {
+  min-height: 100vh;
+  padding: 32px 20px 80px;
+  display: none;
+  position: relative;
+  z-index: 1;
+}
+
+.peakid-final.active {
+  display: block;
+}
+
+.peakid-final-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.peakid-final-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.peakid-final-header h2 {
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  margin-bottom: 12px;
+}
+
+.peakid-final-header p {
+  color: #d4e6f5;
+  font-size: 1.1rem;
+}
+
+.peakid-final-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.peakid-secondary-button {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  color: #f8fafc;
+  padding: 10px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.peakid-social-panel {
+  margin-top: 32px;
+  background: rgba(15, 23, 42, 0.85);
+  border-radius: 24px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 24px;
+  display: grid;
+  gap: 20px;
+}
+
+.peakid-social-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.peakid-toggle-group {
+  display: inline-flex;
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  overflow: hidden;
+}
+
+.peakid-toggle-group button {
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  padding: 8px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.peakid-toggle-group button.active {
+  background: #22c55e;
+  color: #0b0f1a;
+}
+
+.peakid-social-preview {
+  display: flex;
+  justify-content: center;
+}
+
+.peakid-social-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+}
+
+.peakid-social-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.2), rgba(5, 8, 18, 0.9));
+  z-index: 0;
+}
+
+.peakid-social-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.peakid-social-card.landscape {
+  width: min(640px, 100%);
+  aspect-ratio: 16 / 9;
+}
+
+.peakid-social-card.portrait {
+  width: min(420px, 100%);
+  aspect-ratio: 9 / 16;
+}
+
+.peakid-social-card h3 {
+  margin: 0 0 8px;
+  font-size: 1.6rem;
+}
+
+.peakid-social-card p {
+  margin: 0;
+  font-size: 1rem;
+  color: #e2e8f0;
+}
+
+.peakid-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.peakid-splash.active {
+  opacity: 1;
+}
+
+.peakid-splash-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: none;
+}
+
+.visually-hidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+@media (max-width: 900px) {
+  .peakid-round-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .peakid-hero {
+    padding: 22px;
+  }
+
+  .peakid-card-grid,
+  .peakid-slot-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}
