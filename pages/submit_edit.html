@@ -169,12 +169,13 @@ button:disabled{
 }
 </style>
 </head>
-<body>
+<body data-page="submit-edit">
+  <div id="nav-placeholder"></div>
   <div class="wrap">
     <div class="panel">
       <header>
         <h1>Submit Edit to Author</h1>
-        <p>Use this form to report incorrect or outdated information across the NH48 peaks or the Howker Ridge plant catalog. Please include as much detail as you can so we can follow up quickly.</p>
+        <p>Use this form to report incorrect or outdated information across the NH48 peaks or the Howker Ridge plant catalog. Please include as much detail as you can so I can follow up quickly.</p>
       </header>
 
       <div id="statusMessage" class="alert" hidden></div>
@@ -183,7 +184,7 @@ button:disabled{
         <div class="form-grid">
           <div>
             <label for="name">Name (required)</label>
-            <input id="name" name="name" type="text" required placeholder="Your full name" />
+            <input id="name" name="name" type="text" required placeholder="Name" />
           </div>
           <div>
             <label for="email">Email (required)</label>
@@ -205,6 +206,13 @@ button:disabled{
               <option value="">— None —</option>
             </select>
             <div class="helper" id="plantHelp">Loading plant catalog…</div>
+          </div>
+          <div>
+            <label for="pageSelect">Page (optional)</label>
+            <select id="pageSelect" name="page">
+              <option value="">— None —</option>
+            </select>
+            <div class="helper" id="pageHelp">Loading navigation pages…</div>
           </div>
         </div>
 
@@ -231,7 +239,7 @@ button:disabled{
         <div class="captcha-shell">
           <div>
             <label>Bot prevention (recommended)</label>
-            <div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY"></div>
+            <div class="cf-turnstile" data-sitekey=""></div>
             <div class="small-note">Turnstile runs silently in most browsers. If it does not load, please complete the math challenge below.</div>
           </div>
           <div>
@@ -242,14 +250,14 @@ button:disabled{
 
         <div class="actions">
           <button type="submit">Send report</button>
-          <span class="helper">Reports are emailed to the site author for review.</span>
         </div>
       </form>
     </div>
   </div>
+  <div id="footer-placeholder"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   <script>
     const statusMessage = document.getElementById('statusMessage');
     const params = new URLSearchParams(window.location.search);
@@ -272,20 +280,51 @@ button:disabled{
 
     const peakSelect = document.getElementById('peakSelect');
     const plantSelect = document.getElementById('plantSelect');
+    const pageSelect = document.getElementById('pageSelect');
     const peakHelp = document.getElementById('peakHelp');
     const plantHelp = document.getElementById('plantHelp');
+    const pageHelp = document.getElementById('pageHelp');
+    const navPlaceholder = document.getElementById('nav-placeholder');
+    const activeRoute = document.body.dataset.route || document.body.dataset.page;
 
     const uniqueSorted = (values) => Array.from(new Set(values)).sort((a, b) => a.localeCompare(b));
 
+    const extractPeakNames = (data) => {
+      if (Array.isArray(data)) {
+        return data.map(item => item?.peakName || item?.name || item?.peak).filter(Boolean);
+      }
+      if (data && typeof data === 'object') {
+        return Object.values(data)
+          .map(item => item?.peakName || item?.name || item?.peak?.name || item?.peak)
+          .filter(Boolean);
+      }
+      return [];
+    };
+
+    async function fetchFirstJson(urls) {
+      let lastError;
+      for (const url of urls) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) {
+            throw new Error(`Unable to load data from ${url}`);
+          }
+          return await res.json();
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError || new Error('Unable to load data.');
+    }
+
     async function loadPeaks() {
       try {
-        const res = await fetch('/data/nh48.json', { cache: 'no-store' });
-        if (!res.ok) {
-          throw new Error('Unable to load peak list');
-        }
-        const text = await res.text();
-        const matches = Array.from(text.matchAll(/"name"\s*:\s*"([^"]+)"/g));
-        const names = uniqueSorted(matches.map(match => match[1].trim()).filter(Boolean));
+        const data = await fetchFirstJson([
+          '/data/nh48.json',
+          'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
+          'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
+        ]);
+        const names = uniqueSorted(extractPeakNames(data).map(name => name.trim()));
         names.forEach((name) => {
           const option = document.createElement('option');
           option.value = name;
@@ -296,6 +335,30 @@ button:disabled{
       } catch (err) {
         peakHelp.textContent = 'Unable to load peaks.';
       }
+    }
+
+    const extractNavLinks = (root) => Array.from(root.querySelectorAll('.site-nav-links a'))
+      .map((link) => ({
+        href: link.getAttribute('href'),
+        label: link.textContent.trim()
+      }))
+      .filter((link) => link.href && link.label);
+
+    function renderNavLinks(navLinks) {
+      const unique = new Map();
+      navLinks.forEach((link) => {
+        if (!unique.has(link.href)) {
+          unique.set(link.href, link.label);
+        }
+      });
+
+      unique.forEach((label, href) => {
+        const option = document.createElement('option');
+        option.value = href;
+        option.textContent = label;
+        pageSelect.appendChild(option);
+      });
+      pageHelp.textContent = `${unique.size} pages loaded.`;
     }
 
     async function loadPlants() {
@@ -320,8 +383,90 @@ button:disabled{
       }
     }
 
+    function loadNavigation() {
+      if (!navPlaceholder && !pageSelect) {
+        return;
+      }
+
+      fetch('/pages/nav.html')
+        .then(response => response.text())
+        .then(html => {
+          if (navPlaceholder) {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+            if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+              window.NH48_I18N.refreshLangPicker();
+            }
+          }
+
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const navLinks = extractNavLinks(doc);
+          renderNavLinks(navLinks);
+        })
+        .catch(err => {
+          console.error('Failed to load navigation:', err);
+          pageHelp.textContent = 'Unable to load navigation pages.';
+        });
+    }
+
+    async function initTurnstile() {
+      const container = document.querySelector('.cf-turnstile');
+      if (!container) {
+        return;
+      }
+      try {
+        const res = await fetch('/turnstile-sitekey', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.sitekey) {
+            container.dataset.sitekey = data.sitekey;
+          }
+        }
+      } catch (err) {
+        console.warn('Unable to load Turnstile site key:', err);
+      }
+
+      if (!container.dataset.sitekey) {
+        return;
+      }
+
+      const renderTurnstile = () => {
+        if (window.turnstile && window.turnstile.render) {
+          window.turnstile.render(container, { sitekey: container.dataset.sitekey });
+          return true;
+        }
+        return false;
+      };
+
+      if (renderTurnstile()) {
+        return;
+      }
+
+      let attempts = 0;
+      const interval = setInterval(() => {
+        attempts += 1;
+        if (renderTurnstile() || attempts > 12) {
+          clearInterval(interval);
+        }
+      }, 250);
+    }
+
     loadPeaks();
     loadPlants();
+    loadNavigation();
+    initTurnstile();
 
     const form = document.getElementById('editForm');
     form.addEventListener('submit', (event) => {

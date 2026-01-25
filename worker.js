@@ -165,6 +165,16 @@ export default {
       });
     }
 
+    if (pathname === '/turnstile-sitekey') {
+      const sitekey = env.TURNSTILE_SITEKEY || '';
+      return new Response(JSON.stringify({ sitekey }), {
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'no-store'
+        }
+      });
+    }
+
     if (pathname === '/submit-edit' || pathname === '/submit-edit/' || pathname === '/fr/submit-edit' || pathname === '/fr/submit-edit/') {
       if (request.method === 'POST') {
         const form = await request.formData();
@@ -172,6 +182,7 @@ export default {
         const email = form.get('email')?.toString().trim() || '';
         const peak = form.get('peak')?.toString().trim() || '';
         const plant = form.get('plant')?.toString().trim() || '';
+        const page = form.get('page')?.toString().trim() || '';
         const body = form.get('body')?.toString().trim() || '';
         const token = form.get('cf-turnstile-response')?.toString() || '';
 
@@ -215,6 +226,7 @@ export default {
         const subjectTags = [];
         if (peak) subjectTags.push(`Peak: ${peak}`);
         if (plant) subjectTags.push(`Plant: ${plant}`);
+        if (page) subjectTags.push(`Page: ${page}`);
         const subjectSuffix = subjectTags.length ? ` – ${subjectTags.join(', ')}` : '';
         const subject = `Edit submission from ${name}${subjectSuffix}`;
         const sanitizedBody = stripHtml(body);
@@ -223,6 +235,7 @@ export default {
           `Email: ${email}`,
           peak ? `NH48 Peak: ${peak}` : null,
           plant ? `Plant: ${plant}` : null,
+          page ? `Page: ${page}` : null,
           '',
           'Message:',
           sanitizedBody || '(no message provided)'
