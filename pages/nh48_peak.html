@@ -47,7 +47,25 @@
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       crossorigin=""
     >
-    <script src="/js/unified-footer.js" defer></script>
+    <script>
+  (() => {
+    if (window.NH48_BUILD_DATE) return;
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/build-meta.json', false);
+      xhr.send(null);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const meta = JSON.parse(xhr.responseText);
+        if (meta && meta.buildDate) {
+          window.NH48_BUILD_DATE = meta.buildDate;
+        }
+      }
+    } catch (err) {
+      // No-op: build date is optional in static builds.
+    }
+  })();
+</script>
+<script src="/js/unified-footer.js" defer></script>
     <script>
       function getRouteInfo(pathname){
         const parts = pathname.split('/').filter(Boolean);

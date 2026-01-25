@@ -28,6 +28,7 @@ export default {
     const RAW_CATALOG_URL = `${RAW_BASE}/pages/nh48_catalog.html`;
     const RAW_NAV_URL = `${RAW_BASE}/pages/nav.html`;
     const RAW_FOOTER_URL = `${RAW_BASE}/pages/footer.html`;
+    const RAW_BUILD_META_URL = `${RAW_BASE}/build-meta.json`;
     const EN_TRANS_URL = `${RAW_BASE}/i18n/en.json`;
     const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
     const SITE_NAME = url.hostname;
@@ -39,6 +40,9 @@ export default {
       licenseUrl: 'https://nh48.info/license',
       acquireLicensePageUrl: 'https://nh48.info/contact'
     };
+
+    const buildMeta = await fetchBuildMeta(RAW_BUILD_META_URL);
+    const buildDate = buildMeta?.buildDate || '';
 
     if (pathname.startsWith('/api/howker/plant-reports')) {
       const corsHeaders = {
@@ -627,6 +631,28 @@ export default {
       // Duplicate JSON-LD is harmless and trying to remove it was breaking the page
       
       return result;
+    }
+
+    function injectBuildDate(html, isoString) {
+      if (!isoString) return html;
+      const scriptTag = `<script>window.NH48_BUILD_DATE=${JSON.stringify(isoString)};</script>`;
+      const footerScriptPattern = /<script\s+src=["']\/js\/unified-footer\.js["'][^>]*><\/script>/i;
+      if (footerScriptPattern.test(html)) {
+        return html.replace(footerScriptPattern, `${scriptTag}\n$&`);
+      }
+      return html.replace(/<\/head>/i, `${scriptTag}\n</head>`);
+    }
+
+    async function fetchBuildMeta(url) {
+      try {
+        const resp = await fetch(url, { cf: { cacheTtl: 300, cacheEverything: true } });
+        if (!resp.ok) return null;
+        const data = await resp.json();
+        if (!data || typeof data.buildDate !== 'string') return null;
+        return data;
+      } catch (err) {
+        return null;
+      }
     }
 
     function buildMetaBlock(meta) {
@@ -1277,6 +1303,7 @@ export default {
         loadPartial('footer', RAW_FOOTER_URL)
       ]);
       html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'catalog');
+      html = injectBuildDate(html, buildDate);
 
       const metaBlock = [
         `<title>${esc(title)}</title>`,
@@ -1331,6 +1358,7 @@ export default {
       let html = fixRelativePaths(rawHtml);
       html = stripHeadMeta(html);
       html = injectNavFooter(html, navHtml, footerHtml, pathname, routeId);
+      html = injectBuildDate(html, buildDate);
       const metaBlock = buildMetaBlock({
         ...meta,
         jsonLd
@@ -2025,6 +2053,7 @@ export default {
 
     // Remove existing placeholders and duplicate head tags.
     html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'peak');
+    html = injectBuildDate(html, buildDate);
 
     // Insert our meta tags, canonical links and structured data just
     // before the closing head tag.

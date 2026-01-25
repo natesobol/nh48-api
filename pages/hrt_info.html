@@ -33,6 +33,24 @@
 <meta name="twitter:description" content="Howker Ridge Trail info page with stats, terrain, access, safety, and points of interest." />
 <meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg" />
 <meta name="twitter:image:alt" content="Mount Madison ridge view with alpine terrain and distant peaks" />
+<script>
+  (() => {
+    if (window.NH48_BUILD_DATE) return;
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/build-meta.json', false);
+      xhr.send(null);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const meta = JSON.parse(xhr.responseText);
+        if (meta && meta.buildDate) {
+          window.NH48_BUILD_DATE = meta.buildDate;
+        }
+      }
+    } catch (err) {
+      // No-op: build date is optional in static builds.
+    }
+  })();
+</script>
 <script src="/js/unified-footer.js" defer></script>
 <style>
 :root{

@@ -50,7 +50,25 @@
     <link rel="alternate" hreflang="vi" href="https://nh48.info/i18n/vi.html">
     <link rel="alternate" hreflang="pl" href="https://nh48.info/i18n/pl.html">
     <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
-  <script src="/js/unified-footer.js" defer></script>
+  <script>
+  (() => {
+    if (window.NH48_BUILD_DATE) return;
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/build-meta.json', false);
+      xhr.send(null);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const meta = JSON.parse(xhr.responseText);
+        if (meta && meta.buildDate) {
+          window.NH48_BUILD_DATE = meta.buildDate;
+        }
+      }
+    } catch (err) {
+      // No-op: build date is optional in static builds.
+    }
+  })();
+</script>
+<script src="/js/unified-footer.js" defer></script>
   <script type="module" src="../js/i18n.js"></script>
 
   <script type="application/ld+json">

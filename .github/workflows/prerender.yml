@@ -39,6 +39,12 @@ jobs:
             fi
           done
 
+      - name: Write build metadata
+        run: |
+          set -euo pipefail
+          build_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          printf '{\"buildDate\":\"%s\"}\\n' "$build_date" > build-meta.json
+
       - name: Show generated file diffs (debug)
         if: github.event_name == 'pull_request'
         run: |
@@ -58,6 +64,7 @@ jobs:
             peaks/**
             fr/peaks/**
             long-trails/**
+            build-meta.json
             sitemap.xml
             image-sitemap.xml
 
@@ -80,6 +87,7 @@ jobs:
             peaks/**
             fr/peaks/**
             long-trails/**
+            build-meta.json
             sitemap.xml
             image-sitemap.xml
 
