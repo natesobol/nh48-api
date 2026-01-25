@@ -1295,6 +1295,20 @@
         return map[key] ? t(map[key]) : value;
       }
 
+      /**
+       * Return the first non-empty, normalized string from the provided values.
+       * Used to pick between multiple potential date fields (captureDate, fileCreateDate, etc.).
+       * Adapted from scripts/generate-sitemaps.js.
+       */
+      function pickFirstNonEmpty(...vals){
+        for(const v of vals){
+          if(v === undefined || v === null) continue;
+          const s = safeText(v).trim();
+          if(s) return s;
+        }
+        return '';
+      }
+
       const TRAIL_TYPE_TRANSLATIONS = {
         'Loop': 'values.trailType.loop',
         'Loop or Out & back': 'values.trailType.loop_or_out_back',
