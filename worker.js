@@ -744,6 +744,52 @@ export default {
       return caption;
     }
 
+    function parseImageDimensions(photo) {
+      const width = Number(photo?.width);
+      const height = Number(photo?.height);
+      if (Number.isFinite(width) && Number.isFinite(height)) {
+        return { width, height };
+      }
+      const dimensions = String(photo?.dimensions || '').trim();
+      if (!dimensions) return { width: undefined, height: undefined };
+      const match = dimensions.match(/(\d+)\s*[x×]\s*(\d+)/i);
+      if (!match) return { width: undefined, height: undefined };
+      return { width: Number(match[1]), height: Number(match[2]) };
+    }
+
+    function buildPhotoKeywords(photo) {
+      const tags = Array.isArray(photo?.tags) ? photo.tags.map(normalizeTextForWeb).filter(Boolean) : [];
+      const iptcKeywords = Array.isArray(photo?.iptc?.keywords) ? photo.iptc.keywords.map((item) => String(item).trim()).filter(Boolean) : [];
+      const combined = [];
+      const seen = new Set();
+      for (const item of [...tags, ...iptcKeywords]) {
+        if (!item) continue;
+        const key = item.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        combined.push(item);
+      }
+      return combined.length ? combined : undefined;
+    }
+
+    function buildContentLocation(photo) {
+      const loc = photo?.iptc?.locationShown || photo?.iptc?.locationCreated;
+      if (!loc || typeof loc !== 'object') return undefined;
+      const name = pickFirstNonEmpty(loc.city, loc.sublocation, loc.provinceState, loc.countryName, loc.worldRegion);
+      if (!name) return undefined;
+      const address = {};
+      if (loc.city) address.addressLocality = loc.city;
+      if (loc.provinceState) address.addressRegion = loc.provinceState;
+      if (loc.countryName) address.addressCountry = loc.countryName;
+      return {
+        '@type': 'Place',
+        name,
+        address: Object.keys(address).length
+          ? { '@type': 'PostalAddress', ...address }
+          : undefined
+      };
+    }
+
     // Format numbers as feet
     function formatFeet(value) {
       if (value === null || value === undefined || value === '') return '';
@@ -950,7 +996,13 @@ export default {
         .slice(0, 10)
         .map((photo) => {
           if (!photo || !photo.url) return null;
+          const { width, height } = parseImageDimensions(photo);
+          const keywords = buildPhotoKeywords(photo);
+          const contentLocation = buildContentLocation(photo);
+          const dateCreated = pickFirstNonEmpty(photo.captureDate, photo.dateCreated);
           const exifData = buildExifData(photo);
+          const copyrightNotice = pickFirstNonEmpty(photo?.iptc?.copyrightNotice, photo.copyrightNotice, RIGHTS_DEFAULTS.copyrightNotice);
+          const acquireLicensePage = pickFirstNonEmpty(photo.acquireLicensePage, RIGHTS_DEFAULTS.licenseUrl, RIGHTS_DEFAULTS.acquireLicensePageUrl);
           return {
             '@type': 'ImageObject',
             contentUrl: photo.url,
@@ -959,9 +1011,14 @@ export default {
             caption: buildPhotoCaptionUnique(peakName, photo),
             creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
             creditText: RIGHTS_DEFAULTS.creditText,
-            copyrightNotice: RIGHTS_DEFAULTS.copyrightNotice,
+            copyrightNotice,
             license: RIGHTS_DEFAULTS.licenseUrl,
-            acquireLicensePage: RIGHTS_DEFAULTS.acquireLicensePageUrl,
+            acquireLicensePage,
+            dateCreated,
+            width,
+            height,
+            keywords,
+            contentLocation,
             exifData
           };
         })
