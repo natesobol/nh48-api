@@ -1057,10 +1057,16 @@
       }
 
       async function init(){
+        const groupToggle = document.getElementById('groupByRangeToggle');
         try{
           setCatalogLoading(true);
           peaks = await fetchPeaks();
           updateSuggestions();
+          const savedGroup = localStorage.getItem(GROUP_BY_RANGE_KEY);
+          groupByRangeEnabled = savedGroup !== null ? savedGroup === 'true' : true;
+          if(groupToggle){
+            groupToggle.checked = groupByRangeEnabled;
+          }
           updateDisplay();
           trackEvent('catalog_render_complete', { peakCount: peaks.length });
         }catch(err){
@@ -1111,7 +1117,6 @@
             trackEvent('catalog_api_variables_toggle', { enabled: e.target.checked });
           });
         }
-        const groupToggle = document.getElementById('groupByRangeToggle');
         if(groupToggle){
           groupToggle.addEventListener('change', (e) => {
             groupByRangeEnabled = e.target.checked;
@@ -1196,13 +1201,6 @@
       const savedApiVariables = localStorage.getItem(API_VARIABLES_STORAGE_KEY);
       if(savedApiVariables === 'true'){
         setApiVariableLabels(true, { persist: false });
-      }
-
-      const groupToggle = document.getElementById('groupByRangeToggle');
-      const savedGroup = localStorage.getItem(GROUP_BY_RANGE_KEY);
-      groupByRangeEnabled = savedGroup !== null ? savedGroup === 'true' : true;
-      if(groupToggle){
-        groupToggle.checked = groupByRangeEnabled;
       }
       
       columnSelect.addEventListener('change', function() {
