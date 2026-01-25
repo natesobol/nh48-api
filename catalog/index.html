@@ -276,6 +276,10 @@
               <option value="list">List</option>
             </select>
           </div>
+          <div class="filter-group">
+            <label for="groupByRangeToggle">Group by Range</label>
+            <input type="checkbox" id="groupByRangeToggle" checked aria-label="Toggle grouping by mountain range">
+          </div>
           <div class="filter-group api-toggle">
             <label for="apiVariablesToggle">API Labels</label>
             <input type="checkbox" id="apiVariablesToggle" aria-label="Toggle API variable labels">
@@ -286,7 +290,7 @@
           <a href="/submit-edit" class="submit-edit-btn">Submit Edit</a>
         </div>
 
-        <!-- Jump to Range (visible only when sorting by range) -->
+        <!-- Jump to Range (visible only when grouping is enabled) -->
         <div id="rangeJumpLinks" class="range-jump-bar">
           <span class="jump-label">Jump to range:</span>
           <div class="jump-links">
@@ -400,9 +404,11 @@
 
       let peaks = [];
       let activeSort = 'range-asc';
+      let groupByRangeEnabled = true;
 
       const UNIT_STORAGE_KEY = 'nh48_units';
       const API_VARIABLES_STORAGE_KEY = 'nh48-catalog-api-variables';
+      const GROUP_BY_RANGE_KEY = 'nh48-catalog-group-by-range';
       const UNITS = {
         FEET: 'feet',
         METERS: 'meters'
@@ -905,8 +911,35 @@
           rangeGrid.className = 'range-grid';
           rangeGrid.setAttribute('data-columns', document.getElementById('columnSelect')?.value || '3');
 
-          // Sort peaks in each range by elevation desc
-          const peaksInRange = rangeData.peaks.sort((a, b) => (b['Elevation (ft)'] || 0) - (a['Elevation (ft)'] || 0));
+          // Determine sorting function based on activeSort
+          const comparator = (a, b) => {
+            switch(activeSort){
+              case 'name':
+                return (a.peakName || '').localeCompare(b.peakName || '');
+              case 'elev-asc':
+                return (a['Elevation (ft)'] || 0) - (b['Elevation (ft)'] || 0);
+              case 'elev-desc':
+                return (b['Elevation (ft)'] || 0) - (a['Elevation (ft)'] || 0);
+              case 'prom-asc':
+                return (a['Prominence (ft)'] || 0) - (b['Prominence (ft)'] || 0);
+              case 'prom-desc':
+                return (b['Prominence (ft)'] || 0) - (a['Prominence (ft)'] || 0);
+              case 'difficulty-asc':
+                return (a['Difficulty'] || '').localeCompare(b['Difficulty'] || '');
+              case 'difficulty-desc':
+                return (b['Difficulty'] || '').localeCompare(a['Difficulty'] || '');
+              case 'trail-asc':
+                return (a['Trail Type'] || '').localeCompare(b['Trail Type'] || '');
+              case 'exposure-asc':
+                return (a['Exposure Level'] || a['Weather Exposure Rating'] || '')
+                  .localeCompare(b['Exposure Level'] || b['Weather Exposure Rating'] || '');
+              default:
+                return (a['Range / Subrange'] || '').localeCompare(b['Range / Subrange'] || '');
+            }
+          };
+
+          // Sort each group with the comparator
+          const peaksInRange = rangeData.peaks.sort(comparator);
           peaksInRange.forEach(p => rangeGrid.appendChild(createCard(p)));
 
           section.appendChild(rangeGrid);
@@ -993,10 +1026,10 @@
 
         list = sortPeaks(list);
 
-        // Show/hide range jump bar based on sort method and view type
+        // Show/hide range jump bar based on grouping and view type
         const rangeJumpBar = document.getElementById('rangeJumpLinks');
         if(rangeJumpBar){
-          if(activeSort === 'range-asc' && currentView === 'grid'){
+          if(groupByRangeEnabled && currentView === 'grid'){
             rangeJumpBar.classList.add('visible');
           }else{
             rangeJumpBar.classList.remove('visible');
@@ -1009,8 +1042,7 @@
           }
           renderList(list);
         }else{
-          // Use segmented range view only when sorting by range
-          if(activeSort === 'range-asc'){
+          if(groupByRangeEnabled){
             if(grid){
               grid.classList.add('range-view');
             }
@@ -1077,6 +1109,15 @@
             setApiVariableLabels(e.target.checked);
             updateDisplay();
             trackEvent('catalog_api_variables_toggle', { enabled: e.target.checked });
+          });
+        }
+        const groupToggle = document.getElementById('groupByRangeToggle');
+        if(groupToggle){
+          groupToggle.addEventListener('change', (e) => {
+            groupByRangeEnabled = e.target.checked;
+            localStorage.setItem(GROUP_BY_RANGE_KEY, groupByRangeEnabled ? 'true' : 'false');
+            updateDisplay();
+            trackEvent('catalog_group_toggle', { enabled: groupByRangeEnabled });
           });
         }
       }
@@ -1155,6 +1196,13 @@
       const savedApiVariables = localStorage.getItem(API_VARIABLES_STORAGE_KEY);
       if(savedApiVariables === 'true'){
         setApiVariableLabels(true, { persist: false });
+      }
+
+      const groupToggle = document.getElementById('groupByRangeToggle');
+      const savedGroup = localStorage.getItem(GROUP_BY_RANGE_KEY);
+      groupByRangeEnabled = savedGroup !== null ? savedGroup === 'true' : true;
+      if(groupToggle){
+        groupToggle.checked = groupByRangeEnabled;
       }
       
       columnSelect.addEventListener('change', function() {
