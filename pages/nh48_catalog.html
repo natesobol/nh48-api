@@ -56,7 +56,25 @@
     <title>NH48 Peak Catalog – Data &amp; photos for New Hampshire’s 4000-footers</title>
     <link rel="stylesheet" href="../css/nh48_catalog.css">
     <script type="module" src="../js/i18n.js"></script>
-    <script src="/js/unified-footer.js" defer></script>
+    <script>
+  (() => {
+    if (window.NH48_BUILD_DATE) return;
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/build-meta.json', false);
+      xhr.send(null);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const meta = JSON.parse(xhr.responseText);
+        if (meta && meta.buildDate) {
+          window.NH48_BUILD_DATE = meta.buildDate;
+        }
+      }
+    } catch (err) {
+      // No-op: build date is optional in static builds.
+    }
+  })();
+</script>
+<script src="/js/unified-footer.js" defer></script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -119,6 +137,26 @@
           "description": "Public datasets for the New Hampshire 4000-footers including photo metadata, peak attributes, and API utilities for map clients.",
           "license": "https://creativecommons.org/licenses/by/4.0/"
         }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://nh48.info/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Catalog",
+            "item": "https://nh48.info/catalog"
+          }
+        ]
       }
     </script>
     <script type="application/ld+json" class="peak-list">
@@ -194,14 +232,28 @@
     <div class="wrap">
       <nav class="page-breadcrumbs" aria-label="Breadcrumb">
         <ol>
-          <li><a href="/">Home</a></li>
-          <li>Catalog</li>
+          <li><a href="/"><span data-i18n="common.home">Home</span></a></li>
+          <li><span data-i18n="nav.catalog">Catalog</span></li>
         </ol>
       </nav>
       <header>
         <h1 data-i18n="catalog.title">NH48 Peak Catalog</h1>
         <p data-i18n="catalog.intro">Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.</p>
       </header>
+      <nav class="range-jump" aria-label="Jump to range" itemscope itemtype="https://schema.org/SiteNavigationElement">
+        <div class="range-jump__label">Jump to range:</div>
+        <ul class="range-jump__list">
+          <li><a itemprop="url" href="#presidential-range"><span itemprop="name">Presidential Range</span></a></li>
+          <li><a itemprop="url" href="#franconia-ridge"><span itemprop="name">Franconia Ridge</span></a></li>
+          <li><a itemprop="url" href="#twins-bonds"><span itemprop="name">Twins &amp; Bonds</span></a></li>
+          <li><a itemprop="url" href="#carter-moriah-wildcats"><span itemprop="name">Carter-Moriah &amp; Wildcats</span></a></li>
+          <li><a itemprop="url" href="#kinsman-range"><span itemprop="name">Kinsman Range</span></a></li>
+          <li><a itemprop="url" href="#osceolas-trips"><span itemprop="name">Osceolas &amp; Trips</span></a></li>
+          <li><a itemprop="url" href="#pemigewasset"><span itemprop="name">Pemigewasset</span></a></li>
+          <li><a itemprop="url" href="#northern-summits"><span itemprop="name">Northern Summits</span></a></li>
+          <li><a itemprop="url" href="#western-outlying"><span itemprop="name">Western &amp; Outlying</span></a></li>
+        </ul>
+      </nav>
 
       <!-- search with datalist for suggestions -->
       <div class="search">
