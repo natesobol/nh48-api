@@ -1988,7 +1988,7 @@ export default {
     const primaryCaption = primaryPhoto
       ? buildPhotoCaptionUnique(peakName, primaryPhoto)
       : peakName;
-    const { mountain, breadcrumb } = buildJsonLd(
+    const { mountain = {}, hikingTrail = {}, breadcrumb = {} } = buildJsonLd(
       peak,
       peakName,
       elevation,
