@@ -226,80 +226,82 @@
         <p data-i18n="catalog.intro">Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.</p>
       </header>
 
-      <!-- search with datalist for suggestions -->
-      <div class="search">
-        <input type="text" id="searchInput" list="nameSuggestions" data-i18n="catalog.search" data-i18n-attr="placeholder,aria-label" placeholder="Search peaks by name…" aria-label="Search peaks by name" />
-        <datalist id="nameSuggestions"></datalist>
-      </div>
-
-      <!-- Jump to range links (visible only when sorting by range) -->
-      <div id="rangeJumpLinks" class="range-jump-links" style="display: none;">
-        <strong>Jump to range:</strong>
-        <a href="#range-presidential">Presidential Range</a>
-        <a href="#range-franconia">Franconia Range</a>
-        <a href="#range-twin">Twin Range</a>
-        <a href="#range-carter-moriah">Carter-Moriah Range</a>
-        <a href="#range-kinsman">Kinsman Range</a>
-        <a href="#range-sandwich">Sandwich Range</a>
-        <a href="#range-pemigewasset">Pemigewasset Wilderness</a>
-        <a href="#range-willey">Willey Range</a>
-        <a href="#range-osceola">Osceola Range</a>
-        <a href="#range-pliny">Pliny Range</a>
-        <a href="#range-pilot">Pilot Range</a>
-      </div>
-
-      <!-- controls for sorting, filtering, and columns (desktop only) -->
-      <div class="controls">
-        <div class="control">
-          <label for="sortSelect" data-i18n="catalog.sort.label">Sort by:</label>
-          <select id="sortSelect" data-i18n="catalog.sort" data-i18n-attr="aria-label" aria-label="Sort peaks by attribute">
-            <option value="name" data-i18n="catalog.sort.name">Name (A–Z)</option>
-            <option value="elev-asc" data-i18n="catalog.sort.elevAsc">Elevation ↑</option>
-            <option value="elev-desc" data-i18n="catalog.sort.elevDesc">Elevation ↓</option>
-            <option value="prom-asc" data-i18n="catalog.sort.promAsc">Prominence ↑</option>
-            <option value="prom-desc" data-i18n="catalog.sort.promDesc">Prominence ↓</option>
-            <option value="difficulty-asc" data-i18n="catalog.sort.diffAsc">Difficulty A–Z</option>
-            <option value="difficulty-desc" data-i18n="catalog.sort.diffDesc">Difficulty Z–A</option>
-            <option value="range-asc" selected data-i18n="catalog.sort.rangeAsc">Range A–Z</option>
-            <option value="trail-asc" data-i18n="catalog.sort.trailAsc">Trail Type A–Z</option>
-            <option value="exposure-asc" data-i18n="catalog.sort.exposureAsc">Exposure A–Z</option>
-          </select>
+      <!-- Catalog Controls Panel -->
+      <div class="catalog-controls-panel">
+        <!-- Search Row -->
+        <div class="search-row">
+          <div class="search-wrapper">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="searchInput" list="nameSuggestions" placeholder="Search peaks by name…" aria-label="Search peaks by name" />
+            <datalist id="nameSuggestions"></datalist>
+          </div>
         </div>
 
-        <div class="control">
-          <label for="unitsSelect" data-i18n="common.unitsLabel">Units:</label>
-          <select id="unitsSelect" data-i18n-attr="aria-label" data-i18n="common.units" aria-label="Select units">
-            <option value="feet" data-i18n="common.unitsFeet">Feet</option>
-            <option value="meters" data-i18n="common.unitsMeters">Meters</option>
-          </select>
+        <!-- Filters Row -->
+        <div class="filters-row">
+          <div class="filter-group">
+            <label for="sortSelect">Sort</label>
+            <select id="sortSelect" aria-label="Sort peaks by attribute">
+              <option value="range-asc" selected>By Range</option>
+              <option value="name">Name (A–Z)</option>
+              <option value="elev-desc">Elevation ↓</option>
+              <option value="elev-asc">Elevation ↑</option>
+              <option value="prom-desc">Prominence ↓</option>
+              <option value="prom-asc">Prominence ↑</option>
+              <option value="difficulty-asc">Difficulty</option>
+              <option value="trail-asc">Trail Type</option>
+              <option value="exposure-asc">Exposure</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="unitsSelect">Units</label>
+            <select id="unitsSelect" aria-label="Select units">
+              <option value="feet">Feet</option>
+              <option value="meters">Meters</option>
+            </select>
+          </div>
+          <div class="filter-group column-selector-control">
+            <label for="columnSelect">Columns</label>
+            <select id="columnSelect" aria-label="Select number of columns">
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="viewSelect">View</label>
+            <select id="viewSelect" aria-label="Select catalog view">
+              <option value="grid" selected>Grid</option>
+              <option value="list">List</option>
+            </select>
+          </div>
+          <div class="filter-group api-toggle">
+            <label for="apiVariablesToggle">API Labels</label>
+            <input type="checkbox" id="apiVariablesToggle" aria-label="Toggle API variable labels">
+          </div>
+          <div class="filter-group lang-control">
+            <div class="nh48-lang" id="langPicker" aria-label="Language picker"></div>
+          </div>
+          <a href="/submit-edit" class="submit-edit-btn">Submit Edit</a>
         </div>
 
-        <!-- Column selector -->
-        <div class="control column-selector-control">
-          <label for="columnSelect" data-i18n="catalog.columns.label">Columns:</label>
-          <select id="columnSelect" data-i18n="catalog.columns" data-i18n-attr="aria-label" aria-label="Select number of catalog columns">
-            <option value="2">2</option>
-            <option value="3" selected>3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-        </div>
-        <div class="control">
-          <label for="viewSelect">View:</label>
-          <select id="viewSelect" aria-label="Select catalog view">
-            <option value="grid" selected>Grid</option>
-            <option value="list">List</option>
-          </select>
-        </div>
-        <div class="control api-variables-control">
-          <label for="apiVariablesToggle">API Variables</label>
-          <input type="checkbox" id="apiVariablesToggle" aria-label="Toggle API variable labels">
-        </div>
-        <div class="control nh48-lang-control">
-          <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
-        </div>
-        <div class="control submit-edit-control">
-          <a href="/submit-edit" class="submit-edit-link" data-i18n="peak.edit-report">Submit Edit to Author</a>
+        <!-- Jump to Range (visible only when sorting by range) -->
+        <div id="rangeJumpLinks" class="range-jump-bar">
+          <span class="jump-label">Jump to range:</span>
+          <div class="jump-links">
+            <a href="#range-carter-moriah">Carter-Moriah</a>
+            <a href="#range-franconia">Franconia</a>
+            <a href="#range-kinsman">Kinsman</a>
+            <a href="#range-osceola">Osceola</a>
+            <a href="#range-pemigewasset">Pemigewasset</a>
+            <a href="#range-pilot">Pilot</a>
+            <a href="#range-pliny">Pliny</a>
+            <a href="#range-presidential">Presidential</a>
+            <a href="#range-sandwich">Sandwich</a>
+            <a href="#range-twin">Twin</a>
+            <a href="#range-willey">Willey</a>
+          </div>
         </div>
       </div>
 
@@ -816,6 +818,40 @@
         deferInitialImageLoads();
       }
 
+      // Return canonical range info { name, id } for a given raw range string.
+      function getRangeInfo(rangeRaw){
+        const raw = String(rangeRaw || '').trim();
+        if(!raw) return { name: 'Other', id: 'other' };
+
+        // Normalize for matching
+        const key = raw.toLowerCase();
+
+        const KEY_LOOKUPS = [
+          { match: ['presidential', 'washington', 'presidentials'], name: 'Presidential Range', id: 'presidential' },
+          { match: ['franconia'], name: 'Franconia Range', id: 'franconia' },
+          { match: ['twin', 'bond', 'bonds'], name: 'Twin Range', id: 'twin' },
+          { match: ['carter', 'moriah'], name: 'Carter-Moriah Range', id: 'carter-moriah' },
+          { match: ['kinsman'], name: 'Kinsman Range', id: 'kinsman' },
+          { match: ['sandwich'], name: 'Sandwich Range', id: 'sandwich' },
+          { match: ['pemigewasset', 'pemi'], name: 'Pemigewasset Wilderness', id: 'pemigewasset' },
+          { match: ['willey'], name: 'Willey Range', id: 'willey' },
+          { match: ['osceola', 'waterville'], name: 'Osceola Range', id: 'osceola' },
+          { match: ['pliny'], name: 'Pliny Range', id: 'pliny' },
+          { match: ['pilot'], name: 'Pilot Range', id: 'pilot' }
+        ];
+
+        for(const entry of KEY_LOOKUPS){
+          for(const m of entry.match){
+            if(key.includes(m)) return { name: entry.name, id: entry.id };
+          }
+        }
+
+        // Fallback: use the portion before a dash or period as the display name
+        const short = raw.split('-')[0].split('.')[0].trim();
+        const id = short.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        return { name: short || raw, id: id || raw.toLowerCase().replace(/[^a-z0-9]+/g, '-') };
+      }
+
       function renderGridByRange(list){
         const grid = document.getElementById('grid');
         const empty = document.getElementById('emptyMessage');
@@ -826,75 +862,55 @@
         }
         empty.hidden = true;
 
-        // Mapping of range variations to canonical names and IDs
-        const rangeMapping = {
-          'Presidential Range': { name: 'Presidential Range', id: 'presidential' },
-          'Franconia Range': { name: 'Franconia Range', id: 'franconia' },
-          'Twin Range': { name: 'Twin Range', id: 'twin' },
-          'Carter': { name: 'Carter-Moriah Range', id: 'carter-moriah' },
-          'Kinsman Range': { name: 'Kinsman Range', id: 'kinsman' },
-          'Sandwich Range': { name: 'Sandwich Range', id: 'sandwich' },
-          'Pemigewasset Wilderness': { name: 'Pemigewasset Wilderness', id: 'pemigewasset' },
-          'Willey Range': { name: 'Willey Range', id: 'willey' },
-          'Osceola Range': { name: 'Osceola Range', id: 'osceola' },
-          'Pliny Range': { name: 'Pliny Range', id: 'pliny' },
-          'Pilot Range': { name: 'Pilot Range', id: 'pilot' }
-        };
-
-        // Group peaks by range
+        // Group peaks by canonical range name
         const rangeGroups = {};
         list.forEach(p => {
           const rangeRaw = p['Range / Subrange'] || 'Other';
-          // Extract main range name (before dash or period)
-          let rangeKey = rangeRaw.split('-')[0].split('.')[0].trim();
-          
-          // Map to canonical range
-          let rangeInfo = rangeMapping[rangeKey];
-          if(!rangeInfo){
-            // Try partial matches for Carter-Moriah
-            if(rangeKey.includes('Carter') || rangeKey.includes('Moriah')){
-              rangeInfo = rangeMapping['Carter'];
-            } else {
-              // Default to the raw key
-              rangeInfo = { name: rangeKey, id: rangeKey.toLowerCase().replace(/[^a-z0-9]+/g, '-') };
-            }
-          }
-          
-          const rangeName = rangeInfo.name;
+          const info = getRangeInfo(rangeRaw);
+          const rangeName = info.name;
           if(!rangeGroups[rangeName]){
-            rangeGroups[rangeName] = { id: rangeInfo.id, peaks: [] };
+            rangeGroups[rangeName] = { id: info.id, peaks: [] };
           }
           rangeGroups[rangeName].peaks.push(p);
         });
 
-        // Sort ranges alphabetically
         const sortedRanges = Object.keys(rangeGroups).sort();
 
-        // Render each range section
-        sortedRanges.forEach((range, index) => {
+        // Update jump links: show only anchors for ranges present
+        const jumpLinksContainer = document.querySelector('#rangeJumpLinks .jump-links');
+        if(jumpLinksContainer){
+          const allJumpLinks = jumpLinksContainer.querySelectorAll('a');
+          const presentRangeIds = new Set(Object.values(rangeGroups).map(r => r.id));
+          allJumpLinks.forEach(link => {
+            const targetId = (link.getAttribute('href') || '').replace('#range-', '');
+            link.style.display = presentRangeIds.has(targetId) ? '' : 'none';
+          });
+        }
+
+        // Render each range section with heading and per-range grid
+        sortedRanges.forEach(range => {
           const rangeData = rangeGroups[range];
-          
-          // Add divider after previous range (except before first)
-          if(index > 0){
-            const divider = document.createElement('hr');
-            divider.className = 'range-divider';
-            grid.appendChild(divider);
-          }
-          
-          // Create range heading with ID for scrolling
+          const peakCount = rangeData.peaks.length;
+
+          const section = document.createElement('section');
+          section.className = 'range-section';
+          section.id = 'range-' + rangeData.id;
+
           const heading = document.createElement('h2');
           heading.className = 'range-heading';
-          heading.id = 'range-' + rangeData.id;
-          heading.textContent = range;
-          grid.appendChild(heading);
+          heading.innerHTML = `${range} <span class="range-count">(${peakCount})</span>`;
+          section.appendChild(heading);
 
-          // Sort peaks within range by elevation (descending - highest first)
-          const peaksInRange = rangeData.peaks.sort((a, b) => {
-            return (b['Elevation (ft)'] || 0) - (a['Elevation (ft)'] || 0);
-          });
+          const rangeGrid = document.createElement('div');
+          rangeGrid.className = 'range-grid';
+          rangeGrid.setAttribute('data-columns', document.getElementById('columnSelect')?.value || '3');
 
-          // Add all peaks in this range
-          peaksInRange.forEach(p => grid.appendChild(createCard(p)));
+          // Sort peaks in each range by elevation desc
+          const peaksInRange = rangeData.peaks.sort((a, b) => (b['Elevation (ft)'] || 0) - (a['Elevation (ft)'] || 0));
+          peaksInRange.forEach(p => rangeGrid.appendChild(createCard(p)));
+
+          section.appendChild(rangeGrid);
+          grid.appendChild(section);
         });
 
         deferInitialImageLoads();
@@ -971,10 +987,14 @@
 
         list = sortPeaks(list);
 
-        // Show/hide range jump links based on sort method
-        const rangeJumpLinks = document.getElementById('rangeJumpLinks');
-        if(rangeJumpLinks){
-          rangeJumpLinks.style.display = (activeSort === 'range-asc') ? 'flex' : 'none';
+        // Show/hide range jump bar based on sort method and view type
+        const rangeJumpBar = document.getElementById('rangeJumpLinks');
+        if(rangeJumpBar){
+          if(activeSort === 'range-asc' && currentView === 'grid'){
+            rangeJumpBar.classList.add('visible');
+          }else{
+            rangeJumpBar.classList.remove('visible');
+          }
         }
 
         if(currentView === 'list'){
@@ -1105,6 +1125,10 @@
       columnSelect.addEventListener('change', function() {
         const columns = this.value;
         grid.setAttribute('data-columns', columns);
+        // Also update range grids if they exist
+        document.querySelectorAll('.range-grid').forEach(rg => {
+          rg.setAttribute('data-columns', columns);
+        });
         localStorage.setItem('nh48-catalog-columns', columns);
         trackEvent('catalog_columns_change', { columns });
       });

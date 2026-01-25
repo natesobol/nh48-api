@@ -845,7 +845,7 @@ export default {
     }
 
     // Build meta title and description using translations and values
-    function buildMeta(trans, peakName, elevation, range, description) {
+    function buildPeakMeta(trans, peakName, elevation, range, description) {
       const titleTpl = trans['peak.meta.titleTemplate'] || '{peakName} | NH48';
       const descTpl = trans['peak.meta.descriptionTemplate'] || '{peakName} – {description}';
       const title = titleTpl.replace('{peakName}', peakName).replace('{elevation}', elevation).replace('{range}', range);
@@ -2012,7 +2012,7 @@ export default {
     const canonicalX = canonicalEn;
 
     // Build meta tags
-    const { title, description } = buildMeta(trans, peakName, elevation, rangeVal, summaryVal);
+    const { title, description } = buildPeakMeta(trans, peakName, elevation, rangeVal, summaryVal);
     const primaryCaption = primaryPhoto
       ? buildPhotoCaptionUnique(peakName, primaryPhoto)
       : peakName;
