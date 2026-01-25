@@ -692,7 +692,7 @@ export default {
       }
       if (meta.jsonLd && meta.jsonLd.length) {
         for (const block of meta.jsonLd) {
-          tags.push(`<script type="application/ld+json">${JSON.stringify(block).replace(/</g, '<\\/')}</script>`);
+          tags.push(`<script type="application/ld+json">${JSON.stringify(block).replace(/</g, '\\u003c')}</script>`);
         }
       }
       return tags.join('\n');
@@ -1327,7 +1327,7 @@ export default {
         `<link rel="alternate" hreflang="en" href="${SITE}/catalog" />`,
         `<link rel="alternate" hreflang="fr" href="${SITE}/fr/catalog" />`,
         `<link rel="alternate" hreflang="x-default" href="${SITE}/catalog" />`,
-        `<script type="application/ld+json">${JSON.stringify(datasetSchema).replace(/</g, '<\/')}</script>`
+        `<script type="application/ld+json">${JSON.stringify(datasetSchema).replace(/</g, '\\u003c')}</script>`
       ].join('\n');
       html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
 
@@ -2079,9 +2079,9 @@ export default {
       `<link rel="alternate" hreflang="en" href="${canonicalEn}" />`,
       `<link rel="alternate" hreflang="fr" href="${canonicalFr}" />`,
       `<link rel="alternate" hreflang="x-default" href="${canonicalX}" />`,
-      `<script type="application/ld+json">${JSON.stringify(mountain).replace(/</g, '<\/')}</script>`,
-      `<script type="application/ld+json">${JSON.stringify(hikingTrail).replace(/</g, '<\/')}</script>`,
-      `<script type="application/ld+json">${JSON.stringify(breadcrumb).replace(/</g, '<\/')}</script>`
+      `<script type="application/ld+json">${JSON.stringify(mountain).replace(/</g, '\\u003c')}</script>`,
+      `<script type="application/ld+json">${JSON.stringify(hikingTrail).replace(/</g, '\\u003c')}</script>`,
+      `<script type="application/ld+json">${JSON.stringify(breadcrumb).replace(/</g, '\\u003c')}</script>`
     ].join('\n');
     html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
 
