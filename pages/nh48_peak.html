@@ -1772,6 +1772,67 @@
         return properties;
       }
 
+      function buildPeakFaqItems(peak, name){
+        if(!peak) return [];
+        const items = [];
+        const addItem = (question, value, answerPrefix) => {
+          const text = normalizePeakValue(value);
+          if(!text) return;
+          const answerText = answerPrefix ? `${answerPrefix} ${text}` : text;
+          items.push({
+            '@type': 'Question',
+            name: question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: answerText
+            }
+          });
+        };
+
+        addItem(`Can I bring my dog on ${name}?`, peak['Dog Friendly'], 'Dog policy:');
+        addItem(`What type of trail is ${name}?`, peak['Trail Type'], 'Trail type:');
+        addItem(`What are the standard routes for ${name}?`, peak['Standard Routes'], 'Standard routes include:');
+        addItem(`How long does it take to hike ${name}?`, peak['Typical Completion Time'], 'Typical completion time:');
+        addItem(`When is the best time to hike ${name}?`, peak['Best Seasons to Hike'], 'Best seasons:');
+        addItem(`What is the exposure level on ${name}?`, peak['Exposure Level'], 'Exposure level:');
+        addItem(`What is the terrain like on ${name}?`, peak['Terrain Character'], 'Terrain:');
+        addItem(`Are there scramble sections on ${name}?`, peak['Scramble Sections'], 'Scramble sections:');
+        addItem(`Is water available on ${name}?`, peak['Water Availability'], 'Water availability:');
+        addItem(`What is cell reception like on ${name}?`, peak['Cell Reception Quality'], 'Cell reception:');
+        addItem(`What is the weather exposure on ${name}?`, peak['Weather Exposure Rating'], 'Weather exposure:');
+        addItem(`What are the bailout options on ${name}?`, peak['Emergency Bailout Options'], 'Emergency bailout options:');
+        addItem(`What is the summit marker on ${name}?`, peak['Summit Marker Type'], 'Summit marker type:');
+        addItem(`What kind of views does ${name} have?`, peak['View Type'], 'Views:');
+        addItem(`What flora or environment zones are on ${name}?`, peak['Flora/Environment Zones'], 'Flora and environment zones:');
+        addItem(`What notable features are near ${name}?`, peak['Nearby Notable Features'], 'Nearby notable features:');
+        addItem(`What other 4,000-footers connect to ${name}?`, peak['Nearby 4000-footer Connections'], 'Nearby 4,000-footer connections:');
+        addItem(`What are the common trail names for ${name}?`, peak['Trail Names'], 'Trail names:');
+        addItem(`What is the most common trailhead for ${name}?`, peak['Most Common Trailhead'], 'Most common trailhead:');
+        addItem(`Where do I park for ${name}?`, peak['Parking Notes'], 'Parking notes:');
+
+        return items;
+      }
+
+      function buildPeakFaqSchema(peak, name, canonicalUrl){
+        const items = buildPeakFaqItems(peak, name);
+        if(!items.length) return;
+        const faqSchema = {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          '@id': `${canonicalUrl}#faq`,
+          mainEntity: items
+        };
+
+        let faqScript = document.getElementById('peakFaqJsonLd');
+        if(!faqScript){
+          faqScript = document.createElement('script');
+          faqScript.type = 'application/ld+json';
+          faqScript.id = 'peakFaqJsonLd';
+          document.head.appendChild(faqScript);
+        }
+        faqScript.textContent = JSON.stringify(faqSchema);
+      }
+
       function deferImageSrcSwap(root){
         if(!root) return;
         const imgs = Array.from(root.querySelectorAll('img[data-src]'));
@@ -3510,6 +3571,7 @@
           renderPeakMap(p, name, canonicalUrl);
 
           buildMountainSchema(p, name, canonicalUrl, currentPrimaryPhoto, descriptionText, currentMeta);
+          buildPeakFaqSchema(p, name, canonicalUrl);
           buildCarousel(imgs, meta, name);
           console.log('[Peak Init] ✓ Initialization complete');
           trackEvent('peak_loaded', { slug, name, photoCount: imgs.length });
@@ -3577,6 +3639,7 @@
           if (currentPrimaryPhoto) {
             buildMountainSchema(currentPeak, name, canonicalUrl, currentPrimaryPhoto, descriptionText, currentMeta);
           }
+          buildPeakFaqSchema(currentPeak, name, canonicalUrl);
           if (currentImages.length) {
             buildCarousel(currentImages, currentMeta, name);
           }
