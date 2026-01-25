@@ -727,6 +727,9 @@ const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImag
       width: primaryImage.width,
       height: primaryImage.height
     } : undefined,
+    breadcrumb: {
+      "@id": `${canonicalUrl}#breadcrumb`
+    },
     potentialAction: {
       "@type": "ReadAction",
       target: canonicalUrl
