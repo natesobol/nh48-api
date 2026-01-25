@@ -304,6 +304,10 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
   const creditText = cleanText(photo.iptc?.creditLine || photo.creditText || creatorName || AUTHOR_NAME) || AUTHOR_NAME;
   const publisherName = cleanText(photo.iptc?.featuredOrgName) || TWITTER_HANDLE;
   const copyrightNotice = cleanText(photo.iptc?.copyrightNotice) || `© ${AUTHOR_NAME}`;
+  const copyrightHolderName =
+    cleanText(photo.iptc?.creditLine || photo.creditText || photo.iptc?.creator || creatorName || AUTHOR_NAME) ||
+    AUTHOR_NAME;
+  const rightsUsageTerms = cleanText(photo.iptc?.rightsUsageTerms || photo.rightsUsageTerms);
   const licenseUrl = IMAGE_LICENSE_URL;
   const keywords = buildKeywords(photo);
   const exifData = buildExifSummary(photo);
@@ -322,9 +326,11 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
     copyrightNotice,
     license: licenseUrl,
     acquireLicensePage: licenseUrl,
+    usageInfo: rightsUsageTerms || licenseUrl,
+    copyrightHolder: { '@type': 'Person', name: copyrightHolderName },
     contentSize: cleanText(photo.fileSize),
     uploadDate: cleanText(photo.fileCreateDate || photo.captureDate),
-    dateCreated: cleanText(photo.captureDate),
+    dateCreated: cleanText(photo.captureDate || photo.fileCreateDate),
     datePublished: cleanText(photo.captureDate),
     exifData: exifData || undefined,
     keywords: keywords.length ? keywords : undefined,
@@ -359,11 +365,19 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
     publisherName,
     keywords,
     exifData,
+    dateCreated: imageObject.dateCreated,
   };
 };
 
 const pickPrimaryPhoto = (photos, peakName, langCode, canonicalUrl) => {
   if (!Array.isArray(photos) || photos.length === 0) {
+    const fallbackKeywords = [
+      peakName,
+      "White Mountain National Forest",
+      "NH48",
+      "New Hampshire",
+      "mountain landscape",
+    ].filter(Boolean);
     const fallbackImageObject = {
       '@type': 'ImageObject',
       '@id': `${canonicalUrl}#img-001`,
@@ -379,6 +393,13 @@ const pickPrimaryPhoto = (photos, peakName, langCode, canonicalUrl) => {
       copyrightNotice: `© ${AUTHOR_NAME}`,
       license: IMAGE_LICENSE_URL,
       acquireLicensePage: IMAGE_LICENSE_URL,
+      usageInfo: IMAGE_LICENSE_URL,
+      copyrightHolder: { '@type': 'Person', name: AUTHOR_NAME },
+      keywords: fallbackKeywords,
+      contentLocation: {
+        '@type': 'Place',
+        name: 'White Mountain National Forest',
+      },
       representativeOfPage: true,
     };
     return {
@@ -818,6 +839,14 @@ const buildJsonLd = (
           copyrightNotice: `© ${AUTHOR_NAME}`,
           license: IMAGE_LICENSE_URL,
           acquireLicensePage: IMAGE_LICENSE_URL,
+          usageInfo: IMAGE_LICENSE_URL,
+          copyrightHolder: { '@type': 'Person', name: photoSet.primary.creator || AUTHOR_NAME },
+          keywords: photoSet.primary.keywords?.length ? photoSet.primary.keywords : undefined,
+          contentLocation: {
+            '@type': 'Place',
+            name: 'White Mountain National Forest',
+          },
+          dateCreated: photoSet.primary.dateCreated || undefined,
           representativeOfPage: true,
           width: photoSet.primary.width || undefined,
           height: photoSet.primary.height || undefined,
