@@ -1588,6 +1588,14 @@
         if(meta && typeof meta === 'object'){
           if(Array.isArray(meta.keywords)) raw.push(...meta.keywords);
           if(Array.isArray(meta.tags)) raw.push(...meta.tags);
+          if(meta.season) raw.push(meta.season);
+          if(meta.timeOfDay) raw.push(meta.timeOfDay);
+          if(meta.orientation) raw.push(meta.orientation);
+          if(meta.meta && typeof meta.meta === 'object'){
+            if(meta.meta.season) raw.push(meta.meta.season);
+            if(meta.meta.timeOfDay) raw.push(meta.meta.timeOfDay);
+            if(meta.meta.orientation) raw.push(meta.meta.orientation);
+          }
           if(meta.iptc && Array.isArray(meta.iptc.keywords)) raw.push(...meta.iptc.keywords);
         }
         const clean = raw
@@ -1635,6 +1643,103 @@
         return place;
       }
 
+      function formatRouteSummary(route){
+        if(!route || typeof route !== 'object') return '';
+        const name = safeText(route['Route Name'] || route.name);
+        const distance = safeText(route['Distance (mi)'] || route.distance);
+        const gain = safeText(route['Elevation Gain (ft)'] || route.elevationGain);
+        const difficulty = safeText(route['Difficulty'] || route.difficulty);
+        const trailType = safeText(route['Trail Type'] || route.trailType);
+        const details = [distance && `${distance} mi`, gain && `${gain} ft gain`, trailType, difficulty]
+          .filter(Boolean)
+          .join(' • ');
+        if(!name && !details) return '';
+        return details ? `${name || 'Route'} (${details})` : name;
+      }
+
+      function normalizePeakValue(value){
+        if(value === null || value === undefined) return '';
+        if(Array.isArray(value)){
+          return value
+            .map(item => normalizePeakValue(item))
+            .filter(Boolean)
+            .join('; ');
+        }
+        if(typeof value === 'object'){
+          if(
+            'Route Name' in value ||
+            'Distance (mi)' in value ||
+            'Elevation Gain (ft)' in value ||
+            'Trail Type' in value
+          ){
+            return formatRouteSummary(value);
+          }
+          return Object.entries(value)
+            .map(([key, val]) => {
+              const text = normalizePeakValue(val);
+              return text ? `${key}: ${text}` : '';
+            })
+            .filter(Boolean)
+            .join(', ');
+        }
+        return safeText(value);
+      }
+
+      function flattenMetaToPropertyValues(prefix, obj, out){
+        if(!obj || typeof obj !== 'object') return;
+        for(const [key, val] of Object.entries(obj)){
+          if(val === undefined || val === null) continue;
+          if(['url', 'originalUrl', 'photoId', 'filename', 'isPrimary'].includes(key)) continue;
+          const name = prefix ? `${prefix}.${key}` : key;
+          if(Array.isArray(val)){
+            const text = val.map(item => safeText(item)).filter(Boolean).join(', ');
+            if(text) out.push({ '@type': 'PropertyValue', name, value: text });
+          }else if(typeof val === 'object'){
+            flattenMetaToPropertyValues(name, val, out);
+          }else{
+            const text = safeText(val);
+            if(text) out.push({ '@type': 'PropertyValue', name, value: text });
+          }
+        }
+      }
+
+      function buildPhotoPropertyValues(meta){
+        const out = [];
+        flattenMetaToPropertyValues('', meta || {}, out);
+        return out.length ? out : undefined;
+      }
+
+      function buildPeakAdditionalProperties(peak){
+        const properties = [];
+        const addProperty = (name, value) => {
+          const text = normalizePeakValue(value);
+          if(!text) return;
+          properties.push({ '@type': 'PropertyValue', name, value: text });
+        };
+
+        addProperty('Standard Routes', peak['Standard Routes']);
+        addProperty('Typical Completion Time', peak['Typical Completion Time']);
+        addProperty('Best Seasons to Hike', peak['Best Seasons to Hike']);
+        addProperty('Exposure Level', peak['Exposure Level']);
+        addProperty('Terrain Character', peak['Terrain Character']);
+        addProperty('Scramble Sections', peak['Scramble Sections']);
+        addProperty('Water Availability', peak['Water Availability']);
+        addProperty('Cell Reception Quality', peak['Cell Reception Quality']);
+        addProperty('Weather Exposure Rating', peak['Weather Exposure Rating']);
+        addProperty('Emergency Bailout Options', peak['Emergency Bailout Options']);
+        addProperty('Dog Friendly', peak['Dog Friendly']);
+        addProperty('Summit Marker Type', peak['Summit Marker Type']);
+        addProperty('View Type', peak['View Type']);
+        addProperty('Flora/Environment Zones', peak['Flora/Environment Zones']);
+        addProperty('Nearby Notable Features', peak['Nearby Notable Features']);
+        addProperty('Nearby 4000-footer Connections', peak['Nearby 4000-footer Connections']);
+        addProperty('Trail Names', peak['Trail Names']);
+        addProperty('Most Common Trailhead', peak['Most Common Trailhead']);
+        addProperty('Parking Notes', peak['Parking Notes']);
+
+        return properties;
+      }
+
       function deferImageSrcSwap(root){
         if(!root) return;
         const imgs = Array.from(root.querySelectorAll('img[data-src]'));
@@ -1652,7 +1757,7 @@
         });
       }
 
-      function buildMountainSchema(p, name, canonicalUrl, primaryPhoto, descriptionText){
+      function buildMountainSchema(p, name, canonicalUrl, primaryPhoto, descriptionText, photoList){
         const coords = parseCoordinates(p['Coordinates']);
         const elevationFt = numberFrom(p['Elevation (ft)']);
         const prominenceFt = numberFrom(p['Prominence (ft)']);
@@ -1669,24 +1774,27 @@
         const photoCreated = primaryPhoto
           ? pickFirstNonEmpty(primaryPhoto.captureDate, primaryPhoto.fileCreateDate)
           : '';
+        const photoValues = primaryPhoto ? buildPhotoPropertyValues(primaryPhoto) : null;
         const imageObject = primaryPhoto && primaryPhoto.url
           ? {
             '@type': 'ImageObject',
+            '@id': `${canonicalUrl}#img-001`,
             url: photoUrl,
             contentUrl: photoContentUrl,
             name: (enriched && enriched.headline) || `${name} — White Mountain National Forest`,
             caption: (photoDescription && photoDescription.text) || descriptionText,
-            creditText: (enriched && enriched.creditLine) || '© Nathan Sobol',
-            creator: enriched && enriched.creator ? { '@type': 'Person', name: enriched.creator } : undefined,
-            license: (enriched && enriched.rightsUsageTerms) || undefined,
-            acquireLicensePage: 'https://nh48.info/licensing',
-            copyrightNotice: enriched && enriched.copyrightNotice ? enriched.copyrightNotice : undefined,
+            creditText: (enriched && enriched.creditLine) || '© Nathan Sobol / NH48pics.com',
+            creator: enriched && enriched.creator ? { '@type': 'Person', name: enriched.creator } : { '@type': 'Person', name: 'Nathan Sobol' },
+            license: (enriched && enriched.rightsUsageTerms) || 'https://nh48.info/license',
+            acquireLicensePage: 'https://nh48.info/contact',
+            copyrightNotice: enriched && enriched.copyrightNotice ? enriched.copyrightNotice : '© Nathan Sobol',
             alternateName: photoAlt ? photoAlt.text : undefined,
             keywords: photoKeywords.length ? photoKeywords.join(', ') : undefined,
             contentLocation: photoLocation || undefined,
             dateCreated: photoCreated || undefined,
             width: primaryPhoto.width || undefined,
-            height: primaryPhoto.height || undefined
+            height: primaryPhoto.height || undefined,
+            exifData: photoValues || undefined
           }
           : null;
         const additionalProperty = [
@@ -1710,16 +1818,62 @@
             '@type': 'PropertyValue',
             name: 'Trail Type',
             value: trailType
-          } : null
+          } : null,
+          ...(p ? buildPeakAdditionalProperties(p) : [])
         ].filter(Boolean);
+
+        const photoMetaList = Array.isArray(photoList) ? photoList : [];
+        const galleryObjects = photoMetaList.map((photo, index) => {
+          if(!photo || !photo.url) return null;
+          const enrichedPhoto = enrichMetadata(photo, photo.iptc);
+          const alt = buildPhotoAltText(name, photo);
+          const description = buildPhotoExtendedDescription(photo);
+          const keywords = buildKeywordList(photo);
+          const location = buildContentLocation(enrichedPhoto || photo);
+          const created = pickFirstNonEmpty(photo.captureDate, photo.fileCreateDate);
+          const dimensions = parseDimensions(photo.dimensions);
+          const propertyValues = buildPhotoPropertyValues(enrichedPhoto || photo);
+          const id = `${canonicalUrl}#img-${String(index + 1).padStart(3, '0')}`;
+          return {
+            '@type': 'ImageObject',
+            '@id': id,
+            url: photo.originalUrl || photo.url,
+            contentUrl: photo.url,
+            name: (enrichedPhoto && enrichedPhoto.headline) || `${name} — White Mountain National Forest`,
+            caption: (description && description.text) || descriptionText,
+            description: (description && description.text) || descriptionText,
+            creditText: (enrichedPhoto && enrichedPhoto.creditLine) || '© Nathan Sobol / NH48pics.com',
+            creator: enrichedPhoto && enrichedPhoto.creator ? { '@type': 'Person', name: enrichedPhoto.creator } : { '@type': 'Person', name: 'Nathan Sobol' },
+            license: (enrichedPhoto && enrichedPhoto.rightsUsageTerms) || 'https://nh48.info/license',
+            acquireLicensePage: 'https://nh48.info/contact',
+            copyrightNotice: enrichedPhoto && enrichedPhoto.copyrightNotice ? enrichedPhoto.copyrightNotice : '© Nathan Sobol',
+            alternateName: alt ? alt.text : undefined,
+            keywords: keywords.length ? keywords.join(', ') : undefined,
+            contentLocation: location || undefined,
+            dateCreated: created || undefined,
+            width: dimensions.width || undefined,
+            height: dimensions.height || undefined,
+            exifData: propertyValues || undefined,
+            representativeOfPage: photo.isPrimary || index === 0
+          };
+        }).filter(Boolean);
+
+        const imageGallery = galleryObjects.length ? {
+          '@type': 'ImageGallery',
+          name: `${name} photo gallery`,
+          description: `Photos of ${name} in the White Mountains`,
+          associatedMedia: galleryObjects.map((image) => ({ '@id': image['@id'] }))
+        } : null;
 
         const schema = {
           '@context': 'https://schema.org',
           '@type': 'Mountain',
+          '@id': `${canonicalUrl}#mountain`,
           name,
           description: descriptionText,
           url: canonicalUrl,
-          image: imageObject ? [imageObject] : undefined,
+          image: galleryObjects.length ? galleryObjects : (imageObject ? [imageObject] : undefined),
+          primaryImageOfPage: imageObject ? { '@id': imageObject['@id'] } : undefined,
           creator: enriched && enriched.creator ? { '@type': 'Person', name: enriched.creator } : undefined,
           publisher: enriched ? { '@type': 'Organization', name: 'NH48pics.com' } : undefined,
           license: enriched && enriched.rightsUsageTerms ? enriched.rightsUsageTerms : undefined,
@@ -1730,7 +1884,17 @@
             unitText: 'FT'
           } : undefined,
           containedInPlace: range ? { '@type': 'Place', name: 'White Mountain National Forest' } : undefined,
-          additionalProperty: additionalProperty.length ? additionalProperty : undefined
+          containsPlace: (() => {
+            const trailhead = safeText(p['Most Common Trailhead']);
+            const parking = safeText(p['Parking Notes']);
+            if(!trailhead && !parking) return undefined;
+            const place = { '@type': 'Place' };
+            if(trailhead) place.name = trailhead;
+            if(parking) place.description = parking;
+            return place;
+          })(),
+          additionalProperty: additionalProperty.length ? additionalProperty : undefined,
+          subjectOf: imageGallery ? [imageGallery] : undefined
         };
 
         Object.keys(schema).forEach(key => {
@@ -3313,7 +3477,7 @@
           renderConditions(p);
           renderPeakMap(p, name, canonicalUrl);
 
-          buildMountainSchema(p, name, canonicalUrl, currentPrimaryPhoto, descriptionText);
+          buildMountainSchema(p, name, canonicalUrl, currentPrimaryPhoto, descriptionText, currentMeta);
           buildCarousel(imgs, meta, name);
           console.log('[Peak Init] ✓ Initialization complete');
           trackEvent('peak_loaded', { slug, name, photoCount: imgs.length });
@@ -3379,7 +3543,7 @@
           renderConditions(currentPeak);
           renderPeakMap(currentPeak, name, canonicalUrl);
           if (currentPrimaryPhoto) {
-            buildMountainSchema(currentPeak, name, canonicalUrl, currentPrimaryPhoto, descriptionText);
+            buildMountainSchema(currentPeak, name, canonicalUrl, currentPrimaryPhoto, descriptionText, currentMeta);
           }
           if (currentImages.length) {
             buildCarousel(currentImages, currentMeta, name);
