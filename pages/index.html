@@ -1014,6 +1014,11 @@
     .rtl .dataset-card {
       text-align: right;
     }
+    @media (max-width: 900px) {
+      .dataset-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
     @media (max-width: 640px) {
       body {
         padding-top: 0;
@@ -1935,8 +1940,6 @@
           <span class="card-link-text" data-i18n="landing.cards.longTrailsCta">View Long Trails</span>
         </div>
         </a>
-
-      <div class="dataset-divider" aria-hidden="true"></div>
 
       <a href="/plant-catalog" class="dataset-card">
         <h3>Howker Plant Catalog</h3>

@@ -41,7 +41,7 @@
   --panel:#12121a;
   --card:#171a22;
   --ink:#ffffff;
-  --muted:#a5b4c3;
+  --muted:#ffffff;
   --stroke:#ffffff;
   --accent:#22c55e;
   --accent-2:#38bdf8;
@@ -235,6 +235,26 @@ th{
   .panel{ padding:16px; }
   #map{ height:360px; }
 }
+
+/* Added styles to ensure readability and brand colours:
+   - Force all anchor links to use the green accent colour by default.
+   - Underline links on hover for better accessibility.
+   - Override muted text colours in cards and lists to use pure white. */
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.card p,
+.card li,
+.card td,
+.section p,
+.section li {
+  color: var(--ink);
+}
 </style>
 <script type="application/ld+json">
   {
@@ -344,16 +364,7 @@ th{
       </ol>
     </nav>
 
-    <section class="section card" id="overview">
-      <h2>Overview</h2>
-      <p>The Howker Ridge Trail is a steep, classic ascent of Mount Madison. Use this page for interactive mapping, GPS downloads, trail metadata, and current weather/alerts to support responsible planning.</p>
-      <div class="badges">
-        <span class="badge">~4.5 mi one-way</span>
-        <span class="badge">~3,900 ft gain</span>
-        <span class="badge">Strenuous</span>
-        <span class="badge">Northern Presidential Range</span>
-      </div>
-    </section>
+    <!-- Overview removed per design feedback. Trail statistics are covered in the metadata table. -->
 
     <section class="section card" id="map-section">
       <h2>Interactive Trail Map</h2>
@@ -404,7 +415,7 @@ th{
         <h2>Trail Metadata</h2>
         <table>
           <tr><th>Length</th><td>≈ 4.5 mi (7.2 km) one-way</td></tr>
-          <tr><th>Elevation Gain</th><td>≈ 3,900 ft (1,190 m)</td></tr>
+          <tr><th>Elevation Gain</th><td>≈ 4,430 ft (1,350 m)</td></tr>
           <tr><th>Typical Time</th><td>5–7 hours round-trip</td></tr>
           <tr><th>Difficulty</th><td>Strenuous / hard</td></tr>
           <tr><th>Terrain</th><td>Steep ridgeline, rocky scrambles, alpine exposure above treeline</td></tr>
@@ -423,6 +434,18 @@ th{
           <div id="alerts" class="alerts"><em>Loading alerts…</em></div>
         </div>
       </div>
+    </section>
+
+    <!-- Added flora and virtual hike information -->
+    <section class="section card" id="flora">
+      <h2>Flora along the trail</h2>
+      <p>Howker Ridge hosts a variety of alpine and subalpine species. Here are a few highlights:</p>
+      <ul>
+        <li><strong>Alpine Bilberry</strong> – low‑growing shrub with edible berries. <a href="/plant-catalog#alpine-bilberry">Learn more</a></li>
+        <li><strong>Labrador Tea</strong> – evergreen shrub with aromatic leaves and white flowers. <a href="/plant-catalog#labrador-tea">Learn more</a></li>
+        <li><strong>Mountain Cranberry</strong> – mat‑forming evergreen with tart red berries. <a href="/plant-catalog#mountain-cranberry">Learn more</a></li>
+      </ul>
+      <p>For a comprehensive list of species and ecological notes, visit the <a href="/dataset/howker-plants">Howker Ridge plant catalog</a>.</p>
     </section>
 
     <section class="section grid" id="conditions">

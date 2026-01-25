@@ -90,7 +90,8 @@ header p{
   color:var(--muted);
 }
 .submit-edit-cta{
-  margin:12px 0 0;
+  /* provide breathing room below the submit button */
+  margin:12px 0 20px;
 }
 .submit-edit-link{
   display:inline-block;
@@ -118,14 +119,17 @@ blockquote{
   gap:10px;
   align-items:flex-start;
   padding:12px 16px;
-  margin:0 0 12px;
-  background:#eef4ff;
+  /* improve contrast for the notice panel */
+  margin:0 0 16px;
+  background:var(--card);
+  color:var(--ink);
   border-radius:10px;
 }
 .icon-info{
   font-size:18px;
   line-height:1;
-  color:#2563eb;
+  /* align icon colour with the site's accent green */
+  color:var(--accent);
 }
 .info-blurb p{
   margin:0;
@@ -229,11 +233,12 @@ blockquote{
   line-height:1.6;
 }
 .toc a{
-  color:inherit;
+  /* default links in the TOC use the accent colour for better visibility */
+  color:var(--accent);
   text-decoration:none;
 }
 .toc a:hover{
-  color:var(--accent);
+  color:#16a34a;
 }
 .metrics{
   display:grid;
@@ -360,6 +365,37 @@ blockquote{
       </ol>
     </nav>
 
+    <!-- Table of Contents moved to the top for better navigation -->
+    <section class="section" id="toc">
+      <div class="toc">
+        <h2>Table of Contents</h2>
+        <ol>
+          <li><a href="#trail-stats">📊 Trail statistics</a></li>
+          <li><a href="#highlights">✨ Highlights</a></li>
+          <li><a href="#history">🗺️ Trail History</a></li>
+          <li><a href="#construction">🔨 Trail Construction</a></li>
+          <li><a href="#geography">🏞️ Trail Geography &amp; Topography</a></li>
+          <li><a href="#access">🚗 Trail Access &amp; Parking</a></li>
+          <li><a href="#difficulty">🧭 Trail Difficulty, Distance &amp; Time</a></li>
+          <li><a href="#seasonal">☀️ Seasonal Conditions &amp; Best Times</a></li>
+          <li><a href="#ecology">🌿 Ecology &amp; Wildlife</a></li>
+          <li><a href="#safety">⚠️ Trail Safety &amp; Hazards</a></li>
+          <li><a href="#viewpoints">📷 Viewpoints &amp; Photography Spots</a></li>
+          <li><a href="#maintenance">🧹 Trail Maintenance &amp; Stewardship</a></li>
+          <li><a href="#connections">🔗 Trail Connections &amp; Networks</a></li>
+          <li><a href="#lodging">🛌 Nearby Lodging &amp; Facilities</a></li>
+          <li><a href="#poi">📍 Points of Interest</a>
+            <ol>
+              <li><a href="#poi-waterfalls">💧 Waterfalls &amp; Gorge</a></li>
+              <li><a href="#poi-ridgeline">🏔️ Ridgeline &amp; Summit Features</a></li>
+              <li><a href="#poi-junctions">🔀 Trail Junctions &amp; Connectors</a></li>
+            </ol>
+          </li>
+          <li><a href="#faq">❓ Frequently Asked Questions</a></li>
+        </ol>
+      </div>
+    </section>
+
     <section class="section" id="trail-stats">
       <h2>Trail statistics</h2>
       <div class="metrics">
@@ -423,33 +459,7 @@ blockquote{
       </div>
     </section>
 
-    <section class="section" id="toc">
-      <div class="toc">
-        <h2>Table of Contents</h2>
-        <ol>
-          <li><a href="#history">🗺️ Trail History</a></li>
-          <li><a href="#construction">🔨 Trail Construction</a></li>
-          <li><a href="#geography">🏞️ Trail Geography &amp; Topography</a></li>
-          <li><a href="#access">🚗 Trail Access &amp; Parking</a></li>
-          <li><a href="#difficulty">🧭 Trail Difficulty, Distance &amp; Time</a></li>
-          <li><a href="#seasonal">☀️ Seasonal Conditions &amp; Best Times</a></li>
-          <li><a href="#ecology">🌿 Ecology &amp; Wildlife</a></li>
-          <li><a href="#safety">⚠️ Trail Safety &amp; Hazards</a></li>
-          <li><a href="#viewpoints">📷 Viewpoints &amp; Photography Spots</a></li>
-          <li><a href="#maintenance">🧹 Trail Maintenance &amp; Stewardship</a></li>
-          <li><a href="#connections">🔗 Trail Connections &amp; Networks</a></li>
-          <li><a href="#lodging">🛌 Nearby Lodging &amp; Facilities</a></li>
-          <li><a href="#poi">📍 Points of Interest</a>
-            <ol>
-              <li><a href="#poi-waterfalls">💧 Waterfalls &amp; Gorge</a></li>
-              <li><a href="#poi-ridgeline">🏔️ Ridgeline &amp; Summit Features</a></li>
-              <li><a href="#poi-junctions">🔀 Trail Junctions &amp; Connectors</a></li>
-            </ol>
-          </li>
-          <li><a href="#faq">❓ Frequently Asked Questions</a></li>
-        </ol>
-      </div>
-    </section>
+    <!-- Original table of contents removed; replaced above -->
 
     <section class="section" id="history">
       <h2>Trail History</h2>
