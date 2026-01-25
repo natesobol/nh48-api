@@ -118,10 +118,17 @@ body{
   .nav-brand img{ height:32px; }
 }
 .wrap{
-  /* Fixed width for all column selections - cards auto-adjust based on column count */
+  /* Responsive width - scales wider on large screens */
   max-width:1130px;
   margin:0 auto;
   padding:16px;
+}
+/* Scale container wider on large desktop screens (50-100% wider) */
+@media(min-width:1400px){
+  .wrap{ max-width:1600px; }
+}
+@media(min-width:1800px){
+  .wrap{ max-width:1800px; }
 }
 @media(max-width:640px){
   .wrap{ padding:12px; }
@@ -407,12 +414,17 @@ input[list]::-webkit-list-button {
   gap:12px;
 }
 
-/* Dynamic column layouts (desktop only) - all within 1130px container */
+/* Dynamic column layouts (desktop only) - responsive to container width */
 @media(min-width:801px){
   .grid[data-columns="2"]{ grid-template-columns:repeat(2,minmax(0,1fr)); }
   .grid[data-columns="3"]{ grid-template-columns:repeat(3,minmax(0,1fr)); }
   .grid[data-columns="4"]{ grid-template-columns:repeat(4,minmax(0,1fr)); }
   .grid[data-columns="5"]{ grid-template-columns:repeat(5,minmax(0,1fr)); }
+}
+/* Additional column option for very wide screens */
+@media(min-width:1600px){
+  .grid[data-columns="5"]{ grid-template-columns:repeat(6,minmax(0,1fr)); }
+  .grid[data-columns="6"]{ grid-template-columns:repeat(6,minmax(0,1fr)); }
 }
 
 @media(max-width:800px){
@@ -619,6 +631,51 @@ input[list]::-webkit-list-button {
   font-size:1rem;
 }
 
-@keyframes spin{
-  to{ transform:rotate(360deg); }
+/* Range Jump Links */
+.range-jump-links{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px 16px;
+  padding:12px 16px;
+  background:var(--panel);
+  border-radius:6px;
+  margin-bottom:16px;
 }
+.range-jump-links strong{
+  color:var(--muted);
+  font-size:0.9rem;
+  margin-right:4px;
+}
+.range-jump-links a{
+  color:var(--accent);
+  text-decoration:none;
+  font-size:0.9rem;
+  transition:color 0.2s ease;
+}
+.range-jump-links a:hover{
+  color:var(--accent-strong);
+  text-decoration:underline;
+}
+
+/* Range Headings and Dividers */
+.range-heading{
+  grid-column:1 / -1;
+  margin:24px 0 16px;
+  padding-bottom:8px;
+  font-size:1.4rem;
+  font-weight:600;
+  color:var(--accent);
+  border-bottom:2px solid var(--accent);
+}
+.range-heading:first-child{
+  margin-top:0;
+}
+.range-divider{
+  grid-column:1 / -1;
+  height:1px;
+  border:none;
+  background:var(--stroke);
+  margin:32px 0;
+}
+

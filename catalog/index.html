@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="scroll-behavior: smooth;">
   <head>
     <meta charset="utf-8">
     <!-- Favicons - ICO format preferred for Google compatibility -->
@@ -232,6 +232,22 @@
         <datalist id="nameSuggestions"></datalist>
       </div>
 
+      <!-- Jump to range links (visible only when sorting by range) -->
+      <div id="rangeJumpLinks" class="range-jump-links" style="display: none;">
+        <strong>Jump to range:</strong>
+        <a href="#range-presidential">Presidential Range</a>
+        <a href="#range-franconia">Franconia Range</a>
+        <a href="#range-twin">Twin Range</a>
+        <a href="#range-carter-moriah">Carter-Moriah Range</a>
+        <a href="#range-kinsman">Kinsman Range</a>
+        <a href="#range-sandwich">Sandwich Range</a>
+        <a href="#range-pemigewasset">Pemigewasset Wilderness</a>
+        <a href="#range-willey">Willey Range</a>
+        <a href="#range-osceola">Osceola Range</a>
+        <a href="#range-pliny">Pliny Range</a>
+        <a href="#range-pilot">Pilot Range</a>
+      </div>
+
       <!-- controls for sorting, filtering, and columns (desktop only) -->
       <div class="controls">
         <div class="control">
@@ -244,7 +260,7 @@
             <option value="prom-desc" data-i18n="catalog.sort.promDesc">Prominence ↓</option>
             <option value="difficulty-asc" data-i18n="catalog.sort.diffAsc">Difficulty A–Z</option>
             <option value="difficulty-desc" data-i18n="catalog.sort.diffDesc">Difficulty Z–A</option>
-            <option value="range-asc" data-i18n="catalog.sort.rangeAsc">Range A–Z</option>
+            <option value="range-asc" selected data-i18n="catalog.sort.rangeAsc">Range A–Z</option>
             <option value="trail-asc" data-i18n="catalog.sort.trailAsc">Trail Type A–Z</option>
             <option value="exposure-asc" data-i18n="catalog.sort.exposureAsc">Exposure A–Z</option>
           </select>
@@ -283,7 +299,7 @@
           <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
         </div>
         <div class="control submit-edit-control">
-          <a href="/submit-edit-to-author" class="submit-edit-link" data-i18n="peak.edit-report">Submit Edit to Author</a>
+          <a href="/submit-edit" class="submit-edit-link" data-i18n="peak.edit-report">Submit Edit to Author</a>
         </div>
       </div>
 
@@ -381,7 +397,7 @@
       }
 
       let peaks = [];
-      let activeSort = 'name';
+      let activeSort = 'range-asc';
 
       const UNIT_STORAGE_KEY = 'nh48_units';
       const API_VARIABLES_STORAGE_KEY = 'nh48-catalog-api-variables';
@@ -800,6 +816,90 @@
         deferInitialImageLoads();
       }
 
+      function renderGridByRange(list){
+        const grid = document.getElementById('grid');
+        const empty = document.getElementById('emptyMessage');
+        grid.innerHTML = '';
+        if(!list || list.length === 0){
+          empty.hidden = false;
+          return;
+        }
+        empty.hidden = true;
+
+        // Mapping of range variations to canonical names and IDs
+        const rangeMapping = {
+          'Presidential Range': { name: 'Presidential Range', id: 'presidential' },
+          'Franconia Range': { name: 'Franconia Range', id: 'franconia' },
+          'Twin Range': { name: 'Twin Range', id: 'twin' },
+          'Carter': { name: 'Carter-Moriah Range', id: 'carter-moriah' },
+          'Kinsman Range': { name: 'Kinsman Range', id: 'kinsman' },
+          'Sandwich Range': { name: 'Sandwich Range', id: 'sandwich' },
+          'Pemigewasset Wilderness': { name: 'Pemigewasset Wilderness', id: 'pemigewasset' },
+          'Willey Range': { name: 'Willey Range', id: 'willey' },
+          'Osceola Range': { name: 'Osceola Range', id: 'osceola' },
+          'Pliny Range': { name: 'Pliny Range', id: 'pliny' },
+          'Pilot Range': { name: 'Pilot Range', id: 'pilot' }
+        };
+
+        // Group peaks by range
+        const rangeGroups = {};
+        list.forEach(p => {
+          const rangeRaw = p['Range / Subrange'] || 'Other';
+          // Extract main range name (before dash or period)
+          let rangeKey = rangeRaw.split('-')[0].split('.')[0].trim();
+          
+          // Map to canonical range
+          let rangeInfo = rangeMapping[rangeKey];
+          if(!rangeInfo){
+            // Try partial matches for Carter-Moriah
+            if(rangeKey.includes('Carter') || rangeKey.includes('Moriah')){
+              rangeInfo = rangeMapping['Carter'];
+            } else {
+              // Default to the raw key
+              rangeInfo = { name: rangeKey, id: rangeKey.toLowerCase().replace(/[^a-z0-9]+/g, '-') };
+            }
+          }
+          
+          const rangeName = rangeInfo.name;
+          if(!rangeGroups[rangeName]){
+            rangeGroups[rangeName] = { id: rangeInfo.id, peaks: [] };
+          }
+          rangeGroups[rangeName].peaks.push(p);
+        });
+
+        // Sort ranges alphabetically
+        const sortedRanges = Object.keys(rangeGroups).sort();
+
+        // Render each range section
+        sortedRanges.forEach((range, index) => {
+          const rangeData = rangeGroups[range];
+          
+          // Add divider after previous range (except before first)
+          if(index > 0){
+            const divider = document.createElement('hr');
+            divider.className = 'range-divider';
+            grid.appendChild(divider);
+          }
+          
+          // Create range heading with ID for scrolling
+          const heading = document.createElement('h2');
+          heading.className = 'range-heading';
+          heading.id = 'range-' + rangeData.id;
+          heading.textContent = range;
+          grid.appendChild(heading);
+
+          // Sort peaks within range by elevation (descending - highest first)
+          const peaksInRange = rangeData.peaks.sort((a, b) => {
+            return (b['Elevation (ft)'] || 0) - (a['Elevation (ft)'] || 0);
+          });
+
+          // Add all peaks in this range
+          peaksInRange.forEach(p => grid.appendChild(createCard(p)));
+        });
+
+        deferInitialImageLoads();
+      }
+
       function renderList(list){
         const grid = document.getElementById('grid');
         const empty = document.getElementById('emptyMessage');
@@ -871,10 +971,21 @@
 
         list = sortPeaks(list);
 
+        // Show/hide range jump links based on sort method
+        const rangeJumpLinks = document.getElementById('rangeJumpLinks');
+        if(rangeJumpLinks){
+          rangeJumpLinks.style.display = (activeSort === 'range-asc') ? 'flex' : 'none';
+        }
+
         if(currentView === 'list'){
           renderList(list);
         }else{
-          renderGrid(list);
+          // Use segmented range view only when sorting by range
+          if(activeSort === 'range-asc'){
+            renderGridByRange(list);
+          }else{
+            renderGrid(list);
+          }
         }
       }
 
