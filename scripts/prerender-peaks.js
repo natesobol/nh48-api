@@ -790,7 +790,7 @@ const buildBreadcrumbJson = (pageName, canonicalUrl, catalogUrl, homeUrl, labels
   2
 );
 
-const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImage, langCode) => JSON.stringify(
+const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImage, langCode, mapId) => JSON.stringify(
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -799,6 +799,7 @@ const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImag
     description: descriptionText,
     url: canonicalUrl,
     inLanguage: langCode === 'fr' ? 'fr-FR' : 'en-US',
+    hasMap: mapId ? { "@id": mapId } : undefined,
     mainEntity: {
       "@type": "Mountain",
       "@id": `${canonicalUrl}#mountain`,
@@ -838,27 +839,27 @@ const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImag
   2
 );
 
-const DATASET_LICENSE_URL = "https://nh48.info/license";
-
-const buildDatasetSchema = (peakName, descriptionText, slug, langCode) => JSON.stringify(
-  {
-    "@context": "https://schema.org",
-    "@type": "Dataset",
-    name: `NH48 Peak Dataset — ${peakName}`,
-    description: descriptionText,
-    identifier: slug,
-    inLanguage: langCode === "fr" ? "fr-FR" : "en-US",
-    includedInDataCatalog: DEFAULT_CATALOG_URL,
-    distribution: {
-      "@type": "DataDownload",
-      contentUrl: "/data/nh48.json",
-      encodingFormat: "application/json",
+const buildMapSchema = (peakName, canonicalUrl, coordinates) => {
+  if (!coordinates?.latitude || !coordinates?.longitude) return null;
+  const mapId = `${canonicalUrl}#peak-trail-map`;
+  return JSON.stringify(
+    {
+      "@context": "https://schema.org",
+      "@type": "Map",
+      "@id": mapId,
+      name: `Topographic trail map for ${peakName}`,
+      url: `${canonicalUrl}#peak-trail-map`,
+      contentLocation: {
+        "@type": "GeoCoordinates",
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+      },
+      about: { "@type": "Mountain", "@id": `${canonicalUrl}#mountain` },
     },
-    license: DATASET_LICENSE_URL || undefined,
-  },
-  null,
-  2
-);
+    null,
+    2
+  );
+};
 
 const buildFAQSchema = (peakName, routes, difficulty, time, langCode) => {
   const isEnglish = langCode === 'en';
@@ -1313,6 +1314,11 @@ const main = () => {
           primaryPhoto.extendedDescriptionLang || primaryPhoto.altLang
             ? ` lang="${primaryPhoto.extendedDescriptionLang || primaryPhoto.altLang}"`
             : '';
+        const mapId =
+          coordinates.latitude && coordinates.longitude
+            ? `${canonicalUrl}#peak-trail-map`
+            : null;
+        const mapSchema = mapId ? buildMapSchema(localizedName, canonicalUrl, coordinates) : null;
 
         const values = {
           LANG: lang.hreflang,
@@ -1401,11 +1407,11 @@ const main = () => {
             buildBreadcrumbJson(localizedName, canonicalUrl, lang.catalogUrl, lang.homeUrl, lang.labels)
           ),
           WEBPAGE_SCHEMA: escapeScriptJson(
-            buildWebPageSchema(localizedName, canonicalUrl, descriptionText, primaryPhoto, lang.code)
+            buildWebPageSchema(localizedName, canonicalUrl, descriptionText, primaryPhoto, lang.code, mapId)
           ),
-          DATASET_SCHEMA: escapeScriptJson(
-            buildDatasetSchema(localizedName, descriptionText, slug, lang.code)
-          ),
+          MAP_SCHEMA: mapSchema
+            ? `<script type="application/ld+json">${escapeScriptJson(mapSchema)}</script>`
+            : "",
           FAQ_SCHEMA: (() => {
             const faqJson = buildFAQSchema(localizedName, peak["Standard Routes"], difficulty, time, lang.code);
             return faqJson ? `<script type="application/ld+json">${escapeScriptJson(faqJson)}</script>` : "";
