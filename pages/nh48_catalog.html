@@ -292,8 +292,8 @@
           <label for="columnSelect" data-i18n="catalog.columns.label">Columns:</label>
           <select id="columnSelect" data-i18n="catalog.columns" data-i18n-attr="aria-label" aria-label="Select number of catalog columns">
             <option value="2">2</option>
-            <option value="3" selected>3</option>
-            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
             <option value="5">5</option>
           </select>
         </div>
@@ -1057,14 +1057,31 @@
         }
       };
       
+      const COLUMN_BREAKPOINT = 1400;
+      const validColumns = ['2', '3', '4', '5'];
+      let preferredColumns = '4';
+
+      const applyColumns = (columns) => {
+        if (columnSelect) {
+          columnSelect.value = columns;
+        }
+        if (grid) {
+          grid.setAttribute('data-columns', columns);
+        }
+      };
+
+      const applyResponsiveColumns = () => {
+        const shouldCompact = window.innerWidth < COLUMN_BREAKPOINT;
+        const targetColumns = shouldCompact ? '3' : preferredColumns;
+        applyColumns(targetColumns);
+      };
+
       // Load saved column preference
       const savedColumns = localStorage.getItem('nh48-catalog-columns');
-      if (savedColumns && ['2', '3', '4', '5'].includes(savedColumns)) {
-        columnSelect.value = savedColumns;
-        grid.setAttribute('data-columns', savedColumns);
-      } else {
-        grid.setAttribute('data-columns', '3');
+      if (savedColumns && validColumns.includes(savedColumns)) {
+        preferredColumns = savedColumns;
       }
+      applyResponsiveColumns();
 
       const savedView = localStorage.getItem('nh48-catalog-view');
       applyView(savedView || 'grid', { persist: false });
@@ -1072,11 +1089,13 @@
       syncUnitsWithLanguage(window.NH48_I18N ? window.NH48_I18N.getLang() : 'en');
 
       columnSelect.addEventListener('change', function() {
-        const columns = this.value;
-        grid.setAttribute('data-columns', columns);
-        localStorage.setItem('nh48-catalog-columns', columns);
-        trackEvent('catalog_columns_change', { columns });
+        preferredColumns = this.value;
+        localStorage.setItem('nh48-catalog-columns', preferredColumns);
+        applyResponsiveColumns();
+        trackEvent('catalog_columns_change', { columns: preferredColumns });
       });
+
+      window.addEventListener('resize', applyResponsiveColumns);
 
       viewSelect.addEventListener('change', function() {
         applyView(this.value);
