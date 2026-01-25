@@ -2518,6 +2518,9 @@
   "description": "This photograph features Mount Washington in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.",
   "url": "https://nh48.info/peak/mount-washington/",
   "inLanguage": "en-US",
+  "hasMap": {
+    "@id": "https://nh48.info/peak/mount-washington/#peak-trail-map"
+  },
   "mainEntity": {
     "@type": "Mountain",
     "@id": "https://nh48.info/peak/mount-washington/#mountain",
@@ -2555,18 +2558,19 @@
 }</script>
     <script type="application/ld+json">{
   "@context": "https://schema.org",
-  "@type": "Dataset",
-  "name": "NH48 Peak Dataset — Mount Washington",
-  "description": "This photograph features Mount Washington in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.",
-  "identifier": "mount-washington",
-  "inLanguage": "en-US",
-  "includedInDataCatalog": "https://nh48.info/catalog",
-  "distribution": {
-    "@type": "DataDownload",
-    "contentUrl": "/data/nh48.json",
-    "encodingFormat": "application/json"
+  "@type": "Map",
+  "@id": "https://nh48.info/peak/mount-washington/#peak-trail-map",
+  "name": "Topographic trail map for Mount Washington",
+  "url": "https://nh48.info/peak/mount-washington/#peak-trail-map",
+  "contentLocation": {
+    "@type": "GeoCoordinates",
+    "latitude": 44.2705,
+    "longitude": -71.30325
   },
-  "license": "https://nh48.info/license"
+  "about": {
+    "@type": "Mountain",
+    "@id": "https://nh48.info/peak/mount-washington/#mountain"
+  }
 }</script>
     <script type="application/ld+json">{
   "@context": "https://schema.org",

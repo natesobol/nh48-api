@@ -1440,6 +1440,9 @@
   "description": "This photograph features Mount Whiteface in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.",
   "url": "https://nh48.info/peak/mount-whiteface/",
   "inLanguage": "en-US",
+  "hasMap": {
+    "@id": "https://nh48.info/peak/mount-whiteface/#peak-trail-map"
+  },
   "mainEntity": {
     "@type": "Mountain",
     "@id": "https://nh48.info/peak/mount-whiteface/#mountain",
@@ -1477,18 +1480,19 @@
 }</script>
     <script type="application/ld+json">{
   "@context": "https://schema.org",
-  "@type": "Dataset",
-  "name": "NH48 Peak Dataset — Mount Whiteface",
-  "description": "This photograph features Mount Whiteface in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.",
-  "identifier": "mount-whiteface",
-  "inLanguage": "en-US",
-  "includedInDataCatalog": "https://nh48.info/catalog",
-  "distribution": {
-    "@type": "DataDownload",
-    "contentUrl": "/data/nh48.json",
-    "encodingFormat": "application/json"
+  "@type": "Map",
+  "@id": "https://nh48.info/peak/mount-whiteface/#peak-trail-map",
+  "name": "Topographic trail map for Mount Whiteface",
+  "url": "https://nh48.info/peak/mount-whiteface/#peak-trail-map",
+  "contentLocation": {
+    "@type": "GeoCoordinates",
+    "latitude": 43.935,
+    "longitude": -71.42167
   },
-  "license": "https://nh48.info/license"
+  "about": {
+    "@type": "Mountain",
+    "@id": "https://nh48.info/peak/mount-whiteface/#mountain"
+  }
 }</script>
     <script type="application/ld+json">{
   "@context": "https://schema.org",
