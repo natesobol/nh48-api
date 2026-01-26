@@ -997,10 +997,6 @@ def generate_manifest(
                         "filename": filename,
                         "url": url,
                         "alt": alt_text or "",
-                        "caption": headline or "",
-                        "headline": headline or "",
-                        "description": description or "",
-                        "altText": alt_text or "",
                         "extendedDescription": extended_description or "",
                         "season": season,
                         "timeOfDay": time_of_day,
@@ -1019,7 +1015,16 @@ def generate_manifest(
                         if value is not None:
                             photo_entry[key] = value
 
-                    photo_entry["iptc"] = curated_iptc
+                    photo_entry["iptc"] = {
+                        "creator": curated_iptc.get("creator", ""),
+                        "creatorJobTitle": curated_iptc.get("creatorJobTitle", ""),
+                        "creatorEmail": curated_iptc.get("creatorEmail", ""),
+                        "creatorWebsite": curated_iptc.get("creatorWebsite", ""),
+                        "keywords": curated_iptc.get("keywords", []),
+                        "copyrightNotice": curated_iptc.get("copyrightNotice", ""),
+                        "locationCreated": curated_iptc.get("locationCreated", {}),
+                        "locationShown": curated_iptc.get("locationShown", {}),
+                    }
                     if include_iptc_raw and raw_bridge:
                         photo_entry["iptcRaw"] = raw_bridge
 
