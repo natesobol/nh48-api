@@ -17,6 +17,7 @@ const PHOTO_PATH_PREFIX = '/nh48-photos/';
 const STATIC_PAGE_ENTRIES = [
   { loc: 'https://nh48.info/', file: 'index.html' },
   { loc: 'https://nh48.info/catalog', file: 'catalog.html' },
+  { loc: 'https://nh48.info/photos/', file: 'photos/index.html' },
   { loc: 'https://nh48.info/trails', file: 'trails/index.html' },
   { loc: 'https://nh48.info/long-trails', file: 'long-trails/index.html' },
   { loc: 'https://nh48.info/plant-catalog', file: 'pages/plant_catalog.html' },
@@ -278,6 +279,7 @@ const buildPageSitemap = () => {
 
 const buildImageSitemap = () => {
   const urlEntries = [];
+  const allImages = [];
 
   slugs.forEach((slug) => {
     const peak = data[slug] || {};
@@ -285,7 +287,16 @@ const buildImageSitemap = () => {
     const images = dedupeImages(buildImageEntries(peak.photos, name));
     if (!images.length) return;
     urlEntries.push({ loc: `${PEAK_BASE}/${slug}`, images });
+    urlEntries.push({ loc: `${PEAK_BASE}/${slug}/photos`, images });
+    allImages.push(...images);
   });
+
+  if (allImages.length) {
+    urlEntries.unshift({
+      loc: 'https://nh48.info/photos/',
+      images: dedupeImages(allImages),
+    });
+  }
 
   const plantEntries = buildPlantImageEntries();
   urlEntries.push(...plantEntries);
