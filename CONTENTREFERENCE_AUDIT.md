@@ -6,10 +6,9 @@
 
 ## HTML Pages Checked
 No placeholders were found in the following pages:
-- `pages/nh48_catalog.html`
+- `catalog/index.html`
 - `pages/trails_app.html`
 - `pages/hrt_info.html`
-- `catalog/index.html`
 - `old/test_catalog.html`
 
 These pages already include JavaScript helpers (e.g., `cleanJSON`, `parsePeakCoordinates`) that strip `:contentReference[...]` patterns from dynamic JSON data at render time, so no HTML edits were required.

@@ -71,7 +71,7 @@ All pages should load correctly with consistent rendering from GitHub templates.
 ### Template Fetching Flow
 1. **Request arrives** → Worker receives request for `/catalog`
 2. **Route matching** → Worker identifies this as a catalog page
-3. **Fetch from GitHub** → Worker fetches `pages/nh48_catalog.html` from GitHub
+3. **Fetch from GitHub** → Worker fetches `catalog/index.html` from GitHub
 4. **Inject nav/footer** → Worker fetches `pages/nav.html` and `pages/footer.html`
 5. **Add metadata** → Worker injects SEO meta tags and structured data
 6. **Return response** → Complete HTML sent to browser
