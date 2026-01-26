@@ -293,19 +293,7 @@
         <!-- Jump to Range (visible only when grouping is enabled) -->
         <div id="rangeJumpLinks" class="range-jump-bar">
           <span class="jump-label">Jump to range:</span>
-          <div class="jump-links">
-            <a href="#range-carter-moriah">Carter-Moriah</a>
-            <a href="#range-franconia">Franconia</a>
-            <a href="#range-kinsman">Kinsman</a>
-            <a href="#range-osceola">Osceola</a>
-            <a href="#range-pemigewasset">Pemigewasset</a>
-            <a href="#range-pilot">Pilot</a>
-            <a href="#range-pliny">Pliny</a>
-            <a href="#range-presidential">Presidential</a>
-            <a href="#range-sandwich">Sandwich</a>
-            <a href="#range-twin">Twin</a>
-            <a href="#range-willey">Willey</a>
-          </div>
+          <div class="jump-links"></div>
         </div>
       </div>
 
@@ -882,14 +870,16 @@
 
         const sortedRanges = Object.keys(rangeGroups).sort();
 
-        // Update jump links: show only anchors for ranges present
+        // Update jump links: build anchors for ranges present
         const jumpLinksContainer = document.querySelector('#rangeJumpLinks .jump-links');
         if(jumpLinksContainer){
-          const allJumpLinks = jumpLinksContainer.querySelectorAll('a');
-          const presentRangeIds = new Set(Object.values(rangeGroups).map(r => r.id));
-          allJumpLinks.forEach(link => {
-            const targetId = (link.getAttribute('href') || '').replace('#range-', '');
-            link.style.display = presentRangeIds.has(targetId) ? '' : 'none';
+          jumpLinksContainer.innerHTML = '';
+          sortedRanges.forEach(range => {
+            const rangeData = rangeGroups[range];
+            const link = document.createElement('a');
+            link.href = `#range-${rangeData.id}`;
+            link.textContent = range;
+            jumpLinksContainer.appendChild(link);
           });
         }
 
@@ -1057,10 +1047,16 @@
       }
 
       async function init(){
+        const groupToggle = document.getElementById('groupByRangeToggle');
         try{
           setCatalogLoading(true);
           peaks = await fetchPeaks();
           updateSuggestions();
+          const savedGroup = localStorage.getItem(GROUP_BY_RANGE_KEY);
+          groupByRangeEnabled = savedGroup !== null ? savedGroup === 'true' : true;
+          if(groupToggle){
+            groupToggle.checked = groupByRangeEnabled;
+          }
           updateDisplay();
           trackEvent('catalog_render_complete', { peakCount: peaks.length });
         }catch(err){
