@@ -1111,7 +1111,6 @@
             trackEvent('catalog_api_variables_toggle', { enabled: e.target.checked });
           });
         }
-        const groupToggle = document.getElementById('groupByRangeToggle');
         if(groupToggle){
           groupToggle.addEventListener('change', (e) => {
             groupByRangeEnabled = e.target.checked;
@@ -1136,6 +1135,7 @@
       const columnSelect = document.getElementById('columnSelect');
       const viewSelect = document.getElementById('viewSelect');
       const grid = document.getElementById('grid');
+      const groupToggle = document.getElementById('groupByRangeToggle');
       const columnControl = columnSelect ? columnSelect.closest('.control') : null;
       let currentView = 'grid';
 
@@ -1198,9 +1198,13 @@
         setApiVariableLabels(true, { persist: false });
       }
 
-      const groupToggle = document.getElementById('groupByRangeToggle');
       const savedGroup = localStorage.getItem(GROUP_BY_RANGE_KEY);
-      groupByRangeEnabled = savedGroup !== null ? savedGroup === 'true' : true;
+      if(savedGroup === null){
+        groupByRangeEnabled = true;
+        localStorage.setItem(GROUP_BY_RANGE_KEY, 'true');
+      }else{
+        groupByRangeEnabled = savedGroup === 'true';
+      }
       if(groupToggle){
         groupToggle.checked = groupByRangeEnabled;
       }
