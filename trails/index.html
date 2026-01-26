@@ -2208,7 +2208,7 @@
         hikeBtn.addEventListener('click', e => {
           e.stopPropagation();
           const encoded = encodeURIComponent(name);
-          window.open(`/virtual_hike.html?trail=${encoded}`, '_blank');
+          window.open(`/virtual-hike?trail=${encoded}`, '_blank');
           trackEvent('trails_virtual_hike_open', { trail: name });
         });
 

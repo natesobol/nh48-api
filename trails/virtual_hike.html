@@ -32,7 +32,7 @@
         return;
       }
 
-      const redirectUrl = new URL('../virtual_hike.html', window.location.href);
+      const redirectUrl = new URL('/virtual-hike', window.location.href);
       redirectUrl.search = window.location.search;
       window.location.replace(redirectUrl.toString());
     })();
@@ -40,7 +40,7 @@
   <noscript>
     <p>
       JavaScript is required to continue.
-      <a href="../virtual_hike.html">Continue</a>
+      <a href="/virtual-hike">Continue</a>
     </p>
   </noscript>
 </head>

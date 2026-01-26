@@ -67,7 +67,7 @@ To keep the footer unified across all entry points, treat the footer as a single
 
 ### Only style the live app shells (never the prerendered pages)
 
-All UI/appearance work should be focused on the JavaScript-powered app shells that humans actually see: `/`, `/catalog`, `/trails`, `/long-trails`, `/virtual_hike.html` (deprecated), and the `/pages/*` app surfaces (`nh48_catalog.html`, `nh48_peak.html`, `trails_app.html`, `long_trails_app.html`, `virtual_hike.html`). The prerendered redirect/index pages (including everything under `/peak/` and `/fr/peak/`) exist solely for bots and metadata; do **not** spend time restyling them.
+All UI/appearance work should be focused on the JavaScript-powered app shells that humans actually see: `/`, `/catalog`, `/trails`, `/long-trails`, `/virtual-hike`, and the `/pages/*` app surfaces (`nh48_catalog.html`, `nh48_peak.html`, `trails_app.html`, `long_trails_app.html`, `virtual_hike.html`). The prerendered redirect/index pages (including everything under `/peak/` and `/fr/peak/`) exist solely for bots and metadata; do **not** spend time restyling them.
 
 ### SEO Goals
 
