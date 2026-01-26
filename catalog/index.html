@@ -311,6 +311,7 @@
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
+      const RANGES_DATA_URL = '/data/wmnf-ranges.json';
       const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85,width=720';
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
       const PHOTO_BASE = new URL(PHOTO_BASE_URL);
@@ -391,6 +392,7 @@
       }
 
       let peaks = [];
+      let rangesData = {};
       let activeSort = 'range-asc';
       let groupByRangeEnabled = true;
 
@@ -484,6 +486,17 @@
           }
         }
         throw new Error('All API endpoints failed');
+      }
+
+      async function fetchRanges(){
+        const res = await fetch(RANGES_DATA_URL, { mode: 'cors' });
+        if(!res.ok){
+          throw new Error(`Failed to load ranges: ${res.status} ${res.statusText}`);
+        }
+        const text = await res.text();
+        const cleaned = cleanJSON(text);
+        const obj = JSON.parse(cleaned);
+        return obj && typeof obj === 'object' ? obj : {};
       }
 
       function normalizeToken(value){
@@ -812,38 +825,17 @@
         deferInitialImageLoads();
       }
 
-      // Return canonical range info { name, id } for a given raw range string.
-      function getRangeInfo(rangeRaw){
-        const raw = String(rangeRaw || '').trim();
-        if(!raw) return { name: 'Other', id: 'other' };
-
-        // Normalize for matching
-        const key = raw.toLowerCase();
-
-        const KEY_LOOKUPS = [
-          { match: ['presidential', 'washington', 'presidentials'], name: 'Presidential Range', id: 'presidential' },
-          { match: ['franconia'], name: 'Franconia Range', id: 'franconia' },
-          { match: ['twin', 'bond', 'bonds'], name: 'Twin Range', id: 'twin' },
-          { match: ['carter', 'moriah'], name: 'Carter-Moriah Range', id: 'carter-moriah' },
-          { match: ['kinsman'], name: 'Kinsman Range', id: 'kinsman' },
-          { match: ['sandwich'], name: 'Sandwich Range', id: 'sandwich' },
-          { match: ['pemigewasset', 'pemi'], name: 'Pemigewasset Wilderness', id: 'pemigewasset' },
-          { match: ['willey'], name: 'Willey Range', id: 'willey' },
-          { match: ['osceola', 'waterville'], name: 'Osceola Range', id: 'osceola' },
-          { match: ['pliny'], name: 'Pliny Range', id: 'pliny' },
-          { match: ['pilot'], name: 'Pilot Range', id: 'pilot' }
-        ];
-
-        for(const entry of KEY_LOOKUPS){
-          for(const m of entry.match){
-            if(key.includes(m)) return { name: entry.name, id: entry.id };
+      // Return canonical range info { name, id } for a given peak object.
+      function getRangeInfo(peak){
+        if(!peak || !rangesData || typeof rangesData !== 'object'){
+          return { name: 'Other', id: 'other' };
+        }
+        for(const [slug, range] of Object.entries(rangesData)){
+          if(range && Array.isArray(range.peakList) && range.peakList.includes(peak.peakName)){
+            return { id: slug, name: range.rangeName || 'Other' };
           }
         }
-
-        // Fallback: use the portion before a dash or period as the display name
-        const short = raw.split('-')[0].split('.')[0].trim();
-        const id = short.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        return { name: short || raw, id: id || raw.toLowerCase().replace(/[^a-z0-9]+/g, '-') };
+        return { id: 'other', name: 'Other' };
       }
 
       function renderGridByRange(list){
@@ -856,45 +848,46 @@
         }
         empty.hidden = true;
 
-        // Group peaks by canonical range name
-        const rangeGroups = {};
-        list.forEach(p => {
-          const rangeRaw = p['Range / Subrange'] || 'Other';
-          const info = getRangeInfo(rangeRaw);
-          const rangeName = info.name;
-          if(!rangeGroups[rangeName]){
-            rangeGroups[rangeName] = { id: info.id, peaks: [] };
-          }
-          rangeGroups[rangeName].peaks.push(p);
-        });
+        const orderedRanges = Object.entries(rangesData || {}).map(([slug, range]) => ({
+          id: range?.slug || slug,
+          slug,
+          name: range?.rangeName || slug,
+          peaks: Array.isArray(range?.peakList)
+            ? list.filter(p => range.peakList.includes(p.peakName))
+            : []
+        }));
 
-        const sortedRanges = Object.keys(rangeGroups).sort();
+        const unmatchedPeaks = list.filter(p => !orderedRanges.some(range => range.peaks.includes(p)));
+        if(unmatchedPeaks.length > 0){
+          orderedRanges.push({
+            id: 'other',
+            slug: 'other',
+            name: 'Other',
+            peaks: unmatchedPeaks
+          });
+        }
 
-        // Update jump links: build anchors for ranges present
         const jumpLinksContainer = document.querySelector('#rangeJumpLinks .jump-links');
         if(jumpLinksContainer){
           jumpLinksContainer.innerHTML = '';
-          sortedRanges.forEach(range => {
-            const rangeData = rangeGroups[range];
+          orderedRanges.forEach(range => {
             const link = document.createElement('a');
-            link.href = `#range-${rangeData.id}`;
-            link.textContent = range;
+            link.href = `#range-${range.id}`;
+            link.textContent = range.name;
             jumpLinksContainer.appendChild(link);
           });
         }
 
-        // Render each range section with heading and per-range grid
-        sortedRanges.forEach((range, index) => {
-          const rangeData = rangeGroups[range];
-          const peakCount = rangeData.peaks.length;
+        orderedRanges.forEach((range, index) => {
+          const peakCount = range.peaks.length;
 
           const section = document.createElement('section');
           section.className = 'range-section';
-          section.id = 'range-' + rangeData.id;
+          section.id = 'range-' + range.id;
 
           const heading = document.createElement('h2');
           heading.className = 'range-heading';
-          heading.innerHTML = `${range} <span class="range-count">(${peakCount})</span>`;
+          heading.innerHTML = `${range.name} <span class="range-count">(${peakCount})</span>`;
           section.appendChild(heading);
 
           const rangeGrid = document.createElement('div');
@@ -929,13 +922,13 @@
           };
 
           // Sort each group with the comparator
-          const peaksInRange = rangeData.peaks.sort(comparator);
+          const peaksInRange = range.peaks.sort(comparator);
           peaksInRange.forEach(p => rangeGrid.appendChild(createCard(p)));
 
           section.appendChild(rangeGrid);
           grid.appendChild(section);
 
-          if(index < sortedRanges.length - 1){
+          if(index < orderedRanges.length - 1){
             const divider = document.createElement('div');
             divider.className = 'range-divider';
             grid.appendChild(divider);
@@ -1050,6 +1043,7 @@
         const groupToggle = document.getElementById('groupByRangeToggle');
         try{
           setCatalogLoading(true);
+          rangesData = await fetchRanges();
           peaks = await fetchPeaks();
           updateSuggestions();
           const savedGroup = localStorage.getItem(GROUP_BY_RANGE_KEY);
