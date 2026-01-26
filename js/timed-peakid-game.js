@@ -27,10 +27,12 @@
     gameDuration: 120,
     maxZones: 6,
     minZones: 4,
-    startSpawnInterval: 2200,
-    minSpawnInterval: 900,
-    gravity: 0.0007,
-    difficultyStepSeconds: 20
+    startSpawnInterval: 1400,
+    minSpawnInterval: 450,
+    gravity: 0.00035,
+    difficultyStepSeconds: 12,
+    preloadCount: 6,
+    preloadHoldMs: 3000
   };
 
   const state = {
@@ -50,10 +52,19 @@
     spawnInterval: config.startSpawnInterval,
     gravity: config.gravity,
     difficultyLevel: 0,
-    nextPieceId: 1
+    nextPieceId: 1,
+    preloaded: new Map()
   };
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const clampPiecePosition = (piece) => {
+    const bounds = gameArea.getBoundingClientRect();
+    const pieceBounds = piece.el.getBoundingClientRect();
+    const maxX = bounds.width - pieceBounds.width;
+    const maxY = bounds.height - pieceBounds.height;
+    piece.x = clamp(piece.x, 0, Math.max(0, maxX));
+    piece.y = clamp(piece.y, 0, Math.max(0, maxY));
+  };
 
   const shuffle = (arr) => {
     const copy = [...arr];
@@ -110,9 +121,18 @@
     const centerX = pieceRect.left + pieceRect.width / 2;
     const centerY = pieceRect.top + pieceRect.height / 2;
     const zones = getZoneElements();
-    return zones.find(zone => {
+    const centerZone = zones.find(zone => {
       const rect = zone.getBoundingClientRect();
       return centerX >= rect.left && centerX <= rect.right && centerY >= rect.top && centerY <= rect.bottom;
+    });
+    if (centerZone) return centerZone;
+    return zones.find(zone => {
+      const rect = zone.getBoundingClientRect();
+      const overlapX = Math.max(0, Math.min(pieceRect.right, rect.right) - Math.max(pieceRect.left, rect.left));
+      const overlapY = Math.max(0, Math.min(pieceRect.bottom, rect.bottom) - Math.max(pieceRect.top, rect.top));
+      const overlapArea = overlapX * overlapY;
+      const pieceArea = pieceRect.width * pieceRect.height;
+      return overlapArea / pieceArea >= 0.2;
     });
   };
 
@@ -166,6 +186,26 @@
     return true;
   };
 
+  const warmImage = (url) => {
+    if (!url || state.preloaded.has(url)) return;
+    const img = new Image();
+    img.src = url;
+    img.decoding = 'async';
+    state.preloaded.set(url, img);
+    const release = () => state.preloaded.delete(url);
+    if (img.decode) {
+      img.decode().finally(() => {
+        setTimeout(release, config.preloadHoldMs);
+      });
+    } else {
+      setTimeout(release, config.preloadHoldMs);
+    }
+  };
+
+  const preloadUpcoming = (count = config.preloadCount) => {
+    state.queue.slice(0, count).forEach(item => warmImage(item.photoUrl));
+  };
+
   const createPiece = (peak) => {
     const pieceEl = document.createElement('div');
     pieceEl.className = 'falling-piece';
@@ -188,22 +228,15 @@
       el: pieceEl,
       x,
       y: -80,
-      velocity: 0.03,
+      velocity: 0.012,
       dragging: false,
-      pointerId: null
+      pointerId: null,
+      driftPhase: Math.random() * Math.PI * 2,
+      driftSpeed: 0.00045 + Math.random() * 0.00025
     };
 
     const updatePosition = () => {
       piece.el.style.transform = `translate3d(${piece.x}px, ${piece.y}px, 0)`;
-    };
-
-    const clampPosition = () => {
-      const bounds = gameArea.getBoundingClientRect();
-      const pieceBounds = piece.el.getBoundingClientRect();
-      const maxX = bounds.width - pieceBounds.width;
-      const maxY = bounds.height - pieceBounds.height;
-      piece.x = clamp(piece.x, 0, Math.max(0, maxX));
-      piece.y = clamp(piece.y, 0, Math.max(0, maxY));
     };
 
     pieceEl.addEventListener('pointerdown', (event) => {
@@ -220,7 +253,7 @@
       const bounds = gameArea.getBoundingClientRect();
       piece.x = event.clientX - bounds.left - piece.offsetX;
       piece.y = event.clientY - bounds.top - piece.offsetY;
-      clampPosition();
+      clampPiecePosition(piece);
       updatePosition();
       highlightZone(getZoneUnderPiece(pieceEl));
     });
@@ -235,6 +268,7 @@
 
     pieceEl.addEventListener('pointerup', releasePointer);
     pieceEl.addEventListener('pointercancel', releasePointer);
+    pieceEl.addEventListener('lostpointercapture', releasePointer);
 
     pieceEl.addEventListener('focus', () => {
       piece.dragging = true;
@@ -245,29 +279,6 @@
       piece.dragging = false;
       pieceEl.classList.remove('is-dragging');
       clearZoneHighlights();
-    });
-
-    pieceEl.addEventListener('keydown', (event) => {
-      const step = 12;
-      if (event.key === 'ArrowLeft') {
-        piece.x -= step;
-      } else if (event.key === 'ArrowRight') {
-        piece.x += step;
-      } else if (event.key === 'ArrowUp') {
-        piece.y -= step;
-      } else if (event.key === 'ArrowDown') {
-        piece.y += step;
-      } else if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        attemptDrop(piece);
-        return;
-      } else {
-        return;
-      }
-      event.preventDefault();
-      clampPosition();
-      updatePosition();
-      highlightZone(getZoneUnderPiece(pieceEl));
     });
 
     updatePosition();
@@ -284,14 +295,15 @@
     const piece = createPiece(peak);
     state.pieces.push(piece);
     state.totalSpawned += 1;
+    preloadUpcoming();
   };
 
   const updateDifficulty = () => {
     const nextLevel = Math.floor(state.elapsed / config.difficultyStepSeconds);
     if (nextLevel <= state.difficultyLevel) return;
     state.difficultyLevel = nextLevel;
-    state.gravity *= 1.12;
-    state.spawnInterval = Math.max(config.minSpawnInterval, state.spawnInterval - 150);
+    state.gravity *= 1.07;
+    state.spawnInterval = Math.max(config.minSpawnInterval, state.spawnInterval - 120);
   };
 
   const tick = (timestamp) => {
@@ -314,6 +326,9 @@
       if (piece.dragging) return;
       piece.velocity += state.gravity * delta;
       piece.y += piece.velocity * delta;
+      piece.driftPhase += piece.driftSpeed * delta;
+      piece.x += Math.sin(piece.driftPhase) * 0.5;
+      clampPiecePosition(piece);
       if (piece.y + piece.el.offsetHeight >= bounds.height) {
         registerMiss(piece);
       } else {
@@ -356,6 +371,7 @@
     state.pieces.forEach(piece => removePiece(piece));
     state.pieces = [];
     state.queue = shuffle(state.peaks);
+    preloadUpcoming();
     buildZonesFromQueue();
     updateScoreboard();
   };
@@ -387,18 +403,27 @@
   const loadPeaks = async () => {
     const response = await fetch('/data/nh48.json');
     const data = await response.json();
-    state.peaks = Object.values(data).map(item => {
+    state.peaks = Object.values(data).flatMap(item => {
       const photos = item.photos || [];
-      const photo = photos[Math.floor(Math.random() * photos.length)] || {};
-      return {
+      if (!photos.length) {
+        return [{
+          peakName: item.peakName,
+          slug: item.slug,
+          photoUrl: '',
+          altText: `${item.peakName} summit photo`
+        }];
+      }
+      return photos.map(photo => ({
         peakName: item.peakName,
         slug: item.slug,
         photoUrl: photo.url || '',
         altText: photo.altText || photo.alt || `${item.peakName} summit photo`
-      };
+      }));
     }).filter(item => item.photoUrl);
+    config.totalPieces = Math.max(100, state.peaks.length);
     state.queue = shuffle(state.peaks);
     buildZonesFromQueue();
+    preloadUpcoming();
     updateScoreboard();
   };
 
