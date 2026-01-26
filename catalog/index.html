@@ -208,26 +208,12 @@
       });
     </script>
     <div class="wrap">
-      <nav aria-label="Breadcrumb" class="breadcrumb-trail" itemscope itemtype="https://schema.org/BreadcrumbList">
-        <ol>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
-            <meta itemprop="position" content="1">
-          </li>
-          <li aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <span itemprop="name">Catalog</span>
-            <meta itemprop="item" content="https://nh48.info/catalog">
-            <meta itemprop="position" content="2">
-          </li>
-        </ol>
-      </nav>
-      <header>
-        <h1 data-i18n="catalog.title">NH48 Peak Catalog</h1>
-        <p data-i18n="catalog.intro">Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.</p>
-      </header>
-
       <!-- Catalog Controls Panel -->
       <div class="catalog-controls-panel">
+        <div class="catalog-hero">
+          <h1 data-i18n="catalog.title">NH48 Peak Catalog</h1>
+          <p data-i18n="catalog.intro">Explore all forty-eight of New Hampshire’s 4,000-footers in one interactive catalog. Click any peak to view detailed summit info, routes, difficulty, and photos w/ creator metadata.</p>
+        </div>
         <!-- Search Row -->
         <div class="search-row">
           <div class="search-wrapper">
@@ -296,6 +282,20 @@
           <div class="jump-links"></div>
         </div>
       </div>
+
+      <nav aria-label="Breadcrumb" class="breadcrumb-trail" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <ol>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
+            <meta itemprop="position" content="1">
+          </li>
+          <li aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name">Catalog</span>
+            <meta itemprop="item" content="https://nh48.info/catalog">
+            <meta itemprop="position" content="2">
+          </li>
+        </ol>
+      </nav>
 
       <div id="catalogLoading" class="loading-indicator" aria-live="polite">
         <span class="loading-spinner" aria-hidden="true"></span>
