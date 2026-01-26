@@ -99,8 +99,8 @@
   };
 
   const updateScoreboard = () => {
-    elements.totalCorrect.textContent = state.totalCorrect;
-    elements.totalIncorrect.textContent = state.totalIncorrect;
+    elements.totalCorrect.textContent = state.totalCorrect + state.roundCorrect;
+    elements.totalIncorrect.textContent = state.totalIncorrect + state.roundIncorrect;
     const progressPercent = ((state.currentRoundIndex + 1) / TOTAL_ROUNDS) * 100;
     elements.progressBar.style.width = `${progressPercent}%`;
     elements.roundLabel.textContent = `${t('peakid.roundLabel')} ${state.currentRoundIndex + 1} ${t('peakid.ofLabel')} ${TOTAL_ROUNDS}`;
@@ -190,18 +190,19 @@
       return false;
     }
 
-    slot.dataset.assignedCard = cardId;
-    card.dataset.assignedSlot = slotId;
+    const isCorrect = slot.dataset.peakSlug === card.dataset.peakSlug;
+    if (isCorrect) {
+      slot.dataset.assignedCard = cardId;
+      card.dataset.assignedSlot = slotId;
+    }
     card.setAttribute('aria-grabbed', 'false');
     clearSelection();
-
-    const isCorrect = slot.dataset.peakSlug === card.dataset.peakSlug;
-    slot.classList.remove('correct', 'incorrect');
-    slot.classList.add(isCorrect ? 'correct' : 'incorrect');
     announce(isCorrect ? t('peakid.correctLabel') : t('peakid.incorrectLabel'));
-    addSlotFeedback(slot, isCorrect);
-    animateSlotResult(slot, isCorrect);
     if (isCorrect) {
+      slot.classList.remove('correct', 'incorrect');
+      slot.classList.add('correct');
+      addSlotFeedback(slot, true);
+      animateSlotResult(slot, true);
       playPing();
     }
 
@@ -217,15 +218,15 @@
     if (!slotId) return;
     const slot = getSlotById(slotId);
     if (slot) {
-      if (slot.classList.contains('correct')) {
+      if (card.dataset.countedCorrect === 'true') {
         state.roundCorrect = Math.max(0, state.roundCorrect - 1);
-      } else if (slot.classList.contains('incorrect')) {
-        state.roundIncorrect = Math.max(0, state.roundIncorrect - 1);
       }
       slot.dataset.assignedCard = '';
       slot.classList.remove('correct', 'incorrect');
     }
     card.dataset.assignedSlot = '';
+    card.dataset.countedCorrect = '';
+    updateScoreboard();
   };
 
   const enableSubmitIfReady = () => {
@@ -246,6 +247,9 @@
 
     state.totalCorrect += state.roundCorrect;
     state.totalIncorrect += state.roundIncorrect;
+    state.roundCorrect = 0;
+    state.roundIncorrect = 0;
+    state.roundPlaced = 0;
     updateScoreboard();
 
     setTimeout(() => {
@@ -368,6 +372,27 @@
     requestAnimationFrame(step);
   };
 
+  const resetCardPosition = (card) => {
+    if (prefersReducedMotion()) {
+      setCardState(card, 0, 0);
+      return;
+    }
+    card.style.transition = 'transform 0.25s ease';
+    setCardState(card, 0, 0);
+    setTimeout(() => {
+      card.style.transition = '';
+    }, 260);
+  };
+
+  const showIncorrectFeedback = (slot) => {
+    slot.classList.add('incorrect');
+    addSlotFeedback(slot, false);
+    animateSlotResult(slot, false);
+    setTimeout(() => {
+      slot.classList.remove('incorrect');
+    }, prefersReducedMotion() ? 350 : 900);
+  };
+
   const initDragHandlers = (card) => {
     let pointerId = null;
     let startX = 0;
@@ -384,6 +409,7 @@
         clearSlotAssignment(card);
         state.roundPlaced = Math.max(0, state.roundPlaced - 1);
         enableSubmitIfReady();
+        updateScoreboard();
       }
       pointerId = event.pointerId;
       card.setPointerCapture(pointerId);
@@ -435,13 +461,23 @@
       const slot = findSlotForCard(card, event.clientX, event.clientY);
       if (slot && !slot.dataset.assignedCard) {
         const correct = placeCardInSlot(card, slot);
-        state.roundPlaced += 1;
         if (correct) {
-          state.roundCorrect += 1;
-        } else {
-          state.roundIncorrect += 1;
+          state.roundPlaced += 1;
+          if (card.dataset.hadIncorrect !== 'true') {
+            state.roundCorrect += 1;
+            card.dataset.countedCorrect = 'true';
+          } else {
+            card.dataset.countedCorrect = 'false';
+          }
+          enableSubmitIfReady();
+          updateScoreboard();
+          return;
         }
-        enableSubmitIfReady();
+        state.roundIncorrect += 1;
+        card.dataset.hadIncorrect = 'true';
+        showIncorrectFeedback(slot);
+        resetCardPosition(card);
+        updateScoreboard();
         return;
       }
 
@@ -485,13 +521,23 @@
       if (!card) return;
       if (slot.dataset.assignedCard) return;
       const correct = placeCardInSlot(card, slot);
-      state.roundPlaced += 1;
       if (correct) {
-        state.roundCorrect += 1;
-      } else {
-        state.roundIncorrect += 1;
+        state.roundPlaced += 1;
+        if (card.dataset.hadIncorrect !== 'true') {
+          state.roundCorrect += 1;
+          card.dataset.countedCorrect = 'true';
+        } else {
+          card.dataset.countedCorrect = 'false';
+        }
+        enableSubmitIfReady();
+        updateScoreboard();
+        return;
       }
-      enableSubmitIfReady();
+      state.roundIncorrect += 1;
+      card.dataset.hadIncorrect = 'true';
+      showIncorrectFeedback(slot);
+      resetCardPosition(card);
+      updateScoreboard();
     });
   };
 
@@ -524,6 +570,8 @@
       card.setAttribute('aria-grabbed', 'false');
       card.dataset.translateX = 0;
       card.dataset.translateY = 0;
+      card.dataset.hadIncorrect = 'false';
+      card.dataset.countedCorrect = '';
 
       const img = document.createElement('img');
       img.src = peak.photo ? peak.photo.url : '';
@@ -533,7 +581,8 @@
 
       const caption = document.createElement('div');
       caption.className = 'peakid-card-caption';
-      const credit = peak.photo && (peak.photo.creditText || (peak.photo.iptc && peak.photo.iptc.creditText) || peak.photo.author);
+      const rawCredit = peak.photo && (peak.photo.creditText || (peak.photo.iptc && peak.photo.iptc.creditText) || peak.photo.author);
+      const credit = rawCredit ? rawCredit.replace(/©/g, '').trim() : '';
       caption.textContent = credit ? `${t('peakid.photoCredit', { credit })}` : '';
 
       card.appendChild(img);
