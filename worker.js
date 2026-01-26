@@ -25,7 +25,7 @@ export default {
     const RAW_BASE = 'https://raw.githubusercontent.com/natesobol/nh48-api/main';
     const HOWKER_ORIGIN = 'https://nh48.info';
     const RAW_TEMPLATE_URL = `${RAW_BASE}/pages/nh48_peak.html`;
-    const RAW_CATALOG_URL = `${RAW_BASE}/pages/nh48_catalog.html`;
+    const RAW_CATALOG_URL = `${RAW_BASE}/catalog/index.html`;
     const RAW_NAV_URL = `${RAW_BASE}/pages/nav.html`;
     const RAW_FOOTER_URL = `${RAW_BASE}/pages/footer.html`;
     const RAW_BUILD_META_URL = `${RAW_BASE}/build-meta.json`;
