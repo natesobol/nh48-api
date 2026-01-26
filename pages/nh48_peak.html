@@ -2344,6 +2344,31 @@
         ];
 
         const displayMeta = (enrichedMeta && typeof enrichedMeta === 'object') ? enrichedMeta : meta;
+        const shownValues = new Set();
+        let shown = new Set(PRIMARY_META_KEYS);
+
+        const formatMetadataValue = (val) => {
+          if(Array.isArray(val)){
+            return val.join(', ');
+          }
+          if(typeof val === 'object'){
+            return JSON.stringify(val, null, 2);
+          }
+          return String(val);
+        };
+
+        const addMetadataRow = (container, label, value, key) => {
+          const valueText = formatMetadataValue(value).trim();
+          if(!valueText || shownValues.has(valueText)){
+            return false;
+          }
+          container.appendChild(makeRow(label, valueText));
+          shownValues.add(valueText);
+          if(key){
+            shown.add(key);
+          }
+          return true;
+        };
 
         // Collapsed: show only primary keys
         const primaryWrap = document.createElement('div');
@@ -2351,8 +2376,9 @@
         let hasPrimary = false;
         PRIMARY_META_KEYS.forEach(key => {
           if(enrichedMeta && enrichedMeta[key] !== undefined && enrichedMeta[key] !== null && String(enrichedMeta[key]).trim() !== ''){
-            primaryWrap.appendChild(makeRow(humanLabelFromKey(key), String(enrichedMeta[key])));
-            hasPrimary = true;
+            if(addMetadataRow(primaryWrap, humanLabelFromKey(key), enrichedMeta[key], key)){
+              hasPrimary = true;
+            }
           }
         });
         if(!hasPrimary){
@@ -2363,7 +2389,6 @@
         // Expanded: show all fields, grouped by type, skipping duplicates
         const extraWrap = document.createElement('div');
         extraWrap.className = 'metadata-extra';
-        let shown = new Set(PRIMARY_META_KEYS);
         GROUPS.forEach(group => {
           if(group.label === 'IPTC'){
             const iptc = enrichedMeta && enrichedMeta.iptc;
@@ -2392,8 +2417,7 @@
                 subHeader.textContent = 'Creator & Credits';
                 extraWrap.appendChild(subHeader);
                 creatorFields.forEach(([label, value, key]) => {
-                  extraWrap.appendChild(makeRow(label, String(value)));
-                  if(key) shown.add(key);
+                  addMetadataRow(extraWrap, label, value, key);
                 });
               }
 
@@ -2414,8 +2438,7 @@
                 subHeader.textContent = 'Rights & Licensing';
                 extraWrap.appendChild(subHeader);
                 rightsFields.forEach(([label, value, key]) => {
-                  extraWrap.appendChild(makeRow(label, String(value)));
-                  if(key) shown.add(key);
+                  addMetadataRow(extraWrap, label, value, key);
                 });
               }
 
@@ -2425,8 +2448,7 @@
                 subHeader.style.marginTop = '6px';
                 subHeader.textContent = 'Keywords';
                 extraWrap.appendChild(subHeader);
-                extraWrap.appendChild(makeRow('Keywords', iptc.keywords.join(', ')));
-                shown.add('keywords');
+                addMetadataRow(extraWrap, 'Keywords', iptc.keywords.join(', '), 'keywords');
               }
 
               const locationCreatedRows = entriesFromObject('Location Created', iptc.locationCreated);
@@ -2438,7 +2460,7 @@
                 subHeader.style.marginTop = '6px';
                 subHeader.textContent = 'Locations';
                 extraWrap.appendChild(subHeader);
-                locationRows.forEach(([label, value]) => extraWrap.appendChild(makeRow(label, value)));
+                locationRows.forEach(([label, value]) => addMetadataRow(extraWrap, label, value));
                 shown.add('locationCreated');
                 shown.add('locationShown');
               }
@@ -2467,8 +2489,7 @@
                 if(val === undefined || val === null) return;
                 const valueText = Array.isArray(val) ? val.join(', ') : String(val).trim();
                 if(valueText){
-                  extraWrap.appendChild(makeRow(humanLabelFromKey(key), valueText));
-                  shown.add(key);
+                  addMetadataRow(extraWrap, humanLabelFromKey(key), valueText, key);
                 }
               });
             }
@@ -2479,8 +2500,11 @@
           group.keys.forEach(key => {
             if(SKIP_META_KEYS.has(key)) return;
             if(displayMeta[key] !== undefined && displayMeta[key] !== null && String(displayMeta[key]).trim() !== '' && !shown.has(key)){
-              groupFields.push([key, displayMeta[key]]);
+              const valueText = formatMetadataValue(displayMeta[key]).trim();
+              if(!valueText || shownValues.has(valueText)) return;
+              groupFields.push([key, valueText]);
               shown.add(key);
+              shownValues.add(valueText);
             }
           });
           if(groupFields.length > 0){
@@ -2491,13 +2515,7 @@
             groupHeader.textContent = group.label;
             extraWrap.appendChild(groupHeader);
             groupFields.forEach(([key, val]) => {
-              if(Array.isArray(val)){
-                extraWrap.appendChild(makeRow(humanLabelFromKey(key), val.join(', ')));
-              }else if(typeof val === 'object'){
-                extraWrap.appendChild(makeRow(humanLabelFromKey(key), JSON.stringify(val, null, 2)));
-              }else{
-                extraWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
-              }
+              extraWrap.appendChild(makeRow(humanLabelFromKey(key), val));
             });
           }
         });
@@ -2505,14 +2523,7 @@
         Object.entries(displayMeta).forEach(([key, val]) => {
           if(SKIP_META_KEYS.has(key) || shown.has(key)) return;
           if(val === undefined || val === null || String(val).trim() === '') return;
-          if(Array.isArray(val)){
-            extraWrap.appendChild(makeRow(humanLabelFromKey(key), val.join(', ')));
-          }else if(typeof val === 'object'){
-            extraWrap.appendChild(makeRow(humanLabelFromKey(key), JSON.stringify(val, null, 2)));
-          }else{
-            extraWrap.appendChild(makeRow(humanLabelFromKey(key), String(val)));
-          }
-          shown.add(key);
+          addMetadataRow(extraWrap, humanLabelFromKey(key), val, key);
         });
 
         if(extraWrap.childNodes.length > 0){
