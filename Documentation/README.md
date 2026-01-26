@@ -122,8 +122,8 @@ Metadata is automatically extracted using a custom **Manifest Generator** script
  │         └── ...
  │
  ├── scripts/manifest_generator.py     # EXIF → JSON metadata builder
- ├── nh48_catalog.html         # Full catalog grid UI
- └── nh48_peak.html            # Per-peak detail view UI
+ ├── catalog/index.html        # Full catalog grid UI
+ └── pages/nh48_peak.html      # Per-peak detail view UI
 ```
 
 The system is static — **no backend required**. Distribution is handled through:
