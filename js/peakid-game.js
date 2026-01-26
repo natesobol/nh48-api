@@ -24,7 +24,8 @@
     struggledPeaks: new Set(),
     selectedCardId: null,
     usedSocialImages: new Set(),
-    currentSocialImage: null
+    currentSocialImage: null,
+    audioContext: null
   };
 
   const elements = {
@@ -110,6 +111,33 @@
     elements.liveRegion.textContent = message;
   };
 
+  const getAudioContext = () => {
+    if (state.audioContext) return state.audioContext;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return null;
+    state.audioContext = new AudioContext();
+    return state.audioContext;
+  };
+
+  const playPing = () => {
+    const context = getAudioContext();
+    if (!context) return;
+    if (context.state === 'suspended') {
+      context.resume();
+    }
+    const oscillator = context.createOscillator();
+    const gainNode = context.createGain();
+    oscillator.type = 'sine';
+    oscillator.frequency.value = 880;
+    gainNode.gain.value = 0.12;
+
+    oscillator.connect(gainNode);
+    gainNode.connect(context.destination);
+    oscillator.start();
+    gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.4);
+    oscillator.stop(context.currentTime + 0.4);
+  };
+
   const getCardState = (card) => ({
     x: Number(card.dataset.translateX || 0),
     y: Number(card.dataset.translateY || 0)
@@ -123,6 +151,29 @@
 
   const getSlotById = (slotId) =>
     document.querySelector(`[data-slot-id="${slotId}"]`);
+
+  const addSlotFeedback = (slot, isCorrect) => {
+    const existing = slot.querySelector('.peakid-slot-feedback');
+    if (existing) existing.remove();
+    const badge = document.createElement('span');
+    badge.className = `peakid-slot-feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+    badge.textContent = isCorrect ? '✅' : '❌';
+    slot.appendChild(badge);
+    const duration = prefersReducedMotion() ? 350 : 1200;
+    setTimeout(() => {
+      badge.remove();
+    }, duration);
+  };
+
+  const animateSlotResult = (slot, isCorrect) => {
+    if (prefersReducedMotion()) return;
+    slot.classList.remove('feedback-correct', 'feedback-incorrect');
+    void slot.offsetWidth;
+    slot.classList.add(isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+    slot.addEventListener('animationend', () => {
+      slot.classList.remove('feedback-correct', 'feedback-incorrect');
+    }, { once: true });
+  };
 
   const placeCardInSlot = (card, slot) => {
     const cardRect = card.getBoundingClientRect();
@@ -148,6 +199,11 @@
     slot.classList.remove('correct', 'incorrect');
     slot.classList.add(isCorrect ? 'correct' : 'incorrect');
     announce(isCorrect ? t('peakid.correctLabel') : t('peakid.incorrectLabel'));
+    addSlotFeedback(slot, isCorrect);
+    animateSlotResult(slot, isCorrect);
+    if (isCorrect) {
+      playPing();
+    }
 
     if (!isCorrect) {
       state.struggledPeaks.add(card.getAttribute('aria-label'));
@@ -242,6 +298,32 @@
     });
   };
 
+  const findSlotForCard = (card, x, y) => {
+    const slots = Array.from(elements.slots.querySelectorAll('.peakid-slot'));
+    const cardRect = card.getBoundingClientRect();
+    let bestSlot = null;
+    let bestScore = 0;
+
+    slots.forEach(slot => {
+      const rect = slot.getBoundingClientRect();
+      const overlapX = Math.max(0, Math.min(cardRect.right, rect.right) - Math.max(cardRect.left, rect.left));
+      const overlapY = Math.max(0, Math.min(cardRect.bottom, rect.bottom) - Math.max(cardRect.top, rect.top));
+      const overlapArea = overlapX * overlapY;
+      const slotArea = rect.width * rect.height;
+      const score = slotArea ? overlapArea / slotArea : 0;
+      if (score > bestScore) {
+        bestScore = score;
+        bestSlot = slot;
+      }
+    });
+
+    if (bestSlot && bestScore >= 0.25) {
+      return bestSlot;
+    }
+
+    return findSlotUnderPointer(x, y);
+  };
+
   const animateInertia = (card, velocity) => {
     if (prefersReducedMotion()) {
       setCardState(card, 0, 0);
@@ -334,9 +416,9 @@
       lastY = y + dy;
       lastTime = now;
 
-      const slot = findSlotUnderPointer(event.clientX, event.clientY);
+      const slot = findSlotForCard(card, event.clientX, event.clientY);
       elements.slots.querySelectorAll('.peakid-slot').forEach(el => {
-        el.classList.toggle('highlight', el === slot);
+        el.classList.toggle('highlight', el === slot && !el.dataset.assignedCard);
       });
     };
 
@@ -350,7 +432,7 @@
         el.classList.remove('highlight');
       });
 
-      const slot = findSlotUnderPointer(event.clientX, event.clientY);
+      const slot = findSlotForCard(card, event.clientX, event.clientY);
       if (slot && !slot.dataset.assignedCard) {
         const correct = placeCardInSlot(card, slot);
         state.roundPlaced += 1;
@@ -370,6 +452,9 @@
     card.addEventListener('pointermove', onPointerMove);
     card.addEventListener('pointerup', onPointerUp);
     card.addEventListener('pointercancel', onPointerUp);
+    card.addEventListener('dragstart', (event) => {
+      event.preventDefault();
+    });
 
     card.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
@@ -444,6 +529,7 @@
       img.src = peak.photo ? peak.photo.url : '';
       img.alt = peak.photo ? (peak.photo.alt || peak.photo.altText || peak.peakName) : peak.peakName;
       img.loading = 'lazy';
+      img.draggable = false;
 
       const caption = document.createElement('div');
       caption.className = 'peakid-card-caption';
@@ -453,6 +539,7 @@
       card.appendChild(img);
       card.appendChild(caption);
       elements.cards.appendChild(card);
+      card.draggable = false;
 
       initDragHandlers(card);
     });
