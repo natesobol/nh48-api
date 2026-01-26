@@ -19,3 +19,8 @@
 # Game routes
 /peakid-game /peakid-game.html 200
 /timed-peakid-game /timed-peakid-game.html 200
+
+# Virtual hike routes
+/virtual-hike /pages/virtual_hike.html 200
+/virtual-hike/ /pages/virtual_hike.html 200
+/virtual_hike.html /virtual-hike 301
