@@ -32,6 +32,9 @@ Created permanent redirects for consistency:
 - `/peaks/*` → `/peak/:splat` (301)
 - French equivalents
 
+### 4. Removed Legacy `peak.html`
+The old `peak.html` redirect page was removed so peak navigation flows through the canonical `/peak/{slug}` routes handled by the worker and redirects.
+
 ## URLs Now Supported
 
 All these URLs will work for Mount Washington:
