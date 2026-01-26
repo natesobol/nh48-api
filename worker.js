@@ -265,7 +265,7 @@ export default {
     // Since there's no origin server (GitHub Pages disabled), 
     // we serve static files directly from GitHub raw URLs
     // ============================================================
-    const staticExtensions = ['.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.woff', '.woff2', '.ttf', '.eot', '.geojson', '.txt', '.xml', '.webmanifest'];
+    const staticExtensions = ['.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.woff', '.woff2', '.ttf', '.eot', '.geojson', '.txt', '.xml', '.webmanifest', '.html'];
     const staticPrefixes = ['/css/', '/js/', '/data/', '/downloads/', '/images/', '/favicons/', '/photos/', '/i18n/', '/UI-Elements/', '/scripts/', '/license/', '/old/', '/templates/'];
     const staticFiles = ['/manifest.json', '/nh48API_logo.png', '/robots.txt', '/sitemap.xml', '/nh48-preview.png', '/BingSiteAuth.xml', '/image-sitemap.xml', '/page-sitemap.xml'];
 
