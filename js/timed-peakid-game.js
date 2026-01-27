@@ -24,16 +24,16 @@
   const config = {
     maxLives: 5,
     totalPieces: 20,
-    gameDuration: 120,
+    gameDuration: 150,
     maxZones: 6,
     minZones: 4,
-    startSpawnInterval: 1400,
-    minSpawnInterval: 450,
-    difficultyStepSeconds: 12,
+    startSpawnInterval: 1800,
+    minSpawnInterval: 650,
+    difficultyStepSeconds: 16,
     preloadCount: 6,
     preloadHoldMs: 3000,
-    minFallDurationSeconds: 8,
-    maxFallDurationSeconds: 13
+    minFallDurationSeconds: 10,
+    maxFallDurationSeconds: 15
   };
 
   const state = {
@@ -54,6 +54,11 @@
     difficultyLevel: 0,
     nextPieceId: 1,
     preloaded: new Map()
+  };
+
+  const audioState = {
+    context: null,
+    enabled: false
   };
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
@@ -160,16 +165,47 @@
     state.pieces = state.pieces.filter(item => item.id !== piece.id);
   };
 
+  const initAudio = () => {
+    if (audioState.context || audioState.enabled) return;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    audioState.context = new AudioContext();
+    audioState.enabled = true;
+  };
+
+  const playTone = (type) => {
+    if (!audioState.context) return;
+    const context = audioState.context;
+    if (context.state === 'suspended') {
+      context.resume().catch(() => {});
+    }
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    const now = context.currentTime;
+    const isCorrect = type === 'correct';
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(isCorrect ? 620 : 220, now);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(isCorrect ? 0.28 : 0.32, now + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + (isCorrect ? 0.35 : 0.45));
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start(now);
+    oscillator.stop(now + (isCorrect ? 0.38 : 0.5));
+  };
+
   const registerMatch = (piece) => {
     state.score += 10;
     state.matches += 1;
     removePiece(piece);
+    playTone('correct');
   };
 
   const registerMiss = (piece) => {
     state.misses += 1;
     state.lives = Math.max(0, state.lives - 1);
     removePiece(piece);
+    playTone('incorrect');
   };
 
   const attemptDrop = (piece) => {
@@ -212,10 +248,12 @@
     pieceEl.tabIndex = 0;
     pieceEl.setAttribute('role', 'button');
     pieceEl.setAttribute('aria-label', `${peak.peakName}`);
+    pieceEl.setAttribute('draggable', 'false');
     const img = document.createElement('img');
     img.src = peak.photoUrl;
     img.alt = peak.altText;
     img.loading = 'eager';
+    img.draggable = false;
     pieceEl.appendChild(img);
 
     const rect = gameArea.getBoundingClientRect();
@@ -271,6 +309,9 @@
     pieceEl.addEventListener('pointerup', releasePointer);
     pieceEl.addEventListener('pointercancel', releasePointer);
     pieceEl.addEventListener('lostpointercapture', releasePointer);
+    pieceEl.addEventListener('dragstart', (event) => {
+      event.preventDefault();
+    });
 
     pieceEl.addEventListener('focus', () => {
       piece.dragging = true;
@@ -304,7 +345,7 @@
     const nextLevel = Math.floor(state.elapsed / config.difficultyStepSeconds);
     if (nextLevel <= state.difficultyLevel) return;
     state.difficultyLevel = nextLevel;
-    state.spawnInterval = Math.max(config.minSpawnInterval, state.spawnInterval - 120);
+    state.spawnInterval = Math.max(config.minSpawnInterval, state.spawnInterval - 60);
   };
 
   const tick = (timestamp) => {
@@ -395,6 +436,7 @@
   const startGame = () => {
     if (!state.peaks.length) return;
     resetGame();
+    initAudio();
     state.running = true;
     gameOverOverlay?.classList.remove('active');
     state.lastFrame = null;
@@ -421,7 +463,7 @@
         altText: photo.altText || photo.alt || `${item.peakName} summit photo`
       }));
     }).filter(item => item.photoUrl);
-    config.totalPieces = Math.max(100, state.peaks.length);
+    config.totalPieces = Math.min(state.peaks.length, 60);
     state.queue = shuffle(state.peaks);
     buildZonesFromQueue();
     preloadUpcoming();
