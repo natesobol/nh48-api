@@ -288,6 +288,34 @@ export default {
       const targetPath = pathname.startsWith('/fr/') ? `/fr${legacyRedirectMap[legacyKey]}` : legacyRedirectMap[legacyKey];
       return Response.redirect(`${SITE}${targetPath}`, 301);
     }
+
+    if (pathname === '/photos' || pathname === '/photos/') {
+      const githubUrl = `${RAW_BASE}/photos/index.html`;
+      try {
+        const res = await fetch(githubUrl, {
+          headers: { 'User-Agent': 'NH48-SSR/1.0' },
+          cf: { cacheTtl: 0, cacheEverything: false }
+        });
+
+        if (!res.ok) {
+          console.log(`[Static] Not found: ${githubUrl} (${res.status})`);
+          return new Response('Not Found', { status: 404 });
+        }
+
+        const body = await res.arrayBuffer();
+        return new Response(body, {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      } catch (err) {
+        console.error(`[Static] Error: ${err.message}`);
+        return new Response('Internal Server Error', { status: 500 });
+      }
+    }
     
     // Check if this is a static file request (but not an SSR route)
     const hasStaticExtension = staticExtensions.some(ext => pathname.toLowerCase().endsWith(ext));

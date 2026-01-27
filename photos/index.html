@@ -97,8 +97,9 @@
             </select>
           </div>
           <div class="filter-group range-filter-group">
-            <span class="filter-label">Filter Ranges</span>
-            <div id="rangeFilters" class="range-filter-list" aria-label="Filter by range"></div>
+            <label class="filter-label" for="rangeFilters">Filter Ranges</label>
+            <select id="rangeFilters" class="range-filter-select" aria-label="Filter by range" multiple></select>
+            <p class="range-filter-help">Hold Ctrl (Windows) or ⌘ (Mac) to select multiple ranges.</p>
           </div>
         </div>
       </div>
@@ -115,6 +116,17 @@
       </div>
       <div id="photos-container" class="photos-container"></div>
       <div id="photosEmpty" class="empty" hidden>No photos match your filters.</div>
+
+      <div id="photoLightbox" class="photo-lightbox" aria-hidden="true" hidden>
+        <div class="photo-lightbox__backdrop" data-lightbox-close></div>
+        <div class="photo-lightbox__content" role="dialog" aria-modal="true" aria-label="Expanded photo view">
+          <button type="button" class="photo-lightbox__close" aria-label="Close expanded photo view" data-lightbox-close>×</button>
+          <figure class="photo-lightbox__figure">
+            <img id="photoLightboxImage" alt="" />
+            <figcaption id="photoLightboxCaption"></figcaption>
+          </figure>
+        </div>
+      </div>
     </main>
 
     <script src="/js/photos.js" defer></script>
