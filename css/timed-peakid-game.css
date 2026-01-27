@@ -27,7 +27,7 @@ body {
 main {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 24px clamp(16px, 4vw, 32px) 48px;
+  padding: 20px clamp(16px, 4vw, 32px) 48px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -37,21 +37,22 @@ main {
   background: color-mix(in srgb, var(--timed-card) 75%, #0b1222 25%);
   border: 1px solid var(--timed-border);
   border-radius: 18px;
-  padding: clamp(18px, 3vw, 28px);
+  padding: clamp(14px, 2.4vw, 22px);
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
 .timed-hero h1 {
   margin: 0;
-  font-size: clamp(28px, 4vw, 38px);
+  font-size: clamp(24px, 3.4vw, 34px);
   color: var(--timed-accent);
 }
 
 .timed-hero p {
   margin: 0;
   color: var(--timed-muted);
-  line-height: 1.6;
+  line-height: 1.5;
+  font-size: 0.95rem;
 }
 
 .timed-cta {
@@ -114,7 +115,7 @@ main {
 
 .timed-game-area {
   position: relative;
-  height: clamp(340px, 50vh, 520px);
+  height: clamp(380px, 54vh, 560px);
   border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.35);
   background:
@@ -160,13 +161,14 @@ main {
 
 .falling-piece {
   position: absolute;
-  width: 120px;
+  width: 140px;
   aspect-ratio: 4 / 3;
   border-radius: 12px;
   border: 2px solid rgba(148, 163, 184, 0.6);
   background: rgba(15, 23, 42, 0.8);
   overflow: hidden;
   cursor: grab;
+  user-select: none;
   touch-action: none;
   box-shadow: 0 12px 22px rgba(0, 0, 0, 0.45);
 }
@@ -186,6 +188,8 @@ main {
   height: 100%;
   object-fit: cover;
   display: block;
+  pointer-events: none;
+  user-select: none;
 }
 
 .timed-status {
@@ -266,6 +270,6 @@ main {
   }
 
   .falling-piece {
-    width: 96px;
+    width: 112px;
   }
 }
