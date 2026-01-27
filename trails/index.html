@@ -325,6 +325,33 @@
       line-height: 1.5;
     }
 
+    .beta-banner {
+      margin: 0.75rem 0 1rem;
+      padding: 0.6rem 0.9rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      background: rgba(74, 158, 255, 0.15);
+      color: var(--text-primary);
+      border: 1px solid rgba(74, 158, 255, 0.45);
+    }
+
+    .beta-banner span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.4rem;
+      height: 1.4rem;
+      border-radius: 999px;
+      background: rgba(74, 158, 255, 0.35);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
     .page-header .page-subtitle {
       margin: 0.35rem 0 0;
       font-weight: 600;
@@ -1140,6 +1167,10 @@
         <li aria-current="page">White Mountain Trails</li>
       </ol>
     </nav>
+    <div class="beta-banner" role="status" aria-live="polite">
+      <span>β</span>
+      <strong>Beta:</strong> These pages are in active development.
+    </div>
     <h1 data-i18n="trails.title">White Mountain Trails API Map Tool</h1>
     <h2 class="page-subtitle" data-i18n="trails.subtitle">Open peak, trail, and route data structure for the White Mountains.</h2>
     <p data-i18n="trails.intro">White Mountain National Forest — compiled by Nate Sobol. Use this as a quick trail finder and completion tracker. Open API and datasets for New Hampshire’s 4,000-foot mountains.</p>

@@ -200,6 +200,33 @@
       line-height: 1.5;
     }
 
+    .beta-banner {
+      margin: 0.75rem 0 1rem;
+      padding: 0.6rem 0.9rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      background: rgba(74, 158, 255, 0.15);
+      color: var(--text-primary);
+      border: 1px solid rgba(74, 158, 255, 0.45);
+    }
+
+    .beta-banner span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.4rem;
+      height: 1.4rem;
+      border-radius: 999px;
+      background: rgba(74, 158, 255, 0.35);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
     .title-row {
       display: flex;
       align-items: center;
@@ -759,6 +786,10 @@
         <li aria-current="page">Long Trails</li>
       </ol>
     </nav>
+    <div class="beta-banner" role="status" aria-live="polite">
+      <span>β</span>
+      <strong>Beta:</strong> These pages are in active development.
+    </div>
     <div class="title-row">
       <img class="page-logo" src="/Long_Trails_Logo.png" alt="Long Trails logo">
       <div class="title-text">
