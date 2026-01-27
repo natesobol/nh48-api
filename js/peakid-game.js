@@ -4,6 +4,7 @@
   const PEAKS_PER_ROUND = 6;
   const INERTIA_DURATION_MS = 450;
   const INERTIA_FRICTION = 0.92;
+  const SOCIAL_CANONICAL_URL = 'https://nh48.info/peakid';
 
   const prefersReducedMotion = () =>
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -25,6 +26,13 @@
     selectedCardId: null,
     usedSocialImages: new Set(),
     currentSocialImage: null,
+    socialSettings: {
+      showScore: true,
+      showDate: true,
+      showName: false,
+      useGradient: true,
+      name: ''
+    },
     audioContext: null
   };
 
@@ -46,7 +54,15 @@
     socialCard: document.getElementById('peakid-social-card'),
     socialCardTitle: document.getElementById('peakid-social-title'),
     socialCardScore: document.getElementById('peakid-social-score'),
+    socialCardName: document.getElementById('peakid-social-name'),
     socialCardTimestamp: document.getElementById('peakid-social-timestamp'),
+    socialCardLink: document.getElementById('peakid-social-link'),
+    socialSettingsShowScore: document.getElementById('social-show-score'),
+    socialSettingsShowDate: document.getElementById('social-show-date'),
+    socialSettingsShowName: document.getElementById('social-show-name'),
+    socialSettingsUseGradient: document.getElementById('social-use-gradient'),
+    socialSettingsNameInput: document.getElementById('social-name-input'),
+    shareButtons: document.getElementById('peakid-share-buttons'),
     downloadCardButton: document.getElementById('peakid-download-card'),
     regenCardButton: document.getElementById('peakid-regenerate-card'),
     splashBackground: document.getElementById('splash-background')
@@ -643,8 +659,138 @@
     return shuffle(pool);
   };
 
+  const sharePlatforms = [
+    {
+      name: 'Facebook',
+      category: 'major',
+      buildUrl: share => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(share.url)}`
+    },
+    {
+      name: 'X',
+      category: 'major',
+      buildUrl: share => `https://twitter.com/intent/tweet?url=${encodeURIComponent(share.url)}&text=${encodeURIComponent(share.text)}`
+    },
+    {
+      name: 'LinkedIn',
+      category: 'major',
+      buildUrl: share => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(share.url)}`
+    },
+    {
+      name: 'Reddit',
+      category: 'major',
+      buildUrl: share => `https://www.reddit.com/submit?url=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+    },
+    {
+      name: 'Email',
+      category: 'major',
+      buildUrl: share => `mailto:?subject=${encodeURIComponent(share.text)}&body=${encodeURIComponent(share.url)}`
+    },
+    {
+      name: 'WhatsApp',
+      category: 'major',
+      buildUrl: share => `https://wa.me/?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+    },
+    {
+      name: 'Telegram',
+      category: 'international',
+      buildUrl: share => `https://t.me/share/url?url=${encodeURIComponent(share.url)}&text=${encodeURIComponent(share.text)}`
+    },
+    {
+      name: 'Weibo',
+      category: 'international',
+      buildUrl: share => `https://service.weibo.com/share/share.php?url=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+    },
+    {
+      name: 'VK',
+      category: 'international',
+      buildUrl: share => `https://vk.com/share.php?url=${encodeURIComponent(share.url)}`
+    },
+    {
+      name: 'Line',
+      category: 'international',
+      buildUrl: share => `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(share.url)}`
+    },
+    {
+      name: 'KakaoTalk',
+      category: 'international',
+      buildUrl: share => `https://story.kakao.com/share?url=${encodeURIComponent(share.url)}`
+    },
+    {
+      name: 'Mastodon',
+      category: 'international',
+      buildUrl: share => `https://mastodon.social/share?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+    },
+    {
+      name: 'Pocket',
+      category: 'international',
+      buildUrl: share => `https://getpocket.com/edit?url=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+    }
+  ];
+
+  const buildShareButtons = () => {
+    if (!elements.shareButtons) return;
+    const majorContainer = elements.shareButtons.querySelector('.major-networks');
+    const internationalContainer = elements.shareButtons.querySelector('.international-networks');
+    if (!majorContainer || !internationalContainer) return;
+
+    const total = TOTAL_ROUNDS * PEAKS_PER_ROUND;
+    const share = {
+      url: SOCIAL_CANONICAL_URL,
+      text: t('peakid.socialShareText', { score: state.totalCorrect, total })
+    };
+
+    majorContainer.innerHTML = '';
+    internationalContainer.innerHTML = '';
+
+    sharePlatforms.forEach(platform => {
+      const link = document.createElement('a');
+      link.className = `share-button ${platform.category}`;
+      link.href = platform.buildUrl(share);
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = platform.name;
+      link.setAttribute('aria-label', `${t('peakid.socialShareHeading')}: ${platform.name}`);
+
+      if (platform.category === 'major') {
+        majorContainer.appendChild(link);
+      } else {
+        internationalContainer.appendChild(link);
+      }
+    });
+  };
+
+  const syncSocialSettings = () => {
+    if (!elements.socialSettingsShowScore) return;
+    state.socialSettings.showScore = elements.socialSettingsShowScore.checked;
+    state.socialSettings.showDate = elements.socialSettingsShowDate.checked;
+    state.socialSettings.showName = elements.socialSettingsShowName.checked;
+    state.socialSettings.useGradient = elements.socialSettingsUseGradient.checked;
+    state.socialSettings.name = elements.socialSettingsNameInput.value.trim();
+  };
+
+  const initSocialCardSettings = () => {
+    if (!elements.socialSettingsShowScore) return;
+    elements.socialSettingsShowScore.checked = state.socialSettings.showScore;
+    elements.socialSettingsShowDate.checked = state.socialSettings.showDate;
+    elements.socialSettingsShowName.checked = state.socialSettings.showName;
+    elements.socialSettingsUseGradient.checked = state.socialSettings.useGradient;
+    elements.socialSettingsNameInput.value = state.socialSettings.name;
+
+    const updateSettings = () => {
+      syncSocialSettings();
+      updateSocialCardContent();
+    };
+
+    elements.socialSettingsShowScore.addEventListener('change', updateSettings);
+    elements.socialSettingsShowDate.addEventListener('change', updateSettings);
+    elements.socialSettingsShowName.addEventListener('change', updateSettings);
+    elements.socialSettingsUseGradient.addEventListener('change', updateSettings);
+    elements.socialSettingsNameInput.addEventListener('input', updateSettings);
+  };
+
   const updateSocialCardContent = () => {
     if (!elements.socialCard) return;
+    syncSocialSettings();
 
     const pool = getSocialImagePool();
     let selected = pool.find(url => !state.usedSocialImages.has(url));
@@ -658,12 +804,39 @@
     }
 
     elements.socialCard.style.backgroundImage = selected ? `url(${selected})` : 'none';
+    elements.socialCard.classList.toggle('gradient', state.socialSettings.useGradient);
     elements.socialCardTitle.textContent = t('peakid.socialTitle');
-    elements.socialCardScore.textContent = t('peakid.socialScore', {
-      score: state.totalCorrect,
-      total: TOTAL_ROUNDS * PEAKS_PER_ROUND
-    });
-    elements.socialCardTimestamp.textContent = `${t('peakid.socialTimestamp')}: ${formatTimestamp()}`;
+    if (elements.socialCardScore) {
+      elements.socialCardScore.hidden = !state.socialSettings.showScore;
+      if (state.socialSettings.showScore) {
+        elements.socialCardScore.textContent = t('peakid.socialPeaksIdentified', {
+          score: state.totalCorrect,
+          total: TOTAL_ROUNDS * PEAKS_PER_ROUND
+        });
+      }
+    }
+    if (elements.socialCardTimestamp) {
+      elements.socialCardTimestamp.hidden = !state.socialSettings.showDate;
+      if (state.socialSettings.showDate) {
+        elements.socialCardTimestamp.textContent = `${t('peakid.socialTimestamp')}: ${formatTimestamp()}`;
+      }
+    }
+    if (elements.socialCardName) {
+      const hasName = state.socialSettings.showName && state.socialSettings.name;
+      elements.socialCardName.hidden = !hasName;
+      if (hasName) {
+        elements.socialCardName.textContent = t('peakid.socialNameLine', {
+          name: state.socialSettings.name
+        });
+      }
+    }
+    if (elements.socialCardLink) {
+      const anchor = elements.socialCardLink.querySelector('a');
+      if (anchor) {
+        anchor.href = SOCIAL_CANONICAL_URL;
+      }
+    }
+    buildShareButtons();
   };
 
   const updateSocialCardOrientation = (orientation) => {
@@ -713,11 +886,14 @@
       state.rounds = buildRounds(peaks);
       renderRound();
       initSocialCardHandlers();
+      initSocialCardSettings();
+      buildShareButtons();
       if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
         window.NH48_I18N.onLangChange(() => {
           updateScoreboard();
           elements.submitButton.textContent = t('peakid.submit');
           updateSocialCardContent();
+          buildShareButtons();
         });
       }
     } catch (error) {

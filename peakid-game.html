@@ -22,7 +22,7 @@
   <meta name="description" data-i18n="peakid.metaDescription" data-i18n-attr="content" content="Play the NH48 PeakID Game and match summit photos to the 48 New Hampshire four-thousand-foot peaks across eight rounds.">
   <meta name="keywords" content="NH48, PeakID game, New Hampshire 4000 footers, mountain photo quiz, hiking game, summit photos">
   <meta name="robots" content="index,follow">
-  <link rel="canonical" href="https://nh48.info/peakid-game.html">
+  <link rel="canonical" href="https://nh48.info/peakid">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -130,12 +130,44 @@
           <button id="peakid-regenerate-card" class="peakid-secondary-button" type="button" data-i18n="peakid.generateAnotherImage">Generate Another Image</button>
           <button id="peakid-download-card" class="peakid-secondary-button" type="button" data-i18n="peakid.downloadCard">Download Social Card</button>
         </div>
-        <div class="peakid-social-preview">
-          <div id="peakid-social-card" class="peakid-social-card landscape" role="img" aria-label="PeakID social card preview">
-            <h3 id="peakid-social-title" data-i18n="peakid.socialTitle">NH48 PeakID Game</h3>
-            <p id="peakid-social-score">Score: 0 / 48</p>
-            <p id="peakid-social-timestamp">Generated: Today</p>
+        <fieldset id="peakid-social-settings" class="peakid-social-settings">
+          <legend data-i18n="peakid.socialSettingsHeading">Card settings</legend>
+          <div class="peakid-setting">
+            <input id="social-show-score" type="checkbox" checked>
+            <label for="social-show-score" data-i18n="peakid.socialShowScore">Show score line</label>
           </div>
+          <div class="peakid-setting">
+            <input id="social-show-date" type="checkbox" checked>
+            <label for="social-show-date" data-i18n="peakid.socialShowDate">Show date line</label>
+          </div>
+          <div class="peakid-setting">
+            <input id="social-show-name" type="checkbox">
+            <label for="social-show-name" data-i18n="peakid.socialShowName">Show your name</label>
+          </div>
+          <div class="peakid-setting">
+            <input id="social-use-gradient" type="checkbox" checked>
+            <label for="social-use-gradient" data-i18n="peakid.socialUseGradient">Apply gradient overlay</label>
+          </div>
+          <div class="peakid-setting">
+            <label for="social-name-input" data-i18n="peakid.socialNameLabel">Your name</label>
+            <input id="social-name-input" type="text" placeholder="" autocomplete="name">
+          </div>
+        </fieldset>
+        <div class="peakid-social-preview">
+          <div id="peakid-social-card" class="peakid-social-card landscape gradient" role="img" aria-label="PeakID social card preview">
+            <h3 id="peakid-social-title" data-i18n="peakid.socialTitle">NH48 PeakID Game</h3>
+            <p id="peakid-social-score" class="peakid-score-label">Score: 0 / 48</p>
+            <p id="peakid-social-name" class="peakid-social-name" hidden></p>
+            <p id="peakid-social-timestamp">Generated: Today</p>
+            <p id="peakid-social-link" class="peakid-social-link">
+              <a href="https://nh48.info/peakid" target="_blank" rel="noopener" data-i18n="peakid.socialLink">https://nh48.info/peakid</a>
+            </p>
+          </div>
+        </div>
+        <div id="peakid-share-buttons" class="peakid-share-buttons">
+          <h3 data-i18n="peakid.socialShareHeading">Share your score</h3>
+          <div class="peakid-share-group major-networks"></div>
+          <div class="peakid-share-group international-networks"></div>
         </div>
       </div>
     </div>
