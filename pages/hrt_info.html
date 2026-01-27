@@ -152,6 +152,47 @@ blockquote{
 .info-blurb p{
   margin:0;
 }
+/* Warning log style – translucent yellow box, always expanded */
+.warning-log{
+  margin:16px 0;
+  border:2px solid rgba(253, 224, 71, 0.5); /* yellow border with transparency */
+  border-radius:12px;
+  background:linear-gradient(180deg, rgba(253, 230, 138, 0.3), rgba(254, 243, 199, 0.3));
+  overflow:hidden;
+  color:var(--ink);
+}
+.warning-log summary{
+  list-style:none;
+  cursor:default; /* summary is not toggled because details is open by default */
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:700;
+  color:#b45309; /* dark amber text */
+}
+.warning-log summary::-webkit-details-marker{
+  display:none;
+}
+.warning-log .summary-title i{
+  font-size:18px;
+  line-height:1;
+  color:#f59e0b; /* amber icon colour */
+}
+.warning-log .warning-body{
+  border-top:1px solid rgba(253, 224, 71, 0.4);
+  padding:12px 16px 16px;
+  display:grid;
+  gap:10px;
+}
+.warning-log .warning-body p{
+  margin:0;
+  color:var(--ink);
+  line-height:1.5;
+}
+.warning-log .warning-body strong{
+  color:#d97706; /* stronger amber for emphasised phrases */
+}
 .page-breadcrumbs{
   margin:10px 0 18px;
   font-size:13px;
@@ -370,6 +411,20 @@ blockquote{
       </p>
     </header>
 
+    <details class="warning-log" open>
+      <summary>
+        <span class="summary-title">
+          <i class="icon-warning" aria-hidden="true">⚠️</i>
+          Important Trail Warnings
+        </span>
+      </summary>
+      <div class="warning-body">
+        <p><strong>Trail is not frequently traversed in winter</strong> and should be expected to break a majority or the entirety of the trail at any given time from October until May.</p>
+        <p><strong>With weather in careful consideration,</strong> take note of exposure signage and trailhead notices and recommendations from the USFS before entering exposed or alpine areas &amp; zones.</p>
+        <!-- Additional warnings can be added here in the future -->
+      </div>
+    </details>
+
     <div class="info-blurb" role="note">
       <i class="icon-info" aria-hidden="true">&#9432;</i>
       <p><strong>Notice:</strong> This page is for background information only and is not intended for emergency planning. Unofficial information compiled by the trail adopter and trusted references.</p>
@@ -439,11 +494,11 @@ blockquote{
         </dl>
         <dl class="metric-card">
           <dt>Water sources</dt>
-          <dd>Lower Bumpus Brook; spring near Pine Link junction; hut (seasonal).</dd>
+          <dd>Lower <a href="#poi-waterfalls" aria-label="Bumpus Brook in points of interest section">Bumpus Brook</a>; spring near <a href="#poi-junctions" aria-label="Pine Link Junction in points of interest section">Pine Link junction</a>; hut (seasonal).</dd>
         </dl>
         <dl class="metric-card">
           <dt>Designations</dt>
-          <dd>White Mountain National Forest; intersects the AT (Osgood Trail); NH 4,000-footer list.</dd>
+          <dd>White Mountain National Forest; intersects the AT (<a href="/howker-ridge#map" aria-label="Osgood Trail junction on Howker Ridge map">Osgood Trail</a>); NH 4,000-footer list.</dd>
         </dl>
         <dl class="metric-card">
           <dt>Trailhead &amp; parking</dt>
@@ -466,24 +521,24 @@ blockquote{
 
     <section class="section" id="history">
       <h2>Trail History</h2>
-      <p>The Howker Ridge Trail traces its roots to the late 19th century and is named for the Howker family, notably William Howker, who owned farmland at the base of the ridge. Early trail builders Eugene B. Cook and William H. Peek cut this path between 1899 and 1901, establishing a direct route up Mount Madison’s rugged northeast spur. “Howk” became a local term for the ridge’s rocky knobs, and by the early 1900s hikers were already referring to the four peaklets on the ridge as “the Howks.”</p>
-      <p>In the early 20th century, logging in the Northern Presidentials obliterated many trails, including sections of paths in Randolph. The Randolph Mountain Club (RMC) was founded in 1910 to rebuild and maintain these routes. Under RMC stewardship, the Howker Ridge Trail was restored and maintained for public use, preserving its historical route. By 1916, guidebooks noted open views from spots like Blueberry Ledge on the lower ridge, though today the forest has regrown. The trail remains a less-traveled path to Mount Madison, retaining old-fashioned wilderness charm even as it became part of the White Mountain network.</p>
+      <p>The <a href="/howker-ridge" aria-label="Howker Ridge Trail interactive map &amp; data">Howker Ridge Trail</a> traces its roots to the late 19th century and is named for the Howker family, notably William Howker, who owned farmland at the base of the ridge. Early trail builders Eugene B. Cook and William H. Peek cut this path between 1899 and 1901, establishing a direct route up <a href="/nh-4000-footers-info#mount-madison" aria-label="Mount Madison on the NH4000-footers info page">Mount Madison</a>’s rugged northeast spur. “Howk” became a local term for the ridge’s rocky knobs, and by the early 1900s hikers were already referring to the four peaklets on the ridge as “the Howks.”</p>
+      <p>In the early 20th century, logging in the Northern Presidentials obliterated many trails, including sections of paths in Randolph. The Randolph Mountain Club (RMC) was founded in 1910 to rebuild and maintain these routes. Under RMC stewardship, the Howker Ridge Trail was restored and maintained for public use, preserving its historical route. By 1916, guidebooks noted open views from spots like <a href="#poi-ridgeline" aria-label="Blueberry Ledge in points of interest section">Blueberry Ledge</a> on the lower ridge, though today the forest has regrown. The trail remains a less-traveled path to Mount Madison, retaining old-fashioned wilderness charm even as it became part of the White Mountain network.</p>
       <p class="photo-alt">Descriptive alt text: View of the four “Howks” from just below Osgood Junction.</p>
     </section>
 
     <section class="section" id="construction">
       <h2>Trail Construction</h2>
       <p>Constructed by local Randolph hikers at the turn of the 20th century, the Howker Ridge Trail was carved out of steep mountainside by hand. Builders Cook and Peek aligned the route along a natural spur ridge, threading past cliffs and waterfalls and over the ridge’s humps. The initial path likely followed game routes and logging traces, evolving into a formal trail with blazes and a primitive footbed.</p>
-      <p>Given the era of its creation (1899–1901), the trail was built with simple tools: axes and saws to clear blowdowns, and hoes or shovels to cut rudimentary waterbars. The alignment cleverly takes advantage of natural features — following Bumpus Brook for an easier grade early on, then switching to the ridge crest where the footing is solid rock and ledge.</p>
+      <p>Given the era of its creation (1899–1901), the trail was built with simple tools: axes and saws to clear blowdowns, and hoes or shovels to cut rudimentary waterbars. The alignment cleverly takes advantage of natural features — following <a href="#poi-waterfalls" aria-label="Bumpus Brook in points of interest section">Bumpus Brook</a> for an easier grade early on, then switching to the ridge crest where the footing is solid rock and ledge.</p>
       <p>Over time, sections have been improved but the trail still largely reflects original 1900s construction. Stone cairns were added above treeline to mark the route through open boulder fields. Timber steps or bog bridges exist only at a few lower wet spots, leaving most of the climb as a classic White Mountain scramble over roots, rocks, and ledges.</p>
-      <p class="photo-alt">Descriptive alt text: Devil’s Kitchen Gorge near Bumpus Basin.</p>
+      <p class="photo-alt">Descriptive alt text: <a href="#poi-waterfalls" aria-label="Devil’s Kitchen in points of interest section">Devil’s Kitchen</a> Gorge near Bumpus Basin.</p>
     </section>
 
     <section class="section" id="geography">
       <h2>Trail Geography &amp; Topography</h2>
-      <p>The Howker Ridge Trail ascends the north side of Mount Madison, following a spur ridge that separates two drainages. For the first mile, the trail parallels Bumpus Brook, a tumbling stream that carves a mossy ravine through hardwood and spruce forest. Here the terrain is gentle by White Mountain standards — hikers traverse bog bridges and moderate grades while the brook plunges over cascades in a cleft beside the trail.</p>
-      <p>Notable features include the Devil’s Kitchen, a steep-walled mini-gorge where the brook churns, and nearby waterfall plunges that have carved potholes into the granite streambed. As the trail leaves the brook and climbs onto the ridge, the topography shifts to steeper slopes and rocky outcrops.</p>
-      <p>Above ~2,500 feet, Howker Ridge narrows into a spine with increasingly panoramic aspects. The trail clambers up four hump-like knobs (the “Howks”), connected by short cols that drop and re-climb. The ridge’s slope steepens, requiring hands-and-feet scrambling over ledges and boulders in places. The environment transitions from dense spruce-fir to krummholz and then alpine tundra as the trail nears timberline around the Third and Fourth Howk.</p>
+      <p>The Howker Ridge Trail ascends the north side of <a href="/nh-4000-footers-info#mount-madison" aria-label="Mount Madison on the NH4000-footers info page">Mount Madison</a>, following a spur ridge that separates two drainages. For the first mile, the trail parallels Bumpus Brook, a tumbling stream that carves a mossy ravine through hardwood and spruce forest. Here the terrain is gentle by White Mountain standards — hikers traverse bog bridges and moderate grades while the brook plunges over cascades in a cleft beside the trail.</p>
+      <p>Notable features include the <a href="#poi-waterfalls" aria-label="Devil’s Kitchen in points of interest section">Devil’s Kitchen</a>, a steep-walled mini-gorge where the brook churns, and nearby waterfall plunges that have carved potholes into the granite streambed. As the trail leaves the brook and climbs onto the ridge, the topography shifts to steeper slopes and rocky outcrops.</p>
+      <p>Above ~2,500 feet, Howker Ridge narrows into a spine with increasingly panoramic aspects. The trail clambers up four hump-like knobs (the “Howks”), connected by short cols that drop and re-climb. The ridge’s slope steepens, requiring hands-and-feet scrambling over ledges and boulders in places. The environment transitions from dense spruce-fir to krummholz and then alpine tundra as the trail nears timberline around the <a href="#poi-ridgeline" aria-label="Third Howk in points of interest section">Third Howk</a> and <a href="#poi-ridgeline" aria-label="Fourth Howk in points of interest section">Fourth Howk</a>.</p>
       <p>Above ~4,000 feet, terrain is predominantly broken talus and bedrock. The Howker Ridge Trail meets the Osgood Trail (Appalachian Trail) on Madison’s summit cone, where the topography eases into the broad dome of Mount Madison (5,366 ft).</p>
       <p class="photo-alt">Descriptive alt text: Randolph East Pinkham B parking trail sign.</p>
     </section>
@@ -504,14 +559,14 @@ blockquote{
     <section class="section" id="seasonal">
       <h2>Seasonal Conditions &amp; Best Times</h2>
       <p>The optimal hiking season is late spring through fall (May through October). In late spring and early summer, Bumpus Brook flows strongly and alpine wildflowers bloom above treeline. Black flies can be ferocious in June, so many prefer mid-summer when bugs subside. Summer offers the most reliable weather and longest daylight, though hikers should be prepared for cold winds or thunderstorms on Mount Madison’s summit even in July.</p>
-      <p>By late September and early October, fall foliage lights up the surrounding forests. Winter and early spring ascents are recommended only for experienced mountaineers. The trail is typically not traveled in winter; expect to break trail through deep snow and carry snowshoes plus technical gear. Above treeline, the ridge is fully exposed to Presidential Range weather, with high winds and arctic conditions from November through April. A safer winter strategy is often to ascend Howker Ridge on a clear day and descend via a safer trail like Valley Way.</p>
+      <p>By late September and early October, fall foliage lights up the surrounding forests. Winter and early spring ascents are recommended only for experienced mountaineers. The trail is typically not traveled in winter; expect to break trail through deep snow and carry snowshoes plus technical gear. Above treeline, the ridge is fully exposed to Presidential Range weather, with high winds and arctic conditions from November through April. A safer winter strategy is often to ascend Howker Ridge on a clear day and descend via a safer trail like <a href="/howker-ridge#map" aria-label="Valley Way on Howker Ridge map">Valley Way</a>.</p>
       <p class="photo-alt">Descriptive alt text: Mt. Madison summit in October.</p>
     </section>
 
     <section class="section" id="ecology">
       <h2>Ecology &amp; Wildlife</h2>
       <p>Hiking the Howker Ridge Trail is a journey through multiple ecological zones. Deciduous woodlands dominate the lower mile: birch, beech, and maple trees arch over the trail until about 2,000 feet. Bumpus Brook’s cold water supports small brook trout and an abundance of mosses and ferns along its banks. The constant cascade of water and deep shade create a cool microclimate cherished by amphibians and delicate plants like foamflower.</p>
-      <p>Wildlife signs are common — hikers might notice moose tracks near the brook and up the ridge to Pine Link Junction. Black bears are infrequent but possible visitors at lower elevations, and smaller creatures like red squirrels and chipmunks are frequently seen.</p>
+      <p>Wildlife signs are common — hikers might notice moose tracks near the brook and up the ridge to <a href="#poi-junctions" aria-label="Pine Link Junction in points of interest section">Pine Link Junction</a>. Black bears are infrequent but possible visitors at lower elevations, and smaller creatures like red squirrels and chipmunks are frequently seen.</p>
       <p>Climbing higher, the forest transitions to boreal spruce-fir. Around 3,500–4,000 feet, trees become stunted and give way to krummholz, the gnarled shrub-like spruce/fir at treeline. Above treeline, alpine tundra takes over. Cushion plants and alpine grasses grow in patches among the rocky talus. This area experiences a very short growing season; staying on rocks protects slow-growing plants.</p>
       <p class="photo-alt">Descriptive alt text: USFS stop sign at Pine Link (West) Junction.</p>
     </section>
@@ -522,15 +577,15 @@ blockquote{
         <p><strong>Important:</strong> This page is for trip planning only. Weather, snow, and trail conditions change rapidly. Forecasts, GPS coordinates, and third-party feeds may be inaccurate or delayed. By using this page you agree that you are solely responsible for your safety and decisions in the field. Always carry proper gear, check multiple sources, and turn back if conditions deteriorate.</p>
       </div>
       <p><strong>Weather and exposure:</strong> The upper ridge and summit are fully exposed to wind, cold, and lightning. Even on a mild day in the valleys, conditions near Mount Madison’s summit can be extreme. Pack warm layers and rain gear year-round.</p>
-      <p><strong>Terrain hazards:</strong> Many sections are steep and filled with loose rocks. Falls and ankle injuries are a risk on rough footing, especially on descent. The Devil’s Kitchen gorge and the Bear Pit chasm are reached by short side paths; anyone venturing off trail should be extremely careful of slippery moss and sheer rock walls.</p>
+      <p><strong>Terrain hazards:</strong> Many sections are steep and filled with loose rocks. Falls and ankle injuries are a risk on rough footing, especially on descent. The Devil’s Kitchen gorge and the <a href="#poi-waterfalls" aria-label="Bear Pit in points of interest section">Bear Pit</a> chasm are reached by short side paths; anyone venturing off trail should be extremely careful of slippery moss and sheer rock walls.</p>
       <p><strong>Seasonal hazards:</strong> In winter, steep sections can accumulate hard ice — an ice axe and crampons (plus the skills to use them) are necessary to ascend or descend safely. The route is typically untraveled in winter, so expect to break trail and budget extra time and energy for the climb. After heavy rain or during spring melt, Bumpus Brook crossings can swell and become hazardous. Cell phone service is spotty to nonexistent, so parties must be self-reliant.</p>
       <p class="photo-alt">Descriptive alt text: Sunrise on Howker Ridge from the summit of the third Howk.</p>
     </section>
 
     <section class="section" id="viewpoints">
       <h2>Viewpoints &amp; Photography Spots</h2>
-      <p>The serrated crest of Howker Ridge, dotted with four rocky “Howks,” offers unique vistas on the ascent to Mount Madison. The Fourth Howk is a spectacular natural balcony with sweeping views across the Carter-Moriah Range, the Crescent Range, and distant Maine mountains. Each of the lower Howks also has outlooks: the Second Howk opens westward views of Mount Madison’s summit cone, and the First Howk provides peeks back north toward Randolph Valley.</p>
-      <p>Lower on the trail, the waterfalls along Bumpus Brook — Stairs Fall, Coosauk Fall, and Hitchcock Fall — are photogenic spots, especially in spring when water flow is highest. Mount Madison’s summit itself is a premier photography spot, offering sweeping shots of the Northern Presidential ridge and the Great Gulf.</p>
+      <p>The serrated crest of Howker Ridge, dotted with four rocky “Howks,” offers unique vistas on the ascent to Mount Madison. The <a href="#poi-ridgeline" aria-label="Fourth Howk in points of interest section">Fourth Howk</a> is a spectacular natural balcony with sweeping views across the Carter-Moriah Range, the Crescent Range, and distant Maine mountains. Each of the lower Howks also has outlooks: the <a href="#poi-ridgeline" aria-label="Second Howk in points of interest section">Second Howk</a> opens westward views of Mount Madison’s summit cone, and the <a href="#poi-ridgeline" aria-label="First Howk in points of interest section">First Howk</a> provides peeks back north toward Randolph Valley.</p>
+      <p>Lower on the trail, the waterfalls along Bumpus Brook — <a href="#poi-waterfalls" aria-label="Stairs Fall in points of interest section">Stairs Fall</a>, <a href="#poi-waterfalls" aria-label="Coosauk Falls in points of interest section">Coosauk Fall</a>, and <a href="#poi-waterfalls" aria-label="Hitchcock Falls in points of interest section">Hitchcock Fall</a> — are photogenic spots, especially in spring when water flow is highest. Mount Madison’s summit itself is a premier photography spot, offering sweeping shots of the Northern Presidential ridge and the Great Gulf.</p>
     </section>
 
     <section class="section" id="maintenance">
@@ -541,14 +596,14 @@ blockquote{
 
     <section class="section" id="connections">
       <h2>Trail Connections &amp; Networks</h2>
-      <p>Howker Ridge connects to a dense network of Randolph trails. Near the trailhead it shares a starting point with the Randolph Path, a major trunk trail that crosses Mount Adams and Mount Jefferson. Within the first mile, the Sylvan Way connector links Howker Ridge to the Appalachia parking area, enabling loop hikes that pass additional waterfalls.</p>
-      <p>Farther up, the Kelton Trail splits off near Coosauk Fall and provides access to the Inlook and Brookside Trails. At roughly 3.1 miles, Pine Link Trail merges from the east, and a short descent on Pine Link leads to a spring that can serve as a water source. The trail meets the Osgood Trail (Appalachian Trail) near 5,100 feet on Madison’s summit cone, offering connections to Madison Spring Hut, the Great Gulf, and the broader Presidential Range traverse.</p>
+      <p>Howker Ridge connects to a dense network of Randolph trails. Near the trailhead it shares a starting point with the <a href="/howker-ridge#map" aria-label="Randolph Path on Howker Ridge map">Randolph Path</a>, a major trunk trail that crosses <a href="/nh-4000-footers-info#mount-adams" aria-label="Mount Adams on the NH4000-footers info page">Mount Adams</a> and <a href="/nh-4000-footers-info#mount-jefferson" aria-label="Mount Jefferson on the NH4000-footers info page">Mount Jefferson</a>. Within the first mile, the <a href="/howker-ridge#map" aria-label="Sylvan Way on Howker Ridge map">Sylvan Way</a> connector links Howker Ridge to the Appalachia parking area, enabling loop hikes that pass additional waterfalls.</p>
+      <p>Farther up, the <a href="/howker-ridge#map" aria-label="Kelton Trail on Howker Ridge map">Kelton Trail</a> splits off near <a href="#poi-waterfalls" aria-label="Coosauk Falls in points of interest section">Coosauk Fall</a> and provides access to the Inlook and Brookside Trails. At roughly 3.1 miles, <a href="/howker-ridge#map" aria-label="Pine Link Trail on Howker Ridge map">Pine Link Trail</a> merges from the east, and a short descent on Pine Link leads to a spring that can serve as a water source. The trail meets the <a href="/howker-ridge#map" aria-label="Osgood Trail junction on Howker Ridge map">Osgood Trail (Appalachian Trail)</a> near 5,100 feet on Madison’s summit cone, offering connections to <a href="https://www.outdoors.org/destinations/huts/madison-spring-hut/" target="_blank" rel="noopener" aria-label="Madison Spring Hut (AMC)">Madison Spring Hut</a>, the Great Gulf, and the broader Presidential Range traverse.</p>
       <p class="photo-alt">Descriptive alt text: Madison Spring Hut in September.</p>
     </section>
 
     <section class="section" id="lodging">
       <h2>Nearby Lodging &amp; Facilities</h2>
-      <p>Despite its wild setting, the Howker Ridge Trail has access to nearby lodging options — from backcountry huts to front-country campgrounds. The most famous is Madison Spring Hut, an AMC hut located in the col between Mount Madison and Mount Adams. It offers bunks, potable water, and meals in summer season. RMC cabins such as Crag Camp, Gray Knob, and The Perch are reachable via connecting trails for rustic overnight stays.</p>
+      <p>Despite its wild setting, the Howker Ridge Trail has access to nearby lodging options — from backcountry huts to front-country campgrounds. The most famous is <a href="https://www.outdoors.org/destinations/huts/madison-spring-hut/" target="_blank" rel="noopener" aria-label="Madison Spring Hut (AMC)">Madison Spring Hut</a>, an AMC hut located in the col between Mount Madison and Mount Adams. It offers bunks, potable water, and meals in summer season. RMC cabins such as Crag Camp, Gray Knob, and The Perch are reachable via connecting trails for rustic overnight stays.</p>
       <p>Dolly Copp Campground lies a few miles south of the trailhead and offers reservation-only sites, restrooms, and access to other trails. Moose Brook State Park in Gorham is another camping option. The town of Gorham has motels, inns, and B&amp;Bs along with gear shops and restaurants. Pinkham Notch Visitor Center and Joe Dodge Lodge are about 25 minutes away and provide additional lodging and services.</p>
       <p>Trailhead facilities include a pit toilet but no potable water. Potable water is available at Appalachia parking area (seasonal hand-pump) and at Pinkham Notch Visitor Center.</p>
       <p class="photo-alt">Descriptive alt text: Closed Madison Spring Hut in October.</p>
@@ -579,8 +634,8 @@ blockquote{
         <li><strong>Third Howk (44.336426, -71.263518) – 4,009 ft:</strong> Marks transition to alpine terrain with panoramic views and nearby Pine Link junction.</li>
         <li><strong>Fourth Howk (44.334951, -71.266614) – 4,052 ft:</strong> A highlight viewpoint and true alpine perch with sweeping panoramas.</li>
         <li><strong>Mount Madison Summit (44.328683, -71.276917) – 5,366 ft:</strong> A rocky summit with 360-degree views across the Presidential Range.</li>
-        <li><strong>Osgood Ridge (44.329251, -71.271722) – 4,987 ft near junction:</strong> Appalachian Trail ridge connecting Howker Ridge to the summit cone and Great Gulf.</li>
-        <li><strong>Gordon Ridge (44.350067, -71.277300) – 2,746 ft crest:</strong> Trailless ridge forming the opposite wall of Bumpus Basin, visible from the Howks.</li>
+        <li><strong><a href="#poi-ridgeline" aria-label="Osgood Ridge in points of interest section">Osgood Ridge</a> (44.329251, -71.271722) – 4,987 ft near junction:</strong> Appalachian Trail ridge connecting Howker Ridge to the summit cone and Great Gulf.</li>
+        <li><strong><a href="#poi-ridgeline" aria-label="Gordon Ridge in points of interest section">Gordon Ridge</a> (44.350067, -71.277300) – 2,746 ft crest:</strong> Trailless ridge forming the opposite wall of Bumpus Basin, visible from the Howks.</li>
       </ul>
     </section>
 
