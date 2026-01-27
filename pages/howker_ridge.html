@@ -429,6 +429,20 @@ a:hover {
   color: var(--ink);
   text-decoration: underline;
 }
+.poi-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--stroke);
+  object-fit: cover;
+}
+.photo-marker img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
 </style>
 <script type="application/ld+json">
   {
@@ -579,6 +593,7 @@ a:hover {
           <table id="poiTable" aria-label="Points of interest">
             <thead>
               <tr>
+                <th scope="col">Photo</th>
                 <th scope="col"><button type="button" data-sort="name" aria-label="Sort by name">Name</button></th>
                 <th scope="col"><button type="button" data-sort="elevation" aria-label="Sort by elevation">Elevation (ft)</button></th>
                 <th scope="col"><button type="button" data-sort="lat" aria-label="Sort by latitude">Latitude</button></th>
@@ -680,28 +695,6 @@ a:hover {
     L.control.layers({ 'Standard': standardLayer, 'Topographic': topoLayer }, null, { position: 'topleft' }).addTo(map);
     L.control.scale({ position: 'bottomleft' }).addTo(map);
 
-    const categoryIcons = {
-      Waterfall: L.icon({ iconUrl: '/assets/icons/waterfall.svg', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -20] }),
-      Ridgeline: L.icon({ iconUrl: '/assets/icons/ridge.svg', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -20] }),
-      Junction: L.icon({ iconUrl: '/assets/icons/junction.svg', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -20] }),
-      Summit: L.icon({ iconUrl: '/assets/icons/summit.svg', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -20] }),
-      Viewpoint: L.icon({ iconUrl: '/assets/icons/viewpoint.svg', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -20] })
-    };
-
-    const legend = L.control({ position: 'topright' });
-    legend.onAdd = function () {
-      const div = L.DomUtil.create('div', 'map-legend');
-      div.innerHTML = `
-        <h4>Legend</h4>
-        <div><img src="/assets/icons/waterfall.svg" alt="Waterfall icon" /> Waterfall</div>
-        <div><img src="/assets/icons/ridge.svg" alt="Ridgeline icon" /> Ridgeline</div>
-        <div><img src="/assets/icons/summit.svg" alt="Summit icon" /> Summit</div>
-        <div><img src="/assets/icons/junction.svg" alt="Junction icon" /> Junction</div>
-        <div><img src="/assets/icons/viewpoint.svg" alt="Viewpoint icon" /> Viewpoint</div>`;
-      return div;
-    };
-    legend.addTo(map);
-
     const poiTableBody = document.getElementById('poiTableBody');
     const poiSearch = document.getElementById('poiSearch');
     const poiHeaders = document.querySelectorAll('#poiTable thead button');
@@ -709,6 +702,10 @@ a:hover {
     let sortKey = null;
     let sortAsc = true;
     let searchQuery = '';
+
+    function slugify(name) {
+      return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    }
 
     function formatDMS(value, isLat) {
       const absVal = Math.abs(value);
@@ -731,6 +728,20 @@ a:hover {
       return sortAsc ? strA.localeCompare(strB) : strB.localeCompare(strA);
     }
 
+    function createPhotoMarker(latlng, name) {
+      const slug = slugify(name);
+      const thumbUrl = `https://howker.nh48.info/cdn-cgi/image/format=webp,width=40/${slug}/${slug}-001.jpg`;
+      return L.marker(latlng, {
+        icon: L.divIcon({
+          className: 'photo-marker',
+          html: `<img src="${thumbUrl}" alt="${name}">`,
+          iconSize: [36, 36],
+          iconAnchor: [18, 36],
+          popupAnchor: [0, -30]
+        })
+      });
+    }
+
     function updateSortIndicators(activeKey) {
       poiHeaders.forEach(button => {
         const isActive = button.dataset.sort === activeKey;
@@ -747,13 +758,16 @@ a:hover {
       poiTableBody.innerHTML = '';
       if (!data.length) {
         const row = document.createElement('tr');
-        row.innerHTML = '<td colspan="4">No points match your search.</td>';
+        row.innerHTML = '<td colspan="5">No points match your search.</td>';
         poiTableBody.appendChild(row);
         return;
       }
       data.forEach(item => {
+        const slug = slugify(item.name);
+        const thumbUrl = `https://howker.nh48.info/cdn-cgi/image/format=webp,width=48/${slug}/${slug}-001.jpg`;
         const row = document.createElement('tr');
         row.innerHTML = `
+          <td><img class="poi-thumb" src="${thumbUrl}" alt="${item.name} thumbnail" loading="lazy" /></td>
           <td>${item.name}</td>
           <td>${item.elevation ?? ''}</td>
           <td>${formatDMS(item.lat, true)}</td>
@@ -797,11 +811,7 @@ a:hover {
                 category: props.category || '',
                 description: props.description || ''
               });
-            }
-            const category = (feature.properties && feature.properties.category) || '';
-            const icon = categoryIcons[category];
-            if (icon) {
-              return L.marker(latlng, { icon });
+              return createPhotoMarker(latlng, props.name || 'Unknown');
             }
             return L.circleMarker(latlng, {
               radius: 6,
@@ -814,7 +824,10 @@ a:hover {
           onEachFeature: (feature, layer) => {
             if (feature.geometry.type === 'Point') {
               const props = feature.properties || {};
+              const slug = slugify(props.name || '');
+              const popupPhoto = `<img src="https://howker.nh48.info/cdn-cgi/image/format=webp,width=300/${slug}/${slug}-001.jpg" alt="${props.name}" style="width:100%;border-radius:8px; margin-bottom:6px;">`;
               const details = [
+                popupPhoto,
                 `<strong>${props.name || 'Waypoint'}</strong>`,
                 props.category ? `<span>${props.category}</span>` : '',
                 props.elevation_ft ? `<span>${props.elevation_ft} ft</span>` : '',
@@ -831,7 +844,7 @@ a:hover {
       .catch(err => {
         console.error('Failed to load trail data', err);
         const row = document.createElement('tr');
-        row.innerHTML = '<td colspan="4">Trail data unavailable.</td>';
+        row.innerHTML = '<td colspan="5">Trail data unavailable.</td>';
         poiTableBody.appendChild(row);
       });
 
