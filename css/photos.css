@@ -150,6 +150,10 @@
   z-index:999;
 }
 
+.photo-lightbox[hidden]{
+  display:none;
+}
+
 .photo-lightbox__backdrop{
   position:absolute;
   inset:0;
