@@ -155,9 +155,9 @@ blockquote{
 /* Warning log style – translucent yellow box, always expanded */
 .warning-log{
   margin:16px 0;
-  border:2px solid rgba(253, 224, 71, 0.5); /* yellow border with transparency */
+  border:2px solid rgba(253, 224, 71, 0.85); /* stronger yellow border */
   border-radius:12px;
-  background:linear-gradient(180deg, rgba(253, 230, 138, 0.3), rgba(254, 243, 199, 0.3));
+  background:linear-gradient(180deg, rgba(253, 230, 138, 0.55), rgba(254, 243, 199, 0.55));
   overflow:hidden;
   color:var(--ink);
 }
@@ -169,7 +169,7 @@ blockquote{
   align-items:center;
   gap:10px;
   font-weight:700;
-  color:#b45309; /* dark amber text */
+  color:#c2410c; /* deeper orange text */
 }
 .warning-log summary::-webkit-details-marker{
   display:none;
@@ -177,10 +177,10 @@ blockquote{
 .warning-log .summary-title i{
   font-size:18px;
   line-height:1;
-  color:#f59e0b; /* amber icon colour */
+  color:#f97316; /* brighter orange icon colour */
 }
 .warning-log .warning-body{
-  border-top:1px solid rgba(253, 224, 71, 0.4);
+  border-top:1px solid rgba(253, 224, 71, 0.6);
   padding:12px 16px 16px;
   display:grid;
   gap:10px;
@@ -191,7 +191,7 @@ blockquote{
   line-height:1.5;
 }
 .warning-log .warning-body strong{
-  color:#d97706; /* stronger amber for emphasised phrases */
+  color:#c2410c; /* stronger orange for emphasised phrases */
 }
 .page-breadcrumbs{
   margin:10px 0 18px;
@@ -244,6 +244,13 @@ blockquote{
   color:var(--muted);
   line-height:1.6;
 }
+.section p a{
+  color:var(--accent);
+}
+.section p a:hover{
+  color:#16a34a;
+  text-decoration:underline;
+}
 .section ul{
   margin:0;
   padding-left:20px;
@@ -265,14 +272,15 @@ blockquote{
   background:var(--card);
 }
 .callout{
-  background:var(--card);
-  border:1px solid var(--stroke);
+  background:linear-gradient(180deg, rgba(253, 230, 138, 0.5), rgba(254, 243, 199, 0.5));
+  border:2px solid rgba(253, 224, 71, 0.8);
   border-radius:12px;
   padding:16px;
   margin-top:12px;
+  color:#92400e;
 }
 .callout strong{
-  color:var(--ink);
+  color:#c2410c;
 }
 .toc{
   display:grid;
@@ -355,6 +363,20 @@ blockquote{
   border-radius:12px;
   border:1px solid var(--stroke);
   background:var(--card);
+}
+.faq-group{
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  background:var(--panel);
+  padding:12px 14px;
+}
+.faq-group summary{
+  cursor:pointer;
+  font-weight:700;
+  color:var(--ink);
+}
+.faq-group[open] summary{
+  margin-bottom:10px;
 }
 .faq summary{
   cursor:pointer;
@@ -693,6 +715,8 @@ blockquote{
     <section class="section faq" id="faq">
       <h2>Frequently Asked Questions</h2>
       <p class="small">Expand each question to reveal detailed answers based on authoritative references.</p>
+      <details class="faq-group">
+        <summary>View the full FAQ</summary>
       <details>
         <summary>What is the historical origin of the Howker Ridge Trail, and who were the early builders?</summary>
         <p>The trail dates back to the late 19th century. Randolph locals Eugene B. Cook and William H. Peek cut a direct route up Mount Madison’s northeast spur between 1899 and 1901.</p>
@@ -792,6 +816,7 @@ blockquote{
       <details>
         <summary>Can dogs accompany hikers, and what precautions should pet owners take?</summary>
         <p>Dogs are permitted but not recommended because of exposed ledges and rough terrain. If you bring a dog, ensure it is accustomed to scrambling, keep it leashed near cliffs, and pack extra water.</p>
+      </details>
       </details>
     </section>
 
