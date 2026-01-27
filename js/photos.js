@@ -6,6 +6,8 @@ const API_URLS = [
 const PHOTO_BASE_URL = 'https://photos.nh48.info';
 const PHOTO_TRANSFORM = 'format=webp,quality=85,width=720';
 const PHOTO_CDN_PREFIX = `${PHOTO_BASE_URL}/cdn-cgi/image/${PHOTO_TRANSFORM}`;
+const PHOTO_LIGHTBOX_TRANSFORM = 'format=webp,quality=90,width=1600';
+const PHOTO_LIGHTBOX_PREFIX = `${PHOTO_BASE_URL}/cdn-cgi/image/${PHOTO_LIGHTBOX_TRANSFORM}`;
 const PHOTOS_PER_PAGE = 500;
 
 const state = {
@@ -26,7 +28,10 @@ const elements = {
   rangeFilters: document.getElementById('rangeFilters'),
   prev: document.getElementById('paginationPrev'),
   next: document.getElementById('paginationNext'),
-  status: document.getElementById('paginationStatus')
+  status: document.getElementById('paginationStatus'),
+  lightbox: document.getElementById('photoLightbox'),
+  lightboxImage: document.getElementById('photoLightboxImage'),
+  lightboxCaption: document.getElementById('photoLightboxCaption')
 };
 
 const normalizeRange = (value) => {
@@ -42,6 +47,21 @@ const buildPhotoUrl = (photo) => {
     const url = new URL(rawUrl);
     if (url.origin === PHOTO_BASE_URL) {
       return `${PHOTO_CDN_PREFIX}${url.pathname}`;
+    }
+  } catch (error) {
+    return rawUrl;
+  }
+  return rawUrl;
+};
+
+const buildLightboxUrl = (photo) => {
+  if (!photo) return '';
+  const rawUrl = typeof photo === 'string' ? photo : photo.url;
+  if (!rawUrl) return '';
+  try {
+    const url = new URL(rawUrl);
+    if (url.origin === PHOTO_BASE_URL) {
+      return `${PHOTO_LIGHTBOX_PREFIX}${url.pathname}`;
     }
   } catch (error) {
     return rawUrl;
@@ -96,27 +116,30 @@ const filterPeaks = () => {
 const renderRangeFilters = () => {
   elements.rangeFilters.innerHTML = '';
   state.ranges.forEach((range) => {
-    const label = document.createElement('label');
-    label.className = 'range-filter-item';
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.value = range;
-    checkbox.checked = state.activeRanges.has(range);
-    checkbox.addEventListener('change', (event) => {
-      if (event.target.checked) {
-        state.activeRanges.add(range);
-      } else {
-        state.activeRanges.delete(range);
-      }
-      state.page = 1;
-      render();
-    });
-    const span = document.createElement('span');
-    span.textContent = range;
-    label.appendChild(checkbox);
-    label.appendChild(span);
-    elements.rangeFilters.appendChild(label);
+    const option = document.createElement('option');
+    option.value = range;
+    option.textContent = range;
+    option.selected = state.activeRanges.has(range);
+    elements.rangeFilters.appendChild(option);
   });
+};
+
+const openLightbox = (src, captionText, altText) => {
+  if (!elements.lightbox || !elements.lightboxImage || !elements.lightboxCaption) return;
+  elements.lightboxImage.src = src;
+  elements.lightboxImage.alt = altText || captionText || 'Expanded photo view';
+  elements.lightboxCaption.textContent = captionText || '';
+  elements.lightbox.hidden = false;
+  elements.lightbox.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('lightbox-open');
+};
+
+const closeLightbox = () => {
+  if (!elements.lightbox || !elements.lightboxImage) return;
+  elements.lightbox.hidden = true;
+  elements.lightbox.setAttribute('aria-hidden', 'true');
+  elements.lightboxImage.src = '';
+  document.body.classList.remove('lightbox-open');
 };
 
 const buildRangeSections = (photoEntries) => {
@@ -195,11 +218,17 @@ const render = () => {
         img.decoding = 'async';
         img.src = buildPhotoUrl(photo);
         img.alt = pickAlt(photo, peakName);
+        img.dataset.lightboxUrl = buildLightboxUrl(photo);
+        img.dataset.caption = photo.caption || photo.headline || photo.description || img.alt;
+        img.dataset.peakName = peakName;
         const caption = document.createElement('figcaption');
         caption.className = 'sr-only';
-        caption.textContent = photo.caption || photo.headline || photo.description || img.alt;
+        caption.textContent = img.dataset.caption;
         figure.appendChild(img);
         figure.appendChild(caption);
+        figure.addEventListener('click', () => {
+          openLightbox(img.dataset.lightboxUrl, img.dataset.caption, img.alt);
+        });
         grid.appendChild(figure);
       });
 
@@ -279,6 +308,15 @@ if (elements.sort) {
   });
 }
 
+if (elements.rangeFilters) {
+  elements.rangeFilters.addEventListener('change', (event) => {
+    const selected = Array.from(event.target.selectedOptions || []).map((option) => option.value);
+    state.activeRanges = new Set(selected);
+    state.page = 1;
+    render();
+  });
+}
+
 if (elements.prev) {
   elements.prev.addEventListener('click', () => {
     if (state.page > 1) {
@@ -296,3 +334,16 @@ if (elements.next) {
 }
 
 init();
+
+if (elements.lightbox) {
+  elements.lightbox.addEventListener('click', (event) => {
+    if (event.target.closest('[data-lightbox-close]')) {
+      closeLightbox();
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !elements.lightbox.hidden) {
+      closeLightbox();
+    }
+  });
+}
