@@ -691,6 +691,16 @@
       buildUrl: share => `https://wa.me/?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
     },
     {
+      name: 'Bluesky',
+      category: 'major',
+      buildUrl: share => `https://bsky.app/intent/compose?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+    },
+    {
+      name: 'Threads',
+      category: 'major',
+      buildUrl: share => `https://www.threads.net/intent/post?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+    },
+    {
       name: 'Telegram',
       category: 'international',
       buildUrl: share => `https://t.me/share/url?url=${encodeURIComponent(share.url)}&text=${encodeURIComponent(share.text)}`
@@ -724,6 +734,21 @@
       name: 'Pocket',
       category: 'international',
       buildUrl: share => `https://getpocket.com/edit?url=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+    },
+    {
+      name: 'Tumblr',
+      category: 'international',
+      buildUrl: share => `https://www.tumblr.com/widgets/share/tool?canonicalUrl=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+    },
+    {
+      name: 'Pinterest',
+      category: 'international',
+      buildUrl: share => `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(share.url)}&description=${encodeURIComponent(share.text)}`
+    },
+    {
+      name: 'SMS',
+      category: 'international',
+      buildUrl: share => `sms:?&body=${encodeURIComponent(`${share.text} ${share.url}`)}`
     }
   ];
 
