@@ -155,11 +155,11 @@ blockquote{
 /* Warning log style – translucent yellow box, always expanded */
 .warning-log{
   margin:16px 0;
-  border:2px solid rgba(253, 224, 71, 0.85); /* stronger yellow border */
+  border:2px solid #fbbf24; /* brighter amber border for contrast */
   border-radius:12px;
-  background:linear-gradient(180deg, rgba(253, 230, 138, 0.55), rgba(254, 243, 199, 0.55));
+  background:linear-gradient(180deg, #1f1408, #2b1a0a);
   overflow:hidden;
-  color:var(--ink);
+  color:#fef3c7;
 }
 .warning-log summary{
   list-style:none;
@@ -169,7 +169,7 @@ blockquote{
   align-items:center;
   gap:10px;
   font-weight:700;
-  color:#c2410c; /* deeper orange text */
+  color:#fef3c7;
 }
 .warning-log summary::-webkit-details-marker{
   display:none;
@@ -177,21 +177,21 @@ blockquote{
 .warning-log .summary-title i{
   font-size:18px;
   line-height:1;
-  color:#f97316; /* brighter orange icon colour */
+  color:#fbbf24;
 }
 .warning-log .warning-body{
-  border-top:1px solid rgba(253, 224, 71, 0.6);
+  border-top:1px solid rgba(251, 191, 36, 0.6);
   padding:12px 16px 16px;
   display:grid;
   gap:10px;
 }
 .warning-log .warning-body p{
   margin:0;
-  color:var(--ink);
+  color:#fef3c7;
   line-height:1.5;
 }
 .warning-log .warning-body strong{
-  color:#c2410c; /* stronger orange for emphasised phrases */
+  color:#fde68a;
 }
 .page-breadcrumbs{
   margin:10px 0 18px;
