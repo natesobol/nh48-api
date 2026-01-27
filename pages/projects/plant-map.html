@@ -185,6 +185,111 @@ header p{
   height:80vh;
   width:100%;
 }
+.map-controls{
+  position:absolute;
+  left:16px;
+  top:16px;
+  z-index:1000;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  background:var(--panel);
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  padding:10px;
+  box-shadow:0 10px 25px #0005;
+}
+.map-controls h3{
+  margin:0;
+  font-size:14px;
+}
+.map-controls button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:8px;
+  border:1px solid var(--stroke);
+  background:var(--card);
+  color:var(--ink);
+  cursor:pointer;
+  font-size:13px;
+}
+.map-controls button:hover{
+  border-color:var(--accent);
+}
+.map-controls .trail-nav{
+  display:flex;
+  gap:8px;
+}
+.plant-marker,
+.trail-marker{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:var(--panel);
+  border:1px solid var(--stroke);
+  font-size:16px;
+  box-shadow:0 6px 16px #0004;
+}
+.plant-log-list{
+  margin-top:16px;
+  border-top:1px solid var(--stroke);
+  padding-top:16px;
+}
+.plant-log-list__header{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+.plant-log-list__header h3{
+  margin:0;
+  font-size:18px;
+}
+.plant-log-list__header input{
+  flex:1;
+  min-width:200px;
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid var(--stroke);
+  background:var(--card);
+  color:var(--ink);
+}
+.plant-log-list__items{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  gap:10px;
+  max-height:260px;
+  overflow:auto;
+}
+.plant-log-list__item{
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--stroke);
+  background:var(--panel);
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.plant-log-list__item button{
+  align-self:flex-start;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background:transparent;
+  color:var(--ink);
+  cursor:pointer;
+  font-size:12px;
+}
 #reportForm{
   position:absolute;
   top:16px;
@@ -253,6 +358,10 @@ header p{
     position:static;
     width:100%;
     margin-top:12px;
+  }
+  .map-controls{
+    position:static;
+    margin:12px;
   }
 }
 </style>
@@ -367,6 +476,14 @@ header p{
       <p>Click the map to record a plant observation near the trail. Reports are reviewed before appearing on the map.</p>
       <div class="map-wrap">
         <div id="map" aria-label="Plant log map"></div>
+        <div class="map-controls" aria-label="Trail controls">
+          <h3>Trail panning</h3>
+          <button type="button" id="trailZoomBtn">Zoom to trail</button>
+          <div class="trail-nav">
+            <button type="button" id="trailUpBtn" aria-label="Follow trail up">⬆️ Up trail</button>
+            <button type="button" id="trailDownBtn" aria-label="Follow trail down">⬇️ Down trail</button>
+          </div>
+        </div>
         <form id="reportForm">
           <label>Plant species:
             <select id="speciesSelect" required>
@@ -392,13 +509,21 @@ header p{
           <p id="formMessage" class="small"></p>
         </form>
       </div>
+      <div class="plant-log-list" aria-live="polite">
+        <div class="plant-log-list__header">
+          <h3>Plant entries</h3>
+          <input type="search" id="plantSearch" placeholder="Search plant entries" aria-label="Search plant entries" />
+        </div>
+        <ul class="plant-log-list__items" id="plantList"></ul>
+        <p class="small" id="plantListEmpty">No plant entries to show yet.</p>
+      </div>
       <p id="statusMessage" class="small status-message" role="status"></p>
     </section>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin=""></script>
   <script>
-    const map = L.map('map').setView([44.336, -71.266], 13);
+    const map = L.map('map', { zoomControl: false }).setView([44.336, -71.266], 14);
     const reportLayer = L.layerGroup().addTo(map);
     const speciesSelect = document.getElementById('speciesSelect');
     const reportForm = document.getElementById('reportForm');
@@ -409,12 +534,41 @@ header p{
     const formMessage = document.getElementById('formMessage');
     const statusMessage = document.getElementById('statusMessage');
     const cancelBtn = document.getElementById('cancelBtn');
+    const trailZoomBtn = document.getElementById('trailZoomBtn');
+    const trailUpBtn = document.getElementById('trailUpBtn');
+    const trailDownBtn = document.getElementById('trailDownBtn');
+    const plantSearch = document.getElementById('plantSearch');
+    const plantList = document.getElementById('plantList');
+    const plantListEmpty = document.getElementById('plantListEmpty');
     const speciesBySlug = new Map();
     let trailSegments = [];
+    let trailRoute = [];
+    let trailBounds = null;
+    let trailIndex = 0;
+    let reportCache = [];
+    const trailFocusZoom = 15;
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    });
+    const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap'
+    });
+    const esriTopoLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri'
+    });
+    const esriSatelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri'
+    });
+
+    topoLayer.addTo(map);
+    L.control.layers({
+      'OpenTopoMap': topoLayer,
+      'Esri Topo': esriTopoLayer,
+      'OpenStreetMap': osmLayer,
+      'Satellite': esriSatelliteLayer
+    }, null, { position: 'topright' }).addTo(map);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     function distanceToSegment(point, start, end) {
       const x = point.lng;
@@ -475,6 +629,17 @@ header p{
       closeForm();
     });
 
+    function getWaypointEmoji(props) {
+      const name = (props.name || '').toLowerCase();
+      const category = (props.category || '').toLowerCase();
+      if (category.includes('waterfall') || name.includes('falls')) return '💧';
+      if (category.includes('river') || category.includes('water') || name.includes('river')) return '🌊';
+      if (category.includes('view') || name.includes('view')) return '🔭';
+      if (category.includes('summit') || name.includes('summit')) return '⛰️';
+      if (category.includes('camp') || name.includes('camp')) return '🏕️';
+      return '📍';
+    }
+
     function addTrailLayers(data) {
       L.geoJSON(data, {
         style: feature => {
@@ -484,12 +649,14 @@ header p{
           return {};
         },
         pointToLayer: (feature, latlng) => {
-          return L.circleMarker(latlng, {
-            radius: 6,
-            color: '#22c55e',
-            weight: 2,
-            fillColor: '#22c55e',
-            fillOpacity: 0.8
+          const emoji = getWaypointEmoji(feature.properties || {});
+          return L.marker(latlng, {
+            icon: L.divIcon({
+              className: 'trail-marker',
+              html: emoji,
+              iconSize: [28, 28],
+              iconAnchor: [14, 14]
+            })
           });
         },
         onEachFeature: (feature, layer) => {
@@ -514,6 +681,11 @@ header p{
           }
           return feature.geometry.coordinates.map(line => line.map(([lng, lat]) => L.latLng(lat, lng)));
         });
+
+      trailRoute = trailSegments.reduce((longest, segment) => (
+        segment.length > longest.length ? segment : longest
+      ), []);
+      trailIndex = Math.floor(trailRoute.length / 2);
     }
 
     function loadTrail() {
@@ -524,7 +696,8 @@ header p{
         .then(resp => resp.ok ? resp.json() : Promise.reject(resp))
         .then(data => {
           addTrailLayers(data);
-          map.fitBounds(L.geoJSON(data).getBounds(), { padding: [20, 20] });
+          trailBounds = L.geoJSON(data).getBounds();
+          map.fitBounds(trailBounds, { padding: [20, 20], maxZoom: 15 });
         })
         .catch(err => {
           console.error('Failed to load trail data', err);
@@ -564,18 +737,55 @@ header p{
           <span>${observed}</span>
           ${notes}
         `;
-        L.circleMarker([report.lat, report.lng], {
-          radius: 5,
-          color: '#22c55e',
-          weight: 2,
-          fillColor: '#22c55e',
-          fillOpacity: 0.9
+        L.marker([report.lat, report.lng], {
+          icon: L.divIcon({
+            className: 'plant-marker',
+            html: '🌿',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14]
+          })
         }).bindPopup(popup).addTo(reportLayer);
       });
     }
 
+    function renderPlantList(reports) {
+      const query = plantSearch.value.trim().toLowerCase();
+      plantList.innerHTML = '';
+      const filtered = reports.filter(report => {
+        const plant = speciesBySlug.get(report.plantSlug);
+        const name = (plant ? plant.common : report.plantSlug || '').toLowerCase();
+        const notes = (report.notes || '').toLowerCase();
+        return !query || name.includes(query) || notes.includes(query);
+      });
+      if (!filtered.length) {
+        plantListEmpty.style.display = 'block';
+        return;
+      }
+      plantListEmpty.style.display = 'none';
+      filtered.forEach(report => {
+        const plant = speciesBySlug.get(report.plantSlug);
+        const plantName = plant ? plant.common : report.plantSlug;
+        const observed = report.observedAt ? new Date(report.observedAt).toLocaleString() : 'Unknown date';
+        const listItem = document.createElement('li');
+        listItem.className = 'plant-log-list__item';
+        listItem.innerHTML = `
+          <strong>🌿 ${plantName}</strong>
+          <span class="small">${observed}</span>
+          ${report.notes ? `<span class="small">${report.notes}</span>` : ''}
+        `;
+        const focusBtn = document.createElement('button');
+        focusBtn.type = 'button';
+        focusBtn.textContent = 'Focus on map';
+        focusBtn.addEventListener('click', () => {
+          map.setView([report.lat, report.lng], trailFocusZoom, { animate: true });
+        });
+        listItem.appendChild(focusBtn);
+        plantList.appendChild(listItem);
+      });
+    }
+
     function loadReports() {
-      const bounds = map.getBounds();
+      const bounds = trailBounds || map.getBounds();
       const southWest = bounds.getSouthWest();
       const northEast = bounds.getNorthEast();
       const bbox = `${southWest.lng},${southWest.lat},${northEast.lng},${northEast.lat}`;
@@ -586,12 +796,42 @@ header p{
         .then(resp => resp.ok ? resp.json() : Promise.reject(resp))
         .then(data => {
           const reports = data.reports || [];
+          reportCache = reports;
           renderReports(reports);
+          renderPlantList(reports);
         })
         .catch(err => {
           console.error('Failed to load plant reports', err);
         });
     }
+
+    function updateTrailIndex(nextIndex) {
+      if (!trailRoute.length) {
+        return;
+      }
+      const maxIndex = trailRoute.length - 1;
+      trailIndex = Math.max(0, Math.min(maxIndex, nextIndex));
+      map.setView(trailRoute[trailIndex], trailFocusZoom, { animate: true });
+    }
+
+    trailZoomBtn.addEventListener('click', () => {
+      if (trailBounds) {
+        map.fitBounds(trailBounds, { padding: [30, 30], maxZoom: trailFocusZoom });
+      }
+      trailIndex = Math.floor(trailRoute.length / 2);
+    });
+
+    trailUpBtn.addEventListener('click', () => {
+      updateTrailIndex(trailIndex + 10);
+    });
+
+    trailDownBtn.addEventListener('click', () => {
+      updateTrailIndex(trailIndex - 10);
+    });
+
+    plantSearch.addEventListener('input', () => {
+      renderPlantList(reportCache);
+    });
 
     map.on('moveend', () => {
       loadReports();
