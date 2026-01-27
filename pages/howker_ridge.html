@@ -59,7 +59,7 @@
   --panel:#12121a;
   --card:#171a22;
   --ink:#ffffff;
-  --muted:#cbd5f5;
+  --muted:#ffffff;
   --stroke:#2b3345;
   --accent:#4ade80;
   --accent-2:#38bdf8;
@@ -70,8 +70,8 @@ body.light{
   --bg:#f8fafc;
   --panel:#ffffff;
   --card:#f7f9fc;
-  --ink:#1f2937;
-  --muted:#6b7280;
+  --ink:#ffffff;
+  --muted:#ffffff;
   --stroke:#00000022;
   --accent:#16a34a;
   --accent-2:#0ea5e9;
@@ -170,13 +170,13 @@ body{
 }
 .section p{
   margin:0 0 12px;
-  color:var(--muted);
+  color:var(--ink);
   line-height:1.6;
 }
 .section ul{
   margin:0;
   padding-left:20px;
-  color:var(--muted);
+  color:var(--ink);
   line-height:1.6;
 }
 .main-grid{
@@ -187,6 +187,9 @@ body{
 }
 .span-2{
   grid-column:span 2;
+}
+.stacked-panel{
+  grid-column:1 / -1;
 }
 .grid{
   display:grid;
@@ -202,7 +205,7 @@ body{
 .card p,
 .card li,
 .card td{
-  color:var(--muted);
+  color:var(--ink);
 }
 #map{
   height:520px;
@@ -369,7 +372,7 @@ th{
 }
 .flora-card p{
   margin:0 12px 12px;
-  color:var(--muted);
+  color:var(--ink);
   flex:1;
 }
 .flora-card .learn-more{
@@ -387,6 +390,27 @@ th{
 .badge-vine{ background:#5d4037; }
 .badge-bryophyte{ background:#4e7f2f; }
 .badge-sedge{ background:#1b5e20; }
+.warning-callout{
+  border:1px solid #f59e0b;
+  background:rgba(245,158,11,0.12);
+  border-radius:12px;
+  padding:14px 16px;
+  margin:12px 0 16px;
+}
+.warning-callout h3{
+  margin:0 0 8px;
+  font-size:clamp(16px,1.6vw,20px);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.warning-callout p{
+  margin:0 0 8px;
+  color:var(--ink);
+}
+.warning-callout p:last-child{
+  margin-bottom:0;
+}
 @media (max-width: 700px){
   .panel{ padding:16px; }
   #map{ height:360px; }
@@ -398,11 +422,11 @@ th{
    - Force all anchor links to use the green accent colour by default.
    - Underline links on hover for better accessibility. */
 a {
-  color: var(--accent);
+  color: var(--ink);
   text-decoration: none;
 }
 a:hover {
-  color: var(--accent);
+  color: var(--ink);
   text-decoration: underline;
 }
 </style>
@@ -546,7 +570,7 @@ a:hover {
         </div>
       </section>
 
-      <section class="section card span-2" id="poi">
+      <section class="section card span-2 stacked-panel" id="poi">
         <h2>Points of Interest</h2>
         <div class="poi-controls">
           <input type="search" id="poiSearch" placeholder="Search points…" aria-label="Search points of interest" />
@@ -567,7 +591,7 @@ a:hover {
         <p class="small">Coordinates are approximate. Confirm with official maps before travel.</p>
       </section>
 
-      <section class="section card span-2" id="metadata">
+      <section class="section card span-2 stacked-panel" id="metadata">
         <h2>Trail Overview &amp; Conditions</h2>
         <div class="two-col">
           <div>
@@ -606,6 +630,11 @@ a:hover {
 
       <section class="section card span-2" id="conditions">
         <h2>Current conditions &amp; safety guidance</h2>
+        <div class="warning-callout" role="note" aria-label="Important trail warning">
+          <h3>Important trail warning</h3>
+          <p>Expect to break trail for long stretches from October through May. Howker Ridge is rarely traveled in winter and conditions can change quickly.</p>
+          <p>Review exposure signage and trailhead notices before entering alpine zones, and treat weather as a primary decision factor.</p>
+        </div>
         <div class="two-col">
           <div>
             <h3>Current conditions</h3>
@@ -616,7 +645,7 @@ a:hover {
             </ul>
           </div>
           <div>
-            <h3>Safety guidelines</h3>
+            <h3>Info</h3>
             <ul>
               <li>Plan for rapid weather changes and alpine exposure above treeline.</li>
               <li>Carry layers, food, water, and the 10 essentials.</li>
