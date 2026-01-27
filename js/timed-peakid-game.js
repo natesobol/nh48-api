@@ -29,10 +29,11 @@
     minZones: 4,
     startSpawnInterval: 1400,
     minSpawnInterval: 450,
-    gravity: 0.00035,
     difficultyStepSeconds: 12,
     preloadCount: 6,
-    preloadHoldMs: 3000
+    preloadHoldMs: 3000,
+    minFallDurationSeconds: 8,
+    maxFallDurationSeconds: 13
   };
 
   const state = {
@@ -50,7 +51,6 @@
     lastFrame: null,
     spawnTimer: 0,
     spawnInterval: config.startSpawnInterval,
-    gravity: config.gravity,
     difficultyLevel: 0,
     nextPieceId: 1,
     preloaded: new Map()
@@ -228,11 +228,13 @@
       el: pieceEl,
       x,
       y: -80,
-      velocity: 0.012,
       dragging: false,
       pointerId: null,
       driftPhase: Math.random() * Math.PI * 2,
-      driftSpeed: 0.00045 + Math.random() * 0.00025
+      driftSpeed: 0.00045 + Math.random() * 0.00025,
+      fallElapsed: 0,
+      fallDurationMs: (config.minFallDurationSeconds
+        + Math.random() * (config.maxFallDurationSeconds - config.minFallDurationSeconds)) * 1000
     };
 
     const updatePosition = () => {
@@ -302,7 +304,6 @@
     const nextLevel = Math.floor(state.elapsed / config.difficultyStepSeconds);
     if (nextLevel <= state.difficultyLevel) return;
     state.difficultyLevel = nextLevel;
-    state.gravity *= 1.07;
     state.spawnInterval = Math.max(config.minSpawnInterval, state.spawnInterval - 120);
   };
 
@@ -324,8 +325,9 @@
     const bounds = gameArea.getBoundingClientRect();
     state.pieces.forEach(piece => {
       if (piece.dragging) return;
-      piece.velocity += state.gravity * delta;
-      piece.y += piece.velocity * delta;
+      piece.fallElapsed += delta;
+      const progress = Math.min(piece.fallElapsed / piece.fallDurationMs, 1);
+      piece.y = -80 + (bounds.height + 80) * progress;
       piece.driftPhase += piece.driftSpeed * delta;
       piece.x += Math.sin(piece.driftPhase) * 0.5;
       clampPiecePosition(piece);
@@ -366,7 +368,6 @@
     state.elapsed = 0;
     state.spawnTimer = 0;
     state.spawnInterval = config.startSpawnInterval;
-    state.gravity = config.gravity;
     state.difficultyLevel = 0;
     state.pieces.forEach(piece => removePiece(piece));
     state.pieces = [];
