@@ -15,6 +15,8 @@
   const statusValue = document.querySelector('.timed-status');
   const zonesContainer = document.querySelector('.timed-game-zones');
   const playButton = document.querySelector('[data-action="play"]');
+  const splashScreen = document.querySelector('.timed-splash');
+  const mainContent = document.querySelector('main');
   const gameOverOverlay = document.querySelector('.timed-game-over');
   const gameOverScore = document.querySelector('[data-final-score]');
   const gameOverMatches = document.querySelector('[data-final-matches]');
@@ -433,8 +435,20 @@
     }
   };
 
+  const hideSplash = () => {
+    if (splashScreen) {
+      splashScreen.classList.add('is-hidden');
+      splashScreen.setAttribute('aria-hidden', 'true');
+    }
+    if (mainContent) {
+      mainContent.removeAttribute('aria-hidden');
+    }
+    document.body.classList.remove('has-splash');
+  };
+
   const startGame = () => {
     if (!state.peaks.length) return;
+    hideSplash();
     resetGame();
     initAudio();
     state.running = true;
