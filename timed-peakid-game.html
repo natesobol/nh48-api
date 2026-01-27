@@ -35,8 +35,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/timed-peakid-game.css">
   <script src="/js/unified-footer.js" defer></script>
+  <script src="/js/splash.js" defer></script>
 </head>
-<body data-route="timed-peakid-game" data-page="timed-peakid-game">
+<body class="has-splash" data-route="timed-peakid-game" data-page="timed-peakid-game">
+  <div id="splash-background" class="timed-splash-background" aria-hidden="true"></div>
+  <div id="splash-mask" class="timed-splash-mask" aria-hidden="true"></div>
+  <section class="timed-splash" aria-label="Timed PeakID Game introduction">
+    <div class="timed-splash-panel">
+      <p class="timed-splash-kicker">NH48 PeakID</p>
+      <h1 data-i18n="timedGame.title">Timed PeakID Game</h1>
+      <p class="timed-splash-lede">Race the clock by matching summit photos to the right peak names before they hit the bottom.</p>
+      <ul class="timed-splash-list">
+        <li>Drag each photo onto the correct peak label.</li>
+        <li>Keep an eye on the timer and your remaining lives.</li>
+        <li>Each correct match scores points and boosts accuracy.</li>
+        <li>Survive the full round to set a new high score.</li>
+      </ul>
+      <button class="timed-cta" data-action="play" data-i18n="timedGame.play">Start Timed Game</button>
+    </div>
+  </section>
   <div id="nav-placeholder"></div>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -68,11 +85,10 @@
       }
     });
   </script>
-  <main>
+  <main aria-hidden="true">
     <section class="timed-hero">
       <h1 data-i18n="timedGame.title">Timed PeakID Game</h1>
       <p>Match each falling summit photo with the correct NH48 peak name before it hits the bottom. Drag each photo into the matching label to score.</p>
-      <button class="timed-cta" data-action="play" data-i18n="timedGame.play">Play Timed PeakID Game</button>
     </section>
 
     <section class="timed-layout">
