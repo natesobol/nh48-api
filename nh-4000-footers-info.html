@@ -435,6 +435,64 @@
         gap: 12px;
         margin-top: 18px;
       }
+      .snapshot-title {
+        margin: 18px 0 8px;
+        font-size: 1.15rem;
+        color: var(--ink);
+      }
+      .condensed-facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 10px 0 18px;
+      }
+      .condensed-facts div {
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: var(--card-gradient);
+        border: 1px solid var(--card-border);
+        font-size: 0.95rem;
+        color: var(--ink);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: var(--card-shadow);
+      }
+      .condensed-facts strong {
+        font-weight: 700;
+        color: var(--accent-strong);
+      }
+      .toc {
+        margin: 18px 0 30px;
+        padding: 16px;
+        border-radius: 16px;
+        border: 1px solid var(--card-border);
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .toc ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+      }
+      .toc a {
+        color: var(--muted);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        padding-bottom: 2px;
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+      .toc a:hover,
+      .toc a:focus-visible {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+        outline: 2px solid rgba(34, 197, 94, 0.4);
+        outline-offset: 3px;
+        border-radius: 6px;
+      }
       .hero-card {
         background: var(--card-gradient);
         border: 1px solid var(--card-border);
@@ -627,9 +685,6 @@
         border-color: var(--accent-strong);
       }
 
-      /* ============================================================
-         HERO STATS PANEL - Migrated from homepage (index.html)
-         ============================================================ */
       .section-divider {
         display: flex;
         align-items: center;
@@ -650,137 +705,61 @@
         opacity: 0.6;
       }
 
-      .nh48-hero-stats {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 24px;
-        padding: 48px 24px;
-        background: linear-gradient(180deg, rgba(34, 197, 94, 0.08) 0%, transparent 100%);
-        border-radius: 24px;
-        margin: 32px 0;
-      }
-      .nh48-hero-stats h2 {
-        color: var(--ink);
-        font-size: 1.75rem;
-        font-weight: 700;
-        margin: 0 0 12px;
-        text-align: center;
-      }
-      .nh48-hero-stats .stats-grid {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
-        width: 100%;
-      }
-      .nh48-hero-stats .stat-box {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 24px 32px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(34, 197, 94, 0.2);
-        border-radius: 20px;
-        min-width: 150px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-      }
-      .nh48-hero-stats .stat-box:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(34, 197, 94, 0.15);
-        border-color: rgba(34, 197, 94, 0.4);
-      }
-      .nh48-hero-stats .stat-number {
-        font-size: 2.75rem;
-        font-weight: 700;
-        color: var(--accent);
-        line-height: 1.1;
-        letter-spacing: -0.02em;
-      }
-      .nh48-hero-stats .stat-label {
-        font-size: 0.9rem;
-        color: var(--muted);
-        margin-top: 8px;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      .nh48-hero-stats .stat-comparison {
-        font-size: 0.8rem;
-        color: var(--muted);
-        margin-top: 6px;
-        opacity: 0.8;
-      }
-      .comparison-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 10px;
-        background: rgba(34, 197, 94, 0.15);
-        border: 1px solid rgba(34, 197, 94, 0.25);
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--accent-strong);
-        white-space: nowrap;
-      }
-
-      /* Physical Commitment Section */
-      .physical-commitment {
+      /* Effort & Distance Section */
+      .effort-distance {
         padding: 32px 0;
         text-align: left;
       }
-      .physical-commitment h2 {
+      .effort-distance h2 {
         color: var(--ink);
         font-size: 1.5rem;
         margin-bottom: 16px;
         text-align: center;
       }
-      .physical-commitment > p {
+      .effort-distance > p {
         text-align: center;
         margin-bottom: 24px;
       }
-      .commitment-details {
+      .effort-details {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 20px;
       }
-      .commitment-item {
+      .effort-item {
         padding: 24px;
         background: rgba(255, 255, 255, 0.02);
         border: 1px solid rgba(203, 213, 245, 0.1);
         border-radius: 16px;
       }
-      .commitment-item h3 {
+      .effort-item h3 {
         color: var(--accent);
         font-size: 1.1rem;
         margin-bottom: 12px;
       }
-      .commitment-item p {
+      .effort-item p {
         margin: 0;
         font-size: 0.95rem;
       }
 
-      /* Challenge Tiers Section */
-      .challenge-tiers {
+      /* Difficulty Guide Section */
+      .difficulty-guide {
         padding: 40px 24px;
         background: rgba(10, 10, 10, 0.6);
         border-radius: 24px;
         margin: 32px 0;
       }
-      .challenge-tiers h2 {
+      .difficulty-guide h2 {
         text-align: center;
         color: var(--ink);
         font-size: 1.5rem;
         margin-bottom: 12px;
         font-weight: 700;
       }
-      .challenge-tiers > p {
+      .difficulty-guide > p {
         text-align: center;
         margin-bottom: 28px;
       }
-      .challenge-tiers .tiers-container {
+      .difficulty-guide .tiers-container {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
@@ -1026,16 +1005,6 @@
 
       /* Responsive adjustments for migrated sections */
       @media (max-width: 900px) {
-        .nh48-hero-stats {
-          padding: 32px 16px;
-        }
-        .nh48-hero-stats .stat-box {
-          padding: 20px 24px;
-          min-width: 130px;
-        }
-        .nh48-hero-stats .stat-number {
-          font-size: 2.25rem;
-        }
         .tier-badge {
           min-width: 160px;
           padding: 16px 20px;
@@ -1053,29 +1022,7 @@
       }
 
       @media (max-width: 680px) {
-        .nh48-hero-stats .stats-grid {
-          flex-direction: column;
-          align-items: center;
-        }
-        .nh48-hero-stats .stat-box {
-          width: 100%;
-          max-width: 280px;
-          flex-direction: row;
-          justify-content: space-between;
-          padding: 16px 20px;
-        }
-        .nh48-hero-stats .stat-number {
-          font-size: 2rem;
-          order: 2;
-        }
-        .nh48-hero-stats .stat-label {
-          margin-top: 0;
-          text-align: left;
-        }
-        .nh48-hero-stats .stat-comparison {
-          display: none;
-        }
-        .challenge-tiers .tiers-container {
+        .difficulty-guide .tiers-container {
           flex-direction: column;
           align-items: center;
         }
@@ -1104,17 +1051,7 @@
       }
 
       @media (max-width: 480px) {
-        .nh48-hero-stats {
-          padding: 20px 12px;
-          margin: 20px 0;
-        }
-        .nh48-hero-stats h2 {
-          font-size: 1.4rem;
-        }
-        .nh48-hero-stats .stat-number {
-          font-size: 1.75rem;
-        }
-        .challenge-tiers {
+        .difficulty-guide {
           padding: 24px 16px;
         }
       }
@@ -1188,10 +1125,18 @@
     <main class="wrap">
       <header class="hero">
         <p class="eyebrow">Community compiled • Unofficial overview</p>
-        <h1>NH 48 4,000-Footers: Unofficial Information Hub</h1>
+        <h1>NH48 Information Hub</h1>
         <p>
           Community members gathered these notes on the AMC Four-Thousand-Footer peaks—routes, ranges, seasonality patterns, and developer tools—to make browsing easier. Details are not fully verified; please cross-check against the Appalachian Mountain Club’s official resources before you go.
         </p>
+        <h2 class="snapshot-title">NH48 Snapshot</h2>
+        <div class="quick-facts condensed-facts" aria-label="NH48 Snapshot">
+          <div><strong>48 Peaks</strong></div>
+          <div><strong>~350 mi trails</strong></div>
+          <div><strong>~170K ft gain (≈6× Everest)</strong></div>
+          <div><strong>~20 day trips</strong></div>
+          <div><strong>1–4 years typical</strong></div>
+        </div>
         <p class="submit-edit-cta">
           <a href="/submit-edit" class="submit-edit-link">Submit Edit to Author</a>
         </p>
@@ -1219,64 +1164,51 @@
         </div>
       </header>
 
-      <!-- Section Divider -->
-      <div class="section-divider">
-        <span class="divider-icon">📊</span>
-      </div>
-
-      <!-- Hero Stats Section - Migrated from homepage -->
-      <section class="nh48-hero-stats" aria-label="NH48 Challenge Statistics">
-        <h2>The NH48 Challenge at a Glance</h2>
-        <div class="stats-grid">
-          <div class="stat-box">
-            <span class="stat-number">48</span>
-            <span class="stat-label">Total Peaks</span>
-          </div>
-          <div class="stat-box">
-            <span class="stat-number">~350</span>
-            <span class="stat-label">Miles of Trail</span>
-          </div>
-          <div class="stat-box">
-            <span class="stat-number">~170K</span>
-            <span class="stat-label">Feet Elevation Gain</span>
-            <span class="stat-comparison comparison-badge">= 6x Everest</span>
-          </div>
-          <div class="stat-box">
-            <span class="stat-number">~20</span>
-            <span class="stat-label">Min. Day Hikes</span>
-            <span class="stat-comparison">with groupings</span>
-          </div>
-          <div class="stat-box">
-            <span class="stat-number">1-4</span>
-            <span class="stat-label">Years to Complete</span>
-          </div>
-        </div>
-      </section>
+      <nav class="toc" aria-label="Table of contents">
+        <ul>
+          <li><a href="#effort-distance" aria-label="Effort and distance section">Effort &amp; Distance</a></li>
+          <li><a href="#peak-difficulty-guide" aria-label="Peak difficulty guide section">Difficulty Guide</a></li>
+          <li><a href="#day-trip-groupings" aria-label="Day trip groupings section">Day Trip Groupings</a></li>
+          <li><a href="#what-is-nh48" aria-label="What is the NH48 section">What is the NH48?</a></li>
+          <li><a href="#official-peak-list" aria-label="Official peak list section">Official Peak List</a></li>
+          <li><a href="#range-map" aria-label="Range map section">Range Map</a></li>
+          <li><a href="#difficulty-strategy" aria-label="Peak difficulty and strategy section">Peak Difficulty &amp; Strategy</a></li>
+          <li><a href="#time-effort" aria-label="Time and effort section">Time &amp; Effort</a></li>
+          <li><a href="#grouping-strategy" aria-label="Grouping strategy section">Grouping Strategy</a></li>
+          <li><a href="#progression" aria-label="Progression section">Progression</a></li>
+          <li><a href="#risk-preparedness" aria-label="Risk and preparedness section">Risk &amp; Preparedness</a></li>
+          <li><a href="#completion-strategies" aria-label="Finish strategies section">Finish Strategies</a></li>
+          <li><a href="#seasonal-considerations" aria-label="Seasonal considerations section">Seasonal Considerations</a></li>
+          <li><a href="#history" aria-label="History section">History</a></li>
+          <li><a href="#data-api" aria-label="Data and API section">Data &amp; API</a></li>
+          <li><a href="#faq" aria-label="Frequently asked questions section">FAQ</a></li>
+        </ul>
+      </nav>
 
       <!-- Section Divider -->
       <div class="section-divider">
         <span class="divider-icon">🥾</span>
       </div>
 
-      <!-- Physical Commitment Section - Migrated from homepage -->
-      <section class="physical-commitment" aria-label="Physical Commitment Required">
-        <h2>Physical Commitment Required</h2>
-        <p>Completing all 48 peaks demands significant physical effort and time investment. Here's what you're signing up for:</p>
+      <!-- Effort & Distance Section - Migrated from homepage -->
+      <section class="effort-distance" id="effort-distance" aria-label="Effort and Distance">
+        <h2>Effort &amp; Distance</h2>
+        <p>Expect long hikes and significant elevation gain; distances vary based on route choice and grouping style.</p>
         
-        <div class="commitment-details">
-          <div class="commitment-item">
+        <div class="effort-details">
+          <div class="effort-item">
             <h3>📏 Total Distance</h3>
-            <p><strong>~250-500 miles</strong> depending on your route choices and how efficiently you group peaks. Ambitious multi-peak days can reduce total mileage, while enjoying peaks individually adds distance.</p>
+            <p><strong>~250-500 miles</strong> depending on route choices and how efficiently peaks are grouped. Multi-peak days can reduce total mileage, while single-peak outings add distance.</p>
           </div>
           
-          <div class="commitment-item">
+          <div class="effort-item">
             <h3>⛰️ Total Elevation Gain</h3>
-            <p><strong>~170,000 feet</strong> of cumulative elevation gain - equivalent to climbing Mount Everest from sea level <strong>6 times</strong>. This is where the real challenge lies.</p>
+            <p><strong>~170,000 feet</strong> of cumulative elevation gain — roughly six times Mount Everest from sea level.</p>
           </div>
           
-          <div class="commitment-item">
+          <div class="effort-item">
             <h3>⏱️ Time Investment</h3>
-            <p><strong>150-350 hours</strong> of actual hiking time, not including drive time, rest breaks, or time spent enjoying summits. Most completers spend 2-4 years reaching all 48 peaks.</p>
+            <p><strong>150-350 hours</strong> of hiking time, not including drive time, rest breaks, or time spent on summits. Many hikers take 2-4 years to visit all 48 peaks.</p>
           </div>
         </div>
       </section>
@@ -1287,9 +1219,9 @@
       </div>
 
       <!-- Difficulty Tiers Section - Migrated from homepage -->
-      <section class="challenge-tiers" aria-label="Peak Difficulty Tiers">
-        <h2>Peak Difficulty Tiers</h2>
-        <p>Not all peaks are created equal. Plan your progression from accessible summits to challenging alpine terrain.</p>
+      <section class="difficulty-guide" id="peak-difficulty-guide" aria-label="Peak Difficulty Guide">
+        <h2>Peak Difficulty Guide</h2>
+        <p>Not all peaks are created equal. Plan your progression from accessible summits to exposed alpine terrain.</p>
         
         <div class="tiers-container">
           <div class="tier-badge tier-beginner">
@@ -1312,7 +1244,7 @@
           
           <div class="tier-badge tier-severe">
             <span class="tier-count">~8</span>
-            <span class="tier-name">Severe / Alpine</span>
+            <span class="tier-name">Alpine / Exposed</span>
             <span class="tier-examples">Washington, Adams, Jefferson, Madison, Bonds</span>
           </div>
         </div>
@@ -1324,7 +1256,7 @@
       </div>
 
       <!-- Day Trip Groupings Section - Migrated from homepage -->
-      <section class="trip-combos" aria-label="Popular Day Trip Groupings">
+      <section class="trip-combos" id="day-trip-groupings" aria-label="Popular Day Trip Groupings">
         <h2>Popular Day Trip Groupings</h2>
         <p>Maximize your summit count with these classic multi-peak routes. Experienced hikers often complete multiple peaks per trip.</p>
         
@@ -1333,7 +1265,7 @@
             <span class="combo-name">Presidential Traverse</span>
             <span class="combo-peaks">7 Peaks</span>
             <span class="combo-stats">~23 mi | ~9,000 ft gain</span>
-            <p class="combo-description">Madison, Adams, Jefferson, Washington, Monroe, Eisenhower, Pierce - the ultimate White Mountains challenge.</p>
+            <p class="combo-description">Madison, Adams, Jefferson, Washington, Monroe, Eisenhower, Pierce - the ultimate White Mountains traverse.</p>
           </div>
           
           <div class="combo-card">
@@ -1344,10 +1276,17 @@
           </div>
           
           <div class="combo-card">
-            <span class="combo-name">Pemi Loop Bonds</span>
+            <span class="combo-name">Bonds Traverse</span>
             <span class="combo-peaks">3 Peaks</span>
             <span class="combo-stats">~19 mi | ~5,500 ft gain</span>
-            <p class="combo-description">Bondcliff, Bond, West Bond - remote wilderness peaks in the heart of the Pemigewasset.</p>
+            <p class="combo-description">Bondcliff, Bond and West Bond—often done as a long day hike or overnight, usually requiring a car spot or out-and-back.</p>
+          </div>
+
+          <div class="combo-card">
+            <span class="combo-name">Pemi Loop</span>
+            <span class="combo-peaks">9–11 Peaks</span>
+            <span class="combo-stats">~31 mi | ~9,100 ft gain</span>
+            <p class="combo-description">A circuit around the Pemigewasset Wilderness linking Flume, Liberty, Lincoln, Lafayette, Garfield, Galehead, South Twin, West Bond, Bond and Bondcliff, with optional North Twin or Zealand.</p>
           </div>
           
           <div class="combo-card">
@@ -1377,6 +1316,13 @@
             <span class="combo-stats">~8 mi | ~3,200 ft gain</span>
             <p class="combo-description">Mount Osceola, East Osceola - beginner-friendly pairing with a fun chimney scramble.</p>
           </div>
+
+          <div class="combo-card">
+            <span class="combo-name">Willey Range</span>
+            <span class="combo-peaks">3 Peaks</span>
+            <span class="combo-stats">~9 mi | ~3,200 ft gain</span>
+            <p class="combo-description">Mount Tom, Field and Willey via the Ethan Pond or Avalon approaches for a classic three-peak loop.</p>
+          </div>
         </div>
       </section>
 
@@ -1386,7 +1332,7 @@
           The New Hampshire 48 refers to mountains that meet the AMC Four-Thousand-Footer Club standard of at least 4,000 feet above sea level and 200 feet of topographic prominence. NH48.info is not affiliated with the AMC; this overview summarizes information gathered from public references and hiker contributions.
         </p>
         <p>
-          The idea dates to 1931 when Dartmouth librarian Nathaniel L. Goodrich outlined an early challenge. Refined USGS surveys and AMC guidelines eventually set the list at 48 peaks—adding Bondcliff and Galehead while excluding shoulder summits like Mt. Guyot and Mt. Clay. Readers should confirm criteria and routes with the Appalachian Mountain Club before planning trips.
+          The idea dates to 1931 when Dartmouth librarian Nathaniel L. Goodrich outlined an early list. Refined USGS surveys and AMC guidelines eventually set the list at 48 peaks—adding Bondcliff and Galehead while excluding shoulder summits like Mt. Guyot and Mt. Clay. Readers should confirm criteria and routes with the Appalachian Mountain Club before planning trips.
         </p>
       </section>
 
@@ -1443,7 +1389,7 @@
       <section id="difficulty-strategy">
         <h2>Peak Difficulty &amp; Strategy</h2>
         <p>
-          Difficulty is subjective and conditions change quickly. The notes below reflect commonly shared hiker experiences, not official designations. Plan carefully and consult AMC trail guides and forecasts before committing to any route.
+          Difficulty is subjective and conditions change quickly. The notes below reflect commonly shared hiker experiences, not official designations. Plan carefully and consult AMC trail guides and forecasts before choosing a route.
         </p>
         <div class="content-grid">
           <div class="panel hero-card">
@@ -1471,7 +1417,7 @@
             </ul>
           </div>
           <div class="panel hero-card">
-            <h3>Severe / Alpine (≈8 peaks)</h3>
+            <h3>Alpine / Exposed (≈8 peaks)</h3>
             <p>Above-treeline exposure, high winds, and the most rugged terrain.</p>
             <ul>
               <li><strong>Washington, Adams, Jefferson, Madison</strong></li>
@@ -1489,7 +1435,7 @@
             </ul>
           </div>
           <div class="panel hero-card">
-            <h3>Advanced &amp; committing</h3>
+            <h3>Advanced &amp; Strenuous</h3>
             <ul>
               <li><strong>The Bonds</strong> (Bond, West Bond, Bondcliff) — often tackled as a 19–23 mile day or an overnight traverse.</li>
               <li><strong>Owl’s Head</strong> — known for a long approach with a loose slide and muddy valley miles.</li>
@@ -1511,7 +1457,7 @@
             </ul>
           </div>
           <div class="panel hero-card">
-            <h3>Typical Completion Timeline</h3>
+            <h3>Typical Finish Timeline</h3>
             <ul>
               <li><strong>Fast finish:</strong> 1–2 years (or a single intense season).</li>
               <li><strong>Weekend warrior:</strong> 2–4 years for most steady hikers.</li>
@@ -1524,7 +1470,7 @@
       <section id="grouping-strategy">
         <h2>“Smart Groupings” – Day-Trip Strategy</h2>
         <p>
-          The NH48 doesn’t need 48 separate outings. With smart planning, many peaks are commonly paired or traversed in a single day.
+          The NH48 does not always require individual trips. With smart planning, many peaks are commonly paired or traversed in a single day.
         </p>
         <div class="content-grid">
           <div class="panel hero-card">
@@ -1555,7 +1501,7 @@
           <div class="panel hero-card">
             <h3>Easiest 10</h3>
             <p>Start with shorter mileage and forgiving trails.</p>
-            <p><em>Tecumseh, Waumbek, Hale, Jackson, Pierce, Osceola</em> and other low-commitment peaks.</p>
+            <p><em>Tecumseh, Waumbek, Hale, Jackson, Pierce, Osceola</em> and other lower-effort peaks.</p>
           </div>
           <div class="panel hero-card">
             <h3>Middle 20</h3>
@@ -1578,7 +1524,7 @@
       <!-- Risk & Preparedness Section - Migrated from homepage -->
       <section class="risk-stats" id="risk-preparedness" aria-label="Risk Factors and Preparedness">
         <h2>Risk Factors &amp; Preparedness</h2>
-        <p>The White Mountains are deceptively dangerous. Conditions can change rapidly, and rescue is often hours away.</p>
+        <p>Weather changes quickly in the White Mountains; preparation is essential and rescue can take hours.</p>
         
         <div class="risk-grid">
           <div class="risk-box">
@@ -1612,17 +1558,17 @@
         <span class="divider-icon">🎯</span>
       </div>
 
-      <!-- Completion Strategies Section - Migrated from homepage -->
-      <section class="strategy-section" id="completion-strategies" aria-label="Completion Strategies">
-        <h2>Choose Your Completion Strategy</h2>
-        <p>There's no wrong way to complete the 48 - pick the approach that matches your lifestyle and goals.</p>
+      <!-- Finish Strategies Section - Migrated from homepage -->
+      <section class="strategy-section" id="completion-strategies" aria-label="Finish Strategies">
+        <h2>Choose Your Finish Strategy</h2>
+        <p>There's no single way to finish the list - pick the approach that matches your lifestyle and goals.</p>
         
         <div class="strategy-tiles">
           <div class="strategy-tile">
             <span class="strategy-icon">🚀</span>
-            <span class="strategy-name">Speed Run</span>
+            <span class="strategy-name">Fast Finish</span>
             <span class="strategy-duration">~1 Year | 18-20 Day Hikes</span>
-            <p class="strategy-description">Aggressive multi-peak days, optimal groupings, and dedication to the goal. Best for experienced hikers with flexible schedules.</p>
+            <p class="strategy-description">Efficient multi-peak days, optimal groupings, and flexible scheduling. Best for experienced hikers with open calendars.</p>
           </div>
           
           <div class="strategy-tile">
