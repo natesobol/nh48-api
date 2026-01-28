@@ -321,6 +321,27 @@ th{
   flex-wrap:wrap;
   gap:12px;
 }
+.toc-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.toc-link{
+  color:var(--ink);
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid var(--stroke);
+  background:var(--card);
+  font-size:0.95rem;
+}
+.toc-link:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
 .map-link{
   color:var(--ink);
   text-decoration:none;
@@ -617,6 +638,18 @@ a:hover {
         <h2>Interactive Trail Map</h2>
         <div id="map" aria-label="Howker Ridge Trail map"></div>
         <p class="small">Trail line and waypoint markers are loaded from the NH48 GeoJSON dataset. Tap markers for details and use the layer controls to explore ridge features.</p>
+      </section>
+
+      <section class="section card span-2" id="jump-to">
+        <h2>Jump to sections</h2>
+        <p class="small">Quick links to each panel on this page.</p>
+        <div class="toc-links">
+          <a class="toc-link" href="#map-links">Trail maps &amp; downloads</a>
+          <a class="toc-link" href="#poi">Points of interest</a>
+          <a class="toc-link" href="#metadata">Trail overview &amp; conditions</a>
+          <a class="toc-link" href="#flora">Flora along the trail</a>
+          <a class="toc-link" href="#conditions">Current conditions &amp; safety</a>
+        </div>
       </section>
 
       <section class="section card" id="map-links">
