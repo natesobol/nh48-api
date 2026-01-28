@@ -323,20 +323,25 @@ th{
 }
 .toc-links{
   display:flex;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
   gap:12px;
+  width:100%;
 }
 .toc-link{
   color:var(--ink);
   text-decoration:none;
   display:inline-flex;
   align-items:center;
+  justify-content:center;
   gap:8px;
   padding:10px 14px;
   border-radius:999px;
   border:1px solid var(--stroke);
-  background:var(--card);
+  background:transparent;
   font-size:0.95rem;
+  flex:1 1 0;
+  text-align:center;
+  white-space:nowrap;
 }
 .toc-link:hover{
   border-color:var(--accent);
@@ -450,6 +455,13 @@ th{
   #map{ height:360px; }
   .hero{ padding:24px; }
   .span-2{ grid-column:span 1; }
+  .toc-links{
+    flex-wrap:wrap;
+  }
+  .toc-link{
+    flex:1 1 calc(50% - 12px);
+    white-space:normal;
+  }
 }
 
 /* Added styles to ensure readability and brand colours:
@@ -466,6 +478,7 @@ a:hover {
 .poi-thumb {
   width: 32px;
   height: 32px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   border: 1px solid var(--stroke);
   object-fit: cover;
@@ -508,9 +521,11 @@ a:hover {
 .poi-marker img{
   width:34px;
   height:34px;
+  aspect-ratio:1 / 1;
   border-radius:50%;
   border:2px solid #fff;
   box-shadow:0 0 4px rgba(0, 0, 0, 0.3);
+  object-fit:cover;
   transition:transform 0.2s ease;
 }
 .poi-marker img:hover{
