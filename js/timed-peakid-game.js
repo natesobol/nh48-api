@@ -35,8 +35,9 @@
     difficultyStepSeconds: 16,
     preloadCount: 6,
     preloadHoldMs: 3000,
-    minFallDurationSeconds: 10,
-    maxFallDurationSeconds: 15
+    minFallDurationSeconds: 12,
+    maxFallDurationSeconds: 18,
+    flashWarningMs: 2500
   };
 
   const state = {
@@ -287,11 +288,13 @@
       driftSpeed: 0.00045 + Math.random() * 0.00025,
       fallElapsed: 0,
       fallDurationMs: (config.minFallDurationSeconds
-        + Math.random() * (config.maxFallDurationSeconds - config.minFallDurationSeconds)) * 1000
+        + Math.random() * (config.maxFallDurationSeconds - config.minFallDurationSeconds)) * 1000,
+      warned: false
     };
 
     const updatePosition = () => {
-      piece.el.style.transform = `translate3d(${piece.x}px, ${piece.y}px, 0)`;
+      piece.el.style.setProperty('--piece-x', `${piece.x}px`);
+      piece.el.style.setProperty('--piece-y', `${piece.y}px`);
     };
 
     pieceEl.addEventListener('pointerdown', (event) => {
@@ -383,6 +386,11 @@
       if (piece.dragging) return;
       piece.fallElapsed += delta;
       const progress = Math.min(piece.fallElapsed / piece.fallDurationMs, 1);
+      const remainingMs = piece.fallDurationMs - piece.fallElapsed;
+      if (!piece.warned && remainingMs <= config.flashWarningMs) {
+        piece.warned = true;
+        piece.el.classList.add('is-warning');
+      }
       piece.y = -80 + (bounds.height + 80) * progress;
       piece.driftPhase += piece.driftSpeed * delta;
       piece.x += Math.sin(piece.driftPhase) * 0.5;
@@ -390,7 +398,8 @@
       if (piece.y + piece.el.offsetHeight >= bounds.height) {
         registerMiss(piece);
       } else {
-        piece.el.style.transform = `translate3d(${piece.x}px, ${piece.y}px, 0)`;
+        piece.el.style.setProperty('--piece-x', `${piece.x}px`);
+        piece.el.style.setProperty('--piece-y', `${piece.y}px`);
       }
     });
 
