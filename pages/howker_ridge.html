@@ -185,6 +185,10 @@ body{
   gap:var(--gap);
   margin-top:24px;
 }
+#map-section,
+#map-links{
+  grid-column:1 / -1;
+}
 .span-2{
   grid-column:span 2;
 }
@@ -208,7 +212,7 @@ body{
   color:var(--ink);
 }
 #map{
-  height:520px;
+  height:560px;
   width:100%;
   border-radius:10px;
   overflow:hidden;
@@ -308,19 +312,28 @@ th{
   letter-spacing:0.5px;
   background:var(--card);
 }
-.link-list a{
+.map-links-menu{
+  display:grid;
+  gap:18px;
+}
+.map-links-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.map-link{
   color:var(--ink);
   text-decoration:none;
-  display:flex;
-  justify-content:space-between;
+  display:inline-flex;
   align-items:center;
   gap:8px;
-  padding:10px 12px;
-  border-radius:10px;
+  padding:10px 14px;
+  border-radius:12px;
   border:1px solid var(--stroke);
   background:transparent;
+  font-size:0.95rem;
 }
-.link-list a:hover{
+.map-link:hover{
   border-color:var(--accent);
   color:var(--accent);
 }
@@ -435,13 +448,58 @@ a:hover {
   border-radius: 50%;
   border: 1px solid var(--stroke);
   object-fit: cover;
+  transition: transform 0.2s ease;
 }
-.photo-marker img {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+.poi-thumb:hover {
+  transform: scale(1.2);
+}
+.poi-avatar{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.poi-fallback-label{
+  display:none;
+  align-items:center;
+  gap:6px;
+  padding:4px 10px;
+  border-radius:8px;
+  border:1px solid var(--stroke);
+  background:rgba(15,23,42,0.4);
+  font-size:12px;
+  white-space:nowrap;
+}
+.poi-avatar.is-fallback .poi-fallback-label{
+  display:inline-flex;
+}
+.poi-marker{
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:visible;
+}
+.poi-marker.is-fallback{
+  width:auto;
+  height:auto;
+}
+.poi-marker img{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  border:2px solid #fff;
+  box-shadow:0 0 4px rgba(0, 0, 0, 0.3);
+  transition:transform 0.2s ease;
+}
+.poi-marker img:hover{
+  transform:scale(1.2);
+}
+.poi-marker .poi-fallback-label{
+  display:none;
+}
+.poi-marker.is-fallback .poi-fallback-label{
+  display:inline-flex;
 }
 </style>
 <script type="application/ld+json">
@@ -563,22 +621,22 @@ a:hover {
 
       <section class="section card" id="map-links">
         <h2>Trail Maps &amp; Downloads</h2>
-        <div class="two-col">
-          <div>
+        <div class="map-links-menu">
+          <div class="map-links-group">
             <h3>External Trail Maps</h3>
-            <div class="link-list">
-              <a href="https://www.onxmaps.com/offroad/map?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">OnX Maps <span aria-hidden="true">↗</span></a>
-              <a href="https://www.alltrails.com/explore?lat=44.334&lng=-71.266&zoom=12" target="_blank" rel="noopener">AllTrails <span aria-hidden="true">↗</span></a>
-              <a href="https://www.gaiagps.com/map/?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">Gaia GPS <span aria-hidden="true">↗</span></a>
-              <a href="https://caltopo.com/map.html#ll=44.334,-71.266&z=12" target="_blank" rel="noopener">CalTopo <span aria-hidden="true">↗</span></a>
+            <div class="map-links-row">
+              <a class="map-link" href="https://www.onxmaps.com/offroad/map?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">OnX Maps <span aria-hidden="true">↗</span></a>
+              <a class="map-link" href="https://www.alltrails.com/explore?lat=44.334&lng=-71.266&zoom=12" target="_blank" rel="noopener">AllTrails <span aria-hidden="true">↗</span></a>
+              <a class="map-link" href="https://www.gaiagps.com/map/?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">Gaia GPS <span aria-hidden="true">↗</span></a>
+              <a class="map-link" href="https://caltopo.com/map.html#ll=44.334,-71.266&z=12" target="_blank" rel="noopener">CalTopo <span aria-hidden="true">↗</span></a>
             </div>
           </div>
-          <div>
+          <div class="map-links-group">
             <h3>GPS &amp; Navigation Downloads</h3>
-            <ul>
-              <li><a href="/downloads/howker-ridge-trail.gpx" download>Download GPX (trail + POIs)</a></li>
-              <li><a href="/downloads/howker-ridge-trail.kml" download>Download KML</a></li>
-            </ul>
+            <div class="map-links-row">
+              <a class="map-link" href="/downloads/howker-ridge-trail.gpx" download>Download GPX (trail + POIs)</a>
+              <a class="map-link" href="/downloads/howker-ridge-trail.kml" download>Download KML</a>
+            </div>
             <p class="small">Files are formatted for GPS apps and GIS tools. Always carry a paper map and backup navigation.</p>
           </div>
         </div>
@@ -729,12 +787,17 @@ a:hover {
     }
 
     function createPhotoMarker(latlng, name) {
-      const slug = slugify(name);
+      const safeName = name || 'POI';
+      const slug = slugify(safeName);
       const thumbUrl = `https://howker.nh48.info/cdn-cgi/image/format=webp,width=40/${slug}/${slug}-001.jpg`;
       return L.marker(latlng, {
         icon: L.divIcon({
-          className: 'photo-marker',
-          html: `<img src="${thumbUrl}" alt="${name}">`,
+          className: 'poi-marker',
+          html: `
+            <img src="${thumbUrl}" alt="${safeName}" loading="lazy"
+              onerror="this.closest('.poi-marker').classList.add('is-fallback');this.remove();" />
+            <span class="poi-fallback-label">📍 ${safeName}</span>
+          `,
           iconSize: [36, 36],
           iconAnchor: [18, 36],
           popupAnchor: [0, -30]
@@ -767,7 +830,13 @@ a:hover {
         const thumbUrl = `https://howker.nh48.info/cdn-cgi/image/format=webp,width=48/${slug}/${slug}-001.jpg`;
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td><img class="poi-thumb" src="${thumbUrl}" alt="${item.name} thumbnail" loading="lazy" /></td>
+          <td>
+            <div class="poi-avatar">
+              <img class="poi-thumb" src="${thumbUrl}" alt="${item.name} thumbnail" loading="lazy"
+                onerror="this.closest('.poi-avatar').classList.add('is-fallback');this.remove();" />
+              <span class="poi-fallback-label">📍 ${item.name}</span>
+            </div>
+          </td>
           <td>${item.name}</td>
           <td>${item.elevation ?? ''}</td>
           <td>${formatDMS(item.lat, true)}</td>
