@@ -1595,7 +1595,8 @@
     gap: 4px;
   }
 
-  .site-nav-dropdown .site-nav-submenu a {
+  .site-nav-dropdown .site-nav-submenu a,
+  .site-nav-dropdown .site-nav-submenu button {
     width: 100%;
     text-transform: none;
     font-size: 14px;
@@ -1604,7 +1605,53 @@
     border-radius: 8px;
   }
 
-  .site-nav-submenu a + a {
+  .site-nav-dropdown .site-nav-submenu button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ffffff;
+    text-align: left;
+    font-weight: 700;
+  }
+
+  .site-nav-submenu-group {
+    position: relative;
+  }
+
+  .site-nav-submenu-group > button::after {
+    content: "›";
+    float: right;
+    opacity: 0.7;
+  }
+
+  .site-nav-submenu-group + .site-nav-submenu-group {
+    border-top: 1px dotted rgba(255, 255, 255, 0.3);
+    padding-top: 6px;
+    margin-top: 4px;
+  }
+
+  .site-nav-submenu--nested {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: calc(100% + 6px);
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    padding: 10px;
+    min-width: 200px;
+    z-index: 12;
+  }
+
+  .site-nav-submenu-group:hover .site-nav-submenu--nested,
+  .site-nav-submenu-group:focus-within .site-nav-submenu--nested {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .site-nav-submenu--nested a + a {
     border-radius: 0;
     border-top: 1px dotted rgba(255, 255, 255, 0.3);
     padding-top: 6px;
@@ -1868,17 +1915,22 @@
       </div>
     </div>
     <div class="site-nav-dropdown">
-      <button type="button" data-route="trails" data-i18n="nav.trails">White Mountain Trails</button>
-      <div class="site-nav-submenu" aria-label="White Mountain Trails short links">
-        <a href="/trails" data-route="trails">Trails Map</a>
-        <a href="/dataset/wmnf-trails">WMNF Dataset</a>
-      </div>
-    </div>
-    <div class="site-nav-dropdown">
-      <button type="button" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</button>
-      <div class="site-nav-submenu" aria-label="Long Trails short links">
-        <a href="/long-trails" data-route="long-trails">Long Trail Map</a>
-        <a href="/dataset/long-trails">Long Trails Dataset</a>
+      <button type="button">Other Hiking Datasets</button>
+      <div class="site-nav-submenu" aria-label="Other hiking datasets short links">
+        <div class="site-nav-submenu-group">
+          <button type="button" data-route="trails" data-i18n="nav.trails">White Mountain Trails</button>
+          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="White Mountain Trails short links">
+            <a href="/trails" data-route="trails">Trails Map</a>
+            <a href="/dataset/wmnf-trails">WMNF Dataset</a>
+          </div>
+        </div>
+        <div class="site-nav-submenu-group">
+          <button type="button" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</button>
+          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="Long Trails short links">
+            <a href="/long-trails" data-route="long-trails">Long Trail Map</a>
+            <a href="/dataset/long-trails">Long Trails Dataset</a>
+          </div>
+        </div>
       </div>
     </div>
     <div class="site-nav-dropdown">

@@ -44,6 +44,8 @@
   const elements = {
     cards: document.getElementById('peakid-cards'),
     slots: document.getElementById('peakid-slots'),
+    slotsLeft: document.getElementById('peakid-slots-left'),
+    slotsRight: document.getElementById('peakid-slots-right'),
     roundLabel: document.getElementById('peakid-round-label'),
     totalCorrect: document.getElementById('peakid-total-correct'),
     totalIncorrect: document.getElementById('peakid-total-incorrect'),
@@ -635,7 +637,12 @@
     }));
 
     elements.cards.innerHTML = '';
-    elements.slots.innerHTML = '';
+    if (elements.slotsLeft) {
+      elements.slotsLeft.innerHTML = '';
+    }
+    if (elements.slotsRight) {
+      elements.slotsRight.innerHTML = '';
+    }
 
     const shuffledNames = shuffle(roundCards);
 
@@ -708,6 +715,9 @@
       initDragHandlers(card);
     });
 
+    const midpoint = Math.ceil(shuffledNames.length / 2);
+    const slotColumns = [elements.slotsLeft, elements.slotsRight].filter(Boolean);
+
     shuffledNames.forEach((peak, index) => {
       const slot = document.createElement('div');
       slot.className = 'peakid-slot';
@@ -716,7 +726,9 @@
       slot.dataset.peakSlug = peak.slug;
       slot.dataset.slotId = `slot-${state.currentRoundIndex}-${index}`;
       slot.textContent = peak.peakName;
-      elements.slots.appendChild(slot);
+      const columnIndex = slotColumns.length === 2 && index >= midpoint ? 1 : 0;
+      const targetColumn = slotColumns[columnIndex] || elements.slots;
+      targetColumn.appendChild(slot);
       initSlotHandlers(slot);
     });
 
