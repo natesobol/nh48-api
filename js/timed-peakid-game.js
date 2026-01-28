@@ -14,6 +14,7 @@
   const timeValue = document.querySelector('[data-time]');
   const statusValue = document.querySelector('.timed-status');
   const zonesContainer = document.querySelector('.timed-game-zones');
+  const zoneColumns = Array.from(document.querySelectorAll('.timed-zone-column'));
   const playButton = document.querySelector('[data-action="play"]');
   const splashScreen = document.querySelector('.timed-splash');
   const mainContent = document.querySelector('main');
@@ -99,13 +100,25 @@
   const setZones = (names) => {
     state.zones = names;
     if (!zonesContainer) return;
-    zonesContainer.innerHTML = '';
-    names.forEach(name => {
+    if (zoneColumns.length) {
+      zoneColumns.forEach(column => {
+        column.innerHTML = '';
+      });
+    } else {
+      zonesContainer.innerHTML = '';
+    }
+    const midpoint = Math.ceil(names.length / 2);
+    names.forEach((name, index) => {
       const zone = document.createElement('div');
       zone.className = 'drop-zone';
       zone.textContent = name;
       zone.dataset.peak = name;
-      zonesContainer.appendChild(zone);
+      if (zoneColumns.length) {
+        const targetColumn = index >= midpoint ? zoneColumns[1] : zoneColumns[0];
+        targetColumn.appendChild(zone);
+      } else {
+        zonesContainer.appendChild(zone);
+      }
     });
   };
 
