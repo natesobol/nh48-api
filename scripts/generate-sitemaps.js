@@ -25,6 +25,8 @@ const STATIC_PAGE_ENTRIES = [
   { loc: 'https://nh48.info/projects/plant-map', file: 'pages/projects/plant-map.html' },
   { loc: 'https://nh48.info/howker-ridge', file: 'pages/howker_ridge.html' },
   { loc: 'https://nh48.info/virtual-hike', file: 'pages/virtual_hike.html' },
+  { loc: 'https://nh48.info/peakid-game', file: 'peakid-game.html' },
+  { loc: 'https://nh48.info/timed-peakid-game', file: 'timed-peakid-game.html' },
   { loc: 'https://nh48.info/nh-4000-footers-info', file: 'nh-4000-footers-info.html' },
 ];
 const IMAGE_LICENSE_URL = 'https://nh48.info/licensing';
@@ -259,6 +261,17 @@ const buildPageSitemap = () => {
       lastmod: getGitLastmod(path.join('fr', 'peaks', slug, 'index.html')),
     });
   });
+
+  if (Array.isArray(plantData)) {
+    const plantLastmod = getGitLastmod(PLANTS_PATH);
+    plantData.forEach((plant) => {
+      if (!plant || !plant.id) return;
+      urls.push({
+        loc: `https://nh48.info/plant/${encodeURIComponent(plant.id)}`,
+        lastmod: plantLastmod,
+      });
+    });
+  }
 
   const parts = [];
   parts.push('<?xml version="1.0" encoding="UTF-8"?>');
