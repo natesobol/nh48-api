@@ -103,13 +103,28 @@ body {
   box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.4);
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.15fr) minmax(0, 0.9fr);
   position: relative;
   overflow: hidden;
 }
 
 .peakid-slot-columns {
-  display: contents;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  grid-column: 3;
+}
+
+.peakid-slot-column {
+  display: grid;
+  gap: 16px;
+}
+
+.peakid-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  grid-column: 1 / span 2;
 }
 
 .peakid-slot-grid {
@@ -128,7 +143,7 @@ body {
   transform: translate3d(0, 0, 0);
   touch-action: none;
   user-select: none;
-  width: 90%;
+  width: 100%;
   aspect-ratio: 4 / 3;
   justify-self: center;
   align-self: center;
@@ -226,8 +241,8 @@ body {
   background: #0b1224;
   border-radius: 20px;
   border: 2px dashed rgba(34, 197, 94, 0.35);
-  padding: 32px 22px;
-  min-height: 230px;
+  padding: 24px 18px;
+  min-height: 200px;
   aspect-ratio: 4 / 3;
   display: flex;
   align-items: center;
@@ -235,7 +250,7 @@ body {
   text-align: center;
   color: #e2e8f0;
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   letter-spacing: 0.4px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   position: relative;
@@ -651,6 +666,11 @@ body {
 
   .peakid-game-panel {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .peakid-card-grid,
+  .peakid-slot-columns {
+    grid-column: auto;
   }
 
   .peakid-slot-columns {
