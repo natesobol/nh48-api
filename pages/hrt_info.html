@@ -324,10 +324,11 @@ blockquote{
 }
 .toc-layout{
   display:grid;
-  grid-template-columns:minmax(0,1fr) 260px;
+  grid-template-columns:minmax(260px,340px) minmax(0,1fr);
   gap:16px;
-  max-width:900px;
-  margin:0 auto;
+  width:100%;
+  max-width:none;
+  margin:0;
 }
 .toc-panel{
   background:var(--card);
@@ -355,6 +356,7 @@ blockquote{
 .toc-photo{
   display:flex;
   align-items:stretch;
+  justify-content:flex-end;
 }
 .toc-photo img{
   width:100%;
