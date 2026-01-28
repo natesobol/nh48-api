@@ -58,7 +58,7 @@
   --panel:#12121a;
   --card:#171a22;
   --ink:#ffffff;
-  --muted:#a5b4c3;
+  --muted:#c6d1df;
   --stroke:#ffffff;
   --accent:#22c55e;
   --gap:14px;
@@ -81,6 +81,7 @@ body.light{
   align-items:center;
   justify-content:center;
   overflow:hidden;
+  border-radius:18px;
   color:#fff;
   text-align:center;
   background-size:cover;
@@ -226,7 +227,7 @@ blockquote{
 }
 .warning-log .warning-body p{
   margin:0;
-  color:#fef3c7;
+  color:#ffffff;
   line-height:1.5;
 }
 .warning-log .warning-body strong{
@@ -323,11 +324,14 @@ blockquote{
 }
 .toc{
   display:grid;
-  gap:12px;
+  grid-template-columns:minmax(0,1fr) 240px;
+  gap:16px;
   padding:16px;
   background:var(--card);
   border-radius:12px;
   border:1px solid var(--stroke);
+  max-width:900px;
+  margin:0 auto;
 }
 .toc h2{
   margin:0;
@@ -346,16 +350,33 @@ blockquote{
 .toc a:hover{
   color:#16a34a;
 }
-.metrics{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:12px;
+.toc-visual{
+  display:flex;
+  align-items:stretch;
 }
-.metric-card{
+.toc-visual img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.25);
+}
+.metrics{
+  display:block;
   background:var(--card);
   border:1px solid var(--stroke);
-  border-radius:12px;
-  padding:12px 14px;
+  border-radius:14px;
+  overflow:hidden;
+}
+.metric-card{
+  display:grid;
+  grid-template-columns:minmax(160px,220px) 1fr;
+  gap:12px;
+  padding:14px 16px;
+  border-bottom:1px dotted rgba(255,255,255,0.35);
+}
+.metric-card:last-child{
+  border-bottom:none;
 }
 .metric-card dt{
   font-weight:700;
@@ -456,6 +477,15 @@ blockquote{
 }
 @media (max-width: 700px){
   .panel{ padding:16px; }
+  .toc{
+    grid-template-columns:1fr;
+  }
+  .toc-visual{
+    display:none;
+  }
+  .metric-card{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
@@ -531,32 +561,37 @@ blockquote{
     <!-- Table of Contents moved to the top for better navigation -->
     <section class="section" id="toc">
       <div class="toc">
-        <h2>Table of Contents</h2>
-        <ol>
-          <li><a href="#trail-stats">📊 Trail statistics</a></li>
-          <li><a href="#highlights">✨ Highlights</a></li>
-          <li><a href="#history">🗺️ Trail History</a></li>
-          <li><a href="#construction">🔨 Trail Construction</a></li>
-          <li><a href="#geography">🏞️ Trail Geography &amp; Topography</a></li>
-          <li><a href="#access">🚗 Trail Access &amp; Parking</a></li>
-          <li><a href="#difficulty">🧭 Trail Difficulty, Distance &amp; Time</a></li>
-          <li><a href="#seasonal">☀️ Seasonal Conditions &amp; Best Times</a></li>
-          <li><a href="#ecology">🌿 Ecology &amp; Wildlife</a></li>
-          <li><a href="#safety">⚠️ Trail Safety &amp; Hazards</a></li>
-          <li><a href="#viewpoints">📷 Viewpoints &amp; Photography Spots</a></li>
-          <li><a href="#photo-gallery">🖼️ Photo Gallery</a></li>
-          <li><a href="#maintenance">🧹 Trail Maintenance &amp; Stewardship</a></li>
-          <li><a href="#connections">🔗 Trail Connections &amp; Networks</a></li>
-          <li><a href="#lodging">🛌 Nearby Lodging &amp; Facilities</a></li>
-          <li><a href="#poi">📍 Points of Interest</a>
-            <ol>
-              <li><a href="#poi-waterfalls">💧 Waterfalls &amp; Gorge</a></li>
-              <li><a href="#poi-ridgeline">🏔️ Ridgeline &amp; Summit Features</a></li>
-              <li><a href="#poi-junctions">🔀 Trail Junctions &amp; Connectors</a></li>
-            </ol>
-          </li>
-          <li><a href="#faq">❓ Frequently Asked Questions</a></li>
-        </ol>
+        <div class="toc-content">
+          <h2>Table of Contents</h2>
+          <ol>
+            <li><a href="#trail-stats">📊 Trail statistics</a></li>
+            <li><a href="#highlights">✨ Highlights</a></li>
+            <li><a href="#history">🗺️ Trail History</a></li>
+            <li><a href="#construction">🔨 Trail Construction</a></li>
+            <li><a href="#geography">🏞️ Trail Geography &amp; Topography</a></li>
+            <li><a href="#access">🚗 Trail Access &amp; Parking</a></li>
+            <li><a href="#difficulty">🧭 Trail Difficulty, Distance &amp; Time</a></li>
+            <li><a href="#seasonal">☀️ Seasonal Conditions &amp; Best Times</a></li>
+            <li><a href="#ecology">🌿 Ecology &amp; Wildlife</a></li>
+            <li><a href="#safety">⚠️ Trail Safety &amp; Hazards</a></li>
+            <li><a href="#viewpoints">📷 Viewpoints &amp; Photography Spots</a></li>
+            <li><a href="#photo-gallery">🖼️ Photo Gallery</a></li>
+            <li><a href="#maintenance">🧹 Trail Maintenance &amp; Stewardship</a></li>
+            <li><a href="#connections">🔗 Trail Connections &amp; Networks</a></li>
+            <li><a href="#lodging">🛌 Nearby Lodging &amp; Facilities</a></li>
+            <li><a href="#poi">📍 Points of Interest</a>
+              <ol>
+                <li><a href="#poi-waterfalls">💧 Waterfalls &amp; Gorge</a></li>
+                <li><a href="#poi-ridgeline">🏔️ Ridgeline &amp; Summit Features</a></li>
+                <li><a href="#poi-junctions">🔀 Trail Junctions &amp; Connectors</a></li>
+              </ol>
+            </li>
+            <li><a href="#faq">❓ Frequently Asked Questions</a></li>
+          </ol>
+        </div>
+        <div class="toc-visual" aria-hidden="true">
+          <img src="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=520/third-howk/third-howk-001.jpg" alt="" loading="lazy">
+        </div>
       </div>
     </section>
 
