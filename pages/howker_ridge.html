@@ -323,8 +323,8 @@ th{
 }
 .toc-links{
   display:flex;
-  flex-wrap:nowrap;
-  gap:12px;
+  flex-wrap:wrap;
+  gap:8px;
   width:100%;
 }
 .toc-link{
@@ -334,12 +334,12 @@ th{
   align-items:center;
   justify-content:center;
   gap:8px;
-  padding:10px 14px;
+  padding:8px 12px;
   border-radius:999px;
-  border:1px solid var(--stroke);
-  background:transparent;
-  font-size:0.95rem;
-  flex:1 1 0;
+  border:1px solid rgba(203, 213, 245, 0.2);
+  background:rgba(255, 255, 255, 0.03);
+  font-size:14px;
+  font-weight:700;
   text-align:center;
   white-space:nowrap;
 }
@@ -459,7 +459,6 @@ th{
     flex-wrap:wrap;
   }
   .toc-link{
-    flex:1 1 calc(50% - 12px);
     white-space:normal;
   }
 }
