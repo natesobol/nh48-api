@@ -229,23 +229,38 @@ blockquote{
 .toc a:hover{
   color:var(--accent);
 }
-.metrics{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:12px;
+.table-wrap{
+  overflow-x:auto;
 }
-.metric-card{
-  background:var(--card);
+.trail-stats-panel{
+  background:var(--panel);
   border:1px solid var(--stroke);
-  border-radius:12px;
-  padding:12px 14px;
+  border-radius:14px;
+  padding:6px 0;
 }
-.metric-card dt{
-  font-weight:700;
+.trail-stats-panel table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:15px;
+}
+.trail-stats-panel th,
+.trail-stats-panel td{
+  padding:12px 16px;
+  border-bottom:1px solid var(--stroke);
+  text-align:left;
+  vertical-align:top;
+}
+.trail-stats-panel tr:last-child th,
+.trail-stats-panel tr:last-child td{
+  border-bottom:none;
+}
+.trail-stats-panel th{
   color:var(--ink);
-  margin-bottom:6px;
+  font-weight:600;
+  width:32%;
+  min-width:180px;
 }
-.metric-card dd{
+.trail-stats-panel td{
   margin:0;
   color:var(--muted);
   line-height:1.5;
@@ -296,6 +311,10 @@ blockquote{
 }
 @media (max-width: 700px){
   .panel{ padding:16px; }
+  .trail-stats-panel th{
+    width:auto;
+    min-width:140px;
+  }
 }
 </style>
 </head>
@@ -362,51 +381,57 @@ blockquote{
 
     <section class="section" id="trail-stats">
       <h2>Statistiques du sentier</h2>
-      <div class="metrics">
-        <dl class="metric-card">
-          <dt>Longueur</dt>
-          <dd>≈ 4,5 miles (7,2 km) aller simple.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Dénivelé positif</dt>
-          <dd>≈ 4&nbsp;430 pieds (1&nbsp;350 m) cumulés.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Durée typique (aller-retour)</dt>
-          <dd>≈ 7 à 9 heures.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Difficulté</dt>
-          <dd>Difficile / très difficile.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Terrain</dt>
-          <dd>Crête rocheuse et escarpée avec des passages d'escalade sur les Howks et une exposition alpine.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Sources d'eau</dt>
-          <dd>Ruisseau Lower Bumpus ; source près de la jonction Pine Link ; refuge (saisonnier).</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Désignations</dt>
-          <dd>Forêt nationale de White Mountain ; croise le sentier des Appalaches (sentier Osgood) ; fait partie de la liste des sommets de plus de 4&nbsp;000 pieds du New Hampshire.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Point de départ et parking</dt>
-          <dd>Randolph East (Pinkham B / Dolly Copp Rd) ; parking généralement déneigé en hiver ; parking alternatif Appalachia.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Camping à proximité</dt>
-          <dd>Refuge AMC Madison Spring (saisonnier) ; aire de camping Valley Way ; chalets RMC / Perch.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Chiens</dt>
-          <dd>Autorisés mais <strong>non recommandés</strong> (falaises / exposition).</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Note historique</dt>
-          <dd>Nommé d'après la famille Howker ; un itinéraire classique du massif des Presidential Mountains.</dd>
-        </dl>
+      <div class="trail-stats-panel">
+        <div class="table-wrap">
+          <table aria-label="Statistiques du sentier Howker Ridge">
+            <tbody>
+              <tr>
+                <th scope="row">Longueur</th>
+                <td>≈ 4,5 miles (7,2 km) aller simple.</td>
+              </tr>
+              <tr>
+                <th scope="row">Dénivelé positif</th>
+                <td>≈ 4&nbsp;430 pieds (1&nbsp;350 m) cumulés.</td>
+              </tr>
+              <tr>
+                <th scope="row">Durée typique (aller-retour)</th>
+                <td>≈ 7 à 9 heures.</td>
+              </tr>
+              <tr>
+                <th scope="row">Difficulté</th>
+                <td>Difficile / très difficile.</td>
+              </tr>
+              <tr>
+                <th scope="row">Terrain</th>
+                <td>Crête rocheuse et escarpée avec des passages d'escalade sur les Howks et une exposition alpine.</td>
+              </tr>
+              <tr>
+                <th scope="row">Sources d'eau</th>
+                <td>Ruisseau Lower Bumpus ; source près de la jonction Pine Link ; refuge (saisonnier).</td>
+              </tr>
+              <tr>
+                <th scope="row">Désignations</th>
+                <td>Forêt nationale de White Mountain ; croise le sentier des Appalaches (sentier Osgood) ; fait partie de la liste des sommets de plus de 4&nbsp;000 pieds du New Hampshire.</td>
+              </tr>
+              <tr>
+                <th scope="row">Point de départ et parking</th>
+                <td>Randolph East (Pinkham B / Dolly Copp Rd) ; parking généralement déneigé en hiver ; parking alternatif Appalachia.</td>
+              </tr>
+              <tr>
+                <th scope="row">Camping à proximité</th>
+                <td>Refuge AMC Madison Spring (saisonnier) ; aire de camping Valley Way ; chalets RMC / Perch.</td>
+              </tr>
+              <tr>
+                <th scope="row">Chiens</th>
+                <td>Autorisés mais <strong>non recommandés</strong> (falaises / exposition).</td>
+              </tr>
+              <tr>
+                <th scope="row">Note historique</th>
+                <td>Nommé d'après la famille Howker ; un itinéraire classique du massif des Presidential Mountains.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <p class="table-note">Informations sur le sentier compilées à partir de sources fiables, notamment les guides de White Mountain, l'USFS/RMC, l'AMC et des comptes rendus de randonnée vérifiés.</p>
     </section>

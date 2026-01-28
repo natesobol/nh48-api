@@ -365,27 +365,38 @@ blockquote{
   border-radius:12px;
   border:1px solid rgba(255,255,255,0.25);
 }
-.metrics{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:12px;
+.table-wrap{
+  overflow-x:auto;
 }
-.metric-card{
-  display:grid;
-  grid-template-columns:minmax(140px,190px) 1fr;
-  gap:10px;
-  padding:12px 14px;
-  background:var(--card);
+.trail-stats-panel{
+  background:var(--panel);
   border:1px solid var(--stroke);
-  border-radius:12px;
+  border-radius:14px;
+  padding:6px 0;
 }
-.metric-card dt{
-  font-weight:700;
+.trail-stats-panel table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:15px;
+}
+.trail-stats-panel th,
+.trail-stats-panel td{
+  padding:12px 16px;
+  border-bottom:1px solid var(--stroke);
+  text-align:left;
+  vertical-align:top;
+}
+.trail-stats-panel tr:last-child th,
+.trail-stats-panel tr:last-child td{
+  border-bottom:none;
+}
+.trail-stats-panel th{
   color:var(--ink);
-  margin-bottom:6px;
+  font-weight:600;
+  width:32%;
+  min-width:180px;
 }
-.metric-card dd{
-  margin:0;
+.trail-stats-panel td{
   color:var(--muted);
   line-height:1.5;
 }
@@ -484,8 +495,9 @@ blockquote{
   .toc-photo{
     display:none;
   }
-  .metric-card{
-    grid-template-columns:1fr;
+  .trail-stats-panel th{
+    width:auto;
+    min-width:140px;
   }
 }
 </style>
@@ -602,51 +614,57 @@ blockquote{
       <div class="section-banner light-text" aria-label="Sunset view over rolling ridges from the Third Howk." style="background-image:url('https://howker.nh48.info/cdn-cgi/image/format=webp,width=1600/third-howk/third-howk-003.jpg');">
         <h2>Trail statistics</h2>
       </div>
-      <div class="metrics">
-        <dl class="metric-card">
-          <dt>Length</dt>
-          <dd>≈ 4.5 mi (7.2 km) one-way.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Elevation gain</dt>
-          <dd>≈ 4,430 ft (1,350 m) cumulative.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Typical time (round-trip)</dt>
-          <dd>≈ 7–9 hours.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Difficulty</dt>
-          <dd>Strenuous / hard.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Terrain</dt>
-          <dd>Rocky, steep ridgeline with scrambles over the Howks and alpine exposure.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Water sources</dt>
-          <dd>Lower <a href="#poi-waterfalls" aria-label="Bumpus Brook in points of interest section">Bumpus Brook</a>; spring near <a href="#poi-junctions" aria-label="Pine Link Junction in points of interest section">Pine Link junction</a>; hut (seasonal).</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Designations</dt>
-          <dd>White Mountain National Forest; intersects the AT (<a href="/howker-ridge#map" aria-label="Osgood Trail junction on Howker Ridge map">Osgood Trail</a>); NH 4,000-footer list.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Trailhead &amp; parking</dt>
-          <dd>Randolph East (Pinkham B / Dolly Copp Rd); lot typically plowed in winter; alternate Appalachia lot.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Camping nearby</dt>
-          <dd>AMC Madison Spring Hut (seasonal); Valley Way Tentsite; RMC cabins / Perch.</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Dogs</dt>
-          <dd>Allowed but <strong>not recommended</strong> (ledges / exposure).</dd>
-        </dl>
-        <dl class="metric-card">
-          <dt>Historical note</dt>
-          <dd>Named for the Howker family; a classic northern Presidential route.</dd>
-        </dl>
+      <div class="trail-stats-panel">
+        <div class="table-wrap">
+          <table aria-label="Howker Ridge trail statistics">
+            <tbody>
+              <tr>
+                <th scope="row">Length</th>
+                <td>≈ 4.5 mi (7.2 km) one-way.</td>
+              </tr>
+              <tr>
+                <th scope="row">Elevation gain</th>
+                <td>≈ 4,430 ft (1,350 m) cumulative.</td>
+              </tr>
+              <tr>
+                <th scope="row">Typical time (round-trip)</th>
+                <td>≈ 7–9 hours.</td>
+              </tr>
+              <tr>
+                <th scope="row">Difficulty</th>
+                <td>Strenuous / hard.</td>
+              </tr>
+              <tr>
+                <th scope="row">Terrain</th>
+                <td>Rocky, steep ridgeline with scrambles over the Howks and alpine exposure.</td>
+              </tr>
+              <tr>
+                <th scope="row">Water sources</th>
+                <td>Lower <a href="#poi-waterfalls" aria-label="Bumpus Brook in points of interest section">Bumpus Brook</a>; spring near <a href="#poi-junctions" aria-label="Pine Link Junction in points of interest section">Pine Link junction</a>; hut (seasonal).</td>
+              </tr>
+              <tr>
+                <th scope="row">Designations</th>
+                <td>White Mountain National Forest; intersects the AT (<a href="/howker-ridge#map" aria-label="Osgood Trail junction on Howker Ridge map">Osgood Trail</a>); NH 4,000-footer list.</td>
+              </tr>
+              <tr>
+                <th scope="row">Trailhead &amp; parking</th>
+                <td>Randolph East (Pinkham B / Dolly Copp Rd); lot typically plowed in winter; alternate Appalachia lot.</td>
+              </tr>
+              <tr>
+                <th scope="row">Camping nearby</th>
+                <td>AMC Madison Spring Hut (seasonal); Valley Way Tentsite; RMC cabins / Perch.</td>
+              </tr>
+              <tr>
+                <th scope="row">Dogs</th>
+                <td>Allowed but <strong>not recommended</strong> (ledges / exposure).</td>
+              </tr>
+              <tr>
+                <th scope="row">Historical note</th>
+                <td>Named for the Howker family; a classic northern Presidential route.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
