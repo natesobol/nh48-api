@@ -14,6 +14,11 @@
       ? window.NH48_I18N.t(key, vars)
       : key);
 
+  const tf = (key, fallback, vars) => {
+    const value = t(key, vars);
+    return value === key ? fallback : value;
+  };
+
   const state = {
     rounds: [],
     currentRoundIndex: 0,
@@ -135,23 +140,57 @@
     return state.audioContext;
   };
 
-  const playPing = () => {
+  const playSequence = (tones) => {
     const context = getAudioContext();
     if (!context) return;
     if (context.state === 'suspended') {
-      context.resume();
+      context.resume().catch(() => {});
     }
-    const oscillator = context.createOscillator();
-    const gainNode = context.createGain();
-    oscillator.type = 'sine';
-    oscillator.frequency.value = 880;
-    gainNode.gain.value = 0.12;
+    const now = context.currentTime;
+    tones.forEach(tone => {
+      const oscillator = context.createOscillator();
+      const gainNode = context.createGain();
+      const offset = tone.offset || 0;
+      const duration = tone.duration || 0.3;
+      const volume = tone.volume || 0.16;
+      oscillator.type = tone.type || 'sine';
+      oscillator.frequency.setValueAtTime(tone.frequency, now + offset);
+      gainNode.gain.setValueAtTime(0.001, now + offset);
+      gainNode.gain.linearRampToValueAtTime(volume, now + offset + 0.03);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + offset + duration);
+      oscillator.connect(gainNode);
+      gainNode.connect(context.destination);
+      oscillator.start(now + offset);
+      oscillator.stop(now + offset + duration + 0.02);
+    });
+  };
 
-    oscillator.connect(gainNode);
-    gainNode.connect(context.destination);
-    oscillator.start();
-    gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.4);
-    oscillator.stop(context.currentTime + 0.4);
+  const playCorrectSound = () => {
+    playSequence([
+      { frequency: 660, duration: 0.22, volume: 0.18 },
+      { frequency: 880, duration: 0.2, volume: 0.16, offset: 0.16 }
+    ]);
+  };
+
+  const playIncorrectSound = () => {
+    playSequence([
+      { frequency: 220, duration: 0.35, volume: 0.22, type: 'sawtooth' }
+    ]);
+  };
+
+  const playNextRoundSound = () => {
+    playSequence([
+      { frequency: 740, duration: 0.12, volume: 0.16 },
+      { frequency: 520, duration: 0.1, volume: 0.12, offset: 0.12 }
+    ]);
+  };
+
+  const playFinishSound = () => {
+    playSequence([
+      { frequency: 520, duration: 0.2, volume: 0.16 },
+      { frequency: 660, duration: 0.2, volume: 0.16, offset: 0.18 },
+      { frequency: 880, duration: 0.28, volume: 0.18, offset: 0.36 }
+    ]);
   };
 
   const getCardState = (card) => ({
@@ -219,7 +258,7 @@
       slot.classList.add('correct');
       addSlotFeedback(slot, true);
       animateSlotResult(slot, true);
-      playPing();
+      playCorrectSound();
     }
 
     if (!isCorrect) {
@@ -251,6 +290,7 @@
   };
 
   const handleRoundSubmit = () => {
+    playNextRoundSound();
     elements.submitButton.disabled = true;
     elements.submitButton.textContent = t('peakid.nextRound');
 
@@ -282,6 +322,7 @@
     document.querySelector('.peakid-main').style.display = 'none';
     elements.finalScreen.classList.add('active');
     elements.finalScreen.setAttribute('aria-hidden', 'false');
+    playFinishSound();
     if (elements.splashBackground) {
       elements.splashBackground.classList.add('active');
     }
@@ -401,6 +442,7 @@
   };
 
   const showIncorrectFeedback = (slot) => {
+    playIncorrectSound();
     slot.classList.add('incorrect');
     addSlotFeedback(slot, false);
     animateSlotResult(slot, false);
@@ -413,10 +455,13 @@
     let pointerId = null;
     let startX = 0;
     let startY = 0;
+    let downX = 0;
+    let downY = 0;
     let lastX = 0;
     let lastY = 0;
     let lastTime = 0;
     let velocity = { x: 0, y: 0 };
+    let moved = false;
 
     const onPointerDown = (event) => {
       if (event.pointerType === 'mouse' && event.button !== 0) return;
@@ -433,6 +478,10 @@
       card.setAttribute('aria-grabbed', 'true');
       startX = event.clientX;
       startY = event.clientY;
+      downX = event.clientX;
+      downY = event.clientY;
+      moved = false;
+      card.dataset.ignoreClick = 'false';
       const { x, y } = getCardState(card);
       lastX = x;
       lastY = y;
@@ -441,6 +490,10 @@
 
     const onPointerMove = (event) => {
       if (pointerId !== event.pointerId) return;
+      if (!moved) {
+        const distance = Math.hypot(event.clientX - downX, event.clientY - downY);
+        if (distance > 6) moved = true;
+      }
       const now = performance.now();
       const dx = event.clientX - startX;
       const dy = event.clientY - startY;
@@ -469,6 +522,9 @@
       card.releasePointerCapture(pointerId);
       pointerId = null;
       card.classList.remove('dragging');
+      if (moved) {
+        card.dataset.ignoreClick = 'true';
+      }
 
       elements.slots.querySelectorAll('.peakid-slot').forEach(el => {
         el.classList.remove('highlight');
@@ -506,6 +562,14 @@
     card.addEventListener('pointercancel', onPointerUp);
     card.addEventListener('dragstart', (event) => {
       event.preventDefault();
+    });
+    card.addEventListener('click', () => {
+      if (card.dataset.ignoreClick === 'true') return;
+      card.classList.toggle('flipped');
+    });
+    card.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+      card.classList.toggle('flipped');
     });
 
     card.addEventListener('keydown', (event) => {
@@ -589,20 +653,55 @@
       card.dataset.hadIncorrect = 'false';
       card.dataset.countedCorrect = '';
 
+      const cardInner = document.createElement('div');
+      cardInner.className = 'peakid-card-inner';
+
+      const cardFront = document.createElement('div');
+      cardFront.className = 'peakid-card-face peakid-card-front';
+
+      const cardBack = document.createElement('div');
+      cardBack.className = 'peakid-card-face peakid-card-back';
+
       const img = document.createElement('img');
       img.src = peak.photo ? peak.photo.url : '';
       img.alt = peak.photo ? (peak.photo.alt || peak.photo.altText || peak.peakName) : peak.peakName;
       img.loading = 'lazy';
       img.draggable = false;
 
-      const caption = document.createElement('div');
-      caption.className = 'peakid-card-caption';
       const rawCredit = peak.photo && (peak.photo.creditText || (peak.photo.iptc && peak.photo.iptc.creditText) || peak.photo.author);
       const credit = rawCredit ? rawCredit.replace(/©/g, '').trim() : '';
-      caption.textContent = credit ? `${t('peakid.photoCredit', { credit })}` : '';
+      const captureDate = peak.photo && peak.photo.captureDate ? new Date(peak.photo.captureDate) : null;
+      const formattedDate = captureDate && !Number.isNaN(captureDate.getTime())
+        ? captureDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+        : tf('peakid.unknownLabel', 'Unknown');
+      const timeOfDay = peak.photo && peak.photo.timeOfDay ? peak.photo.timeOfDay : tf('peakid.unknownLabel', 'Unknown');
+      const creditLine = credit || tf('peakid.unknownLabel', 'Unknown');
 
-      card.appendChild(img);
-      card.appendChild(caption);
+      const backTitle = document.createElement('h3');
+      backTitle.textContent = tf('peakid.photoHints', 'Photo hints');
+
+      const metaList = document.createElement('dl');
+      metaList.className = 'peakid-card-meta';
+
+      const addMeta = (label, value) => {
+        const dt = document.createElement('dt');
+        dt.textContent = label;
+        const dd = document.createElement('dd');
+        dd.textContent = value;
+        metaList.appendChild(dt);
+        metaList.appendChild(dd);
+      };
+
+      addMeta(tf('peakid.photoDate', 'Photo date'), formattedDate);
+      addMeta(tf('peakid.timeOfDay', 'Time of day'), timeOfDay);
+      addMeta(tf('peakid.photoCreditLabel', 'Credit'), creditLine);
+
+      cardFront.appendChild(img);
+      cardBack.appendChild(backTitle);
+      cardBack.appendChild(metaList);
+      cardInner.appendChild(cardFront);
+      cardInner.appendChild(cardBack);
+      card.appendChild(cardInner);
       elements.cards.appendChild(card);
       card.draggable = false;
 
