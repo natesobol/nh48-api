@@ -429,9 +429,37 @@ header p{
   display:grid;
   gap:10px;
   margin:14px 0;
+  grid-template-columns:1fr;
 }
 @media(min-width:860px){
   .controls{ grid-template-columns:1.2fr .8fr .8fr .6fr; }
+}
+.controls .ctrl-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:nowrap;
+}
+.controls .ctrl-row .ctrl{
+  flex:0 1 auto;
+  width:auto;
+}
+.controls .ctrl-row .ctrl select{
+  width:auto;
+  min-width:0;
+  padding-right:34px;
+}
+.controls .ctrl-row .ctrl select option{
+  max-width:100%;
+}
+@media(min-width:860px){
+  .controls .ctrl-row{
+    display:contents;
+  }
+  .controls .ctrl-row .ctrl,
+  .controls .ctrl-row .ctrl select{
+    width:100%;
+  }
 }
 .ctrl{
   display:flex;
@@ -475,16 +503,27 @@ header p{
   display:flex;
   align-items:center;
   gap:8px;
+  cursor:pointer;
+  list-style:none;
+}
+.settings-logo::-webkit-details-marker{
+  display:none;
+}
+.settings-logo::marker{
+  content:"";
 }
 .settings-icon{
   font-size:20px;
+}
+.settings-body{
+  display:grid;
+  gap:10px;
 }
 /* Each row containing a checkbox and label */
 .setting-row{
   display:flex;
   align-items:center;
   gap:8px;
-  margin-top:10px;
   font-size:14px;
   color:var(--muted);
 }
@@ -501,6 +540,12 @@ header p{
     justify-content:flex-start;
     flex-wrap:wrap;
     gap:22px 26px;
+  }
+  .settings-body{
+    margin-top:0;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 22px;
   }
   .settings-logo{
     margin-bottom:0;
@@ -978,9 +1023,6 @@ body.details-open .drawer.open {
     <blockquote>
       <h1>Howker Ridge • Sub &amp; Alpine Plant Catalog</h1>
     </blockquote>
-    <blockquote>
-      <p>Browse alpine/subalpine species and communities observed along Howker Ridge Trail. Click a card for detailed information. Disclosure Information compiled w/ AI. Purely for exploration &amp; may not be completely accurate. This log should be refined &amp; updated over time as I continue to work safely as the Trail Adopter.</p>
-    </blockquote>
   </header>
   <nav class="page-breadcrumbs" aria-label="Breadcrumb">
     <ol>
@@ -1011,53 +1053,57 @@ body.details-open .drawer.open {
     </div>
   </details>
   <!-- Settings panel -->
-<aside class="settings" id="settings-panel">
-  <div class="settings-logo">Settings</div>
-  <div class="setting-row">
-    <input type="checkbox" id="theme-toggle" checked>
-    <label for="theme-toggle">Dark theme</label>
+<details class="settings settings-collapsible" id="settings-panel">
+  <summary class="settings-logo">Settings</summary>
+  <div class="settings-body">
+    <div class="setting-row">
+      <input type="checkbox" id="theme-toggle" checked>
+      <label for="theme-toggle">Dark theme</label>
+    </div>
+    <div class="setting-row">
+      <input type="checkbox" id="view-toggle">
+      <label for="view-toggle">List view</label>
+    </div>
+    <div class="setting-row">
+      <input type="checkbox" id="rotate-toggle" checked>
+      <label for="rotate-toggle">Rotate images</label>
+    </div>
+    <div class="setting-row">
+      <input type="checkbox" id="compact-toggle">
+      <label for="compact-toggle">Compact view</label>
+    </div>
+    <div class="setting-row">
+      <input type="checkbox" id="sticky-toggle">
+      <label for="sticky-toggle">Sticky header</label>
+    </div>
   </div>
-  <div class="setting-row">
-    <input type="checkbox" id="view-toggle">
-    <label for="view-toggle">List view</label>
-  </div>
-  <div class="setting-row">
-    <input type="checkbox" id="rotate-toggle" checked>
-    <label for="rotate-toggle">Rotate images</label>
-  </div>
-  <div class="setting-row">
-    <input type="checkbox" id="compact-toggle">
-    <label for="compact-toggle">Compact view</label>
-  </div>
-  <div class="setting-row">
-    <input type="checkbox" id="sticky-toggle">
-    <label for="sticky-toggle">Sticky header</label>
-  </div>
-</aside>
+</details>
 
 
   <div class="controls">
     <label class="ctrl"><input id="q" placeholder="Name, latin, tag, habitat…"></label>
-    <label class="ctrl">
-      <select id="type">
-        <option value="">All types</option>
-        <option>Shrub</option><option>Wildflower</option><option>Moss</option>
-        <option>Lichen</option><option>Forest</option><option>Community</option><option>Fungus</option>
-      </select>
-    </label>
-    <label class="ctrl">
-      <select id="habitat">
-        <option value="">Any habitat</option>
-        <option>Alpine heath</option><option>Krumholz</option><option>Talus/boulder</option>
-        <option>Spruce–fir forest</option><option>Moist ravine</option>
-      </select>
-    </label>
-    <label class="ctrl">
-      <select id="bloom">
-        <option value="">Any season</option>
-        <option>Late spring</option><option>Summer</option><option>Non-flowering</option>
-      </select>
-    </label>
+    <div class="ctrl-row">
+      <label class="ctrl">
+        <select id="type">
+          <option value="">All types</option>
+          <option>Shrub</option><option>Wildflower</option><option>Moss</option>
+          <option>Lichen</option><option>Forest</option><option>Community</option><option>Fungus</option>
+        </select>
+      </label>
+      <label class="ctrl">
+        <select id="habitat">
+          <option value="">Any habitat</option>
+          <option>Alpine heath</option><option>Krumholz</option><option>Talus/boulder</option>
+          <option>Spruce–fir forest</option><option>Moist ravine</option>
+        </select>
+      </label>
+      <label class="ctrl">
+        <select id="bloom">
+          <option value="">Any season</option>
+          <option>Late spring</option><option>Summer</option><option>Non-flowering</option>
+        </select>
+      </label>
+    </div>
   </div>
 
   <!-- Pagination header (Top) -->
@@ -1140,11 +1186,24 @@ body.details-open .drawer.open {
   const rotateToggle = document.getElementById('rotate-toggle');
   const compactToggle = document.getElementById('compact-toggle');
   const stickyToggle = document.getElementById('sticky-toggle');
+  const settingsPanel = document.getElementById('settings-panel');
   const pageListTop = document.getElementById('page-list-top');
   const pageListBot = document.getElementById('page-list-bot');
   const statsTop = document.getElementById('pager-stats-top');
   const statsBot = document.getElementById('pager-stats-bot');
   document.getElementById("year").textContent = new Date().getFullYear();
+
+  const settingsMediaQuery = window.matchMedia('(min-width: 760px)');
+  const syncSettingsPanel = () => {
+    if (!settingsPanel) return;
+    settingsPanel.open = settingsMediaQuery.matches;
+  };
+  syncSettingsPanel();
+  if (settingsMediaQuery.addEventListener) {
+    settingsMediaQuery.addEventListener('change', syncSettingsPanel);
+  } else if (settingsMediaQuery.addListener) {
+    settingsMediaQuery.addListener(syncSettingsPanel);
+  }
 
   // Placeholders for images
   const LQ_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
