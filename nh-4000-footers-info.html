@@ -463,11 +463,10 @@
         color: var(--accent-strong);
       }
       .toc {
-        margin: 18px 0 30px;
-        padding: 16px;
-        border-radius: 16px;
-        border: 1px solid var(--card-border);
-        background: rgba(255, 255, 255, 0.02);
+        margin: 18px 0 24px;
+        padding: 0;
+        border: none;
+        background: transparent;
       }
       .toc ul {
         list-style: none;
@@ -475,7 +474,7 @@
         margin: 0;
         display: flex;
         flex-wrap: wrap;
-        gap: 10px 16px;
+        gap: 8px 16px;
       }
       .toc a {
         color: var(--muted);
@@ -526,7 +525,7 @@
         font-weight: 800;
       }
       section {
-        margin: 36px 0 28px;
+        margin: 24px 0 20px;
       }
       h2 {
         font-size: 26px;
@@ -549,6 +548,15 @@
         border-radius: var(--card-radius);
         padding: 16px;
         box-shadow: var(--card-shadow);
+      }
+      .warning-panel {
+        background: rgba(250, 204, 21, 0.15);
+        border: 1px solid rgba(250, 204, 21, 0.25);
+        color: #fde68a;
+        padding: 16px;
+        border-radius: var(--card-radius);
+        box-shadow: var(--card-shadow);
+        margin-bottom: 24px;
       }
       .range-filters {
         display: flex;
@@ -685,26 +693,6 @@
         border-color: var(--accent-strong);
       }
 
-      .section-divider {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        margin: 40px 0;
-        padding: 0 16px;
-      }
-      .section-divider::before,
-      .section-divider::after {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.3), transparent);
-      }
-      .section-divider .divider-icon {
-        font-size: 1.5rem;
-        color: var(--accent);
-        opacity: 0.6;
-      }
-
       /* Effort & Distance Section */
       .effort-distance {
         padding: 32px 0;
@@ -761,11 +749,12 @@
       }
       .difficulty-guide .tiers-container {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-wrap: nowrap;
+        justify-content: space-between;
         gap: 16px;
       }
       .tier-badge {
+        flex: 1 1 0;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -773,7 +762,7 @@
         border-radius: 16px;
         font-weight: 600;
         transition: all 0.3s ease;
-        min-width: 180px;
+        min-width: 0;
         text-align: center;
       }
       .tier-badge:hover {
@@ -815,6 +804,18 @@
         background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
         border: 1px solid rgba(239, 68, 68, 0.4);
         color: #f87171;
+      }
+      tr.tier-beginner td {
+        background: rgba(34, 197, 94, 0.06);
+      }
+      tr.tier-moderate td {
+        background: rgba(251, 191, 36, 0.06);
+      }
+      tr.tier-challenging td {
+        background: rgba(249, 115, 22, 0.06);
+      }
+      tr.tier-severe td {
+        background: rgba(239, 68, 68, 0.06);
       }
 
       /* Trip Combos Section */
@@ -1006,7 +1007,6 @@
       /* Responsive adjustments for migrated sections */
       @media (max-width: 900px) {
         .tier-badge {
-          min-width: 160px;
           padding: 16px 20px;
         }
       }
@@ -1073,7 +1073,6 @@
           background: #ffffff;
           border-color: #e2e8f0;
         }
-        .section-divider,
         .toggle-group {
           display: none;
         }
@@ -1170,6 +1169,15 @@
         </div>
       </header>
 
+      <section id="disclaimer">
+        <div class="warning-panel panel">
+          <h2>Important Disclaimer</h2>
+          <p>NH48.info is an unofficial, community-driven site. Use this page at your own risk; always verify trail status, rules, and safety information with official sources.</p>
+          <p><a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>.</p>
+        </div>
+      </section>
+
+      <h2 class="snapshot-title">Contents</h2>
       <nav class="toc" aria-label="Table of contents">
         <ul>
           <li><a href="#effort-distance" aria-label="Effort and distance section">Effort &amp; Distance</a></li>
@@ -1191,11 +1199,6 @@
         </ul>
       </nav>
 
-      <!-- Section Divider -->
-      <div class="section-divider">
-        <span class="divider-icon">🥾</span>
-      </div>
-
       <!-- Effort & Distance Section - Migrated from homepage -->
       <section class="effort-distance" id="effort-distance" aria-label="Effort and Distance">
         <h2>Effort &amp; Distance</h2>
@@ -1203,26 +1206,21 @@
         
         <div class="effort-details">
           <div class="effort-item">
-            <h3>📏 Total Distance</h3>
+            <h3>Total Distance</h3>
             <p><strong>~250-500 miles</strong> depending on route choices and how efficiently peaks are grouped. Multi-peak days can reduce total mileage, while single-peak outings add distance.</p>
           </div>
           
           <div class="effort-item">
-            <h3>⛰️ Total Elevation Gain</h3>
+            <h3>Total Elevation Gain</h3>
             <p><strong>~170,000 feet</strong> of cumulative elevation gain — roughly six times Mount Everest from sea level.</p>
           </div>
           
           <div class="effort-item">
-            <h3>⏱️ Time Investment</h3>
+            <h3>Time Investment</h3>
             <p><strong>150-250 hours</strong> of hiking time, not including drive time, rest breaks, or time spent on summits. Many hikers take 2-4 years to visit all 48 peaks.</p>
           </div>
         </div>
       </section>
-
-      <!-- Section Divider -->
-      <div class="section-divider">
-        <span class="divider-icon">🎯</span>
-      </div>
 
       <!-- Difficulty Tiers Section - Migrated from homepage -->
       <section class="difficulty-guide" id="peak-difficulty-guide" aria-label="Peak Difficulty Guide">
@@ -1255,11 +1253,6 @@
           </div>
         </div>
       </section>
-
-      <!-- Section Divider -->
-      <div class="section-divider">
-        <span class="divider-icon">🗓️</span>
-      </div>
 
       <!-- Day Trip Groupings Section - Migrated from homepage -->
       <section class="trip-combos" id="day-trip-groupings" aria-label="Popular Day Trip Groupings">
@@ -1349,14 +1342,6 @@
         </p>
       </section>
 
-      <section id="disclaimer">
-        <h2>Important Disclaimer</h2>
-        <p>
-          NH48.info is an unofficial, community-driven site. Use this page at your own risk; always verify trail status, rules, and safety information with the Appalachian Mountain Club and other official sources.
-        </p>
-        <p><a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>.</p>
-      </section>
-
       <section id="official-peak-list">
         <h2>Current NH 4,000-Footer List</h2>
         <p>
@@ -1373,6 +1358,7 @@
                 <th>Peak</th>
                 <th>Elevation (ft)</th>
                 <th>Range</th>
+                <th>Difficulty</th>
                 <th>Best For</th>
               </tr>
             </thead>
@@ -1529,11 +1515,6 @@
         </div>
       </section>
 
-      <!-- Section Divider -->
-      <div class="section-divider">
-        <span class="divider-icon">⚠️</span>
-      </div>
-
       <!-- Risk & Preparedness Section - Migrated from homepage -->
       <section class="risk-stats" id="risk-preparedness" aria-label="Risk Factors and Preparedness">
         <h2>Risk Factors &amp; Preparedness</h2>
@@ -1565,11 +1546,6 @@
           </div>
         </div>
       </section>
-
-      <!-- Section Divider -->
-      <div class="section-divider">
-        <span class="divider-icon">🎯</span>
-      </div>
 
       <!-- Finish Strategies Section - Migrated from homepage -->
       <section class="strategy-section" id="completion-strategies" aria-label="Finish Strategies">
@@ -1738,6 +1714,30 @@
         'Loners & Remote Peaks'
       ];
 
+      const difficultyMap = {
+        'mount-tecumseh': 'beginner',
+        'mount-waumbek': 'beginner',
+        'mount-pierce': 'beginner',
+        'mount-jackson': 'beginner',
+        'mount-osceola': 'beginner',
+        'mount-hale': 'beginner',
+        'mount-carrigain': 'challenging',
+        'owls-head': 'challenging',
+        'mount-isolation': 'challenging',
+        'mount-whiteface': 'challenging',
+        'mount-passaconaway': 'challenging',
+        'wildcat-mountain-a': 'challenging',
+        'wildcat-mountain-d': 'challenging',
+        'mount-washington': 'severe',
+        'mount-adams': 'severe',
+        'mount-jefferson': 'severe',
+        'mount-madison': 'severe',
+        'mount-lafayette': 'severe',
+        'mount-lincoln': 'severe',
+        'bondcliff': 'severe',
+        'mount-monroe': 'severe'
+      };
+
       let peaks = [];
       let currentRange = 'All';
       let itemListSchemaEl;
@@ -1865,6 +1865,7 @@
           .sort((a, b) => a.name.localeCompare(b.name))
           .forEach((peak) => {
             const tr = document.createElement('tr');
+            tr.classList.add(`tier-${peak.difficulty}`);
             const peakCell = document.createElement('td');
             const link = document.createElement('a');
             link.href = `/peak/${peak.slug}/`;
@@ -1877,12 +1878,16 @@
             const rangeCell = document.createElement('td');
             rangeCell.textContent = peak.range;
 
+            const diffCell = document.createElement('td');
+            diffCell.textContent = `${peak.difficulty.charAt(0).toUpperCase()}${peak.difficulty.slice(1)}`;
+
             const bestCell = document.createElement('td');
             bestCell.textContent = peak.bestFor;
 
             tr.appendChild(peakCell);
             tr.appendChild(elevCell);
             tr.appendChild(rangeCell);
+            tr.appendChild(diffCell);
             tr.appendChild(bestCell);
             tbody.appendChild(tr);
           });
@@ -1982,7 +1987,7 @@
       }
 
       function renderDataLoadError(message) {
-        document.getElementById('peakTableBody').innerHTML = `<tr><td colspan="4">${message}</td></tr>`;
+        document.getElementById('peakTableBody').innerHTML = `<tr><td colspan="5">${message}</td></tr>`;
         document.getElementById('factTotal').textContent = 'Unavailable';
         document.getElementById('factHigh').textContent = 'Unavailable';
         const map = document.getElementById('peakMap');
@@ -2022,6 +2027,7 @@
             elevation: parseInt(entry['Elevation (ft)'], 10) || null,
             prominence: parseInt(entry['Prominence (ft)'], 10) || null,
             range: getRange(entry, slug),
+            difficulty: difficultyMap[slug] || 'moderate',
             bestFor: bestFor(entry, slug),
             coords: parseCoords(entry.Coordinates)
           };
