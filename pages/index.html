@@ -745,6 +745,9 @@
       min-height: 100%;
       overflow: hidden;
     }
+    .dataset-card.is-clickable {
+      cursor: pointer;
+    }
 
     .dataset-card .card-body {
       display: flex;
@@ -1939,7 +1942,7 @@
       <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, discover long-distance hiking routes, and learn about alpine flora.</p>
     </section>
     <div class="dataset-overview">
-      <h2 class="cards-section-title">NH48 &amp; Howker Ridge Tools</h2>
+      <h2 class="cards-section-title">NH48 &amp; Howker Ridge Info.</h2>
 
       <section class="dataset-cards">
         <a href="/catalog" class="dataset-card">
@@ -1986,18 +1989,18 @@
           </div>
         </a>
 
-        <a href="/plant-catalog" class="dataset-card">
+        <div class="dataset-card">
           <img class="dataset-card-image" src="https://plants.nh48.info/cdn-cgi/image/format=webp,quality=85/howker_plants_imgs/alpine-bilberry/alpine-bilberry__03.jpg" alt="Close-up of alpine bilberry with ripening berries" loading="lazy">
           <div class="card-body">
             <h3 data-i18n="landing.cards.plantsTitle">Howker Plant Catalog</h3>
             <p data-i18n="landing.cards.plantsBody">Explore alpine and subalpine plant observations from the Howker Ridge Trail, with species details, habitat notes, and photo references.</p>
             <div class="card-action">
-              <span class="card-link-text" data-i18n="landing.cards.plantsCta">Browse Plant Catalog</span>
+              <a href="/plant-catalog" class="card-link" data-i18n="landing.cards.plantsCta">Browse Plant Catalog</a>
             </div>
           </div>
-        </a>
+        </div>
 
-        <div class="dataset-card">
+        <div class="dataset-card is-clickable" role="link" tabindex="0" aria-label="Howker Ridge Trail Info" onclick="if (!event.target.closest('a')) { window.location.href = '/projects/hrt-info'; }" onkeydown="if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('a')) { window.location.href = '/projects/hrt-info'; }">
           <img class="dataset-card-image" src="https://howker.nh48.info/cdn-cgi/image/format=webp,width=1600/third-howk/third-howk-003.jpg" alt="Pastel sunrise view over Howker Ridge from the Third Howk" loading="lazy">
           <div class="card-body">
             <h3 data-i18n="landing.cards.howkerInfoTitle">Howker Ridge Trail Info</h3>
@@ -2008,17 +2011,6 @@
             </div>
           </div>
         </div>
-
-        <a href="/projects/plant-map" class="dataset-card">
-          <img class="dataset-card-image" src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85/galehead-mountain/galehead-mountain__001.jpg" alt="View of the Twin Range from the wooded spur on Galehead Mountain" loading="lazy">
-          <div class="card-body">
-            <h3 data-i18n="landing.cards.plantLogTitle">Plant Log Map</h3>
-            <p data-i18n="landing.cards.plantLogBody">View and record plant logs along the Howker Ridge Trail on an interactive map.</p>
-            <div class="card-action">
-              <span class="card-link-text" data-i18n="landing.cards.plantLogCta">Open Plant Log Map</span>
-            </div>
-          </div>
-        </a>
 
         <a href="/peakid-game.html" class="dataset-card">
           <img class="dataset-card-image" src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85/mount-adams/mount-adams__002.jpg" alt="Rocky alpine cone of Mount Adams above treeline in the Presidential Range" loading="lazy">
@@ -2060,7 +2052,7 @@
           <p><strong>NH48 Peak Catalog</strong> – An interactive index with entries for every 4,000-footer. Each record provides summit coordinates, route descriptions, difficulty grades, elevation and prominence data, trail exposure, range categorization and photo sets with credit. You can sort by elevation, prominence or trail exposure; filter by range (Presidential, Franconia Ridge, Twins &amp; Bonds, Carter-Moriah &amp; Wildcats, Kinsman, Osceola &amp; Tripyramids, etc.); and view results in grid or list format.</p>
           <p><strong>White Mountain Trails Explorer</strong> – A segment-level database of maintained and unofficial trails across the White Mountains. Each segment includes distance, elevation gain, permitted uses, surface type and trailhead coordinates.</p>
           <p><strong>Long Trails Dataset</strong> – Extends coverage to multi-state hiking routes such as the Appalachian Trail and Pacific Crest Trail.</p>
-          <p><strong>Howker Ridge Plant Catalog</strong> – Documents alpine and subalpine species along the Howker Ridge Trail with common and Latin names, habitat notes, bloom windows, elevation bands and photo references. The companion <strong>Plant Log Map</strong> lets you log sightings via map clicks or GPS coordinates; submissions are moderated before publication.</p>
+          <p><strong>Howker Ridge Plant Catalog</strong> – Documents alpine and subalpine species along the Howker Ridge Trail with common and Latin names, habitat notes, bloom windows, elevation bands and photo references.</p>
           <p>Additional features include a virtual-hike simulator, high-resolution trail maps, and trail-info articles to support trip planning. This is an unofficial project; data may be incomplete or outdated. Use it responsibly and send feedback.</p>
           <p><strong>Photo use:</strong> Images are offered for non-commercial and educational use only; they remain the property of the site and may not be sold or printed without permission. For curated galleries and prints see <a href="https://www.nh48pics.com/">NH48pics.com</a>, and for a peak-bagging tracker see <a href="https://nh48.app/">NH48.app</a>.</p>
           <ul class="seo-links">
@@ -2070,7 +2062,6 @@
             <li><a href="/long-trails">Long Trails Dataset</a></li>
             <li><a href="/plant-catalog">Howker Ridge Plant Catalog</a></li>
             <li><a href="/projects/hrt-info">Howker Ridge Info</a></li>
-            <li><a href="/projects/plant-map">Plant Sightings Map</a></li>
             <li><a href="/howker-ridge">Howker Ridge Trail Map</a></li>
             <li><a href="/virtual-hike">Virtual Hike</a></li>
             <li><a href="/nh-4000-footers-info">NH 4,000-Footers Overview</a></li>
