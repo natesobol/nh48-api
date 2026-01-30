@@ -15,6 +15,7 @@
   const statusValue = document.querySelector('.timed-status');
   const zonesContainer = document.querySelector('.timed-game-zones');
   const zoneColumns = Array.from(document.querySelectorAll('.timed-zone-column'));
+  const spawnCountdownValue = document.querySelector('[data-spawn-countdown]');
   const playButton = document.querySelector('[data-action="play"]');
   const splashScreen = document.querySelector('.timed-splash');
   const mainContent = document.querySelector('main');
@@ -30,8 +31,8 @@
     gameDuration: 150,
     maxZones: 6,
     minZones: 4,
-    startSpawnInterval: 1800,
-    minSpawnInterval: 650,
+    startSpawnInterval: 2600,
+    minSpawnInterval: 1100,
     difficultyStepSeconds: 16,
     preloadCount: 6,
     preloadHoldMs: 3000,
@@ -90,12 +91,31 @@
     }
   };
 
+  const updateSpawnCountdown = () => {
+    if (!spawnCountdownValue) return;
+    if (!state.running) {
+      spawnCountdownValue.textContent = '--';
+      return;
+    }
+    const remainingMs = Math.max(0, state.spawnInterval - state.spawnTimer);
+    spawnCountdownValue.textContent = String(Math.ceil(remainingMs / 1000));
+  };
+
   const updateScoreboard = () => {
     const timeLeft = Math.max(0, config.gameDuration - state.elapsed);
     if (scoreValue) scoreValue.textContent = String(state.score);
     if (livesValue) livesValue.textContent = String(state.lives);
     if (timeValue) timeValue.textContent = `${Math.ceil(timeLeft)}s`;
     setStatus(`${t('timedGame.score')}: ${state.score} · ${t('timedGame.lives')}: ${state.lives} · ${t('timedGame.timeRemaining')}: ${Math.ceil(timeLeft)}s`);
+  };
+
+  const getSpawnX = (pieceWidth) => {
+    const bounds = gameArea.getBoundingClientRect();
+    const leftLimit = bounds.width / 6;
+    const rightLimit = (bounds.width * 5) / 6;
+    const availableWidth = Math.max(0, rightLimit - leftLimit - pieceWidth);
+    const startX = availableWidth > 0 ? leftLimit + Math.random() * availableWidth : leftLimit;
+    return clamp(startX, 0, Math.max(0, bounds.width - pieceWidth));
   };
 
   const setZones = (names) => {
@@ -272,9 +292,8 @@
     img.draggable = false;
     pieceEl.appendChild(img);
 
-    const rect = gameArea.getBoundingClientRect();
     const width = pieceEl.offsetWidth || 120;
-    const x = Math.random() * Math.max(0, rect.width - width);
+    const x = getSpawnX(width);
 
     const piece = {
       id: state.nextPieceId++,
@@ -404,6 +423,7 @@
     });
 
     updateScoreboard();
+    updateSpawnCountdown();
 
     const timeLeft = config.gameDuration - state.elapsed;
     if (timeLeft <= 0 || state.lives <= 0 || (state.totalSpawned >= config.totalPieces && state.pieces.length === 0)) {
@@ -440,11 +460,13 @@
     preloadUpcoming();
     buildZonesFromQueue();
     updateScoreboard();
+    updateSpawnCountdown();
   };
 
   const endGame = () => {
     state.running = false;
     clearZoneHighlights();
+    updateSpawnCountdown();
     if (gameOverOverlay) {
       const accuracy = state.matches + state.misses > 0
         ? Math.round((state.matches / (state.matches + state.misses)) * 100)
@@ -476,6 +498,7 @@
     state.running = true;
     gameOverOverlay?.classList.remove('active');
     state.lastFrame = null;
+    updateSpawnCountdown();
     requestAnimationFrame(tick);
   };
 
@@ -504,6 +527,7 @@
     buildZonesFromQueue();
     preloadUpcoming();
     updateScoreboard();
+    updateSpawnCountdown();
   };
 
   playButton?.addEventListener('click', () => {
