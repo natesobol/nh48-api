@@ -466,6 +466,31 @@ blockquote{
   color:var(--muted);
   text-align:center;
 }
+.section::after{
+  content:"";
+  display:block;
+  clear:both;
+}
+.inline-photo{
+  float:right;
+  width:min(320px, 45%);
+  margin:0 0 12px 16px;
+  border:1px solid rgba(255, 255, 255, 0.9);
+  border-radius:12px;
+  overflow:hidden;
+  background:rgba(255, 255, 255, 0.04);
+}
+.inline-photo img{
+  display:block;
+  width:100%;
+  height:auto;
+}
+.inline-photo figcaption{
+  padding:6px 10px;
+  font-size:0.85rem;
+  color:var(--muted);
+  text-align:left;
+}
 .photo-alt{
   font-size:13px;
   color:var(--muted);
@@ -507,6 +532,11 @@ blockquote{
   }
   .toc-photo{
     display:none;
+  }
+  .inline-photo{
+    float:none;
+    width:100%;
+    margin:12px 0;
   }
   .trail-stats-panel th{
     width:auto;
@@ -776,7 +806,7 @@ blockquote{
       <p>Hiking the Howker Ridge Trail is a journey through multiple ecological zones. Deciduous woodlands dominate the lower mile: birch, beech, and maple trees arch over the trail until about 2,000 feet. Bumpus Brook’s cold water supports small brook trout and an abundance of mosses and ferns along its banks. The constant cascade of water and deep shade create a cool microclimate cherished by amphibians and delicate plants like foamflower.</p>
       <p>Wildlife signs are common — hikers might notice moose tracks near the brook and up the ridge to <a href="#poi-junctions" aria-label="Pine Link Junction in points of interest section">Pine Link Junction</a>. Black bears are infrequent but possible visitors at lower elevations, and smaller creatures like red squirrels and chipmunks are frequently seen.</p>
       <p>Climbing higher, the forest transitions to boreal spruce-fir. Around 3,500–4,000 feet, trees become stunted and give way to krummholz, the gnarled shrub-like spruce/fir at treeline. Above treeline, alpine tundra takes over. Cushion plants and alpine grasses grow in patches among the rocky talus. This area experiences a very short growing season; staying on rocks protects slow-growing plants.</p>
-      <figure>
+      <figure class="inline-photo">
         <a href="https://howker.nh48.info/flora-wildlife/flora-wildlife-005.jpg" target="_blank" rel="noopener">
           <picture>
             <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/flora-wildlife/flora-wildlife-005.jpg">
@@ -785,7 +815,7 @@ blockquote{
         </a>
         <figcaption>Trail berries</figcaption>
       </figure>
-      <figure>
+      <figure class="inline-photo">
         <a href="https://howker.nh48.info/flora-wildlife/flora-wildlife-006.jpg" target="_blank" rel="noopener">
           <picture>
             <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/flora-wildlife/flora-wildlife-006.jpg">
@@ -794,7 +824,7 @@ blockquote{
         </a>
         <figcaption>Alpine moss</figcaption>
       </figure>
-      <figure>
+      <figure class="inline-photo">
         <a href="https://howker.nh48.info/flora-wildlife/flora-wildlife-007.jpg" target="_blank" rel="noopener">
           <picture>
             <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/flora-wildlife/flora-wildlife-007.jpg">
@@ -803,7 +833,7 @@ blockquote{
         </a>
         <figcaption>Alpine grasses</figcaption>
       </figure>
-      <figure>
+      <figure class="inline-photo">
         <a href="https://howker.nh48.info/pine-link-junction/pine-link-junction-002.jpg" target="_blank" rel="noopener">
           <picture>
             <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/pine-link-junction/pine-link-junction-002.jpg">
