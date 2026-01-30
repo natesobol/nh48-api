@@ -508,94 +508,94 @@
         {
           title: "Presidential Range",
           links: [
-            { href: "/peak/mount-washington", text: "Washington" },
-            { href: "/peak/mount-adams", text: "Adams" },
-            { href: "/peak/mount-jefferson", text: "Jefferson" },
-            { href: "/peak/mount-monroe", text: "Monroe" },
-            { href: "/peak/mount-eisenhower", text: "Eisenhower" },
-            { href: "/peak/mount-pierce", text: "Pierce" },
-            { href: "/peak/mount-jackson", text: "Jackson" },
-            { href: "/peak/mount-madison", text: "Madison" },
-            { href: "/peak/mount-isolation", text: "Isolation" }
+            { href: "/peak/mount-washington", text: "Mount Washington" },
+            { href: "/peak/mount-adams", text: "Mount Adams" },
+            { href: "/peak/mount-jefferson", text: "Mount Jefferson" },
+            { href: "/peak/mount-monroe", text: "Mount Monroe" },
+            { href: "/peak/mount-madison", text: "Mount Madison" },
+            { href: "/peak/mount-eisenhower", text: "Mount Eisenhower" },
+            { href: "/peak/mount-pierce", text: "Mount Pierce" },
+            { href: "/peak/mount-jackson", text: "Mount Jackson" },
+            { href: "/peak/mount-isolation", text: "Mount Isolation" }
           ]
         },
         {
-          title: "Franconia Ridge",
+          title: "Franconia Range",
           links: [
-            { href: "/peak/mount-lafayette", text: "Lafayette" },
-            { href: "/peak/mount-lincoln", text: "Lincoln" },
-            { href: "/peak/mount-liberty", text: "Liberty" },
-            { href: "/peak/mount-flume", text: "Flume" },
-            { href: "/peak/mount-garfield", text: "Garfield" }
-          ]
-        },
-        {
-          title: "Twins & Bonds",
-          links: [
-            { href: "/peak/south-twin-mountain", text: "South Twin" },
-            { href: "/peak/north-twin-mountain", text: "North Twin" },
-            { href: "/peak/galehead-mountain", text: "Galehead" },
-            { href: "/peak/zealand-mountain", text: "Zealand" },
-            { href: "/peak/west-bond", text: "West Bond" },
-            { href: "/peak/mount-bond", text: "Bond" },
-            { href: "/peak/bondcliff", text: "Bondcliff" },
-            { href: "/peak/owls-head", text: "Owl's Head" }
-          ]
-        },
-        {
-          title: "Carter-Moriah & Wildcats",
-          links: [
-            { href: "/peak/carter-dome", text: "Carter Dome" },
-            { href: "/peak/south-carter-mountain", text: "South Carter" },
-            { href: "/peak/middle-carter-mountain", text: "Middle Carter" },
-            { href: "/peak/mount-moriah", text: "Moriah" },
-            { href: "/peak/wildcat-mountain-a", text: "Wildcat A" },
-            { href: "/peak/wildcat-mountain-d", text: "Wildcat D" }
+            { href: "/peak/mount-lafayette", text: "Mount Lafayette" },
+            { href: "/peak/mount-lincoln", text: "Mount Lincoln" },
+            { href: "/peak/mount-liberty", text: "Mount Liberty" },
+            { href: "/peak/mount-flume", text: "Mount Flume" },
+            { href: "/peak/mount-garfield", text: "Mount Garfield" }
           ]
         },
         {
           title: "Kinsman Range",
           links: [
+            { href: "/peak/mount-moosilauke", text: "Mount Moosilauke" },
+            { href: "/peak/cannon-mountain", text: "Cannon Mountain" },
             { href: "/peak/north-kinsman-mountain", text: "North Kinsman" },
-            { href: "/peak/south-kinsman-mountain", text: "South Kinsman" },
-            { href: "/peak/cannon-mountain", text: "Cannon" }
+            { href: "/peak/south-kinsman-mountain", text: "South Kinsman" }
           ]
         },
         {
-          title: "Osceolas & Trips",
+          title: "Carter-Moriah Range",
           links: [
-            { href: "/peak/mount-passaconaway", text: "Passaconaway" },
-            { href: "/peak/mount-whiteface", text: "Whiteface" },
+            { href: "/peak/carter-dome", text: "Carter Dome" },
+            { href: "/peak/middle-carter-mountain", text: "Middle Carter" },
+            { href: "/peak/south-carter-mountain", text: "South Carter" },
+            { href: "/peak/mount-moriah", text: "Mount Moriah" },
+            { href: "/peak/wildcat-mountain-a", text: "Wildcat A" },
+            { href: "/peak/wildcat-mountain-d", text: "Wildcat D" }
+          ]
+        },
+        {
+          title: "Twin Range",
+          links: [
+            { href: "/peak/south-twin-mountain", text: "South Twin" },
+            { href: "/peak/north-twin-mountain", text: "North Twin" },
+            { href: "/peak/galehead-mountain", text: "Galehead Mountain" },
+            { href: "/peak/zealand-mountain", text: "Zealand Mountain" },
+            { href: "/peak/mount-hale", text: "Mount Hale" }
+          ]
+        },
+        {
+          title: "Willey Range",
+          links: [
+            { href: "/peak/mount-tom", text: "Mount Tom" },
+            { href: "/peak/mount-field", text: "Mount Field" },
+            { href: "/peak/mount-willey", text: "Mount Willey" }
+          ]
+        },
+        {
+          title: "Pilot–Pliny Range",
+          links: [
+            { href: "/peak/mount-cabot", text: "Mount Cabot" },
+            { href: "/peak/mount-waumbek", text: "Mount Waumbek" }
+          ]
+        },
+        {
+          title: "Sandwich / Waterville Range",
+          links: [
+            { href: "/peak/mount-passaconaway", text: "Mount Passaconaway" },
+            { href: "/peak/mount-whiteface", text: "Mount Whiteface" },
             { href: "/peak/north-tripyramid", text: "North Tripyramid" },
             { href: "/peak/middle-tripyramid", text: "Middle Tripyramid" },
-            { href: "/peak/mount-osceola", text: "Osceola" },
-            { href: "/peak/mount-osceola-east", text: "Osceola East" },
-            { href: "/peak/mount-tecumseh", text: "Tecumseh" }
+            { href: "/peak/mount-tecumseh", text: "Mount Tecumseh" },
+            { href: "/peak/mount-osceola", text: "Mount Osceola" },
+            { href: "/peak/mount-osceola-east", text: "East Osceola" }
           ]
         },
         {
-          title: "Pemigewasset",
+          title: "Pemigewasset Wilderness",
           links: [
-            { href: "/peak/mount-carrigain", text: "Carrigain" },
-            { href: "/peak/mount-hancock", text: "Hancock North" },
-            { href: "/peak/mount-hancock-south", text: "Hancock South" },
-            { href: "/peak/mount-hale", text: "Hale" }
-          ]
-        },
-        {
-          title: "Northern Summits",
-          links: [
-            { href: "/peak/mount-cabot", text: "Cabot" },
-            { href: "/peak/mount-waumbek", text: "Waumbek" }
-          ]
-        },
-        {
-          title: "Western & Outlying",
-          links: [
-            { href: "/peak/mount-moosilauke", text: "Moosilauke" },
-            { href: "/peak/mount-willey", text: "Willey" },
-            { href: "/peak/mount-field", text: "Field" },
-            { href: "/peak/mount-tom", text: "Tom" }
+            { href: "/peak/bondcliff", text: "Bondcliff" },
+            { href: "/peak/mount-bond", text: "Mount Bond" },
+            { href: "/peak/west-bond", text: "West Bond" },
+            { href: "/peak/mount-carrigain", text: "Mount Carrigain" },
+            { href: "/peak/owls-head", text: "Owl's Head" },
+            { href: "/peak/mount-hancock", text: "North Hancock" },
+            { href: "/peak/mount-hancock-south", text: "South Hancock" }
           ]
         }
       ],

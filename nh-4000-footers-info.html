@@ -1655,70 +1655,55 @@
       </section>
     </main>
 
-    <script>
-      const rangeLookup = {
-        'bondcliff': 'Twin/Bond Range',
-        'west-bond': 'Twin/Bond Range',
-        'mount-bond': 'Twin/Bond Range',
-        'south-twin-mountain': 'Twin/Bond Range',
-        'north-twin-mountain': 'Twin/Bond Range',
-        'zealand-mountain': 'Twin/Bond Range',
-        'galehead-mountain': 'Twin/Bond Range',
-        'mount-hale': 'Twin/Bond Range',
-        'mount-garfield': 'Franconia Range',
-        'mount-lafayette': 'Franconia Range',
-        'mount-lincoln': 'Franconia Range',
-        'mount-liberty': 'Franconia Range',
-        'mount-flume': 'Franconia Range',
-        'mount-washington': 'Presidential Range',
-        'mount-adams': 'Presidential Range',
-        'mount-jefferson': 'Presidential Range',
-        'mount-monroe': 'Presidential Range',
-        'mount-madison': 'Presidential Range',
-        'mount-eisenhower': 'Presidential Range',
-        'mount-pierce': 'Presidential Range',
-        'mount-jackson': 'Presidential Range',
-        'mount-isolation': 'Presidential Range',
-        'carter-dome': 'Carter-Moriah Range',
-        'middle-carter-mountain': 'Carter-Moriah Range',
-        'south-carter-mountain': 'Carter-Moriah Range',
-        'wildcat-mountain-a': 'Carter-Moriah Range',
-        'wildcat-mountain-d': 'Carter-Moriah Range',
-        'mount-moriah': 'Carter-Moriah Range',
-        'mount-moosilauke': 'Kinsman Range',
-        'north-kinsman-mountain': 'Kinsman Range',
-        'south-kinsman-mountain': 'Kinsman Range',
-        'cannon-mountain': 'Kinsman Range',
-        'mount-osceola': 'Sandwich Range',
-        'mount-osceola-east': 'Sandwich Range',
-        'north-tripyramid': 'Sandwich Range',
-        'middle-tripyramid': 'Sandwich Range',
-        'mount-whiteface': 'Sandwich Range',
-        'mount-passaconaway': 'Sandwich Range',
-        'mount-tecumseh': 'Sandwich Range',
-        'mount-willey': 'Willey Range',
-        'mount-field': 'Willey Range',
-        'mount-tom': 'Willey Range',
-        'mount-carrigain': 'Pemi Wilderness & Remote',
-        'owls-head': 'Pemi Wilderness & Remote',
-        'mount-hancock': 'Pemi Wilderness & Remote',
-        'mount-hancock-south': 'Pemi Wilderness & Remote',
-        'mount-cabot': 'Loners & Remote Peaks',
-        'mount-waumbek': 'Loners & Remote Peaks'
+    <script type="module">
+      import ranges from './data/wmnf-ranges.json' assert { type: 'json' };
+
+      const canonicalRanges = Object.values(ranges).map((range) => ({
+        name: range.rangeName,
+        peaks: range.peakList,
+        description: range.description
+      }));
+
+      const peakSlugOverrides = {
+        'South Twin': 'south-twin-mountain',
+        'North Twin': 'north-twin-mountain',
+        'Middle Carter': 'middle-carter-mountain',
+        'South Carter': 'south-carter-mountain',
+        'Wildcat A': 'wildcat-mountain-a',
+        'Wildcat D': 'wildcat-mountain-d',
+        'East Osceola': 'mount-osceola-east',
+        'North Hancock': 'mount-hancock',
+        'South Hancock': 'mount-hancock-south',
+        'North Kinsman': 'north-kinsman-mountain',
+        'South Kinsman': 'south-kinsman-mountain'
       };
 
-      const rangeOrder = [
-        'All',
-        'Presidential Range',
-        'Franconia Range',
-        'Twin/Bond Range',
-        'Carter-Moriah Range',
-        'Kinsman Range',
-        'Sandwich Range',
-        'Willey Range',
-        'Pemi Wilderness & Remote',
-        'Loners & Remote Peaks'
-      ];
+      const buildRangeLookup = (data) => {
+        const nameToSlug = {};
+        Object.values(data).forEach((entry) => {
+          const slug = entry.slug || entry.peakName?.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          if (entry.peakName) nameToSlug[entry.peakName] = slug;
+          if (entry['Peak Name']) nameToSlug[entry['Peak Name']] = slug;
+        });
+
+        const lookup = {};
+        canonicalRanges.forEach((range) => {
+          range.peaks.forEach((peakName) => {
+            const slug = peakSlugOverrides[peakName] || nameToSlug[peakName];
+            if (slug) {
+              lookup[slug] = range.name;
+            }
+          });
+        });
+        return lookup;
+      };
+
+      const rangeOrder = ['All', ...canonicalRanges.map((range) => range.name)];
+      const rangeDescriptions = canonicalRanges.reduce((acc, range) => {
+        acc[range.name] = range.description;
+        return acc;
+      }, {});
+      let rangeLookup = {};
 
       const difficultyMap = {
         'mount-tecumseh': 'beginner',
@@ -1797,11 +1782,22 @@
         if (rangeLookup[slug]) return rangeLookup[slug];
         const range = entry['Range / Subrange'];
         if (range && typeof range === 'string') {
-          if (range.toLowerCase().includes('presidential')) return 'Presidential Range';
-          if (range.toLowerCase().includes('franconia')) return 'Franconia Range';
-          if (range.toLowerCase().includes('carter') || range.toLowerCase().includes('moriah')) return 'Carter-Moriah Range';
+          const normalized = range.toLowerCase();
+          if (normalized.includes('presidential')) return 'Presidential Range';
+          if (normalized.includes('franconia')) return 'Franconia Range';
+          if (normalized.includes('kinsman') || normalized.includes('moosilauke') || normalized.includes('cannon')) return 'Kinsman Range';
+          if (normalized.includes('carter') || normalized.includes('moriah') || normalized.includes('wildcat')) return 'Carter-Moriah Range';
+          if (normalized.includes('twin') || normalized.includes('bond')) return 'Twin Range';
+          if (normalized.includes('willey') || normalized.includes('field') || normalized.includes('tom')) return 'Willey Range';
+          if (normalized.includes('pilot') || normalized.includes('pliny') || normalized.includes('kilkenny') || normalized.includes('cabot') || normalized.includes('waumbek')) {
+            return 'Pilot–Pliny Range';
+          }
+          if (normalized.includes('sandwich') || normalized.includes('waterville') || normalized.includes('osceola') || normalized.includes('tripyramid') || normalized.includes('tecumseh') || normalized.includes('passaconaway') || normalized.includes('whiteface')) {
+            return 'Sandwich / Waterville Range';
+          }
+          if (normalized.includes('pemigewasset') || normalized.includes('pemi') || normalized.includes('wilderness')) return 'Pemigewasset Wilderness';
         }
-        return 'Pemi Wilderness & Remote';
+        return 'Pemigewasset Wilderness';
       }
 
       function renderRangeFilters() {
@@ -1829,17 +1825,6 @@
       function renderRangeList() {
         const list = document.getElementById('rangeList');
         list.innerHTML = '';
-        const descriptions = {
-          'Presidential Range': 'High alpine ridges with volatile weather; many hikers rehearse bailout options for Washington–Jefferson–Adams days.',
-          'Franconia Range': 'Iconic ridge walks featuring Lafayette, Lincoln, Liberty, Flume, and Garfield. Check route guides for conditions.',
-          'Twin/Bond Range': 'Long Pemigewasset Wilderness miles featuring Bondcliff’s ledge and West Bond’s sunset perch; logistics vary by season.',
-          'Carter-Moriah Range': 'Forest duff, ledgy steps, and hut-to-hut options linking the Carters and Wildcats; exposure shifts with weather.',
-          'Kinsman Range': 'Moosilauke’s bald dome plus Cannon/Kinsman ledges overlooking Franconia Notch—expect changing footing and wind.',
-          'Sandwich Range': 'Osceola, Passaconaway, Whiteface, and the Tripyramids with varied footing that can feel very different in winter.',
-          'Willey Range': 'Short, steep climbs to Tom, Field, and Willey with viewpoints that reward calm-weather days.',
-          'Pemi Wilderness & Remote': 'Carrigain’s fire tower, Owl’s Head’s slide, and the Hancock pair tucked inside the Pemi; approaches can be wet or muddy.',
-          'Loners & Remote Peaks': 'Cabot in the Pilot Range and Waumbek in the Pliny Range—quiet forest walks where conditions change quickly.'
-        };
         rangeOrder.filter((r) => r !== 'All').forEach((range) => {
           const card = document.createElement('div');
           card.className = 'range-card hero-card';
@@ -1869,7 +1854,7 @@
           title.appendChild(h);
           title.appendChild(filterBtn);
           const desc = document.createElement('p');
-          desc.textContent = descriptions[range];
+          desc.textContent = rangeDescriptions[range] || '';
           card.appendChild(title);
           card.appendChild(desc);
           list.appendChild(card);
@@ -2126,6 +2111,7 @@
       }
 
       function hydratePeaks(data) {
+        rangeLookup = buildRangeLookup(data);
         peaks = Object.values(data).map((entry) => {
           const slug = entry.slug || entry.peakName?.toLowerCase().replace(/[^a-z0-9]+/g, '-');
           return {
