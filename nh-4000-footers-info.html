@@ -550,13 +550,50 @@
         box-shadow: var(--card-shadow);
       }
       .warning-panel {
-        background: rgba(250, 204, 21, 0.15);
-        border: 1px solid rgba(250, 204, 21, 0.25);
-        color: #fde68a;
-        padding: 16px;
-        border-radius: var(--card-radius);
+        margin: 16px 0 24px;
+        border: 2px solid #fbbf24;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #1f1408, #2b1a0a);
+        overflow: hidden;
+        color: #fef3c7;
         box-shadow: var(--card-shadow);
-        margin-bottom: 24px;
+      }
+      .warning-panel summary {
+        list-style: none;
+        cursor: default;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        color: #fef3c7;
+      }
+      .warning-panel summary::-webkit-details-marker {
+        display: none;
+      }
+      .warning-panel .summary-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .warning-panel .summary-title .icon-warning {
+        font-size: 18px;
+        line-height: 1;
+        color: #fbbf24;
+      }
+      .warning-panel .warning-body {
+        border-top: 1px solid rgba(251, 191, 36, 0.6);
+        padding: 12px 16px 16px;
+        display: grid;
+        gap: 10px;
+      }
+      .warning-panel .warning-body p {
+        margin: 0;
+        color: #ffffff;
+        line-height: 1.5;
+      }
+      .warning-panel .warning-body strong {
+        color: #fde68a;
       }
       .range-filters {
         display: flex;
@@ -605,6 +642,29 @@
         letter-spacing: 0.6px;
         color: var(--ink);
         opacity: 0.9;
+      }
+      th[aria-sort] {
+        white-space: nowrap;
+      }
+      .sort-button {
+        background: transparent;
+        border: none;
+        color: inherit;
+        font: inherit;
+        text-transform: inherit;
+        letter-spacing: inherit;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0;
+        cursor: pointer;
+      }
+      .sort-button:hover {
+        color: var(--accent);
+      }
+      .sort-indicator {
+        font-size: 11px;
+        opacity: 0.8;
       }
       tr:hover td {
         background: rgba(255, 255, 255, 0.03);
@@ -764,6 +824,10 @@
         transition: all 0.3s ease;
         min-width: 0;
         text-align: center;
+        background: transparent;
+        cursor: pointer;
+        border: none;
+        appearance: none;
       }
       .tier-badge:hover {
         transform: scale(1.05);
@@ -1170,11 +1234,18 @@
       </header>
 
       <section id="disclaimer">
-        <div class="warning-panel panel">
-          <h2>Important Disclaimer</h2>
-          <p>NH48.info is an unofficial, community-driven site. Use this page at your own risk; always verify trail status, rules, and safety information with official sources.</p>
-          <p><a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>.</p>
-        </div>
+        <details class="warning-panel" open>
+          <summary>
+            <span class="summary-title">
+              <span class="icon-warning" aria-hidden="true">⚠️</span>
+              Important Trail Warnings
+            </span>
+          </summary>
+          <div class="warning-body">
+            <p><strong>NH48.info is an unofficial, community-driven site.</strong> Use this page at your own risk; always verify trail status, rules, and safety information with official sources.</p>
+            <p><a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>.</p>
+          </div>
+        </details>
       </section>
 
       <h2 class="snapshot-title">Contents</h2>
@@ -1228,29 +1299,29 @@
         <p>Not all peaks are created equal. Plan your progression from accessible summits to exposed alpine terrain.</p>
         
         <div class="tiers-container">
-          <div class="tier-badge tier-beginner">
+          <button class="tier-badge tier-beginner" type="button" data-difficulty="beginner">
             <span class="tier-count">~10</span>
             <span class="tier-name">Beginner Friendly</span>
             <span class="tier-examples">Tecumseh, Pierce, Jackson, Osceola, Waumbek</span>
-          </div>
+          </button>
           
-          <div class="tier-badge tier-moderate">
+          <button class="tier-badge tier-moderate" type="button" data-difficulty="moderate">
             <span class="tier-count">~15</span>
             <span class="tier-name">Moderate</span>
             <span class="tier-examples">Hancocks, Cabot, Galehead, Passaconaway</span>
-          </div>
+          </button>
           
-          <div class="tier-badge tier-challenging">
+          <button class="tier-badge tier-challenging" type="button" data-difficulty="challenging">
             <span class="tier-count">~15</span>
             <span class="tier-name">Challenging</span>
             <span class="tier-examples">Lafayette, Lincoln, Carrigain, Wildcats</span>
-          </div>
+          </button>
           
-          <div class="tier-badge tier-severe">
+          <button class="tier-badge tier-severe" type="button" data-difficulty="severe">
             <span class="tier-count">~8</span>
             <span class="tier-name">Alpine / Exposed</span>
             <span class="tier-examples">Washington, Adams, Jefferson, Madison, Bonds</span>
-          </div>
+          </button>
         </div>
       </section>
 
@@ -1356,8 +1427,18 @@
             <thead>
               <tr>
                 <th>Peak</th>
-                <th>Elevation (ft)</th>
-                <th>Range</th>
+                <th data-sort-key="elevation" aria-sort="none">
+                  <button class="sort-button" type="button" data-sort="elevation" aria-label="Sort by elevation">
+                    Elevation (ft)
+                    <span class="sort-indicator" aria-hidden="true"></span>
+                  </button>
+                </th>
+                <th data-sort-key="range" aria-sort="none">
+                  <button class="sort-button" type="button" data-sort="range" aria-label="Sort by range">
+                    Range
+                    <span class="sort-indicator" aria-hidden="true"></span>
+                  </button>
+                </th>
                 <th>Difficulty</th>
                 <th>Best For</th>
               </tr>
@@ -1738,8 +1819,15 @@
         'mount-monroe': 'severe'
       };
 
+      const difficultyOrder = ['beginner', 'moderate', 'challenging', 'severe'];
+
       let peaks = [];
       let currentRange = 'All';
+      let sortState = {
+        key: 'name',
+        direction: 'asc',
+        difficultyPriority: null
+      };
       let itemListSchemaEl;
 
       const seasonRows = {
@@ -1861,36 +1949,58 @@
         const tbody = document.getElementById('peakTableBody');
         tbody.innerHTML = '';
         const filtered = currentRange === 'All' ? peaks : peaks.filter((p) => p.range === currentRange);
-        filtered
-          .sort((a, b) => a.name.localeCompare(b.name))
-          .forEach((peak) => {
-            const tr = document.createElement('tr');
-            tr.classList.add(`tier-${peak.difficulty}`);
-            const peakCell = document.createElement('td');
-            const link = document.createElement('a');
-            link.href = `/peak/${peak.slug}/`;
-            link.textContent = peak.name;
-            peakCell.appendChild(link);
+        const sorted = [...filtered].sort((a, b) => {
+          if (sortState.key === 'elevation') {
+            const aVal = a.elevation ?? (sortState.direction === 'asc' ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY);
+            const bVal = b.elevation ?? (sortState.direction === 'asc' ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY);
+            return sortState.direction === 'asc' ? aVal - bVal : bVal - aVal;
+          }
+          if (sortState.key === 'range') {
+            const rangeCompare = a.range.localeCompare(b.range);
+            return sortState.direction === 'asc' ? rangeCompare || a.name.localeCompare(b.name) : (rangeCompare || a.name.localeCompare(b.name)) * -1;
+          }
+          if (sortState.key === 'difficulty') {
+            const baseRank = (value) => {
+              const idx = difficultyOrder.indexOf(value);
+              return idx === -1 ? difficultyOrder.length : idx;
+            };
+            const aRank = baseRank(a.difficulty) + (sortState.difficultyPriority === a.difficulty ? -1 : 0);
+            const bRank = baseRank(b.difficulty) + (sortState.difficultyPriority === b.difficulty ? -1 : 0);
+            if (aRank !== bRank) return aRank - bRank;
+            return a.name.localeCompare(b.name);
+          }
+          return a.name.localeCompare(b.name);
+        });
 
-            const elevCell = document.createElement('td');
-            elevCell.textContent = peak.elevation ? peak.elevation.toLocaleString() : '—';
+        sorted.forEach((peak) => {
+          const tr = document.createElement('tr');
+          tr.classList.add(`tier-${peak.difficulty}`);
+          const peakCell = document.createElement('td');
+          const link = document.createElement('a');
+          link.href = `/peak/${peak.slug}/`;
+          link.textContent = peak.name;
+          peakCell.appendChild(link);
 
-            const rangeCell = document.createElement('td');
-            rangeCell.textContent = peak.range;
+          const elevCell = document.createElement('td');
+          elevCell.textContent = peak.elevation ? peak.elevation.toLocaleString() : '—';
 
-            const diffCell = document.createElement('td');
-            diffCell.textContent = `${peak.difficulty.charAt(0).toUpperCase()}${peak.difficulty.slice(1)}`;
+          const rangeCell = document.createElement('td');
+          rangeCell.textContent = peak.range;
 
-            const bestCell = document.createElement('td');
-            bestCell.textContent = peak.bestFor;
+          const diffCell = document.createElement('td');
+          diffCell.textContent = `${peak.difficulty.charAt(0).toUpperCase()}${peak.difficulty.slice(1)}`;
 
-            tr.appendChild(peakCell);
-            tr.appendChild(elevCell);
-            tr.appendChild(rangeCell);
-            tr.appendChild(diffCell);
-            tr.appendChild(bestCell);
-            tbody.appendChild(tr);
-          });
+          const bestCell = document.createElement('td');
+          bestCell.textContent = peak.bestFor;
+
+          tr.appendChild(peakCell);
+          tr.appendChild(elevCell);
+          tr.appendChild(rangeCell);
+          tr.appendChild(diffCell);
+          tr.appendChild(bestCell);
+          tbody.appendChild(tr);
+        });
+        updateSortIndicators();
       }
 
       function renderQuickFacts() {
@@ -2018,6 +2128,18 @@
         itemListSchemaEl = script;
       }
 
+      function updateSortIndicators() {
+        document.querySelectorAll('th[data-sort-key]').forEach((th) => {
+          const key = th.dataset.sortKey;
+          const isActive = sortState.key === key;
+          th.setAttribute('aria-sort', isActive ? (sortState.direction === 'asc' ? 'ascending' : 'descending') : 'none');
+          const indicator = th.querySelector('.sort-indicator');
+          if (indicator) {
+            indicator.textContent = isActive ? (sortState.direction === 'asc' ? '▲' : '▼') : '';
+          }
+        });
+      }
+
       function hydratePeaks(data) {
         peaks = Object.values(data).map((entry) => {
           const slug = entry.slug || entry.peakName?.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -2046,6 +2168,39 @@
         document.getElementById('winterBtn').addEventListener('click', () => {
           updateSeasonToggle('winter');
           renderSeasonTable('winter');
+        });
+
+        document.querySelectorAll('[data-sort]').forEach((button) => {
+          button.addEventListener('click', () => {
+            const key = button.dataset.sort;
+            if (sortState.key === key) {
+              sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+              sortState.key = key;
+              sortState.direction = 'asc';
+            }
+            sortState.difficultyPriority = null;
+            renderPeakTable();
+          });
+        });
+
+        document.querySelectorAll('.tier-badge').forEach((badge) => {
+          badge.addEventListener('click', () => {
+            const level = badge.dataset.difficulty;
+            if (!level) return;
+            sortState = {
+              key: 'difficulty',
+              direction: 'asc',
+              difficultyPriority: level
+            };
+            currentRange = 'All';
+            renderRangeFilters();
+            renderPeakTable();
+            const list = document.getElementById('official-peak-list');
+            if (list) {
+              list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
         });
 
         fetch('/manifest_out.json')
