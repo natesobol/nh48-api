@@ -463,7 +463,7 @@
         color: var(--accent-strong);
       }
       .toc {
-        margin: 18px 0 24px;
+        margin: 12px 0 0;
         padding: 0;
         border: none;
         background: transparent;
@@ -473,24 +473,40 @@
         padding: 0;
         margin: 0;
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px 16px;
+        flex-direction: column;
+        gap: 10px;
       }
       .toc a {
         color: var(--muted);
         text-decoration: none;
-        border-bottom: 1px solid transparent;
-        padding-bottom: 2px;
+        border-left: 2px solid transparent;
+        padding: 6px 0 6px 12px;
         font-weight: 600;
         font-size: 0.95rem;
       }
       .toc a:hover,
       .toc a:focus-visible {
         color: var(--accent);
-        border-bottom-color: var(--accent);
+        border-left-color: var(--accent);
         outline: 2px solid rgba(34, 197, 94, 0.4);
         outline-offset: 3px;
         border-radius: 6px;
+      }
+      .toc-difficulty {
+        display: grid;
+        grid-template-columns: minmax(220px, 0.65fr) minmax(0, 1fr);
+        gap: 28px;
+        align-items: start;
+        margin: 24px 0 40px;
+      }
+      .toc-panel {
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(203, 213, 245, 0.12);
+        border-radius: 20px;
+      }
+      .toc-panel .snapshot-title {
+        margin: 0 0 12px;
       }
       .hero-card {
         background: var(--card-gradient);
@@ -693,25 +709,13 @@
         border-color: var(--accent-strong);
       }
 
-      /* Effort & Distance Section */
-      .effort-distance {
-        padding: 32px 0;
-        text-align: left;
-      }
-      .effort-distance h2 {
-        color: var(--ink);
-        font-size: 1.5rem;
-        margin-bottom: 16px;
-        text-align: center;
-      }
-      .effort-distance > p {
-        text-align: center;
-        margin-bottom: 24px;
-      }
       .effort-details {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 20px;
+      }
+      .hero-effort {
+        margin-top: 20px;
       }
       .effort-item {
         padding: 24px;
@@ -731,39 +735,37 @@
 
       /* Difficulty Guide Section */
       .difficulty-guide {
-        padding: 40px 24px;
+        padding: 32px 24px;
         background: rgba(10, 10, 10, 0.6);
         border-radius: 24px;
-        margin: 32px 0;
+        margin: 0;
       }
       .difficulty-guide h2 {
-        text-align: center;
+        text-align: left;
         color: var(--ink);
         font-size: 1.5rem;
         margin-bottom: 12px;
         font-weight: 700;
       }
       .difficulty-guide > p {
-        text-align: center;
-        margin-bottom: 28px;
+        text-align: left;
+        margin-bottom: 20px;
       }
       .difficulty-guide .tiers-container {
         display: flex;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        gap: 16px;
+        flex-direction: column;
+        gap: 14px;
       }
       .tier-badge {
-        flex: 1 1 0;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
         padding: 20px 28px;
         border-radius: 16px;
         font-weight: 600;
         transition: all 0.3s ease;
         min-width: 0;
-        text-align: center;
+        text-align: left;
       }
       .tier-badge:hover {
         transform: scale(1.05);
@@ -1006,6 +1008,9 @@
 
       /* Responsive adjustments for migrated sections */
       @media (max-width: 900px) {
+        .toc-difficulty {
+          grid-template-columns: 1fr;
+        }
         .tier-badge {
           padding: 16px 20px;
         }
@@ -1022,19 +1027,8 @@
       }
 
       @media (max-width: 680px) {
-        .difficulty-guide .tiers-container {
-          flex-direction: column;
-          align-items: center;
-        }
         .tier-badge {
-          width: 100%;
-          max-width: 280px;
-          flex-direction: row;
-          justify-content: space-between;
           padding: 14px 18px;
-        }
-        .tier-badge .tier-count {
-          order: 2;
         }
         .tier-badge .tier-examples {
           display: none;
@@ -1167,6 +1161,20 @@
             <small class="muted">Open data for maps, apps, and trackers</small>
           </div>
         </div>
+        <div class="effort-details hero-effort" aria-label="Effort and distance highlights">
+          <div class="effort-item hero-card">
+            <span class="fact-label">Total Distance</span>
+            <p><strong>~250-500 miles</strong> depending on route choices and how efficiently peaks are grouped. Multi-peak days can reduce total mileage, while single-peak outings add distance.</p>
+          </div>
+          <div class="effort-item hero-card">
+            <span class="fact-label">Total Elevation Gain</span>
+            <p><strong>~170,000 feet</strong> of cumulative elevation gain — roughly six times Mount Everest from sea level.</p>
+          </div>
+          <div class="effort-item hero-card">
+            <span class="fact-label">Time Investment</span>
+            <p><strong>150-250 hours</strong> of hiking time, not including drive time, rest breaks, or time spent on summits. Many hikers take 2-4 years to visit all 48 peaks.</p>
+          </div>
+        </div>
       </header>
 
       <section id="disclaimer">
@@ -1177,81 +1185,61 @@
         </div>
       </section>
 
-      <h2 class="snapshot-title">Contents</h2>
-      <nav class="toc" aria-label="Table of contents">
-        <ul>
-          <li><a href="#effort-distance" aria-label="Effort and distance section">Effort &amp; Distance</a></li>
-          <li><a href="#peak-difficulty-guide" aria-label="Peak difficulty guide section">Difficulty Guide</a></li>
-          <li><a href="#day-trip-groupings" aria-label="Day trip groupings section">Day Trip Groupings</a></li>
-          <li><a href="#what-is-nh48" aria-label="What is the NH48 section">What is the NH48?</a></li>
-          <li><a href="#official-peak-list" aria-label="Official peak list section">Official Peak List</a></li>
-          <li><a href="#range-map" aria-label="Range map section">Range Map</a></li>
-          <li><a href="#difficulty-strategy" aria-label="Peak difficulty and strategy section">Peak Difficulty &amp; Strategy</a></li>
-          <li><a href="#time-effort" aria-label="Time and effort section">Time &amp; Effort</a></li>
-          <li><a href="#grouping-strategy" aria-label="Grouping strategy section">Grouping Strategy</a></li>
-          <li><a href="#progression" aria-label="Progression section">Progression</a></li>
-          <li><a href="#risk-preparedness" aria-label="Risk and preparedness section">Risk &amp; Preparedness</a></li>
-          <li><a href="#completion-strategies" aria-label="Finish strategies section">Finish Strategies</a></li>
-          <li><a href="#seasonal-considerations" aria-label="Seasonal considerations section">Seasonal Considerations</a></li>
-          <li><a href="#history" aria-label="History section">History</a></li>
-          <li><a href="#data-api" aria-label="Data and API section">Data &amp; API</a></li>
-          <li><a href="#faq" aria-label="Frequently asked questions section">FAQ</a></li>
-        </ul>
-      </nav>
-
-      <!-- Effort & Distance Section - Migrated from homepage -->
-      <section class="effort-distance" id="effort-distance" aria-label="Effort and Distance">
-        <h2>Effort &amp; Distance</h2>
-        <p>Expect long hikes and significant elevation gain; distances vary based on route choice and grouping style.</p>
-        
-        <div class="effort-details">
-          <div class="effort-item">
-            <h3>Total Distance</h3>
-            <p><strong>~250-500 miles</strong> depending on route choices and how efficiently peaks are grouped. Multi-peak days can reduce total mileage, while single-peak outings add distance.</p>
-          </div>
-          
-          <div class="effort-item">
-            <h3>Total Elevation Gain</h3>
-            <p><strong>~170,000 feet</strong> of cumulative elevation gain — roughly six times Mount Everest from sea level.</p>
-          </div>
-          
-          <div class="effort-item">
-            <h3>Time Investment</h3>
-            <p><strong>150-250 hours</strong> of hiking time, not including drive time, rest breaks, or time spent on summits. Many hikers take 2-4 years to visit all 48 peaks.</p>
-          </div>
+      <section class="toc-difficulty" aria-label="Table of contents and difficulty guide">
+        <div class="toc-panel">
+          <h2 class="snapshot-title">Table of Contents</h2>
+          <nav class="toc" aria-label="Table of contents">
+            <ul>
+              <li><a href="#peak-difficulty-guide" aria-label="Peak difficulty guide section">Difficulty Guide</a></li>
+              <li><a href="#day-trip-groupings" aria-label="Day trip groupings section">Day Trip Groupings</a></li>
+              <li><a href="#what-is-nh48" aria-label="What is the NH48 section">What is the NH48?</a></li>
+              <li><a href="#official-peak-list" aria-label="Official peak list section">Official Peak List</a></li>
+              <li><a href="#range-map" aria-label="Range map section">Range Map</a></li>
+              <li><a href="#difficulty-strategy" aria-label="Peak difficulty and strategy section">Peak Difficulty &amp; Strategy</a></li>
+              <li><a href="#time-effort" aria-label="Time and effort section">Time &amp; Effort</a></li>
+              <li><a href="#grouping-strategy" aria-label="Grouping strategy section">Grouping Strategy</a></li>
+              <li><a href="#progression" aria-label="Progression section">Progression</a></li>
+              <li><a href="#risk-preparedness" aria-label="Risk and preparedness section">Risk &amp; Preparedness</a></li>
+              <li><a href="#completion-strategies" aria-label="Finish strategies section">Finish Strategies</a></li>
+              <li><a href="#seasonal-considerations" aria-label="Seasonal considerations section">Seasonal Considerations</a></li>
+              <li><a href="#history" aria-label="History section">History</a></li>
+              <li><a href="#data-api" aria-label="Data and API section">Data &amp; API</a></li>
+              <li><a href="#faq" aria-label="Frequently asked questions section">FAQ</a></li>
+            </ul>
+          </nav>
         </div>
-      </section>
 
-      <!-- Difficulty Tiers Section - Migrated from homepage -->
-      <section class="difficulty-guide" id="peak-difficulty-guide" aria-label="Peak Difficulty Guide">
-        <h2>Peak Difficulty Guide</h2>
-        <p>Not all peaks are created equal. Plan your progression from accessible summits to exposed alpine terrain.</p>
-        
-        <div class="tiers-container">
-          <div class="tier-badge tier-beginner">
-            <span class="tier-count">~10</span>
-            <span class="tier-name">Beginner Friendly</span>
-            <span class="tier-examples">Tecumseh, Pierce, Jackson, Osceola, Waumbek</span>
-          </div>
+        <!-- Difficulty Tiers Section - Migrated from homepage -->
+        <section class="difficulty-guide" id="peak-difficulty-guide" aria-label="Peak Difficulty Guide">
+          <h2>Peak Difficulty Guide</h2>
+          <p>Not all peaks are created equal. Plan your progression from accessible summits to exposed alpine terrain.</p>
           
-          <div class="tier-badge tier-moderate">
-            <span class="tier-count">~15</span>
-            <span class="tier-name">Moderate</span>
-            <span class="tier-examples">Hancocks, Cabot, Galehead, Passaconaway</span>
+          <div class="tiers-container">
+            <div class="tier-badge tier-beginner">
+              <span class="tier-count">~10</span>
+              <span class="tier-name">Beginner Friendly</span>
+              <span class="tier-examples">Tecumseh, Pierce, Jackson, Osceola, Waumbek</span>
+            </div>
+            
+            <div class="tier-badge tier-moderate">
+              <span class="tier-count">~15</span>
+              <span class="tier-name">Moderate</span>
+              <span class="tier-examples">Hancocks, Cabot, Galehead, Passaconaway</span>
+            </div>
+            
+            <div class="tier-badge tier-challenging">
+              <span class="tier-count">~15</span>
+              <span class="tier-name">Challenging</span>
+              <span class="tier-examples">Lafayette, Lincoln, Carrigain, Wildcats</span>
+            </div>
+            
+            <div class="tier-badge tier-severe">
+              <span class="tier-count">~8</span>
+              <span class="tier-name">Alpine / Exposed</span>
+              <span class="tier-examples">Washington, Adams, Jefferson, Madison, Bonds</span>
+            </div>
           </div>
-          
-          <div class="tier-badge tier-challenging">
-            <span class="tier-count">~15</span>
-            <span class="tier-name">Challenging</span>
-            <span class="tier-examples">Lafayette, Lincoln, Carrigain, Wildcats</span>
-          </div>
-          
-          <div class="tier-badge tier-severe">
-            <span class="tier-count">~8</span>
-            <span class="tier-name">Alpine / Exposed</span>
-            <span class="tier-examples">Washington, Adams, Jefferson, Madison, Bonds</span>
-          </div>
-        </div>
+        </section>
       </section>
 
       <!-- Day Trip Groupings Section - Migrated from homepage -->
