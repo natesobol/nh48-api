@@ -558,6 +558,9 @@
         gap: 18px;
         align-items: start;
       }
+      .stacked-grid {
+        grid-template-columns: 1fr;
+      }
       .panel {
         background: var(--card-gradient);
         border: 1px solid var(--card-border);
@@ -693,8 +696,8 @@
       }
       #peakMap {
         width: 100%;
-        height: 360px;
-        background: rgba(255, 255, 255, 0.02);
+        height: 520px;
+        background: rgba(10, 12, 20, 0.65);
         border-radius: 16px;
         border: 1px solid rgba(203, 213, 245, 0.18);
       }
@@ -724,6 +727,10 @@
         border: 1px solid var(--card-border);
         padding: 12px;
         border-radius: var(--card-radius);
+      }
+      .range-card.active {
+        border-color: rgba(34, 197, 94, 0.5);
+        box-shadow: 0 12px 32px rgba(34, 197, 94, 0.12);
       }
       .toggle-group {
         display: inline-flex;
@@ -1106,6 +1113,9 @@
         .strategy-tiles {
           grid-template-columns: 1fr;
         }
+        #peakMap {
+          height: 420px;
+        }
       }
 
       @media (max-width: 480px) {
@@ -1267,9 +1277,6 @@
               <li><a href="#official-peak-list" aria-label="Official peak list section">Official Peak List</a></li>
               <li><a href="#range-map" aria-label="Range map section">Range Map</a></li>
               <li><a href="#difficulty-strategy" aria-label="Peak difficulty and strategy section">Peak Difficulty &amp; Strategy</a></li>
-              <li><a href="#time-effort" aria-label="Time and effort section">Time &amp; Effort</a></li>
-              <li><a href="#grouping-strategy" aria-label="Grouping strategy section">Grouping Strategy</a></li>
-              <li><a href="#progression" aria-label="Progression section">Progression</a></li>
               <li><a href="#risk-preparedness" aria-label="Risk and preparedness section">Risk &amp; Preparedness</a></li>
               <li><a href="#completion-strategies" aria-label="Finish strategies section">Finish Strategies</a></li>
               <li><a href="#seasonal-considerations" aria-label="Seasonal considerations section">Seasonal Considerations</a></li>
@@ -1279,6 +1286,7 @@
             </ul>
           </nav>
         </div>
+      </section>
 
       <!-- Difficulty Tiers Section - Migrated from homepage -->
       <section class="difficulty-guide" id="peak-difficulty-guide" aria-label="Peak Difficulty Guide">
@@ -1435,7 +1443,7 @@
         </div>
       </section>
 
-      <section id="range-map" class="content-grid">
+      <section id="range-map" class="content-grid stacked-grid">
         <div class="panel hero-card map-shell">
           <h2>Peaks by Mountain Range</h2>
           <p>
@@ -1448,7 +1456,7 @@
           <p>Zoom with your mousewheel or tap each pin to see peak names. All coordinates load from the same manifest that powers the catalog and should be cross-checked with official maps.</p>
           <svg id="peakMap" role="img" aria-label="Map of all 48 New Hampshire 4,000 foot peaks"></svg>
           <div class="map-legend">
-            <span><span class="legend-dot" style="background:#22c55e"></span>NH48 Summits</span>
+            <span><span class="legend-dot" style="background:#22c55e"></span><span id="mapLegendLabel">NH48 Summits (All ranges)</span></span>
           </div>
         </div>
       </section>
@@ -1458,7 +1466,7 @@
         <p>
           Difficulty is subjective and conditions change quickly. The notes below reflect commonly shared hiker experiences, not official designations. Plan carefully and consult AMC trail guides and forecasts before choosing a route.
         </p>
-        <div class="content-grid">
+        <div class="content-grid stacked-grid">
           <div class="panel hero-card">
             <h3>Intro / Friendly (≈10 peaks)</h3>
             <p>Shorter mileage, moderate elevation gain, and generally forgiving terrain.</p>
@@ -1492,7 +1500,7 @@
             </ul>
           </div>
         </div>
-        <div class="content-grid">
+        <div class="content-grid stacked-grid">
           <div class="panel hero-card">
             <h3>Beginner-Friendly choices</h3>
             <ul>
@@ -1512,83 +1520,13 @@
         </div>
       </section>
 
-      <section id="time-effort">
-        <h2>Time &amp; Effort Estimates</h2>
-        <div class="content-grid">
-          <div class="panel hero-card">
-            <h3>Total Hiking Time</h3>
-            <ul>
-              <li><strong>Conservative pace:</strong> ~200–250 hours of hiking time.</li>
-              <li><strong>Strong/efficient hikers:</strong> ~150 hours on trail.</li>
-              <li>Actual elapsed time will be higher with breaks, overnights, and logistics.</li>
-            </ul>
-          </div>
-          <div class="panel hero-card">
-            <h3>Typical Finish Timeline</h3>
-            <ul>
-              <li><strong>Fast finish:</strong> 1–2 years (or a single intense season).</li>
-              <li><strong>Weekend warrior:</strong> 2–4 years for most steady hikers.</li>
-              <li><strong>Casual pace:</strong> 4–6+ years with weather and schedules.</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section id="grouping-strategy">
-        <h2>“Smart Groupings” – Day-Trip Strategy</h2>
-        <p>
-          The NH48 does not always require individual trips. With smart planning, many peaks are commonly paired or traversed in a single day.
-        </p>
-        <div class="content-grid">
-          <div class="panel hero-card">
-            <h3>Trip Count Targets</h3>
-            <ul>
-              <li><strong>Minimum logical trips:</strong> ~12–15 day hikes for ultra-efficient linkups.</li>
-              <li><strong>Typical total trips:</strong> ~20–30 hikes for most people.</li>
-              <li><strong>Average outing:</strong> ~8–12 miles, ~3,000–4,000 ft gain.</li>
-            </ul>
-          </div>
-          <div class="panel hero-card">
-            <h3>Classic Combos</h3>
-            <ul>
-              <li><strong>Pairs:</strong> Pierce + Eisenhower, Liberty + Flume, North + South Kinsman.</li>
-              <li><strong>Triples:</strong> Tom + Field + Willey, Bondcliff + Bond + West Bond.</li>
-              <li><strong>Traverses:</strong> Franconia Ridge Loop, Carter-Moriah Range, Presidential segments.</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section id="progression">
-        <h2>Easiest-to-Hardest Progression</h2>
-        <p>
-          A progression-based approach helps hikers build skills and confidence. Treat this as guidance, not a rule.
-        </p>
-        <div class="content-grid">
-          <div class="panel hero-card">
-            <h3>Easiest 10</h3>
-            <p>Start with shorter mileage and forgiving trails.</p>
-            <p><em>Tecumseh, Waumbek, Hale, Jackson, Pierce, Osceola</em> and other lower-effort peaks.</p>
-          </div>
-          <div class="panel hero-card">
-            <h3>Middle 20</h3>
-            <p>Longer hikes and moderate combos build endurance.</p>
-            <p><em>Garfield, Kinsmans, Hancocks, Cannon, Wildcats</em> and similar mid-range efforts.</p>
-          </div>
-          <div class="panel hero-card">
-            <h3>Hardest 10</h3>
-            <p>Save the most rugged and exposed summits for last.</p>
-            <p><em>Washington, Adams, Jefferson, Madison, Bonds, Isolation, Owl’s Head</em>.</p>
-          </div>
-        </div>
-      </section>
 
       <!-- Risk & Preparedness Section - Migrated from homepage -->
       <section class="risk-stats" id="risk-preparedness" aria-label="Risk Factors and Preparedness">
         <h2>Risk Factors &amp; Preparedness</h2>
         <p>Weather changes quickly in the White Mountains; preparation is essential and rescue can take hours.</p>
         
-        <div class="risk-grid">
+        <div class="risk-grid stacked-grid">
           <div class="risk-box">
             <span class="risk-title">🏔️ Above Treeline Exposure</span>
             <span class="risk-value">15 Peaks</span>
@@ -1620,7 +1558,7 @@
         <h2>Choose Your Finish Strategy</h2>
         <p>There's no single way to finish the list - pick the approach that matches your lifestyle and goals.</p>
         
-        <div class="strategy-tiles">
+        <div class="strategy-tiles stacked-grid">
           <div class="strategy-tile">
             <span class="strategy-icon">🚀</span>
             <span class="strategy-name">Fast Finish</span>
@@ -1880,7 +1818,9 @@
           btn.addEventListener('click', () => {
             currentRange = label;
             renderRangeFilters();
+            renderRangeList();
             renderPeakTable();
+            renderMap();
           });
           container.appendChild(btn);
         });
@@ -1903,6 +1843,7 @@
         rangeOrder.filter((r) => r !== 'All').forEach((range) => {
           const card = document.createElement('div');
           card.className = 'range-card hero-card';
+          card.classList.toggle('active', currentRange === range);
           const title = document.createElement('div');
           title.style.display = 'flex';
           title.style.justifyContent = 'space-between';
@@ -1911,15 +1852,18 @@
           h.textContent = range;
           h.style.margin = '0 0 6px';
           const filterBtn = document.createElement('button');
-          filterBtn.className = 'chip';
+          filterBtn.className = `chip ${currentRange === range ? 'active' : ''}`;
           filterBtn.textContent = 'Filter';
           filterBtn.type = 'button';
           filterBtn.setAttribute('aria-controls', 'peakTableBody');
           filterBtn.setAttribute('aria-label', `Filter peaks to ${range}`);
+          filterBtn.setAttribute('aria-pressed', currentRange === range ? 'true' : 'false');
           filterBtn.addEventListener('click', () => {
             currentRange = range;
             renderRangeFilters();
+            renderRangeList();
             renderPeakTable();
+            renderMap();
             window.scrollTo({ top: document.getElementById('official-peak-list').offsetTop - 60, behavior: 'smooth' });
           });
           title.appendChild(h);
@@ -2006,14 +1950,20 @@
 
       function renderMap() {
         const map = document.getElementById('peakMap');
+        const legendLabel = document.getElementById('mapLegendLabel');
         map.innerHTML = '';
         const coords = peaks.filter((p) => p.coords);
-        if (!coords.length) {
+        const filtered = currentRange === 'All' ? coords : coords.filter((p) => p.range === currentRange);
+        if (legendLabel) {
+          legendLabel.textContent = currentRange === 'All' ? 'NH48 Summits (All ranges)' : `NH48 Summits (${currentRange})`;
+        }
+        if (!filtered.length) {
           map.innerHTML = '<text x="10" y="30" fill="#cbd5e1">No coordinate data available.</text>';
           return;
         }
-        const lats = coords.map((c) => c.coords.lat);
-        const lons = coords.map((c) => c.coords.lon);
+        const boundsSource = filtered.length ? filtered : coords;
+        const lats = boundsSource.map((c) => c.coords.lat);
+        const lons = boundsSource.map((c) => c.coords.lon);
         const minLat = Math.min(...lats);
         const maxLat = Math.max(...lats);
         const minLon = Math.min(...lons);
@@ -2022,6 +1972,7 @@
         const width = map.clientWidth && map.clientWidth > 0 ? map.clientWidth : 800;
         const height = map.clientHeight && map.clientHeight > 0 ? map.clientHeight : 360;
         map.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        map.setAttribute('preserveAspectRatio', 'xMidYMid meet');
         const latSpan = maxLat - minLat || 1;
         const lonSpan = maxLon - minLon || 1;
 
@@ -2031,9 +1982,56 @@
           return { x, y };
         }
 
-        coords.forEach((peak) => {
+        const ns = 'http://www.w3.org/2000/svg';
+        const defs = document.createElementNS(ns, 'defs');
+        const gradient = document.createElementNS(ns, 'linearGradient');
+        gradient.setAttribute('id', 'topoGradient');
+        gradient.setAttribute('x1', '0%');
+        gradient.setAttribute('y1', '0%');
+        gradient.setAttribute('x2', '0%');
+        gradient.setAttribute('y2', '100%');
+        const stopA = document.createElementNS(ns, 'stop');
+        stopA.setAttribute('offset', '0%');
+        stopA.setAttribute('stop-color', '#0f172a');
+        const stopB = document.createElementNS(ns, 'stop');
+        stopB.setAttribute('offset', '100%');
+        stopB.setAttribute('stop-color', '#111827');
+        gradient.appendChild(stopA);
+        gradient.appendChild(stopB);
+        defs.appendChild(gradient);
+        map.appendChild(defs);
+
+        const backdrop = document.createElementNS(ns, 'rect');
+        backdrop.setAttribute('x', '0');
+        backdrop.setAttribute('y', '0');
+        backdrop.setAttribute('width', width);
+        backdrop.setAttribute('height', height);
+        backdrop.setAttribute('fill', 'url(#topoGradient)');
+        map.appendChild(backdrop);
+
+        const contourGroup = document.createElementNS(ns, 'g');
+        contourGroup.setAttribute('opacity', '0.4');
+        for (let i = 0; i < 10; i += 1) {
+          const baseY = (height / 11) * (i + 1);
+          const amplitude = 6 + (i % 3) * 4;
+          const frequency = (Math.PI * 2) / width;
+          let d = `M 0 ${baseY.toFixed(2)}`;
+          for (let x = 0; x <= width; x += 40) {
+            const y = baseY + Math.sin(x * frequency + i) * amplitude;
+            d += ` L ${x.toFixed(2)} ${y.toFixed(2)}`;
+          }
+          const path = document.createElementNS(ns, 'path');
+          path.setAttribute('d', d);
+          path.setAttribute('fill', 'none');
+          path.setAttribute('stroke', 'rgba(148, 163, 184, 0.35)');
+          path.setAttribute('stroke-width', '1');
+          contourGroup.appendChild(path);
+        }
+        map.appendChild(contourGroup);
+
+        filtered.forEach((peak) => {
           const { x, y } = project(peak.coords.lat, peak.coords.lon);
-          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          const circle = document.createElementNS(ns, 'circle');
           circle.setAttribute('cx', x);
           circle.setAttribute('cy', y);
           circle.setAttribute('r', 5);
@@ -2182,7 +2180,9 @@
             };
             currentRange = 'All';
             renderRangeFilters();
+            renderRangeList();
             renderPeakTable();
+            renderMap();
             const list = document.getElementById('official-peak-list');
             if (list) {
               list.scrollIntoView({ behavior: 'smooth', block: 'start' });
