@@ -394,8 +394,10 @@
       });
 
       map.on('draw:drawvertex', event => {
-        if (!event.latlng) return;
-        showFinishButton(event.latlng);
+        if (!event.layers || !event.layers.getLayers().length) return;
+        const markers = event.layers.getLayers();
+        const last = markers[markers.length - 1];
+        showFinishButton(last.getLatLng());
       });
     }
 
