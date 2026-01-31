@@ -504,31 +504,59 @@ blockquote{
   margin-top:6px;
 }
 #photo-gallery .gallery-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:14px;
+  display:block;
+  grid-template-columns:unset;
+  gap:unset;
   margin-top:12px;
 }
-#photo-gallery figure{
-  margin:0;
+#photo-gallery .gallery-masonry{
+  column-count:1;
+  column-gap:var(--gap);
+}
+@media (min-width:600px){
+  #photo-gallery .gallery-masonry{
+    column-count:2;
+  }
+}
+@media (min-width:900px){
+  #photo-gallery .gallery-masonry{
+    column-count:3;
+  }
+}
+@media (min-width:1200px){
+  #photo-gallery .gallery-masonry{
+    column-count:4;
+  }
+}
+#photo-gallery .gallery-masonry figure{
+  break-inside:avoid;
+  page-break-inside:avoid;
+  margin:0 0 var(--gap);
   background:var(--card);
   border:1px solid var(--stroke);
   border-radius:12px;
   overflow:hidden;
+  display:block;
+  width:100%;
+}
+#photo-gallery .gallery-masonry figure:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(0, 0, 0, 0.4);
+  transition:transform 0.2s ease, box-shadow 0.2s ease;
 }
 #photo-gallery a{
   color:inherit;
   text-decoration:none;
   display:block;
 }
-#photo-gallery img{
+#photo-gallery .gallery-masonry img{
   display:block;
   width:100%;
   height:auto;
 }
-#photo-gallery figcaption{
+#photo-gallery .gallery-masonry figcaption{
   padding:6px 10px;
-  font-size:0.9rem;
+  font-size:0.8rem;
   color:var(--muted);
   text-align:center;
 }
@@ -999,7 +1027,7 @@ blockquote{
     <section class="section" id="photo-gallery">
       <h2><a href="#photo-gallery">📷 Howker Ridge Photo Gallery</a></h2>
       <p class="text-guide">A curated set of images from key locations along the trail (converted to WebP for fast loading). Click any image to view full-size.</p>
-      <div class="gallery-grid">
+      <div class="gallery-grid gallery-masonry">
         <figure>
           <a href="https://howker.nh48.info/bear-pit/bear-pit-001.jpg" target="_blank" rel="noopener">
             <picture>
