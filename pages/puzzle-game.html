@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicons/favicon.ico" sizes="48x48">
+  <link rel="icon" type="image/x-icon" href="/favicons/favicon.ico">
+  <link rel="shortcut icon" href="/favicons/favicon.ico">
+  <link rel="icon" type="image/x-icon" sizes="16x16" href="/favicons/favicon-16x16.ico">
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="/favicons/favicon-32x32.ico">
+  <link rel="icon" type="image/x-icon" sizes="48x48" href="/favicons/favicon-48x48.ico">
+  <link rel="icon" type="image/x-icon" sizes="96x96" href="/favicons/favicon-96x96.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="puzzle.title">NH48 Jigsaw Puzzle</title>
+  <meta name="description" data-i18n="puzzle.metaDescription" data-i18n-attr="content" content="Play the NH48 jigsaw puzzle game and rebuild summit photos piece by piece.">
+  <meta name="keywords" content="NH48, jigsaw puzzle, summit photos, New Hampshire 4000 footers, hiking game">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://nh48.info/puzzle">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <script type="module" src="/js/i18n.js"></script>
+  <script src="/js/unified-footer.js" defer></script>
+  <script src="/js/splash.js" defer></script>
+  <link rel="stylesheet" href="/css/puzzle-game.css">
+</head>
+<body data-route="puzzle-game" data-page="puzzle-game">
+  <div id="nav-placeholder"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+            if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+              window.NH48_I18N.refreshLangPicker();
+            }
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+    });
+  </script>
+
+  <main class="puzzle-main" role="main">
+    <section class="puzzle-hero">
+      <h1 data-i18n="puzzle.heroTitle">NH48 Jigsaw Puzzle</h1>
+      <p data-i18n="puzzle.heroBody">Piece together a summit photo by dragging and dropping every unique jigsaw tile into place.</p>
+    </section>
+
+    <section class="puzzle-controls" aria-label="Puzzle setup">
+      <div class="puzzle-control">
+        <label for="puzzle-photo-select" data-i18n="puzzle.photoSelectLabel">Choose a summit photo</label>
+        <select id="puzzle-photo-select" aria-describedby="puzzle-photo-help"></select>
+        <small id="puzzle-photo-help" data-i18n="puzzle.photoSelectHelp">Select a peak from the NH48 dataset or choose a custom upload.</small>
+      </div>
+      <div class="puzzle-control">
+        <label for="puzzle-photo-upload" data-i18n="puzzle.photoUploadLabel">Upload your own photo</label>
+        <input id="puzzle-photo-upload" type="file" accept="image/*">
+        <button id="puzzle-random" class="puzzle-secondary-button" type="button" data-i18n="puzzle.randomPhoto">Random peak</button>
+      </div>
+      <div class="puzzle-control">
+        <label for="puzzle-difficulty" data-i18n="puzzle.difficultyLabel">Puzzle difficulty</label>
+        <select id="puzzle-difficulty">
+          <option value="5" data-i18n="puzzle.difficultyEasy">Easy (5 × 5)</option>
+          <option value="6" data-i18n="puzzle.difficultyMedium">Medium (6 × 6)</option>
+          <option value="7" data-i18n="puzzle.difficultyHard">Hard (7 × 7)</option>
+        </select>
+        <button id="puzzle-start" class="puzzle-primary-button" type="button" data-i18n="puzzle.start">Start puzzle</button>
+      </div>
+    </section>
+
+    <section class="puzzle-scoreboard" aria-label="Puzzle scoreboard">
+      <div class="puzzle-score-card">
+        <span data-i18n="puzzle.progressLabel">Progress</span>
+        <strong id="puzzle-progress-text">0%</strong>
+        <div class="puzzle-progress" aria-hidden="true">
+          <div id="puzzle-progress-bar" class="puzzle-progress-bar"></div>
+        </div>
+      </div>
+      <div class="puzzle-score-card">
+        <span data-i18n="puzzle.timeLabel">Time</span>
+        <strong id="puzzle-timer">0:00</strong>
+      </div>
+      <div class="puzzle-score-card">
+        <span data-i18n="puzzle.piecesLabel">Pieces placed</span>
+        <strong id="puzzle-pieces-count">0 / 0</strong>
+      </div>
+    </section>
+
+    <section class="puzzle-board-section">
+      <p class="puzzle-instructions" data-i18n="puzzle.instructions">Drag pieces from the tray onto the board. Use Enter + arrow keys to move pieces with the keyboard.</p>
+      <div class="puzzle-play-area" aria-label="Puzzle board area">
+        <div id="puzzle-board" class="puzzle-board" role="img" aria-label="Puzzle assembly board"></div>
+        <div id="puzzle-tray" class="puzzle-tray" role="region" aria-label="Puzzle tray"></div>
+        <div id="puzzle-pieces" class="puzzle-pieces" role="list" aria-label="Puzzle pieces"></div>
+      </div>
+      <div class="puzzle-actions">
+        <button id="puzzle-shuffle" class="puzzle-secondary-button" type="button" data-i18n="puzzle.shuffle">Shuffle pieces</button>
+        <span id="puzzle-status" class="puzzle-status" role="status" aria-live="polite"></span>
+      </div>
+      <div id="puzzle-live" class="visually-hidden" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <section id="puzzle-final" class="puzzle-final" aria-hidden="true">
+    <div class="puzzle-final-content">
+      <header class="puzzle-final-header">
+        <h2 data-i18n="puzzle.finalTitle">Puzzle complete</h2>
+        <p id="puzzle-final-time">0:00</p>
+        <p id="puzzle-final-message" data-i18n="puzzle.finalMessage">You solved the puzzle!</p>
+        <div class="puzzle-final-actions">
+          <button id="puzzle-restart" class="puzzle-primary-button" type="button" data-i18n="puzzle.playAgain">Play again</button>
+          <a class="puzzle-secondary-button" href="/catalog" data-i18n="puzzle.returnCatalog">Return to Catalog</a>
+        </div>
+      </header>
+    </div>
+  </section>
+
+  <script src="/js/puzzle-game.js"></script>
+</body>
+</html>

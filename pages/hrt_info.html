@@ -438,10 +438,14 @@ blockquote{
   width:100%;
   border-collapse:collapse;
 }
+#howker-loops th:first-child,
+#howker-loops td.loop-name{
+  width:38%;
+}
 #howker-loops th,
 #howker-loops td{
   padding:0.75rem 1rem;
-  border-bottom:1px solid var(--stroke, #2a2a2a);
+  border-bottom:1px dotted var(--stroke, #2a2a2a);
   color:var(--ink, #ffffff);
   vertical-align:top;
 }
@@ -456,6 +460,8 @@ blockquote{
   position:relative;
   padding-right:1.5rem;
   list-style:none;
+  line-height:1.2;
+  white-space:nowrap;
 }
 #howker-loops details summary::-webkit-details-marker{
   display:none;
@@ -464,6 +470,7 @@ blockquote{
   content:"▼";
   position:absolute;
   right:0;
+  top:0;
   color:var(--accent, #00b15d);
   transition:transform 0.2s;
 }
@@ -474,9 +481,15 @@ blockquote{
   outline:2px solid var(--accent, #00b15d);
   outline-offset:4px;
 }
+#howker-loops .loop-group .loop-description-row{
+  display:none;
+}
+#howker-loops .loop-group:has(details[open]) .loop-description-row{
+  display:table-row;
+}
 #howker-loops .loop-description{
-  margin-top:0.5rem;
-  padding-left:1rem;
+  margin:0;
+  padding:0.25rem 0 0.75rem;
   color:var(--muted, #cccccc);
   font-size:0.9rem;
 }
@@ -584,8 +597,8 @@ blockquote{
 }
 .inline-photo{
   float:right;
-  width:min(320px, 45%);
-  margin:0 0 12px 16px;
+  width:min(300px, 40%);
+  margin:0 0 10px 14px;
   border:1px solid rgba(255, 255, 255, 0.9);
   border-radius:12px;
   overflow:hidden;
@@ -593,7 +606,10 @@ blockquote{
 }
 .inline-photo.left{
   float:left;
-  margin:0 16px 12px 0;
+  margin:0 14px 10px 0;
+}
+.inline-photo.lift{
+  margin-top:-8px;
 }
 .inline-photo img{
   display:block;
@@ -883,7 +899,7 @@ blockquote{
       </div>
       <p>Constructed by local Randolph hikers at the turn of the 20th century, the Howker Ridge Trail was carved out of steep mountainside by hand. Builders Cook and Peek aligned the route along a natural spur ridge, threading past cliffs and waterfalls and over the ridge’s humps. The initial path likely followed game routes and logging traces, evolving into a formal trail with blazes and a primitive footbed.</p>
       <p>Given the era of its creation (1899–1901), the trail was built with simple tools: axes and saws to clear blowdowns, and hoes or shovels to cut rudimentary waterbars. The alignment cleverly takes advantage of natural features — following <a href="#poi-waterfalls" aria-label="Bumpus Brook in points of interest section">Bumpus Brook</a> for an easier grade early on, then switching to the ridge crest where the footing is solid rock and ledge.</p>
-      <figure class="inline-photo right">
+      <figure class="inline-photo right lift">
         <a href="https://howker.nh48.info/devils-kitchen/devils-kitchen-004.jpg" target="_blank" rel="noopener">
           <picture>
             <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/devils-kitchen/devils-kitchen-004.jpg">
@@ -902,7 +918,7 @@ blockquote{
       <p>The Howker Ridge Trail ascends the north side of <a href="/nh-4000-footers-info#mount-madison" aria-label="Mount Madison on the NH4000-footers info page">Mount Madison</a>, following a spur ridge that separates two drainages. For the first mile, the trail parallels Bumpus Brook, a tumbling stream that carves a mossy ravine through hardwood and spruce forest. Here the terrain is gentle by White Mountain standards — hikers traverse bog bridges and moderate grades while the brook plunges over cascades in a cleft beside the trail.</p>
       <p>Notable features include the <a href="#poi-waterfalls" aria-label="Devil’s Kitchen in points of interest section">Devil’s Kitchen</a>, a steep-walled mini-gorge where the brook churns, and nearby waterfall plunges that have carved potholes into the granite streambed. As the trail leaves the brook and climbs onto the ridge, the topography shifts to steeper slopes and rocky outcrops.</p>
       <p>Above ~2,500 feet, Howker Ridge narrows into a spine with increasingly panoramic aspects. The trail clambers up four hump-like knobs (the “Howks”), connected by short cols that drop and re-climb. The ridge’s slope steepens, requiring hands-and-feet scrambling over ledges and boulders in places. The environment transitions from dense spruce-fir to krummholz and then alpine tundra as the trail nears timberline around the <a href="#poi-ridgeline" aria-label="Third Howk in points of interest section">Third Howk</a> and <a href="#poi-ridgeline" aria-label="Fourth Howk in points of interest section">Fourth Howk</a>.</p>
-      <figure class="inline-photo right">
+      <figure class="inline-photo right lift">
         <a href="https://howker.nh48.info/osgood-ridge/osgood-ridge-001.jpg" target="_blank" rel="noopener">
           <picture>
             <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/osgood-ridge/osgood-ridge-001.jpg">
@@ -946,7 +962,7 @@ blockquote{
         <h2><a href="#difficulty">Trail Difficulty, Distance &amp; Time</a></h2>
       </div>
       <p><strong>Length and elevation:</strong> From Randolph East to the summit of Mount Madison, the Howker Ridge Trail is about 4.46 miles one way. Because the route repeatedly climbs and descends over the four Howks, hikers gain roughly 4,430 feet of total elevation. Plan for a full day (7–9 hours) to cover the ~9–10 mile out-and-back.</p>
-      <figure class="inline-photo right">
+      <figure class="inline-photo right lift">
         <a href="https://howker.nh48.info/third-howk/third-howk-004.jpg" target="_blank" rel="noopener">
           <picture>
             <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/third-howk/third-howk-004.jpg">
@@ -964,7 +980,7 @@ blockquote{
       </div>
       <p>The optimal hiking season is late spring through fall (May through October). In late spring and early summer, Bumpus Brook flows strongly and alpine wildflowers bloom above treeline. Black flies can be ferocious in June, so many prefer mid-summer when bugs subside. Summer offers the most reliable weather and longest daylight, though hikers should be prepared for cold winds or thunderstorms on Mount Madison’s summit even in July.</p>
       <p>By late September and early October, fall foliage lights up the surrounding forests.</p>
-      <figure class="inline-photo left">
+      <figure class="inline-photo left lift">
         <a href="https://howker.nh48.info/mount-madison-summit/mount-madison-summit-001.jpg" target="_blank" rel="noopener">
           <picture>
             <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/mount-madison-summit/mount-madison-summit-001.jpg">
@@ -1178,113 +1194,150 @@ blockquote{
               <th scope="col">Loop</th>
               <th scope="col">Peaks</th>
               <th scope="col">Distance/Elevation</th>
-              <th scope="col">Highlights</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge – Watson Path Loop</summary>
-                  <div class="loop-description">
-                    <p>Climbs Mt. Madison via Howker Ridge and Osgood Trail, then descends the steep Watson Path. Expect rocky scrambles, waterfalls near the start, and the Inlook overlook on the return via Brookside, Kelton, and Randolph Path.</p>
-                  </div>
                 </details>
               </td>
               <td>Madison</td>
               <td>~9 mi / 4,000 ft gain</td>
-              <td>Howker Ridge ascent; Watson Path descent; waterfalls; “Howks” ridge</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="3">
+                <div class="loop-description">
+                  <p>Climbs Mt. Madison via Howker Ridge and Osgood Trail, then descends the steep Watson Path. Expect rocky scrambles, waterfalls near the start, and the Inlook overlook on the return via Brookside, Kelton, and Randolph Path.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge – Valley Way Loop</summary>
-                  <div class="loop-description">
-                    <p>Ascends via Howker Ridge to Mt. Madison and returns on Valley Way, with an optional Brookside detour for cascades and scenic lower footing. A steadier descent than Watson Path while keeping the big ridge climb.</p>
-                  </div>
                 </details>
               </td>
               <td>Madison</td>
               <td>~9–9.5 mi / ~4,300 ft gain</td>
-              <td>Ridge scrambles; Madison summit; Valley Way descent; Brookside cascades</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="3">
+                <div class="loop-description">
+                  <p>Ascends via Howker Ridge to Mt. Madison and returns on Valley Way, with an optional Brookside detour for cascades and scenic lower footing. A steadier descent than Watson Path while keeping the big ridge climb.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge – Star Lake – Airline Loop</summary>
-                  <div class="loop-description">
-                    <p>Summits Madison and Adams by climbing Howker Ridge, tagging Madison, then climbing Star Lake Trail to Adams. Descends the exposed Airline Trail along Durand Ridge for sweeping alpine views.</p>
-                  </div>
                 </details>
               </td>
               <td>Madison, Adams</td>
               <td>~10 mi / 5,000+ ft gain</td>
-              <td>Two 5,000-footers; Star Lake talus; Airline ridge views</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="3">
+                <div class="loop-description">
+                  <p>Summits Madison and Adams by climbing Howker Ridge, tagging Madison, then climbing Star Lake Trail to Adams. Descends the exposed Airline Trail along Durand Ridge for sweeping alpine views.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>King Ravine – Howker Ridge Loop</summary>
-                  <div class="loop-description">
-                    <p>Approaches Mt. Adams via King Ravine and the headwall scrambles, then traverses Gulfside to Mt. Madison and descends Howker Ridge. One of the most rugged circuits with boulder hopping and ravine scenery.</p>
-                  </div>
                 </details>
               </td>
               <td>Adams, Madison</td>
               <td>~9–10 mi / 5,000+ ft gain</td>
-              <td>King Ravine headwall; Gulfside traverse; dual summits</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="3">
+                <div class="loop-description">
+                  <p>Approaches Mt. Adams via King Ravine and the headwall scrambles, then traverses Gulfside to Mt. Madison and descends Howker Ridge. One of the most rugged circuits with boulder hopping and ravine scenery.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge Grand Loop</summary>
-                  <div class="loop-description">
-                    <p>A mega-loop over Madison, Adams, and Jefferson. Climbs Howker Ridge, continues across the Gulfside to Jefferson, then returns via Castle Trail and The Link for a long, rocky alpine tour.</p>
-                  </div>
                 </details>
               </td>
               <td>Madison, Adams, Jefferson</td>
               <td>~18 mi / ~6,600 ft gain</td>
-              <td>Presidential trifecta; Star Lake; Castles; long alpine traverse</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="3">
+                <div class="loop-description">
+                  <p>A mega-loop over Madison, Adams, and Jefferson. Climbs Howker Ridge, continues across the Gulfside to Jefferson, then returns via Castle Trail and The Link for a long, rocky alpine tour.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge – Lowe’s Path Loop</summary>
-                  <div class="loop-description">
-                    <p>Climbs Madison and Adams via Howker Ridge and Star Lake, then descends Lowe’s Path to Gray Knob/Crag Camp and returns on the Spur or Randolph Path. Excellent for a long day or overnight at RMC cabins.</p>
-                  </div>
                 </details>
               </td>
               <td>Madison, Adams</td>
               <td>~13–14 mi / ~5,400 ft gain</td>
-              <td>Star Lake climb; Lowe’s Path descent; RMC cabins; King Ravine overlooks</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="3">
+                <div class="loop-description">
+                  <p>Climbs Madison and Adams via Howker Ridge and Star Lake, then descends Lowe’s Path to Gray Knob/Crag Camp and returns on the Spur or Randolph Path. Excellent for a long day or overnight at RMC cabins.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge – Kelton &amp; Inlook Ledge Loop</summary>
-                  <div class="loop-description">
-                    <p>A shorter loop focused on waterfalls and ledge views. Uses Valley Way and Brookside along Snyder Brook, climbs Inlook Trail to the overlook, then descends Kelton and Sylvan Way back to Appalachia.</p>
-                  </div>
                 </details>
               </td>
               <td>Inlook Ledge</td>
               <td>~4.0 mi / ~1,400 ft gain</td>
-              <td>Waterfalls; Gordon Fall spur; Inlook overlook; mellow return</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="3">
+                <div class="loop-description">
+                  <p>A shorter loop focused on waterfalls and ledge views. Uses Valley Way and Brookside along Snyder Brook, climbs Inlook Trail to the overlook, then descends Kelton and Sylvan Way back to Appalachia.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge – Pine Link – Rail Trail Loop</summary>
-                  <div class="loop-description">
-                    <p>Summits Madison via Howker Ridge, then descends Pine Link toward Dolly Copp and returns on the Presidential Rail Trail for a fast, level finish. A good option to avoid the steeper north-side descents.</p>
-                  </div>
                 </details>
               </td>
               <td>Madison</td>
               <td>~10 mi / 4,000–4,500 ft gain</td>
-              <td>Pine Link descent; rail trail stroll; Madison summit</td>
+            </tr>
+            <tr class="loop-description-row">
+              <td colspan="3">
+                <div class="loop-description">
+                  <p>Summits Madison via Howker Ridge, then descends Pine Link toward Dolly Copp and returns on the Presidential Rail Trail for a fast, level finish. A good option to avoid the steeper north-side descents.</p>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -1317,25 +1370,25 @@ blockquote{
     <section class="section" id="poi-waterfalls">
       <h3>Waterfalls &amp; Gorge</h3>
       <ul>
-        <li><strong>Stairs Fall (approx. 1,570 ft):</strong> A small 10-foot cascade visible about 0.6 miles in, across the brook from the trail. Often dry in late summer but audible after rains.</li>
-        <li><strong>Coosauk Falls (44.362833, -71.270633) – 1,614 ft:</strong> A 15-foot series of cascades where Bumpus Brook descends into the Devil’s Kitchen gorge. Old side paths reach the brink, but caution is required on wet rock.</li>
-        <li><strong>Hitchcock Falls (44.359783, -71.271183) – 1,877 ft:</strong> The tallest of the three main falls, just before the trail leaves Bumpus Brook. Offers secluded pools and a good refill spot (filter recommended).</li>
-        <li><strong>Devil’s Kitchen Gorge (approx. 1,650 ft):</strong> A narrow mossy chasm with steep walls and potholes carved by Bumpus Brook. A short side path reaches a viewpoint at the edge.</li>
-        <li><strong>Bear Pit (approx. 1,840 ft):</strong> A vertical-walled rock chasm about 20 feet deep, accessed by a short spur. Interesting formation with caution advised near the edge.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=stairs-fall">Stairs Fall</a> (approx. 1,570 ft):</strong> A small 10-foot cascade visible about 0.6 miles in, across the brook from the trail. Often dry in late summer but audible after rains.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=coosauk-falls">Coosauk Falls</a> (44.362833, -71.270633) – 1,614 ft:</strong> A 15-foot series of cascades where Bumpus Brook descends into the Devil’s Kitchen gorge. Old side paths reach the brink, but caution is required on wet rock.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=hitchcock-falls">Hitchcock Falls</a> (44.359783, -71.271183) – 1,877 ft:</strong> The tallest of the three main falls, just before the trail leaves Bumpus Brook. Offers secluded pools and a good refill spot (filter recommended).</li>
+        <li><strong><a href="/howker-ridge/poi?poi=devils-kitchen">Devil’s Kitchen Gorge</a> (approx. 1,650 ft):</strong> A narrow mossy chasm with steep walls and potholes carved by Bumpus Brook. A short side path reaches a viewpoint at the edge.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=bear-pit">Bear Pit</a> (approx. 1,840 ft):</strong> A vertical-walled rock chasm about 20 feet deep, accessed by a short spur. Interesting formation with caution advised near the edge.</li>
       </ul>
     </section>
 
     <section class="section" id="poi-ridgeline">
       <h3>Ridgeline &amp; Summit Features</h3>
       <ul>
-        <li><strong>Blueberry Ledge (44.354783, -71.261750) – 2,612 ft:</strong> Once offered open views; now mostly forested. Historical milestone on the climb.</li>
-        <li><strong>First Howk (44.348216, -71.259470) – 3,376 ft:</strong> First rocky knob with glimpses toward Randolph Valley and the ridge ahead.</li>
-        <li><strong>Second Howk (44.340153, -71.261429) – 3,888 ft:</strong> Breaks above continuous tree cover with broader views toward Mount Madison and Gordon Ridge.</li>
-        <li><strong>Third Howk (44.336426, -71.263518) – 4,009 ft:</strong> Marks transition to alpine terrain with panoramic views and nearby Pine Link junction.</li>
-        <li><strong>Fourth Howk (44.334951, -71.266614) – 4,052 ft:</strong> A highlight viewpoint and true alpine perch with sweeping panoramas.</li>
-        <li><strong>Mount Madison Summit (44.328683, -71.276917) – 5,366 ft:</strong> A rocky summit with 360-degree views across the Presidential Range.</li>
-        <li><strong><a href="#poi-ridgeline" aria-label="Osgood Ridge in points of interest section">Osgood Ridge</a> (44.329251, -71.271722) – 4,987 ft near junction:</strong> Appalachian Trail ridge connecting Howker Ridge to the summit cone and Great Gulf.</li>
-        <li><strong><a href="#poi-ridgeline" aria-label="Gordon Ridge in points of interest section">Gordon Ridge</a> (44.350067, -71.277300) – 2,746 ft crest:</strong> Trailless ridge forming the opposite wall of Bumpus Basin, visible from the Howks.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=blueberry-ledge">Blueberry Ledge</a> (44.354783, -71.261750) – 2,612 ft:</strong> Once offered open views; now mostly forested. Historical milestone on the climb.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=first-howk">First Howk</a> (44.348216, -71.259470) – 3,376 ft:</strong> First rocky knob with glimpses toward Randolph Valley and the ridge ahead.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=second-howk">Second Howk</a> (44.340153, -71.261429) – 3,888 ft:</strong> Breaks above continuous tree cover with broader views toward Mount Madison and Gordon Ridge.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=third-howk">Third Howk</a> (44.336426, -71.263518) – 4,009 ft:</strong> Marks transition to alpine terrain with panoramic views and nearby Pine Link junction.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=fourth-howk">Fourth Howk</a> (44.334951, -71.266614) – 4,052 ft:</strong> A highlight viewpoint and true alpine perch with sweeping panoramas.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=mount-madison-summit">Mount Madison Summit</a> (44.328683, -71.276917) – 5,366 ft:</strong> A rocky summit with 360-degree views across the Presidential Range.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=osgood-ridge">Osgood Ridge</a> (44.329251, -71.271722) – 4,987 ft near junction:</strong> Appalachian Trail ridge connecting Howker Ridge to the summit cone and Great Gulf.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=gordon-ridge">Gordon Ridge</a> (44.350067, -71.277300) – 2,746 ft crest:</strong> Trailless ridge forming the opposite wall of Bumpus Basin, visible from the Howks.</li>
       </ul>
       <figure>
         <a href="https://howker.nh48.info/second-howk/second-howk-001.jpg" target="_blank" rel="noopener">
@@ -1405,12 +1458,12 @@ blockquote{
     <section class="section" id="poi-junctions">
       <h3>Trail Junctions &amp; Connectors</h3>
       <ul>
-        <li><strong>Randolph Path (Trailhead Junction) (44.370767, -71.271300) – 1,299 ft:</strong> Diverges near the trailhead and provides a cross-mountain route toward Adams and Jefferson.</li>
-        <li><strong>Sylvan Way Trail (44.363017, -71.271017) – 1,644 ft:</strong> Connector from Appalachia with gentle grades and access to additional waterfall loops.</li>
-        <li><strong>Kelton Trail (44.362167, -71.271667) – 1,768 ft:</strong> Splits after Coosauk Fall to connect with Brookside and Inlook trails.</li>
-        <li><strong>Kelton Crag (44.360067, -71.275633) – 2,142 ft:</strong> Short spur off Kelton Trail to a minor rocky overlook.</li>
-        <li><strong>Pine Link Trail Junction (~44.335, -71.264, ≈3,950 ft):</strong> Shared section with Howker Ridge and a short descent to a spring water source.</li>
-        <li><strong>Howker-Osgood Junction (~5,100 ft):</strong> Connection to the Appalachian Trail on the summit cone of Mount Madison.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=randolph-path-trailhead-junction">Randolph Path (Trailhead Junction)</a> (44.370767, -71.271300) – 1,299 ft:</strong> Diverges near the trailhead and provides a cross-mountain route toward Adams and Jefferson.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=sylvan-way-trail">Sylvan Way Trail</a> (44.363017, -71.271017) – 1,644 ft:</strong> Connector from Appalachia with gentle grades and access to additional waterfall loops.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=kelton-trail">Kelton Trail</a> (44.362167, -71.271667) – 1,768 ft:</strong> Splits after Coosauk Fall to connect with Brookside and Inlook trails.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=kelton-crag">Kelton Crag</a> (44.360067, -71.275633) – 2,142 ft:</strong> Short spur off Kelton Trail to a minor rocky overlook.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=pine-link-trail-junction">Pine Link Trail Junction</a> (~44.335, -71.264, ≈3,950 ft):</strong> Shared section with Howker Ridge and a short descent to a spring water source.</li>
+        <li><strong><a href="/howker-ridge/poi?poi=howker-osgood-junction">Howker-Osgood Junction</a> (~5,100 ft):</strong> Connection to the Appalachian Trail on the summit cone of Mount Madison.</li>
       </ul>
       <figure>
         <a href="https://howker.nh48.info/pine-link-junction/pine-link-junction-002.jpg" target="_blank" rel="noopener">

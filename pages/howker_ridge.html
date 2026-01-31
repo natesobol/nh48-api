@@ -101,6 +101,7 @@ body{
 .hero h1{
   margin:0 0 10px;
   font-size:clamp(28px,4vw,40px);
+  color:var(--accent);
 }
 .hero p{
   margin:0;
@@ -163,10 +164,12 @@ body{
 .section h2{
   margin:0 0 10px;
   font-size:clamp(18px,2vw,24px);
+  color:var(--accent);
 }
 .section h3{
   margin:16px 0 8px;
   font-size:clamp(16px,1.6vw,20px);
+  color:var(--accent);
 }
 .section p{
   margin:0 0 12px;
@@ -249,6 +252,59 @@ table{
   border-collapse:collapse;
   font-size:14px;
 }
+.trail-meta{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+.trail-meta th{
+  width:38%;
+  text-align:left;
+  font-weight:600;
+  padding-right:12px;
+  white-space:nowrap;
+}
+.trail-meta td{
+  padding:10px 12px;
+}
+.trail-meta-panels{
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--gap);
+  align-items:stretch;
+}
+.trail-meta-panel{
+  flex:1 1 320px;
+  min-width:260px;
+}
+.feature-list{
+  margin:8px 0 0;
+  padding-left:18px;
+  list-style:disc;
+}
+.meta-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:16px;
+}
+.btn-small{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 12px;
+  border-radius:999px;
+  background:var(--accent-2);
+  color:#0b1220;
+  font-size:13px;
+  font-weight:600;
+  text-decoration:none;
+  border:1px solid transparent;
+}
+.btn-small:hover{
+  border-color:var(--accent);
+  color:#0b1220;
+}
 th, td{
   padding:10px 12px;
   border-bottom:1px solid var(--stroke);
@@ -322,9 +378,9 @@ th{
   gap:12px;
 }
 .toc-links{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:12px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
   width:100%;
 }
 .toc-link{
@@ -376,6 +432,19 @@ th{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:var(--gap);
+}
+.split-panels{
+  grid-column:1 / -1;
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:var(--gap);
+}
+.split-panels > .section{
+  margin-top:0;
+}
+.split-panels #jump-to,
+.split-panels #map-links{
+  grid-column:auto;
 }
 .flora-grid{
   display:grid;
@@ -452,6 +521,11 @@ th{
 }
 .warning-callout p:last-child{
   margin-bottom:0;
+}
+@media (max-width: 900px){
+  .split-panels{
+    grid-template-columns:1fr;
+  }
 }
 @media (max-width: 700px){
   .panel{ padding:16px; }
@@ -557,6 +631,24 @@ a:hover {
 }
 .poi-marker.is-fallback .poi-fallback-label{
   display:inline-flex;
+}
+table a{
+  color:var(--accent);
+  text-decoration:underline;
+  font-weight:600;
+}
+table a:hover{
+  color:var(--accent);
+  text-decoration:underline;
+}
+.poi-detail-link{
+  color:var(--accent);
+  text-decoration:underline;
+  font-weight:600;
+}
+.poi-detail-link:hover{
+  color:var(--accent);
+  text-decoration:underline;
 }
 </style>
 <script type="application/ld+json">
@@ -676,40 +768,42 @@ a:hover {
         <p class="small">Trail line and waypoint markers are loaded from the NH48 GeoJSON dataset. Tap markers for details and use the layer controls to explore ridge features.</p>
       </section>
 
-      <section class="section card span-2" id="jump-to">
-        <h2>Jump to sections</h2>
-        <p class="small">Quick links to each panel on this page.</p>
-        <div class="toc-links">
-          <a class="toc-link" href="#map-links">Trail maps &amp; downloads</a>
-          <a class="toc-link" href="#poi">Points of interest</a>
-          <a class="toc-link" href="#metadata">Trail overview &amp; conditions</a>
-          <a class="toc-link" href="#flora">Flora along the trail</a>
-          <a class="toc-link" href="#conditions">Current conditions &amp; safety</a>
-        </div>
-      </section>
+      <div class="split-panels">
+        <section class="section card" id="jump-to">
+          <h2>Jump to sections</h2>
+          <p class="small">Quick links to each panel on this page.</p>
+          <div class="toc-links">
+            <a class="toc-link" href="#map-links">Trail maps &amp; downloads</a>
+            <a class="toc-link" href="#poi">Points of interest</a>
+            <a class="toc-link" href="#metadata">Trail overview &amp; conditions</a>
+            <a class="toc-link" href="#flora">Flora along the trail</a>
+            <a class="toc-link" href="#conditions">Current conditions &amp; safety</a>
+          </div>
+        </section>
 
-      <section class="section card" id="map-links">
-        <h2>Trail Maps &amp; Downloads</h2>
-        <div class="map-links-menu">
-          <div class="map-links-group">
-            <h3>External Trail Maps</h3>
-            <div class="map-links-row">
-              <a class="map-link" href="https://www.onxmaps.com/offroad/map?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">OnX Maps <span aria-hidden="true">↗</span></a>
-              <a class="map-link" href="https://www.alltrails.com/explore?lat=44.334&lng=-71.266&zoom=12" target="_blank" rel="noopener">AllTrails <span aria-hidden="true">↗</span></a>
-              <a class="map-link" href="https://www.gaiagps.com/map/?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">Gaia GPS <span aria-hidden="true">↗</span></a>
-              <a class="map-link" href="https://caltopo.com/map.html#ll=44.334,-71.266&z=12" target="_blank" rel="noopener">CalTopo <span aria-hidden="true">↗</span></a>
+        <section class="section card" id="map-links">
+          <h2>Trail Maps &amp; Downloads</h2>
+          <div class="map-links-menu">
+            <div class="map-links-group">
+              <h3>External Trail Maps</h3>
+              <div class="map-links-row">
+                <a class="map-link" href="https://www.onxmaps.com/offroad/map?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">OnX Maps <span aria-hidden="true">↗</span></a>
+                <a class="map-link" href="https://www.alltrails.com/explore?lat=44.334&lng=-71.266&zoom=12" target="_blank" rel="noopener">AllTrails <span aria-hidden="true">↗</span></a>
+                <a class="map-link" href="https://www.gaiagps.com/map/?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">Gaia GPS <span aria-hidden="true">↗</span></a>
+                <a class="map-link" href="https://caltopo.com/map.html#ll=44.334,-71.266&z=12" target="_blank" rel="noopener">CalTopo <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+            <div class="map-links-group">
+              <h3>GPS &amp; Navigation Downloads</h3>
+              <div class="map-links-row">
+                <a class="map-link" href="/downloads/howker-ridge-trail.gpx" download>Download GPX (trail + POIs)</a>
+                <a class="map-link" href="/downloads/howker-ridge-trail.kml" download>Download KML</a>
+              </div>
+              <p class="small">Files are formatted for GPS apps and GIS tools. Always carry a paper map and backup navigation.</p>
             </div>
           </div>
-          <div class="map-links-group">
-            <h3>GPS &amp; Navigation Downloads</h3>
-            <div class="map-links-row">
-              <a class="map-link" href="/downloads/howker-ridge-trail.gpx" download>Download GPX (trail + POIs)</a>
-              <a class="map-link" href="/downloads/howker-ridge-trail.kml" download>Download KML</a>
-            </div>
-            <p class="small">Files are formatted for GPS apps and GIS tools. Always carry a paper map and backup navigation.</p>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <section class="section card span-2 stacked-panel" id="poi">
         <h2>Points of Interest</h2>
@@ -735,10 +829,10 @@ a:hover {
 
       <section class="section card span-2 stacked-panel" id="metadata">
         <h2>Trail Overview &amp; Conditions</h2>
-        <div class="two-col">
-          <div>
+        <div class="trail-meta-panels">
+          <div class="trail-meta-panel">
             <h3>Trail Metadata</h3>
-            <table>
+            <table class="trail-meta">
               <tr><th>Length</th>
                 <td>≈ 4.5 mi = 4.2 mi + .3 mi (Osgood Ridge) one-way</td>
               </tr>
@@ -763,16 +857,46 @@ a:hover {
               </tr>
             </table>
           </div>
-          <div>
+          <div class="trail-meta-panel">
             <h3>Mount Madison Snapshot</h3>
-            <p><strong>Elevation:</strong> 5,367 ft (1,636 m)<br>
-            <strong>Prominence:</strong> 366 ft<br>
-            <strong>Features:</strong> Alpine ridgeline views, cairn-marked summit cone, quick access to Madison Spring Hut.</p>
+            <!-- Elevation, location, and features from 4000footers.com -->
+            <!-- Naming, Osgood Trail, and summit hazards from Wikipedia -->
+            <!-- Exposure hazards and northernmost peak note from MyOutdoorBasecamp -->
+            <table class="trail-meta">
+              <tbody>
+                <tr><th>Elevation</th><td>5,367 ft (1,636 m)</td></tr>
+                <tr><th>Prominence</th><td>466 ft (142 m)</td></tr>
+                <tr><th>Location</th><td>Thompson &amp; Meserve’s Purchase, Coös County, NH</td></tr>
+                <tr><th>Range</th><td>Presidential Range (White Mountains)</td></tr>
+                <tr><th>Coordinates</th><td>44°19′44″ N, 71°16′36″ W</td></tr>
+                <tr><th>Named after</th><td>James Madison (4th U.S. President)</td></tr>
+                <tr><th>Nearby peaks</th><td>Mt. Adams 1.4 mi SW; Mt. Jefferson 3.3 mi S</td></tr>
+                <tr>
+                  <th>Features</th>
+                  <td>
+                    <ul class="feature-list">
+                      <li>Alpine zone &amp; rock-covered summit cone with cairns</li>
+                      <li>360° views of the White Mountains</li>
+                      <li>Rock scrambles and boulder fields</li>
+                      <li>Mossy Falls &amp; Ice Caves on the Short Line Trail</li>
+                      <li>Star Lake and Madison Spring Hut (0.4 mi below summit)</li>
+                      <li>Appalachian Trail crosses near summit (Osgood Trail)</li>
+                      <li>Northernmost peak of the Presidentials; high winds &amp; hypothermia risk even in summer</li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
             <div class="forecast-box">
               <div id="forecast"><em>Loading forecast…</em></div>
               <div id="alerts" class="alerts"><em>Loading alerts…</em></div>
             </div>
           </div>
+        </div>
+        <div class="meta-links">
+          <a href="#map" class="btn-small">View map</a>
+          <a href="https://forecast.weather.gov/MapClick.php?lat=44.3288&amp;lon=-71.278" target="_blank" rel="noopener" class="btn-small">Forecast</a>
+          <a href="https://forecast.weather.gov/alerts/wwa.php?lat=44.3288&amp;lon=-71.278" target="_blank" rel="noopener" class="btn-small">NWS Alerts</a>
         </div>
       </section>
 
@@ -920,7 +1044,7 @@ a:hover {
               <span class="poi-fallback-label">📍 ${item.name}</span>
             </div>
           </td>
-          <td>${item.name}</td>
+          <td><a href="/howker-ridge/poi?poi=${slug}">${item.name}</a></td>
           <td>${item.elevation ?? ''}</td>
           <td>${formatDMS(item.lat, true)}</td>
           <td>${formatDMS(item.lng, false)}</td>
@@ -942,9 +1066,19 @@ a:hover {
       renderPoiTable(sorted);
     }
 
-    fetch('/data/howker-ridge.geojson')
-      .then(resp => resp.json())
-      .then(data => {
+    Promise.all([
+      fetch('/data/howker-ridge.geojson').then(resp => resp.json()),
+      fetch('/data/howker-ridge-pois.geojson').then(resp => (resp.ok ? resp.json() : { features: [] }))
+    ])
+      .then(([data, poiEdits]) => {
+        const poiEditsByName = {};
+        (poiEdits.features || []).forEach(feature => {
+          const name = feature.properties?.name;
+          if (name) {
+            poiEditsByName[name] = feature;
+          }
+        });
+
         const trailLayer = L.geoJSON(data, {
           style: feature => {
             if (feature.geometry.type === 'LineString') {
@@ -955,15 +1089,19 @@ a:hover {
           pointToLayer: (feature, latlng) => {
             if (feature.geometry.type === 'Point') {
               const props = feature.properties || {};
+              const edit = poiEditsByName[props.name];
+              const finalLatLng = edit
+                ? L.latLng(edit.geometry.coordinates[1], edit.geometry.coordinates[0])
+                : latlng;
               poiData.push({
                 name: props.name || 'Unknown',
                 elevation: props.elevation_ft ? Number(props.elevation_ft) : null,
-                lat: latlng.lat,
-                lng: latlng.lng,
+                lat: finalLatLng.lat,
+                lng: finalLatLng.lng,
                 category: props.category || '',
                 description: props.description || ''
               });
-              return createPhotoMarker(latlng, props.name || 'Unknown');
+              return createPhotoMarker(finalLatLng, props.name || 'Unknown');
             }
             return L.circleMarker(latlng, {
               radius: 6,
@@ -978,12 +1116,14 @@ a:hover {
               const props = feature.properties || {};
               const slug = slugify(props.name || '');
               const popupPhoto = `<img src="https://howker.nh48.info/cdn-cgi/image/format=webp,width=300/${slug}/${slug}-001.jpg" alt="${props.name}" style="width:100%;border-radius:8px; margin-bottom:6px;">`;
+              const detailLink = slug ? `<a class="poi-detail-link" href="/howker-ridge/poi?poi=${slug}">View POI details</a>` : '';
               const details = [
                 popupPhoto,
                 `<strong>${props.name || 'Waypoint'}</strong>`,
                 props.category ? `<span>${props.category}</span>` : '',
                 props.elevation_ft ? `<span>${props.elevation_ft} ft</span>` : '',
-                props.description ? `<em>${props.description}</em>` : ''
+                props.description ? `<em>${props.description}</em>` : '',
+                detailLink
               ].filter(Boolean).join('<br />');
               layer.bindPopup(details);
             }

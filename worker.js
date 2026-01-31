@@ -188,8 +188,8 @@ export default {
         return jsonResponse(403, { error: 'Unauthorized.' });
       }
 
-      const statusGeoJson = body?.statusGeoJson;
-      const poiGeoJson = body?.poiGeoJson;
+      const statusGeoJson = body?.statusGeoJson || body?.status;
+      const poiGeoJson = body?.poiGeoJson || body?.pois;
 
       if (!statusGeoJson || !poiGeoJson) {
         return jsonResponse(400, { error: 'Missing data.' });
@@ -199,11 +199,28 @@ export default {
         return jsonResponse(500, { error: 'Storage is not configured.' });
       }
 
+      const editPayload = {
+        status: statusGeoJson,
+        blowdowns: body?.blowdowns || null,
+        signs: body?.signs || null,
+        drainage: body?.drainage || null,
+        bogBridges: body?.bogBridges || null,
+        stonework: body?.stonework || null,
+        tread: body?.tread || null,
+        encroachments: body?.encroachments || null,
+        hazards: body?.hazards || null,
+        cairns: body?.cairns || null,
+        pois: poiGeoJson
+      };
+
       await env.HOWKER_DATA.put('howker-ridge-status.geojson', JSON.stringify(statusGeoJson, null, 2), {
         httpMetadata: { contentType: 'application/geo+json' }
       });
       await env.HOWKER_DATA.put('howker-ridge-pois.geojson', JSON.stringify(poiGeoJson, null, 2), {
         httpMetadata: { contentType: 'application/geo+json' }
+      });
+      await env.HOWKER_DATA.put('howker-ridge-edit.json', JSON.stringify(editPayload, null, 2), {
+        httpMetadata: { contentType: 'application/json' }
       });
 
       return jsonResponse(200, { ok: true });
@@ -413,6 +430,7 @@ export default {
                pathname === '/projects/plant-map' || pathname === '/projects/plant-map/' ||
                pathname === '/projects/hrt-info' || pathname === '/projects/hrt-info/' ||
                pathname === '/howker-ridge' || pathname === '/howker-ridge/' ||
+               pathname.startsWith('/howker-ridge/poi') ||
                pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
                pathname === '/nh-4000-footers-info.html' || pathname === '/nh-4000-footers-info' ||
                        pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant)/) !== null;
@@ -1693,6 +1711,25 @@ export default {
       });
     }
 
+    const isRangeDetailRoute = !isFrench && parts[0] === 'range' && parts.length >= 2;
+    if (isRangeDetailRoute) {
+      const canonical = `${SITE}${pathname.endsWith('/') ? pathname : `${pathname}/`}`;
+      return serveTemplatePage({
+        templatePath: 'range/index.html',
+        pathname,
+        routeId: 'range-detail',
+        meta: {
+          title: 'NH48 Range Detail',
+          description: 'View NH48 range details with peak lists, elevations, and highlight imagery.',
+          canonical,
+          image: DEFAULT_IMAGE,
+          imageAlt: 'NH48 range preview',
+          ogType: 'website'
+        },
+        jsonLd: []
+      });
+    }
+
     const { enPath, frPath } = buildAlternatePaths(pathname);
 
     if (pathNoLocale === '/submit-edit' || pathNoLocale === '/submit-edit/') {
@@ -1974,6 +2011,28 @@ export default {
           description: isFrench
             ? 'Carte interactive, téléchargements GPS et météo actuelle pour le sentier Howker Ridge.'
             : 'Interactive map, GPS downloads, and current weather for the Howker Ridge Trail.',
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: isFrench ? 'Vue du Mount Madison' : 'Mount Madison ridge view',
+          ogType: 'website'
+        },
+        jsonLd: []
+      });
+    }
+
+    if (pathNoLocale === '/howker-ridge/poi' || pathNoLocale === '/howker-ridge/poi/') {
+      const canonical = `${SITE}${pathname}`;
+      return serveTemplatePage({
+        templatePath: 'pages/howker_poi.html',
+        pathname,
+        routeId: 'howker-ridge-poi',
+        meta: {
+          title: isFrench ? 'Point d’intérêt Howker Ridge' : 'Howker Ridge POI',
+          description: isFrench
+            ? 'Détails sur un point d’intérêt du sentier Howker Ridge.'
+            : 'Point of interest details for the Howker Ridge Trail.',
           canonical,
           alternateEn: `${SITE}${enPath}`,
           alternateFr: `${SITE}${frPath}`,
