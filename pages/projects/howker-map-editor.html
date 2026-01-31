@@ -86,6 +86,15 @@
       cursor: pointer;
       font-size: 0.9rem;
     }
+    .toolbar input[type="search"] {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      min-width: 220px;
+    }
     .toolbar select {
       border: 1px solid var(--border);
       background: var(--card);
@@ -240,6 +249,13 @@
       <button id="saveBtn" type="button" data-variant="green">Save to Server</button>
       <button id="downloadBtn" type="button">Download JSON</button>
       <button id="loadEditsBtn" type="button">Reload Saved Edits</button>
+      <button id="locateBtn" type="button" data-variant="green">Locate me</button>
+      <label>
+        <span class="sr-only">Search trail features or POIs</span>
+        <input id="searchInput" type="search" list="searchSuggestions" placeholder="Search trail features or POIs" aria-label="Search trail features or POIs" />
+        <datalist id="searchSuggestions"></datalist>
+      </label>
+      <button id="searchBtn" type="button">Search</button>
       <span class="status" id="statusMsg" role="status" aria-live="polite"></span>
     </div>
 
@@ -297,6 +313,7 @@
     let currentMarkerType = 'blowdown';
     let currentLineType = null;
     let finishBtn;
+    let highlightLayer;
     const drawnLayers = new L.FeatureGroup();
     const statusSegments = [];
     const blowdownMarkers = [];
@@ -311,6 +328,8 @@
     const poiMarkers = [];
     const historyStack = [];
     const trailSegments = [];
+    const basePoiLayers = [];
+    const searchIndex = [];
 
     function setStatusMessage(message, isError = false) {
       const statusEl = document.getElementById('statusMsg');
@@ -365,8 +384,12 @@
           const title = props.name || '';
           const desc = props.description || '';
           layer.bindPopup(`<strong>${title}</strong><br/>${desc}`);
+          if (title) {
+            basePoiLayers.push({ name: title, layer });
+          }
         }
       }).addTo(map);
+      updateSearchIndex();
     }
 
     async function loadExistingEdits() {
@@ -810,8 +833,10 @@
 
       poiMarkers.forEach(item => {
         const label = `<strong>${item.name || 'POI'}</strong><br>${item.category || ''}<br>${item.description || ''}`;
-        addDraggableMarker(item, editIcons.poi, label);
+        item._marker = addDraggableMarker(item, editIcons.poi, label);
       });
+
+      updateSearchIndex();
     }
 
     function buildGeoJson() {
@@ -1044,6 +1069,96 @@
       if (finishBtn) finishBtn.style.display = 'none';
     }
 
+    function updateSearchIndex() {
+      searchIndex.length = 0;
+      basePoiLayers.forEach(item => searchIndex.push(item));
+      poiMarkers.forEach(item => {
+        if (item.name && item._marker) {
+          searchIndex.push({ name: item.name, layer: item._marker });
+        }
+      });
+      updateSearchSuggestions();
+    }
+
+    function updateSearchSuggestions() {
+      const datalist = document.getElementById('searchSuggestions');
+      if (!datalist) return;
+      datalist.innerHTML = '';
+      searchIndex
+        .slice()
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.name;
+          datalist.appendChild(option);
+        });
+    }
+
+    function highlightSearchResult(latlng) {
+      if (highlightLayer) {
+        map.removeLayer(highlightLayer);
+      }
+      highlightLayer = L.circleMarker(latlng, {
+        radius: 10,
+        color: '#22c55e',
+        weight: 3,
+        fillColor: '#86efac',
+        fillOpacity: 0.4
+      }).addTo(map);
+    }
+
+    function getLayerLatLng(layer) {
+      if (!layer) return null;
+      if (layer.getLatLng) return layer.getLatLng();
+      if (layer.getBounds) return layer.getBounds().getCenter();
+      return null;
+    }
+
+    function performSearch(query) {
+      const trimmed = query.trim();
+      if (!trimmed) {
+        setStatusMessage('Enter a feature name to search.', true);
+        return;
+      }
+      const lower = trimmed.toLowerCase();
+      const match = searchIndex.find(item => item.name.toLowerCase() === lower)
+        || searchIndex.find(item => item.name.toLowerCase().includes(lower));
+      if (!match) {
+        setStatusMessage('No matching trail feature or POI found.', true);
+        return;
+      }
+      const targetLatLng = getLayerLatLng(match.layer);
+      if (!targetLatLng) {
+        setStatusMessage('Unable to locate that feature on the map.', true);
+        return;
+      }
+      map.flyTo([targetLatLng.lat, targetLatLng.lng], 15);
+      if (match.layer.openPopup) {
+        match.layer.openPopup();
+      }
+      highlightSearchResult(targetLatLng);
+      setStatusMessage(`Found: ${match.name}`);
+    }
+
+    function locateUser() {
+      if (!navigator.geolocation) {
+        setStatusMessage('Geolocation is not supported in this browser.', true);
+        return;
+      }
+      setStatusMessage('Locating you...');
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude } = position.coords;
+          map.flyTo([latitude, longitude], 15);
+          setStatusMessage('Location found.');
+        },
+        error => {
+          setStatusMessage(error.message || 'Unable to retrieve location.', true);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       initMap();
       document.getElementById('lineToolSelect').addEventListener('change', event => {
@@ -1060,6 +1175,15 @@
       document.getElementById('downloadBtn').addEventListener('click', downloadJson);
       document.getElementById('loadEditsBtn').addEventListener('click', loadExistingEdits);
       document.getElementById('undoBtn').addEventListener('click', undoLast);
+      document.getElementById('locateBtn').addEventListener('click', locateUser);
+      const searchInput = document.getElementById('searchInput');
+      document.getElementById('searchBtn').addEventListener('click', () => performSearch(searchInput.value));
+      searchInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          performSearch(searchInput.value);
+        }
+      });
     });
   </script>
 </body>
