@@ -438,6 +438,10 @@ blockquote{
   width:100%;
   border-collapse:collapse;
 }
+#howker-loops th:first-child,
+#howker-loops td.loop-name{
+  width:38%;
+}
 #howker-loops th,
 #howker-loops td{
   padding:0.75rem 1rem;
@@ -456,6 +460,8 @@ blockquote{
   position:relative;
   padding-right:1.5rem;
   list-style:none;
+  line-height:1.2;
+  white-space:nowrap;
 }
 #howker-loops details summary::-webkit-details-marker{
   display:none;
@@ -464,6 +470,7 @@ blockquote{
   content:"▼";
   position:absolute;
   right:0;
+  top:0;
   color:var(--accent, #00b15d);
   transition:transform 0.2s;
 }
@@ -1167,7 +1174,6 @@ blockquote{
               <th scope="col">Loop</th>
               <th scope="col">Peaks</th>
               <th scope="col">Distance/Elevation</th>
-              <th scope="col">Highlights</th>
             </tr>
           </thead>
           <tbody class="loop-group">
@@ -1179,10 +1185,9 @@ blockquote{
               </td>
               <td>Madison</td>
               <td>~9 mi / 4,000 ft gain</td>
-              <td>Howker Ridge ascent; Watson Path descent; waterfalls; “Howks” ridge</td>
             </tr>
             <tr class="loop-description-row">
-              <td colspan="4">
+              <td colspan="3">
                 <div class="loop-description">
                   <p>Climbs Mt. Madison via Howker Ridge and Osgood Trail, then descends the steep Watson Path. Expect rocky scrambles, waterfalls near the start, and the Inlook overlook on the return via Brookside, Kelton, and Randolph Path.</p>
                 </div>
@@ -1198,10 +1203,9 @@ blockquote{
               </td>
               <td>Madison</td>
               <td>~9–9.5 mi / ~4,300 ft gain</td>
-              <td>Ridge scrambles; Madison summit; Valley Way descent; Brookside cascades</td>
             </tr>
             <tr class="loop-description-row">
-              <td colspan="4">
+              <td colspan="3">
                 <div class="loop-description">
                   <p>Ascends via Howker Ridge to Mt. Madison and returns on Valley Way, with an optional Brookside detour for cascades and scenic lower footing. A steadier descent than Watson Path while keeping the big ridge climb.</p>
                 </div>
@@ -1217,10 +1221,9 @@ blockquote{
               </td>
               <td>Madison, Adams</td>
               <td>~10 mi / 5,000+ ft gain</td>
-              <td>Two 5,000-footers; Star Lake talus; Airline ridge views</td>
             </tr>
             <tr class="loop-description-row">
-              <td colspan="4">
+              <td colspan="3">
                 <div class="loop-description">
                   <p>Summits Madison and Adams by climbing Howker Ridge, tagging Madison, then climbing Star Lake Trail to Adams. Descends the exposed Airline Trail along Durand Ridge for sweeping alpine views.</p>
                 </div>
@@ -1236,10 +1239,9 @@ blockquote{
               </td>
               <td>Adams, Madison</td>
               <td>~9–10 mi / 5,000+ ft gain</td>
-              <td>King Ravine headwall; Gulfside traverse; dual summits</td>
             </tr>
             <tr class="loop-description-row">
-              <td colspan="4">
+              <td colspan="3">
                 <div class="loop-description">
                   <p>Approaches Mt. Adams via King Ravine and the headwall scrambles, then traverses Gulfside to Mt. Madison and descends Howker Ridge. One of the most rugged circuits with boulder hopping and ravine scenery.</p>
                 </div>
@@ -1255,10 +1257,9 @@ blockquote{
               </td>
               <td>Madison, Adams, Jefferson</td>
               <td>~18 mi / ~6,600 ft gain</td>
-              <td>Presidential trifecta; Star Lake; Castles; long alpine traverse</td>
             </tr>
             <tr class="loop-description-row">
-              <td colspan="4">
+              <td colspan="3">
                 <div class="loop-description">
                   <p>A mega-loop over Madison, Adams, and Jefferson. Climbs Howker Ridge, continues across the Gulfside to Jefferson, then returns via Castle Trail and The Link for a long, rocky alpine tour.</p>
                 </div>
@@ -1274,10 +1275,9 @@ blockquote{
               </td>
               <td>Madison, Adams</td>
               <td>~13–14 mi / ~5,400 ft gain</td>
-              <td>Star Lake climb; Lowe’s Path descent; RMC cabins; King Ravine overlooks</td>
             </tr>
             <tr class="loop-description-row">
-              <td colspan="4">
+              <td colspan="3">
                 <div class="loop-description">
                   <p>Climbs Madison and Adams via Howker Ridge and Star Lake, then descends Lowe’s Path to Gray Knob/Crag Camp and returns on the Spur or Randolph Path. Excellent for a long day or overnight at RMC cabins.</p>
                 </div>
@@ -1293,10 +1293,9 @@ blockquote{
               </td>
               <td>Inlook Ledge</td>
               <td>~4.0 mi / ~1,400 ft gain</td>
-              <td>Waterfalls; Gordon Fall spur; Inlook overlook; mellow return</td>
             </tr>
             <tr class="loop-description-row">
-              <td colspan="4">
+              <td colspan="3">
                 <div class="loop-description">
                   <p>A shorter loop focused on waterfalls and ledge views. Uses Valley Way and Brookside along Snyder Brook, climbs Inlook Trail to the overlook, then descends Kelton and Sylvan Way back to Appalachia.</p>
                 </div>
@@ -1312,10 +1311,9 @@ blockquote{
               </td>
               <td>Madison</td>
               <td>~10 mi / 4,000–4,500 ft gain</td>
-              <td>Pine Link descent; rail trail stroll; Madison summit</td>
             </tr>
             <tr class="loop-description-row">
-              <td colspan="4">
+              <td colspan="3">
                 <div class="loop-description">
                   <p>Summits Madison via Howker Ridge, then descends Pine Link toward Dolly Copp and returns on the Presidential Rail Trail for a fast, level finish. A good option to avoid the steeper north-side descents.</p>
                 </div>
