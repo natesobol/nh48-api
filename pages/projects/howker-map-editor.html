@@ -310,6 +310,7 @@
     const cairnMarkers = [];
     const poiMarkers = [];
     const historyStack = [];
+    const trailSegments = [];
 
     function setStatusMessage(message, isError = false) {
       const statusEl = document.getElementById('statusMsg');
@@ -346,6 +347,7 @@
         filter: feature => feature.geometry && feature.geometry.type === 'LineString',
         style: { color: '#0ea5e9', weight: 3, opacity: 0.8 }
       }).addTo(map);
+      cacheTrailSegments();
 
       const bounds = baseTrailLayer.getBounds();
       if (bounds.isValid()) map.fitBounds(bounds.pad(0.05));
@@ -559,6 +561,66 @@
       return meters * 3.28084;
     }
 
+    function collectLineLatLngs(latlngs, target) {
+      if (!Array.isArray(latlngs)) {
+        target.push(latlngs);
+        return;
+      }
+      if (latlngs.length && latlngs[0] instanceof L.LatLng) {
+        target.push(...latlngs);
+        return;
+      }
+      latlngs.forEach(item => collectLineLatLngs(item, target));
+    }
+
+    function cacheTrailSegments() {
+      trailSegments.length = 0;
+      if (!baseTrailLayer) return;
+      baseTrailLayer.eachLayer(layer => {
+        if (!layer.getLatLngs) return;
+        const flattened = [];
+        collectLineLatLngs(layer.getLatLngs(), flattened);
+        for (let i = 1; i < flattened.length; i += 1) {
+          trailSegments.push([flattened[i - 1], flattened[i]]);
+        }
+      });
+    }
+
+    function closestPointOnSegment(point, segStart, segEnd) {
+      const segment = segEnd.subtract(segStart);
+      const lengthSquared = segment.x * segment.x + segment.y * segment.y;
+      if (!lengthSquared) return segStart;
+      const t = Math.max(0, Math.min(1, point.subtract(segStart).dot(segment) / lengthSquared));
+      return segStart.add(segment.multiplyBy(t));
+    }
+
+    function snapLatLng(latlng) {
+      if (!trailSegments.length) return latlng;
+      const zoom = map.getZoom();
+      const target = map.project(latlng, zoom);
+      let closest = null;
+      let closestDistance = Infinity;
+      trailSegments.forEach(([start, end]) => {
+        const segStart = map.project(start, zoom);
+        const segEnd = map.project(end, zoom);
+        const candidate = closestPointOnSegment(target, segStart, segEnd);
+        const dist = candidate.distanceTo(target);
+        if (dist < closestDistance) {
+          closestDistance = dist;
+          closest = candidate;
+        }
+      });
+      if (!closest) return latlng;
+      return map.unproject(closest, zoom);
+    }
+
+    function snapLatLngs(latlngs) {
+      if (Array.isArray(latlngs)) {
+        return latlngs.map(item => snapLatLngs(item));
+      }
+      return snapLatLng(latlngs);
+    }
+
     function setupDrawTools() {
       drawControl = new L.Control.Draw({
         draw: {
@@ -586,6 +648,8 @@
       map.on(L.Draw.Event.CREATED, event => {
         const layer = event.layer;
         if (event.layerType === 'polyline' && currentLineType) {
+          const snapped = snapLatLngs(layer.getLatLngs());
+          layer.setLatLngs(snapped);
           const latlngs = layer.getLatLngs();
           const coords = latlngs.map(latlng => [latlng.lat, latlng.lng]);
           const lengthFt = calculateLengthFt(latlngs);
@@ -670,6 +734,8 @@
         if (!event.layers || !event.layers.getLayers().length) return;
         const markers = event.layers.getLayers();
         const last = markers[markers.length - 1];
+        const snapped = snapLatLng(last.getLatLng());
+        last.setLatLng(snapped);
         showFinishButton(last.getLatLng());
       });
     }
