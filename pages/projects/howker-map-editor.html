@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Favicons - ICO format preferred for Google compatibility -->
+  <link rel="icon" href="/favicons/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/x-icon" href="/favicons/favicon.ico" />
+  <link rel="shortcut icon" href="/favicons/favicon.ico" />
+  <link rel="icon" type="image/x-icon" sizes="16x16" href="/favicons/favicon-16x16.ico" />
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="/favicons/favicon-32x32.ico" />
+  <link rel="icon" type="image/x-icon" sizes="48x48" href="/favicons/favicon-48x48.ico" />
+  <link rel="icon" type="image/x-icon" sizes="96x96" href="/favicons/favicon-96x96.ico" />
+  <!-- PNG fallbacks for browsers that prefer PNG -->
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>Howker Ridge Map Editor</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+  <script src="/js/unified-footer.js" defer></script>
+  <style>
+    :root {
+      --bg: #0b0b0f;
+      --panel: #12121a;
+      --card: #1c1f2a;
+      --ink: #f9fafb;
+      --muted: #94a3b8;
+      --border: #263042;
+      --accent: #22c55e;
+      --accent-warn: #fbbf24;
+      --accent-danger: #ef4444;
+    }
+    body.light {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --card: #f1f5f9;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --accent: #16a34a;
+      --accent-warn: #f59e0b;
+      --accent-danger: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      min-height: 100vh;
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 3vw, 34px);
+    }
+    p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      align-items: center;
+    }
+    .toolbar button {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .toolbar button:hover {
+      border-color: var(--accent);
+    }
+    .toolbar button[data-variant="green"] {
+      border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+    }
+    .toolbar button[data-variant="yellow"] {
+      border-color: color-mix(in srgb, var(--accent-warn) 70%, transparent);
+    }
+    .toolbar button[data-variant="danger"] {
+      border-color: color-mix(in srgb, var(--accent-danger) 70%, transparent);
+    }
+    .toolbar .status {
+      margin-left: auto;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .map-wrap {
+      margin-top: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    #map {
+      height: 75vh;
+      width: 100%;
+    }
+    .legend {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      margin-top: 16px;
+    }
+    .legend-item {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+    }
+    .legend-item strong {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .legend-swatch.green { background: #16a34a; }
+    .legend-swatch.yellow { background: #f59e0b; }
+  </style>
+</head>
+<body data-route="howker-map-editor">
+  <div id="nav-placeholder"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+            if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+              window.NH48_I18N.refreshLangPicker();
+            }
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+    });
+  </script>
+
+  <div class="wrap">
+    <header>
+      <h1>Howker Ridge Map Editor</h1>
+      <p>Update brushing status, mark blowdowns, and place signage notes for the Howker Ridge Trail.</p>
+    </header>
+
+    <div class="toolbar" role="toolbar" aria-label="Map editing toolbar">
+      <button id="brushGreenBtn" data-variant="green" type="button">Mark Brushed (Green)</button>
+      <button id="brushYellowBtn" data-variant="yellow" type="button">Mark Needs Brushing (Yellow)</button>
+      <button id="addBlowdownBtn" type="button">Add Blowdown</button>
+      <button id="addSignBtn" type="button">Add Sign</button>
+      <button id="undoBtn" type="button">Undo Last</button>
+      <button id="saveBtn" type="button" data-variant="green">Save to Server</button>
+      <button id="downloadBtn" type="button">Download JSON</button>
+      <button id="loadEditsBtn" type="button">Reload Saved Edits</button>
+      <span class="status" id="statusMsg" role="status" aria-live="polite"></span>
+    </div>
+
+    <div class="map-wrap">
+      <div id="map" aria-label="Howker Ridge trail editor map"></div>
+    </div>
+
+    <div class="legend" aria-label="Map editing legend">
+      <div class="legend-item">
+        <strong><span class="legend-swatch green"></span>Brushed segment</strong>
+        <p>Draw green lines where the trail is brushed and ready.</p>
+      </div>
+      <div class="legend-item">
+        <strong><span class="legend-swatch yellow"></span>Needs brushing</strong>
+        <p>Draw yellow lines where brushing is needed.</p>
+      </div>
+      <div class="legend-item">
+        <strong>Blowdown &amp; signage</strong>
+        <p>Use marker tools to note blowdowns or missing/needed signs.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+  <script>
+    const TRAIL_URL = '/data/howker-ridge.geojson';
+    const STATUS_URL = '/data/howker-ridge-status.geojson';
+    const POI_URL = '/data/howker-ridge-pois.geojson';
+    const SAVE_ENDPOINT = '/api/howker/map-update';
+
+    const baseIcons = {
+      waterfall: '/assets/icons/waterfall.svg',
+      junction: '/assets/icons/junction.svg',
+      scenic: '/assets/icons/viewpoint.svg',
+      summit: '/assets/icons/summit.svg',
+      fallback: '/assets/icons/marker-default.svg'
+    };
+
+    const editIcons = {
+      blowdown: '/assets/icons/blowdown.svg',
+      sign: '/assets/icons/sign.svg'
+    };
+
+    let map;
+    let baseTrailLayer;
+    let drawControl;
+    let currentStatusColor = null;
+    let currentMarkerType = 'blowdown';
+    const drawnLayers = new L.FeatureGroup();
+    const statusSegments = [];
+    const poiMarkers = [];
+    const historyStack = [];
+
+    function setStatusMessage(message, isError = false) {
+      const statusEl = document.getElementById('statusMsg');
+      if (!statusEl) return;
+      statusEl.textContent = message;
+      statusEl.style.color = isError ? '#f87171' : '';
+    }
+
+    function initMap() {
+      map = L.map('map').setView([44.3, -71.3], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+      map.addLayer(drawnLayers);
+
+      loadBaseTrail();
+      loadExistingEdits();
+      setupDrawTools();
+    }
+
+    async function loadBaseTrail() {
+      const res = await fetch(TRAIL_URL);
+      const data = await res.json();
+
+      baseTrailLayer = L.geoJSON(data, {
+        filter: feature => feature.geometry && feature.geometry.type === 'LineString',
+        style: { color: '#0ea5e9', weight: 3, opacity: 0.8 }
+      }).addTo(map);
+
+      const bounds = baseTrailLayer.getBounds();
+      if (bounds.isValid()) map.fitBounds(bounds.pad(0.05));
+
+      L.geoJSON(data, {
+        filter: feature => feature.geometry && feature.geometry.type === 'Point',
+        pointToLayer: (feature, latlng) => {
+          const category = feature.properties?.category || '';
+          const iconPath = baseIcons[category] || baseIcons.fallback;
+          const icon = L.icon({ iconUrl: iconPath, iconSize: [22, 22], iconAnchor: [11, 22] });
+          return L.marker(latlng, { icon });
+        },
+        onEachFeature: (feature, layer) => {
+          const props = feature.properties || {};
+          const title = props.name || '';
+          const desc = props.description || '';
+          layer.bindPopup(`<strong>${title}</strong><br/>${desc}`);
+        }
+      }).addTo(map);
+    }
+
+    async function loadExistingEdits() {
+      setStatusMessage('Loading edits...');
+      try {
+        const [statusRes, poiRes] = await Promise.all([
+          fetch(STATUS_URL),
+          fetch(POI_URL)
+        ]);
+
+        statusSegments.length = 0;
+        poiMarkers.length = 0;
+        historyStack.length = 0;
+
+        if (statusRes.ok) {
+          const statusJson = await statusRes.json();
+          (statusJson.features || []).forEach(feature => {
+            const coords = feature.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+            statusSegments.push({ coords, status: feature.properties?.status || 'green' });
+          });
+        }
+
+        if (poiRes.ok) {
+          const poiJson = await poiRes.json();
+          (poiJson.features || []).forEach(feature => {
+            poiMarkers.push({
+              lat: feature.geometry.coordinates[1],
+              lon: feature.geometry.coordinates[0],
+              type: feature.properties?.type || 'sign',
+              description: feature.properties?.description || ''
+            });
+          });
+        }
+
+        redrawOverlays();
+        setStatusMessage('Edits loaded.');
+      } catch (err) {
+        setStatusMessage('Unable to load edits.', true);
+      }
+    }
+
+    function setupDrawTools() {
+      drawControl = new L.Control.Draw({
+        draw: {
+          polyline: {
+            shapeOptions: { weight: 6, opacity: 0.8 }
+          },
+          polygon: false,
+          rectangle: false,
+          circle: false,
+          circlemarker: false,
+          marker: {
+            icon: L.icon({ iconUrl: editIcons.blowdown, iconSize: [26, 26], iconAnchor: [13, 26] })
+          }
+        },
+        edit: {
+          featureGroup: drawnLayers,
+          edit: false,
+          remove: false
+        }
+      });
+      map.addControl(drawControl);
+
+      map.on(L.Draw.Event.CREATED, event => {
+        const layer = event.layer;
+        if (event.layerType === 'polyline' && currentStatusColor) {
+          const coords = layer.getLatLngs().map(latlng => [latlng.lat, latlng.lng]);
+          statusSegments.push({ coords, status: currentStatusColor });
+          historyStack.push({ type: 'status' });
+          redrawOverlays();
+        } else if (event.layerType === 'marker') {
+          const latlng = layer.getLatLng();
+          poiMarkers.push({ lat: latlng.lat, lon: latlng.lng, type: currentMarkerType, description: '' });
+          historyStack.push({ type: 'poi' });
+          redrawOverlays();
+        }
+      });
+    }
+
+    function redrawOverlays() {
+      drawnLayers.clearLayers();
+      statusSegments.forEach(seg => {
+        const color = seg.status === 'green' ? '#16a34a' : '#f59e0b';
+        L.polyline(seg.coords, { color, weight: 8, opacity: 0.55 }).addTo(drawnLayers);
+      });
+
+      poiMarkers.forEach(poi => {
+        const iconUrl = editIcons[poi.type] || editIcons.sign;
+        const icon = L.icon({ iconUrl, iconSize: [26, 26], iconAnchor: [13, 26] });
+        const marker = L.marker([poi.lat, poi.lon], { icon }).addTo(drawnLayers);
+        const label = poi.type.charAt(0).toUpperCase() + poi.type.slice(1);
+        marker.bindPopup(`<strong>${label}</strong><br/>${poi.description || ''}`);
+      });
+    }
+
+    function buildGeoJson() {
+      const statusFeatures = statusSegments.map(seg => ({
+        type: 'Feature',
+        properties: { status: seg.status },
+        geometry: { type: 'LineString', coordinates: seg.coords.map(coord => [coord[1], coord[0]]) }
+      }));
+      const poiFeatures = poiMarkers.map(poi => ({
+        type: 'Feature',
+        properties: { type: poi.type, description: poi.description },
+        geometry: { type: 'Point', coordinates: [poi.lon, poi.lat] }
+      }));
+      return {
+        status: { type: 'FeatureCollection', features: statusFeatures },
+        pois: { type: 'FeatureCollection', features: poiFeatures }
+      };
+    }
+
+    async function saveToServer() {
+      const password = prompt('Enter editing password:');
+      if (!password) return;
+      const geo = buildGeoJson();
+      const payload = {
+        password,
+        statusGeoJson: geo.status,
+        poiGeoJson: geo.pois
+      };
+
+      setStatusMessage('Saving edits...');
+      try {
+        const res = await fetch(SAVE_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const out = await res.json();
+        if (res.ok && out.ok) {
+          setStatusMessage('Saved successfully.');
+        } else {
+          setStatusMessage(out.error || 'Error saving edits.', true);
+        }
+      } catch (err) {
+        setStatusMessage('Save failed.', true);
+      }
+    }
+
+    function downloadJson() {
+      const { status, pois } = buildGeoJson();
+      const blob = new Blob([JSON.stringify({ status, pois }, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'howker-ridge-edits.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function undoLast() {
+      const last = historyStack.pop();
+      if (!last) {
+        setStatusMessage('Nothing to undo.');
+        return;
+      }
+      if (last.type === 'status') {
+        statusSegments.pop();
+      } else if (last.type === 'poi') {
+        poiMarkers.pop();
+      }
+      redrawOverlays();
+      setStatusMessage('Undid last edit.');
+    }
+
+    function enablePolylineDrawing(color) {
+      currentStatusColor = color;
+      drawControl.setDrawingOptions({
+        polyline: { shapeOptions: { color, weight: 6, opacity: 0.85 } }
+      });
+      drawControl._toolbars.draw._modes.polyline.handler.enable();
+    }
+
+    function enableMarkerDrawing(type) {
+      currentMarkerType = type;
+      const iconUrl = editIcons[type] || editIcons.sign;
+      drawControl._toolbars.draw._modes.marker.handler.setOptions({
+        icon: L.icon({ iconUrl, iconSize: [26, 26], iconAnchor: [13, 26] })
+      });
+      drawControl._toolbars.draw._modes.marker.handler.enable();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      document.getElementById('brushGreenBtn').addEventListener('click', () => enablePolylineDrawing('#16a34a'));
+      document.getElementById('brushYellowBtn').addEventListener('click', () => enablePolylineDrawing('#f59e0b'));
+      document.getElementById('addBlowdownBtn').addEventListener('click', () => enableMarkerDrawing('blowdown'));
+      document.getElementById('addSignBtn').addEventListener('click', () => enableMarkerDrawing('sign'));
+      document.getElementById('saveBtn').addEventListener('click', saveToServer);
+      document.getElementById('downloadBtn').addEventListener('click', downloadJson);
+      document.getElementById('loadEditsBtn').addEventListener('click', loadExistingEdits);
+      document.getElementById('undoBtn').addEventListener('click', undoLast);
+    });
+  </script>
+</body>
+</html>

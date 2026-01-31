@@ -151,6 +151,64 @@ export default {
       return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
     }
 
+    if (pathname === '/api/howker/map-update' || pathname === '/api/howker/map-update/') {
+      const corsHeaders = {
+        'Access-Control-Allow-Origin': HOWKER_ORIGIN,
+        'Access-Control-Allow-Methods': 'POST,OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      };
+
+      const jsonResponse = (status, payload) => {
+        return new Response(JSON.stringify(payload), {
+          status,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          }
+        });
+      };
+
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: corsHeaders });
+      }
+
+      if (request.method !== 'POST') {
+        return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+      }
+
+      let body;
+      try {
+        body = await request.json();
+      } catch (err) {
+        return jsonResponse(400, { error: 'Invalid JSON.' });
+      }
+
+      const password = body?.password;
+      if (!password || password !== env.HOWKER_MAP_PW) {
+        return jsonResponse(403, { error: 'Unauthorized.' });
+      }
+
+      const statusGeoJson = body?.statusGeoJson;
+      const poiGeoJson = body?.poiGeoJson;
+
+      if (!statusGeoJson || !poiGeoJson) {
+        return jsonResponse(400, { error: 'Missing data.' });
+      }
+
+      if (!env.HOWKER_DATA) {
+        return jsonResponse(500, { error: 'Storage is not configured.' });
+      }
+
+      await env.HOWKER_DATA.put('howker-ridge-status.geojson', JSON.stringify(statusGeoJson, null, 2), {
+        httpMetadata: { contentType: 'application/geo+json' }
+      });
+      await env.HOWKER_DATA.put('howker-ridge-pois.geojson', JSON.stringify(poiGeoJson, null, 2), {
+        httpMetadata: { contentType: 'application/geo+json' }
+      });
+
+      return jsonResponse(200, { ok: true });
+    }
+
     if (pathname === '/projects/plant-map' || pathname === '/projects/plant-map/') {
       const canonical = `${SITE}${pathname}`;
       return serveTemplatePage({
@@ -163,6 +221,24 @@ export default {
           canonical,
           image: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg',
           imageAlt: 'Mount Madison ridge view with alpine terrain and distant peaks',
+          ogType: 'website'
+        },
+        jsonLd: []
+      });
+    }
+
+    if (pathname === '/projects/howker-map-editor' || pathname === '/projects/howker-map-editor/') {
+      const canonical = `${SITE}${pathname}`;
+      return serveTemplatePage({
+        templatePath: 'pages/projects/howker-map-editor.html',
+        pathname,
+        routeId: 'howker-map-editor',
+        meta: {
+          title: 'Howker Ridge Trail Map Editor – NH48.info',
+          description: 'Interactive editor for the Howker Ridge Trail map. Mark brushed sections, blowdowns, and signage needs with password-protected saves.',
+          canonical,
+          image: DEFAULT_IMAGE,
+          imageAlt: 'Howker Ridge trail map editor interface',
           ogType: 'website'
         },
         jsonLd: []
