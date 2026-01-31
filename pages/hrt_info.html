@@ -516,34 +516,40 @@ blockquote{
   font-size:13px;
   margin-top:6px;
 }
-#photo-gallery .gallery-grid{
+#photo-gallery .gallery-grid,
+#second-photo-gallery .gallery-grid{
   display:block;
   grid-template-columns:unset;
   gap:unset;
   margin-top:12px;
 }
-#photo-gallery .gallery-masonry{
+#photo-gallery .gallery-masonry,
+#second-photo-gallery .gallery-masonry{
   column-count:1;
   column-width:220px;
   column-gap:var(--gap);
   column-fill:balance;
 }
 @media (min-width:600px){
-  #photo-gallery .gallery-masonry{
+  #photo-gallery .gallery-masonry,
+  #second-photo-gallery .gallery-masonry{
     column-count:2;
   }
 }
 @media (min-width:900px){
-  #photo-gallery .gallery-masonry{
+  #photo-gallery .gallery-masonry,
+  #second-photo-gallery .gallery-masonry{
     column-count:3;
   }
 }
 @media (min-width:1200px){
-  #photo-gallery .gallery-masonry{
+  #photo-gallery .gallery-masonry,
+  #second-photo-gallery .gallery-masonry{
     column-count:4;
   }
 }
-#photo-gallery .gallery-masonry figure{
+#photo-gallery .gallery-masonry figure,
+#second-photo-gallery .gallery-masonry figure{
   break-inside:avoid;
   page-break-inside:avoid;
   margin:0 0 var(--gap);
@@ -554,37 +560,45 @@ blockquote{
   display:block;
   width:100%;
 }
-#photo-gallery .gallery-masonry picture{
+#photo-gallery .gallery-masonry picture,
+#second-photo-gallery .gallery-masonry picture{
   display:block;
   width:100%;
   aspect-ratio:4 / 5;
 }
-#photo-gallery .gallery-masonry figure:nth-child(4n + 2) picture{
+#photo-gallery .gallery-masonry figure:nth-child(4n + 2) picture,
+#second-photo-gallery .gallery-masonry figure:nth-child(4n + 2) picture{
   aspect-ratio:1 / 1;
 }
-#photo-gallery .gallery-masonry figure:nth-child(4n + 3) picture{
+#photo-gallery .gallery-masonry figure:nth-child(4n + 3) picture,
+#second-photo-gallery .gallery-masonry figure:nth-child(4n + 3) picture{
   aspect-ratio:3 / 4;
 }
-#photo-gallery .gallery-masonry figure:nth-child(4n) picture{
+#photo-gallery .gallery-masonry figure:nth-child(4n) picture,
+#second-photo-gallery .gallery-masonry figure:nth-child(4n) picture{
   aspect-ratio:16 / 9;
 }
-#photo-gallery .gallery-masonry figure:hover{
+#photo-gallery .gallery-masonry figure:hover,
+#second-photo-gallery .gallery-masonry figure:hover{
   transform:translateY(-2px);
   box-shadow:0 4px 12px rgba(0, 0, 0, 0.4);
   transition:transform 0.2s ease, box-shadow 0.2s ease;
 }
-#photo-gallery a{
+#photo-gallery a,
+#second-photo-gallery a{
   color:inherit;
   text-decoration:none;
   display:block;
 }
-#photo-gallery .gallery-masonry img{
+#photo-gallery .gallery-masonry img,
+#second-photo-gallery .gallery-masonry img{
   display:block;
   width:100%;
   height:100%;
   object-fit:cover;
 }
-#photo-gallery .gallery-masonry figcaption{
+#photo-gallery .gallery-masonry figcaption,
+#second-photo-gallery .gallery-masonry figcaption{
   padding:6px 10px;
   font-size:0.8rem;
   color:var(--muted);
@@ -775,6 +789,7 @@ blockquote{
                   <li><a href="#poi-junctions">🔀 Trail Junctions &amp; Connectors</a></li>
                 </ol>
               </li>
+              <li><a href="#second-photo-gallery">📷 Second Photo Gallery</a></li>
               <li><a href="#faq">❓ Frequently Asked Questions</a></li>
             </ol>
           </div>
@@ -1390,69 +1405,6 @@ blockquote{
         <li><strong><a href="/howker-ridge/poi?poi=osgood-ridge">Osgood Ridge</a> (44.329251, -71.271722) – 4,987 ft near junction:</strong> Appalachian Trail ridge connecting Howker Ridge to the summit cone and Great Gulf.</li>
         <li><strong><a href="/howker-ridge/poi?poi=gordon-ridge">Gordon Ridge</a> (44.350067, -71.277300) – 2,746 ft crest:</strong> Trailless ridge forming the opposite wall of Bumpus Basin, visible from the Howks.</li>
       </ul>
-      <figure>
-        <a href="https://howker.nh48.info/second-howk/second-howk-001.jpg" target="_blank" rel="noopener">
-          <picture>
-            <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/second-howk/second-howk-001.jpg">
-            <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/second-howk/second-howk-001.jpg" alt="Westward view of Mount Madison’s summit cone from the Second Howk." loading="lazy">
-          </picture>
-        </a>
-        <figcaption>Second Howk</figcaption>
-      </figure>
-      <figure>
-        <a href="https://howker.nh48.info/third-howk/third-howk-004.jpg" target="_blank" rel="noopener">
-          <picture>
-            <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/third-howk/third-howk-004.jpg">
-            <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/third-howk/third-howk-004.jpg" alt="Morning light illuminating the rocky crest of the Third Howk." loading="lazy">
-          </picture>
-        </a>
-        <figcaption>Third Howk – dawn</figcaption>
-      </figure>
-      <figure>
-        <a href="https://howker.nh48.info/third-howk/third-howk-005.jpg" target="_blank" rel="noopener">
-          <picture>
-            <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/third-howk/third-howk-005.jpg">
-            <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/third-howk/third-howk-005.jpg" alt="Fiery sunset casting orange hues over the Third Howk’s summit rocks." loading="lazy">
-          </picture>
-        </a>
-        <figcaption>Third Howk – sunset</figcaption>
-      </figure>
-      <figure>
-        <a href="https://howker.nh48.info/fourth-howk/fourth-howk-002.jpg" target="_blank" rel="noopener">
-          <picture>
-            <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/fourth-howk/fourth-howk-002.jpg">
-            <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/fourth-howk/fourth-howk-002.jpg" alt="Snowy summit ridge and distant peaks viewed from the Fourth Howk." loading="lazy">
-          </picture>
-        </a>
-        <figcaption>Fourth Howk</figcaption>
-      </figure>
-      <figure>
-        <a href="https://howker.nh48.info/osgood-ridge/osgood-ridge-001.jpg" target="_blank" rel="noopener">
-          <picture>
-            <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/osgood-ridge/osgood-ridge-001.jpg">
-            <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/osgood-ridge/osgood-ridge-001.jpg" alt="Alpine ridgewalk along Osgood Ridge, with Mount Madison looming ahead." loading="lazy">
-          </picture>
-        </a>
-        <figcaption>Osgood Ridge</figcaption>
-      </figure>
-      <figure>
-        <a href="https://howker.nh48.info/gordon-ridge/gordon-ridge-001.jpg" target="_blank" rel="noopener">
-          <picture>
-            <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/gordon-ridge/gordon-ridge-001.jpg">
-            <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/gordon-ridge/gordon-ridge-001.jpg" alt="View across Bumpus Basin to the forested crest of Gordon Ridge." loading="lazy">
-          </picture>
-        </a>
-        <figcaption>Gordon Ridge</figcaption>
-      </figure>
-      <figure>
-        <a href="https://howker.nh48.info/gordon-ridge/gordon-ridge-002.jpg" target="_blank" rel="noopener">
-          <picture>
-            <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/gordon-ridge/gordon-ridge-002.jpg">
-            <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/gordon-ridge/gordon-ridge-002.jpg" alt="Rugged, wooded slopes of Gordon Ridge seen from the Howks." loading="lazy">
-          </picture>
-        </a>
-        <figcaption>Gordon Ridge</figcaption>
-      </figure>
     </section>
 
     <section class="section" id="poi-junctions">
@@ -1465,15 +1417,85 @@ blockquote{
         <li><strong><a href="/howker-ridge/poi?poi=pine-link-trail-junction">Pine Link Trail Junction</a> (~44.335, -71.264, ≈3,950 ft):</strong> Shared section with Howker Ridge and a short descent to a spring water source.</li>
         <li><strong><a href="/howker-ridge/poi?poi=howker-osgood-junction">Howker-Osgood Junction</a> (~5,100 ft):</strong> Connection to the Appalachian Trail on the summit cone of Mount Madison.</li>
       </ul>
-      <figure>
-        <a href="https://howker.nh48.info/pine-link-junction/pine-link-junction-002.jpg" target="_blank" rel="noopener">
-          <picture>
-            <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/pine-link-junction/pine-link-junction-002.jpg">
-            <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/pine-link-junction/pine-link-junction-002.jpg" alt="Trail junction sign at Pine Link surrounded by winter snow." loading="lazy">
-          </picture>
-        </a>
-        <figcaption>Pine Link Junction (winter)</figcaption>
-      </figure>
+    </section>
+
+    <section class="section" id="second-photo-gallery">
+      <h2><a href="#second-photo-gallery">📷 Second Photo Gallery</a></h2>
+      <p class="text-guide">Masonry-style gallery featuring the key ridgeline and junction scenes from the points of interest section.</p>
+      <div class="gallery-grid gallery-masonry">
+        <figure>
+          <a href="https://howker.nh48.info/second-howk/second-howk-001.jpg" target="_blank" rel="noopener">
+            <picture>
+              <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/second-howk/second-howk-001.jpg">
+              <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/second-howk/second-howk-001.jpg" alt="Westward view of Mount Madison’s summit cone from the Second Howk." loading="lazy">
+            </picture>
+          </a>
+          <figcaption>Second Howk</figcaption>
+        </figure>
+        <figure>
+          <a href="https://howker.nh48.info/third-howk/third-howk-004.jpg" target="_blank" rel="noopener">
+            <picture>
+              <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/third-howk/third-howk-004.jpg">
+              <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/third-howk/third-howk-004.jpg" alt="Morning light illuminating the rocky crest of the Third Howk." loading="lazy">
+            </picture>
+          </a>
+          <figcaption>Third Howk – dawn</figcaption>
+        </figure>
+        <figure>
+          <a href="https://howker.nh48.info/third-howk/third-howk-005.jpg" target="_blank" rel="noopener">
+            <picture>
+              <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/third-howk/third-howk-005.jpg">
+              <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/third-howk/third-howk-005.jpg" alt="Fiery sunset casting orange hues over the Third Howk’s summit rocks." loading="lazy">
+            </picture>
+          </a>
+          <figcaption>Third Howk – sunset</figcaption>
+        </figure>
+        <figure>
+          <a href="https://howker.nh48.info/fourth-howk/fourth-howk-002.jpg" target="_blank" rel="noopener">
+            <picture>
+              <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/fourth-howk/fourth-howk-002.jpg">
+              <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/fourth-howk/fourth-howk-002.jpg" alt="Snowy summit ridge and distant peaks viewed from the Fourth Howk." loading="lazy">
+            </picture>
+          </a>
+          <figcaption>Fourth Howk</figcaption>
+        </figure>
+        <figure>
+          <a href="https://howker.nh48.info/osgood-ridge/osgood-ridge-001.jpg" target="_blank" rel="noopener">
+            <picture>
+              <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/osgood-ridge/osgood-ridge-001.jpg">
+              <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/osgood-ridge/osgood-ridge-001.jpg" alt="Alpine ridgewalk along Osgood Ridge, with Mount Madison looming ahead." loading="lazy">
+            </picture>
+          </a>
+          <figcaption>Osgood Ridge</figcaption>
+        </figure>
+        <figure>
+          <a href="https://howker.nh48.info/gordon-ridge/gordon-ridge-001.jpg" target="_blank" rel="noopener">
+            <picture>
+              <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/gordon-ridge/gordon-ridge-001.jpg">
+              <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/gordon-ridge/gordon-ridge-001.jpg" alt="View across Bumpus Basin to the forested crest of Gordon Ridge." loading="lazy">
+            </picture>
+          </a>
+          <figcaption>Gordon Ridge</figcaption>
+        </figure>
+        <figure>
+          <a href="https://howker.nh48.info/gordon-ridge/gordon-ridge-002.jpg" target="_blank" rel="noopener">
+            <picture>
+              <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/gordon-ridge/gordon-ridge-002.jpg">
+              <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/gordon-ridge/gordon-ridge-002.jpg" alt="Rugged, wooded slopes of Gordon Ridge seen from the Howks." loading="lazy">
+            </picture>
+          </a>
+          <figcaption>Gordon Ridge</figcaption>
+        </figure>
+        <figure>
+          <a href="https://howker.nh48.info/pine-link-junction/pine-link-junction-002.jpg" target="_blank" rel="noopener">
+            <picture>
+              <source type="image/webp" srcset="https://howker.nh48.info/cdn-cgi/image/format=webp,quality=80,width=640/pine-link-junction/pine-link-junction-002.jpg">
+              <img src="https://howker.nh48.info/cdn-cgi/image/quality=85,width=640/pine-link-junction/pine-link-junction-002.jpg" alt="Trail junction sign at Pine Link surrounded by winter snow." loading="lazy">
+            </picture>
+          </a>
+          <figcaption>Pine Link Junction (winter)</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section class="section" id="links">
