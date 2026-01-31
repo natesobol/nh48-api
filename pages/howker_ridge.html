@@ -942,9 +942,19 @@ a:hover {
       renderPoiTable(sorted);
     }
 
-    fetch('/data/howker-ridge.geojson')
-      .then(resp => resp.json())
-      .then(data => {
+    Promise.all([
+      fetch('/data/howker-ridge.geojson').then(resp => resp.json()),
+      fetch('/data/howker-ridge-pois.geojson').then(resp => (resp.ok ? resp.json() : { features: [] }))
+    ])
+      .then(([data, poiEdits]) => {
+        const poiEditsByName = {};
+        (poiEdits.features || []).forEach(feature => {
+          const name = feature.properties?.name;
+          if (name) {
+            poiEditsByName[name] = feature;
+          }
+        });
+
         const trailLayer = L.geoJSON(data, {
           style: feature => {
             if (feature.geometry.type === 'LineString') {
@@ -955,15 +965,19 @@ a:hover {
           pointToLayer: (feature, latlng) => {
             if (feature.geometry.type === 'Point') {
               const props = feature.properties || {};
+              const edit = poiEditsByName[props.name];
+              const finalLatLng = edit
+                ? L.latLng(edit.geometry.coordinates[1], edit.geometry.coordinates[0])
+                : latlng;
               poiData.push({
                 name: props.name || 'Unknown',
                 elevation: props.elevation_ft ? Number(props.elevation_ft) : null,
-                lat: latlng.lat,
-                lng: latlng.lng,
+                lat: finalLatLng.lat,
+                lng: finalLatLng.lng,
                 category: props.category || '',
                 description: props.description || ''
               });
-              return createPhotoMarker(latlng, props.name || 'Unknown');
+              return createPhotoMarker(finalLatLng, props.name || 'Unknown');
             }
             return L.circleMarker(latlng, {
               radius: 6,

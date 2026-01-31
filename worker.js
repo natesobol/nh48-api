@@ -188,8 +188,8 @@ export default {
         return jsonResponse(403, { error: 'Unauthorized.' });
       }
 
-      const statusGeoJson = body?.statusGeoJson;
-      const poiGeoJson = body?.poiGeoJson;
+      const statusGeoJson = body?.statusGeoJson || body?.status;
+      const poiGeoJson = body?.poiGeoJson || body?.pois;
 
       if (!statusGeoJson || !poiGeoJson) {
         return jsonResponse(400, { error: 'Missing data.' });
@@ -199,11 +199,28 @@ export default {
         return jsonResponse(500, { error: 'Storage is not configured.' });
       }
 
+      const editPayload = {
+        status: statusGeoJson,
+        blowdowns: body?.blowdowns || null,
+        signs: body?.signs || null,
+        drainage: body?.drainage || null,
+        bogBridges: body?.bogBridges || null,
+        stonework: body?.stonework || null,
+        tread: body?.tread || null,
+        encroachments: body?.encroachments || null,
+        hazards: body?.hazards || null,
+        cairns: body?.cairns || null,
+        pois: poiGeoJson
+      };
+
       await env.HOWKER_DATA.put('howker-ridge-status.geojson', JSON.stringify(statusGeoJson, null, 2), {
         httpMetadata: { contentType: 'application/geo+json' }
       });
       await env.HOWKER_DATA.put('howker-ridge-pois.geojson', JSON.stringify(poiGeoJson, null, 2), {
         httpMetadata: { contentType: 'application/geo+json' }
+      });
+      await env.HOWKER_DATA.put('howker-ridge-edit.json', JSON.stringify(editPayload, null, 2), {
+        httpMetadata: { contentType: 'application/json' }
       });
 
       return jsonResponse(200, { ok: true });
