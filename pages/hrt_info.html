@@ -524,7 +524,9 @@ blockquote{
 }
 #photo-gallery .gallery-masonry{
   column-count:1;
+  column-width:220px;
   column-gap:var(--gap);
+  column-fill:balance;
 }
 @media (min-width:600px){
   #photo-gallery .gallery-masonry{
@@ -552,6 +554,20 @@ blockquote{
   display:block;
   width:100%;
 }
+#photo-gallery .gallery-masonry picture{
+  display:block;
+  width:100%;
+  aspect-ratio:4 / 5;
+}
+#photo-gallery .gallery-masonry figure:nth-child(4n + 2) picture{
+  aspect-ratio:1 / 1;
+}
+#photo-gallery .gallery-masonry figure:nth-child(4n + 3) picture{
+  aspect-ratio:3 / 4;
+}
+#photo-gallery .gallery-masonry figure:nth-child(4n) picture{
+  aspect-ratio:16 / 9;
+}
 #photo-gallery .gallery-masonry figure:hover{
   transform:translateY(-2px);
   box-shadow:0 4px 12px rgba(0, 0, 0, 0.4);
@@ -565,7 +581,8 @@ blockquote{
 #photo-gallery .gallery-masonry img{
   display:block;
   width:100%;
-  height:auto;
+  height:100%;
+  object-fit:cover;
 }
 #photo-gallery .gallery-masonry figcaption{
   padding:6px 10px;
