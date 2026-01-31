@@ -430,6 +430,7 @@ export default {
                pathname === '/projects/plant-map' || pathname === '/projects/plant-map/' ||
                pathname === '/projects/hrt-info' || pathname === '/projects/hrt-info/' ||
                pathname === '/howker-ridge' || pathname === '/howker-ridge/' ||
+               pathname.startsWith('/howker-ridge/poi') ||
                pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
                pathname === '/nh-4000-footers-info.html' || pathname === '/nh-4000-footers-info' ||
                        pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant)/) !== null;
@@ -1991,6 +1992,28 @@ export default {
           description: isFrench
             ? 'Carte interactive, téléchargements GPS et météo actuelle pour le sentier Howker Ridge.'
             : 'Interactive map, GPS downloads, and current weather for the Howker Ridge Trail.',
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: isFrench ? 'Vue du Mount Madison' : 'Mount Madison ridge view',
+          ogType: 'website'
+        },
+        jsonLd: []
+      });
+    }
+
+    if (pathNoLocale === '/howker-ridge/poi' || pathNoLocale === '/howker-ridge/poi/') {
+      const canonical = `${SITE}${pathname}`;
+      return serveTemplatePage({
+        templatePath: 'pages/howker_poi.html',
+        pathname,
+        routeId: 'howker-ridge-poi',
+        meta: {
+          title: isFrench ? 'Point d’intérêt Howker Ridge' : 'Howker Ridge POI',
+          description: isFrench
+            ? 'Détails sur un point d’intérêt du sentier Howker Ridge.'
+            : 'Point of interest details for the Howker Ridge Trail.',
           canonical,
           alternateEn: `${SITE}${enPath}`,
           alternateFr: `${SITE}${frPath}`,

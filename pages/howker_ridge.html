@@ -920,7 +920,7 @@ a:hover {
               <span class="poi-fallback-label">📍 ${item.name}</span>
             </div>
           </td>
-          <td>${item.name}</td>
+          <td><a href="/howker-ridge/poi?poi=${slug}">${item.name}</a></td>
           <td>${item.elevation ?? ''}</td>
           <td>${formatDMS(item.lat, true)}</td>
           <td>${formatDMS(item.lng, false)}</td>
