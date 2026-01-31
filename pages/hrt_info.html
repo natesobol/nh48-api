@@ -441,7 +441,7 @@ blockquote{
 #howker-loops th,
 #howker-loops td{
   padding:0.75rem 1rem;
-  border-bottom:1px solid var(--stroke, #2a2a2a);
+  border-bottom:1px dotted var(--stroke, #2a2a2a);
   color:var(--ink, #ffffff);
   vertical-align:top;
 }
@@ -474,9 +474,15 @@ blockquote{
   outline:2px solid var(--accent, #00b15d);
   outline-offset:4px;
 }
+#howker-loops .loop-group .loop-description-row{
+  display:none;
+}
+#howker-loops .loop-group:has(details[open]) .loop-description-row{
+  display:table-row;
+}
 #howker-loops .loop-description{
-  margin-top:0.5rem;
-  padding-left:1rem;
+  margin:0;
+  padding:0.25rem 0 0.75rem;
   color:var(--muted, #cccccc);
   font-size:0.9rem;
 }
@@ -1164,110 +1170,156 @@ blockquote{
               <th scope="col">Highlights</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge – Watson Path Loop</summary>
-                  <div class="loop-description">
-                    <p>Climbs Mt. Madison via Howker Ridge and Osgood Trail, then descends the steep Watson Path. Expect rocky scrambles, waterfalls near the start, and the Inlook overlook on the return via Brookside, Kelton, and Randolph Path.</p>
-                  </div>
                 </details>
               </td>
               <td>Madison</td>
               <td>~9 mi / 4,000 ft gain</td>
               <td>Howker Ridge ascent; Watson Path descent; waterfalls; “Howks” ridge</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="4">
+                <div class="loop-description">
+                  <p>Climbs Mt. Madison via Howker Ridge and Osgood Trail, then descends the steep Watson Path. Expect rocky scrambles, waterfalls near the start, and the Inlook overlook on the return via Brookside, Kelton, and Randolph Path.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge – Valley Way Loop</summary>
-                  <div class="loop-description">
-                    <p>Ascends via Howker Ridge to Mt. Madison and returns on Valley Way, with an optional Brookside detour for cascades and scenic lower footing. A steadier descent than Watson Path while keeping the big ridge climb.</p>
-                  </div>
                 </details>
               </td>
               <td>Madison</td>
               <td>~9–9.5 mi / ~4,300 ft gain</td>
               <td>Ridge scrambles; Madison summit; Valley Way descent; Brookside cascades</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="4">
+                <div class="loop-description">
+                  <p>Ascends via Howker Ridge to Mt. Madison and returns on Valley Way, with an optional Brookside detour for cascades and scenic lower footing. A steadier descent than Watson Path while keeping the big ridge climb.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge – Star Lake – Airline Loop</summary>
-                  <div class="loop-description">
-                    <p>Summits Madison and Adams by climbing Howker Ridge, tagging Madison, then climbing Star Lake Trail to Adams. Descends the exposed Airline Trail along Durand Ridge for sweeping alpine views.</p>
-                  </div>
                 </details>
               </td>
               <td>Madison, Adams</td>
               <td>~10 mi / 5,000+ ft gain</td>
               <td>Two 5,000-footers; Star Lake talus; Airline ridge views</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="4">
+                <div class="loop-description">
+                  <p>Summits Madison and Adams by climbing Howker Ridge, tagging Madison, then climbing Star Lake Trail to Adams. Descends the exposed Airline Trail along Durand Ridge for sweeping alpine views.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>King Ravine – Howker Ridge Loop</summary>
-                  <div class="loop-description">
-                    <p>Approaches Mt. Adams via King Ravine and the headwall scrambles, then traverses Gulfside to Mt. Madison and descends Howker Ridge. One of the most rugged circuits with boulder hopping and ravine scenery.</p>
-                  </div>
                 </details>
               </td>
               <td>Adams, Madison</td>
               <td>~9–10 mi / 5,000+ ft gain</td>
               <td>King Ravine headwall; Gulfside traverse; dual summits</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="4">
+                <div class="loop-description">
+                  <p>Approaches Mt. Adams via King Ravine and the headwall scrambles, then traverses Gulfside to Mt. Madison and descends Howker Ridge. One of the most rugged circuits with boulder hopping and ravine scenery.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge Grand Loop</summary>
-                  <div class="loop-description">
-                    <p>A mega-loop over Madison, Adams, and Jefferson. Climbs Howker Ridge, continues across the Gulfside to Jefferson, then returns via Castle Trail and The Link for a long, rocky alpine tour.</p>
-                  </div>
                 </details>
               </td>
               <td>Madison, Adams, Jefferson</td>
               <td>~18 mi / ~6,600 ft gain</td>
               <td>Presidential trifecta; Star Lake; Castles; long alpine traverse</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="4">
+                <div class="loop-description">
+                  <p>A mega-loop over Madison, Adams, and Jefferson. Climbs Howker Ridge, continues across the Gulfside to Jefferson, then returns via Castle Trail and The Link for a long, rocky alpine tour.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge – Lowe’s Path Loop</summary>
-                  <div class="loop-description">
-                    <p>Climbs Madison and Adams via Howker Ridge and Star Lake, then descends Lowe’s Path to Gray Knob/Crag Camp and returns on the Spur or Randolph Path. Excellent for a long day or overnight at RMC cabins.</p>
-                  </div>
                 </details>
               </td>
               <td>Madison, Adams</td>
               <td>~13–14 mi / ~5,400 ft gain</td>
               <td>Star Lake climb; Lowe’s Path descent; RMC cabins; King Ravine overlooks</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="4">
+                <div class="loop-description">
+                  <p>Climbs Madison and Adams via Howker Ridge and Star Lake, then descends Lowe’s Path to Gray Knob/Crag Camp and returns on the Spur or Randolph Path. Excellent for a long day or overnight at RMC cabins.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge – Kelton &amp; Inlook Ledge Loop</summary>
-                  <div class="loop-description">
-                    <p>A shorter loop focused on waterfalls and ledge views. Uses Valley Way and Brookside along Snyder Brook, climbs Inlook Trail to the overlook, then descends Kelton and Sylvan Way back to Appalachia.</p>
-                  </div>
                 </details>
               </td>
               <td>Inlook Ledge</td>
               <td>~4.0 mi / ~1,400 ft gain</td>
               <td>Waterfalls; Gordon Fall spur; Inlook overlook; mellow return</td>
             </tr>
+            <tr class="loop-description-row">
+              <td colspan="4">
+                <div class="loop-description">
+                  <p>A shorter loop focused on waterfalls and ledge views. Uses Valley Way and Brookside along Snyder Brook, climbs Inlook Trail to the overlook, then descends Kelton and Sylvan Way back to Appalachia.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="loop-group">
             <tr class="loop-row">
               <td class="loop-name">
-                <details>
+                <details class="loop-details">
                   <summary>Howker Ridge – Pine Link – Rail Trail Loop</summary>
-                  <div class="loop-description">
-                    <p>Summits Madison via Howker Ridge, then descends Pine Link toward Dolly Copp and returns on the Presidential Rail Trail for a fast, level finish. A good option to avoid the steeper north-side descents.</p>
-                  </div>
                 </details>
               </td>
               <td>Madison</td>
               <td>~10 mi / 4,000–4,500 ft gain</td>
               <td>Pine Link descent; rail trail stroll; Madison summit</td>
+            </tr>
+            <tr class="loop-description-row">
+              <td colspan="4">
+                <div class="loop-description">
+                  <p>Summits Madison via Howker Ridge, then descends Pine Link toward Dolly Copp and returns on the Presidential Rail Trail for a fast, level finish. A good option to avoid the steeper north-side descents.</p>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
