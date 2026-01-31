@@ -130,10 +130,10 @@
     <div id="footer-placeholder"></div>
 
     <script>
-      const PEAK_DATA_URLS = [
-        '/data/nh48.json',
-        'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
-        'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
+      const RANGES_DATA_URLS = [
+        '/data/wmnf-ranges.json',
+        'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-ranges.json',
+        'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-ranges.json'
       ];
       const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85,width=720';
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
@@ -215,55 +215,43 @@
       }
 
       function parseElevation(peak){
-        const raw = peak['Elevation (ft)'] ?? peak.elevation ?? peak['Elevation'] ?? peak.elevationFeet;
+        const raw = peak['Elevation (ft)'] ?? peak.elevation ?? peak['Elevation'] ?? peak.elevationFeet ?? peak.elevation_ft;
         const value = typeof raw === 'string' ? parseFloat(raw.replace(/,/g, '')) : Number(raw);
         return Number.isFinite(value) ? value : 0;
       }
 
-      function getPrimaryPhoto(peak){
-        const photos = Array.isArray(peak.photos) ? peak.photos : [];
+      function getPrimaryPhoto(entry){
+        const photos = Array.isArray(entry?.photos) ? entry.photos : [];
         return photos.find(photo => photo && photo.isPrimary) || photos[0] || null;
       }
 
-      function buildRangeData(peaks){
-        const ranges = new Map();
-        peaks.forEach(peak => {
-          if(!peak) return;
-          const rangeName = cleanRangeName(peak['Range / Subrange'] || peak.range || peak.rangeName);
-          const elevation = parseElevation(peak);
-          const existing = ranges.get(rangeName) || {
-            name: rangeName,
-            count: 0,
-            highestPeak: null,
-            highestElevation: 0
+      function normalizeRangeData(rangesData){
+        return Object.values(rangesData || {}).map(range => {
+          const highestPoint = range?.highestPoint || {};
+          return {
+            name: cleanRangeName(range?.rangeName || range?.name || 'Unknown Range'),
+            count: Number(range?.peakCount ?? range?.count) || 0,
+            highestPeak: highestPoint,
+            highestElevation: parseElevation(highestPoint),
+            photos: range?.photos || []
           };
-          existing.count += 1;
-          if(elevation >= existing.highestElevation){
-            existing.highestElevation = elevation;
-            existing.highestPeak = peak;
-          }
-          ranges.set(rangeName, existing);
         });
-        return Array.from(ranges.values());
       }
 
-      async function fetchPeaks(){
-        for(const url of PEAK_DATA_URLS){
+      async function fetchRanges(){
+        for(const url of RANGES_DATA_URLS){
           try{
             const response = await fetch(url, { mode: 'cors' });
             if(!response.ok) throw new Error(`Bad response: ${response.status}`);
             const data = await response.json();
-            if(Array.isArray(data)){
+            if(data && typeof data === 'object'){
               return data;
             }
-            if(data && typeof data === 'object'){
-              return Object.values(data);
-            }
           }catch(error){
-            console.warn('Failed to fetch peaks from', url, error);
+            console.warn('Failed to fetch ranges from', url, error);
           }
         }
-        throw new Error('Unable to load peak data.');
+        throw new Error('Unable to load ranges data.');
       }
 
       function formatElevation(elevation){
@@ -274,7 +262,7 @@
       function buildRangeCard(range){
         const placeholder = getPlaceholder();
         const highestPeakName = range.highestPeak?.peakName || range.highestPeak?.['Peak Name'] || 'Unknown Peak';
-        const primaryPhoto = range.highestPeak ? getPrimaryPhoto(range.highestPeak) : null;
+        const primaryPhoto = getPrimaryPhoto(range);
         const photoUrl = primaryPhoto?.url || primaryPhoto;
         const thumbSrc = photoUrl ? toTransformedPhotoUrl(photoUrl) : '';
         const altText = primaryPhoto?.alt || `${range.name} range highlighted by ${highestPeakName}`;
@@ -359,8 +347,8 @@
 
       async function init(){
         try{
-          const peaks = await fetchPeaks();
-          const ranges = buildRangeData(peaks);
+          const rangesData = await fetchRanges();
+          const ranges = normalizeRangeData(rangesData);
           loadingEl.style.display = 'none';
           render(ranges);
 
