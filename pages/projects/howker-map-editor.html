@@ -136,8 +136,21 @@
       border-radius: 50%;
       display: inline-block;
     }
-    .legend-swatch.green { background: #16a34a; }
-    .legend-swatch.yellow { background: #f59e0b; }
+    .legend-swatch.green { background: #4ade80; }
+    .legend-swatch.yellow { background: #fbbf24; }
+    .finish-segment-btn {
+      position: absolute;
+      z-index: 1000;
+      background: #fff;
+      color: #333;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+      cursor: pointer;
+      display: none;
+    }
   </style>
 </head>
 <body data-route="howker-map-editor">
@@ -239,6 +252,7 @@
     let drawControl;
     let currentStatusColor = null;
     let currentMarkerType = 'blowdown';
+    let finishBtn;
     const drawnLayers = new L.FeatureGroup();
     const statusSegments = [];
     const poiMarkers = [];
@@ -252,11 +266,18 @@
     }
 
     function initMap() {
-      map = L.map('map').setView([44.3, -71.3], 13);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      const standardLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(map);
+        attribution: '&copy; OpenStreetMap contributors'
+      });
+      const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 17,
+        attribution: '&copy; OpenTopoMap contributors'
+      });
+
+      map = L.map('map', { layers: [topoLayer] }).setView([44.3, -71.3], 13);
+      L.control.layers({ Topographic: topoLayer, Standard: standardLayer }, null, { position: 'topleft' }).addTo(map);
+      L.control.scale({ position: 'bottomleft' }).addTo(map);
       map.addLayer(drawnLayers);
 
       loadBaseTrail();
@@ -336,7 +357,9 @@
       drawControl = new L.Control.Draw({
         draw: {
           polyline: {
-            shapeOptions: { weight: 6, opacity: 0.8 }
+            shapeOptions: { weight: 6, opacity: 0.8 },
+            repeatMode: true,
+            metric: false
           },
           polygon: false,
           rectangle: false,
@@ -367,14 +390,20 @@
           historyStack.push({ type: 'poi' });
           redrawOverlays();
         }
+        if (finishBtn) finishBtn.style.display = 'none';
+      });
+
+      map.on('draw:drawvertex', event => {
+        if (!event.latlng) return;
+        showFinishButton(event.latlng);
       });
     }
 
     function redrawOverlays() {
       drawnLayers.clearLayers();
       statusSegments.forEach(seg => {
-        const color = seg.status === 'green' ? '#16a34a' : '#f59e0b';
-        L.polyline(seg.coords, { color, weight: 8, opacity: 0.55 }).addTo(drawnLayers);
+        const color = seg.status === 'green' ? '#4ade80' : '#fbbf24';
+        L.polyline(seg.coords, { color, weight: 8, opacity: 0.5 }).addTo(drawnLayers);
       });
 
       poiMarkers.forEach(poi => {
@@ -459,12 +488,32 @@
       setStatusMessage('Undid last edit.');
     }
 
-    function enablePolylineDrawing(color) {
-      currentStatusColor = color;
+    function enablePolylineDrawing(status) {
+      const color = status === 'green' ? '#4ade80' : '#fbbf24';
+      currentStatusColor = status;
       drawControl.setDrawingOptions({
-        polyline: { shapeOptions: { color, weight: 6, opacity: 0.85 } }
+        polyline: { shapeOptions: { color, weight: 6, opacity: 0.85 }, repeatMode: true }
       });
       drawControl._toolbars.draw._modes.polyline.handler.enable();
+    }
+
+    function showFinishButton(latlng) {
+      if (!finishBtn) {
+        finishBtn = L.DomUtil.create('button', 'finish-segment-btn', map.getContainer());
+        finishBtn.innerText = 'End segment';
+        finishBtn.type = 'button';
+        finishBtn.addEventListener('click', () => {
+          const polyHandler = drawControl?._toolbars?.draw?._modes?.polyline?.handler;
+          if (polyHandler) {
+            polyHandler.completeShape();
+          }
+          finishBtn.style.display = 'none';
+        });
+      }
+      const point = map.latLngToContainerPoint(latlng);
+      finishBtn.style.left = `${point.x + 8}px`;
+      finishBtn.style.top = `${point.y + 8}px`;
+      finishBtn.style.display = 'block';
     }
 
     function enableMarkerDrawing(type) {
@@ -474,12 +523,13 @@
         icon: L.icon({ iconUrl, iconSize: [26, 26], iconAnchor: [13, 26] })
       });
       drawControl._toolbars.draw._modes.marker.handler.enable();
+      if (finishBtn) finishBtn.style.display = 'none';
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       initMap();
-      document.getElementById('brushGreenBtn').addEventListener('click', () => enablePolylineDrawing('#16a34a'));
-      document.getElementById('brushYellowBtn').addEventListener('click', () => enablePolylineDrawing('#f59e0b'));
+      document.getElementById('brushGreenBtn').addEventListener('click', () => enablePolylineDrawing('green'));
+      document.getElementById('brushYellowBtn').addEventListener('click', () => enablePolylineDrawing('yellow'));
       document.getElementById('addBlowdownBtn').addEventListener('click', () => enableMarkerDrawing('blowdown'));
       document.getElementById('addSignBtn').addEventListener('click', () => enableMarkerDrawing('sign'));
       document.getElementById('saveBtn').addEventListener('click', saveToServer);
