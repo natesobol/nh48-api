@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en" style="scroll-behavior: smooth;">
+  <head>
+    <meta charset="utf-8">
+    <link rel="icon" href="/favicons/favicon.ico" sizes="48x48">
+    <link rel="icon" type="image/x-icon" href="/favicons/favicon.ico">
+    <link rel="shortcut icon" href="/favicons/favicon.ico">
+    <link rel="icon" type="image/x-icon" sizes="16x16" href="/favicons/favicon-16x16.ico">
+    <link rel="icon" type="image/x-icon" sizes="32x32" href="/favicons/favicon-32x32.ico">
+    <link rel="icon" type="image/x-icon" sizes="48x48" href="/favicons/favicon-48x48.ico">
+    <link rel="icon" type="image/x-icon" sizes="96x96" href="/favicons/favicon-96x96.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse the NH48 Range Catalog to explore New Hampshire’s mountain ranges, highest peaks, and summary stats derived from the NH48 dataset.">
+    <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, mountain ranges, range catalog, White Mountains data, hiking database">
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow,max-image-preview:large">
+    <link rel="canonical" href="https://nh48.info/catalog/ranges">
+    <link rel="sitemap" type="application/xml" title="Page sitemap" href="https://nh48.info/page-sitemap.xml">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nh48.info/catalog/ranges">
+    <meta property="og:title" content="NH48 Range Catalog – New Hampshire’s mountain ranges">
+    <meta property="og:description" content="Explore the NH48 Range Catalog with peak counts, highest summits, and range photos drawn from the NH48 dataset.">
+    <meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__001.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://nh48.info/catalog/ranges">
+    <meta name="twitter:title" content="NH48 Range Catalog – New Hampshire’s mountain ranges">
+    <meta name="twitter:description" content="Explore the NH48 Range Catalog with peak counts, highest summits, and range photos drawn from the NH48 dataset.">
+    <meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__001.jpg">
+
+    <title>NH48 Range Catalog – New Hampshire’s mountain ranges</title>
+    <link rel="mask-icon" href="/favicons/favicon.ico" color="#22c55e">
+    <link rel="stylesheet" href="/css/nh48_catalog.css">
+    <script type="module" src="/js/i18n.js"></script>
+    <script src="/js/unified-footer.js" defer></script>
+    <noscript>
+      <p>
+        JavaScript is required to continue.
+        <a href="https://nh48.info/catalog/ranges">Continue</a>
+      </p>
+    </noscript>
+
+    <script type="application/ld+json" id="breadcrumb-structured-data">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://nh48.info/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "NH48 Range Catalog",
+            "item": "https://nh48.info/catalog/ranges"
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body data-route="range-catalog" data-page="range-catalog">
+    <div id="nav-placeholder"></div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const navPlaceholder = document.getElementById('nav-placeholder');
+        const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+        if (navPlaceholder) {
+          fetch('/pages/nav.html')
+            .then(response => response.text())
+            .then(html => {
+              navPlaceholder.innerHTML = html;
+              const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+              links.forEach(link => {
+                const routes = (link.dataset.routes || link.dataset.route || '')
+                  .split(',')
+                  .map(value => value.trim())
+                  .filter(Boolean);
+
+                if (routes.includes(activeRoute)) {
+                  link.classList.add('active');
+                  link.setAttribute('aria-current', 'page');
+                }
+              });
+            })
+            .catch(err => console.error('Failed to load navigation:', err));
+        }
+      });
+    </script>
+    <div class="wrap">
+      <div class="catalog-controls-panel">
+        <div class="catalog-hero">
+          <h1>NH48 Range Catalog</h1>
+          <p>Explore the ranges that make up New Hampshire’s 4,000-foot peaks, including their highest summits and how many NH48 peaks each range includes.</p>
+        </div>
+        <div class="search-row">
+          <div class="search-wrapper">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="searchInput" placeholder="Search ranges by name…" aria-label="Search ranges by name" />
+          </div>
+        </div>
+        <div class="filters-row">
+          <div class="filter-group">
+            <label for="sortSelect">Sort</label>
+            <select id="sortSelect" aria-label="Sort ranges by attribute">
+              <option value="name" selected>Name (A–Z)</option>
+              <option value="peaks-desc">Peaks Count ↓</option>
+              <option value="elev-desc">Highest Elevation ↓</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="catalogLoading" class="loading-indicator" aria-live="polite">
+        <span class="loading-spinner" aria-hidden="true"></span>
+        <span class="loading-text">Loading…</span>
+      </div>
+      <div id="grid" class="grid" data-columns="3"></div>
+      <div id="emptyMessage" class="empty" hidden>No ranges found.</div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+      const PEAK_DATA_URLS = [
+        '/data/nh48.json',
+        'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
+        'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
+      ];
+      const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85,width=720';
+      const PHOTO_BASE_URL = 'https://photos.nh48.info';
+      const PHOTO_BASE = new URL(PHOTO_BASE_URL);
+      const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
+      const PHOTO_PATH_PREFIX = '/nh48-photos/';
+
+      const loadingEl = document.getElementById('catalogLoading');
+      const gridEl = document.getElementById('grid');
+      const emptyEl = document.getElementById('emptyMessage');
+      const searchInput = document.getElementById('searchInput');
+      const sortSelect = document.getElementById('sortSelect');
+
+      function getPlaceholder() {
+        return 'data:image/svg+xml;utf8,' + encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">No image</text></svg>`
+        );
+      }
+
+      function applyImageTransform(url){
+        if(!url) return url;
+        try {
+          const parsed = new URL(url, window.location.origin);
+          if(parsed.pathname.startsWith('/cdn-cgi/image/')){
+            return url;
+          }
+          if(parsed.hostname === PHOTO_BASE.hostname){
+            const normalizedPath = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
+            return `${IMAGE_TRANSFORM_PREFIX}${normalizedPath}${parsed.search || ''}`;
+          }
+        } catch (err) {
+          console.warn('Unable to normalize photo URL', url, err);
+        }
+        return url;
+      }
+
+      function normalizePhotoUrl(url){
+        if(!url) return url;
+        if(url.startsWith(PHOTO_BASE_URL)) return applyImageTransform(url);
+        const isJsdelivrPhoto = url.includes('cdn.jsdelivr.net/gh/natesobol/nh48-api@main/photos/');
+        const isGithubRawPhoto = url.includes('raw.githubusercontent.com/natesobol/nh48-api/main/photos/');
+        const isR2PathStyle = url.includes('r2.cloudflarestorage.com/nh48-photos/');
+        const isR2BucketHost = url.includes('r2.cloudflarestorage.com/') && !url.includes('/nh48-photos/');
+        let normalized = url;
+        if(isR2PathStyle){
+          const [, tail] = url.split(PHOTO_PATH_PREFIX);
+          normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+        }
+        if(isR2BucketHost){
+          const bucketTail = url.split('r2.cloudflarestorage.com/')[1];
+          if(bucketTail){
+            const normalizedTail = bucketTail.replace(/^nh48-photos\//, '');
+            normalized = `${PHOTO_BASE_URL}/${normalizedTail}`;
+          }
+        }
+        if(isJsdelivrPhoto || isGithubRawPhoto){
+          const [, tail] = url.split('/photos/');
+          normalized = tail ? `${PHOTO_BASE_URL}/${tail}` : url;
+        }
+        if(normalized.startsWith(PHOTO_BASE_URL)){
+          return applyImageTransform(normalized);
+        }
+        return normalized;
+      }
+
+      function toTransformedPhotoUrl(url){
+        const normalized = normalizePhotoUrl(url);
+        if(!normalized) return normalized;
+        if(normalized.includes('/cdn-cgi/image/')){
+          return normalized;
+        }
+        return applyImageTransform(normalized);
+      }
+
+      function cleanRangeName(range){
+        if(!range) return 'Unknown Range';
+        const cleaned = range.trim();
+        return cleaned.endsWith('.') ? cleaned.slice(0, -1) : cleaned;
+      }
+
+      function parseElevation(peak){
+        const raw = peak['Elevation (ft)'] ?? peak.elevation ?? peak['Elevation'] ?? peak.elevationFeet;
+        const value = typeof raw === 'string' ? parseFloat(raw.replace(/,/g, '')) : Number(raw);
+        return Number.isFinite(value) ? value : 0;
+      }
+
+      function getPrimaryPhoto(peak){
+        const photos = Array.isArray(peak.photos) ? peak.photos : [];
+        return photos.find(photo => photo && photo.isPrimary) || photos[0] || null;
+      }
+
+      function buildRangeData(peaks){
+        const ranges = new Map();
+        peaks.forEach(peak => {
+          if(!peak) return;
+          const rangeName = cleanRangeName(peak['Range / Subrange'] || peak.range || peak.rangeName);
+          const elevation = parseElevation(peak);
+          const existing = ranges.get(rangeName) || {
+            name: rangeName,
+            count: 0,
+            highestPeak: null,
+            highestElevation: 0
+          };
+          existing.count += 1;
+          if(elevation >= existing.highestElevation){
+            existing.highestElevation = elevation;
+            existing.highestPeak = peak;
+          }
+          ranges.set(rangeName, existing);
+        });
+        return Array.from(ranges.values());
+      }
+
+      async function fetchPeaks(){
+        for(const url of PEAK_DATA_URLS){
+          try{
+            const response = await fetch(url, { mode: 'cors' });
+            if(!response.ok) throw new Error(`Bad response: ${response.status}`);
+            const data = await response.json();
+            if(Array.isArray(data)){
+              return data;
+            }
+            if(data && typeof data === 'object'){
+              return Object.values(data);
+            }
+          }catch(error){
+            console.warn('Failed to fetch peaks from', url, error);
+          }
+        }
+        throw new Error('Unable to load peak data.');
+      }
+
+      function formatElevation(elevation){
+        if(!elevation) return '—';
+        return `${Math.round(elevation).toLocaleString()} ft`;
+      }
+
+      function buildRangeCard(range){
+        const placeholder = getPlaceholder();
+        const highestPeakName = range.highestPeak?.peakName || range.highestPeak?.['Peak Name'] || 'Unknown Peak';
+        const primaryPhoto = range.highestPeak ? getPrimaryPhoto(range.highestPeak) : null;
+        const photoUrl = primaryPhoto?.url || primaryPhoto;
+        const thumbSrc = photoUrl ? toTransformedPhotoUrl(photoUrl) : '';
+        const altText = primaryPhoto?.alt || `${range.name} range highlighted by ${highestPeakName}`;
+        const imgMarkup = `
+          <div class="thumb">
+            <img src="${placeholder}" ${thumbSrc ? `data-src="${thumbSrc}"` : ''} alt="${altText}" loading="lazy" decoding="async">
+          </div>
+        `;
+        return `
+          <div class="card">
+            ${imgMarkup}
+            <div class="body">
+              <h3>${range.name}</h3>
+              <div class="card-meta">
+                <div class="meta-row">
+                  <span class="meta-label">Highest Peak</span>
+                  <span class="meta-value">${highestPeakName}</span>
+                </div>
+                <div class="meta-row">
+                  <span class="meta-label">Elevation</span>
+                  <span class="meta-value">${formatElevation(range.highestElevation)}</span>
+                </div>
+                <div class="meta-row">
+                  <span class="meta-label">NH48 Peaks</span>
+                  <span class="meta-value">${range.count}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function applyFilterAndSort(ranges){
+        const query = searchInput.value.trim().toLowerCase();
+        let filtered = ranges;
+        if(query){
+          filtered = ranges.filter(range => range.name.toLowerCase().includes(query));
+        }
+        const sortValue = sortSelect.value;
+        const sorted = [...filtered];
+        if(sortValue === 'peaks-desc'){
+          sorted.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+        }else if(sortValue === 'elev-desc'){
+          sorted.sort((a, b) => b.highestElevation - a.highestElevation || a.name.localeCompare(b.name));
+        }else{
+          sorted.sort((a, b) => a.name.localeCompare(b.name));
+        }
+        return sorted;
+      }
+
+      function setupLazyLoading(){
+        const imgs = Array.from(document.querySelectorAll('img[data-src]'));
+        if(imgs.length === 0) return;
+
+        if (!('IntersectionObserver' in window)) {
+          imgs.forEach(img => {
+            const real = img.getAttribute('data-src');
+            if(real){ img.src = real; img.removeAttribute('data-src'); }
+          });
+          return;
+        }
+
+        const observer = new IntersectionObserver((entries, obs) => {
+          entries.forEach(entry => {
+            if(entry.isIntersecting){
+              const img = entry.target;
+              const real = img.getAttribute('data-src');
+              if(real){ img.src = real; img.removeAttribute('data-src'); }
+              obs.unobserve(img);
+            }
+          });
+        }, { rootMargin: '200px' });
+        imgs.forEach(img => observer.observe(img));
+      }
+
+      function render(ranges){
+        const list = applyFilterAndSort(ranges);
+        gridEl.innerHTML = list.map(buildRangeCard).join('');
+        emptyEl.hidden = list.length > 0;
+        setupLazyLoading();
+      }
+
+      async function init(){
+        try{
+          const peaks = await fetchPeaks();
+          const ranges = buildRangeData(peaks);
+          loadingEl.style.display = 'none';
+          render(ranges);
+
+          searchInput.addEventListener('input', () => render(ranges));
+          sortSelect.addEventListener('change', () => render(ranges));
+        }catch(error){
+          console.error(error);
+          loadingEl.style.display = 'none';
+          emptyEl.hidden = false;
+          emptyEl.textContent = 'Unable to load range data.';
+        }
+      }
+
+      init();
+    </script>
+  </body>
+</html>
