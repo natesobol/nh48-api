@@ -1597,6 +1597,26 @@ export default {
       return serveCatalog();
     }
 
+    const isRangeCatalogRoute = !isFrench
+      && (pathNoLocale === '/catalog/ranges' || pathNoLocale === '/catalog/ranges/');
+    if (isRangeCatalogRoute) {
+      const canonical = `${SITE}/catalog/ranges`;
+      return serveTemplatePage({
+        templatePath: 'catalog/ranges/index.html',
+        pathname,
+        routeId: 'range-catalog',
+        meta: {
+          title: 'NH48 Range Catalog - New Hampshire’s mountain ranges',
+          description: 'Explore NH48 mountain ranges with peak counts, highest summits, and photo highlights derived from the NH48 dataset.',
+          canonical,
+          image: DEFAULT_IMAGE,
+          imageAlt: 'Preview of the NH48 Range Catalog',
+          ogType: 'website'
+        },
+        jsonLd: []
+      });
+    }
+
     const { enPath, frPath } = buildAlternatePaths(pathname);
 
     if (pathNoLocale === '/submit-edit' || pathNoLocale === '/submit-edit/') {
