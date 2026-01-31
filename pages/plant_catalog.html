@@ -239,6 +239,42 @@ header p{
   margin:0;
   color:var(--muted);
 }
+header.plant-hero{
+  position:relative;
+  padding:36px 24px;
+  border-radius:14px;
+  background-image:url('https://howker.nh48.info/blueberry-ledge/blueberry-ledge-001.jpg');
+  background-size:cover;
+  background-position:center 68%;
+  color:#f6f7fb;
+  overflow:hidden;
+}
+header.plant-hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg, rgba(6,9,16,0.7), rgba(6,9,16,0.35));
+}
+header.plant-hero blockquote{
+  position:relative;
+  margin:0;
+  z-index:1;
+}
+header.plant-hero h1{
+  color:inherit;
+  text-shadow:0 8px 24px rgba(0,0,0,0.55);
+}
+header.plant-hero.sticky{
+  background-image:none;
+  background-color:var(--panel);
+  color:var(--ink);
+}
+header.plant-hero.sticky::before{
+  content:none;
+}
+header.plant-hero.sticky h1{
+  text-shadow:none;
+}
 
 .page-breadcrumbs{
   margin:6px 0 16px;
@@ -1019,7 +1055,7 @@ body.details-open .drawer.open {
   </script>
 <!-- data-site-origin ensures Editor/Preview loads entries -->
 <div class="wrap panel" id="howker-plants">
-  <header>
+  <header class="plant-hero">
     <blockquote>
       <h1>Howker Ridge • Sub &amp; Alpine Plant Catalog</h1>
     </blockquote>
