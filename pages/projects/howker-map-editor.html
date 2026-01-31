@@ -86,6 +86,25 @@
       cursor: pointer;
       font-size: 0.9rem;
     }
+    .toolbar select {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
     .toolbar button:hover {
       border-color: var(--accent);
     }
@@ -193,10 +212,30 @@
     </header>
 
     <div class="toolbar" role="toolbar" aria-label="Map editing toolbar">
-      <button id="brushGreenBtn" data-variant="green" type="button">Mark Brushed (Green)</button>
-      <button id="brushYellowBtn" data-variant="yellow" type="button">Mark Needs Brushing (Yellow)</button>
-      <button id="addBlowdownBtn" type="button">Add Blowdown</button>
-      <button id="addSignBtn" type="button">Add Sign</button>
+      <label>
+        <span class="sr-only">Polyline tool</span>
+        <select id="lineToolSelect" aria-label="Polyline tool selector" title="Choose a line tool to draw trail conditions">
+          <option value="">Select line tool…</option>
+          <option value="brush_green">Brushed (Green)</option>
+          <option value="brush_yellow">Needs Brushing (Yellow)</option>
+          <option value="bog_bridge">Bog Bridge / Puncheon</option>
+          <option value="stonework">Stonework</option>
+          <option value="tread">Tread Condition</option>
+          <option value="encroachment">Corridor Encroachment</option>
+        </select>
+      </label>
+      <label>
+        <span class="sr-only">Marker tool</span>
+        <select id="markerToolSelect" aria-label="Marker tool selector" title="Choose a marker tool to place a point">
+          <option value="">Select marker tool…</option>
+          <option value="blowdown">Blowdown</option>
+          <option value="sign">Sign</option>
+          <option value="drain">Drainage</option>
+          <option value="hazard">Hazard</option>
+          <option value="cairn">Cairn</option>
+          <option value="poi">Public POI Update</option>
+        </select>
+      </label>
       <button id="undoBtn" type="button">Undo Last</button>
       <button id="saveBtn" type="button" data-variant="green">Save to Server</button>
       <button id="downloadBtn" type="button">Download JSON</button>
@@ -218,8 +257,8 @@
         <p>Draw yellow lines where brushing is needed.</p>
       </div>
       <div class="legend-item">
-        <strong>Blowdown &amp; signage</strong>
-        <p>Use marker tools to note blowdowns or missing/needed signs.</p>
+        <strong>Adopter tools</strong>
+        <p>Use the dropdowns to record drainage, bog bridges, stonework, tread issues, encroachment, hazards, signs, and cairns.</p>
       </div>
     </div>
   </div>
@@ -232,6 +271,7 @@
     const TRAIL_URL = '/data/howker-ridge.geojson';
     const STATUS_URL = '/data/howker-ridge-status.geojson';
     const POI_URL = '/data/howker-ridge-pois.geojson';
+    const EDIT_URL = '/data/howker-ridge-edit.json';
     const SAVE_ENDPOINT = '/api/howker/map-update';
 
     const baseIcons = {
@@ -244,17 +284,30 @@
 
     const editIcons = {
       blowdown: '/assets/icons/blowdown.svg',
-      sign: '/assets/icons/sign.svg'
+      sign: '/assets/icons/sign.svg',
+      drain: '/assets/icons/drain.svg',
+      hazard: '/assets/icons/hazard.svg',
+      cairn: '/assets/icons/cairn.svg',
+      poi: '/assets/icons/marker-default.svg'
     };
 
     let map;
     let baseTrailLayer;
     let drawControl;
-    let currentStatusColor = null;
     let currentMarkerType = 'blowdown';
+    let currentLineType = null;
     let finishBtn;
     const drawnLayers = new L.FeatureGroup();
     const statusSegments = [];
+    const blowdownMarkers = [];
+    const signMarkers = [];
+    const drainageFeatures = [];
+    const bogBridges = [];
+    const stoneworkSegments = [];
+    const treadConditions = [];
+    const encroachments = [];
+    const hazardMarkers = [];
+    const cairnMarkers = [];
     const poiMarkers = [];
     const historyStack = [];
 
@@ -316,15 +369,26 @@
 
     async function loadExistingEdits() {
       setStatusMessage('Loading edits...');
-      try {
+      const resetState = () => {
+        statusSegments.length = 0;
+        blowdownMarkers.length = 0;
+        signMarkers.length = 0;
+        drainageFeatures.length = 0;
+        bogBridges.length = 0;
+        stoneworkSegments.length = 0;
+        treadConditions.length = 0;
+        encroachments.length = 0;
+        hazardMarkers.length = 0;
+        cairnMarkers.length = 0;
+        poiMarkers.length = 0;
+        historyStack.length = 0;
+      };
+
+      const loadLegacyFiles = async () => {
         const [statusRes, poiRes] = await Promise.all([
           fetch(STATUS_URL),
           fetch(POI_URL)
         ]);
-
-        statusSegments.length = 0;
-        poiMarkers.length = 0;
-        historyStack.length = 0;
 
         if (statusRes.ok) {
           const statusJson = await statusRes.json();
@@ -337,13 +401,132 @@
         if (poiRes.ok) {
           const poiJson = await poiRes.json();
           (poiJson.features || []).forEach(feature => {
-            poiMarkers.push({
+            const type = feature.properties?.type || 'sign';
+            const base = {
               lat: feature.geometry.coordinates[1],
               lon: feature.geometry.coordinates[0],
-              type: feature.properties?.type || 'sign',
+              description: feature.properties?.description || ''
+            };
+            if (type === 'blowdown') {
+              blowdownMarkers.push({
+                ...base,
+                size: feature.properties?.size || '',
+                passable: feature.properties?.passable ?? null,
+                tool: feature.properties?.tool || ''
+              });
+            } else {
+              signMarkers.push({
+                ...base,
+                subtype: feature.properties?.subtype || type,
+                junction: feature.properties?.junction || '',
+                direction: feature.properties?.direction || '',
+                text: feature.properties?.text || ''
+              });
+            }
+          });
+        }
+      };
+
+      try {
+        resetState();
+        const editRes = await fetch(EDIT_URL);
+        if (editRes.ok) {
+          const editJson = await editRes.json();
+          (editJson.status?.features || []).forEach(feature => {
+            const coords = feature.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+            statusSegments.push({ coords, status: feature.properties?.status || 'green' });
+          });
+          (editJson.blowdowns?.features || []).forEach(feature => {
+            blowdownMarkers.push({
+              lat: feature.geometry.coordinates[1],
+              lon: feature.geometry.coordinates[0],
+              description: feature.properties?.description || '',
+              size: feature.properties?.size || '',
+              passable: feature.properties?.passable ?? null,
+              tool: feature.properties?.tool || ''
+            });
+          });
+          (editJson.signs?.features || []).forEach(feature => {
+            signMarkers.push({
+              lat: feature.geometry.coordinates[1],
+              lon: feature.geometry.coordinates[0],
+              description: feature.properties?.description || '',
+              subtype: feature.properties?.subtype || '',
+              junction: feature.properties?.junction || '',
+              direction: feature.properties?.direction || '',
+              text: feature.properties?.text || ''
+            });
+          });
+          (editJson.drainage?.features || []).forEach(feature => {
+            drainageFeatures.push({
+              lat: feature.geometry.coordinates[1],
+              lon: feature.geometry.coordinates[0],
+              subtype: feature.properties?.subtype || '',
+              condition: feature.properties?.condition || '',
+              last_worked: feature.properties?.last_worked || '',
+              notes: feature.properties?.notes || ''
+            });
+          });
+          (editJson.bogBridges?.features || []).forEach(feature => {
+            bogBridges.push({
+              coords: feature.geometry.coordinates.map(coord => [coord[1], coord[0]]),
+              length_ft: feature.properties?.length_ft || 0,
+              condition: feature.properties?.condition || '',
+              hazard: feature.properties?.hazard || false,
+              subtype: feature.properties?.subtype || ''
+            });
+          });
+          (editJson.stonework?.features || []).forEach(feature => {
+            stoneworkSegments.push({
+              coords: feature.geometry.coordinates.map(coord => [coord[1], coord[0]]),
+              subtype: feature.properties?.subtype || '',
+              condition: feature.properties?.condition || '',
+              notes: feature.properties?.notes || ''
+            });
+          });
+          (editJson.tread?.features || []).forEach(feature => {
+            treadConditions.push({
+              coords: feature.geometry.coordinates.map(coord => [coord[1], coord[0]]),
+              status: feature.properties?.status || '',
+              notes: feature.properties?.notes || ''
+            });
+          });
+          (editJson.encroachments?.features || []).forEach(feature => {
+            encroachments.push({
+              coords: feature.geometry.coordinates.map(coord => [coord[1], coord[0]]),
+              side: feature.properties?.side || '',
+              notes: feature.properties?.notes || ''
+            });
+          });
+          (editJson.hazards?.features || []).forEach(feature => {
+            hazardMarkers.push({
+              lat: feature.geometry.coordinates[1],
+              lon: feature.geometry.coordinates[0],
+              subtype: feature.properties?.subtype || '',
+              severity: feature.properties?.severity || '',
+              seasonal: feature.properties?.seasonal || '',
               description: feature.properties?.description || ''
             });
           });
+          (editJson.cairns?.features || []).forEach(feature => {
+            cairnMarkers.push({
+              lat: feature.geometry.coordinates[1],
+              lon: feature.geometry.coordinates[0],
+              status: feature.properties?.status || '',
+              notes: feature.properties?.notes || ''
+            });
+          });
+          (editJson.pois?.features || []).forEach(feature => {
+            poiMarkers.push({
+              lat: feature.geometry.coordinates[1],
+              lon: feature.geometry.coordinates[0],
+              name: feature.properties?.name || '',
+              category: feature.properties?.category || '',
+              description: feature.properties?.description || ''
+            });
+          });
+        } else {
+          await loadLegacyFiles();
         }
 
         redrawOverlays();
@@ -351,6 +534,29 @@
       } catch (err) {
         setStatusMessage('Unable to load edits.', true);
       }
+    }
+
+    function promptValue(label, fallback = '') {
+      const value = prompt(label, fallback);
+      if (value === null) return '';
+      return value.trim();
+    }
+
+    function promptYesNo(label, fallback = '') {
+      const value = prompt(label, fallback);
+      if (value === null) return null;
+      const normalized = value.trim().toLowerCase();
+      if (['yes', 'y', 'true', '1'].includes(normalized)) return true;
+      if (['no', 'n', 'false', '0'].includes(normalized)) return false;
+      return null;
+    }
+
+    function calculateLengthFt(latlngs) {
+      let meters = 0;
+      for (let i = 1; i < latlngs.length; i += 1) {
+        meters += map.distance(latlngs[i - 1], latlngs[i]);
+      }
+      return meters * 3.28084;
     }
 
     function setupDrawTools() {
@@ -379,15 +585,82 @@
 
       map.on(L.Draw.Event.CREATED, event => {
         const layer = event.layer;
-        if (event.layerType === 'polyline' && currentStatusColor) {
-          const coords = layer.getLatLngs().map(latlng => [latlng.lat, latlng.lng]);
-          statusSegments.push({ coords, status: currentStatusColor });
-          historyStack.push({ type: 'status' });
+        if (event.layerType === 'polyline' && currentLineType) {
+          const latlngs = layer.getLatLngs();
+          const coords = latlngs.map(latlng => [latlng.lat, latlng.lng]);
+          const lengthFt = calculateLengthFt(latlngs);
+
+          if (currentLineType === 'brush_green' || currentLineType === 'brush_yellow') {
+            const status = currentLineType === 'brush_green' ? 'green' : 'yellow';
+            statusSegments.push({ coords, status });
+            historyStack.push({ type: 'status' });
+          } else if (currentLineType === 'bog_bridge') {
+            const subtype = promptValue('Bog bridge subtype (bog_bridge, puncheon, stepping_stones):');
+            const condition = promptValue('Condition (good, fair, poor):');
+            const hazard = promptYesNo('Is this section hazardous? (yes/no)');
+            bogBridges.push({ coords, length_ft: lengthFt, condition, hazard, subtype });
+            historyStack.push({ type: 'bog_bridge' });
+          } else if (currentLineType === 'stonework') {
+            const subtype = promptValue('Stonework subtype (rock_step, staircase, retaining_wall, causeway):');
+            const condition = promptValue('Condition (good, fair, poor):');
+            const notes = promptValue('Notes (optional):');
+            stoneworkSegments.push({ coords, subtype, condition, notes });
+            historyStack.push({ type: 'stonework' });
+          } else if (currentLineType === 'tread') {
+            const status = promptValue('Tread condition (stable, eroding, severe, braided):');
+            const notes = promptValue('Notes (optional):');
+            treadConditions.push({ coords, status, notes });
+            historyStack.push({ type: 'tread' });
+          } else if (currentLineType === 'encroachment') {
+            const side = promptValue('Encroachment side (left, right, both):');
+            const notes = promptValue('Notes (optional):');
+            encroachments.push({ coords, side, notes });
+            historyStack.push({ type: 'encroachment' });
+          }
           redrawOverlays();
         } else if (event.layerType === 'marker') {
           const latlng = layer.getLatLng();
-          poiMarkers.push({ lat: latlng.lat, lon: latlng.lng, type: currentMarkerType, description: '' });
-          historyStack.push({ type: 'poi' });
+          if (currentMarkerType === 'blowdown') {
+            const size = promptValue('Blowdown size (small, medium, large):');
+            const passable = promptYesNo('Passable? (yes/no)');
+            const tool = promptValue('Required tool (crosscut, chainsaw, hand):');
+            const description = promptValue('Notes (optional):');
+            blowdownMarkers.push({ lat: latlng.lat, lon: latlng.lng, size, passable, tool, description });
+            historyStack.push({ type: 'blowdown' });
+          } else if (currentMarkerType === 'sign') {
+            const subtype = promptValue('Sign subtype (junction, blaze, info):');
+            const junction = promptValue('Junction name (optional):');
+            const direction = promptValue('Direction (optional):');
+            const text = promptValue('Sign text (optional):');
+            const description = promptValue('Notes (optional):');
+            signMarkers.push({ lat: latlng.lat, lon: latlng.lng, subtype, junction, direction, text, description });
+            historyStack.push({ type: 'sign' });
+          } else if (currentMarkerType === 'drain') {
+            const subtype = promptValue('Drainage subtype (water_bar, drain_dip, ditch, cross_drain):');
+            const condition = promptValue('Condition (clear, partial, blocked):');
+            const last_worked = promptValue('Last worked (YYYY-MM-DD):');
+            const notes = promptValue('Notes (optional):');
+            drainageFeatures.push({ lat: latlng.lat, lon: latlng.lng, subtype, condition, last_worked, notes });
+            historyStack.push({ type: 'drainage' });
+          } else if (currentMarkerType === 'hazard') {
+            const subtype = promptValue('Hazard subtype (ice, cliff, slab, washout):');
+            const severity = promptValue('Severity (low, medium, high):');
+            const seasonal = promptValue('Seasonal (winter, spring, year-round):');
+            const description = promptValue('Notes (optional):');
+            hazardMarkers.push({ lat: latlng.lat, lon: latlng.lng, subtype, severity, seasonal, description });
+            historyStack.push({ type: 'hazard' });
+          } else if (currentMarkerType === 'cairn') {
+            const status = promptValue('Cairn status (good, needs_reset, missing):');
+            const notes = promptValue('Notes (optional):');
+            cairnMarkers.push({ lat: latlng.lat, lon: latlng.lng, status, notes });
+            historyStack.push({ type: 'cairn' });
+          } else if (currentMarkerType === 'poi') {
+            const name = promptValue('POI name:');
+            const category = promptValue('POI category (optional):');
+            const description = promptValue('POI description (optional):');
+            poiMarkers.push({ lat: latlng.lat, lon: latlng.lng, name, category, description });
+            historyStack.push({ type: 'poi' });
+          }
           redrawOverlays();
         }
         if (finishBtn) finishBtn.style.display = 'none';
@@ -401,6 +674,18 @@
       });
     }
 
+    function addDraggableMarker(item, iconUrl, popupHtml) {
+      const icon = L.icon({ iconUrl, iconSize: [26, 26], iconAnchor: [13, 26] });
+      const marker = L.marker([item.lat, item.lon], { icon, draggable: true }).addTo(drawnLayers);
+      if (popupHtml) marker.bindPopup(popupHtml);
+      marker.on('dragend', () => {
+        const ll = marker.getLatLng();
+        item.lat = ll.lat;
+        item.lon = ll.lng;
+      });
+      return marker;
+    }
+
     function redrawOverlays() {
       drawnLayers.clearLayers();
       statusSegments.forEach(seg => {
@@ -408,12 +693,58 @@
         L.polyline(seg.coords, { color, weight: 8, opacity: 0.5 }).addTo(drawnLayers);
       });
 
-      poiMarkers.forEach(poi => {
-        const iconUrl = editIcons[poi.type] || editIcons.sign;
-        const icon = L.icon({ iconUrl, iconSize: [26, 26], iconAnchor: [13, 26] });
-        const marker = L.marker([poi.lat, poi.lon], { icon }).addTo(drawnLayers);
-        const label = poi.type.charAt(0).toUpperCase() + poi.type.slice(1);
-        marker.bindPopup(`<strong>${label}</strong><br/>${poi.description || ''}`);
+      bogBridges.forEach(bb => {
+        const opts = { color: '#8b5cf6', weight: 6, opacity: 0.7 };
+        const label = `<strong>Bog Bridge</strong><br>Length: ${bb.length_ft ? bb.length_ft.toFixed(0) : '0'} ft<br>Condition: ${bb.condition || ''}${bb.hazard ? '<br><em>Hazardous</em>' : ''}`;
+        L.polyline(bb.coords, opts).addTo(drawnLayers).bindPopup(label);
+      });
+
+      stoneworkSegments.forEach(seg => {
+        const opts = { color: '#94a3b8', weight: 6, opacity: 0.7 };
+        const label = `<strong>Stonework</strong><br>${seg.subtype || ''}<br>Condition: ${seg.condition || ''}<br>${seg.notes || ''}`;
+        L.polyline(seg.coords, opts).addTo(drawnLayers).bindPopup(label);
+      });
+
+      treadConditions.forEach(seg => {
+        const opts = { color: '#f97316', weight: 6, opacity: 0.7 };
+        const label = `<strong>Tread Condition</strong><br>${seg.status || ''}<br>${seg.notes || ''}`;
+        L.polyline(seg.coords, opts).addTo(drawnLayers).bindPopup(label);
+      });
+
+      encroachments.forEach(seg => {
+        const opts = { color: '#ef4444', weight: 6, opacity: 0.7 };
+        const label = `<strong>Encroachment</strong><br>${seg.side || ''}<br>${seg.notes || ''}`;
+        L.polyline(seg.coords, opts).addTo(drawnLayers).bindPopup(label);
+      });
+
+      blowdownMarkers.forEach(item => {
+        const label = `<strong>Blowdown</strong><br>Size: ${item.size || ''}<br>Passable: ${item.passable === null ? '' : item.passable ? 'Yes' : 'No'}<br>Tool: ${item.tool || ''}<br>${item.description || ''}`;
+        addDraggableMarker(item, editIcons.blowdown, label);
+      });
+
+      signMarkers.forEach(item => {
+        const label = `<strong>Sign</strong><br>${item.subtype || ''}<br>${item.junction || ''}<br>${item.direction || ''}<br>${item.text || ''}<br>${item.description || ''}`;
+        addDraggableMarker(item, editIcons.sign, label);
+      });
+
+      drainageFeatures.forEach(item => {
+        const label = `<strong>Drainage</strong><br>${item.subtype || ''}<br>Condition: ${item.condition || ''}<br>Last worked: ${item.last_worked || ''}<br>${item.notes || ''}`;
+        addDraggableMarker(item, editIcons.drain, label);
+      });
+
+      hazardMarkers.forEach(item => {
+        const label = `<strong>Hazard</strong><br>${item.subtype || ''}<br>Severity: ${item.severity || ''}<br>Seasonal: ${item.seasonal || ''}<br>${item.description || ''}`;
+        addDraggableMarker(item, editIcons.hazard, label);
+      });
+
+      cairnMarkers.forEach(item => {
+        const label = `<strong>Cairn</strong><br>Status: ${item.status || ''}<br>${item.notes || ''}`;
+        addDraggableMarker(item, editIcons.cairn, label);
+      });
+
+      poiMarkers.forEach(item => {
+        const label = `<strong>${item.name || 'POI'}</strong><br>${item.category || ''}<br>${item.description || ''}`;
+        addDraggableMarker(item, editIcons.poi, label);
       });
     }
 
@@ -423,13 +754,107 @@
         properties: { status: seg.status },
         geometry: { type: 'LineString', coordinates: seg.coords.map(coord => [coord[1], coord[0]]) }
       }));
-      const poiFeatures = poiMarkers.map(poi => ({
+      const blowdownFeatures = blowdownMarkers.map(item => ({
         type: 'Feature',
-        properties: { type: poi.type, description: poi.description },
-        geometry: { type: 'Point', coordinates: [poi.lon, poi.lat] }
+        properties: {
+          type: 'blowdown',
+          size: item.size,
+          passable: item.passable,
+          tool: item.tool,
+          description: item.description
+        },
+        geometry: { type: 'Point', coordinates: [item.lon, item.lat] }
+      }));
+      const signFeatures = signMarkers.map(item => ({
+        type: 'Feature',
+        properties: {
+          type: 'sign',
+          subtype: item.subtype,
+          junction: item.junction,
+          direction: item.direction,
+          text: item.text,
+          description: item.description
+        },
+        geometry: { type: 'Point', coordinates: [item.lon, item.lat] }
+      }));
+      const drainageFeaturesFC = drainageFeatures.map(item => ({
+        type: 'Feature',
+        properties: {
+          type: 'drain',
+          subtype: item.subtype,
+          condition: item.condition,
+          last_worked: item.last_worked,
+          notes: item.notes
+        },
+        geometry: { type: 'Point', coordinates: [item.lon, item.lat] }
+      }));
+      const bogBridgeFeatures = bogBridges.map(item => ({
+        type: 'Feature',
+        properties: {
+          type: 'bog_bridge',
+          subtype: item.subtype,
+          length_ft: item.length_ft,
+          condition: item.condition,
+          hazard: item.hazard
+        },
+        geometry: { type: 'LineString', coordinates: item.coords.map(coord => [coord[1], coord[0]]) }
+      }));
+      const stoneworkFeatures = stoneworkSegments.map(item => ({
+        type: 'Feature',
+        properties: {
+          type: 'stonework',
+          subtype: item.subtype,
+          condition: item.condition,
+          notes: item.notes
+        },
+        geometry: { type: 'LineString', coordinates: item.coords.map(coord => [coord[1], coord[0]]) }
+      }));
+      const treadFeatures = treadConditions.map(item => ({
+        type: 'Feature',
+        properties: { type: 'tread', status: item.status, notes: item.notes },
+        geometry: { type: 'LineString', coordinates: item.coords.map(coord => [coord[1], coord[0]]) }
+      }));
+      const encroachmentFeatures = encroachments.map(item => ({
+        type: 'Feature',
+        properties: { type: 'encroachment', side: item.side, notes: item.notes },
+        geometry: { type: 'LineString', coordinates: item.coords.map(coord => [coord[1], coord[0]]) }
+      }));
+      const hazardFeatures = hazardMarkers.map(item => ({
+        type: 'Feature',
+        properties: {
+          type: 'hazard',
+          subtype: item.subtype,
+          severity: item.severity,
+          seasonal: item.seasonal,
+          description: item.description
+        },
+        geometry: { type: 'Point', coordinates: [item.lon, item.lat] }
+      }));
+      const cairnFeatures = cairnMarkers.map(item => ({
+        type: 'Feature',
+        properties: { type: 'cairn', status: item.status, notes: item.notes },
+        geometry: { type: 'Point', coordinates: [item.lon, item.lat] }
+      }));
+      const poiFeatures = poiMarkers.map(item => ({
+        type: 'Feature',
+        properties: {
+          name: item.name,
+          category: item.category,
+          description: item.description
+        },
+        geometry: { type: 'Point', coordinates: [item.lon, item.lat] }
       }));
       return {
         status: { type: 'FeatureCollection', features: statusFeatures },
+        blowdowns: { type: 'FeatureCollection', features: blowdownFeatures },
+        signs: { type: 'FeatureCollection', features: signFeatures },
+        drainage: { type: 'FeatureCollection', features: drainageFeaturesFC },
+        bogBridges: { type: 'FeatureCollection', features: bogBridgeFeatures },
+        stonework: { type: 'FeatureCollection', features: stoneworkFeatures },
+        tread: { type: 'FeatureCollection', features: treadFeatures },
+        encroachments: { type: 'FeatureCollection', features: encroachmentFeatures },
+        hazards: { type: 'FeatureCollection', features: hazardFeatures },
+        cairns: { type: 'FeatureCollection', features: cairnFeatures },
         pois: { type: 'FeatureCollection', features: poiFeatures }
       };
     }
@@ -438,11 +863,7 @@
       const password = prompt('Enter editing password:');
       if (!password) return;
       const geo = buildGeoJson();
-      const payload = {
-        password,
-        statusGeoJson: geo.status,
-        poiGeoJson: geo.pois
-      };
+      const payload = { password, ...geo };
 
       setStatusMessage('Saving edits...');
       try {
@@ -463,8 +884,8 @@
     }
 
     function downloadJson() {
-      const { status, pois } = buildGeoJson();
-      const blob = new Blob([JSON.stringify({ status, pois }, null, 2)], { type: 'application/json' });
+      const geo = buildGeoJson();
+      const blob = new Blob([JSON.stringify(geo, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -483,6 +904,24 @@
       }
       if (last.type === 'status') {
         statusSegments.pop();
+      } else if (last.type === 'bog_bridge') {
+        bogBridges.pop();
+      } else if (last.type === 'stonework') {
+        stoneworkSegments.pop();
+      } else if (last.type === 'tread') {
+        treadConditions.pop();
+      } else if (last.type === 'encroachment') {
+        encroachments.pop();
+      } else if (last.type === 'blowdown') {
+        blowdownMarkers.pop();
+      } else if (last.type === 'sign') {
+        signMarkers.pop();
+      } else if (last.type === 'drainage') {
+        drainageFeatures.pop();
+      } else if (last.type === 'hazard') {
+        hazardMarkers.pop();
+      } else if (last.type === 'cairn') {
+        cairnMarkers.pop();
       } else if (last.type === 'poi') {
         poiMarkers.pop();
       }
@@ -490,9 +929,20 @@
       setStatusMessage('Undid last edit.');
     }
 
-    function enablePolylineDrawing(status) {
-      const color = status === 'green' ? '#4ade80' : '#fbbf24';
-      currentStatusColor = status;
+    function enablePolylineDrawing(lineType) {
+      currentLineType = lineType;
+      let color = '#4ade80';
+      if (lineType === 'brush_yellow') {
+        color = '#fbbf24';
+      } else if (lineType === 'bog_bridge') {
+        color = '#8b5cf6';
+      } else if (lineType === 'stonework') {
+        color = '#94a3b8';
+      } else if (lineType === 'tread') {
+        color = '#f97316';
+      } else if (lineType === 'encroachment') {
+        color = '#ef4444';
+      }
       drawControl.setDrawingOptions({
         polyline: { shapeOptions: { color, weight: 6, opacity: 0.85 }, repeatMode: true }
       });
@@ -530,10 +980,16 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       initMap();
-      document.getElementById('brushGreenBtn').addEventListener('click', () => enablePolylineDrawing('green'));
-      document.getElementById('brushYellowBtn').addEventListener('click', () => enablePolylineDrawing('yellow'));
-      document.getElementById('addBlowdownBtn').addEventListener('click', () => enableMarkerDrawing('blowdown'));
-      document.getElementById('addSignBtn').addEventListener('click', () => enableMarkerDrawing('sign'));
+      document.getElementById('lineToolSelect').addEventListener('change', event => {
+        if (event.target.value) {
+          enablePolylineDrawing(event.target.value);
+        }
+      });
+      document.getElementById('markerToolSelect').addEventListener('change', event => {
+        if (event.target.value) {
+          enableMarkerDrawing(event.target.value);
+        }
+      });
       document.getElementById('saveBtn').addEventListener('click', saveToServer);
       document.getElementById('downloadBtn').addEventListener('click', downloadJson);
       document.getElementById('loadEditsBtn').addEventListener('click', loadExistingEdits);
