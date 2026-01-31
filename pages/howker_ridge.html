@@ -101,6 +101,7 @@ body{
 .hero h1{
   margin:0 0 10px;
   font-size:clamp(28px,4vw,40px);
+  color:var(--accent);
 }
 .hero p{
   margin:0;
@@ -163,10 +164,12 @@ body{
 .section h2{
   margin:0 0 10px;
   font-size:clamp(18px,2vw,24px);
+  color:var(--accent);
 }
 .section h3{
   margin:16px 0 8px;
   font-size:clamp(16px,1.6vw,20px);
+  color:var(--accent);
 }
 .section p{
   margin:0 0 12px;
@@ -322,9 +325,9 @@ th{
   gap:12px;
 }
 .toc-links{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:12px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
   width:100%;
 }
 .toc-link{
@@ -376,6 +379,19 @@ th{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:var(--gap);
+}
+.split-panels{
+  grid-column:1 / -1;
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:var(--gap);
+}
+.split-panels > .section{
+  margin-top:0;
+}
+.split-panels #jump-to,
+.split-panels #map-links{
+  grid-column:auto;
 }
 .flora-grid{
   display:grid;
@@ -452,6 +468,11 @@ th{
 }
 .warning-callout p:last-child{
   margin-bottom:0;
+}
+@media (max-width: 900px){
+  .split-panels{
+    grid-template-columns:1fr;
+  }
 }
 @media (max-width: 700px){
   .panel{ padding:16px; }
@@ -557,6 +578,24 @@ a:hover {
 }
 .poi-marker.is-fallback .poi-fallback-label{
   display:inline-flex;
+}
+table a{
+  color:var(--accent);
+  text-decoration:underline;
+  font-weight:600;
+}
+table a:hover{
+  color:var(--accent);
+  text-decoration:underline;
+}
+.poi-detail-link{
+  color:var(--accent);
+  text-decoration:underline;
+  font-weight:600;
+}
+.poi-detail-link:hover{
+  color:var(--accent);
+  text-decoration:underline;
 }
 </style>
 <script type="application/ld+json">
@@ -676,40 +715,42 @@ a:hover {
         <p class="small">Trail line and waypoint markers are loaded from the NH48 GeoJSON dataset. Tap markers for details and use the layer controls to explore ridge features.</p>
       </section>
 
-      <section class="section card span-2" id="jump-to">
-        <h2>Jump to sections</h2>
-        <p class="small">Quick links to each panel on this page.</p>
-        <div class="toc-links">
-          <a class="toc-link" href="#map-links">Trail maps &amp; downloads</a>
-          <a class="toc-link" href="#poi">Points of interest</a>
-          <a class="toc-link" href="#metadata">Trail overview &amp; conditions</a>
-          <a class="toc-link" href="#flora">Flora along the trail</a>
-          <a class="toc-link" href="#conditions">Current conditions &amp; safety</a>
-        </div>
-      </section>
+      <div class="split-panels">
+        <section class="section card" id="jump-to">
+          <h2>Jump to sections</h2>
+          <p class="small">Quick links to each panel on this page.</p>
+          <div class="toc-links">
+            <a class="toc-link" href="#map-links">Trail maps &amp; downloads</a>
+            <a class="toc-link" href="#poi">Points of interest</a>
+            <a class="toc-link" href="#metadata">Trail overview &amp; conditions</a>
+            <a class="toc-link" href="#flora">Flora along the trail</a>
+            <a class="toc-link" href="#conditions">Current conditions &amp; safety</a>
+          </div>
+        </section>
 
-      <section class="section card" id="map-links">
-        <h2>Trail Maps &amp; Downloads</h2>
-        <div class="map-links-menu">
-          <div class="map-links-group">
-            <h3>External Trail Maps</h3>
-            <div class="map-links-row">
-              <a class="map-link" href="https://www.onxmaps.com/offroad/map?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">OnX Maps <span aria-hidden="true">↗</span></a>
-              <a class="map-link" href="https://www.alltrails.com/explore?lat=44.334&lng=-71.266&zoom=12" target="_blank" rel="noopener">AllTrails <span aria-hidden="true">↗</span></a>
-              <a class="map-link" href="https://www.gaiagps.com/map/?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">Gaia GPS <span aria-hidden="true">↗</span></a>
-              <a class="map-link" href="https://caltopo.com/map.html#ll=44.334,-71.266&z=12" target="_blank" rel="noopener">CalTopo <span aria-hidden="true">↗</span></a>
+        <section class="section card" id="map-links">
+          <h2>Trail Maps &amp; Downloads</h2>
+          <div class="map-links-menu">
+            <div class="map-links-group">
+              <h3>External Trail Maps</h3>
+              <div class="map-links-row">
+                <a class="map-link" href="https://www.onxmaps.com/offroad/map?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">OnX Maps <span aria-hidden="true">↗</span></a>
+                <a class="map-link" href="https://www.alltrails.com/explore?lat=44.334&lng=-71.266&zoom=12" target="_blank" rel="noopener">AllTrails <span aria-hidden="true">↗</span></a>
+                <a class="map-link" href="https://www.gaiagps.com/map/?lat=44.334&lon=-71.266&zoom=12" target="_blank" rel="noopener">Gaia GPS <span aria-hidden="true">↗</span></a>
+                <a class="map-link" href="https://caltopo.com/map.html#ll=44.334,-71.266&z=12" target="_blank" rel="noopener">CalTopo <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+            <div class="map-links-group">
+              <h3>GPS &amp; Navigation Downloads</h3>
+              <div class="map-links-row">
+                <a class="map-link" href="/downloads/howker-ridge-trail.gpx" download>Download GPX (trail + POIs)</a>
+                <a class="map-link" href="/downloads/howker-ridge-trail.kml" download>Download KML</a>
+              </div>
+              <p class="small">Files are formatted for GPS apps and GIS tools. Always carry a paper map and backup navigation.</p>
             </div>
           </div>
-          <div class="map-links-group">
-            <h3>GPS &amp; Navigation Downloads</h3>
-            <div class="map-links-row">
-              <a class="map-link" href="/downloads/howker-ridge-trail.gpx" download>Download GPX (trail + POIs)</a>
-              <a class="map-link" href="/downloads/howker-ridge-trail.kml" download>Download KML</a>
-            </div>
-            <p class="small">Files are formatted for GPS apps and GIS tools. Always carry a paper map and backup navigation.</p>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <section class="section card span-2 stacked-panel" id="poi">
         <h2>Points of Interest</h2>
@@ -992,12 +1033,14 @@ a:hover {
               const props = feature.properties || {};
               const slug = slugify(props.name || '');
               const popupPhoto = `<img src="https://howker.nh48.info/cdn-cgi/image/format=webp,width=300/${slug}/${slug}-001.jpg" alt="${props.name}" style="width:100%;border-radius:8px; margin-bottom:6px;">`;
+              const detailLink = slug ? `<a class="poi-detail-link" href="/howker-ridge/poi?poi=${slug}">View POI details</a>` : '';
               const details = [
                 popupPhoto,
                 `<strong>${props.name || 'Waypoint'}</strong>`,
                 props.category ? `<span>${props.category}</span>` : '',
                 props.elevation_ft ? `<span>${props.elevation_ft} ft</span>` : '',
-                props.description ? `<em>${props.description}</em>` : ''
+                props.description ? `<em>${props.description}</em>` : '',
+                detailLink
               ].filter(Boolean).join('<br />');
               layer.bindPopup(details);
             }
