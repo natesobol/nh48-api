@@ -1711,6 +1711,25 @@ export default {
       });
     }
 
+    const isRangeDetailRoute = !isFrench && parts[0] === 'range' && parts.length >= 2;
+    if (isRangeDetailRoute) {
+      const canonical = `${SITE}${pathname.endsWith('/') ? pathname : `${pathname}/`}`;
+      return serveTemplatePage({
+        templatePath: 'range/index.html',
+        pathname,
+        routeId: 'range-detail',
+        meta: {
+          title: 'NH48 Range Detail',
+          description: 'View NH48 range details with peak lists, elevations, and highlight imagery.',
+          canonical,
+          image: DEFAULT_IMAGE,
+          imageAlt: 'NH48 range preview',
+          ogType: 'website'
+        },
+        jsonLd: []
+      });
+    }
+
     const { enPath, frPath } = buildAlternatePaths(pathname);
 
     if (pathNoLocale === '/submit-edit' || pathNoLocale === '/submit-edit/') {
