@@ -177,6 +177,42 @@ header p{
   margin:0;
   color:var(--muted);
 }
+header.plant-hero{
+  position:relative;
+  padding:36px 24px;
+  border-radius:14px;
+  background-image:url('https://howker.nh48.info/blueberry-ledge/blueberry-ledge-001.jpg');
+  background-size:cover;
+  background-position:center 68%;
+  color:#f6f7fb;
+  overflow:hidden;
+}
+header.plant-hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg, rgba(6,9,16,0.7), rgba(6,9,16,0.35));
+}
+header.plant-hero blockquote{
+  position:relative;
+  margin:0;
+  z-index:1;
+}
+header.plant-hero h1{
+  color:inherit;
+  text-shadow:0 8px 24px rgba(0,0,0,0.55);
+}
+header.plant-hero.sticky{
+  background-image:none;
+  background-color:var(--panel);
+  color:var(--ink);
+}
+header.plant-hero.sticky::before{
+  content:none;
+}
+header.plant-hero.sticky h1{
+  text-shadow:none;
+}
 
 .page-breadcrumbs{
   margin:6px 0 16px;
@@ -205,6 +241,10 @@ header p{
 }
 .page-breadcrumbs a:hover{
   color:var(--accent);
+}
+.text-guide{
+  font-size:0.9rem;
+  margin:0 0 1rem;
 }
 
 /****************************
@@ -435,12 +475,9 @@ header p{
   </script>
 
 <div class="wrap panel" id="plant-detail">
-  <header>
+  <header class="plant-hero">
     <blockquote>
       <h1 id="detail-title">Howker Ridge • Plant</h1>
-    </blockquote>
-    <blockquote>
-      <p>Detailed information for an alpine or subalpine species recorded along Howker Ridge Trail. Use the back link to return to the catalog.</p>
     </blockquote>
   </header>
   <nav class="page-breadcrumbs" aria-label="Breadcrumb">
@@ -451,6 +488,7 @@ header p{
       <li><span id="detail-breadcrumb">Plant</span></li>
     </ol>
   </nav>
+  <p class="text-guide">Detailed information for an alpine or subalpine species recorded along Howker Ridge Trail. Use the back link to return to the catalog.</p>
 
   <!-- Details content -->
   <a href="/plant-catalog" class="back-link">← Back to Catalog</a>
@@ -518,6 +556,7 @@ header p{
   const nextBtn = document.getElementById('nextBtn');
   const detailTitle = document.getElementById('detail-title');
   const detailBreadcrumb = document.getElementById('detail-breadcrumb');
+  const detailHero = document.querySelector('.plant-hero');
 
   // Placeholders for images
   const LQ_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
@@ -571,11 +610,12 @@ header p{
     carouselEl.innerHTML = '';
     dotsEl.innerHTML = '';
     carouselImgs = [];
-    carouselIdx = 0;
     if (!images || !images.length){ images = [PLACEHOLDER]; }
+    const startingIndex = images.length > 1 ? 1 : 0;
+    carouselIdx = startingIndex;
     images.forEach((src, i)=>{
       const slide = document.createElement('div');
-      slide.className = 'slide' + (i===0 ? ' active' : '');
+      slide.className = 'slide' + (i===startingIndex ? ' active' : '');
       const img = document.createElement('img');
       const altBase = (p && p.common) ? p.common : 'Plant';
       const descSnippet = (p && (p.morph || p.teaser || p.desc) || '').trim();
@@ -586,7 +626,7 @@ header p{
       img.dataset.credits = (p && p.credits) || '';
       img.loading = 'lazy';
       img.decoding = 'async';
-      if (i===0){
+      if (i===startingIndex){
         img.src = src;
       } else {
         img.setAttribute('data-src', src);
@@ -601,7 +641,7 @@ header p{
       carouselEl.appendChild(slide);
       carouselImgs.push(img);
       const dot=document.createElement('div');
-      dot.className='dot'+(i===0?' active':'');
+      dot.className='dot'+(i===startingIndex?' active':'');
       dot.addEventListener('click', ()=>goTo(i));
       dotsEl.appendChild(dot);
     });
@@ -704,6 +744,11 @@ header p{
 
     const imgs = Array.isArray(p.imgs) && p.imgs.length ? p.imgs : (p.img ? [p.img] : []);
     buildCarousel(imgs, p);
+
+    const heroCandidate = [imgs[1], imgs[0]].find(src => typeof src === 'string' && src.trim().length > 0);
+    if (detailHero && heroCandidate){
+      detailHero.style.backgroundImage = `url("${heroCandidate}")`;
+    }
 
     const firstImage = Array.isArray(p.imgs) && p.imgs.length ? p.imgs[0] : (p.img || '');
     const caption = normalizeTextForWeb(`${p.common || ''} - ${p.teaser || p.desc || p.morph || ''}`.trim());
