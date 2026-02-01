@@ -1964,6 +1964,18 @@
     text-align: center;
   }
 
+  .site-nav-submenu--divided > * + * {
+    border-top: 1px dotted rgba(255, 255, 255, 0.3);
+    padding-top: 6px;
+    margin-top: 4px;
+  }
+
+  .site-nav-submenu--wide .site-nav-submenu-group + .site-nav-submenu-group {
+    border-top: 1px dotted rgba(255, 255, 255, 0.3);
+    padding-top: 6px;
+    margin-top: 4px;
+  }
+
   /* Widen Projects dropdown to ~50% more than the default */
   .projects-submenu {
     min-width: 300px;
@@ -2004,17 +2016,25 @@
     position: relative;
   }
 
-  .site-nav-submenu-group > button::after {
-    content: "›";
-    float: right;
-    opacity: 0.7;
-    margin-left: 16px;
+  .site-nav-submenu-group > button {
+    position: relative;
+    padding-right: 36px;
   }
 
-  .site-nav-submenu-group + .site-nav-submenu-group {
-    border-top: 1px dotted rgba(255, 255, 255, 0.3);
-    padding-top: 6px;
-    margin-top: 4px;
+  .site-nav-submenu-group > button::after {
+    content: "›";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.7;
+  }
+
+  .site-nav-submenu-group > button.submenu-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 36px;
   }
 
   .site-nav-submenu.site-nav-submenu--nested {
@@ -2292,7 +2312,7 @@
   <div class="site-nav-links">
     <div class="site-nav-dropdown">
       <button type="button" data-route="dataset-home" data-routes="home,dataset-home">NH48</button>
-      <div class="site-nav-submenu" aria-label="NH48 dataset short links">
+      <div class="site-nav-submenu site-nav-submenu--divided" aria-label="NH48 dataset short links">
         <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Guide</a>
         <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
         <a href="/catalog/ranges" data-route="range-catalog" data-routes="range-catalog,range-detail">Range Catalog</a>
@@ -2329,7 +2349,7 @@
     </div>
     <div class="site-nav-dropdown">
       <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Howker Ridge Info</a>
-      <div class="site-nav-submenu projects-submenu" aria-label="Howker Ridge Info short links">
+      <div class="site-nav-submenu projects-submenu site-nav-submenu--divided" aria-label="Howker Ridge Info short links">
         <a href="/projects/hrt-info" data-route="howker-ridge" data-routes="howker-ridge">Trail Info</a>
         <a href="/plant-catalog">Plant Catalog</a>
         <a href="/howker-ridge" data-route="howker-ridge" data-routes="howker-ridge">Trail Map &amp; Data</a>

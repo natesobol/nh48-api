@@ -364,6 +364,58 @@
       color: var(--accent);
       text-decoration: underline;
     }
+    .modal-form {
+      display: grid;
+      gap: 16px;
+    }
+    .modal-form fieldset {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+    .modal-form legend {
+      padding: 0 6px;
+      font-weight: 600;
+    }
+    .modal-form label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+    }
+    .modal-form select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+    }
+    .modal-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .modal-actions button {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .modal-actions button[data-variant="green"] {
+      border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+    }
     .legend {
       display: grid;
       gap: 8px;
@@ -702,6 +754,7 @@
           <option value="8k">Share Card: 8K (7680×4320) — heavy</option>
         </select>
         <button id="shareCardBtn" type="button" data-variant="green">Generate Share Card (Save + Download)</button>
+        <button id="topoArtBtn" type="button" data-variant="yellow" title="Create Topo Art" aria-label="Create Topo Art">Create Topo Art</button>
       </div>
       <div class="tool-group" id="searchTools" aria-label="Search and location">
         <button id="locateBtn" type="button" data-variant="green" title="Locate me" aria-label="Locate me">Locate me</button>
@@ -815,6 +868,40 @@
           <div class="small">Remote URL</div>
           <a id="shareCardUrl" href="#" target="_blank" rel="noopener">—</a>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="topoArtModal" class="modal-backdrop" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="topoArtTitle">
+      <div class="modal-head">
+        <h2 id="topoArtTitle">Create Topo Art</h2>
+        <button id="topoArtClose" type="button" class="xbtn" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="topoArtForm" class="modal-form">
+          <fieldset>
+            <legend>Theme</legend>
+            <label>
+              <input type="radio" name="topoTheme" value="dark" checked />
+              Dark (white lines on black)
+            </label>
+            <label>
+              <input type="radio" name="topoTheme" value="light" />
+              Light (black lines on white)
+            </label>
+          </fieldset>
+          <label for="topoResolution">Resolution</label>
+          <select id="topoResolution" name="topoResolution">
+            <option value="4k" selected>4K (3840px wide)</option>
+            <option value="8k">8K (7680px wide) — heavy export</option>
+          </select>
+          <p class="modal-note">Exports may take a few seconds, especially at 8K. The map will temporarily resize during capture.</p>
+          <div class="modal-actions">
+            <button type="button" id="topoArtCancel">Cancel</button>
+            <button type="button" id="generateTopoArt" data-variant="green">Generate</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -2544,6 +2631,8 @@
       const baseH = resSel === '8k' ? 4320 : 2304;
       const exportW = orientation === 'portrait' ? baseH : baseW;
       const exportH = orientation === 'portrait' ? baseW : baseH;
+      const mapW = orientation === 'landscape' ? exportH : exportW;
+      const mapH = orientation === 'landscape' ? exportW : exportH;
       const mapEl = document.getElementById('map');
       const wrapEl = mapEl?.parentElement;
 
@@ -2561,7 +2650,7 @@
 
       try {
         setStep('render', true, `Preparing ${exportW}×${exportH} export…`);
-        const paddingSize = Math.round(Math.min(exportW, exportH) * 0.06);
+        const paddingSize = Math.round(Math.min(mapW, mapH) * 0.06);
         const boundsGroup = L.featureGroup([baseTrailLayer, drawnLayers].filter(Boolean));
         const bounds = boundsGroup.getBounds?.();
         if (bounds && bounds.isValid()) {
@@ -2570,10 +2659,10 @@
           });
         }
 
-        mapEl.style.width = `${exportW}px`;
-        mapEl.style.height = `${exportH}px`;
-        wrapEl.style.width = `${exportW}px`;
-        wrapEl.style.height = `${exportH}px`;
+        mapEl.style.width = `${mapW}px`;
+        mapEl.style.height = `${mapH}px`;
+        wrapEl.style.width = `${mapW}px`;
+        wrapEl.style.height = `${mapH}px`;
 
         map.invalidateSize(true);
         await waitForMapIdle(15000);
@@ -2595,7 +2684,7 @@
           rctx.save();
           rctx.translate(exportW, 0);
           rctx.rotate(Math.PI / 2);
-          rctx.drawImage(canvas, 0, 0, exportH, exportW);
+          rctx.drawImage(canvas, 0, 0, mapW, mapH);
           rctx.restore();
           exportCanvas = rotated;
         }
@@ -2656,6 +2745,110 @@
         wrapEl.style.height = prev.wrapH;
         map.invalidateSize(true);
       }
+    }
+
+    function openTopoArtModal() {
+      const modal = document.getElementById('topoArtModal');
+      if (!modal) return;
+      modal.hidden = false;
+      modal.addEventListener('click', event => {
+        if (event.target === modal) {
+          modal.hidden = true;
+        }
+      }, { once: true });
+    }
+
+    function closeTopoArtModal() {
+      const modal = document.getElementById('topoArtModal');
+      if (modal) modal.hidden = true;
+    }
+
+    async function generateTopoArt(theme, resolution) {
+      const mapEl = document.getElementById('map');
+      const wrapEl = mapEl?.parentElement;
+      if (!mapEl || !wrapEl) {
+        setStatusMessage('Map container not found for Topo Art export.', true);
+        return;
+      }
+
+      const originalSize = map.getSize();
+      const originalCenter = map.getCenter();
+      const originalZoom = map.getZoom();
+      const targetWidth = resolution === '8k' ? 7680 : 3840;
+      const targetHeight = Math.round(targetWidth * originalSize.y / originalSize.x);
+      const prev = {
+        mapW: mapEl.style.width,
+        mapH: mapEl.style.height,
+        wrapW: wrapEl.style.width,
+        wrapH: wrapEl.style.height
+      };
+
+      try {
+        setStatusMessage(`Rendering Topo Art (${targetWidth}×${targetHeight})...`);
+        mapEl.style.width = `${targetWidth}px`;
+        mapEl.style.height = `${targetHeight}px`;
+        wrapEl.style.width = `${targetWidth}px`;
+        wrapEl.style.height = `${targetHeight}px`;
+        map.invalidateSize(true);
+        map.setView(originalCenter, originalZoom, { animate: false });
+        await waitForMapIdle(15000);
+
+        const canvas = await new Promise((resolve, reject) => {
+          window.leafletImage(map, (err, c) => {
+            if (err) reject(err);
+            else resolve(c);
+          });
+        });
+
+        processTopoArtImage(canvas, theme);
+
+        const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+        const filename = `topo-art-${theme}-${resolution}-${stamp}.png`;
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        if (!blob) {
+          throw new Error('Unable to encode PNG.');
+        }
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        setStatusMessage(`Topo Art downloaded: ${filename}`);
+      } catch (err) {
+        setStatusMessage(err?.message || 'Topo Art export failed.', true);
+        console.error(err);
+      } finally {
+        mapEl.style.width = prev.mapW;
+        mapEl.style.height = prev.mapH;
+        wrapEl.style.width = prev.wrapW;
+        wrapEl.style.height = prev.wrapH;
+        map.invalidateSize(true);
+        map.setView(originalCenter, originalZoom, { animate: false });
+      }
+    }
+
+    function processTopoArtImage(canvas, theme) {
+      const ctx = canvas.getContext('2d');
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+        if (theme === 'dark') {
+          const inverted = 255 - gray;
+          const threshold = inverted > 100 ? 255 : 0;
+          data[i] = data[i + 1] = data[i + 2] = threshold;
+        } else {
+          const threshold = gray < 155 ? 0 : 255;
+          data[i] = data[i + 1] = data[i + 2] = threshold;
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
     }
 
     function undoLast() {
@@ -2856,6 +3049,10 @@
       const poiImageList = document.getElementById('poiImageList');
       const poiAddImageBtn = document.getElementById('poiAddImageBtn');
       const poiCancelBtn = document.getElementById('poiCancelBtn');
+      const topoArtBtn = document.getElementById('topoArtBtn');
+      const topoArtClose = document.getElementById('topoArtClose');
+      const topoArtCancel = document.getElementById('topoArtCancel');
+      const generateTopoArtBtn = document.getElementById('generateTopoArt');
 
       if (poiImageList && !poiImageList.querySelector('.poi-image-row')) {
         buildPoiImageRow(poiImageList, '');
@@ -3019,6 +3216,23 @@
       document.getElementById('undoBtn').addEventListener('click', undoLast);
       document.getElementById('locateBtn').addEventListener('click', locateUser);
       document.getElementById('shareCardBtn').addEventListener('click', generateShareCard);
+      if (topoArtBtn) {
+        topoArtBtn.addEventListener('click', openTopoArtModal);
+      }
+      if (topoArtClose) {
+        topoArtClose.addEventListener('click', closeTopoArtModal);
+      }
+      if (topoArtCancel) {
+        topoArtCancel.addEventListener('click', closeTopoArtModal);
+      }
+      if (generateTopoArtBtn) {
+        generateTopoArtBtn.addEventListener('click', async () => {
+          const theme = document.querySelector('input[name="topoTheme"]:checked')?.value || 'dark';
+          const resolution = document.getElementById('topoResolution')?.value || '4k';
+          closeTopoArtModal();
+          await generateTopoArt(theme, resolution);
+        });
+      }
       const cardOrientation = document.getElementById('cardOrientation');
       if (cardOrientation) {
         cardOrientation.addEventListener('change', updateShareCardOverlay);
