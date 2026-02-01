@@ -1257,8 +1257,18 @@ body.details-open .drawer.open {
 
   /* ---------- Lazy image loading via IntersectionObserver ---------- */
   let imgObserver;            // IntersectionObserver for image src swap
+  function hideThumbOverlay(img) {
+    const overlay = img?.previousElementSibling;
+    if (overlay && overlay.classList.contains('thumb-loading')) {
+      overlay.classList.add('hidden');
+    }
+  }
   function setupImgObserver(){
     if (imgObserver) imgObserver.disconnect();
+    if (!('IntersectionObserver' in window)) {
+      imgObserver = null;
+      return;
+    }
     const opts = { rootMargin: '200px 0px', threshold: 0.01 };
     imgObserver = new IntersectionObserver((entries)=>{
       entries.forEach(entry=>{
@@ -1336,14 +1346,25 @@ body.details-open .drawer.open {
       el.dataset.pid = p.id;
       const img = el.querySelector('img');
       if (img) {
-        imgObserver && imgObserver.observe(img);
-        img.addEventListener('load', () => {
-          const overlay = img.previousElementSibling;
-          if (overlay && overlay.classList.contains('thumb-loading')) {
-            overlay.classList.add('hidden');
+        if (imgObserver) {
+          imgObserver.observe(img);
+        } else {
+          const realSrc = img.getAttribute('data-src');
+          if (realSrc) {
+            img.src = realSrc;
+            img.removeAttribute('data-src');
           }
+        }
+        img.addEventListener('load', () => {
+          hideThumbOverlay(img);
+        }, { once: true });
+        img.addEventListener('error', () => {
+          hideThumbOverlay(img);
         }, { once: true });
         img.addEventListener('load', schedule, {once:true});
+        if (!imgObserver) {
+          hideThumbOverlay(img);
+        }
       }
       // Instead of opening a drawer, redirect to details page
       el.addEventListener("click", () => {

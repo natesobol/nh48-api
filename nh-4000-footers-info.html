@@ -1655,14 +1655,8 @@
       </section>
     </main>
 
-    <script type="module">
-      import ranges from './data/wmnf-ranges.json' assert { type: 'json' };
-
-      const canonicalRanges = Object.values(ranges).map((range) => ({
-        name: range.rangeName,
-        peaks: range.peakList,
-        description: range.description
-      }));
+    <script>
+      let canonicalRanges = [];
 
       const peakSlugOverrides = {
         'South Twin': 'south-twin-mountain',
@@ -1677,6 +1671,10 @@
         'North Kinsman': 'north-kinsman-mountain',
         'South Kinsman': 'south-kinsman-mountain'
       };
+
+      let rangeOrder = ['All'];
+      let rangeDescriptions = {};
+      let rangeLookup = {};
 
       const buildRangeLookup = (data) => {
         const nameToSlug = {};
@@ -1698,12 +1696,31 @@
         return lookup;
       };
 
-      const rangeOrder = ['All', ...canonicalRanges.map((range) => range.name)];
-      const rangeDescriptions = canonicalRanges.reduce((acc, range) => {
-        acc[range.name] = range.description;
-        return acc;
-      }, {});
-      let rangeLookup = {};
+      function setRangeData(ranges) {
+        canonicalRanges = ranges;
+        rangeOrder = ['All', ...canonicalRanges.map((range) => range.name)];
+        rangeDescriptions = canonicalRanges.reduce((acc, range) => {
+          acc[range.name] = range.description;
+          return acc;
+        }, {});
+      }
+
+      function loadRanges() {
+        return fetch('/data/wmnf-ranges.json', { headers: { 'Accept': 'application/json' } })
+          .then((response) => (response.ok ? response.json() : Promise.reject(response)))
+          .then((ranges) => {
+            const resolved = Object.values(ranges).map((range) => ({
+              name: range.rangeName,
+              peaks: range.peakList,
+              description: range.description
+            }));
+            setRangeData(resolved);
+          })
+          .catch((err) => {
+            console.error('Failed to load range data', err);
+            setRangeData([]);
+          });
+      }
 
       const difficultyMap = {
         'mount-tecumseh': 'beginner',
@@ -2191,7 +2208,11 @@
           });
       }
 
-      document.addEventListener('DOMContentLoaded', init);
+      document.addEventListener('DOMContentLoaded', () => {
+        loadRanges().finally(() => {
+          init();
+        });
+      });
   </script>
   <div id="footer-placeholder"></div>
 </body>
