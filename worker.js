@@ -33,6 +33,20 @@ export default {
     const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
     const SITE_NAME = url.hostname;
     const DEFAULT_IMAGE = `${SITE}/nh48-preview.png`;
+    const howkerDataRoutes = {
+      '/data/howker-ridge-status.geojson': {
+        key: 'howker-ridge-status.geojson',
+        contentType: 'application/geo+json; charset=utf-8'
+      },
+      '/data/howker-ridge-pois.geojson': {
+        key: 'howker-ridge-pois.geojson',
+        contentType: 'application/geo+json; charset=utf-8'
+      },
+      '/data/howker-ridge-edit.json': {
+        key: 'howker-ridge-edit.json',
+        contentType: 'application/json; charset=utf-8'
+      }
+    };
     const RIGHTS_DEFAULTS = {
       creatorName: 'Nathan Sobol',
       creditText: '© Nathan Sobol / NH48pics.com',
@@ -204,6 +218,8 @@ export default {
           }
         });
       };
+      const MAX_PAYLOAD_BYTES = 5 * 1024 * 1024;
+
       if (request.method === 'OPTIONS') {
         return new Response(null, { status: 204, headers: corsHeaders(origin) });
       }
@@ -325,6 +341,8 @@ export default {
         });
       };
 
+      const MAX_PAYLOAD_BYTES = 5 * 1024 * 1024;
+
       if (request.method === 'OPTIONS') {
         return new Response(null, { status: 204, headers: corsHeaders(origin) });
       }
@@ -333,11 +351,24 @@ export default {
         return new Response('Method Not Allowed', { status: 405, headers: corsHeaders(origin) });
       }
 
+      const contentLengthHeader = request.headers.get('content-length');
+      const contentLength = contentLengthHeader ? Number(contentLengthHeader) : null;
+      if (Number.isFinite(contentLength) && contentLength > MAX_PAYLOAD_BYTES) {
+        return jsonResponse(400, { error: 'Payload too large.' });
+      }
+
       let body = {};
       try {
         body = await request.json();
       } catch (err) {
         return new Response('Bad JSON', { status: 400, headers: corsHeaders(origin) });
+      }
+
+      if (!Number.isFinite(contentLength)) {
+        const payloadSize = JSON.stringify(body).length;
+        if (payloadSize > MAX_PAYLOAD_BYTES) {
+          return jsonResponse(400, { error: 'Payload too large.' });
+        }
       }
 
       const expectedPw = (env.HOWKER_MAP_PW || '').trim()
@@ -353,6 +384,18 @@ export default {
 
       if (!statusGeoJson || !poiGeoJson) {
         return jsonResponse(400, { error: 'Missing data.' });
+      }
+
+      const isFeatureCollection = (value) => {
+        return Boolean(
+          value
+          && value.type === 'FeatureCollection'
+          && Array.isArray(value.features)
+        );
+      };
+
+      if (!isFeatureCollection(statusGeoJson) || !isFeatureCollection(poiGeoJson)) {
+        return jsonResponse(400, { error: 'Invalid GeoJSON FeatureCollection.' });
       }
 
       if (!env.HOWKER_DATA) {
@@ -430,6 +473,53 @@ export default {
           'cache-control': 'no-store'
         }
       });
+    }
+
+    if (howkerDataRoutes[pathname]) {
+      const { key, contentType } = howkerDataRoutes[pathname];
+      const cacheHeaders = {
+        'Cache-Control': 'no-store',
+        'Access-Control-Allow-Origin': '*'
+      };
+
+      if (env.HOWKER_DATA) {
+        const object = await env.HOWKER_DATA.get(key);
+        if (object) {
+          const body = await object.arrayBuffer();
+          return new Response(body, {
+            status: 200,
+            headers: {
+              'Content-Type': object.httpMetadata?.contentType || contentType,
+              ...cacheHeaders
+            }
+          });
+        }
+      }
+
+      const githubUrl = `${RAW_BASE}${pathname}`;
+      try {
+        const res = await fetch(githubUrl, {
+          headers: { 'User-Agent': 'NH48-SSR/1.0' },
+          cf: { cacheTtl: 0, cacheEverything: false }
+        });
+
+        if (!res.ok) {
+          console.log(`[Static] Not found: ${githubUrl} (${res.status})`);
+          return new Response('Not Found', { status: 404 });
+        }
+
+        const body = await res.arrayBuffer();
+        return new Response(body, {
+          status: 200,
+          headers: {
+            'Content-Type': contentType,
+            ...cacheHeaders
+          }
+        });
+      } catch (err) {
+        console.error(`[Static] Error: ${err.message}`);
+        return new Response('Internal Server Error', { status: 500 });
+      }
     }
 
     if (pathname === '/submit-edit' || pathname === '/submit-edit/' || pathname === '/fr/submit-edit' || pathname === '/fr/submit-edit/') {
@@ -743,6 +833,15 @@ export default {
         .trim();
     }
 
+    function normalizeDescriptionKey(value) {
+      return String(value || '')
+        .toLowerCase()
+        .replace(/[-_]+/g, ' ')
+        .replace(/[^a-z0-9\\s]/g, '')
+        .replace(/\\s+/g, ' ')
+        .trim();
+    }
+
     // Load mountain descriptions from R2 or cache
     async function loadDescriptions() {
       const map = Object.create(null);
@@ -754,11 +853,25 @@ export default {
             text.split(/\r?\n/).forEach((line) => {
               const trimmed = line.trim();
               if (!trimmed || trimmed.startsWith('#')) return;
-              const idx = trimmed.indexOf(':');
-              if (idx > 0) {
-                const key = trimmed.slice(0, idx).trim();
-                const value = trimmed.slice(idx + 1).trim();
-                if (key) map[key] = value;
+              let key = '';
+              let value = '';
+              const colonIdx = trimmed.indexOf(':');
+              if (colonIdx > 0) {
+                key = trimmed.slice(0, colonIdx).trim();
+                value = trimmed.slice(colonIdx + 1).trim();
+              } else {
+                const dashMatch = trimmed.match(/^(.+?)\\s*[–—-]\\s+(.+)$/);
+                if (dashMatch) {
+                  key = dashMatch[1].trim();
+                  value = dashMatch[2].trim();
+                }
+              }
+              if (key && value) {
+                map[key] = value;
+                const normalizedKey = normalizeDescriptionKey(key);
+                if (normalizedKey) {
+                  map[normalizedKey] = value;
+                }
               }
             });
           }
@@ -2345,7 +2458,14 @@ export default {
     }
     const primaryPhoto = photos.length ? photos[0] : null;
     const heroUrl = primaryPhoto ? primaryPhoto.url : DEFAULT_IMAGE;
-    const summaryFromFile = descMap[slug] || '';
+    const normalizedSlug = normalizeDescriptionKey(slug);
+    const normalizedName = normalizeDescriptionKey(peakName);
+    const summaryFromFile =
+      descMap[slug] ||
+      descMap[normalizedSlug] ||
+      descMap[peakName] ||
+      descMap[normalizedName] ||
+      '';
     const summaryVal = summaryFromFile || (peak.summary || peak.description || '').toString().trim();
 
     // Build canonical and alternate URLs
