@@ -518,6 +518,28 @@
       min-height: 80px;
       resize: vertical;
     }
+    .poi-image-list {
+      display: grid;
+      gap: 6px;
+    }
+    .poi-image-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .poi-image-row input {
+      flex: 1;
+    }
+    .poi-image-row button,
+    .poi-image-add {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--ink);
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
     .poi-item-actions {
       display: flex;
       justify-content: flex-end;
@@ -683,8 +705,9 @@
             <label for="poiDescriptionInput">Description
               <textarea id="poiDescriptionInput" name="poiDescription" aria-label="POI description"></textarea>
             </label>
-            <label for="poiImageInput">Image URL (optional)
-              <input id="poiImageInput" name="poiImage" type="url" placeholder="https://photos.nh48.info/..." aria-label="POI image URL" />
+            <label>Image URLs (optional)
+              <div class="poi-image-list" id="poiImageList"></div>
+              <button type="button" class="poi-image-add" id="poiAddImageBtn">Add image URL</button>
             </label>
           </div>
           <div class="poi-form-actions">
@@ -840,6 +863,27 @@
       return [];
     }
 
+    function normalizeImageUrls(value) {
+      if (!value) return [];
+      if (Array.isArray(value)) {
+        return value.map(item => (typeof item === 'string' ? item.trim() : '')).filter(Boolean);
+      }
+      if (typeof value === 'string') {
+        const trimmed = value.trim();
+        return trimmed ? [trimmed] : [];
+      }
+      return [];
+    }
+
+    function getImageUrlsFromProps(props = {}) {
+      return normalizeImageUrls(
+        props.image_urls
+        || props.imageUrls
+        || props.image_url
+        || props.imageUrl
+      );
+    }
+
     function featureToPoi(feature) {
       const props = feature?.properties || {};
       return {
@@ -850,7 +894,7 @@
         category: props.category || '',
         elevation: props.elevation_ft ?? props.elevation ?? null,
         description: props.description || '',
-        imageUrl: props.image_url || props.imageUrl || ''
+        imageUrls: getImageUrlsFromProps(props)
       };
     }
 
@@ -869,7 +913,7 @@
             category: item.category || '',
             elevation: item.elevation_ft ?? item.elevation ?? null,
             description: item.description || '',
-            imageUrl: item.image_url || item.imageUrl || ''
+            imageUrls: getImageUrlsFromProps(item)
           }))
           .filter(item => Number.isFinite(item.lat) && Number.isFinite(item.lon));
       }
@@ -937,6 +981,7 @@
             category: feature.properties?.category || '',
             elevation_ft: feature.properties?.elevation_ft ?? null,
             description: feature.properties?.description || '',
+            image_urls: normalizeImageUrls(feature.properties?.image_urls || feature.properties?.imageUrls),
             image_url: feature.properties?.image_url || ''
           });
         },
@@ -950,7 +995,8 @@
               category: props.category || '',
               description: desc,
               elevation_ft: props.elevation_ft ?? null,
-              slug: props.slug || ''
+              slug: props.slug || '',
+              image_urls: getImageUrlsFromProps(props)
             });
           }
           layer.bindPopup(`<strong>${title}</strong><br/>${desc}`);
@@ -1100,7 +1146,7 @@
             category: feature.properties?.category || '',
             elevation: feature.properties?.elevation_ft ?? null,
             description: feature.properties?.description || '',
-            imageUrl: feature.properties?.image_url || '',
+            imageUrls: getImageUrlsFromProps(feature.properties || {}),
             lat: feature.geometry.coordinates[1],
             lon: feature.geometry.coordinates[0]
           }));
@@ -1170,6 +1216,32 @@
       if (form) form.reset();
       poiSlugTouched = false;
       clearPoiFormError();
+      const imageList = document.getElementById('poiImageList');
+      if (imageList) {
+        imageList.innerHTML = '';
+        buildPoiImageRow(imageList, '');
+      }
+    }
+
+    function buildPoiImageRow(container, value = '') {
+      if (!container) return;
+      const row = document.createElement('div');
+      row.className = 'poi-image-row';
+      const input = document.createElement('input');
+      input.type = 'url';
+      input.placeholder = 'https://photos.nh48.info/...';
+      input.value = value;
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', () => {
+        row.remove();
+        if (!container.querySelector('.poi-image-row')) {
+          buildPoiImageRow(container, '');
+        }
+      });
+      row.append(input, removeBtn);
+      container.appendChild(row);
     }
 
     function getPoiNames() {
@@ -1544,7 +1616,7 @@
         category: props.category || '',
         elevation: props.elevation_ft ?? null,
         description: props.description || '',
-        imageUrl: props.image_url || props.imageUrl || ''
+        imageUrls: getImageUrlsFromProps(props)
       };
     }
 
@@ -1635,22 +1707,59 @@
       descriptionLabel.appendChild(descriptionInput);
 
       const imageLabel = document.createElement('label');
-      imageLabel.textContent = 'Image URL';
-      const imageInput = document.createElement('input');
-      imageInput.type = 'url';
-      imageInput.value = poi.imageUrl || '';
-      imageLabel.appendChild(imageInput);
+      imageLabel.textContent = 'Image URLs';
+      const imageList = document.createElement('div');
+      imageList.className = 'poi-image-list';
+
+      const addImageInput = (value = '') => {
+        const row = document.createElement('div');
+        row.className = 'poi-image-row';
+        const input = document.createElement('input');
+        input.type = 'url';
+        input.placeholder = 'https://photos.nh48.info/...';
+        input.value = value;
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', () => {
+          row.remove();
+          updatePoi();
+        });
+        input.addEventListener('change', updatePoi);
+        row.append(input, removeBtn);
+        imageList.appendChild(row);
+      };
+
+      const startingImages = Array.isArray(poi.imageUrls) ? poi.imageUrls : [];
+      if (startingImages.length) {
+        startingImages.forEach(url => addImageInput(url));
+      } else {
+        addImageInput('');
+      }
+
+      const addImageBtn = document.createElement('button');
+      addImageBtn.type = 'button';
+      addImageBtn.className = 'poi-image-add';
+      addImageBtn.textContent = 'Add image URL';
+      addImageBtn.addEventListener('click', () => {
+        addImageInput('');
+      });
+
+      imageLabel.append(imageList, addImageBtn);
 
       grid.append(nameLabel, slugLabel, categoryLabel, elevationLabel, descriptionLabel, imageLabel);
 
       const updatePoi = () => {
+        const imageUrls = Array.from(imageList.querySelectorAll('input'))
+          .map(input => input.value.trim())
+          .filter(Boolean);
         const updated = {
           name: nameInput.value.trim(),
           slug: slugInput.value.trim(),
           category: categorySelect.value,
           elevation: elevationInput.value ? Number(elevationInput.value) : null,
           description: descriptionInput.value.trim(),
-          imageUrl: imageInput.value.trim(),
+          imageUrls,
           lat: poi.lat,
           lon: poi.lon
         };
@@ -1659,7 +1768,7 @@
         icon.src = getPoiIconForCategory(updated.category);
       };
 
-      [nameInput, slugInput, categorySelect, elevationInput, descriptionInput, imageInput].forEach(input => {
+      [nameInput, slugInput, categorySelect, elevationInput, descriptionInput].forEach(input => {
         input.addEventListener('change', updatePoi);
       });
 
@@ -1715,7 +1824,7 @@
           ...edit,
           slug: base.slug || edit?.slug || baseSlug,
           elevation: edit?.elevation ?? base.elevation ?? null,
-          imageUrl: edit?.imageUrl || base.imageUrl || '',
+          imageUrls: edit?.imageUrls?.length ? edit.imageUrls : base.imageUrls || [],
           lat: edit?.lat ?? markerLatLng.lat,
           lon: edit?.lon ?? markerLatLng.lng
         };
@@ -1741,6 +1850,10 @@
     function getPoiFeatureProperties(item) {
       const base = basePoiDataByName.get(item.name) || {};
       const elevation = item.elevation ?? base.elevation_ft ?? base.elevation ?? null;
+      const imageUrls = [
+        ...getImageUrlsFromProps(base),
+        ...(Array.isArray(item.imageUrls) ? item.imageUrls : getImageUrlsFromProps(item))
+      ].map(url => url.trim()).filter(Boolean);
       const props = {
         name: item.name || base.name || '',
         category: item.category || base.category || '',
@@ -1751,9 +1864,8 @@
       if (typeof elevation === 'number' && !Number.isNaN(elevation)) {
         props.elevation_ft = elevation;
       }
-      const imageUrl = item.imageUrl || base.image_url || base.imageUrl || '';
-      if (imageUrl) {
-        props.image_url = imageUrl;
+      if (imageUrls.length) {
+        props.image_urls = imageUrls;
       }
       return props;
     }
@@ -2419,8 +2531,16 @@
       const poiCategoryInput = document.getElementById('poiCategoryInput');
       const poiElevationInput = document.getElementById('poiElevationInput');
       const poiDescriptionInput = document.getElementById('poiDescriptionInput');
-      const poiImageInput = document.getElementById('poiImageInput');
+      const poiImageList = document.getElementById('poiImageList');
+      const poiAddImageBtn = document.getElementById('poiAddImageBtn');
       const poiCancelBtn = document.getElementById('poiCancelBtn');
+
+      if (poiImageList && !poiImageList.querySelector('.poi-image-row')) {
+        buildPoiImageRow(poiImageList, '');
+      }
+      if (poiAddImageBtn && poiImageList) {
+        poiAddImageBtn.addEventListener('click', () => buildPoiImageRow(poiImageList, ''));
+      }
 
       document.querySelectorAll('.tool.dropdown > .tool-btn').forEach(button => {
         button.addEventListener('click', event => {
@@ -2508,6 +2628,9 @@
           const name = poiNameInput?.value.trim() || '';
           const slug = poiSlugInput?.value.trim() || '';
           const elevationValue = poiElevationInput?.value ? Number(poiElevationInput.value) : null;
+          const imageUrls = Array.from(poiImageList?.querySelectorAll('input') || [])
+            .map(input => input.value.trim())
+            .filter(Boolean);
 
           if (!name) {
             showPoiFormError('Name is required to add a POI.');
@@ -2539,7 +2662,7 @@
             category: poiCategoryInput?.value || '',
             elevation: elevationValue,
             description: poiDescriptionInput?.value.trim() || '',
-            imageUrl: poiImageInput?.value.trim() || ''
+            imageUrls
           };
           closePoiFormModal();
           setStatusMessage('Click the map to place the new POI.');
