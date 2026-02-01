@@ -23,11 +23,95 @@ const STATIC_PAGE_ENTRIES = [
   { loc: 'https://nh48.info/plant-catalog', file: 'pages/plant_catalog.html' },
   { loc: 'https://nh48.info/projects/hrt-info', file: 'pages/hrt_info.html' },
   { loc: 'https://nh48.info/projects/plant-map', file: 'pages/projects/plant-map.html' },
+  {
+    loc: 'https://nh48.info/projects/howker-map-editor',
+    file: 'pages/projects/howker-map-editor.html',
+    changefreq: 'monthly',
+    priority: 0.5,
+  },
   { loc: 'https://nh48.info/howker-ridge', file: 'pages/howker_ridge.html' },
   { loc: 'https://nh48.info/virtual-hike', file: 'pages/virtual_hike.html' },
   { loc: 'https://nh48.info/peakid-game', file: 'peakid-game.html' },
   { loc: 'https://nh48.info/timed-peakid-game', file: 'timed-peakid-game.html' },
+  {
+    loc: 'https://nh48.info/pages/puzzle-game.html',
+    file: 'pages/puzzle-game.html',
+    changefreq: 'monthly',
+    priority: 0.6,
+  },
   { loc: 'https://nh48.info/nh-4000-footers-info', file: 'nh-4000-footers-info.html' },
+];
+const STATIC_IMAGE_ENTRIES = [
+  {
+    loc: 'https://nh48.info/',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/bondcliff/bondcliff__001.jpg',
+        title: 'Bondcliff ridgeline looking into the Pemigewasset Wilderness',
+        caption: 'Bondcliff ridgeline looking into the Pemigewasset Wilderness featured on the NH48 homepage.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/catalog',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__002.jpg',
+        title: 'Franconia Ridge trail climbing toward the Mount Lafayette summit cone',
+        caption: 'Franconia Ridge trail climbing toward Mount Lafayette, featured on the NH48 catalog.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/photos/',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__001.jpg',
+        title: 'Mount Washington summit buildings and observatory',
+        caption: 'Featured Mount Washington summit photo for the NH48 photo hub.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/nh-4000-footers-info',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__001.jpg',
+        title: 'Mount Madison summit boulders under dramatic skies in the Presidential Range',
+        caption: 'Mount Madison summit boulders under dramatic skies, featured on the NH48 info hub.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/projects/plant-map',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg',
+        title: 'Mount Madison ridge view with alpine terrain and distant peaks',
+        caption: 'Mount Madison ridge view featured on the Howker Ridge plant log map.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/virtual-hike',
+    images: [
+      {
+        url: 'https://nh48.info/assets/virtual-hike-thumbnail.jpg',
+        title: 'Virtual hike overview of Howker Ridge',
+        caption: 'Virtual hike preview image for the Howker Ridge 3D experience.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/timed-peakid-game',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__002.jpg',
+        title: 'Franconia Ridge trail climbing toward the Mount Lafayette summit cone',
+        caption: 'Franconia Ridge trail climbing toward Mount Lafayette, featured on the timed PeakID game.',
+      },
+    ],
+  },
 ];
 const IMAGE_LICENSE_URL = 'https://nh48.info/licensing';
 
@@ -249,7 +333,12 @@ const buildPlantImageEntries = () => {
 const buildPageSitemap = () => {
   const urls = [];
   STATIC_PAGE_ENTRIES.forEach((entry) =>
-    urls.push({ loc: entry.loc, lastmod: getGitLastmod(entry.file) }),
+    urls.push({
+      loc: entry.loc,
+      lastmod: getGitLastmod(entry.file),
+      changefreq: entry.changefreq,
+      priority: entry.priority,
+    }),
   );
   slugs.forEach((slug) => {
     urls.push({
@@ -282,6 +371,12 @@ const buildPageSitemap = () => {
     if (entry.lastmod) {
       parts.push(`    <lastmod>${escapeXml(entry.lastmod)}</lastmod>`);
     }
+    if (entry.changefreq) {
+      parts.push(`    <changefreq>${escapeXml(entry.changefreq)}</changefreq>`);
+    }
+    if (entry.priority !== undefined && entry.priority !== null) {
+      parts.push(`    <priority>${entry.priority}</priority>`);
+    }
     parts.push('  </url>');
   });
   parts.push('</urlset>');
@@ -313,6 +408,16 @@ const buildImageSitemap = () => {
 
   const plantEntries = buildPlantImageEntries();
   urlEntries.push(...plantEntries);
+  const staticEntries = STATIC_IMAGE_ENTRIES.map((entry) => ({
+    ...entry,
+    images: dedupeImages(
+      (entry.images || []).map((image) => ({
+        ...image,
+        url: normalizePhotoUrl(image.url),
+      })),
+    ),
+  }));
+  urlEntries.push(...staticEntries);
 
   const xmlParts = [];
   xmlParts.push('<?xml version="1.0" encoding="UTF-8"?>');
