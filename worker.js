@@ -152,40 +152,54 @@ export default {
     }
 
     if (pathname === '/api/howker/map-update' || pathname === '/api/howker/map-update/') {
-      const corsHeaders = {
-        'Access-Control-Allow-Origin': HOWKER_ORIGIN,
-        'Access-Control-Allow-Methods': 'POST,OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
+      const corsHeaders = (origin) => {
+        const allowed = new Set([
+          'https://nh48.info',
+          'http://localhost:3000',
+          'http://127.0.0.1:3000'
+        ]);
+        const resolved = allowed.has(origin) ? origin : 'https://nh48.info';
+        return {
+          'Access-Control-Allow-Origin': resolved,
+          'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Access-Control-Max-Age': '86400'
+        };
       };
+
+      const origin = request.headers.get('Origin') || HOWKER_ORIGIN;
 
       const jsonResponse = (status, payload) => {
         return new Response(JSON.stringify(payload), {
           status,
           headers: {
-            ...corsHeaders,
+            ...corsHeaders(origin),
             'Content-Type': 'application/json'
           }
         });
       };
 
       if (request.method === 'OPTIONS') {
-        return new Response(null, { status: 204, headers: corsHeaders });
+        return new Response(null, { status: 204, headers: corsHeaders(origin) });
       }
 
       if (request.method !== 'POST') {
-        return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+        return new Response('Method Not Allowed', { status: 405, headers: corsHeaders(origin) });
       }
 
-      let body;
+      let body = {};
       try {
         body = await request.json();
       } catch (err) {
-        return jsonResponse(400, { error: 'Invalid JSON.' });
+        return new Response('Bad JSON', { status: 400, headers: corsHeaders(origin) });
       }
 
-      const password = body?.password;
-      if (!password || password !== env.HOWKER_MAP_PW) {
-        return jsonResponse(403, { error: 'Unauthorized.' });
+      const expectedPw = (env.HOWKER_MAP_PW || '').trim()
+        || (env.HOWKER_MAP_PASSWORD || '').trim()
+        || (env.HOWKER_PASS || '').trim();
+      const providedPw = (body?.password || '').trim();
+      if (!expectedPw || !providedPw || providedPw !== expectedPw) {
+        return new Response('Unauthorized', { status: 403, headers: corsHeaders(origin) });
       }
 
       const statusGeoJson = body?.statusGeoJson || body?.status;
