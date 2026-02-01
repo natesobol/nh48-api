@@ -135,6 +135,11 @@
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
+      const RANGE_DATA_URLS = [
+        '/data/wmnf-ranges.json',
+        'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-ranges.json',
+        'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-ranges.json'
+      ];
       const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85,width=720';
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
       const PHOTO_BASE = new URL(PHOTO_BASE_URL);
@@ -208,67 +213,6 @@
         return applyImageTransform(normalized);
       }
 
-      function cleanRangeName(range){
-        if(!range) return 'Unknown Range';
-        const cleaned = range.trim();
-        return cleaned.endsWith('.') ? cleaned.slice(0, -1) : cleaned;
-      }
-
-      function slugify(value){
-        return String(value || '')
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/^-+|-+$/g, '');
-      }
-
-      function parseElevation(peak){
-        const raw = peak['Elevation (ft)'] ?? peak.elevation ?? peak['Elevation'] ?? peak.elevationFeet ?? peak.elevation_ft;
-        const value = typeof raw === 'string' ? parseFloat(raw.replace(/,/g, '')) : Number(raw);
-        return Number.isFinite(value) ? value : 0;
-      }
-
-      function getPrimaryPhoto(peak){
-        const photos = Array.isArray(peak?.photos) ? peak.photos : [];
-        return photos.find(photo => photo && (photo.isPrimary || photo.default)) || photos[0] || null;
-      }
-
-      function getPeaksArray(data){
-        if(Array.isArray(data)) return data;
-        if(data && typeof data === 'object') return Object.values(data);
-        return [];
-      }
-
-      function getPeakName(peak){
-        return peak?.name || peak?.['Peak Name'] || peak?.peakName || peak?.['Peak'] || 'Unknown Peak';
-      }
-
-      function getRangeName(peak){
-        const range = peak?.range || peak?.['Range / Subrange'] || peak?.['Range'] || 'Unknown Range';
-        return cleanRangeName(range);
-      }
-
-      function buildRangeCatalog(peaks){
-        const grouped = new Map();
-        peaks.forEach(peak => {
-          const rangeName = getRangeName(peak);
-          if(!grouped.has(rangeName)) grouped.set(rangeName, []);
-          grouped.get(rangeName).push(peak);
-        });
-
-        return Array.from(grouped.entries()).map(([rangeName, rangePeaks]) => {
-          const tallestPeak = rangePeaks.reduce((highest, current) => {
-            return parseElevation(current) > parseElevation(highest) ? current : highest;
-          }, rangePeaks[0]);
-          return {
-            name: rangeName,
-            slug: slugify(rangeName),
-            count: rangePeaks.length,
-            highestPeak: tallestPeak,
-            highestElevation: parseElevation(tallestPeak)
-          };
-        });
-      }
-
       async function fetchPeaks(){
         for(const url of PEAKS_DATA_URLS){
           try{
@@ -285,6 +229,38 @@
         throw new Error('Unable to load peaks data.');
       }
 
+      async function fetchRanges(){
+        for(const url of RANGE_DATA_URLS){
+          try{
+            const response = await fetch(url, { mode: 'cors' });
+            if(!response.ok) throw new Error(`Bad response: ${response.status}`);
+            const data = await response.json();
+            if(data && typeof data === 'object'){
+              return data;
+            }
+          }catch(error){
+            console.warn('Failed to fetch ranges from', url, error);
+          }
+        }
+        throw new Error('Unable to load range data.');
+      }
+
+      function buildRangesFromJson(rangeObj){
+        return Object.values(rangeObj).map(range => {
+          const photo = (range.photos || []).find(item => item?.isPrimary) || range.photos?.[0] || null;
+          const photoUrl = photo ? toTransformedPhotoUrl(photo.url) : '';
+          return {
+            name: range.rangeName,
+            slug: range.slug,
+            count: range.peakCount,
+            highestPeakName: range.highestPoint?.peakName || '—',
+            highestElevation: range.highestPoint?.elevation_ft || 0,
+            cardPhotoUrl: photoUrl,
+            photoAlt: photo?.altText || photo?.alt || `${range.rangeName} range`
+          };
+        });
+      }
+
       function formatElevation(elevation){
         if(!elevation) return '—';
         return `${Math.round(elevation).toLocaleString()} ft`;
@@ -292,11 +268,8 @@
 
       function buildRangeCard(range){
         const placeholder = getPlaceholder();
-        const highestPeakName = getPeakName(range.highestPeak);
-        const primaryPhoto = getPrimaryPhoto(range.highestPeak);
-        const photoUrl = primaryPhoto?.url || primaryPhoto;
-        const thumbSrc = photoUrl ? toTransformedPhotoUrl(photoUrl) : '';
-        const altText = primaryPhoto?.alt || `${range.name} range highlighted by ${highestPeakName}`;
+        const thumbSrc = range.cardPhotoUrl || '';
+        const altText = range.photoAlt || `${range.name} range`;
         const imgMarkup = `
           <div class="thumb">
             <img src="${placeholder}" ${thumbSrc ? `data-src="${thumbSrc}"` : ''} alt="${altText}" loading="lazy" decoding="async">
@@ -310,7 +283,7 @@
               <div class="card-meta">
                 <div class="meta-row">
                   <span class="meta-label">Highest Peak</span>
-                  <span class="meta-value">${highestPeakName}</span>
+                  <span class="meta-value">${range.highestPeakName}</span>
                 </div>
                 <div class="meta-row">
                   <span class="meta-label">Elevation</span>
@@ -344,6 +317,31 @@
         return sorted;
       }
 
+      function insertRangeCatalogStructuredData(ranges){
+        const existing = document.getElementById('range-catalog-structured-data');
+        if(existing) existing.remove();
+        const datasetSD = {
+          "@context": "https://schema.org",
+          "@type": "Dataset",
+          "name": "NH48 Range Catalog",
+          "description": "Collection of New Hampshire ranges with peak counts, highest summits and representative photos.",
+          "url": "https://nh48.info/catalog/ranges",
+          "creator": { "@type": "Person", "name": "Nathan Sobol" },
+          "license": "https://creativecommons.org/licenses/by/4.0/",
+          "hasPart": ranges.map(range => ({
+            "@type": "Place",
+            "name": range.name,
+            "url": `https://nh48.info/range/${range.slug}/`,
+            "image": range.cardPhotoUrl
+          }))
+        };
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.id = 'range-catalog-structured-data';
+        script.textContent = JSON.stringify(datasetSD);
+        document.head.appendChild(script);
+      }
+
       function setupLazyLoading(){
         const imgs = Array.from(document.querySelectorAll('img[data-src]'));
         if(imgs.length === 0) return;
@@ -371,6 +369,7 @@
 
       function render(ranges){
         const list = applyFilterAndSort(ranges);
+        insertRangeCatalogStructuredData(list);
         gridEl.innerHTML = list.map(buildRangeCard).join('');
         emptyEl.hidden = list.length > 0;
         setupLazyLoading();
@@ -378,9 +377,9 @@
 
       async function init(){
         try{
-          const peaksData = await fetchPeaks();
-          const peaks = getPeaksArray(peaksData);
-          const ranges = buildRangeCatalog(peaks);
+          await fetchPeaks();
+          const rangeData = await fetchRanges();
+          const ranges = buildRangesFromJson(rangeData);
           loadingEl.style.display = 'none';
           render(ranges);
 
