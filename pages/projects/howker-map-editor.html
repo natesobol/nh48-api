@@ -225,50 +225,55 @@
     }
     .share-card-overlay {
       position: absolute;
-      top: 18px;
-      right: 18px;
-      width: 320px;
-      max-width: calc(100% - 36px);
-      background: rgba(10, 10, 10, 0.78);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
+      inset: auto 0 0 0;
+      width: 100%;
+      padding: 28px;
       color: #fff;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-      display: grid;
-      gap: 12px;
+      display: flex;
+      align-items: flex-end;
       pointer-events: none;
     }
-    .share-card-overlay h3 {
+    .share-card-overlay::before {
+      content: '';
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 40%;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    }
+    .share-card-overlay.portrait::before {
+      height: 50%;
+    }
+    .share-card-overlay .share-card-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 8px;
+    }
+    .share-card-overlay .trail-title {
+      font-size: 1.4rem;
+      font-weight: 700;
       margin: 0;
-      font-size: 1.1rem;
     }
-    .share-card-overlay .subtitle {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 0.85rem;
+    .share-card-overlay .trail-subtitle {
+      color: #d1e5ff;
+      font-size: 0.9rem;
+      margin: 0;
     }
-    .share-card-overlay .badges {
+    .share-card-overlay .trail-stats {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 8px;
     }
-    .share-card-overlay .badge {
+    .share-card-overlay.portrait .trail-stats {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .share-card-overlay .trail-stats span {
+      display: inline-block;
+      background: rgba(0, 0, 0, 0.45);
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 4px 10px;
-      font-size: 0.75rem;
-      background: rgba(23, 26, 34, 0.9);
-    }
-    .share-card-overlay .stats {
-      display: grid;
-      gap: 4px;
+      padding: 4px 12px;
       font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.78);
-    }
-    .share-card-overlay .footer {
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.65);
     }
     .modal-backdrop {
       position: fixed;
@@ -688,6 +693,10 @@
         <button id="saveBtn" type="button" data-variant="green" title="Save to server" aria-label="Save to server">Save</button>
         <button id="downloadBtn" type="button" title="Download edits" aria-label="Download edits">Download</button>
         <button id="loadEditsBtn" type="button" title="Reload saved edits" aria-label="Reload saved edits">Reload</button>
+        <select id="cardOrientation" aria-label="Share card orientation">
+          <option value="landscape" selected>Share Card: Wide (16:9, north left)</option>
+          <option value="portrait">Share Card: Vertical (9:16, north up)</option>
+        </select>
         <select id="cardRes" aria-label="Share card resolution">
           <option value="4k" selected>Share Card: 4K (4096×2304)</option>
           <option value="8k">Share Card: 8K (7680×4320) — heavy</option>
@@ -2341,7 +2350,7 @@
         subtitle: 'Mount Madison • White Mountain National Forest',
         stats: [
           '~4.5 mi one-way',
-          '~3,900 ft gain',
+          '~4,750 ft gain',
           'Strenuous'
         ],
         edits: { brushed, needs, blowdowns, signs },
@@ -2356,21 +2365,16 @@
       const overlay = document.getElementById('shareCardOverlay');
       if (!overlay) return;
       const meta = buildCardMeta();
+      const orientation = document.getElementById('cardOrientation')?.value || 'landscape';
+      overlay.classList.toggle('portrait', orientation === 'portrait');
       overlay.innerHTML = `
-        <div>
-          <h3>${meta.title}</h3>
-          <div class="subtitle">${meta.subtitle}</div>
+        <div class="share-card-content">
+          <div class="trail-title">${meta.title}</div>
+          <div class="trail-subtitle">${meta.subtitle}</div>
+          <div class="trail-stats">
+            ${meta.stats.map(stat => `<span>${stat}</span>`).join('')}
+          </div>
         </div>
-        <div class="badges">
-          ${meta.stats.map(stat => `<span class="badge">${stat}</span>`).join('')}
-        </div>
-        <div class="stats">
-          <div>Brushed segments: ${meta.edits.brushed}</div>
-          <div>Needs brushing: ${meta.edits.needs}</div>
-          <div>Blowdowns: ${meta.edits.blowdowns}</div>
-          <div>Signs: ${meta.edits.signs}</div>
-        </div>
-        <div class="footer">nh48.info/projects/howker-map-editor • ${new Date().toLocaleString()}</div>
       `;
     }
 
@@ -2465,82 +2469,63 @@
       return y;
     }
 
-    function drawLegendOnCanvas(canvas, meta, exportW, exportH) {
+    function drawLegendOnCanvas(canvas, meta, exportW, exportH, orientation) {
       const ctx = canvas.getContext('2d');
-      const pad = Math.round(exportW * 0.02);
-      const boxW = Math.min(920, Math.round(exportW * 0.26));
-      const boxX = exportW - boxW - pad;
-      const boxY = pad;
-      const boxH = Math.min(Math.round(exportH * 0.46), exportH - pad * 2);
+      const pad = Math.round(exportW * 0.04);
+      const gradientRatio = orientation === 'portrait' ? 0.5 : 0.4;
+      const gradientHeight = Math.round(exportH * gradientRatio);
+      const gradientStart = exportH - gradientHeight;
 
       ctx.save();
-      ctx.fillStyle = 'rgba(10,10,10,0.78)';
-      ctx.strokeStyle = 'rgba(34,197,94,0.55)';
-      ctx.lineWidth = Math.max(2, Math.round(exportW * 0.0015));
-      roundRect(ctx, boxX, boxY, boxW, boxH, 24);
-      ctx.fill();
-      ctx.stroke();
+      const gradient = ctx.createLinearGradient(0, gradientStart, 0, exportH);
+      gradient.addColorStop(0, 'rgba(0,0,0,0)');
+      gradient.addColorStop(1, 'rgba(0,0,0,0.65)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, gradientStart, exportW, gradientHeight);
 
-      const titleSize = Math.max(34, Math.round(exportW * 0.012));
-      const subSize = Math.max(18, Math.round(exportW * 0.006));
-      const bodySize = Math.max(18, Math.round(exportW * 0.006));
+      const titleSize = Math.max(44, Math.round(exportW * 0.03));
+      const subSize = Math.max(22, Math.round(exportW * 0.015));
+      const statSize = Math.max(20, Math.round(exportW * 0.013));
 
-      let y = boxY + Math.round(pad * 0.8);
+      const statLineHeight = Math.round(statSize * 1.4);
+      const statsHeight = orientation === 'portrait'
+        ? meta.stats.length * statLineHeight
+        : Math.round(statSize * 2);
+      const totalHeight = titleSize + subSize + statsHeight + Math.round(pad * 0.6);
+      let y = exportH - pad - totalHeight;
+
       ctx.fillStyle = '#ffffff';
       ctx.font = `700 ${titleSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-      y = drawWrappedText(ctx, meta.title, boxX + Math.round(pad * 0.6), y, boxW - Math.round(pad * 1.2), titleSize + 6);
+      y = drawWrappedText(ctx, meta.title, pad, y, exportW - pad * 2, titleSize + 6);
 
-      ctx.fillStyle = 'rgba(255,255,255,0.82)';
+      ctx.fillStyle = '#d1e5ff';
       ctx.font = `600 ${subSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-      y += 6;
-      y = drawWrappedText(ctx, meta.subtitle, boxX + Math.round(pad * 0.6), y, boxW - Math.round(pad * 1.2), subSize + 4);
+      y += Math.round(subSize * 0.4);
+      y = drawWrappedText(ctx, meta.subtitle, pad, y, exportW - pad * 2, subSize + 4);
 
-      y += Math.round(pad * 0.35);
-      const badgeH = Math.round(subSize * 1.7);
-      const badgePadX = Math.round(subSize * 0.9);
-      const badgeGap = Math.round(subSize * 0.6);
-
-      ctx.font = `700 ${bodySize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-      let bx = boxX + Math.round(pad * 0.6);
-      meta.stats.forEach(txt => {
-        const w = ctx.measureText(txt).width + badgePadX * 2;
-        if (bx + w > boxX + boxW - Math.round(pad * 0.6)) {
-          bx = boxX + Math.round(pad * 0.6);
-          y += badgeH + Math.round(subSize * 0.6);
-        }
-        ctx.fillStyle = 'rgba(23,26,34,0.9)';
-        ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-        roundRect(ctx, bx, y, w, badgeH, 999);
-        ctx.fill();
-        ctx.stroke();
+      y += Math.round(subSize * 0.6);
+      ctx.font = `600 ${statSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      if (orientation === 'portrait') {
         ctx.fillStyle = '#ffffff';
-        ctx.fillText(txt, bx + badgePadX, y + Math.round(badgeH * 0.68));
-        bx += w + badgeGap;
-      });
-
-      y += badgeH + Math.round(pad * 0.6);
-      ctx.fillStyle = 'rgba(255,255,255,0.85)';
-      ctx.font = `700 ${bodySize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-      ctx.fillText('Edits on this map', boxX + Math.round(pad * 0.6), y);
-
-      y += Math.round(bodySize * 1.5);
-      ctx.fillStyle = 'rgba(255,255,255,0.78)';
-      ctx.font = `600 ${bodySize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-      const rows = [
-        `Brushed segments: ${meta.edits.brushed}`,
-        `Needs brushing: ${meta.edits.needs}`,
-        `Blowdowns: ${meta.edits.blowdowns}`,
-        `Signs: ${meta.edits.signs}`
-      ];
-      rows.forEach(row => {
-        ctx.fillText(row, boxX + Math.round(pad * 0.6), y);
-        y += Math.round(bodySize * 1.35);
-      });
-
-      const footerY = boxY + boxH - Math.round(pad * 0.6);
-      ctx.fillStyle = 'rgba(255,255,255,0.75)';
-      ctx.font = `600 ${Math.max(16, Math.round(exportW * 0.0048))}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
-      ctx.fillText('nh48.info • Howker Ridge Map Editor', boxX + Math.round(pad * 0.6), footerY);
+        meta.stats.forEach(stat => {
+          ctx.fillText(stat, pad, y + statSize);
+          y += statLineHeight;
+        });
+      } else {
+        const badgeHeight = Math.round(statSize * 1.8);
+        const badgePadX = Math.round(statSize * 1.2);
+        const badgeGap = Math.round(statSize * 0.6);
+        let bx = pad;
+        meta.stats.forEach(stat => {
+          const badgeW = ctx.measureText(stat).width + badgePadX * 2;
+          ctx.fillStyle = 'rgba(0,0,0,0.45)';
+          roundRect(ctx, bx, y, badgeW, badgeHeight, 999);
+          ctx.fill();
+          ctx.fillStyle = '#ffffff';
+          ctx.fillText(stat, bx + badgePadX, y + Math.round(badgeHeight * 0.68));
+          bx += badgeW + badgeGap;
+        });
+      }
 
       ctx.restore();
     }
@@ -2554,8 +2539,13 @@
       }
 
       const resSel = document.getElementById('cardRes')?.value || '4k';
-      const exportW = resSel === '8k' ? 7680 : 4096;
-      const exportH = resSel === '8k' ? 4320 : 2304;
+      const orientation = document.getElementById('cardOrientation')?.value || 'landscape';
+      const baseW = resSel === '8k' ? 7680 : 4096;
+      const baseH = resSel === '8k' ? 4320 : 2304;
+      const exportW = orientation === 'portrait' ? baseH : baseW;
+      const exportH = orientation === 'portrait' ? baseW : baseH;
+      const mapW = orientation === 'landscape' ? exportH : exportW;
+      const mapH = orientation === 'landscape' ? exportW : exportH;
       const mapEl = document.getElementById('map');
       const wrapEl = mapEl?.parentElement;
 
@@ -2573,20 +2563,19 @@
 
       try {
         setStep('render', true, `Preparing ${exportW}×${exportH} export…`);
-        const overlayReserve = Math.min(920, Math.round(exportW * 0.26));
+        const paddingSize = Math.round(Math.min(mapW, mapH) * 0.06);
         const boundsGroup = L.featureGroup([baseTrailLayer, drawnLayers].filter(Boolean));
         const bounds = boundsGroup.getBounds?.();
         if (bounds && bounds.isValid()) {
           map.fitBounds(bounds, {
-            paddingTopLeft: [40, 40],
-            paddingBottomRight: [overlayReserve + 80, 40]
+            padding: [paddingSize, paddingSize]
           });
         }
 
-        mapEl.style.width = `${exportW}px`;
-        mapEl.style.height = `${exportH}px`;
-        wrapEl.style.width = `${exportW}px`;
-        wrapEl.style.height = `${exportH}px`;
+        mapEl.style.width = `${mapW}px`;
+        mapEl.style.height = `${mapH}px`;
+        wrapEl.style.width = `${mapW}px`;
+        wrapEl.style.height = `${mapH}px`;
 
         map.invalidateSize(true);
         await waitForMapIdle(15000);
@@ -2599,10 +2588,23 @@
         });
 
         const meta = buildCardMeta();
-        drawLegendOnCanvas(canvas, meta, exportW, exportH);
+        let exportCanvas = canvas;
+        if (orientation === 'landscape') {
+          const rotated = document.createElement('canvas');
+          rotated.width = exportW;
+          rotated.height = exportH;
+          const rctx = rotated.getContext('2d');
+          rctx.save();
+          rctx.translate(exportW, 0);
+          rctx.rotate(Math.PI / 2);
+          rctx.drawImage(canvas, 0, 0, mapW, mapH);
+          rctx.restore();
+          exportCanvas = rotated;
+        }
+        drawLegendOnCanvas(exportCanvas, meta, exportW, exportH, orientation);
 
         const blob = await new Promise(resolve => {
-          canvas.toBlob(b => resolve(b), 'image/jpeg', 0.92);
+          exportCanvas.toBlob(b => resolve(b), 'image/jpeg', 0.92);
         });
 
         if (!blob) {
@@ -2610,7 +2612,7 @@
         }
 
         const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-        const filename = `howker-ridge-map-card-${resSel}-${stamp}.jpg`;
+        const filename = `howker-ridge-map-card-${orientation}-${resSel}-${stamp}.jpg`;
         const dlUrl = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = dlUrl;
@@ -3019,6 +3021,10 @@
       document.getElementById('undoBtn').addEventListener('click', undoLast);
       document.getElementById('locateBtn').addEventListener('click', locateUser);
       document.getElementById('shareCardBtn').addEventListener('click', generateShareCard);
+      const cardOrientation = document.getElementById('cardOrientation');
+      if (cardOrientation) {
+        cardOrientation.addEventListener('change', updateShareCardOverlay);
+      }
       const searchInput = document.getElementById('searchInput');
       document.getElementById('searchBtn').addEventListener('click', () => performSearch(searchInput.value));
       searchInput.addEventListener('keydown', event => {
