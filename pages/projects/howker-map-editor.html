@@ -197,6 +197,32 @@
       height: 75vh;
       width: 100%;
     }
+    .leaflet-control.satellite-control {
+      background: rgba(15, 23, 42, 0.92);
+      color: #e2e8f0;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 10px;
+      display: grid;
+      gap: 6px;
+      min-width: 180px;
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.35);
+    }
+    .satellite-control label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.78rem;
+    }
+    .satellite-control input[type="range"] {
+      width: 110px;
+      accent-color: var(--accent);
+    }
+    .satellite-control .satellite-toggle {
+      justify-content: flex-start;
+      gap: 6px;
+    }
     .share-card-overlay {
       position: absolute;
       top: 18px;
@@ -992,19 +1018,78 @@
 
     async function initMap() {
       const TILE_URL = '/api/tiles/opentopo/{z}/{x}/{y}.png';
+      const MAX_ZOOM = 20;
+      const SATELLITE_OPACITY_DEFAULT = 0.6;
       const standardLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
+        maxZoom: MAX_ZOOM,
+        maxNativeZoom: 19,
         attribution: '&copy; OpenStreetMap contributors'
       });
       const topoLayer = L.tileLayer(TILE_URL, {
-        maxZoom: 17,
+        maxZoom: MAX_ZOOM,
+        maxNativeZoom: 17,
         crossOrigin: true,
         attribution: '© OpenTopoMap (CC-BY-SA) • © OpenStreetMap contributors'
       });
+      const satelliteLayer = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: MAX_ZOOM,
+          maxNativeZoom: 19,
+          opacity: SATELLITE_OPACITY_DEFAULT,
+          attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+        }
+      );
 
-      map = L.map('map', { layers: [topoLayer] }).setView([44.3, -71.3], 13);
-      L.control.layers({ Topographic: topoLayer, Standard: standardLayer }, null, { position: 'topleft' }).addTo(map);
+      map = L.map('map', { layers: [topoLayer], maxZoom: MAX_ZOOM }).setView([44.3, -71.3], 13);
+      L.control.layers(
+        { Topographic: topoLayer, Standard: standardLayer },
+        { Satellite: satelliteLayer },
+        { position: 'topleft' }
+      ).addTo(map);
       L.control.scale({ position: 'bottomleft' }).addTo(map);
+      const satelliteControl = L.control({ position: 'topleft' });
+      satelliteControl.onAdd = () => {
+        const container = L.DomUtil.create('div', 'leaflet-control satellite-control');
+        container.innerHTML = `
+          <label class="satellite-toggle">
+            <input type="checkbox" id="satelliteToggle" />
+            <span>Satellite overlay</span>
+          </label>
+          <label>
+            <span>Opacity</span>
+            <input type="range" id="satelliteOpacity" min="0" max="1" step="0.05" value="${SATELLITE_OPACITY_DEFAULT}" />
+          </label>
+        `;
+        L.DomEvent.disableClickPropagation(container);
+        L.DomEvent.disableScrollPropagation(container);
+        return container;
+      };
+      satelliteControl.addTo(map);
+      const satelliteToggle = document.getElementById('satelliteToggle');
+      const satelliteOpacity = document.getElementById('satelliteOpacity');
+      const syncSatelliteLayer = () => {
+        if (satelliteToggle.checked) {
+          if (!map.hasLayer(satelliteLayer)) map.addLayer(satelliteLayer);
+        } else if (map.hasLayer(satelliteLayer)) {
+          map.removeLayer(satelliteLayer);
+        }
+      };
+      satelliteToggle.addEventListener('change', syncSatelliteLayer);
+      satelliteOpacity.addEventListener('input', event => {
+        const nextValue = Number(event.target.value);
+        satelliteLayer.setOpacity(Number.isFinite(nextValue) ? nextValue : SATELLITE_OPACITY_DEFAULT);
+      });
+      map.on('overlayadd', event => {
+        if (event.layer === satelliteLayer) {
+          satelliteToggle.checked = true;
+        }
+      });
+      map.on('overlayremove', event => {
+        if (event.layer === satelliteLayer) {
+          satelliteToggle.checked = false;
+        }
+      });
       map.addLayer(drawnLayers);
 
       photoCatalogBySlug = await fetchJsonWithDefault(PHOTO_CATALOG_URL, {}).then(buildPhotoCatalog);
