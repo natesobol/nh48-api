@@ -97,6 +97,54 @@
       }
     }
   </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "NH48 Long-Distance Trails Dataset",
+      "description": "Open dataset of long-distance trails and segments, including Appalachian Trail sections and major thru-hike routes.",
+      "identifier": "long-trails",
+      "url": "https://nh48.info/dataset/long-trails",
+      "sameAs": [
+        "https://github.com/natesobol/nh48-api/tree/main/data/long-trails"
+      ],
+      "keywords": [
+        "long distance trails",
+        "Appalachian Trail",
+        "Pacific Crest Trail",
+        "Continental Divide Trail",
+        "NH48",
+        "open data"
+      ],
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "creator": {
+        "@type": "Organization",
+        "name": "NH48 Project",
+        "url": "https://nh48.info/"
+      },
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "name": "Long Trails (Full)",
+          "contentUrl": "https://nh48.info/data/long-trails-full.json"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "name": "Long Trails Index",
+          "contentUrl": "https://nh48.info/data/long-trails-index.json"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "name": "Long Trails Manifest",
+          "contentUrl": "https://nh48.info/data/long-trails-manifest.json"
+        }
+      ]
+    }
+  </script>
   <style>
     * {
       box-sizing: border-box;

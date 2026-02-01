@@ -4,7 +4,7 @@
   const PEAKS_PER_ROUND = 6;
   const INERTIA_DURATION_MS = 450;
   const INERTIA_FRICTION = 0.92;
-  const SOCIAL_CANONICAL_URL = 'https://nh48.info/peakid';
+  const SOCIAL_CANONICAL_URL = 'https://nh48.info/peakid-game.html';
 
   const prefersReducedMotion = () =>
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
