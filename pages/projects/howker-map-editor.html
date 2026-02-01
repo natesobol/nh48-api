@@ -787,6 +787,7 @@
     const STATUS_URL = '/data/howker-ridge-status.geojson';
     const POI_URL = '/data/howker-ridge-pois.geojson';
     const EDIT_URL = '/data/howker-ridge-edit.json';
+    const PHOTO_CATALOG_URL = '/data/howker-photos.json';
     const SAVE_ENDPOINT = '/api/howker/map-update';
     const CARD_UPLOAD_ENDPOINT = '/api/howker/map-card-upload';
 
@@ -839,6 +840,7 @@
     const basePoiLayers = [];
     const basePoiDataByName = new Map();
     const searchIndex = [];
+    let photoCatalogBySlug = new Map();
 
     function setStatusMessage(message, isError = false) {
       const statusEl = document.getElementById('statusMsg');
@@ -875,6 +877,29 @@
       return [];
     }
 
+    function slugFromFilename(filename) {
+      if (!filename || typeof filename !== 'string') return '';
+      return filename.replace(/\.[^/.]+$/, '').replace(/-\d+$/, '');
+    }
+
+    function buildPhotoCatalog(data) {
+      const catalog = new Map();
+      const filenames = Object.keys(data || {}).sort();
+      filenames.forEach(filename => {
+        const slug = slugFromFilename(filename);
+        if (!slug) return;
+        const url = `https://howker.nh48.info/cdn-cgi/image/format=webp,width=1400/${slug}/${filename}`;
+        if (!catalog.has(slug)) catalog.set(slug, []);
+        catalog.get(slug).push(url);
+      });
+      return catalog;
+    }
+
+    function getCatalogImageUrls(slug) {
+      if (!slug || !photoCatalogBySlug) return [];
+      return photoCatalogBySlug.get(slug) || [];
+    }
+
     function getImageUrlsFromProps(props = {}) {
       return normalizeImageUrls(
         props.image_urls
@@ -884,17 +909,37 @@
       );
     }
 
+    function mergeImageUrls(primary, fallback) {
+      const combined = [];
+      const seen = new Set();
+      [primary, fallback].forEach(list => {
+        (Array.isArray(list) ? list : []).forEach(url => {
+          if (!url || seen.has(url)) return;
+          seen.add(url);
+          combined.push(url);
+        });
+      });
+      return combined;
+    }
+
+    function getPoiImageUrls(props = {}, slug = '') {
+      const primary = getImageUrlsFromProps(props);
+      const fallback = getCatalogImageUrls(slug);
+      return mergeImageUrls(primary, fallback);
+    }
+
     function featureToPoi(feature) {
       const props = feature?.properties || {};
+      const slug = props.slug || slugify(props.name || '');
       return {
         lat: feature.geometry?.coordinates?.[1],
         lon: feature.geometry?.coordinates?.[0],
         name: props.name || '',
-        slug: props.slug || '',
+        slug,
         category: props.category || '',
         elevation: props.elevation_ft ?? props.elevation ?? null,
         description: props.description || '',
-        imageUrls: getImageUrlsFromProps(props)
+        imageUrls: getPoiImageUrls(props, slug)
       };
     }
 
@@ -909,11 +954,11 @@
             lat: item.lat ?? item.latitude,
             lon: item.lon ?? item.longitude,
             name: item.name || '',
-            slug: item.slug || '',
+            slug: item.slug || slugify(item.name || ''),
             category: item.category || '',
             elevation: item.elevation_ft ?? item.elevation ?? null,
             description: item.description || '',
-            imageUrls: getImageUrlsFromProps(item)
+            imageUrls: getPoiImageUrls(item, item.slug || slugify(item.name || ''))
           }))
           .filter(item => Number.isFinite(item.lat) && Number.isFinite(item.lon));
       }
@@ -940,6 +985,7 @@
       L.control.scale({ position: 'bottomleft' }).addTo(map);
       map.addLayer(drawnLayers);
 
+      photoCatalogBySlug = await fetchJsonWithDefault(PHOTO_CATALOG_URL, {}).then(buildPhotoCatalog);
       await loadBaseTrail();
       await loadExistingEdits();
       buildPoiList();
@@ -981,7 +1027,7 @@
             category: feature.properties?.category || '',
             elevation_ft: feature.properties?.elevation_ft ?? null,
             description: feature.properties?.description || '',
-            image_urls: normalizeImageUrls(feature.properties?.image_urls || feature.properties?.imageUrls),
+            image_urls: getPoiImageUrls(feature.properties, feature.properties?.slug || slugify(feature.properties?.name || '')),
             image_url: feature.properties?.image_url || ''
           });
         },
@@ -989,14 +1035,15 @@
           const props = feature.properties || {};
           const title = props.name || '';
           const desc = props.description || '';
+          const slug = props.slug || slugify(title);
           if (title) {
             basePoiDataByName.set(title, {
               name: title,
               category: props.category || '',
               description: desc,
               elevation_ft: props.elevation_ft ?? null,
-              slug: props.slug || '',
-              image_urls: getImageUrlsFromProps(props)
+              slug,
+              image_urls: getPoiImageUrls(props, slug)
             });
           }
           layer.bindPopup(`<strong>${title}</strong><br/>${desc}`);
@@ -1150,7 +1197,7 @@
             category: feature.properties?.category || '',
             elevation: feature.properties?.elevation_ft ?? null,
             description: feature.properties?.description || '',
-            imageUrls: getImageUrlsFromProps(feature.properties || {}),
+            imageUrls: getPoiImageUrls(feature.properties || {}, feature.properties?.slug || slugify(feature.properties?.name || '')),
             lat: feature.geometry.coordinates[1],
             lon: feature.geometry.coordinates[0]
           }));
@@ -1614,13 +1661,14 @@
     function getBasePoiData(item) {
       const props = item?.layer?.options || item?.props || {};
       const name = props.name || item.name || '';
+      const slug = props.slug || slugify(name);
       return {
         name,
-        slug: props.slug || '',
+        slug,
         category: props.category || '',
         elevation: props.elevation_ft ?? null,
         description: props.description || '',
-        imageUrls: getImageUrlsFromProps(props)
+        imageUrls: getPoiImageUrls(props, slug)
       };
     }
 
@@ -1854,10 +1902,12 @@
     function getPoiFeatureProperties(item) {
       const base = basePoiDataByName.get(item.name) || {};
       const elevation = item.elevation ?? base.elevation_ft ?? base.elevation ?? null;
-      const imageUrls = [
-        ...getImageUrlsFromProps(base),
-        ...(Array.isArray(item.imageUrls) ? item.imageUrls : getImageUrlsFromProps(item))
-      ].map(url => url.trim()).filter(Boolean);
+      const baseSlug = base.slug || slugify(base.name || '');
+      const itemSlug = item.slug || slugify(item.name || '');
+      const imageUrls = mergeImageUrls(
+        getPoiImageUrls(base, baseSlug),
+        Array.isArray(item.imageUrls) ? item.imageUrls : getPoiImageUrls(item, itemSlug)
+      ).map(url => url.trim()).filter(Boolean);
       const props = {
         name: item.name || base.name || '',
         category: item.category || base.category || '',

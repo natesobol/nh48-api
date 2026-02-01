@@ -984,6 +984,7 @@ table a:hover{
     let sortKey = null;
     let sortAsc = true;
     let searchQuery = '';
+    let photoCatalogBySlug = new Map();
 
     function slugify(name) {
       return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -1011,6 +1012,29 @@ table a:hover{
       return [];
     }
 
+    function slugFromFilename(filename) {
+      if (!filename || typeof filename !== 'string') return '';
+      return filename.replace(/\.[^/.]+$/, '').replace(/-\d+$/, '');
+    }
+
+    function buildPhotoCatalog(data) {
+      const catalog = new Map();
+      const filenames = Object.keys(data || {}).sort();
+      filenames.forEach(filename => {
+        const slug = slugFromFilename(filename);
+        if (!slug) return;
+        const url = `https://howker.nh48.info/cdn-cgi/image/format=webp,width=1400/${slug}/${filename}`;
+        if (!catalog.has(slug)) catalog.set(slug, []);
+        catalog.get(slug).push(url);
+      });
+      return catalog;
+    }
+
+    function getCatalogImageUrls(slug) {
+      if (!slug || !photoCatalogBySlug) return [];
+      return photoCatalogBySlug.get(slug) || [];
+    }
+
     function getImageUrlsFromProps(props = {}) {
       return normalizeImageUrls(
         props.image_urls
@@ -1018,6 +1042,25 @@ table a:hover{
         || props.image_url
         || props.imageUrl
       );
+    }
+
+    function mergeImageUrls(primary, fallback) {
+      const combined = [];
+      const seen = new Set();
+      [primary, fallback].forEach(list => {
+        (Array.isArray(list) ? list : []).forEach(url => {
+          if (!url || seen.has(url)) return;
+          seen.add(url);
+          combined.push(url);
+        });
+      });
+      return combined;
+    }
+
+    function getPoiImageUrls(props = {}, slug = '') {
+      const primary = getImageUrlsFromProps(props);
+      const fallback = getCatalogImageUrls(slug);
+      return mergeImageUrls(primary, fallback);
     }
 
     function getPrimaryImageUrl(imageUrls) {
@@ -1115,9 +1158,13 @@ table a:hover{
 
     Promise.all([
       fetch('/data/howker-ridge.geojson').then(resp => resp.json()),
-      fetch('/data/howker-ridge-pois.geojson').then(resp => (resp.ok ? resp.json() : { features: [] }))
+      fetch('/data/howker-ridge-pois.geojson').then(resp => (resp.ok ? resp.json() : { features: [] })),
+      fetch('/data/howker-photos.json')
+        .then(resp => (resp.ok ? resp.json() : {}))
+        .catch(() => ({}))
     ])
-      .then(([data, poiEdits]) => {
+      .then(([data, poiEdits, photoCatalog]) => {
+        photoCatalogBySlug = buildPhotoCatalog(photoCatalog);
         const basePoiNames = new Set();
         (data.features || []).forEach(feature => {
           if (feature.geometry?.type === 'Point') {
@@ -1151,7 +1198,7 @@ table a:hover{
             : Number(elevationValue);
           const name = mergedProps.name || props.name || 'Unknown';
           const slug = mergedProps.slug || slugify(name);
-          const imageUrls = getImageUrlsFromProps(mergedProps);
+          const imageUrls = getPoiImageUrls(mergedProps, slug);
           return { name, slug, imageUrls, elevation, finalLatLng, mergedProps };
         }
 
@@ -1211,7 +1258,7 @@ table a:hover{
           const latlng = L.latLng(coords[1], coords[0]);
           const name = props.name || 'Unknown';
           const slug = props.slug || slugify(name);
-          const imageUrls = getImageUrlsFromProps(props);
+          const imageUrls = getPoiImageUrls(props, slug);
           const elevationValue = props.elevation_ft ?? props.elevation;
           const elevation = elevationValue === null || elevationValue === undefined || Number.isNaN(Number(elevationValue))
             ? null

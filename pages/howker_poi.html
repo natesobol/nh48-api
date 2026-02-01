@@ -342,6 +342,7 @@ body{
     const rowCoords = document.getElementById('rowCoords');
     const notFound = document.getElementById('poiNotFound');
     const contentSections = document.querySelectorAll('[data-poi-content]');
+    let photoCatalogBySlug = new Map();
 
     function slugify(name) {
       return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -383,6 +384,29 @@ body{
       return [];
     }
 
+    function slugFromFilename(filename) {
+      if (!filename || typeof filename !== 'string') return '';
+      return filename.replace(/\.[^/.]+$/, '').replace(/-\d+$/, '');
+    }
+
+    function buildPhotoCatalog(data) {
+      const catalog = new Map();
+      const filenames = Object.keys(data || {}).sort();
+      filenames.forEach(filename => {
+        const slug = slugFromFilename(filename);
+        if (!slug) return;
+        const url = `https://howker.nh48.info/cdn-cgi/image/format=webp,width=1400/${slug}/${filename}`;
+        if (!catalog.has(slug)) catalog.set(slug, []);
+        catalog.get(slug).push(url);
+      });
+      return catalog;
+    }
+
+    function getCatalogImageUrls(slug) {
+      if (!slug || !photoCatalogBySlug) return [];
+      return photoCatalogBySlug.get(slug) || [];
+    }
+
     function getImageUrlsFromProps(props = {}) {
       return normalizeImageUrls(
         props.image_urls
@@ -390,6 +414,25 @@ body{
         || props.image_url
         || props.imageUrl
       );
+    }
+
+    function mergeImageUrls(primary, fallback) {
+      const combined = [];
+      const seen = new Set();
+      [primary, fallback].forEach(list => {
+        (Array.isArray(list) ? list : []).forEach(url => {
+          if (!url || seen.has(url)) return;
+          seen.add(url);
+          combined.push(url);
+        });
+      });
+      return combined;
+    }
+
+    function getPoiImageUrls(props = {}, slug = '') {
+      const primary = getImageUrlsFromProps(props);
+      const fallback = getCatalogImageUrls(slug);
+      return mergeImageUrls(primary, fallback);
     }
 
     function getPrimaryImageUrl(imageUrls) {
@@ -402,9 +445,13 @@ body{
     } else {
       Promise.all([
         fetch('/data/howker-ridge.geojson').then(resp => resp.json()),
-        fetch('/data/howker-ridge-pois.geojson').then(resp => (resp.ok ? resp.json() : { features: [] }))
+        fetch('/data/howker-ridge-pois.geojson').then(resp => (resp.ok ? resp.json() : { features: [] })),
+        fetch('/data/howker-photos.json')
+          .then(resp => (resp.ok ? resp.json() : {}))
+          .catch(() => ({}))
       ])
-        .then(([baseData, edits]) => {
+        .then(([baseData, edits, photoCatalog]) => {
+          photoCatalogBySlug = buildPhotoCatalog(photoCatalog);
           const editsByName = new Map();
           const editsBySlug = new Map();
           (edits.features || []).forEach(feature => {
@@ -454,7 +501,7 @@ body{
             : Math.round(Number(elevationValue));
           const description = props.description || 'No description is available yet for this point of interest.';
           const slug = props.slug || slugify(name);
-          const imageUrls = getImageUrlsFromProps(props);
+          const imageUrls = getPoiImageUrls(props, slug);
 
           poiName.textContent = name;
           poiBreadcrumb.textContent = name;
