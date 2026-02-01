@@ -1200,12 +1200,20 @@
       toolbar?._modes?.marker?.handler?.disable();
     }
 
+    function hasMapControl(mapInstance, control) {
+      if (!mapInstance || !control) return false;
+      if (typeof mapInstance.hasControl === 'function') return mapInstance.hasControl(control);
+      const container = control._container;
+      if (!container) return false;
+      return Boolean(mapInstance._controlContainer?.contains(container));
+    }
+
     function setActiveTool(tool) {
       currentTool = tool;
       if (tool === 'adjust-poi' || tool === 'poi-add') {
-        if (map?.hasControl(drawControl)) map.removeControl(drawControl);
+        if (hasMapControl(map, drawControl)) map.removeControl(drawControl);
         disableDrawHandlers();
-      } else if (drawControl && map && !map.hasControl(drawControl)) {
+      } else if (drawControl && map && !hasMapControl(map, drawControl)) {
         map.addControl(drawControl);
       }
 
