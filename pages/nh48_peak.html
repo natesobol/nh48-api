@@ -47,6 +47,7 @@
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       crossorigin=""
     >
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js" defer></script>
     <script>
   (() => {
     if (window.NH48_BUILD_DATE) return;
@@ -277,6 +278,29 @@
         gap:16px 20px;
         flex-wrap:wrap;
         margin:12px 0 16px;
+      }
+      .icon-btn{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        gap:8px;
+        min-height:36px;
+        padding:6px 12px;
+        border-radius:10px;
+        border:2px solid #ffffff;
+        background:var(--card);
+        color:var(--ink);
+        cursor:pointer;
+        font-size:0.85rem;
+        text-transform:uppercase;
+        letter-spacing:0.6px;
+      }
+      .icon-btn:hover{
+        border-color:var(--accent);
+        color:var(--accent);
+      }
+      .icon-btn .iconify{
+        font-size:1.1rem;
       }
       .nh48-lang{
         display:flex;
@@ -933,6 +957,85 @@
       @keyframes spin{
         to{ transform:rotate(360deg); }
       }
+
+      .print-only{ display:none; }
+      .no-print{ }
+
+      @media print{
+        body{
+          margin:0;
+          font-size:11pt;
+          background:#ffffff;
+          color:#000000;
+        }
+        nav,
+        footer,
+        .no-print{
+          display:none !important;
+        }
+        .print-only{
+          display:block !important;
+        }
+        .wrap{
+          max-width:100%;
+          padding:0.3in;
+        }
+        .peak-map-panel{
+          display:block !important;
+          border:none;
+          padding:0;
+          background:none;
+        }
+        .peak-map-header,
+        .peak-map-status{
+          display:none !important;
+        }
+        .peak-map-frame{
+          height:6in !important;
+          width:100% !important;
+          border:none;
+        }
+        .peak-map-canvas{
+          height:100% !important;
+        }
+        .leaflet-control-container{
+          display:none !important;
+        }
+        .print-summary-header{
+          display:flex;
+          align-items:center;
+          margin-bottom:0.5in;
+          border-bottom:1px solid #ccc;
+          padding-bottom:0.25in;
+          gap:0.3in;
+        }
+        .print-thumb{
+          width:1.25in;
+          height:1.25in;
+          object-fit:cover;
+          border-radius:4px;
+          border:1px solid #bbb;
+        }
+        .print-summary-header h1{
+          font-size:18pt;
+          margin:0;
+        }
+        .print-details{
+          display:flex;
+          flex-wrap:wrap;
+          gap:0.2in;
+          margin:0 0 0.5in 0;
+        }
+        .print-details dt{
+          font-weight:700;
+        }
+        .print-details dd{
+          margin:0 0.4in 0 0;
+        }
+        .print-description{
+          margin-bottom:0.5in;
+        }
+      }
     </style>
   </head>
   <body data-route="peak" data-page="peak">
@@ -944,11 +1047,18 @@
         };
       })();
     </script>
-    <div id="nav-placeholder"></div>
+    <div id="nav-placeholder" class="no-print"></div>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const navPlaceholder = document.getElementById('nav-placeholder');
         const activeRoute = document.body.dataset.route || document.body.dataset.page;
+        const printBtn = document.getElementById('printBtn');
+
+        if(printBtn){
+          printBtn.addEventListener('click', () => {
+            window.print();
+          });
+        }
 
         if (navPlaceholder) {
           fetch('/pages/nav.html')
@@ -976,7 +1086,7 @@
       });
     </script>
     <div class="wrap">
-      <nav class="breadcrumb-nav" aria-label="Breadcrumb" id="breadcrumbNav">
+      <nav class="breadcrumb-nav no-print" aria-label="Breadcrumb" id="breadcrumbNav">
         <ol itemscope itemtype="https://schema.org/BreadcrumbList">
           <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <a itemprop="item" href="/" id="breadcrumbHomeLink"><span itemprop="name" data-i18n="common.home">Home</span></a>
@@ -993,10 +1103,10 @@
           </li>
         </ol>
       </nav>
-      <div class="seo-links">
+      <div class="seo-links no-print">
         <a href="/catalog" data-i18n="peak.back">Back to NH48 Peak Catalog</a>
       </div>
-      <div class="controls-row">
+      <div class="controls-row no-print">
         <div class="units-control">
           <label for="unitsSelect" data-i18n="common.unitsLabel">Units</label>
           <select id="unitsSelect" data-i18n="common.units" data-i18n-attr="aria-label" aria-label="Select units">
@@ -1004,12 +1114,16 @@
           <option value="meters" data-i18n="common.unitsMeters">Meters</option>
           </select>
         </div>
+        <button id="printBtn" class="icon-btn no-print" title="Print trail sheet">
+          <span class="iconify" data-icon="mdi:printer" aria-hidden="true"></span>
+          <span class="sr-only">Print</span>
+        </button>
       </div>
-      <a class="back-guide" href="/nh-4000-footers-info">NH48 Info</a>
-      <h1 id="peakTitle" data-i18n="peak.loading">Loading…</h1>
+      <a class="back-guide no-print" href="/nh-4000-footers-info">NH48 Info</a>
+      <h1 id="peakTitle" class="no-print" data-i18n="peak.loading">Loading…</h1>
 
       <!-- MEDIA / CAROUSEL ---------------------------------------------------->
-      <div class="media" id="media" hidden>
+      <div class="media no-print" id="media" hidden>
         <div class="media-loading" id="mediaLoading">
           <span class="loading-spinner" aria-hidden="true"></span>
           <span class="loading-text" data-i18n="common.loading">Loading…</span>
@@ -1033,18 +1147,18 @@
       </div>
 
 
-      <div id="peakDescriptionPanel" class="metadata-panel" hidden style="margin-bottom:16px;"></div>
+      <div id="peakDescriptionPanel" class="metadata-panel no-print" hidden style="margin-bottom:16px;"></div>
       <!-- GENERAL INFO ABOVE METADATA PANEL (STACKED, FULL WIDTH) ------------->
-      <div id="generalInfoPanel" class="metadata-panel" hidden style="margin-bottom:16px;"></div>
-      <div id="photoMetadataPanel" class="metadata-panel" hidden></div>
+      <div id="generalInfoPanel" class="metadata-panel no-print" hidden style="margin-bottom:16px;"></div>
+      <div id="photoMetadataPanel" class="metadata-panel no-print" hidden></div>
       <!-- Submit Edit link moved below carousel -->
-      <div class="seo-links">
+      <div class="seo-links no-print">
         <a href="/submit-edit" class="ml-3" data-i18n="peak.edit-report">Submit Edit to Author</a>
       </div>
 
       <!-- OTHER SECTIONS ------------------------------------------------------>
       <section aria-labelledby="routesHeading">
-        <h2 id="routesHeading" class="section-title" data-i18n="peak.section.routes">Hiking Routes</h2>
+        <h2 id="routesHeading" class="section-title no-print" data-i18n="peak.section.routes">Hiking Routes</h2>
         <div class="peak-map-panel" id="peakMapPanel" hidden>
           <span id="peak-trail-map" class="sr-only">Peak trail map</span>
           <div class="peak-map-header">
@@ -1059,25 +1173,27 @@
             <div class="peak-map-status" id="peakMapStatus">Loading trail map…</div>
           </div>
         </div>
-        <div class="info-grid" id="routesGrid" hidden></div>
+        <!-- Hidden by default; shown only in print -->
+        <div id="print-summary" class="print-only" aria-live="polite"></div>
+        <div class="info-grid no-print" id="routesGrid" hidden></div>
       </section>
 
-      <section aria-labelledby="relatedTrailsHeading">
+      <section aria-labelledby="relatedTrailsHeading" class="no-print">
         <h2 id="relatedTrailsHeading" class="section-title" data-i18n="peak.relatedTrails.title">Related Trails &amp; Routes</h2>
         <div class="info-grid" id="relatedTrailsGrid" hidden></div>
       </section>
 
-      <section aria-labelledby="trailNamesHeading">
+      <section aria-labelledby="trailNamesHeading" class="no-print">
         <h2 id="trailNamesHeading" class="section-title" data-i18n="peak.section.trails">Associated Trails</h2>
         <div class="info-grid" id="trailNamesGrid" hidden></div>
       </section>
 
-      <section aria-labelledby="terrainHeading">
+      <section aria-labelledby="terrainHeading" class="no-print">
         <h2 id="terrainHeading" class="section-title" data-i18n="peak.section.terrain">Trail &amp; Terrain</h2>
         <div class="info-grid" id="terrainGrid" hidden></div>
       </section>
 
-      <section aria-labelledby="conditionsHeading">
+      <section aria-labelledby="conditionsHeading" class="no-print">
         <h2 id="conditionsHeading" class="section-title" data-i18n="peak.section.conditions">Conditions &amp; Access</h2>
         <div class="info-grid" id="conditionsGrid" hidden></div>
       </section>
@@ -2604,6 +2720,40 @@
         trackEvent('peak_general_info_rendered', { slug: currentSlug });
       }
 
+      function buildPrintSummary(peak, name){
+        const summary = document.getElementById('print-summary');
+        if(!summary || !peak) return;
+
+        const peakName = name || peak.peakName || peak['Peak Name'] || peak.name || peak['Name'] || peak.peak || peak['Peak'] || peak['PeakName'] || currentSlug || '';
+        const imgUrl = (currentPrimaryPhoto && currentPrimaryPhoto.url)
+          || (Array.isArray(peak.photos) && peak.photos.length > 0 && (peak.photos[0].url || peak.photos[0]))
+          || getPlaceholder();
+        const description = safeText(peak.description || peak['Description']).trim();
+        const elevation = formatFeetValue(peak['Elevation (ft)']);
+        const prominence = formatFeetValue(peak['Prominence (ft)']);
+        const routes = Array.isArray(peak['Standard Routes']) ? peak['Standard Routes'] : [];
+        const distance = routes.length ? formatDistanceMiles(routes[0]['Distance (mi)']) : '—';
+        const difficulty = translateDifficulty(peak['Difficulty']) || '—';
+        const trailType = translateTrailType(peak['Trail Type']) || '—';
+        const season = safeText(peak['Best Seasons to Hike'] || peak.season || peak['Season']) || translateWithFallback('peak.generalInfo.season', 'All year');
+
+        summary.innerHTML = `
+          <div class="print-summary-header">
+            <img src="${escapeHtml(normalizePhotoUrl(imgUrl))}" alt="${escapeHtml(peakName)} summit" class="print-thumb">
+            <h1>${escapeHtml(peakName)}</h1>
+          </div>
+          <dl class="print-details">
+            <div><dt>${escapeHtml(t('peak.generalInfo.elevation'))}</dt><dd>${escapeHtml(elevation)}</dd></div>
+            <div><dt>${escapeHtml(t('peak.generalInfo.prominence'))}</dt><dd>${escapeHtml(prominence)}</dd></div>
+            <div><dt>${escapeHtml(translateWithFallback('peak.print.distance', 'Distance (round-trip)'))}</dt><dd>${escapeHtml(distance)}</dd></div>
+            <div><dt>${escapeHtml(t('peak.generalInfo.difficulty'))}</dt><dd>${escapeHtml(difficulty)}</dd></div>
+            <div><dt>${escapeHtml(t('peak.generalInfo.trailType'))}</dt><dd>${escapeHtml(trailType)}</dd></div>
+            <div><dt>${escapeHtml(translateWithFallback('peak.print.season', 'Season'))}</dt><dd>${escapeHtml(season)}</dd></div>
+          </dl>
+          ${description ? `<p class="print-description">${escapeHtml(description)}</p>` : ''}
+        `;
+      }
+
       function renderRoutes(routes){
         const routesGrid = document.getElementById('routesGrid');
         if(!routesGrid) return;
@@ -3566,6 +3716,7 @@
           buildPeakDescription(p);
           // Build general info panel
           buildGeneralInfo(p);
+          buildPrintSummary(p, name);
 
           const routes = p['Standard Routes'] || [];
           const trailNames = p['Trail Names'] || [];
@@ -3634,6 +3785,7 @@
           const { canonicalUrl, descriptionText } = updateHeadMeta(currentPeak, currentSlug, name, currentPrimaryMeta);
           buildPeakDescription(currentPeak);
           buildGeneralInfo(currentPeak);
+          buildPrintSummary(currentPeak, name);
           const routes = currentPeak['Standard Routes'] || [];
           const trailNames = currentPeak['Trail Names'] || [];
           renderRoutes(routes);
@@ -3663,6 +3815,7 @@
           setUnits(e.target.value);
           if (!currentPeak) return;
           buildGeneralInfo(currentPeak);
+          buildPrintSummary(currentPeak);
           const routes = currentPeak['Standard Routes'] || [];
           renderRoutes(routes);
           trackEvent('peak_units_change', { units: e.target.value, slug: currentSlug });
