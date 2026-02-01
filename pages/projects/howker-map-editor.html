@@ -2544,6 +2544,8 @@
       const baseH = resSel === '8k' ? 4320 : 2304;
       const exportW = orientation === 'portrait' ? baseH : baseW;
       const exportH = orientation === 'portrait' ? baseW : baseH;
+      const mapW = orientation === 'landscape' ? exportH : exportW;
+      const mapH = orientation === 'landscape' ? exportW : exportH;
       const mapEl = document.getElementById('map');
       const wrapEl = mapEl?.parentElement;
 
@@ -2561,7 +2563,7 @@
 
       try {
         setStep('render', true, `Preparing ${exportW}×${exportH} export…`);
-        const paddingSize = Math.round(Math.min(exportW, exportH) * 0.06);
+        const paddingSize = Math.round(Math.min(mapW, mapH) * 0.06);
         const boundsGroup = L.featureGroup([baseTrailLayer, drawnLayers].filter(Boolean));
         const bounds = boundsGroup.getBounds?.();
         if (bounds && bounds.isValid()) {
@@ -2570,10 +2572,10 @@
           });
         }
 
-        mapEl.style.width = `${exportW}px`;
-        mapEl.style.height = `${exportH}px`;
-        wrapEl.style.width = `${exportW}px`;
-        wrapEl.style.height = `${exportH}px`;
+        mapEl.style.width = `${mapW}px`;
+        mapEl.style.height = `${mapH}px`;
+        wrapEl.style.width = `${mapW}px`;
+        wrapEl.style.height = `${mapH}px`;
 
         map.invalidateSize(true);
         await waitForMapIdle(15000);
@@ -2595,7 +2597,7 @@
           rctx.save();
           rctx.translate(exportW, 0);
           rctx.rotate(Math.PI / 2);
-          rctx.drawImage(canvas, 0, 0, exportH, exportW);
+          rctx.drawImage(canvas, 0, 0, mapW, mapH);
           rctx.restore();
           exportCanvas = rotated;
         }
