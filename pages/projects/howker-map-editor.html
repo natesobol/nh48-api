@@ -1032,7 +1032,11 @@
         const editRes = await fetch(EDIT_URL);
         let editJson = null;
         if (editRes.ok) {
-          editJson = await editRes.json();
+          try {
+            editJson = await editRes.json();
+          } catch (error) {
+            editJson = null;
+          }
         }
 
         if (!editJson) {
@@ -1711,6 +1715,25 @@
       const imageList = document.createElement('div');
       imageList.className = 'poi-image-list';
 
+      const updatePoi = () => {
+        const imageUrls = Array.from(imageList.querySelectorAll('input'))
+          .map(input => input.value.trim())
+          .filter(Boolean);
+        const updated = {
+          name: nameInput.value.trim(),
+          slug: slugInput.value.trim(),
+          category: categorySelect.value,
+          elevation: elevationInput.value ? Number(elevationInput.value) : null,
+          description: descriptionInput.value.trim(),
+          imageUrls,
+          lat: poi.lat,
+          lon: poi.lon
+        };
+        updatePoiMarker(updated, row.dataset.baseSlug);
+        title.textContent = updated.name || 'Untitled POI';
+        icon.src = getPoiIconForCategory(updated.category);
+      };
+
       const addImageInput = (value = '') => {
         const row = document.createElement('div');
         row.className = 'poi-image-row';
@@ -1748,25 +1771,6 @@
       imageLabel.append(imageList, addImageBtn);
 
       grid.append(nameLabel, slugLabel, categoryLabel, elevationLabel, descriptionLabel, imageLabel);
-
-      const updatePoi = () => {
-        const imageUrls = Array.from(imageList.querySelectorAll('input'))
-          .map(input => input.value.trim())
-          .filter(Boolean);
-        const updated = {
-          name: nameInput.value.trim(),
-          slug: slugInput.value.trim(),
-          category: categorySelect.value,
-          elevation: elevationInput.value ? Number(elevationInput.value) : null,
-          description: descriptionInput.value.trim(),
-          imageUrls,
-          lat: poi.lat,
-          lon: poi.lon
-        };
-        updatePoiMarker(updated, row.dataset.baseSlug);
-        title.textContent = updated.name || 'Untitled POI';
-        icon.src = getPoiIconForCategory(updated.category);
-      };
 
       [nameInput, slugInput, categorySelect, elevationInput, descriptionInput].forEach(input => {
         input.addEventListener('change', updatePoi);
