@@ -299,6 +299,90 @@
     .poi-form-error.is-visible {
       display: block;
     }
+    .poi-list-section {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      display: grid;
+      gap: 12px;
+    }
+    .poi-list-section h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    #poi-list-container {
+      display: grid;
+      gap: 12px;
+    }
+    .poi-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: var(--card);
+      display: grid;
+      gap: 10px;
+    }
+    .poi-item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .poi-item-header strong {
+      font-size: 1rem;
+    }
+    .poi-item-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .poi-item-icon {
+      width: 20px;
+      height: 20px;
+    }
+    .poi-item-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .poi-item-grid label {
+      display: grid;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .poi-item-grid input,
+    .poi-item-grid textarea,
+    .poi-item-grid select {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      background: var(--panel);
+      color: var(--ink);
+      font-size: 0.9rem;
+    }
+    .poi-item-grid textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .poi-item-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .poi-item-actions button {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--ink);
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
   </style>
 </head>
 <body data-route="howker-map-editor">
@@ -470,6 +554,10 @@
         <p>Use the toolbar tools to record drainage, bog bridges, stonework, tread issues, encroachment, hazards, signs, and cairns.</p>
       </div>
     </div>
+    <section id="poi-list-section" class="poi-list-section">
+      <h2>Edit Points of Interest</h2>
+      <div id="poi-list-container"></div>
+    </section>
   </div>
 
   <div id="footer-placeholder"></div>
@@ -535,7 +623,62 @@
       statusEl.style.color = isError ? '#f87171' : '';
     }
 
-    function initMap() {
+    function fetchJsonWithDefault(url, defaultValue) {
+      return fetch(url)
+        .then(resp => {
+          if (!resp.ok) return defaultValue;
+          return resp.json().catch(() => defaultValue);
+        })
+        .catch(() => defaultValue);
+    }
+
+    function normalizeFeatureArray(value) {
+      if (!value) return [];
+      if (Array.isArray(value)) return value;
+      if (Array.isArray(value.features)) return value.features;
+      return [];
+    }
+
+    function featureToPoi(feature) {
+      const props = feature?.properties || {};
+      return {
+        lat: feature.geometry?.coordinates?.[1],
+        lon: feature.geometry?.coordinates?.[0],
+        name: props.name || '',
+        slug: props.slug || '',
+        category: props.category || '',
+        elevation: props.elevation_ft ?? props.elevation ?? null,
+        description: props.description || '',
+        imageUrl: props.image_url || props.imageUrl || ''
+      };
+    }
+
+    function normalizePoiItems(value) {
+      if (!value) return [];
+      if (Array.isArray(value)) {
+        if (value.length && value[0]?.geometry) {
+          return value.map(featureToPoi).filter(item => Number.isFinite(item.lat) && Number.isFinite(item.lon));
+        }
+        return value
+          .map(item => ({
+            lat: item.lat ?? item.latitude,
+            lon: item.lon ?? item.longitude,
+            name: item.name || '',
+            slug: item.slug || '',
+            category: item.category || '',
+            elevation: item.elevation_ft ?? item.elevation ?? null,
+            description: item.description || '',
+            imageUrl: item.image_url || item.imageUrl || ''
+          }))
+          .filter(item => Number.isFinite(item.lat) && Number.isFinite(item.lon));
+      }
+      if (Array.isArray(value.features)) {
+        return value.features.map(featureToPoi).filter(item => Number.isFinite(item.lat) && Number.isFinite(item.lon));
+      }
+      return [];
+    }
+
+    async function initMap() {
       const standardLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; OpenStreetMap contributors'
@@ -550,8 +693,9 @@
       L.control.scale({ position: 'bottomleft' }).addTo(map);
       map.addLayer(drawnLayers);
 
-      loadBaseTrail();
-      loadExistingEdits();
+      await loadBaseTrail();
+      await loadExistingEdits();
+      buildPoiList();
       setupDrawTools();
     }
 
@@ -574,7 +718,15 @@
           const category = feature.properties?.category || '';
           const iconPath = baseIcons[category] || baseIcons.fallback;
           const icon = L.icon({ iconUrl: iconPath, iconSize: [22, 22], iconAnchor: [11, 22] });
-          return L.marker(latlng, { icon });
+          return L.marker(latlng, {
+            icon,
+            name: feature.properties?.name || '',
+            slug: feature.properties?.slug || '',
+            category: feature.properties?.category || '',
+            elevation_ft: feature.properties?.elevation_ft ?? null,
+            description: feature.properties?.description || '',
+            image_url: feature.properties?.image_url || ''
+          });
         },
         onEachFeature: (feature, layer) => {
           const props = feature.properties || {};
@@ -591,7 +743,7 @@
           }
           layer.bindPopup(`<strong>${title}</strong><br/>${desc}`);
           if (title) {
-            basePoiLayers.push({ name: title, layer });
+            basePoiLayers.push({ name: title, layer, props: layer.options });
           }
         }
       }).addTo(map);
@@ -616,156 +768,135 @@
         historyStack.length = 0;
       };
 
-      const loadLegacyFiles = async () => {
-        const [statusRes, poiRes] = await Promise.all([
-          fetch(STATUS_URL),
-          fetch(POI_URL)
-        ]);
-
-        if (statusRes.ok) {
-          const statusJson = await statusRes.json();
-          (statusJson.features || []).forEach(feature => {
-            const coords = feature.geometry.coordinates.map(coord => [coord[1], coord[0]]);
-            statusSegments.push({ coords, status: feature.properties?.status || 'green' });
-          });
-        }
-
-        if (poiRes.ok) {
-          const poiJson = await poiRes.json();
-          (poiJson.features || []).forEach(feature => {
-            const type = feature.properties?.type || 'sign';
-            const base = {
-              lat: feature.geometry.coordinates[1],
-              lon: feature.geometry.coordinates[0],
-              description: feature.properties?.description || ''
-            };
-            if (type === 'blowdown') {
-              blowdownMarkers.push({
-                ...base,
-                size: feature.properties?.size || '',
-                passable: feature.properties?.passable ?? null,
-                tool: feature.properties?.tool || ''
-              });
-            } else {
-              signMarkers.push({
-                ...base,
-                subtype: feature.properties?.subtype || type,
-                junction: feature.properties?.junction || '',
-                direction: feature.properties?.direction || '',
-                text: feature.properties?.text || ''
-              });
-            }
-          });
-        }
-      };
-
       try {
         resetState();
-        const editRes = await fetch(EDIT_URL);
-        if (editRes.ok) {
-          const editJson = await editRes.json();
-          (editJson.status?.features || []).forEach(feature => {
-            const coords = feature.geometry.coordinates.map(coord => [coord[1], coord[0]]);
-            statusSegments.push({ coords, status: feature.properties?.status || 'green' });
+        const editJson = await fetchJsonWithDefault(EDIT_URL, {
+          statuses: [],
+          blowdowns: [],
+          signs: [],
+          drainage: [],
+          bogBridges: [],
+          stonework: [],
+          tread: [],
+          encroachments: [],
+          hazards: [],
+          cairns: [],
+          pois: []
+        });
+
+        const editStatusFeatures = normalizeFeatureArray(editJson.status || editJson.statuses);
+        const editPoiItems = normalizePoiItems(editJson.pois);
+        const legacyStatus = editStatusFeatures.length
+          ? { features: [] }
+          : await fetchJsonWithDefault(STATUS_URL, { features: [] });
+        const legacyPois = editPoiItems.length
+          ? { features: [] }
+          : await fetchJsonWithDefault(POI_URL, { features: [] });
+
+        const statusFeatures = editStatusFeatures.length ? editStatusFeatures : legacyStatus.features || [];
+        statusFeatures.forEach(feature => {
+          const coords = feature.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+          statusSegments.push({ coords, status: feature.properties?.status || 'green' });
+        });
+
+        normalizeFeatureArray(editJson.blowdowns).forEach(feature => {
+          blowdownMarkers.push({
+            lat: feature.geometry.coordinates[1],
+            lon: feature.geometry.coordinates[0],
+            description: feature.properties?.description || '',
+            size: feature.properties?.size || '',
+            passable: feature.properties?.passable ?? null,
+            tool: feature.properties?.tool || ''
           });
-          (editJson.blowdowns?.features || []).forEach(feature => {
-            blowdownMarkers.push({
-              lat: feature.geometry.coordinates[1],
-              lon: feature.geometry.coordinates[0],
-              description: feature.properties?.description || '',
-              size: feature.properties?.size || '',
-              passable: feature.properties?.passable ?? null,
-              tool: feature.properties?.tool || ''
-            });
+        });
+        normalizeFeatureArray(editJson.signs).forEach(feature => {
+          signMarkers.push({
+            lat: feature.geometry.coordinates[1],
+            lon: feature.geometry.coordinates[0],
+            description: feature.properties?.description || '',
+            subtype: feature.properties?.subtype || '',
+            junction: feature.properties?.junction || '',
+            direction: feature.properties?.direction || '',
+            text: feature.properties?.text || ''
           });
-          (editJson.signs?.features || []).forEach(feature => {
-            signMarkers.push({
-              lat: feature.geometry.coordinates[1],
-              lon: feature.geometry.coordinates[0],
-              description: feature.properties?.description || '',
-              subtype: feature.properties?.subtype || '',
-              junction: feature.properties?.junction || '',
-              direction: feature.properties?.direction || '',
-              text: feature.properties?.text || ''
-            });
+        });
+        normalizeFeatureArray(editJson.drainage).forEach(feature => {
+          drainageFeatures.push({
+            lat: feature.geometry.coordinates[1],
+            lon: feature.geometry.coordinates[0],
+            subtype: feature.properties?.subtype || '',
+            condition: feature.properties?.condition || '',
+            last_worked: feature.properties?.last_worked || '',
+            notes: feature.properties?.notes || ''
           });
-          (editJson.drainage?.features || []).forEach(feature => {
-            drainageFeatures.push({
-              lat: feature.geometry.coordinates[1],
-              lon: feature.geometry.coordinates[0],
-              subtype: feature.properties?.subtype || '',
-              condition: feature.properties?.condition || '',
-              last_worked: feature.properties?.last_worked || '',
-              notes: feature.properties?.notes || ''
-            });
+        });
+        normalizeFeatureArray(editJson.bogBridges).forEach(feature => {
+          bogBridges.push({
+            coords: feature.geometry.coordinates.map(coord => [coord[1], coord[0]]),
+            length_ft: feature.properties?.length_ft || 0,
+            condition: feature.properties?.condition || '',
+            hazard: feature.properties?.hazard || false,
+            subtype: feature.properties?.subtype || ''
           });
-          (editJson.bogBridges?.features || []).forEach(feature => {
-            bogBridges.push({
-              coords: feature.geometry.coordinates.map(coord => [coord[1], coord[0]]),
-              length_ft: feature.properties?.length_ft || 0,
-              condition: feature.properties?.condition || '',
-              hazard: feature.properties?.hazard || false,
-              subtype: feature.properties?.subtype || ''
-            });
+        });
+        normalizeFeatureArray(editJson.stonework).forEach(feature => {
+          stoneworkSegments.push({
+            coords: feature.geometry.coordinates.map(coord => [coord[1], coord[0]]),
+            subtype: feature.properties?.subtype || '',
+            condition: feature.properties?.condition || '',
+            notes: feature.properties?.notes || ''
           });
-          (editJson.stonework?.features || []).forEach(feature => {
-            stoneworkSegments.push({
-              coords: feature.geometry.coordinates.map(coord => [coord[1], coord[0]]),
-              subtype: feature.properties?.subtype || '',
-              condition: feature.properties?.condition || '',
-              notes: feature.properties?.notes || ''
-            });
+        });
+        normalizeFeatureArray(editJson.tread).forEach(feature => {
+          treadConditions.push({
+            coords: feature.geometry.coordinates.map(coord => [coord[1], coord[0]]),
+            status: feature.properties?.status || '',
+            notes: feature.properties?.notes || ''
           });
-          (editJson.tread?.features || []).forEach(feature => {
-            treadConditions.push({
-              coords: feature.geometry.coordinates.map(coord => [coord[1], coord[0]]),
-              status: feature.properties?.status || '',
-              notes: feature.properties?.notes || ''
-            });
+        });
+        normalizeFeatureArray(editJson.encroachments).forEach(feature => {
+          encroachments.push({
+            coords: feature.geometry.coordinates.map(coord => [coord[1], coord[0]]),
+            side: feature.properties?.side || '',
+            notes: feature.properties?.notes || ''
           });
-          (editJson.encroachments?.features || []).forEach(feature => {
-            encroachments.push({
-              coords: feature.geometry.coordinates.map(coord => [coord[1], coord[0]]),
-              side: feature.properties?.side || '',
-              notes: feature.properties?.notes || ''
-            });
+        });
+        normalizeFeatureArray(editJson.hazards).forEach(feature => {
+          hazardMarkers.push({
+            lat: feature.geometry.coordinates[1],
+            lon: feature.geometry.coordinates[0],
+            subtype: feature.properties?.subtype || '',
+            severity: feature.properties?.severity || '',
+            seasonal: feature.properties?.seasonal || '',
+            description: feature.properties?.description || ''
           });
-          (editJson.hazards?.features || []).forEach(feature => {
-            hazardMarkers.push({
-              lat: feature.geometry.coordinates[1],
-              lon: feature.geometry.coordinates[0],
-              subtype: feature.properties?.subtype || '',
-              severity: feature.properties?.severity || '',
-              seasonal: feature.properties?.seasonal || '',
-              description: feature.properties?.description || ''
-            });
+        });
+        normalizeFeatureArray(editJson.cairns).forEach(feature => {
+          cairnMarkers.push({
+            lat: feature.geometry.coordinates[1],
+            lon: feature.geometry.coordinates[0],
+            status: feature.properties?.status || '',
+            notes: feature.properties?.notes || ''
           });
-          (editJson.cairns?.features || []).forEach(feature => {
-            cairnMarkers.push({
-              lat: feature.geometry.coordinates[1],
-              lon: feature.geometry.coordinates[0],
-              status: feature.properties?.status || '',
-              notes: feature.properties?.notes || ''
-            });
-          });
-          (editJson.pois?.features || []).forEach(feature => {
-            const props = feature.properties || {};
-            poiMarkers.push({
-              lat: feature.geometry.coordinates[1],
-              lon: feature.geometry.coordinates[0],
-              name: props.name || '',
-              slug: props.slug || '',
-              category: props.category || '',
-              elevation: props.elevation_ft ?? props.elevation ?? null,
-              description: props.description || '',
-              imageUrl: props.image_url || props.imageUrl || ''
-            });
-          });
-        } else {
-          await loadLegacyFiles();
+        });
+
+        let poiItems = editPoiItems;
+        if (!poiItems.length && legacyPois.features?.length) {
+          poiItems = legacyPois.features.map(feature => ({
+            name: feature.properties?.name || '',
+            slug: feature.properties?.slug || slugify(feature.properties?.name || ''),
+            category: feature.properties?.category || '',
+            elevation: feature.properties?.elevation_ft ?? null,
+            description: feature.properties?.description || '',
+            imageUrl: feature.properties?.image_url || '',
+            lat: feature.geometry.coordinates[1],
+            lon: feature.geometry.coordinates[0]
+          }));
         }
+        poiItems.forEach(item => poiMarkers.push(item));
 
         redrawOverlays();
+        buildPoiList();
         setStatusMessage('Edits loaded.');
       } catch (err) {
         setStatusMessage('Unable to load edits.', true);
@@ -900,6 +1031,7 @@
           }
           layer.dragging?.disable();
           redrawOverlays();
+          buildPoiList();
         });
       });
     }
@@ -1180,6 +1312,200 @@
 
       syncBasePoiLayers();
       updateSearchIndex();
+    }
+
+    function getBasePoiData(item) {
+      const props = item?.layer?.options || item?.props || {};
+      const name = props.name || item.name || '';
+      return {
+        name,
+        slug: props.slug || '',
+        category: props.category || '',
+        elevation: props.elevation_ft ?? null,
+        description: props.description || '',
+        imageUrl: props.image_url || props.imageUrl || ''
+      };
+    }
+
+    function getPoiIconForCategory(category) {
+      return baseIcons[category] || baseIcons.fallback || editIcons.poi;
+    }
+
+    function renderPoiRow(container, poi, options = {}) {
+      const row = document.createElement('div');
+      row.className = 'poi-item';
+      const slug = poi.slug || (poi.name ? slugify(poi.name) : '');
+      if (options.baseSlug) row.dataset.baseSlug = options.baseSlug;
+      row.dataset.slug = slug;
+
+      const header = document.createElement('div');
+      header.className = 'poi-item-header';
+
+      const headerLeft = document.createElement('div');
+      headerLeft.className = 'poi-item-meta';
+      const icon = document.createElement('img');
+      icon.className = 'poi-item-icon';
+      icon.alt = 'POI category icon';
+      icon.src = getPoiIconForCategory(poi.category);
+      const title = document.createElement('strong');
+      title.textContent = poi.name || 'Untitled POI';
+      headerLeft.append(icon, title);
+
+      const actions = document.createElement('div');
+      actions.className = 'poi-item-actions';
+      const focusBtn = document.createElement('button');
+      focusBtn.type = 'button';
+      focusBtn.textContent = 'Locate';
+      focusBtn.addEventListener('click', () => {
+        if (Number.isFinite(poi.lat) && Number.isFinite(poi.lon)) {
+          map.flyTo([poi.lat, poi.lon], 16);
+        }
+      });
+      actions.appendChild(focusBtn);
+
+      header.append(headerLeft, actions);
+
+      const grid = document.createElement('div');
+      grid.className = 'poi-item-grid';
+
+      const isBase = options.isBase || false;
+
+      const nameLabel = document.createElement('label');
+      nameLabel.textContent = 'Name';
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.value = poi.name || '';
+      nameInput.disabled = isBase;
+      nameLabel.appendChild(nameInput);
+
+      const slugLabel = document.createElement('label');
+      slugLabel.textContent = 'Slug';
+      const slugInput = document.createElement('input');
+      slugInput.type = 'text';
+      slugInput.value = poi.slug || slugify(poi.name || '');
+      slugInput.disabled = isBase;
+      slugLabel.appendChild(slugInput);
+
+      const categoryLabel = document.createElement('label');
+      categoryLabel.textContent = 'Category';
+      const categorySelect = document.createElement('select');
+      ['','waterfall','junction','scenic','summit','other'].forEach(value => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value ? value[0].toUpperCase() + value.slice(1) : 'Select category';
+        if (value === poi.category) option.selected = true;
+        categorySelect.appendChild(option);
+      });
+      categoryLabel.appendChild(categorySelect);
+
+      const elevationLabel = document.createElement('label');
+      elevationLabel.textContent = 'Elevation (ft)';
+      const elevationInput = document.createElement('input');
+      elevationInput.type = 'number';
+      elevationInput.min = '0';
+      elevationInput.step = '1';
+      elevationInput.value = Number.isFinite(poi.elevation) ? String(poi.elevation) : '';
+      elevationLabel.appendChild(elevationInput);
+
+      const descriptionLabel = document.createElement('label');
+      descriptionLabel.textContent = 'Description';
+      const descriptionInput = document.createElement('textarea');
+      descriptionInput.value = poi.description || '';
+      descriptionLabel.appendChild(descriptionInput);
+
+      const imageLabel = document.createElement('label');
+      imageLabel.textContent = 'Image URL';
+      const imageInput = document.createElement('input');
+      imageInput.type = 'url';
+      imageInput.value = poi.imageUrl || '';
+      imageLabel.appendChild(imageInput);
+
+      grid.append(nameLabel, slugLabel, categoryLabel, elevationLabel, descriptionLabel, imageLabel);
+
+      const updatePoi = () => {
+        const updated = {
+          name: nameInput.value.trim(),
+          slug: slugInput.value.trim(),
+          category: categorySelect.value,
+          elevation: elevationInput.value ? Number(elevationInput.value) : null,
+          description: descriptionInput.value.trim(),
+          imageUrl: imageInput.value.trim(),
+          lat: poi.lat,
+          lon: poi.lon
+        };
+        updatePoiMarker(updated, row.dataset.baseSlug);
+        title.textContent = updated.name || 'Untitled POI';
+        icon.src = getPoiIconForCategory(updated.category);
+      };
+
+      [nameInput, slugInput, categorySelect, elevationInput, descriptionInput, imageInput].forEach(input => {
+        input.addEventListener('change', updatePoi);
+      });
+
+      row.append(header, grid);
+      container.appendChild(row);
+    }
+
+    function updatePoiMarker(updated, baseSlug = '') {
+      const slugKey = baseSlug || updated.slug || slugify(updated.name || '');
+      const existing = poiMarkers.find(poi => (poi.slug || slugify(poi.name || '')) === slugKey);
+      if (existing) {
+        Object.assign(existing, updated);
+      } else {
+        poiMarkers.push(updated);
+      }
+      const baseItem = baseSlug
+        ? basePoiLayers.find(item => slugify(item.layer?.options?.slug || item.name || '') === baseSlug)
+        : basePoiLayers.find(item => slugify(item.layer?.options?.slug || item.name || '') === slugKey);
+      if (baseItem) {
+        const iconPath = getPoiIconForCategory(updated.category || baseItem.layer?.options?.category);
+        baseItem.layer?.setIcon?.(L.icon({ iconUrl: iconPath, iconSize: [22, 22], iconAnchor: [11, 22] }));
+        const elevationLabel = updated.elevation ? `${updated.elevation} ft` : '';
+        const popupHtml = [
+          `<strong>${baseItem.name}</strong>`,
+          updated.category || baseItem.layer?.options?.category || '',
+          elevationLabel,
+          updated.description || ''
+        ].filter(Boolean).join('<br>');
+        baseItem.layer?.bindPopup?.(popupHtml);
+      }
+      redrawOverlays();
+    }
+
+    function buildPoiList() {
+      const container = document.getElementById('poi-list-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const editedBySlug = new Map(
+        poiMarkers.map(item => [item.slug || slugify(item.name || ''), item])
+      );
+      const baseSlugs = new Set();
+
+      basePoiLayers.forEach(item => {
+        const base = getBasePoiData(item);
+        const baseSlug = base.slug || slugify(base.name || '');
+        if (!baseSlug) return;
+        baseSlugs.add(baseSlug);
+        const edit = editedBySlug.get(baseSlug);
+        const markerLatLng = item.layer.getLatLng();
+        const poi = {
+          ...base,
+          ...edit,
+          slug: base.slug || edit?.slug || baseSlug,
+          elevation: edit?.elevation ?? base.elevation ?? null,
+          imageUrl: edit?.imageUrl || base.imageUrl || '',
+          lat: edit?.lat ?? markerLatLng.lat,
+          lon: edit?.lon ?? markerLatLng.lng
+        };
+        renderPoiRow(container, poi, { isBase: true, baseSlug });
+      });
+
+      poiMarkers.forEach(item => {
+        const slug = item.slug || slugify(item.name || '');
+        if (baseSlugs.has(slug)) return;
+        renderPoiRow(container, item);
+      });
     }
 
     function syncBasePoiLayers() {
@@ -1680,6 +2006,7 @@
         pendingPoiData = null;
         resetPoiForm();
         redrawOverlays();
+        buildPoiList();
         setStatusMessage(`Added POI: ${newPoi.name}`);
       });
       document.getElementById('saveBtn').addEventListener('click', saveToServer);
