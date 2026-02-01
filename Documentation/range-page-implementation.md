@@ -4,50 +4,48 @@ These notes describe how to update the range catalog and add a range detail page
 
 ## Goals
 
-1. **Range catalog cards** use the **primary photo of the tallest peak in the range** (from `data/nh48.json`) and link to the range detail page.
+1. **Range catalog cards** use the **primary photo defined in `data/wmnf-ranges.json`** and link to the range detail page.
 2. **Range detail page** looks like a peak detail page: a gallery (single image for now), followed by a table of all peaks in the range with photos and metadata.
 
 ## Data source and helpers
 
-- Use `data/nh48.json` as the source of truth for peaks, ranges, and photos.
+- Use `data/wmnf-ranges.json` as the source of truth for range names, slugs, peak lists, and hero photos.
+- Use `data/nh48.json` to look up full peak details (slugs, elevation, difficulty, peak photos) when building the peaks table.
 - Prefer a helper that:
-  - Groups peaks by range.
-  - Finds the tallest peak in each range.
-  - Extracts the **primary** photo: the photo with `default: true` or the first photo.
-  - Generates a stable range slug (use the same slugify logic everywhere).
+  - Reads ranges from `wmnf-ranges.json` (do not group peaks by range labels from `nh48.json`).
+  - Selects the **primary** photo (`isPrimary: true`) for the range hero, falling back to the first photo.
+  - Maps each `peakList` entry back to the matching peak record in `nh48.json`.
 
 Example helper (pseudo-code):
 
 ```ts
 // utils/rangeUtils.ts
 import peaks from '../data/nh48.json';
-import slugify from 'slugify';
+import ranges from '../data/wmnf-ranges.json';
 
 export function getPrimaryPhoto(photos: any[]) {
   if (!Array.isArray(photos) || photos.length === 0) return '';
-  const primary = photos.find((photo) => photo.default);
+  const primary = photos.find((photo) => photo.isPrimary);
   return (primary || photos[0]).url || '';
 }
 
 export function buildRangeCatalog() {
-  const ranges: Record<string, any[]> = {};
-  peaks.forEach((peak) => {
-    const range = peak.range || 'Unknown';
-    ranges[range] = ranges[range] || [];
-    ranges[range].push(peak);
-  });
+  return Object.values(ranges).map((range) => ({
+    name: range.rangeName,
+    slug: range.slug,
+    imageUrl: getPrimaryPhoto(range.photos),
+    tallestPeakName: range.highestPoint?.peakName,
+    peakCount: range.peakCount,
+  }));
+}
 
-  return Object.entries(ranges).map(([rangeName, rangePeaks]) => {
-    const tallest = rangePeaks.reduce((max, peak) =>
-      peak.elevation > max.elevation ? peak : max,
-    );
-    return {
-      name: rangeName,
-      slug: slugify(rangeName, { lower: true }),
-      imageUrl: getPrimaryPhoto(tallest.photos),
-      tallestPeakName: tallest.name,
-    };
+export function mapRangePeaks(range) {
+  const peakMap = new Map();
+  peaks.forEach((peak) => {
+    if (peak.name) peakMap.set(peak.name, peak);
+    if (peak.peakName) peakMap.set(peak.peakName, peak);
   });
+  return range.peakList.map((name) => peakMap.get(name)).filter(Boolean);
 }
 ```
 
@@ -55,14 +53,13 @@ export function buildRangeCatalog() {
 
 **Problem:** The range catalog currently uses the wrong slug to fetch images.
 
-**Fix:** Derive the range image from the tallest peak in that range, then render that image and link to `/range/[rangeSlug]`.
+**Fix:** Derive the range image from the primary range photo in `wmnf-ranges.json`, then render that image and link to `/range/[rangeSlug]`.
 
 Implementation outline:
 
-1. Load peaks from `data/nh48.json` at build time (preferred) or client-side.
-2. Group peaks by range and compute each range’s tallest peak.
-3. Use the tallest peak’s primary photo for the card image.
-4. Generate the range card link using the range slug, not the peak slug.
+1. Load ranges from `data/wmnf-ranges.json` at build time (preferred) or client-side.
+2. Use the range’s primary photo for the card image.
+3. Generate the range card link using the `slug` from the range dataset.
 
 Example usage in a catalog page (pseudo-code):
 
@@ -102,25 +99,24 @@ export default function RangeCatalogPage() {
 Implementation outline:
 
 1. Add a dynamic route `pages/range/[rangeSlug].tsx`.
-2. At build time, compute all range slugs using the same helper as the catalog.
-3. In `getStaticProps`, filter peaks by `slugify(peak.range) === rangeSlug`.
-4. Compute the tallest peak for the gallery image.
-5. Render the gallery and a table of peaks.
+2. At build time, compute all range slugs from `wmnf-ranges.json`.
+3. In `getStaticProps`, read the matching range entry by slug.
+4. Map `range.peakList` to full peak data from `nh48.json`.
+5. Render the gallery using the range’s primary photo and a table of peaks.
 
 Pseudo-code skeleton:
 
 ```tsx
 import Link from 'next/link';
-import slugify from 'slugify';
 import peaks from '../../data/nh48.json';
+import ranges from '../../data/wmnf-ranges.json';
 import GalleryCarousel from '../../components/GalleryCarousel';
 import { getPrimaryPhoto } from '../../utils/rangeUtils';
 
 export async function getStaticPaths() {
-  const ranges = [...new Set(peaks.map((peak) => peak.range).filter(Boolean))];
   return {
-    paths: ranges.map((range) => ({
-      params: { rangeSlug: slugify(range, { lower: true }) },
+    paths: Object.keys(ranges).map((rangeSlug) => ({
+      params: { rangeSlug },
     })),
     fallback: false,
   };
@@ -128,16 +124,18 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const { rangeSlug } = params;
-  const peaksInRange = peaks.filter(
-    (peak) => peak.range && slugify(peak.range, { lower: true }) === rangeSlug,
-  );
-  const tallestPeak = peaksInRange.reduce((max, peak) =>
-    peak.elevation > max.elevation ? peak : max,
-  );
+  const range = ranges[rangeSlug];
+  const peakMap = new Map();
+  peaks.forEach((peak) => {
+    if (peak.name) peakMap.set(peak.name, peak);
+    if (peak.peakName) peakMap.set(peak.peakName, peak);
+  });
+  const peaksInRange = range.peakList.map((name) => peakMap.get(name)).filter(Boolean);
+  const heroPhoto = getPrimaryPhoto(range.photos || []);
   return {
     props: {
-      rangeName: tallestPeak?.range ?? rangeSlug,
-      galleryImage: getPrimaryPhoto(tallestPeak?.photos ?? []),
+      rangeName: range.rangeName,
+      galleryImage: heroPhoto,
       peaksInRange,
     },
   };

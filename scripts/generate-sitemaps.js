@@ -6,17 +6,20 @@ const { execSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
+const RANGES_DATA_PATH = path.join(ROOT, 'data', 'wmnf-ranges.json');
 const PLANTS_PATH = path.join(ROOT, 'data', 'howker-plants');
 const SITEMAP_INDEX_OUTPUT = path.join(ROOT, 'sitemap.xml');
 const PAGE_SITEMAP_OUTPUT = path.join(ROOT, 'page-sitemap.xml');
 const IMAGE_SITEMAP_OUTPUT = path.join(ROOT, 'image-sitemap.xml');
 const PEAK_BASE = 'https://nh48.info/peak';
 const PEAK_BASE_FR = 'https://nh48.info/fr/peak';
+const RANGE_BASE = 'https://nh48.info/range';
 const PHOTO_BASE_URL = 'https://photos.nh48.info';
 const PHOTO_PATH_PREFIX = '/nh48-photos/';
 const STATIC_PAGE_ENTRIES = [
   { loc: 'https://nh48.info/', file: 'index.html' },
   { loc: 'https://nh48.info/catalog', file: 'catalog.html' },
+  { loc: 'https://nh48.info/catalog/ranges', file: 'catalog/ranges/index.html' },
   { loc: 'https://nh48.info/photos/', file: 'photos/index.html' },
   { loc: 'https://nh48.info/trails', file: 'trails/index.html' },
   { loc: 'https://nh48.info/long-trails', file: 'long-trails/index.html' },
@@ -116,6 +119,7 @@ const STATIC_IMAGE_ENTRIES = [
 const IMAGE_LICENSE_URL = 'https://nh48.info/licensing';
 
 const data = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
+const rangesData = JSON.parse(fs.readFileSync(RANGES_DATA_PATH, 'utf8'));
 const plantData = JSON.parse(fs.readFileSync(PLANTS_PATH, 'utf8'));
 
 // Normalize strings for web output. Fixes common mojibake (â€” → —, etc.)
@@ -314,6 +318,7 @@ const dedupeImages = (images) => {
 };
 
 const slugs = Object.keys(data).sort();
+const rangeSlugs = Object.keys(rangesData).sort();
 
 const buildPlantImageEntries = () => {
   const entries = [];
@@ -348,6 +353,13 @@ const buildPageSitemap = () => {
     urls.push({
       loc: `${PEAK_BASE_FR}/${slug}`,
       lastmod: getGitLastmod(path.join('fr', 'peaks', slug, 'index.html')),
+    });
+  });
+  const rangeLastmod = getGitLastmod('range/index.html');
+  rangeSlugs.forEach((slug) => {
+    urls.push({
+      loc: `${RANGE_BASE}/${slug}/`,
+      lastmod: rangeLastmod,
     });
   });
 

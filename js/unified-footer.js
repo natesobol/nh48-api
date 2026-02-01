@@ -12,10 +12,82 @@
   const THUMBNAIL_FALLBACK = 'data:image/svg+xml;utf8,' + encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${THUMBNAIL_CONFIG.size}" height="${THUMBNAIL_CONFIG.size}"><rect width="100%" height="100%" fill="#0f172a"/></svg>`
   );
+  const PEAKS_DATA_URLS = [
+    '/data/nh48.json',
+    'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
+    'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
+  ];
+  const RANGE_DATA_URLS = [
+    '/data/wmnf-ranges.json',
+    'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-ranges.json',
+    'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-ranges.json'
+  ];
 
   const getPeakSlug = (href = '') => {
     const cleaned = href.split('/peak/')[1] || '';
     return cleaned.replace(/\/$/, '');
+  };
+
+  const normalizeName = (value = '') => String(value || '').trim().toLowerCase();
+
+  const getPeaksArray = (data) => {
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === 'object') return Object.values(data);
+    return [];
+  };
+
+  const parseElevation = (peak) => {
+    const raw = peak['Elevation (ft)'] ?? peak.elevation ?? peak['Elevation'] ?? peak.elevationFeet ?? peak.elevation_ft;
+    const value = typeof raw === 'string' ? parseFloat(raw.replace(/,/g, '')) : Number(raw);
+    return Number.isFinite(value) ? value : 0;
+  };
+
+  const getPeakName = (peak) => peak?.name || peak?.['Peak Name'] || peak?.peakName || peak?.['Peak'] || 'Unknown Peak';
+
+  const fetchJson = async (urls = []) => {
+    for (const url of urls) {
+      try {
+        const response = await fetch(url, { mode: 'cors' });
+        if (!response.ok) throw new Error(`Bad response: ${response.status}`);
+        const data = await response.json();
+        if (data && typeof data === 'object') return data;
+      } catch (error) {
+        console.warn('Failed to fetch JSON from', url, error);
+      }
+    }
+    return null;
+  };
+
+  const buildFooterGroupsFromRanges = (rangesData, peaksData) => {
+    if (!rangesData || !peaksData) return null;
+    const peaks = getPeaksArray(peaksData);
+    const peakMap = new Map();
+    peaks.forEach((peak) => {
+      const name = getPeakName(peak);
+      if (name) peakMap.set(normalizeName(name), peak);
+      if (peak?.peakName) peakMap.set(normalizeName(peak.peakName), peak);
+    });
+
+    const groups = Object.values(rangesData)
+      .map((range) => {
+        const links = (range.peakList || [])
+          .map((name) => {
+            const match = peakMap.get(normalizeName(name));
+            if (!match || !match.slug) return null;
+            return { href: `/peak/${match.slug}`, text: name };
+          })
+          .filter(Boolean);
+        return links.length ? { title: range.rangeName, links } : null;
+      })
+      .filter(Boolean);
+
+    const peaksMeta = peaks.map((peak) => ({
+      slug: peak.slug,
+      name: getPeakName(peak),
+      elevation: parseElevation(peak)
+    }));
+
+    return { groups, peaks: peaksMeta };
   };
 
   const getThumbnailSrc = (slug) => {
@@ -861,7 +933,16 @@
   };
 
   // Initialize when DOM is ready
-  const boot = () => {
+  const boot = async () => {
+    const [rangesData, peaksData] = await Promise.all([
+      fetchJson(RANGE_DATA_URLS),
+      fetchJson(PEAKS_DATA_URLS)
+    ]);
+    const footerData = buildFooterGroupsFromRanges(rangesData, peaksData);
+    if (footerData?.groups?.length) {
+      FOOTER_CONFIG.content.groups = footerData.groups;
+      FOOTER_CONFIG.peaks = footerData.peaks;
+    }
     injectFooter();
   };
 
