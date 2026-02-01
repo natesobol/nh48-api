@@ -999,6 +999,36 @@ table a:hover{
       return `${deg}°${min}'${sec}" ${hemi}`;
     }
 
+    function normalizeImageUrls(value) {
+      if (!value) return [];
+      if (Array.isArray(value)) {
+        return value.map(item => (typeof item === 'string' ? item.trim() : '')).filter(Boolean);
+      }
+      if (typeof value === 'string') {
+        const trimmed = value.trim();
+        return trimmed ? [trimmed] : [];
+      }
+      return [];
+    }
+
+    function getImageUrlsFromProps(props = {}) {
+      return normalizeImageUrls(
+        props.image_urls
+        || props.imageUrls
+        || props.image_url
+        || props.imageUrl
+      );
+    }
+
+    function getPrimaryImageUrl(imageUrls) {
+      if (!Array.isArray(imageUrls)) return '';
+      return imageUrls.find(url => typeof url === 'string' && url.trim().length) || '';
+    }
+
+    function getFallbackImageUrl(slug, width) {
+      return `https://howker.nh48.info/cdn-cgi/image/format=webp,width=${width}/${slug}/${slug}-001.jpg`;
+    }
+
     function comparePoi(a, b, key) {
       const valA = a[key];
       const valB = b[key];
@@ -1010,10 +1040,10 @@ table a:hover{
       return sortAsc ? strA.localeCompare(strB) : strB.localeCompare(strA);
     }
 
-    function createPhotoMarker(latlng, name, imageUrl, slugOverride) {
+    function createPhotoMarker(latlng, name, imageUrls, slugOverride) {
       const safeName = name || 'POI';
       const slug = slugOverride || slugify(safeName);
-      const thumbUrl = imageUrl || `https://howker.nh48.info/cdn-cgi/image/format=webp,width=60/${slug}/${slug}-001.jpg`;
+      const thumbUrl = getPrimaryImageUrl(imageUrls) || getFallbackImageUrl(slug, 60);
       return L.marker(latlng, {
         icon: L.divIcon({
           className: 'poi-marker',
@@ -1051,7 +1081,7 @@ table a:hover{
       }
       data.forEach(item => {
         const slug = item.slug || slugify(item.name);
-        const thumbUrl = item.imageUrl || `https://howker.nh48.info/cdn-cgi/image/format=webp,width=48/${slug}/${slug}-001.jpg`;
+        const thumbUrl = getPrimaryImageUrl(item.imageUrls) || getFallbackImageUrl(slug, 48);
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>
@@ -1121,8 +1151,8 @@ table a:hover{
             : Number(elevationValue);
           const name = mergedProps.name || props.name || 'Unknown';
           const slug = mergedProps.slug || slugify(name);
-          const imageUrl = mergedProps.image_url || mergedProps.imageUrl || '';
-          return { name, slug, imageUrl, elevation, finalLatLng, mergedProps };
+          const imageUrls = getImageUrlsFromProps(mergedProps);
+          return { name, slug, imageUrls, elevation, finalLatLng, mergedProps };
         }
 
         const trailLayer = L.geoJSON(data, {
@@ -1134,18 +1164,18 @@ table a:hover{
           },
           pointToLayer: (feature, latlng) => {
             if (feature.geometry.type === 'Point') {
-              const { name, slug, imageUrl, elevation, finalLatLng, mergedProps } = getPoiMergedData(feature);
+              const { name, slug, imageUrls, elevation, finalLatLng, mergedProps } = getPoiMergedData(feature);
               poiData.push({
                 name,
                 slug,
-                imageUrl,
+                imageUrls,
                 elevation,
                 lat: finalLatLng.lat,
                 lng: finalLatLng.lng,
                 category: mergedProps.category || '',
                 description: mergedProps.description || ''
               });
-              return createPhotoMarker(finalLatLng, name, imageUrl, slug);
+              return createPhotoMarker(finalLatLng, name, imageUrls, slug);
             }
             return L.circleMarker(latlng, {
               radius: 6,
@@ -1157,8 +1187,8 @@ table a:hover{
           },
           onEachFeature: (feature, layer) => {
             if (feature.geometry.type === 'Point') {
-              const { name, slug, imageUrl, elevation, mergedProps } = getPoiMergedData(feature);
-              const photoUrl = imageUrl || `https://howker.nh48.info/cdn-cgi/image/format=webp,width=300/${slug}/${slug}-001.jpg`;
+              const { name, slug, imageUrls, elevation, mergedProps } = getPoiMergedData(feature);
+              const photoUrl = getPrimaryImageUrl(imageUrls) || getFallbackImageUrl(slug, 300);
               const popupPhoto = `<img src="${photoUrl}" alt="${name}" style="width:100%;border-radius:8px; margin-bottom:6px;">`;
               const detailLink = slug ? `<a class="poi-detail-link" href="/howker-ridge/poi?poi=${slug}">View POI details</a>` : '';
               const details = [
@@ -1181,7 +1211,7 @@ table a:hover{
           const latlng = L.latLng(coords[1], coords[0]);
           const name = props.name || 'Unknown';
           const slug = props.slug || slugify(name);
-          const imageUrl = props.image_url || props.imageUrl || '';
+          const imageUrls = getImageUrlsFromProps(props);
           const elevationValue = props.elevation_ft ?? props.elevation;
           const elevation = elevationValue === null || elevationValue === undefined || Number.isNaN(Number(elevationValue))
             ? null
@@ -1189,15 +1219,15 @@ table a:hover{
           poiData.push({
             name,
             slug,
-            imageUrl,
+            imageUrls,
             elevation,
             lat: latlng.lat,
             lng: latlng.lng,
             category: props.category || '',
             description: props.description || ''
           });
-          const marker = createPhotoMarker(latlng, name, imageUrl, slug);
-          const photoUrl = imageUrl || `https://howker.nh48.info/cdn-cgi/image/format=webp,width=300/${slug}/${slug}-001.jpg`;
+          const marker = createPhotoMarker(latlng, name, imageUrls, slug);
+          const photoUrl = getPrimaryImageUrl(imageUrls) || getFallbackImageUrl(slug, 300);
           const detailLink = slug ? `<a class="poi-detail-link" href="/howker-ridge/poi?poi=${slug}">View POI details</a>` : '';
           const popupDetails = [
             `<img src="${photoUrl}" alt="${name}" style="width:100%;border-radius:8px; margin-bottom:6px;">`,
