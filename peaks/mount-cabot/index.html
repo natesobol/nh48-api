@@ -1353,6 +1353,18 @@
     z-index: 10;
   }
 
+  .site-nav-submenu--wide {
+    min-width: 240px;
+  }
+
+  .site-nav-submenu--wide .site-nav-submenu-group > button {
+    padding-right: 18px;
+  }
+
+  .site-nav-submenu .submenu-centered {
+    text-align: center;
+  }
+
   /* Widen Projects dropdown to ~50% more than the default */
   .projects-submenu {
     min-width: 300px;
@@ -1685,7 +1697,7 @@
         <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
         <a href="/catalog/ranges" data-route="range-catalog" data-routes="range-catalog,range-detail">Range Catalog</a>
         <div class="site-nav-submenu-group">
-          <button type="button" data-i18n="nav.games">Games</button>
+          <button type="button" class="submenu-centered" data-i18n="nav.games">Games</button>
           <div class="site-nav-submenu site-nav-submenu--nested" aria-label="NH48 games menu">
             <a href="/peakid-game.html" data-route="peakid-game" data-i18n="nav.peakidGame">PeakID Game</a>
             <a href="/timed-peakid-game.html" data-route="timed-peakid-game" data-i18n="nav.timedPeakId">Timed PeakID Game</a>
@@ -1697,8 +1709,8 @@
       </div>
     </div>
     <div class="site-nav-dropdown">
-      <button type="button">Other Hiking Datasets</button>
-      <div class="site-nav-submenu" aria-label="Other hiking datasets short links">
+      <button type="button">Trail Maps &amp; Datasets</button>
+      <div class="site-nav-submenu site-nav-submenu--wide" aria-label="Other hiking datasets short links">
         <div class="site-nav-submenu-group">
           <button type="button" data-route="trails" data-i18n="nav.trails">White Mountain Trails</button>
           <div class="site-nav-submenu site-nav-submenu--nested" aria-label="White Mountain Trails short links">
