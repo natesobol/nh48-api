@@ -4,16 +4,17 @@ These notes describe how to update the range catalog and add a range detail page
 
 ## Goals
 
-1. **Range catalog cards** use the **primary photo defined in `data/wmnf-ranges.json`** and link to the range detail page.
+1. **Range catalog cards** use the **primary photo of the highest peak in each range**, sourced from `data/nh48.json`, and link to the range detail page.
 2. **Range detail page** looks like a peak detail page: a gallery (single image for now), followed by a table of all peaks in the range with photos and metadata.
 
 ## Data source and helpers
 
-- Use `data/wmnf-ranges.json` as the source of truth for range names, slugs, peak lists, and hero photos.
-- Use `data/nh48.json` to look up full peak details (slugs, elevation, difficulty, peak photos) when building the peaks table.
+- Use `data/wmnf-ranges.json` as the source of truth for range names, slugs, peak lists, and highest peaks.
+- Use `data/nh48.json` to look up full peak details (slugs, elevation, difficulty, peak photos) when building the peaks table and when selecting the range catalog hero images.
+- **Important:** range photo subfolders do not exist in R2. Always pull range catalog imagery from the highest peak’s **primary** photo in `nh48.json`, which already points to the correct peak-name subfolder.
 - Prefer a helper that:
   - Reads ranges from `wmnf-ranges.json` (do not group peaks by range labels from `nh48.json`).
-  - Selects the **primary** photo (`isPrimary: true`) for the range hero, falling back to the first photo.
+  - Selects the **primary** photo (`isPrimary: true`) from the highest peak in each range, falling back to the first photo for that peak.
   - Maps each `peakList` entry back to the matching peak record in `nh48.json`.
 
 Example helper (pseudo-code):
@@ -22,6 +23,11 @@ Example helper (pseudo-code):
 // utils/rangeUtils.ts
 import peaks from '../data/nh48.json';
 import ranges from '../data/wmnf-ranges.json';
+
+const peaksByName = new Map();
+Object.values(peaks).forEach((peak) => {
+  if (peak.peakName) peaksByName.set(peak.peakName, peak);
+});
 
 export function getPrimaryPhoto(photos: any[]) {
   if (!Array.isArray(photos) || photos.length === 0) return '';
@@ -33,7 +39,7 @@ export function buildRangeCatalog() {
   return Object.values(ranges).map((range) => ({
     name: range.rangeName,
     slug: range.slug,
-    imageUrl: getPrimaryPhoto(range.photos),
+    imageUrl: getPrimaryPhoto(peaksByName.get(range.highestPoint?.peakName)?.photos || []),
     tallestPeakName: range.highestPoint?.peakName,
     peakCount: range.peakCount,
   }));
@@ -53,12 +59,12 @@ export function mapRangePeaks(range) {
 
 **Problem:** The range catalog currently uses the wrong slug to fetch images.
 
-**Fix:** Derive the range image from the primary range photo in `wmnf-ranges.json`, then render that image and link to `/range/[rangeSlug]`.
+**Fix:** Derive the range image from the **primary photo of the highest peak** in `nh48.json`, then render that image and link to `/range/[rangeSlug]`.
 
 Implementation outline:
 
 1. Load ranges from `data/wmnf-ranges.json` at build time (preferred) or client-side.
-2. Use the range’s primary photo for the card image.
+2. Use the highest peak’s primary photo (from `nh48.json`) for the card image.
 3. Generate the range card link using the `slug` from the range dataset.
 
 Example usage in a catalog page (pseudo-code):
@@ -88,7 +94,7 @@ export default function RangeCatalogPage() {
 
 **Goal:** Create a range detail page that mirrors the peak detail layout:
 
-- **Gallery carousel** (for now: a single image, using the tallest peak’s primary photo).
+- **Gallery carousel** (for now: a single image, using the tallest peak’s primary photo from `nh48.json`).
 - **Peak table** listing all peaks in the range with:
   - Primary photo thumbnail
   - Name (linked to `/peak/[slug]`)
@@ -102,7 +108,7 @@ Implementation outline:
 2. At build time, compute all range slugs from `wmnf-ranges.json`.
 3. In `getStaticProps`, read the matching range entry by slug.
 4. Map `range.peakList` to full peak data from `nh48.json`.
-5. Render the gallery using the range’s primary photo and a table of peaks.
+5. Render the gallery using the tallest peak’s primary photo and a table of peaks.
 
 Pseudo-code skeleton:
 
@@ -131,7 +137,7 @@ export async function getStaticProps({ params }) {
     if (peak.peakName) peakMap.set(peak.peakName, peak);
   });
   const peaksInRange = range.peakList.map((name) => peakMap.get(name)).filter(Boolean);
-  const heroPhoto = getPrimaryPhoto(range.photos || []);
+  const heroPhoto = getPrimaryPhoto(peakMap.get(range.highestPoint?.peakName)?.photos || []);
   return {
     props: {
       rangeName: range.rangeName,
@@ -217,4 +223,4 @@ Ensure the site navigation includes a link to the range catalog, if not already 
 
 ---
 
-These instructions keep the implementation consistent with existing peak detail pages while correcting the range catalog imagery by always using the tallest peak’s primary photo.
+These instructions keep the implementation consistent with existing peak detail pages while correcting the range catalog imagery by always using the tallest peak’s primary photo (from `nh48.json`, not range-based folders).
