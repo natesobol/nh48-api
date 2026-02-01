@@ -131,6 +131,18 @@
       cursor: pointer;
       font-size: 0.9rem;
     }
+    .toolbar.large select {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .toolbar.large select:focus {
+      outline: 2px solid color-mix(in srgb, var(--accent) 60%, transparent);
+      outline-offset: 2px;
+    }
     .toolbar.large input[type="search"] {
       border: 1px solid var(--border);
       background: var(--card);
@@ -179,10 +191,144 @@
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid var(--border);
+      position: relative;
     }
     #map {
       height: 75vh;
       width: 100%;
+    }
+    .share-card-overlay {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 320px;
+      max-width: calc(100% - 36px);
+      background: rgba(10, 10, 10, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      color: #fff;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      display: grid;
+      gap: 12px;
+      pointer-events: none;
+    }
+    .share-card-overlay h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+    .share-card-overlay .subtitle {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.85rem;
+    }
+    .share-card-overlay .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .share-card-overlay .badge {
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      background: rgba(23, 26, 34, 0.9);
+    }
+    .share-card-overlay .stats {
+      display: grid;
+      gap: 4px;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.78);
+    }
+    .share-card-overlay .footer {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.65);
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 9999;
+    }
+    .modal-card {
+      width: min(560px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-head h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .xbtn {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+    .modal-body {
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+    .step {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--card) 70%, transparent);
+    }
+    .step .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 6px;
+      background: #64748b;
+    }
+    .step.ok .dot {
+      background: var(--accent);
+    }
+    .step.fail .dot {
+      background: var(--accent-danger);
+    }
+    .step .msg {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 3px;
+      line-height: 1.35;
+    }
+    .result {
+      margin-top: 4px;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px dashed color-mix(in srgb, var(--accent) 55%, var(--border));
+      background: color-mix(in srgb, var(--panel) 70%, transparent);
+    }
+    .result a {
+      color: var(--ink);
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .result a:hover {
+      color: var(--accent);
+      text-decoration: underline;
     }
     .legend {
       display: grid;
@@ -480,6 +626,11 @@
         <button id="saveBtn" type="button" data-variant="green" title="Save to server" aria-label="Save to server">Save</button>
         <button id="downloadBtn" type="button" title="Download edits" aria-label="Download edits">Download</button>
         <button id="loadEditsBtn" type="button" title="Reload saved edits" aria-label="Reload saved edits">Reload</button>
+        <select id="cardRes" aria-label="Share card resolution">
+          <option value="4k" selected>Share Card: 4K (4096×2304)</option>
+          <option value="8k">Share Card: 8K (7680×4320) — heavy</option>
+        </select>
+        <button id="shareCardBtn" type="button" data-variant="green">Generate Share Card (Save + Download)</button>
       </div>
       <div class="tool-group" id="searchTools" aria-label="Search and location">
         <button id="locateBtn" type="button" data-variant="green" title="Locate me" aria-label="Locate me">Locate me</button>
@@ -495,6 +646,7 @@
 
     <div class="map-wrap">
       <div id="map" aria-label="Howker Ridge trail editor map"></div>
+      <div id="shareCardOverlay" class="share-card-overlay" aria-hidden="true"></div>
     </div>
 
     <div class="poi-form-modal" id="poiFormModal" hidden>
@@ -560,10 +712,46 @@
     </section>
   </div>
 
+  <div id="shareCardModal" class="modal-backdrop" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="shareCardTitle">
+      <div class="modal-head">
+        <h2 id="shareCardTitle">Share Card Export</h2>
+        <button id="shareCardClose" type="button" class="xbtn" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="step" data-step="render">
+          <span class="dot"></span>
+          <div><strong>Render</strong><div class="msg">Pending…</div></div>
+        </div>
+        <div class="step" data-step="download">
+          <span class="dot"></span>
+          <div><strong>Download</strong><div class="msg">Pending…</div></div>
+        </div>
+        <div class="step" data-step="upload">
+          <span class="dot"></span>
+          <div><strong>Upload to Cloudflare</strong><div class="msg">Pending…</div></div>
+        </div>
+        <div class="step" data-step="head">
+          <span class="dot"></span>
+          <div><strong>Verify (HEAD)</strong><div class="msg">Pending…</div></div>
+        </div>
+        <div class="step" data-step="get">
+          <span class="dot"></span>
+          <div><strong>Verify (GET)</strong><div class="msg">Pending…</div></div>
+        </div>
+        <div class="result">
+          <div class="small">Remote URL</div>
+          <a id="shareCardUrl" href="#" target="_blank" rel="noopener">—</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="footer-placeholder"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+  <script src="https://unpkg.com/leaflet-image/leaflet-image.js"></script>
   <script>
     window.addEventListener('error', (e) => {
       console.error('[HowkerEditor] Script error:', e.message, e.filename, e.lineno, e.colno);
@@ -574,6 +762,7 @@
     const POI_URL = '/data/howker-ridge-pois.geojson';
     const EDIT_URL = '/data/howker-ridge-edit.json';
     const SAVE_ENDPOINT = '/api/howker/map-update';
+    const CARD_UPLOAD_ENDPOINT = '/api/howker/map-card-upload';
 
     const baseIcons = {
       waterfall: '/assets/icons/waterfall.svg',
@@ -602,6 +791,11 @@
     let poiSlugTouched = false;
     let finishBtn;
     let highlightLayer;
+    let trailMeta = {
+      name: 'Howker Ridge Trail',
+      poiCount: 0,
+      bounds: null
+    };
     const drawnLayers = new L.FeatureGroup();
     const statusSegments = [];
     const blowdownMarkers = [];
@@ -683,13 +877,15 @@
     }
 
     async function initMap() {
+      const TILE_URL = '/api/tiles/opentopo/{z}/{x}/{y}.png';
       const standardLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; OpenStreetMap contributors'
       });
-      const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      const topoLayer = L.tileLayer(TILE_URL, {
         maxZoom: 17,
-        attribution: '&copy; OpenTopoMap contributors'
+        crossOrigin: true,
+        attribution: '© OpenTopoMap (CC-BY-SA) • © OpenStreetMap contributors'
       });
 
       map = L.map('map', { layers: [topoLayer] }).setView([44.3, -71.3], 13);
@@ -706,6 +902,10 @@
     async function loadBaseTrail() {
       const res = await fetch(TRAIL_URL);
       const data = await res.json();
+      const features = Array.isArray(data?.features) ? data.features : [];
+      const lineFeatures = features.filter(feature => feature.geometry && feature.geometry.type === 'LineString');
+      const firstLineName = lineFeatures.find(feature => feature.properties?.name)?.properties?.name;
+      const poiFeatures = features.filter(feature => feature.geometry && feature.geometry.type === 'Point');
 
       baseTrailLayer = L.geoJSON(data, {
         filter: feature => feature.geometry && feature.geometry.type === 'LineString',
@@ -715,6 +915,11 @@
 
       const bounds = baseTrailLayer.getBounds();
       if (bounds.isValid()) map.fitBounds(bounds.pad(0.05));
+      trailMeta = {
+        name: firstLineName || 'Howker Ridge Trail',
+        poiCount: poiFeatures.length,
+        bounds
+      };
 
       L.geoJSON(data, {
         filter: feature => feature.geometry && feature.geometry.type === 'Point',
@@ -753,6 +958,7 @@
       }).addTo(map);
       syncBasePoiLayers();
       updateSearchIndex();
+      updateShareCardOverlay();
     }
 
     async function loadExistingEdits() {
@@ -1315,6 +1521,7 @@
 
       syncBasePoiLayers();
       updateSearchIndex();
+      updateShareCardOverlay();
     }
 
     function getBasePoiData(item) {
@@ -1684,6 +1891,338 @@
       URL.revokeObjectURL(url);
     }
 
+    function buildCardMeta() {
+      const brushed = statusSegments.filter(s => s.status === 'green').length;
+      const needs = statusSegments.filter(s => s.status !== 'green').length;
+      const blowdowns = poiMarkers.filter(p => p.type === 'blowdown').length || blowdownMarkers.length;
+      const signs = poiMarkers.filter(p => p.type === 'sign').length || signMarkers.length;
+      const bounds = trailMeta?.bounds;
+      const bbox = bounds
+        ? [bounds.getSouthWest().lng, bounds.getSouthWest().lat, bounds.getNorthEast().lng, bounds.getNorthEast().lat]
+        : null;
+
+      return {
+        title: trailMeta?.name || 'Howker Ridge Trail',
+        subtitle: 'Mount Madison • White Mountain National Forest',
+        stats: [
+          '~4.5 mi one-way',
+          '~3,900 ft gain',
+          'Strenuous'
+        ],
+        edits: { brushed, needs, blowdowns, signs },
+        createdAt: new Date().toISOString(),
+        page: 'https://nh48.info/projects/howker-map-editor',
+        poiCount: trailMeta?.poiCount || 0,
+        bbox
+      };
+    }
+
+    function updateShareCardOverlay() {
+      const overlay = document.getElementById('shareCardOverlay');
+      if (!overlay) return;
+      const meta = buildCardMeta();
+      overlay.innerHTML = `
+        <div>
+          <h3>${meta.title}</h3>
+          <div class="subtitle">${meta.subtitle}</div>
+        </div>
+        <div class="badges">
+          ${meta.stats.map(stat => `<span class="badge">${stat}</span>`).join('')}
+        </div>
+        <div class="stats">
+          <div>Brushed segments: ${meta.edits.brushed}</div>
+          <div>Needs brushing: ${meta.edits.needs}</div>
+          <div>Blowdowns: ${meta.edits.blowdowns}</div>
+          <div>Signs: ${meta.edits.signs}</div>
+        </div>
+        <div class="footer">nh48.info/projects/howker-map-editor • ${new Date().toLocaleString()}</div>
+      `;
+    }
+
+    function openShareCardModal() {
+      const modal = document.getElementById('shareCardModal');
+      const urlEl = document.getElementById('shareCardUrl');
+      if (!modal || !urlEl) return;
+      urlEl.textContent = '—';
+      urlEl.href = '#';
+      modal.hidden = false;
+      modal.addEventListener('click', event => {
+        if (event.target === modal) {
+          modal.hidden = true;
+        }
+      }, { once: true });
+      const closeBtn = document.getElementById('shareCardClose');
+      if (closeBtn) closeBtn.onclick = () => (modal.hidden = true);
+      modal.querySelectorAll('.step').forEach(step => {
+        step.classList.remove('ok', 'fail');
+        const msg = step.querySelector('.msg');
+        if (msg) msg.textContent = 'Pending…';
+      });
+    }
+
+    function setStep(step, ok, msg) {
+      const modal = document.getElementById('shareCardModal');
+      if (!modal) return;
+      const row = modal.querySelector(`.step[data-step="${step}"]`);
+      if (!row) return;
+      row.classList.remove('ok', 'fail');
+      row.classList.add(ok ? 'ok' : 'fail');
+      const msgEl = row.querySelector('.msg');
+      if (msgEl) msgEl.textContent = msg || (ok ? 'OK' : 'Failed');
+    }
+
+    function waitForMapIdle(timeoutMs = 12000) {
+      return new Promise(resolve => {
+        let done = false;
+        const finish = () => {
+          if (done) return;
+          done = true;
+          cleanup();
+          resolve(true);
+        };
+        const cleanup = () => {
+          map.off('load', bump);
+          map.off('tileload', bump);
+          map.off('tileerror', bump);
+        };
+        let t;
+        const bump = () => {
+          clearTimeout(t);
+          t = setTimeout(finish, 400);
+        };
+        map.on('load', bump);
+        map.on('tileload', bump);
+        map.on('tileerror', bump);
+        bump();
+        setTimeout(finish, timeoutMs);
+      });
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      const radius = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.arcTo(x + w, y, x + w, y + h, radius);
+      ctx.arcTo(x + w, y + h, x, y + h, radius);
+      ctx.arcTo(x, y + h, x, y, radius);
+      ctx.arcTo(x, y, x + w, y, radius);
+      ctx.closePath();
+    }
+
+    function drawWrappedText(ctx, text, x, y, maxW, lineH) {
+      const words = String(text || '').split(/\s+/).filter(Boolean);
+      let line = '';
+      for (let i = 0; i < words.length; i += 1) {
+        const test = line ? `${line} ${words[i]}` : words[i];
+        const w = ctx.measureText(test).width;
+        if (w > maxW && line) {
+          ctx.fillText(line, x, y);
+          y += lineH;
+          line = words[i];
+        } else {
+          line = test;
+        }
+      }
+      if (line) {
+        ctx.fillText(line, x, y);
+        y += lineH;
+      }
+      return y;
+    }
+
+    function drawLegendOnCanvas(canvas, meta, exportW, exportH) {
+      const ctx = canvas.getContext('2d');
+      const pad = Math.round(exportW * 0.02);
+      const boxW = Math.min(920, Math.round(exportW * 0.26));
+      const boxX = exportW - boxW - pad;
+      const boxY = pad;
+      const boxH = Math.min(Math.round(exportH * 0.46), exportH - pad * 2);
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(10,10,10,0.78)';
+      ctx.strokeStyle = 'rgba(34,197,94,0.55)';
+      ctx.lineWidth = Math.max(2, Math.round(exportW * 0.0015));
+      roundRect(ctx, boxX, boxY, boxW, boxH, 24);
+      ctx.fill();
+      ctx.stroke();
+
+      const titleSize = Math.max(34, Math.round(exportW * 0.012));
+      const subSize = Math.max(18, Math.round(exportW * 0.006));
+      const bodySize = Math.max(18, Math.round(exportW * 0.006));
+
+      let y = boxY + Math.round(pad * 0.8);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `700 ${titleSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      y = drawWrappedText(ctx, meta.title, boxX + Math.round(pad * 0.6), y, boxW - Math.round(pad * 1.2), titleSize + 6);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.82)';
+      ctx.font = `600 ${subSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      y += 6;
+      y = drawWrappedText(ctx, meta.subtitle, boxX + Math.round(pad * 0.6), y, boxW - Math.round(pad * 1.2), subSize + 4);
+
+      y += Math.round(pad * 0.35);
+      const badgeH = Math.round(subSize * 1.7);
+      const badgePadX = Math.round(subSize * 0.9);
+      const badgeGap = Math.round(subSize * 0.6);
+
+      ctx.font = `700 ${bodySize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      let bx = boxX + Math.round(pad * 0.6);
+      meta.stats.forEach(txt => {
+        const w = ctx.measureText(txt).width + badgePadX * 2;
+        if (bx + w > boxX + boxW - Math.round(pad * 0.6)) {
+          bx = boxX + Math.round(pad * 0.6);
+          y += badgeH + Math.round(subSize * 0.6);
+        }
+        ctx.fillStyle = 'rgba(23,26,34,0.9)';
+        ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+        roundRect(ctx, bx, y, w, badgeH, 999);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(txt, bx + badgePadX, y + Math.round(badgeH * 0.68));
+        bx += w + badgeGap;
+      });
+
+      y += badgeH + Math.round(pad * 0.6);
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.font = `700 ${bodySize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      ctx.fillText('Edits on this map', boxX + Math.round(pad * 0.6), y);
+
+      y += Math.round(bodySize * 1.5);
+      ctx.fillStyle = 'rgba(255,255,255,0.78)';
+      ctx.font = `600 ${bodySize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      const rows = [
+        `Brushed segments: ${meta.edits.brushed}`,
+        `Needs brushing: ${meta.edits.needs}`,
+        `Blowdowns: ${meta.edits.blowdowns}`,
+        `Signs: ${meta.edits.signs}`
+      ];
+      rows.forEach(row => {
+        ctx.fillText(row, boxX + Math.round(pad * 0.6), y);
+        y += Math.round(bodySize * 1.35);
+      });
+
+      const footerY = boxY + boxH - Math.round(pad * 0.6);
+      ctx.fillStyle = 'rgba(255,255,255,0.75)';
+      ctx.font = `600 ${Math.max(16, Math.round(exportW * 0.0048))}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      ctx.fillText('nh48.info • Howker Ridge Map Editor', boxX + Math.round(pad * 0.6), footerY);
+
+      ctx.restore();
+    }
+
+    async function generateShareCard() {
+      openShareCardModal();
+      const pw = prompt('Enter HOWKER_MAP_PW to upload the share card:');
+      if (!pw) {
+        setStep('render', false, 'Cancelled (no password).');
+        return;
+      }
+
+      const resSel = document.getElementById('cardRes')?.value || '4k';
+      const exportW = resSel === '8k' ? 7680 : 4096;
+      const exportH = resSel === '8k' ? 4320 : 2304;
+      const mapEl = document.getElementById('map');
+      const wrapEl = mapEl?.parentElement;
+
+      if (!mapEl || !wrapEl) {
+        setStep('render', false, 'Map container not found.');
+        return;
+      }
+
+      const prev = {
+        mapW: mapEl.style.width,
+        mapH: mapEl.style.height,
+        wrapW: wrapEl.style.width,
+        wrapH: wrapEl.style.height
+      };
+
+      try {
+        setStep('render', true, `Preparing ${exportW}×${exportH} export…`);
+        const overlayReserve = Math.min(920, Math.round(exportW * 0.26));
+        const boundsGroup = L.featureGroup([baseTrailLayer, drawnLayers].filter(Boolean));
+        const bounds = boundsGroup.getBounds?.();
+        if (bounds && bounds.isValid()) {
+          map.fitBounds(bounds, {
+            paddingTopLeft: [40, 40],
+            paddingBottomRight: [overlayReserve + 80, 40]
+          });
+        }
+
+        mapEl.style.width = `${exportW}px`;
+        mapEl.style.height = `${exportH}px`;
+        wrapEl.style.width = `${exportW}px`;
+        wrapEl.style.height = `${exportH}px`;
+
+        map.invalidateSize(true);
+        await waitForMapIdle(15000);
+
+        const canvas = await new Promise((resolve, reject) => {
+          window.leafletImage(map, (err, c) => {
+            if (err) reject(err);
+            else resolve(c);
+          });
+        });
+
+        const meta = buildCardMeta();
+        drawLegendOnCanvas(canvas, meta, exportW, exportH);
+
+        const blob = await new Promise(resolve => {
+          canvas.toBlob(b => resolve(b), 'image/jpeg', 0.92);
+        });
+
+        if (!blob) {
+          throw new Error('Unable to encode JPG.');
+        }
+
+        const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+        const filename = `howker-ridge-map-card-${resSel}-${stamp}.jpg`;
+        const dlUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = dlUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(dlUrl);
+        setStep('download', true, `Downloaded: ${filename}`);
+
+        const fd = new FormData();
+        fd.append('password', pw);
+        fd.append('meta', JSON.stringify(meta));
+        fd.append('file', blob, filename);
+
+        const upRes = await fetch(CARD_UPLOAD_ENDPOINT, { method: 'POST', body: fd });
+        const upJson = await upRes.json().catch(() => ({}));
+
+        if (!upRes.ok || !upJson.ok) {
+          throw new Error(upJson?.error || `Upload failed (${upRes.status}).`);
+        }
+
+        setStep('upload', true, `Stored key: ${upJson.key}`);
+        const remoteUrl = upJson.url;
+        const urlEl = document.getElementById('shareCardUrl');
+        if (urlEl) {
+          urlEl.textContent = remoteUrl;
+          urlEl.href = remoteUrl;
+        }
+
+        const headRes = await fetch(remoteUrl, { method: 'HEAD' });
+        setStep('head', headRes.ok, headRes.ok ? 'HEAD 200 OK' : `HEAD failed (${headRes.status})`);
+
+        const getRes = await fetch(remoteUrl, { method: 'GET' });
+        setStep('get', getRes.ok, getRes.ok ? 'GET 200 OK (image retrievable)' : `GET failed (${getRes.status})`);
+      } catch (err) {
+        setStep('render', false, err?.message || 'Export failed.');
+        console.error(err);
+      } finally {
+        mapEl.style.width = prev.mapW;
+        mapEl.style.height = prev.mapH;
+        wrapEl.style.width = prev.wrapW;
+        wrapEl.style.height = prev.wrapH;
+        map.invalidateSize(true);
+      }
+    }
+
     function undoLast() {
       const last = historyStack.pop();
       if (!last) {
@@ -2017,6 +2556,7 @@
       document.getElementById('loadEditsBtn').addEventListener('click', loadExistingEdits);
       document.getElementById('undoBtn').addEventListener('click', undoLast);
       document.getElementById('locateBtn').addEventListener('click', locateUser);
+      document.getElementById('shareCardBtn').addEventListener('click', generateShareCard);
       const searchInput = document.getElementById('searchInput');
       document.getElementById('searchBtn').addEventListener('click', () => performSearch(searchInput.value));
       searchInput.addEventListener('keydown', event => {
