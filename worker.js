@@ -44,6 +44,34 @@ export default {
     const buildMeta = await fetchBuildMeta(RAW_BUILD_META_URL);
     const buildDate = buildMeta?.buildDate || '';
 
+    if (pathname.startsWith('/api/tiles/opentopo/')) {
+      const match = pathname.match(/^\/api\/tiles\/opentopo\/(\d+)\/(\d+)\/(\d+)\.(png|jpg)$/);
+      if (!match) {
+        return new Response('Invalid tile path.', { status: 400 });
+      }
+      if (!['GET', 'HEAD'].includes(request.method)) {
+        return new Response('Method Not Allowed', { status: 405 });
+      }
+      const [, z, x, y, ext] = match;
+      const subdomains = ['a', 'b', 'c'];
+      const sub = subdomains[Math.floor(Math.random() * subdomains.length)];
+      const tileUrl = `https://${sub}.tile.opentopomap.org/${z}/${x}/${y}.png`;
+      const upstream = await fetch(tileUrl, {
+        cf: { cacheTtl: 86400, cacheEverything: true }
+      });
+      if (!upstream.ok) {
+        return new Response('Tile not found.', { status: upstream.status });
+      }
+      return new Response(upstream.body, {
+        status: upstream.status,
+        headers: {
+          'Content-Type': `image/${ext === 'jpg' ? 'jpeg' : ext}`,
+          'Cache-Control': 'public, max-age=86400',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
     if (pathname.startsWith('/api/howker/plant-reports')) {
       const corsHeaders = {
         'Access-Control-Allow-Origin': HOWKER_ORIGIN,
@@ -149,6 +177,124 @@ export default {
       }
 
       return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+    }
+
+    if (pathname === '/api/howker/map-card-upload' || pathname === '/api/howker/map-card-upload/') {
+      const corsHeaders = (origin) => {
+        const allowed = new Set([
+          'https://nh48.info',
+          'http://localhost:3000',
+          'http://127.0.0.1:3000'
+        ]);
+        const resolved = allowed.has(origin) ? origin : 'https://nh48.info';
+        return {
+          'Access-Control-Allow-Origin': resolved,
+          'Access-Control-Allow-Methods': 'POST,OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Access-Control-Max-Age': '86400'
+        };
+      };
+      const origin = request.headers.get('Origin') || HOWKER_ORIGIN;
+      const jsonResponse = (status, payload) => {
+        return new Response(JSON.stringify(payload), {
+          status,
+          headers: {
+            ...corsHeaders(origin),
+            'Content-Type': 'application/json'
+          }
+        });
+      };
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: corsHeaders(origin) });
+      }
+      if (request.method !== 'POST') {
+        return new Response('Method Not Allowed', { status: 405, headers: corsHeaders(origin) });
+      }
+      if (!env.HOWKER_DATA) {
+        return jsonResponse(500, { error: 'Storage is not configured.' });
+      }
+      let form;
+      try {
+        form = await request.formData();
+      } catch (err) {
+        return jsonResponse(400, { error: 'Invalid form data.' });
+      }
+      const expectedPw = (env.HOWKER_MAP_PW || '').trim()
+        || (env.HOWKER_MAP_PASSWORD || '').trim()
+        || (env.HOWKER_PASS || '').trim();
+      const providedPw = (form.get('password') || '').toString().trim();
+      if (!expectedPw || !providedPw || providedPw !== expectedPw) {
+        return new Response('Unauthorized', { status: 403, headers: corsHeaders(origin) });
+      }
+      const file = form.get('file');
+      if (!file || typeof file === 'string') {
+        return jsonResponse(400, { error: 'Missing file upload.' });
+      }
+      const filename = file.name || 'howker-map-card.jpg';
+      const isJpeg = file.type === 'image/jpeg' || /\.(jpe?g)$/i.test(filename);
+      if (!isJpeg) {
+        return jsonResponse(400, { error: 'Only JPEG uploads are allowed.' });
+      }
+      const meta = form.get('meta');
+      const metaString = typeof meta === 'string' ? meta : '';
+      const key = `howker-share/howker-map-card-${Date.now()}.jpg`;
+      await env.HOWKER_DATA.put(key, file.stream(), {
+        httpMetadata: { contentType: 'image/jpeg' },
+        customMetadata: metaString ? { meta: metaString } : undefined
+      });
+      return jsonResponse(200, {
+        ok: true,
+        key,
+        url: `${SITE}/api/howker/map-card/${encodeURIComponent(key)}`
+      });
+    }
+
+    if (pathname.startsWith('/api/howker/map-card/')) {
+      const corsHeaders = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,HEAD,OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Max-Age': '86400'
+      };
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: corsHeaders });
+      }
+      if (!['GET', 'HEAD'].includes(request.method)) {
+        return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+      }
+      if (!env.HOWKER_DATA) {
+        return new Response('Storage is not configured.', { status: 500, headers: corsHeaders });
+      }
+      const key = decodeURIComponent(pathname.replace('/api/howker/map-card/', ''));
+      if (!key) {
+        return new Response('Missing key.', { status: 400, headers: corsHeaders });
+      }
+      if (request.method === 'HEAD') {
+        const head = await env.HOWKER_DATA.head(key);
+        if (!head) {
+          return new Response('Not Found', { status: 404, headers: corsHeaders });
+        }
+        return new Response(null, {
+          status: 200,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'image/jpeg',
+            'Cache-Control': 'public, max-age=31536000'
+          }
+        });
+      }
+      const object = await env.HOWKER_DATA.get(key);
+      if (!object) {
+        return new Response('Not Found', { status: 404, headers: corsHeaders });
+      }
+      return new Response(object.body, {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'image/jpeg',
+          'Cache-Control': 'public, max-age=31536000'
+        }
+      });
     }
 
     if (pathname === '/api/howker/map-update' || pathname === '/api/howker/map-update/') {
