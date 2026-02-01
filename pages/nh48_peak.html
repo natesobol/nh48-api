@@ -273,6 +273,35 @@
       .breadcrumb-nav a:hover{
         color:var(--accent-strong);
       }
+      .peak-hero{
+        position:relative;
+        min-height:200px;
+        padding:36px 24px;
+        border-radius:14px;
+        color:#fff;
+        background-size:cover;
+        background-position:center;
+        background-repeat:no-repeat;
+        background-color:var(--panel);
+        display:flex;
+        align-items:flex-end;
+        margin:12px 0 16px;
+        overflow:hidden;
+      }
+      .peak-hero::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        border-radius:inherit;
+        background:linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.65));
+      }
+      .peak-hero-title{
+        position:relative;
+        margin:0;
+        font-size:2rem;
+        z-index:1;
+        text-shadow:0 4px 10px rgba(0,0,0,0.5);
+      }
       .controls-row{
         display:flex;
         align-items:flex-start;
@@ -1286,6 +1315,9 @@
       <div class="seo-links no-print">
         <a href="/catalog" data-i18n="peak.back">Back to NH48 Peak Catalog</a>
       </div>
+      <header id="peakHero" class="peak-hero no-print" aria-label="Peak banner">
+        <h1 id="peakHeroTitle" class="peak-hero-title" data-i18n="peak.loading">Loading…</h1>
+      </header>
       <div class="controls-row no-print">
         <div class="units-control">
           <label for="unitsSelect" data-i18n="common.unitsLabel">Units</label>
@@ -1568,6 +1600,13 @@
         peakTitle.textContent = name;
         if(peakTitle.hasAttribute('data-i18n')){
           peakTitle.removeAttribute('data-i18n');
+        }
+        const heroTitle = document.getElementById('peakHeroTitle');
+        if(heroTitle){
+          heroTitle.textContent = name;
+          if(heroTitle.hasAttribute('data-i18n')){
+            heroTitle.removeAttribute('data-i18n');
+          }
         }
       }
 
@@ -4228,6 +4267,19 @@
           let meta = [];
           let primaryIndex = 0;
           let primaryMarked = false;
+          const photos = Array.isArray(p.photos) ? p.photos : [];
+          let heroUrl = null;
+          if(photos.length > 1){
+            const candidate = photos[1];
+            heroUrl = typeof candidate === 'string' ? candidate : candidate && candidate.url;
+          }
+          if(!heroUrl && photos.length > 0){
+            const candidate = photos[0];
+            heroUrl = typeof candidate === 'string' ? candidate : candidate && candidate.url;
+          }
+          if(heroUrl){
+            heroUrl = normalizePhotoUrl(heroUrl);
+          }
           if(Array.isArray(p.photos) && p.photos.length > 0){
             p.photos.forEach((item, idx) => {
               if(typeof item === 'string'){
@@ -4258,6 +4310,10 @@
           console.log('[Peak Init] Photos loaded:', imgs.length);
           currentImages = imgs.slice();
           currentMeta = meta.slice();
+          const heroEl = document.getElementById('peakHero');
+          if(heroEl){
+            heroEl.style.backgroundImage = heroUrl ? `url("${heroUrl}")` : '';
+          }
 
           const primaryMeta = meta[primaryIndex] || meta[0] || {};
           const primaryImageCandidate = imgs[primaryIndex] || imgs[0];
