@@ -734,7 +734,6 @@
       background: rgba(34, 197, 94, 0.08);
       border: 1px solid rgba(34, 197, 94, 0.3);
       border-radius: 16px;
-      padding: 20px;
       text-align: left;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       text-decoration: none;
@@ -743,6 +742,58 @@
       flex-direction: column;
       gap: 10px;
       min-height: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .dataset-card .card-image {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+      border-top-left-radius: inherit;
+      border-top-right-radius: inherit;
+    }
+
+    .dataset-card .dataset-card-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .dataset-card .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 20px;
+      flex: 1;
+    }
+
+    .dataset-card .ribbon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 35%;
+      padding: 4px 6px;
+      background: var(--primary-color, #22c55e);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-bottom-right-radius: 4px;
+      text-align: center;
+      transform: translate(-10%, 20%) rotate(-5deg);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .dataset-card .last-modified {
+      display: block;
+      margin-top: 6px;
+      padding: 4px 0;
+      font-size: 0.75rem;
+      color: var(--text-secondary-color, #9aa8c7);
+      text-align: right;
     }
     
     .dataset-card:hover {
@@ -811,6 +862,11 @@
       .dataset-cards {
         grid-template-columns: 1fr;
         max-width: 400px;
+      }
+    }
+    @media (max-width: 480px) {
+      .dataset-card .ribbon {
+        width: 50%;
       }
     }
     .seo-gallery {
@@ -1824,43 +1880,73 @@
 
     <div class="dataset-overview">
       <section class="dataset-cards">
-        <a href="/catalog" class="dataset-card">
-          <h3 data-i18n="landing.cards.catalogTitle">NH48 Catalog</h3>
-          <p data-i18n="landing.cards.catalogBody">Browse New Hampshire's 48 four-thousand-foot peaks with detailed elevation data, route information, and summit photos. Filter by difficulty, range, and completion status.</p>
-          <div class="card-action">
-            <span class="card-link-text" data-i18n="landing.cards.catalogCta">Explore NH48 Peaks</span>
+        <a href="/catalog" class="dataset-card" data-card-id="nh48">
+          <div class="card-image">
+            <img class="dataset-card-image" src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85/mount-washington/mount-washington__006.jpg" alt="Buildings and weather observatory atop Mount Washington in the White Mountains" loading="lazy">
+          </div>
+          <div class="card-body">
+            <h3 data-i18n="landing.cards.catalogTitle">NH48 Catalog</h3>
+            <p data-i18n="landing.cards.catalogBody">Browse New Hampshire's 48 four-thousand-foot peaks with detailed elevation data, route information, and summit photos. Filter by difficulty, range, and completion status.</p>
+            <div class="card-action">
+              <span class="card-link-text" data-i18n="landing.cards.catalogCta">Explore NH48 Peaks</span>
+            </div>
+            <small class="last-modified"></small>
           </div>
         </a>
 
-        <a href="/timed-peakid-game.html" class="dataset-card">
-          <h3 data-i18n="landing.cards.timedGameTitle">Timed PeakID Game</h3>
-          <p data-i18n="landing.cards.timedGameBody">Race the clock by matching falling summit photos to the correct NH48 peak names.</p>
-          <div class="card-action">
-            <span class="card-link-text" data-i18n="landing.cards.timedGameCta">Play Timed PeakID Game</span>
+        <a href="/timed-peakid-game.html" class="dataset-card" data-card-id="timed-peakid">
+          <div class="card-image">
+            <img class="dataset-card-image" src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85/west-bond/west-bond__002.jpg" alt="Approach to West Bond through krummholz with the Bonds beyond" loading="lazy">
+          </div>
+          <div class="card-body">
+            <h3 data-i18n="landing.cards.timedGameTitle">Timed PeakID Game</h3>
+            <p data-i18n="landing.cards.timedGameBody">Race the clock by matching falling summit photos to the correct NH48 peak names.</p>
+            <div class="card-action">
+              <span class="card-link-text" data-i18n="landing.cards.timedGameCta">Play Timed PeakID Game</span>
+            </div>
+            <small class="last-modified"></small>
           </div>
         </a>
         
-        <a href="/trails" class="dataset-card">
-          <h3 data-i18n="landing.cards.trailsTitle">White Mountain Trails</h3>
-          <p data-i18n="landing.cards.trailsBody">Interactive map and trail finder for the White Mountain National Forest. Track completion progress, view trail details, and explore routes with real-time filtering.</p>
-          <div class="card-action">
-            <span class="card-link-text" data-i18n="landing.cards.trailsCta">Explore Trails</span>
+        <a href="/trails" class="dataset-card" data-card-id="white-mountain-trails">
+          <div class="card-image">
+            <img class="dataset-card-image" src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85/carter-dome/carter-dome__001.jpg" alt="Forest path along Carter Dome crest toward Carter Dome" loading="lazy">
+          </div>
+          <div class="card-body">
+            <h3 data-i18n="landing.cards.trailsTitle">White Mountain Trails</h3>
+            <p data-i18n="landing.cards.trailsBody">Interactive map and trail finder for the White Mountain National Forest. Track completion progress, view trail details, and explore routes with real-time filtering.</p>
+            <div class="card-action">
+              <span class="card-link-text" data-i18n="landing.cards.trailsCta">Explore Trails</span>
+            </div>
+            <small class="last-modified"></small>
           </div>
         </a>
         
-        <a href="/long-trails" class="dataset-card">
-          <h3 data-i18n="landing.cards.longTrailsTitle">Long Trails</h3>
-          <p data-i18n="landing.cards.longTrailsBody">Discover long-distance hiking trails across North America. View trail segments, elevation profiles, and route details for scenic thru-hikes and backpacking adventures.</p>
-          <div class="card-action">
-            <span class="card-link-text" data-i18n="landing.cards.longTrailsCta">View Long Trails</span>
+        <a href="/long-trails" class="dataset-card" data-card-id="long-trails">
+          <div class="card-image">
+            <img class="dataset-card-image" src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85/mount-lafayette/mount-lafayette__002.jpg" alt="Franconia Ridge trail climbing toward the Mount Lafayette summit cone" loading="lazy">
+          </div>
+          <div class="card-body">
+            <h3 data-i18n="landing.cards.longTrailsTitle">Long Trails</h3>
+            <p data-i18n="landing.cards.longTrailsBody">Discover long-distance hiking trails across North America. View trail segments, elevation profiles, and route details for scenic thru-hikes and backpacking adventures.</p>
+            <div class="card-action">
+              <span class="card-link-text" data-i18n="landing.cards.longTrailsCta">View Long Trails</span>
+            </div>
+            <small class="last-modified"></small>
           </div>
         </a>
 
-        <a href="/plant-catalog" class="dataset-card">
-          <h3 data-i18n="landing.cards.plantsTitle">Howker Plant Catalog</h3>
-          <p data-i18n="landing.cards.plantsBody">Explore alpine and subalpine plant observations from the Howker Ridge Trail, with species details, habitat notes, and photo references.</p>
-          <div class="card-action">
-            <span class="card-link-text" data-i18n="landing.cards.plantsCta">Browse Plant Catalog</span>
+        <a href="/plant-catalog" class="dataset-card" data-card-id="plant-catalog">
+          <div class="card-image">
+            <img class="dataset-card-image" src="https://plants.nh48.info/cdn-cgi/image/format=webp,quality=85/howker_plants_imgs/alpine-bilberry/alpine-bilberry__03.jpg" alt="Close-up of alpine bilberry with ripening berries" loading="lazy">
+          </div>
+          <div class="card-body">
+            <h3 data-i18n="landing.cards.plantsTitle">Howker Plant Catalog</h3>
+            <p data-i18n="landing.cards.plantsBody">Explore alpine and subalpine plant observations from the Howker Ridge Trail, with species details, habitat notes, and photo references.</p>
+            <div class="card-action">
+              <span class="card-link-text" data-i18n="landing.cards.plantsCta">Browse Plant Catalog</span>
+            </div>
+            <small class="last-modified"></small>
           </div>
         </a>
       </section>
@@ -2114,6 +2200,64 @@
   </script>
   <script type="module" src="/js/i18n.js"></script>
   <script src="/js/splash.js" defer></script>
+  <script type="module">
+    const formatLastModified = (dateValue) => {
+      if (!dateValue) {
+        return '';
+      }
+      const date = new Date(dateValue);
+      if (Number.isNaN(date.getTime())) {
+        return '';
+      }
+      return date.toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric'
+      });
+    };
+
+    const populateDatasetCards = async () => {
+      try {
+        const response = await fetch('/data/dataset-cards-meta.json');
+        if (!response.ok) {
+          throw new Error(`Metadata fetch failed: ${response.status}`);
+        }
+        const metadataList = await response.json();
+        const metaMap = new Map(metadataList.map((meta) => [meta.id, meta]));
+
+        document.querySelectorAll('.dataset-card').forEach((card) => {
+          const id = card.dataset.cardId;
+          if (!id) {
+            return;
+          }
+          const meta = metaMap.get(id);
+          if (!meta) {
+            return;
+          }
+
+          if (meta.ribbon) {
+            const imageContainer = card.querySelector('.card-image');
+            if (imageContainer && !imageContainer.querySelector('.ribbon')) {
+              const ribbon = document.createElement('div');
+              ribbon.className = 'ribbon';
+              ribbon.textContent = meta.ribbon;
+              imageContainer.prepend(ribbon);
+            }
+          }
+
+          const dateElem = card.querySelector('.last-modified');
+          if (dateElem) {
+            const formattedDate = formatLastModified(meta.lastModified);
+            dateElem.textContent = formattedDate ? `Last Modified: ${formattedDate}` : '';
+          }
+        });
+      } catch (error) {
+        console.error('Failed to load dataset card metadata', error);
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', populateDatasetCards);
+  </script>
 
   <div id="footer-placeholder"></div>
   <script type="module">
