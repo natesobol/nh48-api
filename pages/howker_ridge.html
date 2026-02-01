@@ -185,6 +185,7 @@ body{
 .main-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  grid-auto-rows:auto;
   gap:var(--gap);
   margin-top:24px;
 }
@@ -201,6 +202,7 @@ body{
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  grid-auto-rows:auto;
   gap:var(--gap);
 }
 .card{
@@ -287,6 +289,7 @@ table{
   flex-wrap:wrap;
   gap:10px;
   margin-top:16px;
+  align-items:stretch;
 }
 .btn-small{
   display:inline-flex;
@@ -300,6 +303,13 @@ table{
   font-weight:600;
   text-decoration:none;
   border:1px solid transparent;
+}
+.meta-links .btn-small{
+  flex:1 1 160px;
+}
+.meta-links .btn-small:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
 }
 .btn-small:hover{
   border-color:var(--accent);
@@ -449,6 +459,7 @@ th{
 .flora-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  grid-auto-rows:auto;
   gap:var(--gap);
   margin-top:16px;
 }
@@ -537,6 +548,9 @@ th{
   }
   .toc-link{
     white-space:normal;
+  }
+  .meta-links{
+    flex-direction:column;
   }
 }
 
@@ -959,6 +973,9 @@ table a:hover{
 
     L.control.layers({ 'Topographic': topoLayer, 'Standard': standardLayer }, null, { position: 'topleft' }).addTo(map);
     L.control.scale({ position: 'bottomleft' }).addTo(map);
+    window.addEventListener('scroll', () => {
+      map.closePopup();
+    });
 
     const poiTableBody = document.getElementById('poiTableBody');
     const poiSearch = document.getElementById('poiSearch');
