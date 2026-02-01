@@ -222,6 +222,83 @@
       cursor: pointer;
       display: none;
     }
+    .poi-form-modal[hidden] {
+      display: none;
+    }
+    .poi-form-modal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .poi-form-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+    }
+    .poi-form-panel {
+      position: relative;
+      z-index: 1;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      width: min(520px, 92vw);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+      display: grid;
+      gap: 12px;
+    }
+    .poi-form-panel h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    .poi-form-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .poi-form-grid label {
+      display: grid;
+      gap: 6px;
+      font-size: 0.9rem;
+    }
+    .poi-form-grid input,
+    .poi-form-grid textarea,
+    .poi-form-grid select {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      background: var(--card);
+      color: var(--ink);
+      font-size: 0.95rem;
+    }
+    .poi-form-grid textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .poi-form-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+    .poi-form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .poi-form-error {
+      border-radius: 8px;
+      border: 1px solid rgba(248, 113, 113, 0.6);
+      background: rgba(248, 113, 113, 0.1);
+      color: #fecaca;
+      padding: 8px 10px;
+      font-size: 0.85rem;
+      display: none;
+    }
+    .poi-form-error.is-visible {
+      display: block;
+    }
   </style>
 </head>
 <body data-route="howker-map-editor">
@@ -310,6 +387,9 @@
         <button type="button" class="tool-btn" data-marker-type="poi" title="POI update" aria-label="Public point of interest update">
           <img src="/assets/icons/poi-update.svg" alt="POI update">
         </button>
+        <button type="button" class="tool-btn" id="adjustPoiBtn" title="Adjust existing POI" aria-label="Adjust existing POI">
+          <img src="/assets/icons/adjust-poi.svg" alt="Adjust POI icon">
+        </button>
       </div>
       <div class="tool-group" id="actions" aria-label="Editing actions">
         <button id="undoBtn" type="button" title="Undo last edit" aria-label="Undo last edit">Undo</button>
@@ -331,6 +411,49 @@
 
     <div class="map-wrap">
       <div id="map" aria-label="Howker Ridge trail editor map"></div>
+    </div>
+
+    <div class="poi-form-modal" id="poiFormModal" hidden>
+      <div class="poi-form-backdrop" data-action="close" aria-hidden="true"></div>
+      <div class="poi-form-panel" role="dialog" aria-modal="true" aria-labelledby="poiFormTitle">
+        <h2 id="poiFormTitle">Add a new point of interest</h2>
+        <form id="poiForm">
+          <div class="poi-form-grid">
+            <div class="poi-form-error" id="poiFormError" role="alert" aria-live="polite"></div>
+            <label for="poiNameInput">Name (required)
+              <input id="poiNameInput" name="poiName" type="text" required autocomplete="off" aria-label="POI name" />
+            </label>
+            <label for="poiSlugInput">Slug
+              <input id="poiSlugInput" name="poiSlug" type="text" required autocomplete="off" aria-label="POI slug" />
+            </label>
+            <div class="poi-form-row">
+              <label for="poiCategoryInput">Category
+                <select id="poiCategoryInput" name="poiCategory" aria-label="POI category">
+                  <option value="">Select category</option>
+                  <option value="waterfall">Waterfall</option>
+                  <option value="junction">Junction</option>
+                  <option value="scenic">Scenic overlook</option>
+                  <option value="summit">Summit</option>
+                  <option value="other">Other</option>
+                </select>
+              </label>
+              <label for="poiElevationInput">Elevation (ft)
+                <input id="poiElevationInput" name="poiElevation" type="number" inputmode="numeric" min="0" step="1" aria-label="POI elevation" />
+              </label>
+            </div>
+            <label for="poiDescriptionInput">Description
+              <textarea id="poiDescriptionInput" name="poiDescription" aria-label="POI description"></textarea>
+            </label>
+            <label for="poiImageInput">Image URL (optional)
+              <input id="poiImageInput" name="poiImage" type="url" placeholder="https://photos.nh48.info/..." aria-label="POI image URL" />
+            </label>
+          </div>
+          <div class="poi-form-actions">
+            <button type="button" id="poiCancelBtn" aria-label="Cancel add POI">Cancel</button>
+            <button type="submit" id="poiSubmitBtn" data-variant="green" aria-label="Add POI">Add POI</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <div class="legend" aria-label="Map editing legend">
@@ -382,6 +505,9 @@
     let drawControl;
     let currentMarkerType = 'blowdown';
     let currentLineType = null;
+    let currentTool = null;
+    let pendingPoiData = null;
+    let poiSlugTouched = false;
     let finishBtn;
     let highlightLayer;
     const drawnLayers = new L.FeatureGroup();
@@ -399,6 +525,7 @@
     const historyStack = [];
     const trailSegments = [];
     const basePoiLayers = [];
+    const basePoiDataByName = new Map();
     const searchIndex = [];
 
     function setStatusMessage(message, isError = false) {
@@ -453,12 +580,22 @@
           const props = feature.properties || {};
           const title = props.name || '';
           const desc = props.description || '';
+          if (title) {
+            basePoiDataByName.set(title, {
+              name: title,
+              category: props.category || '',
+              description: desc,
+              elevation_ft: props.elevation_ft ?? null,
+              slug: props.slug || ''
+            });
+          }
           layer.bindPopup(`<strong>${title}</strong><br/>${desc}`);
           if (title) {
             basePoiLayers.push({ name: title, layer });
           }
         }
       }).addTo(map);
+      syncBasePoiLayers();
       updateSearchIndex();
     }
 
@@ -612,12 +749,16 @@
             });
           });
           (editJson.pois?.features || []).forEach(feature => {
+            const props = feature.properties || {};
             poiMarkers.push({
               lat: feature.geometry.coordinates[1],
               lon: feature.geometry.coordinates[0],
-              name: feature.properties?.name || '',
-              category: feature.properties?.category || '',
-              description: feature.properties?.description || ''
+              name: props.name || '',
+              slug: props.slug || '',
+              category: props.category || '',
+              elevation: props.elevation_ft ?? props.elevation ?? null,
+              description: props.description || '',
+              imageUrl: props.image_url || props.imageUrl || ''
             });
           });
         } else {
@@ -644,6 +785,133 @@
       if (['yes', 'y', 'true', '1'].includes(normalized)) return true;
       if (['no', 'n', 'false', '0'].includes(normalized)) return false;
       return null;
+    }
+
+    function slugify(value) {
+      return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    }
+
+    function clearPoiFormError() {
+      const errorEl = document.getElementById('poiFormError');
+      if (!errorEl) return;
+      errorEl.textContent = '';
+      errorEl.classList.remove('is-visible');
+    }
+
+    function showPoiFormError(message) {
+      const errorEl = document.getElementById('poiFormError');
+      if (!errorEl) return;
+      errorEl.textContent = message;
+      errorEl.classList.add('is-visible');
+    }
+
+    function openPoiFormModal() {
+      const modal = document.getElementById('poiFormModal');
+      if (!modal) return;
+      clearPoiFormError();
+      modal.hidden = false;
+      const nameInput = document.getElementById('poiNameInput');
+      if (nameInput) {
+        nameInput.focus();
+      }
+    }
+
+    function closePoiFormModal() {
+      const modal = document.getElementById('poiFormModal');
+      if (!modal) return;
+      modal.hidden = true;
+    }
+
+    function resetPoiForm() {
+      const form = document.getElementById('poiForm');
+      if (form) form.reset();
+      poiSlugTouched = false;
+      clearPoiFormError();
+    }
+
+    function getPoiNames() {
+      const names = new Set();
+      basePoiDataByName.forEach((value, key) => names.add(key.toLowerCase()));
+      poiMarkers.forEach(item => {
+        if (item.name) names.add(item.name.toLowerCase());
+      });
+      return names;
+    }
+
+    function getPoiSlugs() {
+      const slugs = new Set();
+      basePoiDataByName.forEach(value => {
+        if (value.slug) slugs.add(value.slug.toLowerCase());
+        if (value.name) slugs.add(slugify(value.name));
+      });
+      poiMarkers.forEach(item => {
+        if (item.slug) slugs.add(item.slug.toLowerCase());
+        if (item.name) slugs.add(slugify(item.name));
+      });
+      return slugs;
+    }
+
+    function disableDrawHandlers() {
+      const toolbar = drawControl?._toolbars?.draw;
+      toolbar?._modes?.polyline?.handler?.disable();
+      toolbar?._modes?.marker?.handler?.disable();
+    }
+
+    function setActiveTool(tool) {
+      currentTool = tool;
+      if (tool === 'adjust-poi' || tool === 'poi-add') {
+        if (map?.hasControl(drawControl)) map.removeControl(drawControl);
+        disableDrawHandlers();
+      } else if (drawControl && map && !map.hasControl(drawControl)) {
+        map.addControl(drawControl);
+      }
+
+      if (tool !== 'poi-add') {
+        pendingPoiData = null;
+        closePoiFormModal();
+      }
+      if (tool !== 'adjust-poi') {
+        disableAdjustPoiMode();
+      } else {
+        enableAdjustPoiMode();
+      }
+    }
+
+    function enableAdjustPoiMode() {
+      basePoiLayers.forEach(item => {
+        const layer = item.layer;
+        if (!layer || layer._adjustHandlersAdded) return;
+        layer._adjustHandlersAdded = true;
+        layer.on('click', () => {
+          if (currentTool !== 'adjust-poi') return;
+          layer.dragging?.enable();
+        });
+        layer.on('dragend', () => {
+          if (currentTool !== 'adjust-poi') return;
+          const ll = layer.getLatLng();
+          const name = item.name;
+          if (!name) return;
+          const existing = poiMarkers.find(poi => poi.name === name);
+          if (existing) {
+            existing.lat = ll.lat;
+            existing.lon = ll.lng;
+          } else {
+            poiMarkers.push({ name, lat: ll.lat, lon: ll.lng });
+          }
+          layer.dragging?.disable();
+          redrawOverlays();
+        });
+      });
+    }
+
+    function disableAdjustPoiMode() {
+      basePoiLayers.forEach(item => {
+        const layer = item.layer;
+        if (!layer) return;
+        if (layer.dragging?.enabled?.()) {
+          layer.dragging.disable();
+        }
+      });
     }
 
     function calculateLengthFt(latlngs) {
@@ -811,12 +1079,6 @@
             const notes = promptValue('Notes (optional):');
             cairnMarkers.push({ lat: latlng.lat, lon: latlng.lng, status, notes });
             historyStack.push({ type: 'cairn' });
-          } else if (currentMarkerType === 'poi') {
-            const name = promptValue('POI name:');
-            const category = promptValue('POI category (optional):');
-            const description = promptValue('POI description (optional):');
-            poiMarkers.push({ lat: latlng.lat, lon: latlng.lng, name, category, description });
-            historyStack.push({ type: 'poi' });
           }
           redrawOverlays();
         }
@@ -833,9 +1095,9 @@
       });
     }
 
-    function addDraggableMarker(item, iconUrl, popupHtml) {
+    function addDraggableMarker(item, iconUrl, popupHtml, options = {}) {
       const icon = L.icon({ iconUrl, iconSize: [26, 26], iconAnchor: [13, 26] });
-      const marker = L.marker([item.lat, item.lon], { icon, draggable: true }).addTo(drawnLayers);
+      const marker = L.marker([item.lat, item.lon], { icon, draggable: options.draggable ?? true }).addTo(drawnLayers);
       if (popupHtml) marker.bindPopup(popupHtml);
       marker.on('dragend', () => {
         const ll = marker.getLatLng();
@@ -902,11 +1164,51 @@
       });
 
       poiMarkers.forEach(item => {
-        const label = `<strong>${item.name || 'POI'}</strong><br>${item.category || ''}<br>${item.description || ''}`;
-        item._marker = addDraggableMarker(item, editIcons.poi, label);
+        if (basePoiDataByName.has(item.name)) {
+          return;
+        }
+        const elevation = item.elevation ? `${item.elevation} ft` : '';
+        const label = [
+          `<strong>${item.name || 'POI'}</strong>`,
+          item.category || '',
+          elevation,
+          item.description || ''
+        ].filter(Boolean).join('<br>');
+        const iconUrl = baseIcons[item.category] || baseIcons.fallback || editIcons.poi;
+        item._marker = addDraggableMarker(item, iconUrl, label);
       });
 
+      syncBasePoiLayers();
       updateSearchIndex();
+    }
+
+    function syncBasePoiLayers() {
+      if (!basePoiLayers.length) return;
+      basePoiLayers.forEach(item => {
+        const edit = poiMarkers.find(poi => poi.name === item.name);
+        if (!edit || typeof edit.lat !== 'number' || typeof edit.lon !== 'number') return;
+        item.layer.setLatLng([edit.lat, edit.lon]);
+      });
+    }
+
+    function getPoiFeatureProperties(item) {
+      const base = basePoiDataByName.get(item.name) || {};
+      const elevation = item.elevation ?? base.elevation_ft ?? base.elevation ?? null;
+      const props = {
+        name: item.name || base.name || '',
+        category: item.category || base.category || '',
+        description: item.description || base.description || ''
+      };
+      const slug = item.slug || base.slug || (props.name ? slugify(props.name) : '');
+      if (slug) props.slug = slug;
+      if (typeof elevation === 'number' && !Number.isNaN(elevation)) {
+        props.elevation_ft = elevation;
+      }
+      const imageUrl = item.imageUrl || base.image_url || base.imageUrl || '';
+      if (imageUrl) {
+        props.image_url = imageUrl;
+      }
+      return props;
     }
 
     function buildGeoJson() {
@@ -998,11 +1300,7 @@
       }));
       const poiFeatures = poiMarkers.map(item => ({
         type: 'Feature',
-        properties: {
-          name: item.name,
-          category: item.category,
-          description: item.description
-        },
+        properties: getPoiFeatureProperties(item),
         geometry: { type: 'Point', coordinates: [item.lon, item.lat] }
       }));
       return {
@@ -1092,6 +1390,7 @@
 
     function enablePolylineDrawing(lineType) {
       currentLineType = lineType;
+      setActiveTool('line');
       let color = '#4ade80';
       if (lineType === 'brush_yellow') {
         color = '#fbbf24';
@@ -1131,6 +1430,7 @@
 
     function enableMarkerDrawing(type) {
       currentMarkerType = type;
+      setActiveTool('marker');
       const iconUrl = editIcons[type] || editIcons.sign;
       drawControl._toolbars.draw._modes.marker.handler.setOptions({
         icon: L.icon({ iconUrl, iconSize: [26, 26], iconAnchor: [13, 26] })
@@ -1231,6 +1531,18 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       initMap();
+      const adjustPoiBtn = document.getElementById('adjustPoiBtn');
+      const poiFormModal = document.getElementById('poiFormModal');
+      const poiForm = document.getElementById('poiForm');
+      const poiAddBtn = document.querySelector('.tool-btn[data-marker-type="poi"]');
+      const poiNameInput = document.getElementById('poiNameInput');
+      const poiSlugInput = document.getElementById('poiSlugInput');
+      const poiCategoryInput = document.getElementById('poiCategoryInput');
+      const poiElevationInput = document.getElementById('poiElevationInput');
+      const poiDescriptionInput = document.getElementById('poiDescriptionInput');
+      const poiImageInput = document.getElementById('poiImageInput');
+      const poiCancelBtn = document.getElementById('poiCancelBtn');
+
       document.querySelectorAll('.tool.dropdown > .tool-btn').forEach(button => {
         button.addEventListener('click', event => {
           event.stopPropagation();
@@ -1251,6 +1563,8 @@
           const type = button.getAttribute('data-line-type');
           enablePolylineDrawing(type);
           document.querySelectorAll('.tool-btn[data-line-type]').forEach(item => item.classList.remove('active'));
+          document.querySelectorAll('.tool-btn[data-marker-type]').forEach(item => item.classList.remove('active'));
+          if (adjustPoiBtn) adjustPoiBtn.classList.remove('active');
           button.classList.add('active');
           const dropdown = button.closest('.tool.dropdown');
           if (dropdown) dropdown.classList.remove('open');
@@ -1259,10 +1573,114 @@
       document.querySelectorAll('.tool-btn[data-marker-type]').forEach(button => {
         button.addEventListener('click', () => {
           const type = button.getAttribute('data-marker-type');
-          enableMarkerDrawing(type);
           document.querySelectorAll('.tool-btn[data-marker-type]').forEach(item => item.classList.remove('active'));
+          document.querySelectorAll('.tool-btn[data-line-type]').forEach(item => item.classList.remove('active'));
+          if (adjustPoiBtn) adjustPoiBtn.classList.remove('active');
           button.classList.add('active');
+          if (type === 'poi') {
+            setActiveTool('poi-add');
+            openPoiFormModal();
+          } else {
+            enableMarkerDrawing(type);
+          }
         });
+      });
+      if (adjustPoiBtn) {
+        adjustPoiBtn.addEventListener('click', () => {
+          document.querySelectorAll('.tool-btn[data-marker-type]').forEach(item => item.classList.remove('active'));
+          document.querySelectorAll('.tool-btn[data-line-type]').forEach(item => item.classList.remove('active'));
+          adjustPoiBtn.classList.add('active');
+          setActiveTool('adjust-poi');
+          setStatusMessage('Adjust mode: click a POI marker, drag to reposition, and release.');
+        });
+      }
+      if (poiFormModal) {
+        poiFormModal.addEventListener('click', event => {
+          if (event.target?.dataset?.action === 'close') {
+            closePoiFormModal();
+            resetPoiForm();
+            if (poiAddBtn) poiAddBtn.classList.remove('active');
+            setActiveTool(null);
+          }
+        });
+      }
+      if (poiCancelBtn) {
+        poiCancelBtn.addEventListener('click', () => {
+          closePoiFormModal();
+          resetPoiForm();
+          if (poiAddBtn) poiAddBtn.classList.remove('active');
+          setActiveTool(null);
+          setStatusMessage('POI creation canceled.');
+        });
+      }
+      if (poiNameInput && poiSlugInput) {
+        poiNameInput.addEventListener('input', () => {
+          if (poiSlugTouched) return;
+          poiSlugInput.value = slugify(poiNameInput.value.trim());
+        });
+        poiSlugInput.addEventListener('input', () => {
+          poiSlugTouched = true;
+        });
+      }
+      if (poiForm) {
+        poiForm.addEventListener('submit', event => {
+          event.preventDefault();
+          clearPoiFormError();
+          const name = poiNameInput?.value.trim() || '';
+          const slug = poiSlugInput?.value.trim() || '';
+          const elevationValue = poiElevationInput?.value ? Number(poiElevationInput.value) : null;
+
+          if (!name) {
+            showPoiFormError('Name is required to add a POI.');
+            return;
+          }
+          if (!slug) {
+            showPoiFormError('Slug is required to add a POI.');
+            return;
+          }
+          if (Number.isNaN(elevationValue)) {
+            showPoiFormError('Elevation must be a valid number.');
+            return;
+          }
+
+          const nameSet = getPoiNames();
+          const slugSet = getPoiSlugs();
+          if (nameSet.has(name.toLowerCase())) {
+            showPoiFormError('That name is already in use. Choose a unique name.');
+            return;
+          }
+          if (slugSet.has(slug.toLowerCase())) {
+            showPoiFormError('That slug is already in use. Choose a unique slug.');
+            return;
+          }
+
+          pendingPoiData = {
+            name,
+            slug,
+            category: poiCategoryInput?.value || '',
+            elevation: elevationValue,
+            description: poiDescriptionInput?.value.trim() || '',
+            imageUrl: poiImageInput?.value.trim() || ''
+          };
+          closePoiFormModal();
+          setStatusMessage('Click the map to place the new POI.');
+        });
+      }
+
+      map.on('click', event => {
+        if (currentTool !== 'poi-add' || !pendingPoiData) return;
+        const latlng = event.latlng;
+        const newPoi = {
+          ...pendingPoiData,
+          lat: latlng.lat,
+          lon: latlng.lng
+        };
+        poiMarkers.push(newPoi);
+        historyStack.push({ type: 'poi' });
+        pendingPoiData = null;
+        resetPoiForm();
+        redrawOverlays();
+        setStatusMessage(`Added POI: ${newPoi.name}`);
       });
       document.getElementById('saveBtn').addEventListener('click', saveToServer);
       document.getElementById('downloadBtn').addEventListener('click', downloadJson);
