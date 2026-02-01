@@ -1456,6 +1456,7 @@
       } else {
         enableAdjustPoiMode();
       }
+      updateBrushEditing();
     }
 
     function toggleMarkerHighlight(marker, enabled) {
@@ -1598,16 +1599,18 @@
     }
 
     function closestPointOnSegment(point, segStart, segEnd) {
-      const segment = segEnd.subtract(segStart);
-      const lengthSquared = segment.x * segment.x + segment.y * segment.y;
+      const dx = segEnd.x - segStart.x;
+      const dy = segEnd.y - segStart.y;
+      const lengthSquared = dx * dx + dy * dy;
       if (!lengthSquared) return segStart;
-      const t = Math.max(0, Math.min(1, point.subtract(segStart).dot(segment) / lengthSquared));
-      return segStart.add(segment.multiplyBy(t));
+      const t = Math.max(0, Math.min(1, ((point.x - segStart.x) * dx + (point.y - segStart.y) * dy) / lengthSquared));
+      return L.point(segStart.x + dx * t, segStart.y + dy * t);
     }
 
-    function snapLatLng(latlng) {
+    function snapLatLng(latlng, options = {}) {
       if (!trailSegments.length) return latlng;
       const zoom = map.getZoom();
+      const maxDistancePx = Number.isFinite(options.maxDistancePx) ? options.maxDistancePx : 28;
       const target = map.project(latlng, zoom);
       let closest = null;
       let closestDistance = Infinity;
@@ -1621,15 +1624,42 @@
           closest = candidate;
         }
       });
-      if (!closest) return latlng;
+      if (!closest || closestDistance > maxDistancePx) return latlng;
       return map.unproject(closest, zoom);
     }
 
-    function snapLatLngs(latlngs) {
+    function snapLatLngs(latlngs, options = {}) {
       if (Array.isArray(latlngs)) {
-        return latlngs.map(item => snapLatLngs(item));
+        return latlngs.map(item => snapLatLngs(item, options));
       }
-      return snapLatLng(latlngs);
+      return snapLatLng(latlngs, options);
+    }
+
+    function latLngsToCoords(latlngs) {
+      const flattened = [];
+      collectLineLatLngs(latlngs, flattened);
+      return flattened.map(latlng => [latlng.lat, latlng.lng]);
+    }
+
+    function updateStatusSegmentFromLayer(seg) {
+      if (!seg?._layer) return;
+      const latlngs = seg._layer.getLatLngs();
+      const snapped = snapLatLngs(latlngs, { maxDistancePx: 28 });
+      seg._layer.setLatLngs(snapped);
+      seg.coords = latLngsToCoords(snapped);
+    }
+
+    function updateBrushEditing() {
+      const brushStatus = currentLineType === 'brush_green' ? 'green' : currentLineType === 'brush_yellow' ? 'yellow' : null;
+      statusSegments.forEach(seg => {
+        const layer = seg._layer;
+        if (!layer?.editing) return;
+        if (brushStatus && seg.status === brushStatus) {
+          layer.editing.enable();
+        } else {
+          layer.editing.disable();
+        }
+      });
     }
 
     function setupDrawTools() {
@@ -1659,11 +1689,13 @@
       map.on(L.Draw.Event.CREATED, event => {
         const layer = event.layer;
         if (event.layerType === 'polyline' && currentLineType) {
-          const snapped = snapLatLngs(layer.getLatLngs());
+          const snapped = snapLatLngs(layer.getLatLngs(), { maxDistancePx: 32 });
           layer.setLatLngs(snapped);
           const latlngs = layer.getLatLngs();
-          const coords = latlngs.map(latlng => [latlng.lat, latlng.lng]);
-          const lengthFt = calculateLengthFt(latlngs);
+          const coords = latLngsToCoords(latlngs);
+          const flatLatLngs = [];
+          collectLineLatLngs(latlngs, flatLatLngs);
+          const lengthFt = calculateLengthFt(flatLatLngs);
 
           if (currentLineType === 'brush_green' || currentLineType === 'brush_yellow') {
             const status = currentLineType === 'brush_green' ? 'green' : 'yellow';
@@ -1739,9 +1771,15 @@
         if (!event.layers || !event.layers.getLayers().length) return;
         const markers = event.layers.getLayers();
         const last = markers[markers.length - 1];
-        const snapped = snapLatLng(last.getLatLng());
+        const snapped = snapLatLng(last.getLatLng(), { maxDistancePx: 32 });
         last.setLatLng(snapped);
         showFinishButton(last.getLatLng());
+        const finishLine = () => completePolyline();
+        if (last._finishHandler) {
+          last.off('click', last._finishHandler);
+        }
+        last._finishHandler = finishLine;
+        last.on('click', finishLine);
       });
     }
 
@@ -1761,7 +1799,9 @@
       drawnLayers.clearLayers();
       statusSegments.forEach(seg => {
         const color = seg.status === 'green' ? '#4ade80' : '#fbbf24';
-        L.polyline(seg.coords, { color, weight: 8, opacity: 0.5 }).addTo(drawnLayers);
+        const line = L.polyline(seg.coords, { color, weight: 8, opacity: 0.5 }).addTo(drawnLayers);
+        seg._layer = line;
+        line.on('edit', () => updateStatusSegmentFromLayer(seg));
       });
 
       bogBridges.forEach(bb => {
@@ -1831,6 +1871,7 @@
       syncBasePoiLayers();
       updateSearchIndex();
       updateShareCardOverlay();
+      updateBrushEditing();
       if (currentTool === 'adjust-poi') {
         enableAdjustPoiMode();
       }
@@ -2669,6 +2710,17 @@
         polyline: { shapeOptions: { color, weight: 6, opacity: 0.85 }, repeatMode: true }
       });
       drawControl._toolbars.draw._modes.polyline.handler.enable();
+      updateBrushEditing();
+    }
+
+    function completePolyline() {
+      const polyHandler = drawControl?._toolbars?.draw?._modes?.polyline?.handler;
+      if (!polyHandler) return;
+      if (typeof polyHandler.completeShape === 'function') {
+        polyHandler.completeShape();
+      } else if (typeof polyHandler._finishShape === 'function') {
+        polyHandler._finishShape();
+      }
     }
 
     function showFinishButton(latlng) {
@@ -2677,10 +2729,7 @@
         finishBtn.innerText = 'End segment';
         finishBtn.type = 'button';
         finishBtn.addEventListener('click', () => {
-          const polyHandler = drawControl?._toolbars?.draw?._modes?.polyline?.handler;
-          if (polyHandler) {
-            polyHandler.completeShape();
-          }
+          completePolyline();
           finishBtn.style.display = 'none';
         });
       }
@@ -2692,7 +2741,9 @@
 
     function enableMarkerDrawing(type) {
       currentMarkerType = type;
+      currentLineType = null;
       setActiveTool('marker');
+      updateBrushEditing();
       const iconUrl = editIcons[type] || editIcons.sign;
       drawControl._toolbars.draw._modes.marker.handler.setOptions({
         icon: L.icon({ iconUrl, iconSize: [26, 26], iconAnchor: [13, 26] })
