@@ -993,10 +993,10 @@ table a:hover{
       return sortAsc ? strA.localeCompare(strB) : strB.localeCompare(strA);
     }
 
-    function createPhotoMarker(latlng, name) {
+    function createPhotoMarker(latlng, name, imageUrl, slugOverride) {
       const safeName = name || 'POI';
-      const slug = slugify(safeName);
-      const thumbUrl = `https://howker.nh48.info/cdn-cgi/image/format=webp,width=60/${slug}/${slug}-001.jpg`;
+      const slug = slugOverride || slugify(safeName);
+      const thumbUrl = imageUrl || `https://howker.nh48.info/cdn-cgi/image/format=webp,width=60/${slug}/${slug}-001.jpg`;
       return L.marker(latlng, {
         icon: L.divIcon({
           className: 'poi-marker',
@@ -1033,8 +1033,8 @@ table a:hover{
         return;
       }
       data.forEach(item => {
-        const slug = slugify(item.name);
-        const thumbUrl = `https://howker.nh48.info/cdn-cgi/image/format=webp,width=48/${slug}/${slug}-001.jpg`;
+        const slug = item.slug || slugify(item.name);
+        const thumbUrl = item.imageUrl || `https://howker.nh48.info/cdn-cgi/image/format=webp,width=48/${slug}/${slug}-001.jpg`;
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>
@@ -1071,13 +1071,42 @@ table a:hover{
       fetch('/data/howker-ridge-pois.geojson').then(resp => (resp.ok ? resp.json() : { features: [] }))
     ])
       .then(([data, poiEdits]) => {
-        const poiEditsByName = {};
-        (poiEdits.features || []).forEach(feature => {
-          const name = feature.properties?.name;
-          if (name) {
-            poiEditsByName[name] = feature;
+        const basePoiNames = new Set();
+        (data.features || []).forEach(feature => {
+          if (feature.geometry?.type === 'Point') {
+            const name = feature.properties?.name;
+            if (name) basePoiNames.add(name);
           }
         });
+
+        const poiEditsByName = {};
+        const newPoiEdits = [];
+        (poiEdits.features || []).forEach(feature => {
+          const name = feature.properties?.name;
+          if (!name) return;
+          if (basePoiNames.has(name)) {
+            poiEditsByName[name] = feature;
+          } else {
+            newPoiEdits.push(feature);
+          }
+        });
+
+        function getPoiMergedData(feature) {
+          const props = feature.properties || {};
+          const edit = poiEditsByName[props.name];
+          const editProps = edit?.properties || {};
+          const mergedProps = { ...props, ...editProps };
+          const coords = edit?.geometry?.coordinates || feature.geometry.coordinates;
+          const finalLatLng = L.latLng(coords[1], coords[0]);
+          const elevationValue = mergedProps.elevation_ft ?? mergedProps.elevation;
+          const elevation = elevationValue === null || elevationValue === undefined || Number.isNaN(Number(elevationValue))
+            ? null
+            : Number(elevationValue);
+          const name = mergedProps.name || props.name || 'Unknown';
+          const slug = mergedProps.slug || slugify(name);
+          const imageUrl = mergedProps.image_url || mergedProps.imageUrl || '';
+          return { name, slug, imageUrl, elevation, finalLatLng, mergedProps };
+        }
 
         const trailLayer = L.geoJSON(data, {
           style: feature => {
@@ -1088,20 +1117,18 @@ table a:hover{
           },
           pointToLayer: (feature, latlng) => {
             if (feature.geometry.type === 'Point') {
-              const props = feature.properties || {};
-              const edit = poiEditsByName[props.name];
-              const finalLatLng = edit
-                ? L.latLng(edit.geometry.coordinates[1], edit.geometry.coordinates[0])
-                : latlng;
+              const { name, slug, imageUrl, elevation, finalLatLng, mergedProps } = getPoiMergedData(feature);
               poiData.push({
-                name: props.name || 'Unknown',
-                elevation: props.elevation_ft ? Number(props.elevation_ft) : null,
+                name,
+                slug,
+                imageUrl,
+                elevation,
                 lat: finalLatLng.lat,
                 lng: finalLatLng.lng,
-                category: props.category || '',
-                description: props.description || ''
+                category: mergedProps.category || '',
+                description: mergedProps.description || ''
               });
-              return createPhotoMarker(finalLatLng, props.name || 'Unknown');
+              return createPhotoMarker(finalLatLng, name, imageUrl, slug);
             }
             return L.circleMarker(latlng, {
               radius: 6,
@@ -1113,22 +1140,58 @@ table a:hover{
           },
           onEachFeature: (feature, layer) => {
             if (feature.geometry.type === 'Point') {
-              const props = feature.properties || {};
-              const slug = slugify(props.name || '');
-              const popupPhoto = `<img src="https://howker.nh48.info/cdn-cgi/image/format=webp,width=300/${slug}/${slug}-001.jpg" alt="${props.name}" style="width:100%;border-radius:8px; margin-bottom:6px;">`;
+              const { name, slug, imageUrl, elevation, mergedProps } = getPoiMergedData(feature);
+              const photoUrl = imageUrl || `https://howker.nh48.info/cdn-cgi/image/format=webp,width=300/${slug}/${slug}-001.jpg`;
+              const popupPhoto = `<img src="${photoUrl}" alt="${name}" style="width:100%;border-radius:8px; margin-bottom:6px;">`;
               const detailLink = slug ? `<a class="poi-detail-link" href="/howker-ridge/poi?poi=${slug}">View POI details</a>` : '';
               const details = [
                 popupPhoto,
-                `<strong>${props.name || 'Waypoint'}</strong>`,
-                props.category ? `<span>${props.category}</span>` : '',
-                props.elevation_ft ? `<span>${props.elevation_ft} ft</span>` : '',
-                props.description ? `<em>${props.description}</em>` : '',
+                `<strong>${name || 'Waypoint'}</strong>`,
+                mergedProps.category ? `<span>${mergedProps.category}</span>` : '',
+                elevation ? `<span>${elevation} ft</span>` : '',
+                mergedProps.description ? `<em>${mergedProps.description}</em>` : '',
                 detailLink
               ].filter(Boolean).join('<br />');
               layer.bindPopup(details);
             }
           }
         }).addTo(map);
+
+        newPoiEdits.forEach(feature => {
+          const props = feature.properties || {};
+          const coords = feature.geometry?.coordinates || [];
+          if (coords.length < 2) return;
+          const latlng = L.latLng(coords[1], coords[0]);
+          const name = props.name || 'Unknown';
+          const slug = props.slug || slugify(name);
+          const imageUrl = props.image_url || props.imageUrl || '';
+          const elevationValue = props.elevation_ft ?? props.elevation;
+          const elevation = elevationValue === null || elevationValue === undefined || Number.isNaN(Number(elevationValue))
+            ? null
+            : Number(elevationValue);
+          poiData.push({
+            name,
+            slug,
+            imageUrl,
+            elevation,
+            lat: latlng.lat,
+            lng: latlng.lng,
+            category: props.category || '',
+            description: props.description || ''
+          });
+          const marker = createPhotoMarker(latlng, name, imageUrl, slug);
+          const photoUrl = imageUrl || `https://howker.nh48.info/cdn-cgi/image/format=webp,width=300/${slug}/${slug}-001.jpg`;
+          const detailLink = slug ? `<a class="poi-detail-link" href="/howker-ridge/poi?poi=${slug}">View POI details</a>` : '';
+          const popupDetails = [
+            `<img src="${photoUrl}" alt="${name}" style="width:100%;border-radius:8px; margin-bottom:6px;">`,
+            `<strong>${name || 'Waypoint'}</strong>`,
+            props.category ? `<span>${props.category}</span>` : '',
+            elevation ? `<span>${elevation} ft</span>` : '',
+            props.description ? `<em>${props.description}</em>` : '',
+            detailLink
+          ].filter(Boolean).join('<br />');
+          marker.bindPopup(popupDetails).addTo(map);
+        });
 
         map.fitBounds(trailLayer.getBounds(), { padding: [30, 30] });
         updatePoiTable();

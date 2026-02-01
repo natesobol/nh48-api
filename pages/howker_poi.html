@@ -379,34 +379,56 @@ body{
         fetch('/data/howker-ridge-pois.geojson').then(resp => (resp.ok ? resp.json() : { features: [] }))
       ])
         .then(([baseData, edits]) => {
-          const editsByName = {};
+          const editsByName = new Map();
+          const editsBySlug = new Map();
           (edits.features || []).forEach(feature => {
-            const name = feature.properties?.name;
+            const props = feature.properties || {};
+            const name = props.name || '';
             if (name) {
-              editsByName[name] = feature.geometry.coordinates;
+              editsByName.set(name, feature);
+            }
+            const slug = props.slug || (name ? slugify(name) : '');
+            if (slug) {
+              editsBySlug.set(slug, feature);
             }
           });
 
-          const feature = (baseData.features || []).find(item => {
+          const baseFeature = (baseData.features || []).find(item => {
             if (item.geometry?.type !== 'Point') return false;
             const name = item.properties?.name || '';
             return slugify(name) === poiSlug;
           });
+          const editFeature = editsBySlug.get(poiSlug);
 
-          if (!feature) {
+          let props = null;
+          let coords = null;
+          if (baseFeature) {
+            const baseProps = baseFeature.properties || {};
+            const editForBase = editsByName.get(baseProps.name) || editFeature;
+            const editProps = editForBase?.properties || {};
+            props = { ...baseProps, ...editProps };
+            coords = editForBase?.geometry?.coordinates || baseFeature.geometry.coordinates;
+          } else if (editFeature) {
+            props = editFeature.properties || {};
+            coords = editFeature.geometry?.coordinates || null;
+          }
+
+          if (!props || !coords) {
             showNotFound();
             return;
           }
 
-          const props = feature.properties || {};
           const name = props.name || 'Howker Ridge POI';
-          const coords = editsByName[name] || feature.geometry.coordinates;
           const lat = coords[1];
           const lng = coords[0];
           const category = props.category || '';
-          const elevation = props.elevation_ft ? Math.round(Number(props.elevation_ft)) : null;
+          const elevationValue = props.elevation_ft ?? props.elevation;
+          const elevation = elevationValue === null || elevationValue === undefined || Number.isNaN(Number(elevationValue))
+            ? null
+            : Math.round(Number(elevationValue));
           const description = props.description || 'No description is available yet for this point of interest.';
-          const slug = slugify(name);
+          const slug = props.slug || slugify(name);
+          const imageUrl = props.image_url || props.imageUrl || '';
 
           poiName.textContent = name;
           poiBreadcrumb.textContent = name;
@@ -431,10 +453,10 @@ body{
             hideRow(rowCoords);
           }
 
-          const heroUrl = `https://howker.nh48.info/cdn-cgi/image/format=webp,width=1400/${slug}/${slug}-001.jpg`;
+          const heroUrl = imageUrl || `https://howker.nh48.info/cdn-cgi/image/format=webp,width=1400/${slug}/${slug}-001.jpg`;
           poiHero.style.backgroundImage = `linear-gradient(120deg,var(--hero-overlay),rgba(4,8,16,0.4)),url('${heroUrl}')`;
 
-          const photoUrl = `https://howker.nh48.info/cdn-cgi/image/format=webp,width=900/${slug}/${slug}-001.jpg`;
+          const photoUrl = imageUrl || `https://howker.nh48.info/cdn-cgi/image/format=webp,width=900/${slug}/${slug}-001.jpg`;
           poiPhoto.src = photoUrl;
           poiPhoto.alt = `${name} photo`;
           poiPhoto.onerror = () => {
