@@ -1586,11 +1586,11 @@
   }
 
   .site-nav-submenu--wide {
-    min-width: 240px;
+    min-width: max(280px, 100%);
   }
 
   .site-nav-submenu--wide .site-nav-submenu-group > button {
-    padding-right: 18px;
+    padding-right: 36px;
   }
 
   .site-nav-submenu .submenu-centered {
@@ -1641,6 +1641,7 @@
     content: "›";
     float: right;
     opacity: 0.7;
+    margin-left: 12px;
   }
 
   .site-nav-submenu-group + .site-nav-submenu-group {
