@@ -554,6 +554,17 @@
       cursor: pointer;
       font-size: 0.85rem;
     }
+    .poi-adjust-highlight {
+      filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.85));
+      transform: scale(1.08);
+      transition: transform 0.15s ease, filter 0.15s ease;
+      cursor: grab;
+    }
+    .poi-adjust-highlight.poi-adjust-dragging {
+      cursor: grabbing;
+      filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.95));
+      transform: scale(1.12);
+    }
   </style>
 </head>
 <body data-route="howker-map-editor">
@@ -841,6 +852,7 @@
     const basePoiDataByName = new Map();
     const searchIndex = [];
     let photoCatalogBySlug = new Map();
+    const COORDINATE_PRECISION = 6;
 
     function setStatusMessage(message, isError = false) {
       const statusEl = document.getElementById('statusMsg');
@@ -875,6 +887,16 @@
         return trimmed ? [trimmed] : [];
       }
       return [];
+    }
+
+    function formatCoordinate(value) {
+      return Number.isFinite(value) ? value.toFixed(COORDINATE_PRECISION) : '';
+    }
+
+    function parseCoordinate(value) {
+      if (typeof value !== 'string') return null;
+      const parsed = Number.parseFloat(value.trim());
+      return Number.isFinite(parsed) ? parsed : null;
     }
 
     function slugFromFilename(filename) {
@@ -1351,31 +1373,91 @@
       }
     }
 
+    function toggleMarkerHighlight(marker, enabled) {
+      const el = marker?.getElement?.();
+      if (!el) return;
+      el.classList.toggle('poi-adjust-highlight', enabled);
+      if (!enabled) {
+        el.classList.remove('poi-adjust-dragging');
+      }
+    }
+
+    function toggleMarkerDraggingState(marker, enabled) {
+      const el = marker?.getElement?.();
+      if (!el) return;
+      el.classList.toggle('poi-adjust-dragging', enabled);
+    }
+
+    function findPoiRowBySlug(slug) {
+      if (!slug) return null;
+      return document.querySelector(`.poi-item[data-base-slug="${slug}"], .poi-item[data-slug="${slug}"]`);
+    }
+
+    function updatePoiListCoordinates(slug, lat, lon) {
+      const row = findPoiRowBySlug(slug);
+      if (!row) return;
+      const latInput = row.querySelector('input[data-coord="lat"]');
+      const lonInput = row.querySelector('input[data-coord="lon"]');
+      if (latInput) latInput.value = formatCoordinate(lat);
+      if (lonInput) lonInput.value = formatCoordinate(lon);
+    }
+
+    function upsertPoiCoordinates({ name, slug, lat, lon, baseSlug }) {
+      const key = baseSlug || slug || slugify(name || '');
+      if (!key) return;
+      const existing = poiMarkers.find(poi => (poi.slug || slugify(poi.name || '')) === key);
+      if (existing) {
+        existing.lat = lat;
+        existing.lon = lon;
+      } else {
+        poiMarkers.push({ name, slug: slug || key, lat, lon });
+      }
+      updatePoiListCoordinates(key, lat, lon);
+    }
+
+    function registerPoiDragHandlers(marker, meta) {
+      if (!marker || marker._poiAdjustHandlersAdded) return;
+      marker._poiAdjustHandlersAdded = true;
+      marker.on('dragstart', () => toggleMarkerDraggingState(marker, true));
+      marker.on('dragend', () => {
+        toggleMarkerDraggingState(marker, false);
+        const ll = marker.getLatLng();
+        upsertPoiCoordinates({
+          name: meta.name,
+          slug: meta.slug,
+          baseSlug: meta.baseSlug,
+          lat: ll.lat,
+          lon: ll.lng
+        });
+        setStatusMessage(`Updated ${meta.name || 'POI'} coordinates.`);
+      });
+    }
+
     function enableAdjustPoiMode() {
       basePoiLayers.forEach(item => {
         const layer = item.layer;
-        if (!layer || layer._adjustHandlersAdded) return;
-        layer._adjustHandlersAdded = true;
-        layer.on('click', () => {
-          if (currentTool !== 'adjust-poi') return;
-          layer.dragging?.enable();
+        if (!layer) return;
+        const slug = layer?.options?.slug || slugify(item.name || '');
+        registerPoiDragHandlers(layer, {
+          name: item.name,
+          slug,
+          baseSlug: slug
         });
-        layer.on('dragend', () => {
-          if (currentTool !== 'adjust-poi') return;
-          const ll = layer.getLatLng();
-          const name = item.name;
-          if (!name) return;
-          const existing = poiMarkers.find(poi => poi.name === name);
-          if (existing) {
-            existing.lat = ll.lat;
-            existing.lon = ll.lng;
-          } else {
-            poiMarkers.push({ name, lat: ll.lat, lon: ll.lng });
-          }
-          layer.dragging?.disable();
-          redrawOverlays();
-          buildPoiList();
+      });
+      basePoiLayers.forEach(item => {
+        const layer = item.layer;
+        if (!layer) return;
+        layer.dragging?.enable();
+        toggleMarkerHighlight(layer, true);
+      });
+      poiMarkers.forEach(item => {
+        if (!item._marker) return;
+        registerPoiDragHandlers(item._marker, {
+          name: item.name,
+          slug: item.slug || slugify(item.name || '')
         });
+        item._marker.dragging?.enable();
+        toggleMarkerHighlight(item._marker, true);
       });
     }
 
@@ -1386,6 +1468,14 @@
         if (layer.dragging?.enabled?.()) {
           layer.dragging.disable();
         }
+        toggleMarkerHighlight(layer, false);
+      });
+      poiMarkers.forEach(item => {
+        if (!item._marker) return;
+        if (item._marker.dragging?.enabled?.()) {
+          item._marker.dragging.disable();
+        }
+        toggleMarkerHighlight(item._marker, false);
       });
     }
 
@@ -1650,12 +1740,15 @@
           item.description || ''
         ].filter(Boolean).join('<br>');
         const iconUrl = baseIcons[item.category] || baseIcons.fallback || editIcons.poi;
-        item._marker = addDraggableMarker(item, iconUrl, label);
+        item._marker = addDraggableMarker(item, iconUrl, label, { draggable: currentTool === 'adjust-poi' });
       });
 
       syncBasePoiLayers();
       updateSearchIndex();
       updateShareCardOverlay();
+      if (currentTool === 'adjust-poi') {
+        enableAdjustPoiMode();
+      }
     }
 
     function getBasePoiData(item) {
@@ -1752,6 +1845,24 @@
       elevationInput.value = Number.isFinite(poi.elevation) ? String(poi.elevation) : '';
       elevationLabel.appendChild(elevationInput);
 
+      const latLabel = document.createElement('label');
+      latLabel.textContent = 'Latitude';
+      const latInput = document.createElement('input');
+      latInput.type = 'text';
+      latInput.inputMode = 'decimal';
+      latInput.dataset.coord = 'lat';
+      latInput.value = formatCoordinate(poi.lat);
+      latLabel.appendChild(latInput);
+
+      const lonLabel = document.createElement('label');
+      lonLabel.textContent = 'Longitude';
+      const lonInput = document.createElement('input');
+      lonInput.type = 'text';
+      lonInput.inputMode = 'decimal';
+      lonInput.dataset.coord = 'lon';
+      lonInput.value = formatCoordinate(poi.lon);
+      lonLabel.appendChild(lonInput);
+
       const descriptionLabel = document.createElement('label');
       descriptionLabel.textContent = 'Description';
       const descriptionInput = document.createElement('textarea');
@@ -1764,9 +1875,19 @@
       imageList.className = 'poi-image-list';
 
       const updatePoi = () => {
+        const latValue = parseCoordinate(latInput.value);
+        const lonValue = parseCoordinate(lonInput.value);
+        if (Number.isFinite(latValue)) {
+          latInput.value = formatCoordinate(latValue);
+        }
+        if (Number.isFinite(lonValue)) {
+          lonInput.value = formatCoordinate(lonValue);
+        }
         const imageUrls = Array.from(imageList.querySelectorAll('input'))
           .map(input => input.value.trim())
           .filter(Boolean);
+        const resolvedLat = Number.isFinite(latValue) ? latValue : poi.lat;
+        const resolvedLon = Number.isFinite(lonValue) ? lonValue : poi.lon;
         const updated = {
           name: nameInput.value.trim(),
           slug: slugInput.value.trim(),
@@ -1774,9 +1895,10 @@
           elevation: elevationInput.value ? Number(elevationInput.value) : null,
           description: descriptionInput.value.trim(),
           imageUrls,
-          lat: poi.lat,
-          lon: poi.lon
+          lat: resolvedLat,
+          lon: resolvedLon
         };
+        row.dataset.slug = updated.slug || slugify(updated.name || '');
         updatePoiMarker(updated, row.dataset.baseSlug);
         title.textContent = updated.name || 'Untitled POI';
         icon.src = getPoiIconForCategory(updated.category);
@@ -1818,9 +1940,18 @@
 
       imageLabel.append(imageList, addImageBtn);
 
-      grid.append(nameLabel, slugLabel, categoryLabel, elevationLabel, descriptionLabel, imageLabel);
+      grid.append(
+        nameLabel,
+        slugLabel,
+        categoryLabel,
+        elevationLabel,
+        latLabel,
+        lonLabel,
+        descriptionLabel,
+        imageLabel
+      );
 
-      [nameInput, slugInput, categorySelect, elevationInput, descriptionInput].forEach(input => {
+      [nameInput, slugInput, categorySelect, elevationInput, descriptionInput, latInput, lonInput].forEach(input => {
         input.addEventListener('change', updatePoi);
       });
 
@@ -1852,6 +1983,7 @@
         baseItem.layer?.bindPopup?.(popupHtml);
       }
       redrawOverlays();
+      updatePoiListCoordinates(slugKey, updated.lat, updated.lon);
     }
 
     function buildPoiList() {
@@ -2640,11 +2772,17 @@
       });
       if (adjustPoiBtn) {
         adjustPoiBtn.addEventListener('click', () => {
+          if (currentTool === 'adjust-poi') {
+            adjustPoiBtn.classList.remove('active');
+            setActiveTool(null);
+            setStatusMessage('Adjust mode off.');
+            return;
+          }
           document.querySelectorAll('.tool-btn[data-marker-type]').forEach(item => item.classList.remove('active'));
           document.querySelectorAll('.tool-btn[data-line-type]').forEach(item => item.classList.remove('active'));
           adjustPoiBtn.classList.add('active');
           setActiveTool('adjust-poi');
-          setStatusMessage('Adjust mode: click a POI marker, drag to reposition, and release.');
+          setStatusMessage('Adjust mode: drag any glowing POI marker or edit coordinates below.');
         });
       }
       if (poiFormModal) {
