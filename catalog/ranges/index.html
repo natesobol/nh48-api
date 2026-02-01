@@ -245,18 +245,43 @@
         throw new Error('Unable to load range data.');
       }
 
-      function buildRangesFromJson(rangeObj){
+      function normalizePeakName(name){
+        return (name || '').toLowerCase().replace(/\s+/g, ' ').trim();
+      }
+
+      function buildPeaksIndex(peaksData){
+        const index = new Map();
+        Object.values(peaksData || {}).forEach(peak => {
+          const peakName = normalizePeakName(peak?.peakName || peak?.['Peak Name'] || peak?.name);
+          if(peakName){
+            index.set(peakName, peak);
+          }
+          if(peak?.slug){
+            index.set(peak.slug, peak);
+          }
+        });
+        return index;
+      }
+
+      function getPrimaryPhoto(photos){
+        if(!Array.isArray(photos) || photos.length === 0) return null;
+        return photos.find(photo => photo?.isPrimary) || photos[0];
+      }
+
+      function buildRangesFromJson(rangeObj, peakIndex){
         return Object.values(rangeObj).map(range => {
-          const photo = (range.photos || []).find(item => item?.isPrimary) || range.photos?.[0] || null;
+          const highestPeakName = range.highestPoint?.peakName || '—';
+          const peakMatch = peakIndex?.get(normalizePeakName(highestPeakName));
+          const photo = getPrimaryPhoto(peakMatch?.photos);
           const photoUrl = photo ? toTransformedPhotoUrl(photo.url) : '';
           return {
             name: range.rangeName,
             slug: range.slug,
             count: range.peakCount,
-            highestPeakName: range.highestPoint?.peakName || '—',
+            highestPeakName,
             highestElevation: range.highestPoint?.elevation_ft || 0,
             cardPhotoUrl: photoUrl,
-            photoAlt: photo?.altText || photo?.alt || `${range.rangeName} range`
+            photoAlt: photo?.altText || photo?.alt || `${highestPeakName} in the ${range.rangeName}`
           };
         });
       }
@@ -377,9 +402,10 @@
 
       async function init(){
         try{
-          await fetchPeaks();
+          const peaksData = await fetchPeaks();
+          const peakIndex = buildPeaksIndex(peaksData);
           const rangeData = await fetchRanges();
-          const ranges = buildRangesFromJson(rangeData);
+          const ranges = buildRangesFromJson(rangeData, peakIndex);
           loadingEl.style.display = 'none';
           render(ranges);
 
