@@ -831,6 +831,18 @@ body,
   overflow-x:hidden;
 }
 
+/* Plant catalog overlay (hidden by default, only shown when toggled) */
+.plant-catalog-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(2, 6, 23, 0.6);
+  display:none;
+  z-index:900;
+}
+body.show-plant-catalog-overlay .plant-catalog-overlay{
+  display:block;
+}
+
 /****************************
  * PAGINATION UI (cleaned)
  ****************************/
@@ -1022,6 +1034,7 @@ body.details-open .drawer.open {
 
 </head>
 <body data-route="plant-catalog" data-page="plant-catalog">
+  <div class="plant-catalog-overlay" aria-hidden="true"></div>
   <div id="nav-placeholder"></div>
   <script>
     document.addEventListener('DOMContentLoaded', () => {

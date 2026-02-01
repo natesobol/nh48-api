@@ -316,7 +316,7 @@
             "name": "NATHAN SOBOL"
           },
           "contentSize": "5.38 MB",
-          "uploadDate": "2026-01-27T01:17:40.998047",
+          "uploadDate": "2026-02-01T03:55:47.499889",
           "dateCreated": "2020-11-05T16:20:24",
           "datePublished": "2020-11-05T16:20:24",
           "exifData": "Camera Make: Canon; Camera Model: Canon EOS Rebel T7; Lens: Canon EF 75-300mm f/4-5.6; F-Stop: f/5.6; Shutter Speed: 1/500 sec; ISO: 250; Exposure Bias: +0.0 EV; Focal Length: 300 mm; Flash Mode: Flash fired; Metering Mode: 5; Max Aperture: f/7.1",
@@ -466,12 +466,12 @@
             {
               "@type": "PropertyValue",
               "name": "fileCreateDate",
-              "value": "2026-01-27T01:17:40.998047"
+              "value": "2026-02-01T03:55:47.499889"
             },
             {
               "@type": "PropertyValue",
               "name": "fileModifiedDate",
-              "value": "2026-01-27T01:17:40.998047"
+              "value": "2026-02-01T03:55:47.499889"
             },
             {
               "@type": "PropertyValue",
@@ -584,7 +584,7 @@
             "name": "NATHAN SOBOL"
           },
           "contentSize": "1.05 MB",
-          "uploadDate": "2026-01-27T01:17:41.002047",
+          "uploadDate": "2026-02-01T03:55:47.503889",
           "dateCreated": "2020-11-05T17:10:34",
           "datePublished": "2020-11-05T17:10:34",
           "exifData": "Camera Make: Canon; Camera Model: Canon EOS Rebel T7; Lens: Canon EF 24mm f/2.8 or Canon EF 24mm f/2.8 IS USM; F-Stop: f/2.8; Shutter Speed: 1/1000 sec; ISO: 100; Exposure Bias: +0.0 EV; Focal Length: 24 mm; Flash Mode: Flash fired; Metering Mode: 5; Max Aperture: f/2.7",
@@ -734,12 +734,12 @@
             {
               "@type": "PropertyValue",
               "name": "fileCreateDate",
-              "value": "2026-01-27T01:17:41.002047"
+              "value": "2026-02-01T03:55:47.503889"
             },
             {
               "@type": "PropertyValue",
               "name": "fileModifiedDate",
-              "value": "2026-01-27T01:17:41.002047"
+              "value": "2026-02-01T03:55:47.503889"
             },
             {
               "@type": "PropertyValue",
@@ -852,7 +852,7 @@
             "name": "Nathan Sobol"
           },
           "contentSize": "27.71 MB",
-          "uploadDate": "2026-01-27T01:17:41.049047",
+          "uploadDate": "2026-02-01T03:55:47.550889",
           "dateCreated": "2025-12-09T15:43:23",
           "datePublished": "2025-12-09T15:43:23",
           "exifData": "Camera Make: Canon; Camera Model: Canon EOS Rebel T7; Lens: 150-600mm F5-6.3 DG OS HSM | Contemporary 015; F-Stop: f/5.6; Shutter Speed: 1/400 sec; ISO: 200; Exposure Bias: +0.0 EV; Focal Length: 165 mm; Flash Mode: Flash fired; Metering Mode: 6; Max Aperture: f/5.2",
@@ -1002,12 +1002,12 @@
             {
               "@type": "PropertyValue",
               "name": "fileCreateDate",
-              "value": "2026-01-27T01:17:41.049047"
+              "value": "2026-02-01T03:55:47.550889"
             },
             {
               "@type": "PropertyValue",
               "name": "fileModifiedDate",
-              "value": "2026-01-27T01:17:41.049047"
+              "value": "2026-02-01T03:55:47.550889"
             },
             {
               "@type": "PropertyValue",
@@ -1284,6 +1284,7 @@
       .site-nav-dropdown::after{content:"";position:absolute;left:0;right:0;top:100%;height:12px;}
       .site-nav-dropdown .site-nav-submenu{display:none;position:absolute;top:calc(100% + 6px);left:0;background:#0f172a;border:1px solid rgba(255,255,255,0.08);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,0.4);padding:8px;min-width:200px;z-index:10;}
       .site-nav-dropdown:hover .site-nav-submenu,.site-nav-dropdown:focus-within .site-nav-submenu{display:flex;flex-direction:column;gap:4px;}
+      .site-nav-dropdown:hover .site-nav-submenu--nested,.site-nav-dropdown:focus-within .site-nav-submenu--nested{display:none;}
       .site-nav-dropdown .site-nav-submenu a{width:100%;text-transform:none;font-size:14px;letter-spacing:0.3px;padding:10px 12px;border-radius:8px;}
       .site-nav-cta{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;font-size:13px;border-radius:6px;background:#22c55e;border:2px solid #22c55e;color:#ffffff;font-family:"Arial Narrow","Roboto Condensed","Helvetica Neue Condensed",Arial,sans-serif;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;}
       .site-nav-cta svg{width:16px;height:16px;stroke:#ffffff;}
@@ -1629,6 +1630,18 @@
     z-index: 10;
   }
 
+  .site-nav-submenu--wide {
+    min-width: 240px;
+  }
+
+  .site-nav-submenu--wide .site-nav-submenu-group > button {
+    padding-right: 18px;
+  }
+
+  .site-nav-submenu .submenu-centered {
+    text-align: center;
+  }
+
   /* Widen Projects dropdown to ~50% more than the default */
   .projects-submenu {
     min-width: 300px;
@@ -1639,6 +1652,11 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+  }
+
+  .site-nav-dropdown:hover .site-nav-submenu--nested,
+  .site-nav-dropdown:focus-within .site-nav-submenu--nested {
+    display: none;
   }
 
   .site-nav-dropdown .site-nav-submenu a,
@@ -1954,15 +1972,22 @@
       <div class="site-nav-submenu" aria-label="NH48 dataset short links">
         <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Guide</a>
         <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
+        <a href="/catalog/ranges" data-route="range-catalog" data-routes="range-catalog,range-detail">Range Catalog</a>
+        <div class="site-nav-submenu-group">
+          <button type="button" class="submenu-centered" data-i18n="nav.games">Games</button>
+          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="NH48 games menu">
+            <a href="/peakid-game.html" data-route="peakid-game" data-i18n="nav.peakidGame">PeakID Game</a>
+            <a href="/timed-peakid-game.html" data-route="timed-peakid-game" data-i18n="nav.timedPeakId">Timed PeakID Game</a>
+            <a href="/pages/puzzle-game.html" data-route="puzzle-game" data-i18n="nav.puzzleGame">Jigsaw Puzzle</a>
+          </div>
+        </div>
         <a href="/photos/" data-route="photos">NH48 Photos</a>
-        <a href="/peakid-game.html" data-route="peakid-game" data-i18n="nav.peakidGame">PeakID Game</a>
-        <a href="/timed-peakid-game.html" data-route="timed-peakid-game" data-i18n="nav.timedPeakId">Timed PeakID Game</a>
         <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48 Data &amp; API</a>
       </div>
     </div>
     <div class="site-nav-dropdown">
-      <button type="button">Other Hiking Datasets</button>
-      <div class="site-nav-submenu" aria-label="Other hiking datasets short links">
+      <button type="button">Trail Maps &amp; Datasets</button>
+      <div class="site-nav-submenu site-nav-submenu--wide" aria-label="Other hiking datasets short links">
         <div class="site-nav-submenu-group">
           <button type="button" data-route="trails" data-i18n="nav.trails">White Mountain Trails</button>
           <div class="site-nav-submenu site-nav-submenu--nested" aria-label="White Mountain Trails short links">
@@ -1986,6 +2011,7 @@
         <a href="/plant-catalog">Plant Catalog</a>
         <a href="/howker-ridge" data-route="howker-ridge" data-routes="howker-ridge">Trail Map &amp; Data</a>
         <a href="/projects/plant-map" data-route="plant-map" data-routes="plant-map">Plant Log Map</a>
+        <a href="/projects/howker-map-editor" data-route="howker-map-editor" data-routes="howker-map-editor">Edit Trail Map</a>
         <a href="/dataset/howker-plants">Plant Data &amp; API</a>
       </div>
     </div>
@@ -2584,7 +2610,7 @@
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2 id="franconia-ridge">Franconia Ridge</h2>
+      <h2 id="franconia-range">Franconia Range</h2>
       <ul class="nh48-quick-footer__list">
         <li><a class="nh48-quick-footer__link" href="/peak/mount-lafayette">Mount Lafayette</a></li>
         <li><a class="nh48-quick-footer__link" href="/peak/mount-lincoln">Mount Lincoln</a></li>
@@ -2594,72 +2620,72 @@
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2 id="twins-bonds">Twins &amp; Bonds</h2>
-      <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peak/south-twin-mountain">South Twin Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/north-twin-mountain">North Twin Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/galehead-mountain">Galehead Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/zealand-mountain">Zealand Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/west-bond">West Bond</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-bond">Mount Bond</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/bondcliff">Bondcliff</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/owls-head">Owl's Head</a></li>
-      </ul>
-    </div>
-    <div class="nh48-quick-footer__group">
-      <h2 id="carter-moriah-wildcats">Carter-Moriah & Wildcats</h2>
-      <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peak/carter-dome">Carter Dome</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/south-carter-mountain">South Carter Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/middle-carter-mountain">Middle Carter Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-moriah">Mount Moriah</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/wildcat-mountain-a">Wildcat Mountain – A Peak</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/wildcat-mountain-d">Wildcat Mountain – D Peak</a></li>
-      </ul>
-    </div>
-    <div class="nh48-quick-footer__group">
       <h2 id="kinsman-range">Kinsman Range</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peak/north-kinsman-mountain">North Kinsman Mountain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/south-kinsman-mountain">South Kinsman Mountain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-moosilauke">Mount Moosilauke</a></li>
         <li><a class="nh48-quick-footer__link" href="/peak/cannon-mountain">Cannon Mountain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/north-kinsman-mountain">North Kinsman</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/south-kinsman-mountain">South Kinsman</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2 id="osceolas-trips">Osceolas &amp; Trips</h2>
+      <h2 id="carter-moriah-range">Carter-Moriah Range</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-passaconaway">Mount Passaconaway</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-whiteface">Mount Whiteface</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/north-tripyramid">North Tripyramid</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/middle-tripyramid">Middle Tripyramid</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-osceola">Mount Osceola</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-osceola-east">Mount Osceola – East Peak</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-tecumseh">Mount Tecumseh</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/carter-dome">Carter Dome</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/middle-carter-mountain">Middle Carter</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/south-carter-mountain">South Carter</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-moriah">Mount Moriah</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/wildcat-mountain-a">Wildcat A</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/wildcat-mountain-d">Wildcat D</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2 id="pemigewasset">Pemigewasset</h2>
+      <h2 id="twin-range">Twin Range</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-carrigain">Mount Carrigain</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-hancock">Mount Hancock – North Peak</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-hancock-south">Mount Hancock – South Peak</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/south-twin-mountain">South Twin</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/north-twin-mountain">North Twin</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/galehead-mountain">Galehead Mountain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/zealand-mountain">Zealand Mountain</a></li>
         <li><a class="nh48-quick-footer__link" href="/peak/mount-hale">Mount Hale</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2 id="northern-summits">Northern Summits</h2>
+      <h2 id="willey-range">Willey Range</h2>
+      <ul class="nh48-quick-footer__list">
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-tom">Mount Tom</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-field">Mount Field</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-willey">Mount Willey</a></li>
+      </ul>
+    </div>
+    <div class="nh48-quick-footer__group">
+      <h2 id="pilot-pliny-range">Pilot–Pliny Range</h2>
       <ul class="nh48-quick-footer__list">
         <li><a class="nh48-quick-footer__link" href="/peak/mount-cabot">Mount Cabot</a></li>
         <li><a class="nh48-quick-footer__link" href="/peak/mount-waumbek">Mount Waumbek</a></li>
       </ul>
     </div>
     <div class="nh48-quick-footer__group">
-      <h2 id="western-outlying">Western &amp; Outlying</h2>
+      <h2 id="sandwich-waterville-range">Sandwich / Waterville Range</h2>
       <ul class="nh48-quick-footer__list">
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-moosilauke">Mount Moosilauke</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-willey">Mount Willey</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-field">Mount Field</a></li>
-        <li><a class="nh48-quick-footer__link" href="/peak/mount-tom">Mount Tom</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-passaconaway">Mount Passaconaway</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-whiteface">Mount Whiteface</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/north-tripyramid">North Tripyramid</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/middle-tripyramid">Middle Tripyramid</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-tecumseh">Mount Tecumseh</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-osceola">Mount Osceola</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-osceola-east">East Osceola</a></li>
+      </ul>
+    </div>
+    <div class="nh48-quick-footer__group">
+      <h2 id="pemigewasset-wilderness">Pemigewasset Wilderness</h2>
+      <ul class="nh48-quick-footer__list">
+        <li><a class="nh48-quick-footer__link" href="/peak/bondcliff">Bondcliff</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-bond">Mount Bond</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/west-bond">West Bond</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-carrigain">Mount Carrigain</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/owls-head">Owl's Head</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-hancock">North Hancock</a></li>
+        <li><a class="nh48-quick-footer__link" href="/peak/mount-hancock-south">South Hancock</a></li>
       </ul>
     </div>
   </nav>
