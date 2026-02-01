@@ -382,8 +382,8 @@
       border-radius: 50%;
       display: inline-block;
     }
-    .legend-swatch.green { background: #4ade80; }
-    .legend-swatch.yellow { background: #fbbf24; }
+    .legend-swatch.green { background: #15803d; }
+    .legend-swatch.yellow { background: #b45309; }
     .finish-segment-btn {
       position: absolute;
       z-index: 1000;
@@ -1666,7 +1666,7 @@
       drawControl = new L.Control.Draw({
         draw: {
           polyline: {
-            shapeOptions: { weight: 6, opacity: 0.8 },
+            shapeOptions: { weight: 5, opacity: 0.8 },
             repeatMode: true,
             metric: false
           },
@@ -1798,8 +1798,8 @@
     function redrawOverlays() {
       drawnLayers.clearLayers();
       statusSegments.forEach(seg => {
-        const color = seg.status === 'green' ? '#4ade80' : '#fbbf24';
-        const line = L.polyline(seg.coords, { color, weight: 8, opacity: 0.5 }).addTo(drawnLayers);
+        const color = seg.status === 'green' ? '#15803d' : '#b45309';
+        const line = L.polyline(seg.coords, { color, weight: 5, opacity: 0.5 }).addTo(drawnLayers);
         seg._layer = line;
         line.on('edit', () => updateStatusSegmentFromLayer(seg));
       });
