@@ -565,6 +565,10 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
   <script>
+    window.addEventListener('error', (e) => {
+      console.error('[HowkerEditor] Script error:', e.message, e.filename, e.lineno, e.colno);
+    });
+
     const TRAIL_URL = '/data/howker-ridge.geojson';
     const STATUS_URL = '/data/howker-ridge-status.geojson';
     const POI_URL = '/data/howker-ridge-pois.geojson';
@@ -770,19 +774,18 @@
 
       try {
         resetState();
-        const editJson = await fetchJsonWithDefault(EDIT_URL, {
-          statuses: [],
-          blowdowns: [],
-          signs: [],
-          drainage: [],
-          bogBridges: [],
-          stonework: [],
-          tread: [],
-          encroachments: [],
-          hazards: [],
-          cairns: [],
-          pois: []
-        });
+        const editRes = await fetch(EDIT_URL);
+        let editJson = null;
+        if (editRes.ok) {
+          editJson = await editRes.json();
+        }
+
+        if (!editJson) {
+          redrawOverlays();
+          buildPoiList();
+          setStatusMessage('No saved edits yet (fresh start).');
+          return;
+        }
 
         const editStatusFeatures = normalizeFeatureArray(editJson.status || editJson.statuses);
         const editPoiItems = normalizePoiItems(editJson.pois);
