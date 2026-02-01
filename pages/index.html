@@ -1986,7 +1986,7 @@
       <p data-i18n="landing.heroBody">Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks. Browse the catalog, explore White Mountain trails, discover long-distance hiking routes, and learn about alpine flora.</p>
     </section>
     <div class="dataset-overview">
-      <h2 class="cards-section-title">NH48 &amp; Howker Ridge Info.</h2>
+      <h2 class="cards-section-title">Main Menu</h2>
 
       <section class="dataset-cards">
         <a href="/catalog" class="dataset-card" data-card-id="nh48">
@@ -2391,13 +2391,58 @@
       });
     };
 
+    const normalizePath = (value) => {
+      if (!value) {
+        return '';
+      }
+      try {
+        const url = new URL(value, window.location.origin);
+        const trimmed = url.pathname.replace(/\/$/, '');
+        return trimmed || '/';
+      } catch (error) {
+        return '';
+      }
+    };
+
+    const fetchSitemapLastModified = async () => {
+      const response = await fetch('/page-sitemap.xml');
+      if (!response.ok) {
+        throw new Error(`Sitemap fetch failed: ${response.status}`);
+      }
+      const xmlText = await response.text();
+      const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+      const map = new Map();
+      const urlNodes = Array.from(doc.getElementsByTagName('url'));
+
+      urlNodes.forEach((urlNode) => {
+        const loc = urlNode.getElementsByTagName('loc')[0]?.textContent?.trim();
+        const lastmod = urlNode.getElementsByTagName('lastmod')[0]?.textContent?.trim();
+        const path = normalizePath(loc);
+        if (path && lastmod) {
+          map.set(path, lastmod);
+        }
+      });
+
+      return map;
+    };
+
+    const resolveCardPath = (card) => {
+      const directHref = card.tagName === 'A' ? card.getAttribute('href') : null;
+      const actionLink = card.querySelector('.card-action a');
+      const fallbackHref = actionLink ? actionLink.getAttribute('href') : null;
+      return normalizePath(directHref || fallbackHref);
+    };
+
     const populateDatasetCards = async () => {
       try {
-        const response = await fetch('/data/dataset-cards-meta.json');
-        if (!response.ok) {
-          throw new Error(`Metadata fetch failed: ${response.status}`);
+        const [metaResponse, sitemapMap] = await Promise.all([
+          fetch('/data/dataset-cards-meta.json'),
+          fetchSitemapLastModified()
+        ]);
+        if (!metaResponse.ok) {
+          throw new Error(`Metadata fetch failed: ${metaResponse.status}`);
         }
-        const metadataList = await response.json();
+        const metadataList = await metaResponse.json();
         const metaMap = new Map(metadataList.map((meta) => [meta.id, meta]));
 
         document.querySelectorAll('.dataset-card').forEach((card) => {
@@ -2422,7 +2467,8 @@
 
           const dateElem = card.querySelector('.last-modified');
           if (dateElem) {
-            const formattedDate = formatLastModified(meta.lastModified);
+            const sitemapDate = sitemapMap.get(resolveCardPath(card));
+            const formattedDate = formatLastModified(sitemapDate || meta.lastModified);
             dateElem.textContent = formattedDate ? `Last Modified: ${formattedDate}` : '';
           }
         });
