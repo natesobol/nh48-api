@@ -48,6 +48,7 @@
       crossorigin=""
     >
     <script src="https://code.iconify.design/3/3.1.1/iconify.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js" defer></script>
     <script>
   (() => {
     if (window.NH48_BUILD_DATE) return;
@@ -301,6 +302,185 @@
       }
       .icon-btn .iconify{
         font-size:1.1rem;
+      }
+      .primary-btn{
+        background:var(--accent);
+        color:#07130a;
+        border:none;
+        border-radius:999px;
+        padding:8px 16px;
+        font-weight:700;
+        cursor:pointer;
+        transition:transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .primary-btn:hover{
+        transform:translateY(-1px);
+        box-shadow:0 12px 24px rgba(34, 197, 94, 0.25);
+      }
+
+      .social-card-modal{
+        position:fixed;
+        inset:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:24px;
+        background:rgba(5, 8, 18, 0.75);
+        z-index:10000;
+      }
+      .social-card-modal[hidden]{
+        display:none;
+      }
+      .social-card-dialog{
+        width:min(980px, 100%);
+        max-height:90vh;
+        overflow:hidden;
+        border-radius:18px;
+        background:var(--panel);
+        border:1px solid var(--stroke);
+        box-shadow:0 30px 80px rgba(0,0,0,0.45);
+        display:flex;
+        flex-direction:column;
+      }
+      .social-card-header{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:16px 20px;
+        border-bottom:1px solid var(--stroke);
+      }
+      .social-card-header h2{
+        margin:0;
+        font-size:1.1rem;
+      }
+      .social-card-controls{
+        display:flex;
+        flex-wrap:wrap;
+        gap:12px;
+        align-items:center;
+        padding:12px 20px;
+        border-bottom:1px solid var(--stroke);
+      }
+      .social-card-toggle{
+        display:inline-flex;
+        background:rgba(255,255,255,0.08);
+        border-radius:999px;
+        overflow:hidden;
+        border:1px solid rgba(255,255,255,0.12);
+      }
+      .social-card-toggle button{
+        background:transparent;
+        border:none;
+        color:var(--ink);
+        padding:8px 16px;
+        font-weight:700;
+        cursor:pointer;
+      }
+      .social-card-toggle button.active{
+        background:var(--accent);
+        color:#07130a;
+      }
+      .social-card-body{
+        padding:20px;
+        display:grid;
+        gap:18px;
+      }
+      .social-card-preview{
+        display:flex;
+        justify-content:center;
+      }
+      .social-card{
+        position:relative;
+        border-radius:20px;
+        overflow:hidden;
+        width:min(720px, 100%);
+        aspect-ratio:16 / 9;
+        background:#0b0b10;
+        box-shadow:0 18px 40px rgba(0,0,0,0.4);
+      }
+      .social-card.portrait{
+        width:min(440px, 100%);
+        aspect-ratio:9 / 16;
+      }
+      .social-card::after{
+        content:"";
+        position:absolute;
+        bottom:0;
+        left:0;
+        width:100%;
+        height:40%;
+        background:linear-gradient(to top, rgba(0,0,0,0.65), transparent);
+        pointer-events:none;
+        z-index:1;
+      }
+      .social-card.portrait::after{
+        height:50%;
+      }
+      .social-card-map{
+        position:absolute;
+        inset:0;
+        z-index:0;
+      }
+      .social-card.landscape .social-card-map{
+        transform:rotate(-90deg);
+        transform-origin:center;
+      }
+      .social-card-overlay{
+        position:absolute;
+        bottom:0;
+        left:0;
+        width:100%;
+        padding:24px;
+        display:grid;
+        gap:8px;
+        color:#fff;
+        z-index:2;
+      }
+      .social-card-overlay .trail-title{
+        font-size:1.5rem;
+        font-weight:700;
+      }
+      .social-card-overlay .trail-subtitle{
+        color:#d1e5ff;
+        font-size:0.9rem;
+      }
+      .social-card-overlay .trail-stats{
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+      }
+      .social-card.portrait .trail-stats{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .social-card-overlay .trail-stats span{
+        background:rgba(0,0,0,0.45);
+        border-radius:999px;
+        padding:4px 12px;
+        font-size:0.8rem;
+      }
+      .social-share-buttons{
+        margin-top:8px;
+        text-align:center;
+      }
+      .social-share-buttons h3{
+        margin:0 0 12px;
+        font-size:1rem;
+      }
+      .social-share-group{
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+        justify-content:center;
+        margin-bottom:8px;
+      }
+      .social-share-group .share-button{
+        padding:6px 12px;
+        border-radius:999px;
+        border:1px solid rgba(255,255,255,0.18);
+        color:var(--ink);
+        text-decoration:none;
+        font-size:0.78rem;
       }
       .nh48-lang{
         display:flex;
@@ -1118,6 +1298,10 @@
           <span class="iconify" data-icon="mdi:printer" aria-hidden="true"></span>
           <span class="sr-only">Print</span>
         </button>
+        <button id="shareBtn" class="icon-btn no-print" title="Share social card" aria-label="Share social card">
+          <span class="iconify" data-icon="mdi:share-outline" aria-hidden="true"></span>
+          <span class="sr-only">Share</span>
+        </button>
       </div>
       <a class="back-guide no-print" href="/nh-4000-footers-info">NH48 Info</a>
       <h1 id="peakTitle" class="no-print" data-i18n="peak.loading">Loading…</h1>
@@ -1197,6 +1381,41 @@
         <h2 id="conditionsHeading" class="section-title" data-i18n="peak.section.conditions">Conditions &amp; Access</h2>
         <div class="info-grid" id="conditionsGrid" hidden></div>
       </section>
+    </div>
+    <div id="socialCardModal" class="social-card-modal" hidden>
+      <div class="social-card-dialog" role="dialog" aria-modal="true" aria-labelledby="socialCardTitle">
+        <div class="social-card-header">
+          <h2 id="socialCardTitle">Share social card</h2>
+          <button id="closeSocialCard" class="icon-btn" type="button" aria-label="Close share dialog">
+            <span class="iconify" data-icon="mdi:close" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="social-card-controls">
+          <span>Orientation</span>
+          <div class="social-card-toggle" role="group" aria-label="Social card orientation">
+            <button type="button" class="social-card-toggle-btn active" data-orientation="landscape">Landscape</button>
+            <button type="button" class="social-card-toggle-btn" data-orientation="portrait">Portrait</button>
+          </div>
+          <button id="downloadSocialCard" class="primary-btn" type="button">Download</button>
+        </div>
+        <div class="social-card-body">
+          <div class="social-card-preview">
+            <div id="socialCardContainer" class="social-card landscape" role="img" aria-label="Social card preview">
+              <div id="socialCardMap" class="social-card-map" aria-hidden="true"></div>
+              <div class="social-card-overlay">
+                <div id="socialCardPeakName" class="trail-title">NH48 Peak</div>
+                <div id="socialCardPeakLocation" class="trail-subtitle">White Mountain National Forest</div>
+                <div id="socialCardPeakStats" class="trail-stats"></div>
+              </div>
+            </div>
+          </div>
+          <div id="socialShareButtons" class="social-share-buttons">
+            <h3>Share this peak</h3>
+            <div class="social-share-group major-networks"></div>
+            <div class="social-share-group international-networks"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
@@ -3169,6 +3388,359 @@
         trackEvent('peak_map_rendered', { slug: currentSlug, trails: trailsToRender.length });
       }
 
+      const socialSharePlatforms = [
+        {
+          name: 'Facebook',
+          category: 'major',
+          buildUrl: share => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(share.url)}`
+        },
+        {
+          name: 'X',
+          category: 'major',
+          buildUrl: share => `https://twitter.com/intent/tweet?url=${encodeURIComponent(share.url)}&text=${encodeURIComponent(share.text)}`
+        },
+        {
+          name: 'LinkedIn',
+          category: 'major',
+          buildUrl: share => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(share.url)}`
+        },
+        {
+          name: 'Reddit',
+          category: 'major',
+          buildUrl: share => `https://www.reddit.com/submit?url=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+        },
+        {
+          name: 'Email',
+          category: 'major',
+          buildUrl: share => `mailto:?subject=${encodeURIComponent(share.text)}&body=${encodeURIComponent(share.url)}`
+        },
+        {
+          name: 'WhatsApp',
+          category: 'major',
+          buildUrl: share => `https://wa.me/?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+        },
+        {
+          name: 'Bluesky',
+          category: 'major',
+          buildUrl: share => `https://bsky.app/intent/compose?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+        },
+        {
+          name: 'Threads',
+          category: 'major',
+          buildUrl: share => `https://www.threads.net/intent/post?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+        },
+        {
+          name: 'Telegram',
+          category: 'international',
+          buildUrl: share => `https://t.me/share/url?url=${encodeURIComponent(share.url)}&text=${encodeURIComponent(share.text)}`
+        },
+        {
+          name: 'Weibo',
+          category: 'international',
+          buildUrl: share => `https://service.weibo.com/share/share.php?url=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+        },
+        {
+          name: 'VK',
+          category: 'international',
+          buildUrl: share => `https://vk.com/share.php?url=${encodeURIComponent(share.url)}`
+        },
+        {
+          name: 'Line',
+          category: 'international',
+          buildUrl: share => `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(share.url)}`
+        },
+        {
+          name: 'KakaoTalk',
+          category: 'international',
+          buildUrl: share => `https://story.kakao.com/share?url=${encodeURIComponent(share.url)}`
+        },
+        {
+          name: 'Mastodon',
+          category: 'international',
+          buildUrl: share => `https://mastodon.social/share?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+        },
+        {
+          name: 'Pocket',
+          category: 'international',
+          buildUrl: share => `https://getpocket.com/edit?url=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+        },
+        {
+          name: 'Tumblr',
+          category: 'international',
+          buildUrl: share => `https://www.tumblr.com/widgets/share/tool?canonicalUrl=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+        },
+        {
+          name: 'Pinterest',
+          category: 'international',
+          buildUrl: share => `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(share.url)}&description=${encodeURIComponent(share.text)}`
+        },
+        {
+          name: 'SMS',
+          category: 'international',
+          buildUrl: share => `sms:?&body=${encodeURIComponent(`${share.text} ${share.url}`)}`
+        }
+      ];
+
+      let socialCardMap = null;
+      let socialCardMarker = null;
+      let socialCardTrailsLayer = null;
+      let socialCardReadyPromise = null;
+      let socialCardPayload = null;
+
+      function getSocialCardElements(){
+        return {
+          modal: document.getElementById('socialCardModal'),
+          container: document.getElementById('socialCardContainer'),
+          map: document.getElementById('socialCardMap'),
+          name: document.getElementById('socialCardPeakName'),
+          location: document.getElementById('socialCardPeakLocation'),
+          stats: document.getElementById('socialCardPeakStats'),
+          buttons: Array.from(document.querySelectorAll('.social-card-toggle-btn')),
+          shareButtons: document.getElementById('socialShareButtons'),
+          downloadButton: document.getElementById('downloadSocialCard'),
+          closeButton: document.getElementById('closeSocialCard')
+        };
+      }
+
+      function buildSocialStats(peak){
+        const routes = Array.isArray(peak['Standard Routes']) ? peak['Standard Routes'] : [];
+        const route = routes[0] || {};
+        const distance = formatDistanceMiles(route['Distance (mi)']);
+        const gain = formatFeetValue(route['Elevation Gain (ft)']);
+        const difficulty = translateDifficulty(peak['Difficulty']) || '—';
+        const stats = [];
+        if(distance !== '—') stats.push(`${distance} round trip`);
+        if(gain !== '—') stats.push(`${gain} gain`);
+        if(difficulty && difficulty !== '—') stats.push(difficulty);
+        return stats.length ? stats : ['NH48 peak'];
+      }
+
+      function buildShareButtons(share){
+        const elements = getSocialCardElements();
+        if(!elements.shareButtons) return;
+        const majorContainer = elements.shareButtons.querySelector('.major-networks');
+        const internationalContainer = elements.shareButtons.querySelector('.international-networks');
+        if(!majorContainer || !internationalContainer) return;
+        majorContainer.innerHTML = '';
+        internationalContainer.innerHTML = '';
+
+        socialSharePlatforms.forEach(platform => {
+          const link = document.createElement('a');
+          link.className = `share-button ${platform.category}`;
+          link.href = platform.buildUrl(share);
+          link.target = '_blank';
+          link.rel = 'noopener';
+          link.textContent = platform.name;
+          link.setAttribute('aria-label', `Share peak on ${platform.name}`);
+          if(platform.category === 'major'){
+            majorContainer.appendChild(link);
+          }else{
+            internationalContainer.appendChild(link);
+          }
+        });
+      }
+
+      function updateSocialCardContent(peak, name, canonicalUrl){
+        const elements = getSocialCardElements();
+        if(!elements.container || !peak) return;
+        const range = peak['Range / Subrange'];
+        const subtitle = range ? `${range} • White Mountain National Forest` : 'White Mountain National Forest';
+        const stats = buildSocialStats(peak);
+        elements.name.textContent = name;
+        elements.location.textContent = subtitle;
+        elements.stats.innerHTML = stats.map(stat => `<span>${escapeHtml(stat)}</span>`).join('');
+        buildShareButtons({
+          url: canonicalUrl,
+          text: `${name} — NH48 peak details`
+        });
+      }
+
+      function updateSocialCardOrientation(orientation){
+        const elements = getSocialCardElements();
+        if(!elements.container) return;
+        elements.container.classList.toggle('landscape', orientation === 'landscape');
+        elements.container.classList.toggle('portrait', orientation === 'portrait');
+        elements.buttons.forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.orientation === orientation);
+        });
+        if(socialCardMap){
+          requestAnimationFrame(() => socialCardMap.invalidateSize());
+        }
+      }
+
+      async function ensureSocialCardMap(peak){
+        const elements = getSocialCardElements();
+        if(!elements.map) return;
+        if(!window.L) return;
+        const coords = parseCoordinates(peak['Coordinates']);
+        if(!coords) return;
+        const bounds = getPeakMapBounds(coords);
+        const latLngBounds = L.latLngBounds([bounds.south, bounds.west], [bounds.north, bounds.east]);
+
+        if(!socialCardMap){
+          socialCardMap = L.map(elements.map, {
+            zoomControl:false,
+            scrollWheelZoom:false,
+            dragging:false,
+            doubleClickZoom:false,
+            boxZoom:false,
+            keyboard:false,
+            tap:false,
+            attributionControl:false
+          });
+          const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors &amp; OpenTopoMap (CC-BY-SA)'
+          });
+          const fallbackLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+          });
+          topoLayer.on('tileerror', () => {
+            if(!socialCardMap.hasLayer(fallbackLayer)){
+              fallbackLayer.addTo(socialCardMap);
+            }
+          });
+          topoLayer.addTo(socialCardMap);
+          socialCardTrailsLayer = L.layerGroup().addTo(socialCardMap);
+        }else if(socialCardTrailsLayer){
+          socialCardTrailsLayer.clearLayers();
+        }
+
+        socialCardMap.fitBounds(latLngBounds, { padding: [12, 12] });
+        socialCardMap.setMaxBounds(latLngBounds.pad(0.05));
+        socialCardMap.setMinZoom(socialCardMap.getBoundsZoom(latLngBounds));
+
+        if(socialCardMarker){
+          socialCardMarker.setLatLng([coords.lat, coords.lon]);
+        }else{
+          socialCardMarker = L.circleMarker([coords.lat, coords.lon], {
+            radius: 6,
+            color: '#22c55e',
+            fillColor: '#22c55e',
+            fillOpacity: 0.9,
+            weight: 2
+          }).addTo(socialCardMap);
+        }
+
+        const trailData = await fetchTrailData();
+        const candidates = buildTrailNameCandidates(peak['Standard Routes'] || [], peak['Trail Names'] || []);
+        const matched = trailData.filter(trail => {
+          const normalized = normalizeTrailName(trail.name || trail.trail_name || '');
+          if(!normalized) return false;
+          if(candidates.has(normalized)) return true;
+          for(const candidate of candidates){
+            if(candidate && normalized.includes(candidate)) return true;
+          }
+          return false;
+        });
+        const trailsToRender = matched.length
+          ? matched
+          : trailData.filter(trail => trailWithinBounds(trail, bounds));
+
+        trailsToRender.forEach(trail => {
+          if(!Array.isArray(trail.geometry) || trail.geometry.length < 2) return;
+          const latLngs = trail.geometry.map(point => [point.lat, point.lon]);
+          L.polyline(latLngs, {
+            color: '#ff8c00',
+            weight: 4,
+            opacity: 0.9
+          }).addTo(socialCardTrailsLayer);
+        });
+
+        socialCardReadyPromise = new Promise(resolve => {
+          socialCardMap.whenReady(() => {
+            requestAnimationFrame(() => {
+              socialCardMap.invalidateSize();
+              setTimeout(resolve, 500);
+            });
+          });
+        });
+      }
+
+      function openSocialCardModal(){
+        const elements = getSocialCardElements();
+        if(!elements.modal || !socialCardPayload) return;
+        elements.modal.hidden = false;
+        updateSocialCardOrientation('landscape');
+        updateSocialCardContent(socialCardPayload.peak, socialCardPayload.name, socialCardPayload.canonicalUrl);
+        ensureSocialCardMap(socialCardPayload.peak);
+      }
+
+      function closeSocialCardModal(){
+        const elements = getSocialCardElements();
+        if(elements.modal){
+          elements.modal.hidden = true;
+        }
+      }
+
+      async function downloadSocialCard(){
+        const elements = getSocialCardElements();
+        if(!window.htmlToImage || !elements.container || !socialCardPayload) return;
+        const orientation = elements.container.classList.contains('portrait') ? 'portrait' : 'landscape';
+        const fileOrientation = orientation === 'portrait' ? 'vertical' : 'horizontal';
+        const fileName = `${socialCardPayload.slug}-social-${fileOrientation}.png`;
+        const blob = await window.htmlToImage.toBlob(elements.container, { cacheBust: true });
+        if(!blob) return;
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+
+        if(window.NH48_SOCIAL_UPLOAD_URL && window.NH48_SOCIAL_UPLOAD_TOKEN){
+          const formData = new FormData();
+          formData.append('file', blob, fileName);
+          formData.append('slug', socialCardPayload.slug);
+          formData.append('orientation', fileOrientation);
+          try{
+            await fetch(window.NH48_SOCIAL_UPLOAD_URL, {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${window.NH48_SOCIAL_UPLOAD_TOKEN}` },
+              body: formData
+            });
+          }catch(err){
+            console.warn('Social card upload failed.', err);
+          }
+        }
+      }
+
+      function initPeakSocialCardHandlers(peak, name, canonicalUrl, slug){
+        const elements = getSocialCardElements();
+        if(!elements.modal) return;
+        socialCardPayload = { peak, name, canonicalUrl, slug };
+        updateSocialCardContent(peak, name, canonicalUrl);
+
+        const shareBtn = document.getElementById('shareBtn');
+        if(shareBtn){
+          shareBtn.addEventListener('click', openSocialCardModal);
+        }
+        if(elements.closeButton){
+          elements.closeButton.addEventListener('click', closeSocialCardModal);
+        }
+        elements.modal.addEventListener('click', event => {
+          if(event.target === elements.modal){
+            closeSocialCardModal();
+          }
+        });
+        elements.buttons.forEach(button => {
+          button.addEventListener('click', () => {
+            updateSocialCardOrientation(button.dataset.orientation);
+          });
+        });
+        if(elements.downloadButton){
+          elements.downloadButton.addEventListener('click', downloadSocialCard);
+        }
+        window.NH48_PEAK_SOCIAL = {
+          openModal: openSocialCardModal,
+          closeModal: closeSocialCardModal,
+          setOrientation: updateSocialCardOrientation,
+          waitForReady: () => socialCardReadyPromise || Promise.resolve(),
+          getCardElement: () => elements.container
+        };
+      }
+
       function renderTerrain(p){
         const terrainGrid = document.getElementById('terrainGrid');
         if(!terrainGrid) return;
@@ -3730,6 +4302,7 @@
           renderTerrain(p);
           renderConditions(p);
           renderPeakMap(p, name, canonicalUrl);
+          initPeakSocialCardHandlers(p, name, canonicalUrl, slug);
 
           buildMountainSchema(p, name, canonicalUrl, currentPrimaryPhoto, descriptionText, currentMeta);
           buildPeakFaqSchema(p, name, canonicalUrl);
@@ -3798,6 +4371,7 @@
           renderTerrain(currentPeak);
           renderConditions(currentPeak);
           renderPeakMap(currentPeak, name, canonicalUrl);
+          updateSocialCardContent(currentPeak, name, canonicalUrl);
           if (currentPrimaryPhoto) {
             buildMountainSchema(currentPeak, name, canonicalUrl, currentPrimaryPhoto, descriptionText, currentMeta);
           }
@@ -3818,6 +4392,7 @@
           buildPrintSummary(currentPeak);
           const routes = currentPeak['Standard Routes'] || [];
           renderRoutes(routes);
+          updateSocialCardContent(currentPeak, currentPeak.peakName || currentPeak['Peak Name'] || currentSlug, buildCanonicalUrl(currentSlug, getSeoLang()));
           trackEvent('peak_units_change', { units: e.target.value, slug: currentSlug });
         });
       }
