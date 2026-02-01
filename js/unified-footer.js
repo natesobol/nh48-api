@@ -191,10 +191,13 @@
 
         .nh48-quick-footer__group h2 {
           margin: 0 0 6px;
-          font-size: 13px;
+          font-size: 15px;
           letter-spacing: 0.1px;
           color: var(--nh48-footer-ink);
           line-height: 1.2;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .nh48-quick-footer__list {
@@ -311,9 +314,12 @@
 
       .nh48-quick-footer__group h2 {
         margin: 0 0 8px;
-        font-size: 15px;
+        font-size: 16px;
         letter-spacing: 0.2px;
         color: var(--nh48-footer-ink);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .nh48-quick-footer__list {
@@ -441,6 +447,11 @@
         background: #16a34a;
         border-color: #15803d;
         color: #ffffff;
+      }
+
+      .nh48-quick-footer__group h2 a {
+        color: inherit;
+        text-decoration: none;
       }
 
       .nh48-quick-footer__legal {
@@ -692,6 +703,16 @@
     `;
   };
 
+  const getRangeSlug = (title) => {
+    return title
+      .toLowerCase()
+      .replace(/[–/]/g, '-')
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  };
+
   // Popularity index for sorting
   const renderGrid = (gridEl) => {
     gridEl.innerHTML = '';
@@ -703,7 +724,11 @@
       groupEl.className = 'nh48-quick-footer__group';
       
       const titleEl = document.createElement('h2');
-      titleEl.textContent = group.title;
+      const titleLink = document.createElement('a');
+      const rangeSlug = getRangeSlug(group.title);
+      titleLink.href = `/range/${rangeSlug}/`;
+      titleLink.textContent = group.title;
+      titleEl.appendChild(titleLink);
       groupEl.appendChild(titleEl);
       
       const listEl = document.createElement('ul');
