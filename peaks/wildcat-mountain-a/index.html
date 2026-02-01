@@ -1098,13 +1098,31 @@
   }
 
   .site-nav-submenu--divided > * + * {
-    border-top: 1px dotted rgba(255, 255, 255, 0.3);
+    border-top: 0;
+    border-radius: 0;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.3) 0 4px,
+      transparent 4px 8px
+    );
+    background-repeat: repeat-x;
+    background-size: 100% 1px;
+    background-position: top left;
     padding-top: 6px;
     margin-top: 4px;
   }
 
   .site-nav-submenu--wide .site-nav-submenu-group + .site-nav-submenu-group {
-    border-top: 1px dotted rgba(255, 255, 255, 0.3);
+    border-top: 0;
+    border-radius: 0;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.3) 0 4px,
+      transparent 4px 8px
+    );
+    background-repeat: repeat-x;
+    background-size: 100% 1px;
+    background-position: top left;
     padding-top: 6px;
     margin-top: 4px;
   }
@@ -1193,7 +1211,15 @@
 
   .site-nav-submenu--nested a + a {
     border-radius: 0;
-    border-top: 1px dotted rgba(255, 255, 255, 0.3);
+    border-top: 0;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.3) 0 4px,
+      transparent 4px 8px
+    );
+    background-repeat: repeat-x;
+    background-size: 100% 1px;
+    background-position: top left;
     padding-top: 6px;
     margin-top: 4px;
   }
