@@ -252,21 +252,22 @@ header.plant-hero.sticky h1{
  ****************************/
 /* The details view uses a carousel similar to the catalog drawer. */
 .media{
-  position:relative;
-  height:auto;
-  aspect-ratio:5/3;
-  margin:16px 8px 20px;      /* side padding for image block */
-  padding:8px;               /* inner padding around image */
   background:var(--card);
+  border:1px solid var(--stroke);
   border-radius:12px;
-  border-bottom:1px dashed var(--stroke);
   overflow:hidden;
+  margin:16px 8px 20px;
+  position:relative;
+  aspect-ratio:4/3;
+  min-height:clamp(240px, 60vw, 520px);
+  max-height:min(65vh, 640px);
+  box-sizing:border-box;
+  box-shadow:0 18px 46px rgba(0,0,0,0.35);
 }
 .carousel{
   position:relative;
   width:100%;
   height:100%;
-  border-radius:10px;
   overflow:hidden;
 }
 .slide{
@@ -275,33 +276,66 @@ header.plant-hero.sticky h1{
   opacity:0;
   transition:opacity .35s ease;
 }
-.slide img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
 .slide.active{
   opacity:1;
 }
+.slide figure{
+  margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px;
+  box-sizing:border-box;
+  height:100%;
+}
+.slide figure img{
+  max-height:100%;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  display:block;
+  border-radius:8px;
+}
 .dots{
   position:absolute;
-  left:50%;
-  bottom:8px;
-  transform:translateX(-50%);
+  bottom:12px;
+  left:12px;
+  right:12px;
   display:flex;
-  gap:6px;
+  gap:10px;
+  padding:10px;
+  background:rgba(10,10,10,0.55);
+  border:1px solid rgba(255,255,255,0.18);
+  border-radius:12px;
+  overflow-x:auto;
   z-index:2;
 }
 .dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  border:1px solid #ffffff;
-  background:#ffffff22;
+  width:70px;
+  height:46px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.35);
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-color:#0f1118;
+  cursor:pointer;
+  opacity:0.8;
+  transition:transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+  flex:0 0 auto;
+  padding:0;
+  appearance:none;
 }
+.dot:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+.dot:hover{ opacity:1; transform:translateY(-2px); }
 .dot.active{
-  background:#ffffff;
+  opacity:1;
+  border-color:var(--accent);
+  box-shadow:0 10px 24px rgba(0,0,0,0.35);
 }
 .ctrls{
   position:absolute;
@@ -313,13 +347,86 @@ header.plant-hero.sticky h1{
 }
 .ctrls button{
   pointer-events:auto;
-  background:#00000055;
-  border:1px solid #ffffff;
+  background:rgba(10,10,10,0.5);
+  border:1px solid rgba(255,255,255,0.45);
   color:#ffffff;
-  border-radius:8px;
-  padding:6px 10px;
-  margin:0 8px;
+  border-radius:50%;
+  width:42px;
+  height:42px;
+  padding:0;
+  margin:0 10px;
   cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.25rem;
+  box-shadow:0 12px 28px rgba(0,0,0,0.35);
+  transition:transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.ctrls button:hover{ background:rgba(10,10,10,0.7); border-color:var(--accent); transform:translateY(-1px); }
+.ctrls button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+/* Countdown timer styles ---------------------------------------------- */
+.timer{
+  position:absolute;
+  top:8px;
+  right:8px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 8px;
+  background:rgba(0,0,0,0.35);
+  border-radius:12px;
+  z-index:3;
+}
+.timer-visual{
+  position:relative;
+  width:56px;
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.timer svg{
+  width:100%;
+  height:100%;
+  transform:rotate(-90deg);
+}
+.timer-ring{
+  fill:none;
+  stroke:var(--accent);
+  stroke-width:4;
+  stroke-linecap:round;
+  transition:stroke-dashoffset 0.1s linear;
+}
+.timer-text{
+  position:absolute;
+  color:var(--accent);
+  font-size:0.8rem;
+  font-weight:600;
+  pointer-events:none;
+}
+.timer-pause{
+  background:rgba(255,255,255,0.15);
+  color:var(--accent);
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:50%;
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  cursor:pointer;
+  transition:background 0.2s ease, transform 0.2s ease;
+}
+.timer-pause:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+.timer-pause:hover{
+  background:rgba(255,255,255,0.25);
+  transform:scale(1.02);
 }
 .content{
   padding:14px;
@@ -499,11 +606,20 @@ header.plant-hero.sticky h1{
   </header>
   <div class="media">
     <div id="carousel" class="carousel" aria-roledescription="carousel" aria-label="Photos" tabindex="0"></div>
-    <div class="ctrls">
-      <button type="button" id="prevBtn" aria-label="Previous image">◀</button>
-      <button type="button" id="nextBtn" aria-label="Next image">▶</button>
-    </div>
     <div id="dots" class="dots" aria-hidden="true"></div>
+    <div class="ctrls">
+      <button type="button" id="prevBtn" aria-label="Previous image">‹</button>
+      <button type="button" id="nextBtn" aria-label="Next image">›</button>
+    </div>
+    <div class="timer" id="carouselTimer" hidden>
+      <div class="timer-visual">
+        <svg viewBox="0 0 40 40">
+          <circle id="timerRing" class="timer-ring" cx="20" cy="20" r="18"></circle>
+        </svg>
+        <span id="timerText" class="timer-text"></span>
+      </div>
+      <button id="carouselPauseBtn" type="button" class="timer-pause" aria-label="Pause carousel" aria-pressed="false" title="Pause carousel">❚❚</button>
+    </div>
   </div>
   <div class="content" id="drawerContent">
     <div class="facts">
@@ -544,9 +660,12 @@ header.plant-hero.sticky h1{
   let PLANTS = [];
   // Carousel state
   let carouselTimer = null;
+  let timerInterval = null;
   let carouselIdx = 0;
   let carouselImgs = [];
-  let carouselDelay = 4000;
+  let currentDelay = 8000;
+  const BASE_DELAY = 8000;
+  let isCarouselPaused = false;
 
   // DOM helpers
   const $ = s => document.querySelector(s);
@@ -613,9 +732,11 @@ header.plant-hero.sticky h1{
     if (!images || !images.length){ images = [PLACEHOLDER]; }
     const startingIndex = images.length > 1 ? 1 : 0;
     carouselIdx = startingIndex;
+    const timerEl = document.getElementById('carouselTimer');
     images.forEach((src, i)=>{
       const slide = document.createElement('div');
       slide.className = 'slide' + (i===startingIndex ? ' active' : '');
+      const figure = document.createElement('figure');
       const img = document.createElement('img');
       const altBase = (p && p.common) ? p.common : 'Plant';
       const descSnippet = (p && (p.morph || p.teaser || p.desc) || '').trim();
@@ -633,25 +754,33 @@ header.plant-hero.sticky h1{
         img.src = LQ_PLACEHOLDER;
       }
       img.onerror = ()=>{ img.onerror=null; img.src=PLACEHOLDER; };
-      slide.appendChild(img);
+      figure.appendChild(img);
+      slide.appendChild(figure);
       const caption = document.createElement('p');
       caption.className = 'sr-only';
       caption.textContent = (p && (p.desc || p.teaser) || '').trim();
       slide.appendChild(caption);
       carouselEl.appendChild(slide);
       carouselImgs.push(img);
-      const dot=document.createElement('div');
-      dot.className='dot'+(i===startingIndex?' active':'');
-      dot.addEventListener('click', ()=>goTo(i));
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'dot' + (i===startingIndex ? ' active' : '');
+      dot.style.backgroundImage = `url('${src}')`;
+      dot.setAttribute('aria-label', `View photo ${i + 1}`);
+      dot.title = dot.getAttribute('aria-label');
+      dot.addEventListener('click', ()=>goTo(i, true));
       dotsEl.appendChild(dot);
     });
     const media = document.querySelector('.media');
-    prevBtn.onclick = prev;
-    nextBtn.onclick = next;
+    prevBtn.onclick = () => prev(true);
+    nextBtn.onclick = () => next(true);
     media.onmouseenter = stopCarousel;
     media.onmouseleave = startCarousel;
     media.onfocusin = stopCarousel;
     media.onfocusout = startCarousel;
+    if (timerEl){
+      timerEl.hidden = images.length <= 1;
+    }
     startCarousel();
   }
   function updateSlides(){
@@ -668,31 +797,131 @@ header.plant-hero.sticky h1{
       img.removeAttribute('data-src');
     }
   }
-  function next(){
+  function next(manual=false){
     carouselIdx = (carouselIdx + 1) % carouselImgs.length;
     ensureImgLoaded(carouselIdx);
     updateSlides();
+    if (manual){
+      restartCarousel();
+    }
   }
-  function prev(){
+  function prev(manual=false){
     carouselIdx = (carouselIdx - 1 + carouselImgs.length) % carouselImgs.length;
     ensureImgLoaded(carouselIdx);
     updateSlides();
+    if (manual){
+      restartCarousel();
+    }
   }
-  function goTo(i){
+  function goTo(i, manual=false){
     carouselIdx = i % carouselImgs.length;
     ensureImgLoaded(carouselIdx);
     updateSlides();
+    if (manual){
+      restartCarousel();
+    }
   }
   function startCarousel(){
     stopCarousel();
-    carouselDelay = 3000 + Math.floor(Math.random()*2000);
-    carouselTimer = setInterval(next, carouselDelay);
+    if (carouselImgs.length <= 1){
+      updatePauseButton(false);
+      return;
+    }
+    if (isCarouselPaused){
+      updatePauseButton(true);
+      return;
+    }
+    currentDelay = BASE_DELAY + Math.floor(Math.random()*2000);
+    startTimer(currentDelay);
+    carouselTimer = setInterval(() => {
+      next(false);
+      startTimer(currentDelay);
+    }, currentDelay);
+    updatePauseButton(false);
   }
   function stopCarousel(){
     if (carouselTimer){
       clearInterval(carouselTimer);
       carouselTimer=null;
     }
+    if (timerInterval){
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function updatePauseButton(paused=isCarouselPaused){
+    const btn = document.getElementById('carouselPauseBtn');
+    if (!btn) return;
+    btn.textContent = paused ? '▶' : '❚❚';
+    btn.setAttribute('aria-pressed', paused);
+    btn.setAttribute('aria-label', paused ? 'Resume carousel' : 'Pause carousel');
+    btn.title = paused ? 'Resume carousel' : 'Pause carousel';
+  }
+
+  function pauseCarousel(){
+    if (isCarouselPaused) return;
+    isCarouselPaused = true;
+    stopCarousel();
+    updatePauseButton(true);
+  }
+
+  function resumeCarousel(){
+    if (!isCarouselPaused) return;
+    isCarouselPaused = false;
+    startCarousel();
+    updatePauseButton(false);
+  }
+
+  function restartCarousel(){
+    if (isCarouselPaused) return;
+    startCarousel();
+  }
+
+  function toggleCarouselPause(){
+    if (isCarouselPaused){
+      resumeCarousel();
+    } else {
+      pauseCarousel();
+    }
+  }
+
+  const pauseBtn = document.getElementById('carouselPauseBtn');
+  if (pauseBtn){
+    pauseBtn.addEventListener('click', toggleCarouselPause);
+    updatePauseButton(false);
+  }
+
+  function startTimer(duration){
+    const ring = document.getElementById('timerRing');
+    const textEl = document.getElementById('timerText');
+    if (!ring || !textEl) return;
+
+    const radius = 18;
+    const circumference = 2 * Math.PI * radius;
+    ring.style.strokeDasharray = circumference;
+    ring.style.strokeDashoffset = 0;
+
+    const start = Date.now();
+    const end = start + duration;
+
+    if (timerInterval) clearInterval(timerInterval);
+
+    timerInterval = setInterval(() => {
+      const now = Date.now();
+      const remaining = Math.max(end - now, 0);
+      const percent = remaining / duration;
+      const offset = circumference * (1 - percent);
+      ring.style.strokeDashoffset = offset;
+      const secs = Math.ceil(remaining / 1000);
+      textEl.textContent = secs;
+      if (remaining <= 0){
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }, 100);
+
+    textEl.textContent = Math.ceil(duration / 1000);
   }
 
   /* ---------- Populate details ---------- */
