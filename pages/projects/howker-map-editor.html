@@ -2659,15 +2659,9 @@
           });
         }
 
-        mapEl.style.width = `${mapW}px`;
-        mapEl.style.height = `${mapH}px`;
-        wrapEl.style.width = `${mapW}px`;
-        wrapEl.style.height = `${mapH}px`;
-
-        map.invalidateSize(true);
         await waitForMapIdle(15000);
 
-        const canvas = await new Promise((resolve, reject) => {
+        const sourceCanvas = await new Promise((resolve, reject) => {
           window.leafletImage(map, (err, c) => {
             if (err) reject(err);
             else resolve(c);
@@ -2675,16 +2669,28 @@
         });
 
         const meta = buildCardMeta();
-        let exportCanvas = canvas;
+        const scaledCanvas = document.createElement('canvas');
+        scaledCanvas.width = mapW;
+        scaledCanvas.height = mapH;
+        const scaledCtx = scaledCanvas.getContext('2d');
+        scaledCtx.imageSmoothingEnabled = true;
+        scaledCtx.drawImage(
+          sourceCanvas,
+          0, 0, sourceCanvas.width, sourceCanvas.height,
+          0, 0, mapW, mapH
+        );
+
+        let exportCanvas = scaledCanvas;
         if (orientation === 'landscape') {
           const rotated = document.createElement('canvas');
           rotated.width = exportW;
           rotated.height = exportH;
           const rctx = rotated.getContext('2d');
+          rctx.imageSmoothingEnabled = true;
           rctx.save();
           rctx.translate(exportW, 0);
           rctx.rotate(Math.PI / 2);
-          rctx.drawImage(canvas, 0, 0, mapW, mapH);
+          rctx.drawImage(scaledCanvas, 0, 0, mapW, mapH);
           rctx.restore();
           exportCanvas = rotated;
         }
@@ -2772,39 +2778,36 @@
       }
 
       const originalSize = map.getSize();
-      const originalCenter = map.getCenter();
-      const originalZoom = map.getZoom();
       const targetWidth = resolution === '8k' ? 7680 : 3840;
       const targetHeight = Math.round(targetWidth * originalSize.y / originalSize.x);
-      const prev = {
-        mapW: mapEl.style.width,
-        mapH: mapEl.style.height,
-        wrapW: wrapEl.style.width,
-        wrapH: wrapEl.style.height
-      };
 
       try {
         setStatusMessage(`Rendering Topo Art (${targetWidth}×${targetHeight})...`);
-        mapEl.style.width = `${targetWidth}px`;
-        mapEl.style.height = `${targetHeight}px`;
-        wrapEl.style.width = `${targetWidth}px`;
-        wrapEl.style.height = `${targetHeight}px`;
-        map.invalidateSize(true);
-        map.setView(originalCenter, originalZoom, { animate: false });
         await waitForMapIdle(15000);
 
-        const canvas = await new Promise((resolve, reject) => {
+        const sourceCanvas = await new Promise((resolve, reject) => {
           window.leafletImage(map, (err, c) => {
             if (err) reject(err);
             else resolve(c);
           });
         });
 
-        processTopoArtImage(canvas, theme);
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = targetWidth;
+        exportCanvas.height = targetHeight;
+        const exportCtx = exportCanvas.getContext('2d');
+        exportCtx.imageSmoothingEnabled = true;
+        exportCtx.drawImage(
+          sourceCanvas,
+          0, 0, sourceCanvas.width, sourceCanvas.height,
+          0, 0, targetWidth, targetHeight
+        );
+
+        processTopoArtImage(exportCanvas, theme);
 
         const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
         const filename = `topo-art-${theme}-${resolution}-${stamp}.png`;
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const blob = await new Promise(resolve => exportCanvas.toBlob(resolve, 'image/png'));
         if (!blob) {
           throw new Error('Unable to encode PNG.');
         }
@@ -2820,13 +2823,6 @@
       } catch (err) {
         setStatusMessage(err?.message || 'Topo Art export failed.', true);
         console.error(err);
-      } finally {
-        mapEl.style.width = prev.mapW;
-        mapEl.style.height = prev.mapH;
-        wrapEl.style.width = prev.wrapW;
-        wrapEl.style.height = prev.wrapH;
-        map.invalidateSize(true);
-        map.setView(originalCenter, originalZoom, { animate: false });
       }
     }
 
@@ -2838,14 +2834,18 @@
         const r = data[i];
         const g = data[i + 1];
         const b = data[i + 2];
-        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
         if (theme === 'dark') {
-          const inverted = 255 - gray;
-          const threshold = inverted > 100 ? 255 : 0;
-          data[i] = data[i + 1] = data[i + 2] = threshold;
+          if (r > 240 && g > 240 && b > 240) {
+            data[i] = data[i + 1] = data[i + 2] = 255;
+          } else {
+            data[i] = data[i + 1] = data[i + 2] = 0;
+          }
         } else {
-          const threshold = gray < 155 ? 0 : 255;
-          data[i] = data[i + 1] = data[i + 2] = threshold;
+          if (r < 20 && g < 20 && b < 20) {
+            data[i] = data[i + 1] = data[i + 2] = 0;
+          } else {
+            data[i] = data[i + 1] = data[i + 2] = 255;
+          }
         }
       }
       ctx.putImageData(imageData, 0, 0);
