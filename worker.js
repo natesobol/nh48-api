@@ -204,6 +204,8 @@ export default {
           }
         });
       };
+      const MAX_PAYLOAD_BYTES = 5 * 1024 * 1024;
+
       if (request.method === 'OPTIONS') {
         return new Response(null, { status: 204, headers: corsHeaders(origin) });
       }
@@ -325,6 +327,8 @@ export default {
         });
       };
 
+      const MAX_PAYLOAD_BYTES = 5 * 1024 * 1024;
+
       if (request.method === 'OPTIONS') {
         return new Response(null, { status: 204, headers: corsHeaders(origin) });
       }
@@ -333,11 +337,24 @@ export default {
         return new Response('Method Not Allowed', { status: 405, headers: corsHeaders(origin) });
       }
 
+      const contentLengthHeader = request.headers.get('content-length');
+      const contentLength = contentLengthHeader ? Number(contentLengthHeader) : null;
+      if (Number.isFinite(contentLength) && contentLength > MAX_PAYLOAD_BYTES) {
+        return jsonResponse(400, { error: 'Payload too large.' });
+      }
+
       let body = {};
       try {
         body = await request.json();
       } catch (err) {
         return new Response('Bad JSON', { status: 400, headers: corsHeaders(origin) });
+      }
+
+      if (!Number.isFinite(contentLength)) {
+        const payloadSize = JSON.stringify(body).length;
+        if (payloadSize > MAX_PAYLOAD_BYTES) {
+          return jsonResponse(400, { error: 'Payload too large.' });
+        }
       }
 
       const expectedPw = (env.HOWKER_MAP_PW || '').trim()
@@ -353,6 +370,18 @@ export default {
 
       if (!statusGeoJson || !poiGeoJson) {
         return jsonResponse(400, { error: 'Missing data.' });
+      }
+
+      const isFeatureCollection = (value) => {
+        return Boolean(
+          value
+          && value.type === 'FeatureCollection'
+          && Array.isArray(value.features)
+        );
+      };
+
+      if (!isFeatureCollection(statusGeoJson) || !isFeatureCollection(poiGeoJson)) {
+        return jsonResponse(400, { error: 'Invalid GeoJSON FeatureCollection.' });
       }
 
       if (!env.HOWKER_DATA) {
