@@ -33,6 +33,20 @@ export default {
     const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
     const SITE_NAME = url.hostname;
     const DEFAULT_IMAGE = `${SITE}/nh48-preview.png`;
+    const howkerDataRoutes = {
+      '/data/howker-ridge-status.geojson': {
+        key: 'howker-ridge-status.geojson',
+        contentType: 'application/geo+json; charset=utf-8'
+      },
+      '/data/howker-ridge-pois.geojson': {
+        key: 'howker-ridge-pois.geojson',
+        contentType: 'application/geo+json; charset=utf-8'
+      },
+      '/data/howker-ridge-edit.json': {
+        key: 'howker-ridge-edit.json',
+        contentType: 'application/json; charset=utf-8'
+      }
+    };
     const RIGHTS_DEFAULTS = {
       creatorName: 'Nathan Sobol',
       creditText: '© Nathan Sobol / NH48pics.com',
@@ -430,6 +444,53 @@ export default {
           'cache-control': 'no-store'
         }
       });
+    }
+
+    if (howkerDataRoutes[pathname]) {
+      const { key, contentType } = howkerDataRoutes[pathname];
+      const cacheHeaders = {
+        'Cache-Control': 'no-store',
+        'Access-Control-Allow-Origin': '*'
+      };
+
+      if (env.HOWKER_DATA) {
+        const object = await env.HOWKER_DATA.get(key);
+        if (object) {
+          const body = await object.arrayBuffer();
+          return new Response(body, {
+            status: 200,
+            headers: {
+              'Content-Type': object.httpMetadata?.contentType || contentType,
+              ...cacheHeaders
+            }
+          });
+        }
+      }
+
+      const githubUrl = `${RAW_BASE}${pathname}`;
+      try {
+        const res = await fetch(githubUrl, {
+          headers: { 'User-Agent': 'NH48-SSR/1.0' },
+          cf: { cacheTtl: 0, cacheEverything: false }
+        });
+
+        if (!res.ok) {
+          console.log(`[Static] Not found: ${githubUrl} (${res.status})`);
+          return new Response('Not Found', { status: 404 });
+        }
+
+        const body = await res.arrayBuffer();
+        return new Response(body, {
+          status: 200,
+          headers: {
+            'Content-Type': contentType,
+            ...cacheHeaders
+          }
+        });
+      } catch (err) {
+        console.error(`[Static] Error: ${err.message}`);
+        return new Response('Internal Server Error', { status: 500 });
+      }
     }
 
     if (pathname === '/submit-edit' || pathname === '/submit-edit/' || pathname === '/fr/submit-edit' || pathname === '/fr/submit-edit/') {
