@@ -8,7 +8,8 @@
 // `window.location.search` so that the existing client-side code can
 // read the slug from the query string, and inserts server-rendered
 // meta tags and structured data for SEO.  The Worker fetches the
-// mountain data and descriptions from an R2 bucket (`NH48_DATA`), and
+// mountain data from an R2 bucket (`NH48_DATA`) while sourcing mountain
+// descriptions from the canonical GitHub file, and
 // loads translation dictionaries from GitHub to build localized
 // titles and descriptions.  By doing this work on the server, the
 // page becomes indexable while still delivering the full SPA
@@ -29,6 +30,7 @@ export default {
     const RAW_NAV_URL = `${RAW_BASE}/pages/nav.html`;
     const RAW_FOOTER_URL = `${RAW_BASE}/pages/footer.html`;
     const RAW_BUILD_META_URL = `${RAW_BASE}/build-meta.json`;
+    const RAW_MOUNTAIN_DESCRIPTIONS_URL = `${RAW_BASE}/data/nh48/mountain-descriptions.txt`;
     const EN_TRANS_URL = `${RAW_BASE}/i18n/en.json`;
     const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
     const SITE_NAME = url.hostname;
@@ -905,39 +907,37 @@ export default {
         .trim();
     }
 
-    // Load mountain descriptions from R2 or cache
+    // Load mountain descriptions from the canonical GitHub data file
     async function loadDescriptions() {
       const map = Object.create(null);
       try {
-        if (env.NH48_DATA) {
-          const obj = await env.NH48_DATA.get('mountain-descriptions.txt');
-          if (obj) {
-            const text = await obj.text();
-            text.split(/\r?\n/).forEach((line) => {
-              const trimmed = line.trim();
-              if (!trimmed || trimmed.startsWith('#')) return;
-              let key = '';
-              let value = '';
-              const colonIdx = trimmed.indexOf(':');
-              if (colonIdx > 0) {
-                key = trimmed.slice(0, colonIdx).trim();
-                value = trimmed.slice(colonIdx + 1).trim();
-              } else {
-                const dashMatch = trimmed.match(/^(.+?)\\s*[–—-]\\s+(.+)$/);
-                if (dashMatch) {
-                  key = dashMatch[1].trim();
-                  value = dashMatch[2].trim();
-                }
+        const res = await fetch(RAW_MOUNTAIN_DESCRIPTIONS_URL, NO_CACHE_FETCH);
+        if (res.ok) {
+          const text = await res.text();
+          text.split(/\r?\n/).forEach((line) => {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed.startsWith('#')) return;
+            let key = '';
+            let value = '';
+            const colonIdx = trimmed.indexOf(':');
+            if (colonIdx > 0) {
+              key = trimmed.slice(0, colonIdx).trim();
+              value = trimmed.slice(colonIdx + 1).trim();
+            } else {
+              const dashMatch = trimmed.match(/^(.+?)\\s*[–—-]\\s+(.+)$/);
+              if (dashMatch) {
+                key = dashMatch[1].trim();
+                value = dashMatch[2].trim();
               }
-              if (key && value) {
-                map[key] = value;
-                const normalizedKey = normalizeDescriptionKey(key);
-                if (normalizedKey) {
-                  map[normalizedKey] = value;
-                }
+            }
+            if (key && value) {
+              map[key] = value;
+              const normalizedKey = normalizeDescriptionKey(key);
+              if (normalizedKey) {
+                map[normalizedKey] = value;
               }
-            });
-          }
+            }
+          });
         }
       } catch (_) {}
       return map;
