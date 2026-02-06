@@ -316,7 +316,7 @@
             "name": "NATHAN SOBOL"
           },
           "contentSize": "2.78 MB",
-          "uploadDate": "2026-02-01T03:55:45.998871",
+          "uploadDate": "2026-02-06T14:43:41.470493",
           "dateCreated": "2025-07-03T05:57:06",
           "datePublished": "2025-07-03T05:57:06",
           "exifData": "Camera Make: Canon; Camera Model: Canon EOS 5DS R; Lens: EF50mm f/1.2L USM; F-Stop: f/4.5; Shutter Speed: 1/250 sec; ISO: 100; Exposure Bias: +0.0 EV; Focal Length: 50 mm; Flash Mode: Flash fired; Metering Mode: 5; Max Aperture: f/1.2",
@@ -466,12 +466,12 @@
             {
               "@type": "PropertyValue",
               "name": "fileCreateDate",
-              "value": "2026-02-01T03:55:45.998871"
+              "value": "2026-02-06T14:43:41.470493"
             },
             {
               "@type": "PropertyValue",
               "name": "fileModifiedDate",
-              "value": "2026-02-01T03:55:45.998871"
+              "value": "2026-02-06T14:43:41.470493"
             },
             {
               "@type": "PropertyValue",
@@ -584,7 +584,7 @@
             "name": "NATHAN SOBOL"
           },
           "contentSize": "1.39 MB",
-          "uploadDate": "2026-02-01T03:55:46.002871",
+          "uploadDate": "2026-02-06T14:43:41.474493",
           "dateCreated": "2025-08-15T12:35:14",
           "datePublished": "2025-08-15T12:35:14",
           "exifData": "Camera Make: Canon; Camera Model: Canon EOS 5DS R; Lens: 35mm F1.4 DG HSM | Art 012; F-Stop: f/2.0; Shutter Speed: 0/1 sec; ISO: 100; Exposure Bias: -1.3 EV; Focal Length: 35 mm; Flash Mode: Flash fired; Metering Mode: 5; Max Aperture: f/1.4",
@@ -734,12 +734,12 @@
             {
               "@type": "PropertyValue",
               "name": "fileCreateDate",
-              "value": "2026-02-01T03:55:46.002871"
+              "value": "2026-02-06T14:43:41.474493"
             },
             {
               "@type": "PropertyValue",
               "name": "fileModifiedDate",
-              "value": "2026-02-01T03:55:46.002871"
+              "value": "2026-02-06T14:43:41.474493"
             },
             {
               "@type": "PropertyValue",
@@ -852,7 +852,7 @@
             "name": "Nathan Sobol"
           },
           "contentSize": "7.24 MB",
-          "uploadDate": "2026-02-01T03:55:46.015871",
+          "uploadDate": "2026-02-06T14:43:41.488493",
           "dateCreated": "2025-09-30T11:35:25",
           "datePublished": "2025-09-30T11:35:25",
           "exifData": "Camera Make: Canon; Camera Model: Canon EOS 5DS R; Lens: 35mm F1.4 DG HSM | Art 012; F-Stop: f/6.3; Shutter Speed: 1/640 sec; ISO: 200; Exposure Bias: +0.0 EV; Focal Length: 35 mm; Flash Mode: Flash fired; Metering Mode: 5; Max Aperture: f/1.4",
@@ -1002,12 +1002,12 @@
             {
               "@type": "PropertyValue",
               "name": "fileCreateDate",
-              "value": "2026-02-01T03:55:46.015871"
+              "value": "2026-02-06T14:43:41.488493"
             },
             {
               "@type": "PropertyValue",
               "name": "fileModifiedDate",
-              "value": "2026-02-01T03:55:46.015871"
+              "value": "2026-02-06T14:43:41.488493"
             },
             {
               "@type": "PropertyValue",
@@ -1635,11 +1635,41 @@
   }
 
   .site-nav-submenu--wide .site-nav-submenu-group > button {
-    padding-right: 24px;
+    padding-right: 48px;
   }
 
   .site-nav-submenu .submenu-centered {
     text-align: center;
+  }
+
+  .site-nav-submenu--divided > * + * {
+    border-top: 0;
+    border-radius: 0;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.3) 0 4px,
+      transparent 4px 8px
+    );
+    background-repeat: repeat-x;
+    background-size: 100% 1px;
+    background-position: top left;
+    padding-top: 6px;
+    margin-top: 4px;
+  }
+
+  .site-nav-submenu--wide .site-nav-submenu-group + .site-nav-submenu-group {
+    border-top: 0;
+    border-radius: 0;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.3) 0 4px,
+      transparent 4px 8px
+    );
+    background-repeat: repeat-x;
+    background-size: 100% 1px;
+    background-position: top left;
+    padding-top: 6px;
+    margin-top: 4px;
   }
 
   /* Widen Projects dropdown to ~50% more than the default */
@@ -1682,16 +1712,25 @@
     position: relative;
   }
 
+  .site-nav-submenu-group > button {
+    position: relative;
+    padding-right: 36px;
+  }
+
   .site-nav-submenu-group > button::after {
     content: "›";
-    float: right;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
     opacity: 0.7;
   }
 
-  .site-nav-submenu-group + .site-nav-submenu-group {
-    border-top: 1px dotted rgba(255, 255, 255, 0.3);
-    padding-top: 6px;
-    margin-top: 4px;
+  .site-nav-submenu-group > button.submenu-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 24px;
   }
 
   .site-nav-submenu.site-nav-submenu--nested {
@@ -1717,7 +1756,15 @@
 
   .site-nav-submenu--nested a + a {
     border-radius: 0;
-    border-top: 1px dotted rgba(255, 255, 255, 0.3);
+    border-top: 0;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.3) 0 4px,
+      transparent 4px 8px
+    );
+    background-repeat: repeat-x;
+    background-size: 100% 1px;
+    background-position: top left;
     padding-top: 6px;
     margin-top: 4px;
   }
@@ -1969,7 +2016,7 @@
   <div class="site-nav-links">
     <div class="site-nav-dropdown">
       <button type="button" data-route="dataset-home" data-routes="home,dataset-home">NH48</button>
-      <div class="site-nav-submenu" aria-label="NH48 dataset short links">
+      <div class="site-nav-submenu site-nav-submenu--divided" aria-label="NH48 dataset short links">
         <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Guide</a>
         <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
         <a href="/catalog/ranges" data-route="range-catalog" data-routes="range-catalog,range-detail">Range Catalog</a>
@@ -2006,8 +2053,8 @@
     </div>
     <div class="site-nav-dropdown">
       <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Howker Ridge Info</a>
-      <div class="site-nav-submenu projects-submenu" aria-label="Howker Ridge Info short links">
-        <a href="/projects/hrt-info" data-route="hrt-info" data-routes="hrt-info">Trail Info</a>
+      <div class="site-nav-submenu projects-submenu site-nav-submenu--divided" aria-label="Howker Ridge Info short links">
+        <a href="/projects/hrt-info" data-route="howker-ridge" data-routes="howker-ridge">Trail Info</a>
         <a href="/plant-catalog">Plant Catalog</a>
         <a href="/howker-ridge" data-route="howker-ridge" data-routes="howker-ridge">Trail Map &amp; Data</a>
         <a href="/projects/plant-map" data-route="plant-map" data-routes="plant-map">Plant Log Map</a>
@@ -2543,11 +2590,12 @@
 
   @media (max-width: 768px) {
     .nh48-quick-footer {
-      margin: 24px auto 10px;
-      padding: 14px clamp(12px, 4vw, 18px) 0;
+      margin: 20px auto 0;
+      padding: 12px clamp(12px, 4vw, 18px) 6px;
       width: min(720px, 100%);
       min-height: 0;
       max-height: none;
+      gap: 12px;
     }
 
     .nh48-quick-footer .nh48-quick-footer__grid {
@@ -2574,6 +2622,8 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    gap: 12px;
+    padding: 10px clamp(16px, 3vw, 32px) 6px;
   }
 
   .nh48-quick-footer__meta-main {
