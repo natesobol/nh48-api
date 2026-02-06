@@ -394,6 +394,10 @@
         padding: 16px 18px 64px;
       }
       header.hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
+        gap: 22px;
+        align-items: center;
         background: var(--card-gradient);
         border: 1px solid var(--card-border);
         border-radius: var(--card-radius);
@@ -413,6 +417,16 @@
       }
       .submit-edit-cta{
         margin: 16px 0 0;
+      }
+      .hero-meta {
+        padding: 18px;
+        border-radius: 16px;
+        border: 1px solid rgba(203, 213, 245, 0.2);
+        background: rgba(34, 197, 94, 0.08);
+      }
+      .hero-meta p {
+        margin: 0;
+        font-size: 14px;
       }
       .submit-edit-link{
         display: inline-block;
@@ -492,6 +506,10 @@
         outline-offset: 3px;
         border-radius: 6px;
       }
+      .toc a.active {
+        color: var(--accent);
+        border-left-color: var(--accent);
+      }
       .toc-difficulty {
         display: grid;
         grid-template-columns: minmax(220px, 0.65fr) minmax(0, 1fr);
@@ -500,6 +518,11 @@
         margin: 24px 0 40px;
       }
       .toc-panel {
+        position: sticky;
+        top: 80px;
+        align-self: start;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
         padding: 24px;
         background: rgba(255, 255, 255, 0.02);
         border: 1px solid rgba(203, 213, 245, 0.12);
@@ -686,7 +709,7 @@
         opacity: 0.8;
       }
       tr:hover td {
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.05);
       }
       .map-shell {
         background: var(--card-gradient);
@@ -749,6 +772,12 @@
       .toggle-group button.active {
         background: var(--accent);
         color: var(--bg);
+      }
+      .official-layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        align-items: start;
       }
       .season-table {
         margin-top: 14px;
@@ -819,8 +848,8 @@
         margin-bottom: 20px;
       }
       .difficulty-guide .tiers-container {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 14px;
       }
       .tier-badge {
@@ -832,7 +861,7 @@
         font-weight: 600;
         transition: all 0.3s ease;
         min-width: 0;
-        text-align: center;
+        text-align: left;
         background: transparent;
         cursor: pointer;
         border: none;
@@ -858,37 +887,67 @@
         opacity: 0.8;
         font-weight: 400;
       }
-      .tier-beginner {
+      .tier-badge.tier-beginner {
         background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%);
         border: 1px solid rgba(34, 197, 94, 0.4);
         color: #4ade80;
       }
-      .tier-moderate {
+      .tier-badge.tier-moderate {
         background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(251, 191, 36, 0.1) 100%);
         border: 1px solid rgba(251, 191, 36, 0.4);
         color: #fbbf24;
       }
-      .tier-challenging {
+      .tier-badge.tier-challenging {
         background: linear-gradient(135deg, rgba(249, 115, 22, 0.2) 0%, rgba(249, 115, 22, 0.1) 100%);
         border: 1px solid rgba(249, 115, 22, 0.4);
         color: #fb923c;
       }
-      .tier-severe {
+      .tier-badge.tier-severe {
         background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
         border: 1px solid rgba(239, 68, 68, 0.4);
         color: #f87171;
       }
-      tr.tier-beginner td {
-        background: rgba(34, 197, 94, 0.06);
+      tbody tr td {
+        background: var(--card);
+        color: #e2e8f0;
       }
-      tr.tier-moderate td {
-        background: rgba(251, 191, 36, 0.06);
+      tbody tr td:first-child {
+        border-left: 4px solid transparent;
+        padding-left: 10px;
       }
-      tr.tier-challenging td {
-        background: rgba(249, 115, 22, 0.06);
+      tbody tr.tier-beginner td:first-child {
+        border-left-color: var(--accent);
       }
-      tr.tier-severe td {
-        background: rgba(239, 68, 68, 0.06);
+      tbody tr.tier-moderate td:first-child {
+        border-left-color: #fbbf24;
+      }
+      tbody tr.tier-challenging td:first-child {
+        border-left-color: #f97316;
+      }
+      tbody tr.tier-severe td:first-child {
+        border-left-color: #ef4444;
+      }
+      .difficulty-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--bg);
+        line-height: 1.3;
+      }
+      .difficulty-badge.tier-beginner {
+        background: var(--accent);
+      }
+      .difficulty-badge.tier-moderate {
+        background: #fbbf24;
+      }
+      .difficulty-badge.tier-challenging {
+        background: #f97316;
+      }
+      .difficulty-badge.tier-severe {
+        background: #ef4444;
       }
 
       /* Trip Combos Section */
@@ -1079,7 +1138,17 @@
 
       /* Responsive adjustments for migrated sections */
       @media (max-width: 900px) {
+        header.hero {
+          grid-template-columns: 1fr;
+        }
         .toc-difficulty {
+          grid-template-columns: 1fr;
+        }
+        .toc-panel {
+          position: static;
+          max-height: none;
+        }
+        .official-layout {
           grid-template-columns: 1fr;
         }
         .tier-badge {
@@ -1191,23 +1260,45 @@
 
     <main class="wrap">
       <header class="hero">
-        <p class="eyebrow">Community compiled • Unofficial overview</p>
-        <h1>NH48 Information Hub</h1>
-        <p>
-          Community members gathered these notes on the AMC Four-Thousand-Footer peaks—routes, ranges, seasonality patterns, and developer tools—to make browsing easier. Details are not fully verified; please cross-check against the Appalachian Mountain Club’s official resources before you go.
-        </p>
+        <div>
+          <p class="eyebrow">Community compiled • Unofficial overview</p>
+          <h1>NH48 Information Hub</h1>
+          <p>
+            Community members gathered these notes on the AMC Four-Thousand-Footer peaks—routes, ranges, seasonality patterns, and developer tools—to make browsing easier. Details are not fully verified; please cross-check against the Appalachian Mountain Club’s official resources before you go.
+          </p>
+          <p class="submit-edit-cta">
+            <a href="/submit-edit" class="submit-edit-link">Submit Edit to Author</a>
+          </p>
+        </div>
+        <aside class="hero-meta" aria-label="Official source reminder">
+          <p><strong>Planning reminder:</strong> Route descriptions on this page are unofficial. Use AMC resources for the final trail, weather, and safety decisions.</p>
+        </aside>
+      </header>
+
+      <section id="disclaimer">
+        <details class="warning-panel" open>
+          <summary>
+            <span class="summary-title">
+              <span class="icon-warning" aria-hidden="true">⚠️</span>
+              Important Trail Warnings
+            </span>
+          </summary>
+          <div class="warning-body">
+            <p><strong>NH48.info is an unofficial, community-driven site.</strong> Use this page at your own risk; always verify trail status, rules, and safety information with official sources.</p>
+            <p><a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="stats-overview" aria-label="NH48 quick stats">
         <h2 class="snapshot-title">NH48 Snapshot</h2>
         <div class="quick-facts condensed-facts" aria-label="NH48 Snapshot">
           <div><strong>48 Peaks</strong></div>
           <div><strong>~250–500 mi trails</strong></div>
           <div><strong>~170K ft gain (≈6× Everest)</strong></div>
-          <div><strong>~12–15 min trips</strong></div>
           <div><strong>~20–30 typical trips</strong></div>
           <div><strong>1–4 years typical</strong></div>
         </div>
-        <p class="submit-edit-cta">
-          <a href="/submit-edit" class="submit-edit-link">Submit Edit to Author</a>
-        </p>
         <div class="quick-facts" id="quickFacts">
           <div class="fact-card hero-card">
             <span class="fact-label">Total Peaks</span>
@@ -1235,35 +1326,6 @@
             <small class="muted">Open data for maps, apps, and trackers</small>
           </div>
         </div>
-        <div class="effort-details hero-effort" aria-label="Effort and distance highlights">
-          <div class="effort-item hero-card">
-            <span class="fact-label">Total Distance</span>
-            <p><strong>~250-500 miles</strong> depending on route choices and how efficiently peaks are grouped. Multi-peak days can reduce total mileage, while single-peak outings add distance.</p>
-          </div>
-          <div class="effort-item hero-card">
-            <span class="fact-label">Total Elevation Gain</span>
-            <p><strong>~170,000 feet</strong> of cumulative elevation gain — roughly six times Mount Everest from sea level.</p>
-          </div>
-          <div class="effort-item hero-card">
-            <span class="fact-label">Time Investment</span>
-            <p><strong>150-250 hours</strong> of hiking time, not including drive time, rest breaks, or time spent on summits. Many hikers take 2-4 years to visit all 48 peaks.</p>
-          </div>
-        </div>
-      </header>
-
-      <section id="disclaimer">
-        <details class="warning-panel" open>
-          <summary>
-            <span class="summary-title">
-              <span class="icon-warning" aria-hidden="true">⚠️</span>
-              Important Trail Warnings
-            </span>
-          </summary>
-          <div class="warning-body">
-            <p><strong>NH48.info is an unofficial, community-driven site.</strong> Use this page at your own risk; always verify trail status, rules, and safety information with official sources.</p>
-            <p><a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>.</p>
-          </div>
-        </details>
       </section>
 
       <section class="toc-difficulty" aria-label="Table of contents and difficulty guide">
@@ -1271,12 +1333,12 @@
           <h2 class="snapshot-title">Table of Contents</h2>
           <nav class="toc" aria-label="Table of contents">
             <ul>
-              <li><a href="#peak-difficulty-guide" aria-label="Peak difficulty guide section">Difficulty Guide</a></li>
               <li><a href="#day-trip-groupings" aria-label="Day trip groupings section">Day Trip Groupings</a></li>
               <li><a href="#what-is-nh48" aria-label="What is the NH48 section">What is the NH48?</a></li>
               <li><a href="#official-peak-list" aria-label="Official peak list section">Official Peak List</a></li>
+              <li><a href="#peak-difficulty-guide" aria-label="Difficulty filter section">Difficulty Filters</a></li>
               <li><a href="#range-map" aria-label="Range map section">Range Map</a></li>
-              <li><a href="#difficulty-strategy" aria-label="Peak difficulty and strategy section">Peak Difficulty &amp; Strategy</a></li>
+              <li><a href="#difficulty-strategy" aria-label="Peak strategy section">Peak Strategy</a></li>
               <li><a href="#risk-preparedness" aria-label="Risk and preparedness section">Risk &amp; Preparedness</a></li>
               <li><a href="#completion-strategies" aria-label="Finish strategies section">Finish Strategies</a></li>
               <li><a href="#seasonal-considerations" aria-label="Seasonal considerations section">Seasonal Considerations</a></li>
@@ -1285,38 +1347,6 @@
               <li><a href="#faq" aria-label="Frequently asked questions section">FAQ</a></li>
             </ul>
           </nav>
-        </div>
-      </section>
-
-      <!-- Difficulty Tiers Section - Migrated from homepage -->
-      <section class="difficulty-guide" id="peak-difficulty-guide" aria-label="Peak Difficulty Guide">
-        <h2>Peak Difficulty Guide</h2>
-        <p>Not all peaks are created equal. Plan your progression from accessible summits to exposed alpine terrain.</p>
-        
-        <div class="tiers-container">
-          <button class="tier-badge tier-beginner" type="button" data-difficulty="beginner">
-            <span class="tier-count">~10</span>
-            <span class="tier-name">Beginner Friendly</span>
-            <span class="tier-examples">Tecumseh, Pierce, Jackson, Osceola, Waumbek</span>
-          </button>
-          
-          <button class="tier-badge tier-moderate" type="button" data-difficulty="moderate">
-            <span class="tier-count">~15</span>
-            <span class="tier-name">Moderate</span>
-            <span class="tier-examples">Hancocks, Cabot, Galehead, Passaconaway</span>
-          </button>
-          
-          <button class="tier-badge tier-challenging" type="button" data-difficulty="challenging">
-            <span class="tier-count">~15</span>
-            <span class="tier-name">Challenging</span>
-            <span class="tier-examples">Lafayette, Lincoln, Carrigain, Wildcats</span>
-          </button>
-          
-          <button class="tier-badge tier-severe" type="button" data-difficulty="severe">
-            <span class="tier-count">~8</span>
-            <span class="tier-name">Alpine / Exposed</span>
-            <span class="tier-examples">Washington, Adams, Jefferson, Madison, Bonds</span>
-          </button>
         </div>
       </section>
 
@@ -1416,90 +1446,77 @@
         <p>
           <a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>. Please confirm prominence, elevation, and trail guidance with the AMC before relying on this table.
         </p>
-        <div class="range-filters" id="rangeFilters" aria-label="Filter peaks by range"></div>
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Peak</th>
-                <th data-sort-key="elevation" aria-sort="none">
-                  <button class="sort-button" type="button" data-sort="elevation" aria-label="Sort by elevation">
-                    Elevation (ft)
-                    <span class="sort-indicator" aria-hidden="true"></span>
-                  </button>
-                </th>
-                <th data-sort-key="range" aria-sort="none">
-                  <button class="sort-button" type="button" data-sort="range" aria-label="Sort by range">
-                    Range
-                    <span class="sort-indicator" aria-hidden="true"></span>
-                  </button>
-                </th>
-                <th>Difficulty</th>
-                <th>Best For</th>
-              </tr>
-            </thead>
-            <tbody id="peakTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="range-map" class="content-grid stacked-grid">
-        <div class="panel hero-card map-shell">
-          <h2>Peaks by Mountain Range</h2>
-          <p>
-            The NH48 spans eight major clusters. Use the quick chips to jump straight to a filtered list: the Presidential Range’s alpine zone, the Franconia Ridge views, the remote Bonds inside the Pemigewasset Wilderness, and the Sandwich Range approaches. Conditions and difficulty vary by season; consult route guides before you go.
-          </p>
-          <div class="range-list" id="rangeList"></div>
-        </div>
-        <div class="panel hero-card map-shell">
-          <h2>Interactive Map</h2>
-          <p>Zoom with your mousewheel or tap each pin to see peak names. All coordinates load from the same manifest that powers the catalog and should be cross-checked with official maps.</p>
-          <svg id="peakMap" role="img" aria-label="Map of all 48 New Hampshire 4,000 foot peaks"></svg>
-          <div class="map-legend">
-            <span><span class="legend-dot" style="background:#22c55e"></span><span id="mapLegendLabel">NH48 Summits (All ranges)</span></span>
+        <div class="official-layout">
+          <div class="official-table">
+            <div class="range-filters" id="rangeFilters" aria-label="Filter peaks by range"></div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Peak</th>
+                    <th data-sort-key="elevation" aria-sort="none">
+                      <button class="sort-button" type="button" data-sort="elevation" aria-label="Sort by elevation">
+                        Elevation (ft)
+                        <span class="sort-indicator" aria-hidden="true"></span>
+                      </button>
+                    </th>
+                    <th data-sort-key="range" aria-sort="none">
+                      <button class="sort-button" type="button" data-sort="range" aria-label="Sort by range">
+                        Range
+                        <span class="sort-indicator" aria-hidden="true"></span>
+                      </button>
+                    </th>
+                    <th>Difficulty</th>
+                    <th>Best For</th>
+                  </tr>
+                </thead>
+                <tbody id="peakTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <section class="difficulty-guide" id="peak-difficulty-guide" aria-label="Peak Difficulty Guide">
+            <h2>Difficulty Filters</h2>
+            <p>Use these tier buttons to prioritize one difficulty level in the sortable table.</p>
+            <div class="tiers-container">
+              <button class="tier-badge tier-beginner" type="button" data-difficulty="beginner">
+                <span class="tier-count">~10</span>
+                <span class="tier-name">Beginner Friendly</span>
+                <span class="tier-examples">Tecumseh, Pierce, Jackson, Osceola, Waumbek</span>
+              </button>
+              <button class="tier-badge tier-moderate" type="button" data-difficulty="moderate">
+                <span class="tier-count">~15</span>
+                <span class="tier-name">Moderate</span>
+                <span class="tier-examples">Hancocks, Cabot, Galehead, Passaconaway</span>
+              </button>
+              <button class="tier-badge tier-challenging" type="button" data-difficulty="challenging">
+                <span class="tier-count">~15</span>
+                <span class="tier-name">Challenging</span>
+                <span class="tier-examples">Lafayette, Lincoln, Carrigain, Wildcats</span>
+              </button>
+              <button class="tier-badge tier-severe" type="button" data-difficulty="severe">
+                <span class="tier-count">~8</span>
+                <span class="tier-name">Alpine / Exposed</span>
+                <span class="tier-examples">Washington, Adams, Jefferson, Madison, Bonds</span>
+              </button>
+            </div>
+          </section>
+          <div class="panel hero-card map-shell" id="range-map">
+            <h2>Range Map</h2>
+            <p>Use range cards to focus the list and map together for faster planning.</p>
+            <div class="range-list" id="rangeList"></div>
+            <svg id="peakMap" role="img" aria-label="Map of all 48 New Hampshire 4,000 foot peaks"></svg>
+            <div class="map-legend">
+              <span><span class="legend-dot" style="background:#22c55e"></span><span id="mapLegendLabel">NH48 Summits (All ranges)</span></span>
+            </div>
           </div>
         </div>
       </section>
 
       <section id="difficulty-strategy">
-        <h2>Peak Difficulty &amp; Strategy</h2>
+        <h2>Peak Strategy Highlights</h2>
         <p>
-          Difficulty is subjective and conditions change quickly. The notes below reflect commonly shared hiker experiences, not official designations. Plan carefully and consult AMC trail guides and forecasts before choosing a route.
+          Difficulty is subjective and conditions change quickly. Use the table filters above for tier sorting, then apply these route-planning examples as conditions, weather, and experience allow.
         </p>
-        <div class="content-grid stacked-grid">
-          <div class="panel hero-card">
-            <h3>Intro / Friendly (≈10 peaks)</h3>
-            <p>Shorter mileage, moderate elevation gain, and generally forgiving terrain.</p>
-            <ul>
-              <li><strong>Mt. Tecumseh</strong>, <strong>Mt. Waumbek</strong>, <strong>Mt. Hale</strong></li>
-              <li><strong>Mt. Jackson</strong>, <strong>Mt. Pierce</strong>, <strong>Mt. Osceola</strong> (Tripoli approach)</li>
-            </ul>
-          </div>
-          <div class="panel hero-card">
-            <h3>Moderate Day Hikes (≈15 peaks)</h3>
-            <p>Longer mileage or steeper grades with occasional rough footing.</p>
-            <ul>
-              <li><strong>Mt. Garfield</strong>, <strong>North &amp; South Kinsman</strong></li>
-              <li><strong>Cannon Mountain</strong>, <strong>North Twin</strong>, <strong>Cabot</strong></li>
-            </ul>
-          </div>
-          <div class="panel hero-card">
-            <h3>Challenging (≈15 peaks)</h3>
-            <p>Long days, sustained climbs, and rugged sections that test endurance.</p>
-            <ul>
-              <li><strong>Owl’s Head</strong>, <strong>Isolation</strong>, <strong>Mt. Carrigain</strong></li>
-              <li><strong>Whiteface &amp; Passaconaway</strong>, <strong>Wildcat Range</strong></li>
-            </ul>
-          </div>
-          <div class="panel hero-card">
-            <h3>Alpine / Exposed (≈8 peaks)</h3>
-            <p>Above-treeline exposure, high winds, and the most rugged terrain.</p>
-            <ul>
-              <li><strong>Washington, Adams, Jefferson, Madison</strong></li>
-              <li><strong>Franconia Ridge</strong> (Lafayette + Lincoln), <strong>Bondcliff</strong></li>
-            </ul>
-          </div>
-        </div>
         <div class="content-grid stacked-grid">
           <div class="panel hero-card">
             <h3>Beginner-Friendly choices</h3>
@@ -1921,7 +1938,10 @@
           rangeCell.textContent = peak.range;
 
           const diffCell = document.createElement('td');
-          diffCell.textContent = `${peak.difficulty.charAt(0).toUpperCase()}${peak.difficulty.slice(1)}`;
+          const difficultyBadge = document.createElement('span');
+          difficultyBadge.className = `difficulty-badge tier-${peak.difficulty}`;
+          difficultyBadge.textContent = `${peak.difficulty.charAt(0).toUpperCase()}${peak.difficulty.slice(1)}`;
+          diffCell.appendChild(difficultyBadge);
 
           const bestCell = document.createElement('td');
           bestCell.textContent = peak.bestFor;
@@ -2115,6 +2135,38 @@
         itemListSchemaEl = script;
       }
 
+      function setupTocObserver() {
+        const links = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
+        const sections = links
+          .map((link) => document.querySelector(link.getAttribute('href')))
+          .filter(Boolean);
+        if (!links.length || !sections.length) return;
+
+        const setActive = (id) => {
+          links.forEach((link) => {
+            const isActive = link.getAttribute('href') === `#${id}`;
+            link.classList.toggle('active', isActive);
+            if (isActive) {
+              link.setAttribute('aria-current', 'true');
+            } else {
+              link.removeAttribute('aria-current');
+            }
+          });
+        };
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            const visible = entries
+              .filter((entry) => entry.isIntersecting)
+              .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+            if (visible?.target?.id) setActive(visible.target.id);
+          },
+          { rootMargin: '-25% 0px -60% 0px', threshold: [0.1, 0.4, 0.7] }
+        );
+
+        sections.forEach((section) => observer.observe(section));
+      }
+
       function updateSortIndicators() {
         document.querySelectorAll('th[data-sort-key]').forEach((th) => {
           const key = th.dataset.sortKey;
@@ -2209,6 +2261,7 @@
       }
 
       document.addEventListener('DOMContentLoaded', () => {
+        setupTocObserver();
         loadRanges().finally(() => {
           init();
         });
