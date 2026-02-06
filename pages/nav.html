@@ -154,34 +154,32 @@
     gap: 0;
   }
 
-  .site-nav-submenu--divided > * + * {
-    border-top: 0;
-    border-radius: 0;
-    background-image: repeating-linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0.62) 0 4px,
-      transparent 4px 8px
-    );
-    background-repeat: repeat-x;
-    background-size: calc(100% - 24px) 1px;
-    background-position: top center;
-    padding-top: 9px;
-    margin-top: 9px;
+  .site-nav-submenu--divided > * {
+    position: relative;
   }
 
+  .site-nav-submenu--divided > * + *,
   .site-nav-submenu--wide .site-nav-submenu-group + .site-nav-submenu-group {
     border-top: 0;
     border-radius: 0;
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .site-nav-submenu--divided > * + *::before,
+  .site-nav-submenu--wide .site-nav-submenu-group + .site-nav-submenu-group::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 12px;
+    right: 12px;
+    height: 1px;
     background-image: repeating-linear-gradient(
       to right,
-      rgba(255, 255, 255, 0.62) 0 4px,
+      rgba(255, 255, 255, 0.66) 0 4px,
       transparent 4px 8px
     );
-    background-repeat: repeat-x;
-    background-size: calc(100% - 24px) 1px;
-    background-position: top center;
-    padding-top: 9px;
-    margin-top: 9px;
+    pointer-events: none;
   }
 
   /* Widen Projects dropdown to ~50% more than the default */
@@ -207,12 +205,11 @@
     align-items: center;
     justify-content: flex-start;
     width: 100%;
-    min-height: 46px;
     text-transform: none;
     font-size: 14px;
     letter-spacing: 0.3px;
-    line-height: 1.2;
-    padding: 10px 12px;
+    line-height: 1.15;
+    padding: 14px 12px;
     border-radius: 8px;
   }
 
@@ -248,7 +245,7 @@
   .site-nav-submenu-group > button.submenu-centered {
     justify-content: center;
     text-align: center;
-    padding-left: 12px;
+    padding-left: 36px;
     padding-right: 36px;
   }
 
