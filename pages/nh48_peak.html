@@ -1490,6 +1490,11 @@
         `https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json${CDN_CACHE_BUST}`,
         `https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json${CDN_CACHE_BUST}`
       ];
+      const DESC_URLS = [
+        '/data/nh48/mountain-descriptions.txt',
+        'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48/mountain-descriptions.txt',
+        'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48/mountain-descriptions.txt'
+      ];
       const TRAIL_API_URLS = [
         '/data/wmnf-trails/wmnf-normalized.json',
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-trails/wmnf-normalized.json',
@@ -2434,6 +2439,10 @@
         return cleaned;
       }
 
+      function normalizeDescriptionLookupKey(value){
+        return safeText(value).toLowerCase().replace(/[^a-z0-9]/g, '');
+      }
+
       async function fetchPeaks(){
         let lastError = null;
         for(let i=0; i<API_URLS.length; i++){
@@ -2476,6 +2485,43 @@
         console.error('✗ [Peak Data] All API endpoints failed. Last error:', lastError);
         console.error('[Peak Data] Attempted URLs:', API_URLS);
         throw new Error(`All API endpoints failed. Last error: ${lastError || 'Unknown error'}`);
+      }
+
+      async function fetchDescriptions(){
+        for(const url of DESC_URLS){
+          try{
+            const response = await fetch(url, { mode:'cors' });
+            if(!response.ok){
+              continue;
+            }
+
+            const text = await response.text();
+            const descriptionMap = {};
+            const lines = text.split(/\r?\n/);
+            for(const rawLine of lines){
+              const line = safeText(rawLine).trim();
+              if(!line || line.startsWith('#')){
+                continue;
+              }
+              const separatorMatch = line.match(/[:–]/);
+              if(!separatorMatch || separatorMatch.index == null){
+                continue;
+              }
+              const splitIndex = separatorMatch.index;
+              const rawKey = line.slice(0, splitIndex).trim();
+              const value = line.slice(splitIndex + 1).trim();
+              const normalizedKey = normalizeDescriptionLookupKey(rawKey);
+              if(normalizedKey && value){
+                descriptionMap[normalizedKey] = value;
+              }
+            }
+
+            return descriptionMap;
+          }catch(err){
+            console.warn('Failed to load mountain-descriptions:', err);
+          }
+        }
+        return {};
       }
 
       /* CAROUSEL + TIMER STATE ----------------------------------------------- */
@@ -4277,9 +4323,10 @@
 
         try{
           console.log('[Peak Init] Loading translation data and peak data...');
-          const [ , data ] = await Promise.all([
+          const [ , data, descMap ] = await Promise.all([
             waitForI18NReady(),
-            fetchPeaks()
+            fetchPeaks(),
+            fetchDescriptions()
           ]);
           
           console.log('[Peak Init] Data loaded, looking up peak:', slug);
@@ -4303,6 +4350,16 @@
               mediaEl.hidden = false;
             }
             return;
+          }
+
+          const normalizedSlug = normalizeDescriptionLookupKey(slug);
+          const peakName = p && (p.peakName || p['Peak Name'] || p.name || p['Name'] || p.peak || p['Peak'] || p['PeakName']);
+          const normalizedPeakName = normalizeDescriptionLookupKey(peakName);
+          const extendedDescription = descMap[normalizedSlug] || descMap[normalizedPeakName];
+          if(extendedDescription){
+            p.description = extendedDescription;
+          }else{
+            p.description = p.description || p['Description'];
           }
 
           const name = p.peakName || p['Peak Name'] || p.name || p['Name'] || p.peak || p['Peak'] || p['PeakName'] || slug;
