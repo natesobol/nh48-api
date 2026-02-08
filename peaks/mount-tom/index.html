@@ -2042,14 +2042,26 @@
     display: none;
     position: absolute;
     top: 0;
-    left: calc(100% + 6px);
+    left: 100%;
+    margin-left: -1px;
     background: #0f172a;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
+    border-left: 0;
+    border-radius: 0 10px 10px 0;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
     padding: 10px;
     min-width: 200px;
     z-index: 12;
+  }
+
+  .site-nav-submenu.site-nav-submenu--nested::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -12px;
+    width: 12px;
+    height: 100%;
+    background: transparent;
   }
 
   .site-nav-submenu-group:hover .site-nav-submenu--nested,
@@ -2057,6 +2069,12 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+  }
+
+  .site-nav-submenu-group:hover > button,
+  .site-nav-submenu-group:focus-within > button {
+    border-radius: 8px 0 0 8px;
+    background: rgba(255, 255, 255, 0.08);
   }
 
   .site-nav-submenu--nested a + a {
@@ -2359,12 +2377,23 @@
     <div class="site-nav-dropdown">
       <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Howker Ridge Info</a>
       <div class="site-nav-submenu projects-submenu site-nav-submenu--divided" aria-label="Howker Ridge Info short links">
-        <a href="/projects/hrt-info" data-route="howker-ridge" data-routes="howker-ridge">Trail Info</a>
-        <a href="/plant-catalog">Plant Catalog</a>
-        <a href="/howker-ridge" data-route="howker-ridge" data-routes="howker-ridge">Trail Map &amp; Data</a>
-        <a href="/projects/plant-map" data-route="plant-map" data-routes="plant-map">Plant Log Map</a>
+        <div class="site-nav-submenu-group">
+          <button type="button" data-route="howker-ridge" data-routes="howker-ridge">Howker Trail Info</button>
+          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="Howker trail info links">
+            <a href="/projects/hrt-info" data-route="howker-ridge" data-routes="howker-ridge">Trail Info</a>
+            <a href="/howker-ridge" data-route="howker-ridge" data-routes="howker-ridge">Trail Map &amp; Data</a>
+            <a href="/howker-ridge/poi" data-route="howker-ridge" data-routes="howker-ridge">Trail POI</a>
+          </div>
+        </div>
+        <div class="site-nav-submenu-group">
+          <button type="button" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Howker Plant Catalog</button>
+          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="Howker plant catalog links">
+            <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Plant Catalog</a>
+            <a href="/projects/plant-map" data-route="plant-map" data-routes="plant-map">Plant Log Map</a>
+            <a href="/dataset/howker-plants">Plant Data &amp; API</a>
+          </div>
+        </div>
         <a href="/projects/howker-map-editor" data-route="howker-map-editor" data-routes="howker-map-editor">Edit Trail Map</a>
-        <a href="/dataset/howker-plants">Plant Data &amp; API</a>
       </div>
     </div>
     <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
