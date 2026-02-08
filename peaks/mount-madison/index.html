@@ -317,10 +317,9 @@
       },
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
-        "https://www.instagram.com/nate_dumps_pics",
+        "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
-        "https://www.etsy.com/shop/NH48pics",
-        "https://github.com/natesobol/nh48-api"
+        "https://www.etsy.com/shop/NH48pics"
       ],
       "address": {
         "@type": "PostalAddress",
@@ -329,7 +328,9 @@
         "addressCountry": "US"
       },
       "founder": {
-        "@id": "https://nh48.info/#person-nathan-sobol"
+        "@type": "Person",
+        "@id": "https://nh48.info/#person-nathan-sobol",
+        "name": "Nathan Sobol"
       }
     },
     {
@@ -337,15 +338,33 @@
       "@id": "https://nh48.info/#person-nathan-sobol",
       "name": "Nathan Sobol",
       "alternateName": "Nathan Sobol Photography",
-      "url": "https://nh48.info/about",
+      "url": "https://nh48.info/about/",
       "sameAs": [
-        "https://www.instagram.com/nate_dumps_pics",
+        "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics"
       ],
       "worksFor": {
         "@id": "https://nh48.info/#organization"
-      }
+      },
+      "image": "https://nh48.info/nathan-sobol.jpg",
+      "description": "Nathan Sobol is a landscape photographer and hiker who has documented every 4,000-footer in New Hampshire. As the founder of NH48pics, he combines his passion for the White Mountains with professional photography, offering high-quality prints and trail resources.",
+      "jobTitle": [
+        "Landscape Photographer",
+        "Founder of NH48pics"
+      ],
+      "homeLocation": {
+        "@type": "Place",
+        "name": "White Mountains",
+        "address": {
+          "@type": "PostalAddress",
+          "addressRegion": "NH",
+          "addressCountry": "US"
+        }
+      },
+      "knowsLanguage": [
+        "en"
+      ]
     },
     {
       "@type": "WebSite",
@@ -353,6 +372,9 @@
       "name": "NH48pics",
       "url": "https://nh48.info/",
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
+      "sameAs": [
+        "https://www.instagram.com/nate_dumps_pics/"
+      ],
       "publisher": {
         "@id": "https://nh48.info/#organization"
       },
@@ -362,6 +384,71 @@
       "inLanguage": [
         "en",
         "fr"
+      ],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://nh48.info/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": [
+        "CreativeWork",
+        "Photograph"
+      ],
+      "@id": "https://nh48.info/peak/mount-madison/#creativework",
+      "url": "https://nh48.info/peak/mount-madison/",
+      "name": "Mount Madison fine-art photograph",
+      "description": "This photograph features Mount Madison in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.",
+      "thumbnailUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__001.jpg",
+      "publisher": {
+        "@id": "https://nh48.info/#organization"
+      },
+      "creator": {
+        "@id": "https://nh48.info/#person-nathan-sobol"
+      },
+      "sameAs": [
+        "https://nh48.info/",
+        "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.facebook.com/natedumpspics",
+        "https://www.etsy.com/shop/NH48pics"
+      ],
+      "isPartOf": {
+        "@id": "https://nh48.info/#organization"
+      },
+      "mainEntityOfPage": {
+        "@id": "https://nh48.info/peak/mount-madison/#webpage"
+      },
+      "image": [
+        {
+          "@id": "https://nh48.info/peak/mount-madison/#img-001"
+        }
+      ],
+      "associatedMedia": [
+        {
+          "@id": "https://nh48.info/peak/mount-madison/#img-001"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-madison/#img-002"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-madison/#img-003"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-madison/#img-004"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-madison/#img-005"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-madison/#img-006"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-madison/#img-007"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-madison/#img-008"
+        }
       ]
     },
     {
@@ -408,7 +495,10 @@
       ]
     },
     {
-      "@type": "ImageObject",
+      "@type": [
+        "ImageObject",
+        "Photograph"
+      ],
       "@id": "https://nh48.info/peak/mount-madison/#img-001",
       "url": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__001.jpg",
       "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__001.jpg",
@@ -708,7 +798,10 @@
       }
     },
     {
-      "@type": "ImageObject",
+      "@type": [
+        "ImageObject",
+        "Photograph"
+      ],
       "@id": "https://nh48.info/peak/mount-madison/#img-002",
       "url": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__002.jpg",
       "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__002.jpg",
@@ -1008,7 +1101,10 @@
       }
     },
     {
-      "@type": "ImageObject",
+      "@type": [
+        "ImageObject",
+        "Photograph"
+      ],
       "@id": "https://nh48.info/peak/mount-madison/#img-003",
       "url": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__003.jpg",
       "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__003.jpg",
@@ -1308,7 +1404,10 @@
       }
     },
     {
-      "@type": "ImageObject",
+      "@type": [
+        "ImageObject",
+        "Photograph"
+      ],
       "@id": "https://nh48.info/peak/mount-madison/#img-004",
       "url": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__004.jpg",
       "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__004.jpg",
@@ -1608,7 +1707,10 @@
       }
     },
     {
-      "@type": "ImageObject",
+      "@type": [
+        "ImageObject",
+        "Photograph"
+      ],
       "@id": "https://nh48.info/peak/mount-madison/#img-005",
       "url": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__005.jpg",
       "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__005.jpg",
@@ -1903,7 +2005,10 @@
       }
     },
     {
-      "@type": "ImageObject",
+      "@type": [
+        "ImageObject",
+        "Photograph"
+      ],
       "@id": "https://nh48.info/peak/mount-madison/#img-006",
       "url": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__006.jpg",
       "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__006.jpg",
@@ -2198,7 +2303,10 @@
       }
     },
     {
-      "@type": "ImageObject",
+      "@type": [
+        "ImageObject",
+        "Photograph"
+      ],
       "@id": "https://nh48.info/peak/mount-madison/#img-007",
       "url": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__007.jpg",
       "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__007.jpg",
@@ -2498,7 +2606,10 @@
       }
     },
     {
-      "@type": "ImageObject",
+      "@type": [
+        "ImageObject",
+        "Photograph"
+      ],
       "@id": "https://nh48.info/peak/mount-madison/#img-008",
       "url": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__008.jpg",
       "contentUrl": "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-madison/mount-madison__008.jpg",
@@ -2905,22 +3016,10 @@
     "name": "Mount Madison"
   },
   "isPartOf": {
-    "@type": "WebSite",
-    "@id": "https://nh48.info/#website",
-    "name": "NH48pics",
-    "url": "https://nh48.info/",
-    "publisher": {
-      "@type": "Organization",
-      "@id": "https://nh48.info/#organization",
-      "name": "NH48pics",
-      "url": "https://nh48.info/",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://nh48.info/nh48API_logo.png",
-        "width": 512,
-        "height": 512
-      }
-    }
+    "@id": "https://nh48.info/#website"
+  },
+  "publisher": {
+    "@id": "https://nh48.info/#organization"
   },
   "primaryImageOfPage": {
     "@type": "ImageObject",
