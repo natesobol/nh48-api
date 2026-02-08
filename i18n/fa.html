@@ -56,7 +56,7 @@
   <link rel="alternate" hreflang="sw" href="https://nh48.info/i18n/sw.html">
   <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="NH48 API">
+  <meta property="og:site_name" content="NH48pics">
   <meta property="og:locale" content="fa_IR">
   <meta property="og:title" data-i18n="landing.ogTitle" data-i18n-attr="content" content="NH48 API – قله‌ها و مسیرهای ۴۰۰۰ فوتی نیوهمپشایر">
   <meta property="og:description" data-i18n="landing.ogDescription" data-i18n-attr="content" content="داده‌های باز، مسیرها و فراداده عکس برای ۴۸ قله ۴۰۰۰ فوتی در جنگل ملی وایت مانتین نیوهمپشایر را ارائه می‌دهد. فهرست را مرور کنید، مسیرها را کاوش کنید و از این مجموعه داده استفاده کنید.">
@@ -64,6 +64,8 @@
   <meta property="og:image:alt" content="Open summit views from Mount Moosilauke in New Hampshire">
   <meta property="og:url" content="https://nh48.info/i18n/fa.html">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@nate_dumps_pics">
+  <meta name="twitter:creator" content="@nate_dumps_pics">
   <meta name="twitter:title" data-i18n="landing.ogTitle" data-i18n-attr="content" content="NH48 API – Open Trails and Peaks Data">
   <meta name="twitter:description" data-i18n="landing.ogDescription" data-i18n-attr="content" content="Browse the peak catalog, explore White Mountain trails, and access long-distance route data for New Hampshire’s mountains.">
   <meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-moosilauke/mount-moosilauke__001.jpg">
@@ -74,19 +76,59 @@
       "@graph": [
         {
           "@type": "Organization",
-          "@id": "https://nh48.info/#org",
-          "name": "NH48 API",
-          "description": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks and White Mountain trails.",
-          "url": "https://nh48.info",
-          "logo": "https://nh48.info/UI-Elements/logo.png"
+          "@id": "https://nh48.info/#organization",
+          "name": "NH48pics",
+          "legalName": "NH48pics.com",
+          "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
+          "url": "https://nh48.info/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://nh48.info/nh48API_logo.png",
+            "width": 512,
+            "height": 512
+          },
+          "sameAs": [
+            "https://www.instagram.com/nate_dumps_pics",
+            "https://www.facebook.com/natedumpspics",
+            "https://www.etsy.com/shop/NH48pics",
+            "https://github.com/natesobol/nh48-api"
+          ],
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "White Mountains",
+            "addressRegion": "NH",
+            "addressCountry": "US"
+          },
+          "founder": { "@id": "https://nh48.info/#person-nathan-sobol" }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://nh48.info/#person-nathan-sobol",
+          "name": "Nathan Sobol",
+          "alternateName": "Nathan Sobol Photography",
+          "url": "https://nh48.info/about",
+          "jobTitle": ["Landscape Photographer", "Founder of NH48pics"],
+          "worksFor": { "@id": "https://nh48.info/#organization" },
+          "sameAs": [
+            "https://www.instagram.com/nate_dumps_pics",
+            "https://www.facebook.com/natedumpspics",
+            "https://www.etsy.com/shop/NH48pics"
+          ]
         },
         {
           "@type": "WebSite",
           "@id": "https://nh48.info/#website",
-          "url": "https://nh48.info",
-          "name": "NH48 API",
-          "description": "Open data and trail resources for New Hampshire’s White Mountains and long-distance routes.",
-          "publisher": { "@id": "https://nh48.info/#org" }
+          "url": "https://nh48.info/",
+          "name": "NH48pics",
+          "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
+          "publisher": { "@id": "https://nh48.info/#organization" },
+          "copyrightHolder": { "@id": "https://nh48.info/#organization" },
+          "inLanguage": ["en", "fr"],
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://nh48.info/catalog?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
         },
         {
           "@type": "WebPage",

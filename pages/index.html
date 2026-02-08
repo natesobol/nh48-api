@@ -77,7 +77,7 @@
   <link rel="alternate" hreflang="sw" href="https://nh48.info/i18n/sw.html">
   <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="NH48 API">
+  <meta property="og:site_name" content="NH48pics">
   <meta property="og:locale" content="en_US">
   <meta property="og:locale:alternate" content="es_ES">
   <meta property="og:locale:alternate" content="fr_FR">
@@ -107,6 +107,8 @@
   <meta property="og:image:alt" content="Buildings and weather observatory atop Mount Washington in the White Mountains">
   <meta property="og:url" content="https://nh48.info/">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@nate_dumps_pics">
+  <meta name="twitter:creator" content="@nate_dumps_pics">
   <meta name="twitter:title" content="NH48 API – Open Trails and Peaks Data">
   <meta name="twitter:description" content="Quick Browse NH48 peaks of the White Mountains of New Hampshire, explore trail routes, and access long-distance data for every 4,000-footer.">
   <meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__001.jpg">
@@ -117,22 +119,57 @@
       "@graph": [
         {
           "@type": "Organization",
-          "@id": "https://nh48.info/#org",
-          "name": "NH48 API",
-          "description": "Open data, routes, and photo metadata for New Hampshire’s 48 four-thousand-foot peaks and White Mountain trails.",
-          "url": "https://nh48.info",
-          "logo": "https://nh48.info/UI-Elements/logo.png"
+          "@id": "https://nh48.info/#organization",
+          "name": "NH48pics",
+          "legalName": "NH48pics.com",
+          "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
+          "url": "https://nh48.info/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://nh48.info/nh48API_logo.png",
+            "width": 512,
+            "height": 512
+          },
+          "sameAs": [
+            "https://www.instagram.com/nate_dumps_pics",
+            "https://www.facebook.com/natedumpspics",
+            "https://www.etsy.com/shop/NH48pics",
+            "https://github.com/natesobol/nh48-api"
+          ],
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "White Mountains",
+            "addressRegion": "NH",
+            "addressCountry": "US"
+          },
+          "founder": { "@id": "https://nh48.info/#person-nathan-sobol" }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://nh48.info/#person-nathan-sobol",
+          "name": "Nathan Sobol",
+          "alternateName": "Nathan Sobol Photography",
+          "url": "https://nh48.info/about",
+          "jobTitle": ["Landscape Photographer", "Founder of NH48pics"],
+          "worksFor": { "@id": "https://nh48.info/#organization" },
+          "sameAs": [
+            "https://www.instagram.com/nate_dumps_pics",
+            "https://www.facebook.com/natedumpspics",
+            "https://www.etsy.com/shop/NH48pics"
+          ]
         },
         {
           "@type": "WebSite",
           "@id": "https://nh48.info/#website",
-          "url": "https://nh48.info",
-          "name": "NH48 API",
-          "description": "Open data and trail resources for New Hampshire’s White Mountains and long-distance routes.",
-          "publisher": { "@id": "https://nh48.info/#org" },
+          "url": "https://nh48.info/",
+          "name": "NH48pics",
+          "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
+          "publisher": { "@id": "https://nh48.info/#organization" },
+          "copyrightHolder": { "@id": "https://nh48.info/#organization" },
+          "inLanguage": ["en", "fr"],
           "potentialAction": {
             "@type": "SearchAction",
-            "target": "https://nh48.info/search?q={search_term_string}",
+            "target": "https://nh48.info/catalog?q={search_term_string}",
             "query-input": "required name=search_term_string"
           }
         },
@@ -209,7 +246,7 @@
           "description": "Open dataset of hiking trails in the White Mountain National Forest with distances, elevation profiles, surfaces, permitted uses, and connecting routes.",
           "url": "https://nh48.info/data/wmnf-trails.json",
           "license": "https://creativecommons.org/licenses/by/4.0/",
-          "creator": { "@id": "https://nh48.info/#org" },
+          "creator": { "@id": "https://nh48.info/#organization" },
           "keywords": [
             "White Mountain trails",
             "hiking dataset",
@@ -227,7 +264,7 @@
           "description": "Structured data for major long‑distance hiking routes, including the Appalachian Trail and Pacific Crest Trail, with segment metadata and geospatial geometries.",
           "url": "https://nh48.info/data/long-trails.json",
           "license": "https://creativecommons.org/licenses/by/4.0/",
-          "creator": { "@id": "https://nh48.info/#org" },
+          "creator": { "@id": "https://nh48.info/#organization" },
           "keywords": [
             "long trails",
             "Appalachian Trail",
@@ -245,7 +282,7 @@
           "description": "Alpine and subalpine plant observations from the Howker Ridge Trail, including common and scientific names, habitat notes, seasonal tags, and photo references.",
           "url": "https://nh48.info/data/howker-plants.json",
           "license": "https://creativecommons.org/licenses/by/4.0/",
-          "creator": { "@id": "https://nh48.info/#org" },
+          "creator": { "@id": "https://nh48.info/#organization" },
           "keywords": [
             "Howker Ridge plants",
             "alpine flora",
@@ -262,7 +299,7 @@
           "name": "NH48 API Data Catalog",
           "description": "Catalogue of open datasets for NH48 peaks, White Mountain trails, alpine plants, and long‑distance routes.",
           "url": "https://nh48.info/dataset/",
-          "creator": { "@id": "https://nh48.info/#org" },
+          "creator": { "@id": "https://nh48.info/#organization" },
           "dataset": [
             { "@id": "https://nh48.info/#nh48-dataset" },
             { "@id": "https://nh48.info/#white-mountain-trails-dataset" },
@@ -296,7 +333,7 @@
           "description": "Illustrated map highlighting New Hampshire’s White Mountains.",
           "inLanguage": "en",
           "license": "https://creativecommons.org/licenses/by/4.0/",
-          "creator": { "@id": "https://nh48.info/#org" }
+          "creator": { "@id": "https://nh48.info/#organization" }
         },
         {
           "@type": "ImageObject",
@@ -306,7 +343,7 @@
           "description": "Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route.",
           "inLanguage": "en",
           "license": "https://creativecommons.org/licenses/by/4.0/",
-          "creator": { "@id": "https://nh48.info/#org" }
+          "creator": { "@id": "https://nh48.info/#organization" }
         }
       ]
     }

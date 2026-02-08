@@ -1060,10 +1060,10 @@ export default {
         `<meta name="googlebot" content="${meta.robots || 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}" />`,
         `<meta name="bingbot" content="${meta.robots || 'index, follow, max-image-preview:large'}" />`,
         `<meta name="author" content="${meta.author || 'Nathan Sobol'}" />`,
-        `<meta name="publisher" content="NH48 API" />`,
-        `<meta name="application-name" content="NH48 API" />`,
+        `<meta name="publisher" content="NH48pics" />`,
+        `<meta name="application-name" content="NH48pics" />`,
         `<meta name="theme-color" content="#0a0a0a" />`,
-        `<meta property="og:site_name" content="${meta.siteName || SITE_NAME}" />`,
+        `<meta property="og:site_name" content="${meta.siteName || 'NH48pics'}" />`,
         `<meta property="og:type" content="${meta.ogType || 'website'}" />`,
         `<meta property="og:locale" content="${meta.locale || 'en_US'}" />`,
         `<meta property="og:title" content="${esc(meta.title)}" />`,
@@ -1288,11 +1288,7 @@ export default {
         ],
         isAccessibleForFree: true,
         license: 'https://creativecommons.org/licenses/by/4.0/',
-        creator: {
-          '@type': 'Person',
-          name: RIGHTS_DEFAULTS.creatorName,
-          url: 'https://www.nh48pics.com/'
-        },
+        creator: { '@id': `${SITE}/#organization` },
         keywords: [
           'NH48',
           'White Mountains',
@@ -1389,8 +1385,8 @@ export default {
         description,
         url: canonicalUrl,
         license: license || 'https://creativecommons.org/licenses/by/4.0/',
-        creator: publisher || { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
-        publisher: publisher || { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
+        creator: publisher || { '@id': `${SITE}/#organization` },
+        publisher: publisher || { '@id': `${SITE}/#organization` },
         keywords,
         spatialCoverage,
         distribution
@@ -1611,6 +1607,7 @@ export default {
           addPropertyValue(name, value);
         }
       }
+      mountain.publisher = { '@id': `${SITE}/#organization` };
       if (coords.lat && coords.lon) {
         mountain.geo = { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon };
       }
@@ -1744,7 +1741,7 @@ export default {
         '@id': `${canonicalUrl}#image-gallery`,
         name: 'NH48 Summit Photo Gallery',
         description: 'Primary summit photographs for all 48 New Hampshire four-thousand-footers in the NH48 catalog.',
-        creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
+        creator: { '@id': `${SITE}/#organization` },
         license: CATALOG_IMAGE_LICENSE_URL,
         about: { '@type': 'Dataset', '@id': `${canonicalUrl}#dataset`, name: title },
         associatedMedia: imageObjects
@@ -1788,7 +1785,7 @@ export default {
         `<meta name="keywords" content="NH48 API, NH48 catalog, New Hampshire 4000 footers, peak metadata, hiking data, mountain photos" />`,
         `<meta name="robots" content="index,follow,max-image-preview:large" />`,
         `<meta name="author" content="Nathan Sobol" />`,
-        `<meta property="og:site_name" content="${SITE_NAME}" />`,
+        `<meta property="og:site_name" content="NH48pics" />`,
         `<meta property="og:type" content="website" />`,
         `<meta property="og:title" content="${esc(title)}" />`,
         `<meta property="og:description" content="${esc(description)}" />`,
@@ -1796,6 +1793,8 @@ export default {
         `<meta property="og:image:alt" content="${esc(altText)}" />`,
         `<meta property="og:url" content="${canonicalUrl}" />`,
         `<meta name="twitter:card" content="summary_large_image" />`,
+        `<meta name="twitter:site" content="@nate_dumps_pics" />`,
+        `<meta name="twitter:creator" content="@nate_dumps_pics" />`,
         `<meta name="twitter:url" content="${canonicalUrl}" />`,
         `<meta name="twitter:title" content="${esc(title)}" />`,
         `<meta name="twitter:description" content="${esc(description)}" />`,
@@ -1866,34 +1865,74 @@ export default {
       const jsonLd = [
         {
           '@context': 'https://schema.org',
+          '@type': 'Organization',
+          '@id': `${SITE}/#organization`,
+          name: 'NH48pics',
+          legalName: 'NH48pics.com',
+          url: `${SITE}/`,
+          logo: {
+            '@type': 'ImageObject',
+            url: `${SITE}/nh48API_logo.png`,
+            width: 512,
+            height: 512
+          },
+          description: 'Professional mountain photography covering the New Hampshire 4,000-footers and beyond.',
+          sameAs: [
+            'https://www.instagram.com/nate_dumps_pics',
+            'https://www.facebook.com/natedumpspics',
+            'https://www.etsy.com/shop/NH48pics',
+            'https://github.com/natesobol/nh48-api'
+          ],
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: 'White Mountains',
+            addressRegion: 'NH',
+            addressCountry: 'US'
+          },
+          founder: { '@id': `${SITE}/#person-nathan-sobol` }
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Person',
+          '@id': `${SITE}/#person-nathan-sobol`,
+          name: 'Nathan Sobol',
+          alternateName: 'Nathan Sobol Photography',
+          url: `${SITE}/about`,
+          image: `${SITE}/nh48-preview.png`,
+          description: 'Nathan Sobol is a landscape photographer and hiker who has documented every 4,000-footer in New Hampshire. As the founder of NH48pics, he combines his passion for the White Mountains with professional photography, offering high-quality prints and trail resources.',
+          jobTitle: ['Landscape Photographer', 'Founder of NH48pics'],
+          worksFor: { '@id': `${SITE}/#organization` },
+          homeLocation: {
+            '@type': 'Place',
+            name: 'White Mountains',
+            address: {
+              '@type': 'PostalAddress',
+              addressRegion: 'NH',
+              addressCountry: 'US'
+            }
+          },
+          knowsLanguage: ['en'],
+          sameAs: [
+            'https://www.instagram.com/nate_dumps_pics',
+            'https://www.facebook.com/natedumpspics',
+            'https://www.etsy.com/shop/NH48pics'
+          ]
+        },
+        {
+          '@context': 'https://schema.org',
           '@type': 'WebSite',
           '@id': `${SITE}/#website`,
-          name: 'NH48 API',
-          url: SITE,
-          description,
-          publisher: {
-            '@type': 'Person',
-            name: RIGHTS_DEFAULTS.creatorName,
-            url: 'https://www.nh48pics.com/'
-          },
+          name: 'NH48pics',
+          url: `${SITE}/`,
+          description: 'Fine-art photography and trail resources for the NH 48 4,000-footers.',
+          publisher: { '@id': `${SITE}/#organization` },
+          copyrightHolder: { '@id': `${SITE}/#organization` },
           potentialAction: {
             '@type': 'SearchAction',
             target: `${SITE}/catalog?q={search_term_string}`,
             'query-input': 'required name=search_term_string'
           },
-          inLanguage: isFrench ? 'fr' : 'en'
-        },
-        {
-          '@context': 'https://schema.org',
-          '@type': 'Organization',
-          '@id': `${SITE}/#organization`,
-          name: 'NH48 API',
-          url: SITE,
-          logo: `${SITE}/nh48API_logo.png`,
-          sameAs: [
-            'https://github.com/natesobol/nh48-api',
-            'https://www.instagram.com/nate_dumps_pics/'
-          ]
+          inLanguage: ['en', 'fr']
         },
         {
           '@context': 'https://schema.org',
@@ -2230,7 +2269,7 @@ export default {
               name: 'White Mountain National Forest'
             },
             license: 'https://creativecommons.org/licenses/by/4.0/',
-            publisher: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName }
+            publisher: { '@id': `${SITE}/#organization` }
           })
         ];
         return serveTemplatePage({
@@ -2313,7 +2352,7 @@ export default {
           keywords: ['plants', 'alpine', 'NH48', 'White Mountains'],
           spatialCoverage: { '@type': 'Place', name: 'White Mountain National Forest' },
           license: 'https://creativecommons.org/licenses/by/4.0/',
-          publisher: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName }
+          publisher: { '@id': `${SITE}/#organization` }
         })
       ];
       return serveTemplatePage({
@@ -2436,6 +2475,103 @@ export default {
           image,
           imageAlt: plant.common,
           ogType: 'article'
+        },
+        jsonLd
+      });
+    }
+
+    if (pathNoLocale === '/about' || pathNoLocale === '/about/') {
+      const canonical = `${SITE}/about`;
+      const aboutTitle = isFrench ? 'À propos de Nathan Sobol – NH48pics' : 'About Nathan Sobol – NH48pics';
+      const aboutDescription = isFrench
+        ? 'Nathan Sobol est un photographe de paysage et randonneur qui a documenté chacun des 4 000 pieds du New Hampshire. Fondateur de NH48pics.'
+        : 'Nathan Sobol is a landscape photographer and hiker who has documented every 4,000-footer in New Hampshire. Founder of NH48pics.';
+      const jsonLd = [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Person',
+          '@id': `${SITE}/#person-nathan-sobol`,
+          name: 'Nathan Sobol',
+          alternateName: 'Nathan Sobol Photography',
+          url: `${SITE}/about`,
+          image: `${SITE}/nh48-preview.png`,
+          description: 'Nathan Sobol is a landscape photographer and hiker who has documented every 4,000-footer in New Hampshire. As the founder of NH48pics, he combines his passion for the White Mountains with professional photography, offering high-quality prints and trail resources.',
+          jobTitle: ['Landscape Photographer', 'Founder of NH48pics'],
+          worksFor: { '@id': `${SITE}/#organization` },
+          homeLocation: {
+            '@type': 'Place',
+            name: 'White Mountains',
+            address: {
+              '@type': 'PostalAddress',
+              addressRegion: 'NH',
+              addressCountry: 'US'
+            }
+          },
+          knowsLanguage: ['en'],
+          sameAs: [
+            'https://www.instagram.com/nate_dumps_pics',
+            'https://www.facebook.com/natedumpspics',
+            'https://www.etsy.com/shop/NH48pics'
+          ]
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          '@id': `${SITE}/#organization`,
+          name: 'NH48pics',
+          legalName: 'NH48pics.com',
+          url: `${SITE}/`,
+          logo: {
+            '@type': 'ImageObject',
+            url: `${SITE}/nh48API_logo.png`,
+            width: 512,
+            height: 512
+          },
+          description: 'Professional mountain photography covering the New Hampshire 4,000-footers and beyond.',
+          sameAs: [
+            'https://www.instagram.com/nate_dumps_pics',
+            'https://www.facebook.com/natedumpspics',
+            'https://www.etsy.com/shop/NH48pics',
+            'https://github.com/natesobol/nh48-api'
+          ],
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: 'White Mountains',
+            addressRegion: 'NH',
+            addressCountry: 'US'
+          },
+          founder: { '@id': `${SITE}/#person-nathan-sobol` }
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          '@id': `${SITE}/#website`,
+          name: 'NH48pics',
+          url: `${SITE}/`,
+          description: 'Fine-art photography and trail resources for the NH 48 4,000-footers.',
+          publisher: { '@id': `${SITE}/#organization` },
+          copyrightHolder: { '@id': `${SITE}/#organization` },
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: `${SITE}/catalog?q={search_term_string}`,
+            'query-input': 'required name=search_term_string'
+          },
+          inLanguage: ['en', 'fr']
+        }
+      ];
+      return serveTemplatePage({
+        templatePath: 'pages/about.html',
+        pathname,
+        routeId: 'about',
+        meta: {
+          title: aboutTitle,
+          description: aboutDescription,
+          canonical,
+          alternateEn: `${SITE}/about`,
+          alternateFr: `${SITE}/fr/about`,
+          image: `${SITE}/nh48-preview.png`,
+          imageAlt: 'Nathan Sobol – NH48pics',
+          ogType: 'profile'
         },
         jsonLd
       });
@@ -2611,7 +2747,7 @@ export default {
       `<meta name="keywords" content="NH48 API, ${esc(peakName)} peak details, New Hampshire 4000 footers, White Mountains routes, hiking data, peak metadata, mountain photos" />`,
       `<meta name="robots" content="index,follow,max-image-preview:large" />`,
       `<meta name="author" content="Nathan Sobol" />`,
-      `<meta property="og:site_name" content="${SITE_NAME}" />`,
+      `<meta property="og:site_name" content="NH48pics" />`,
       `<meta property="og:type" content="website" />`,
       `<meta property="og:title" content="${title}" />`,
       `<meta property="og:description" content="${description}" />`,
@@ -2619,6 +2755,8 @@ export default {
       `<meta property="og:image:alt" content="${esc(primaryCaption)}" />`,
       `<meta property="og:url" content="${canonical}" />`,
       `<meta name="twitter:card" content="summary_large_image" />`,
+      `<meta name="twitter:site" content="@nate_dumps_pics" />`,
+      `<meta name="twitter:creator" content="@nate_dumps_pics" />`,
       `<meta name="twitter:url" content="${canonical}" />`,
       `<meta name="twitter:title" content="${title}" />`,
       `<meta name="twitter:description" content="${description}" />`,

@@ -1,0 +1,32 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://nh48.info/#organization",
+  "name": "NH48pics",
+  "legalName": "NH48pics.com",
+  "url": "https://nh48.info/",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://nh48.info/nh48API_logo.png",
+    "width": 512,
+    "height": 512
+  },
+  "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
+  "sameAs": [
+    "https://www.instagram.com/nate_dumps_pics",
+    "https://www.facebook.com/natedumpspics",
+    "https://www.etsy.com/shop/NH48pics",
+    "https://github.com/natesobol/nh48-api"
+  ],
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "White Mountains",
+    "addressRegion": "NH",
+    "addressCountry": "US"
+  },
+  "founder": {
+    "@type": "Person",
+    "@id": "https://nh48.info/#person-nathan-sobol",
+    "name": "Nathan Sobol"
+  }
+}

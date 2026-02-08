@@ -21,7 +21,7 @@ const PHOTO_BASE = new URL(PHOTO_BASE_URL);
 const PHOTO_PATH_PREFIX = "/nh48-photos/";
 const IMAGE_TRANSFORM_OPTIONS = "format=webp,quality=85,metadata=keep";
 const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
-const DEFAULT_SITE_NAME = "NH48 Peak Guide";
+const DEFAULT_SITE_NAME = "NH48pics";
 const IMAGE_LICENSE_URL = "https://creativecommons.org/licenses/by-nc-nd/4.0/";
 const PEAK_SAMEAS_PATH = path.join(ROOT, "data", "peak-sameas.json");
 const AUTHOR_NAME = "Nathan Sobol";
@@ -40,10 +40,10 @@ const LANGUAGE_CONFIGS = [
     canonicalBase: CANONICAL_BASE,
     homeUrl: "https://nh48.info/",
     catalogUrl: DEFAULT_CATALOG_URL,
-    siteName: "NH48 Peak Guide",
+    siteName: "NH48pics",
     ogLocale: "en_US",
     ogLocaleAlternate: "fr_FR",
-    titleSuffix: "NH 48 Peak Guide",
+    titleSuffix: "NH48pics",
     descriptionTemplate: (name) => `${name} info page with route details, elevation, and photos.`,
     summaryFallback: (name) => `${name} is one of the classic New Hampshire 4,000-footers.`,
     defaults: {
@@ -84,10 +84,10 @@ const LANGUAGE_CONFIGS = [
     canonicalBase: "https://nh48.info/fr/peaks",
     homeUrl: "https://nh48.info/fr/",
     catalogUrl: DEFAULT_CATALOG_URL,
-    siteName: "Guide des sommets NH48",
+    siteName: "NH48pics",
     ogLocale: "fr_FR",
     ogLocaleAlternate: "en_US",
-    titleSuffix: "Guide des sommets NH48",
+    titleSuffix: "NH48pics",
     descriptionTemplate: (name) => `${name} : page d'info avec itinéraires, altitude et photos.`,
     summaryFallback: (name) => `${name} est l’un des sommets classiques de 4 000 pieds du New Hampshire.`,
     defaults: {
@@ -835,11 +835,13 @@ const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImag
     },
     isPartOf: {
       "@type": "WebSite",
-      name: "NH48 Peak Guide",
+      "@id": "https://nh48.info/#website",
+      name: "NH48pics",
       url: "https://nh48.info/",
       publisher: {
         "@type": "Organization",
-        name: "NH48 Peak Guide",
+        "@id": "https://nh48.info/#organization",
+        name: "NH48pics",
         url: "https://nh48.info/",
         logo: {
           "@type": "ImageObject",
@@ -1166,8 +1168,29 @@ const buildJsonLd = (
   const publisherNode = {
     "@type": "Organization",
     "@id": "https://nh48.info/#organization",
-    name: "NH48 Peak Guide",
+    name: "NH48pics",
+    legalName: "NH48pics.com",
     url: HOME_URL,
+    logo: {
+      "@type": "ImageObject",
+      url: "https://nh48.info/nh48API_logo.png",
+      width: 512,
+      height: 512
+    },
+    description: "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
+    sameAs: [
+      "https://www.instagram.com/nate_dumps_pics",
+      "https://www.facebook.com/natedumpspics",
+      "https://www.etsy.com/shop/NH48pics",
+      "https://github.com/natesobol/nh48-api"
+    ],
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "White Mountains",
+      addressRegion: "NH",
+      addressCountry: "US"
+    },
+    founder: { "@id": "https://nh48.info/#person-nathan-sobol" }
   };
 
   const dataCatalogNode = {
@@ -1178,12 +1201,29 @@ const buildJsonLd = (
     publisher: { "@id": publisherNode["@id"] },
   };
 
+  const personNode = {
+    "@type": "Person",
+    "@id": "https://nh48.info/#person-nathan-sobol",
+    name: "Nathan Sobol",
+    alternateName: "Nathan Sobol Photography",
+    url: "https://nh48.info/about",
+    sameAs: [
+      "https://www.instagram.com/nate_dumps_pics",
+      "https://www.facebook.com/natedumpspics",
+      "https://www.etsy.com/shop/NH48pics"
+    ],
+    worksFor: { "@id": publisherNode["@id"] }
+  };
+
   const webSiteNode = {
     "@type": "WebSite",
     "@id": "https://nh48.info/#website",
-    name: "NH48 Peak Guide",
+    name: "NH48pics",
     url: HOME_URL,
+    description: "Fine-art photography and trail resources for the NH 48 4,000-footers.",
     publisher: { "@id": publisherNode["@id"] },
+    copyrightHolder: { "@id": publisherNode["@id"] },
+    inLanguage: ["en", "fr"]
   };
 
   const webPageNode = {
@@ -1241,6 +1281,7 @@ const buildJsonLd = (
       return place;
     })(),
     isPartOf: { "@id": dataCatalogNode["@id"] },
+    publisher: { "@id": publisherNode["@id"] },
     sameAs: sameAsLinks.length ? sameAsLinks : undefined,
     subjectOf: imageGallery ? [{ '@id': imageGallery['@id'] }] : undefined,
     mainEntityOfPage: { "@id": webPageNode["@id"] },
@@ -1253,6 +1294,7 @@ const buildJsonLd = (
     webPageNode,
     dataCatalogNode,
     publisherNode,
+    personNode,
     webSiteNode,
     whiteMountainForestNode,
     geoNode,

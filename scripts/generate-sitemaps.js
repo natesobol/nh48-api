@@ -43,6 +43,7 @@ const STATIC_PAGE_ENTRIES = [
     priority: 0.6,
   },
   { loc: 'https://nh48.info/nh-4000-footers-info', file: 'nh-4000-footers-info.html' },
+  { loc: 'https://nh48.info/about', file: 'pages/about.html' },
 ];
 const STATIC_IMAGE_ENTRIES = [
   {

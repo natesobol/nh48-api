@@ -48,11 +48,80 @@
   <link rel="alternate" hreflang="sw" href="https://nh48.info/i18n/sw.html">
   <link rel="alternate" hreflang="x-default" href="https://nh48.info/">
 
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NH48pics">
+  <meta property="og:locale" content="id_ID">
   <meta property="og:title" data-i18n="landing.ogTitle" data-i18n-attr="content" content="NH48 API – Puncak dan jalur setinggi 4 000 kaki di New Hampshire">
   <meta property="og:description" data-i18n="landing.ogDescription" data-i18n-attr="content" content="Menyediakan data terbuka, rute, dan metadata foto untuk 48 puncak 4 000 kaki di Hutan Nasional White Mountain, New Hampshire. Jelajahi katalog, telusuri jalur, dan gunakan kumpulan data ini.">
   <meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-garfield/mount-garfield__001.jpg">
   <meta property="og:url" content="https://nh48.info/i18n/id.html">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@nate_dumps_pics">
+  <meta name="twitter:creator" content="@nate_dumps_pics">
+  <meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-garfield/mount-garfield__001.jpg">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://nh48.info/#organization",
+          "name": "NH48pics",
+          "legalName": "NH48pics.com",
+          "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
+          "url": "https://nh48.info/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://nh48.info/nh48API_logo.png",
+            "width": 512,
+            "height": 512
+          },
+          "sameAs": [
+            "https://www.instagram.com/nate_dumps_pics",
+            "https://www.facebook.com/natedumpspics",
+            "https://www.etsy.com/shop/NH48pics",
+            "https://github.com/natesobol/nh48-api"
+          ],
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "White Mountains",
+            "addressRegion": "NH",
+            "addressCountry": "US"
+          },
+          "founder": { "@id": "https://nh48.info/#person-nathan-sobol" }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://nh48.info/#person-nathan-sobol",
+          "name": "Nathan Sobol",
+          "alternateName": "Nathan Sobol Photography",
+          "url": "https://nh48.info/about",
+          "jobTitle": ["Landscape Photographer", "Founder of NH48pics"],
+          "worksFor": { "@id": "https://nh48.info/#organization" },
+          "sameAs": [
+            "https://www.instagram.com/nate_dumps_pics",
+            "https://www.facebook.com/natedumpspics",
+            "https://www.etsy.com/shop/NH48pics"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://nh48.info/#website",
+          "url": "https://nh48.info/",
+          "name": "NH48pics",
+          "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
+          "publisher": { "@id": "https://nh48.info/#organization" },
+          "copyrightHolder": { "@id": "https://nh48.info/#organization" },
+          "inLanguage": ["en", "fr"],
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://nh48.info/catalog?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+  </script>
   <style>
     html, body {
       width: 100%;

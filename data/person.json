@@ -1,0 +1,27 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://nh48.info/#person-nathan-sobol",
+  "name": "Nathan Sobol",
+  "alternateName": "Nathan Sobol Photography",
+  "url": "https://nh48.info/about",
+  "image": "https://nh48.info/nh48-preview.png",
+  "description": "Nathan Sobol is a landscape photographer and hiker who has documented every 4,000-footer in New Hampshire. As the founder of NH48pics, he combines his passion for the White Mountains with professional photography, offering high-quality prints and trail resources.",
+  "jobTitle": ["Landscape Photographer", "Founder of NH48pics"],
+  "worksFor": { "@id": "https://nh48.info/#organization" },
+  "homeLocation": {
+    "@type": "Place",
+    "name": "White Mountains",
+    "address": {
+      "@type": "PostalAddress",
+      "addressRegion": "NH",
+      "addressCountry": "US"
+    }
+  },
+  "knowsLanguage": ["en"],
+  "sameAs": [
+    "https://www.instagram.com/nate_dumps_pics",
+    "https://www.facebook.com/natedumpspics",
+    "https://www.etsy.com/shop/NH48pics"
+  ]
+}
