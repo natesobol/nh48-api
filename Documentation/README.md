@@ -17,6 +17,17 @@ The **NH48 API** is a comprehensive, self-contained dataset and media delivery s
 * **Brand polish:** Updated logo wrapping and border styles to keep identity assets crisp on dark and light backgrounds across landing pages.
 * **Navigation + footer parity:** Standardized the site-nav menu and quick-browse footer partial so every live page ships the same link set, CTA ordering, and data-route attributes for analytics and crawlability.
 
+
+## ✅ Pre-release JSON-LD verification
+
+Before release commits, run:
+
+```bash
+node scripts/verify-peak-geography-jsonld.js
+```
+
+This lightweight static check scans generated `peaks/<slug>/index.html` pages and `catalog.html` to verify Mountain/TouristAttraction typing, `containedInPlace` target IDs, USFS `landManager`, shared geography node cardinality, and catalog `TouristDestination.includesAttraction` count parity with `data/nh48.json`.
+
 ## 🔎 **SEO Implementation & Goals**
 
 We actively structure the project so search engines can surface **New Hampshire 4000-footers**, **White Mountain National Forest trails**, and **hiking route planning data** to the right audiences. Core tactics include:
