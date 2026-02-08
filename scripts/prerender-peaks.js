@@ -8,7 +8,6 @@ const TEMPLATE_PATH = path.join(ROOT, "templates", "peak-page-template.html");
 const NAV_PARTIAL_PATH = path.join(ROOT, "pages", "nav.html");
 const QUICK_FOOTER_PATH = path.join(ROOT, "pages", "footer.html");
 const DATA_PATH = path.join(ROOT, "data", "nh48.json");
-const GEOGRAPHY_PATH = path.join(ROOT, "data", "geography.json");
 const OUTPUT_DIR = path.join(ROOT, "peaks");
 const CANONICAL_BASE = "https://nh48.info/peak";
 const HOME_URL = "https://nh48.info/";
@@ -1050,8 +1049,7 @@ const buildJsonLd = (
   range,
   langConfig,
   englishName,
-  localizedName,
-  geographyRefs
+  localizedName
 ) => {
   const peakName = cleanText(localizedName || peak.peakName || peak["Peak Name"] || peak.slug);
   const elevationFt = numberFrom(peak["Elevation (ft)"]);
@@ -1148,53 +1146,8 @@ const buildJsonLd = (
     }
     : undefined;
 
-  const geoNode = coordinates.latitude && coordinates.longitude
-    ? {
-      "@type": "GeoCoordinates",
-      "@id": `${canonicalUrl}#geo`,
-      latitude: coordinates.latitude,
-      longitude: coordinates.longitude,
-    }
-    : undefined;
-
-  const whiteMountainForestNode = {
-    "@type": "Place",
-    "@id": `${canonicalUrl}#white-mountain-national-forest`,
-    name: "White Mountain National Forest",
-  };
-
-  const publisherNode = {
-    "@type": "Organization",
-    "@id": "https://nh48.info/#organization",
-    name: "NH48 Peak Guide",
-    url: HOME_URL,
-  };
-
-  const dataCatalogNode = {
-    "@type": "DataCatalog",
-    "@id": `${canonicalUrl}#nh48-peak-dataset`,
-    name: "NH48 Peak Dataset",
-    url: "https://nh48.info/catalog",
-    publisher: { "@id": publisherNode["@id"] },
-  };
-
-  const webSiteNode = {
-    "@type": "WebSite",
-    "@id": "https://nh48.info/#website",
-    name: "NH48 Peak Guide",
-    url: HOME_URL,
-    publisher: { "@id": publisherNode["@id"] },
-  };
-
-  const webPageNode = {
-    "@type": "WebPage",
-    "@id": `${canonicalUrl}#webpage`,
-    url: canonicalUrl,
-    name: `${peakName} — White Mountain National Forest`,
-    isPartOf: { "@id": webSiteNode["@id"] },
-  };
-
-  const mountainNode = {
+  const jsonLd = {
+    "@context": "https://schema.org",
     "@type": "Mountain",
     "@id": `${canonicalUrl}#mountain`,
     name: peakName,
@@ -1221,14 +1174,7 @@ const buildJsonLd = (
         unitText: "FT",
       }
       : undefined,
-    containedInPlace: { "@id": whiteMountainForestNode["@id"] },
-    containedInPlace: [
-      geographyRefs.wmnf,
-      geographyRefs.newHampshire,
-      geographyRefs.newEngland,
-      geographyRefs.usa,
-    ].map((ref) => ({ "@id": ref["@id"] })),
-    landManager: { "@id": geographyRefs.usfs["@id"] },
+    containedInPlace: { "@type": "Place", name: "White Mountain National Forest" },
     additionalProperty: additionalProperty.length ? additionalProperty : undefined,
     hasPart: routeRefs.length ? routeRefs : undefined,
     containsPlace: (() => {
@@ -1354,39 +1300,7 @@ const main = () => {
     const navMenuPartial = readFile(NAV_PARTIAL_PATH, "navigation menu partial");
     const quickBrowseFooterPartial = readFile(QUICK_FOOTER_PATH, "quick browse footer partial");
     const data = JSON.parse(readFile(DATA_PATH, "data"));
-    const geographyData = JSON.parse(readFile(GEOGRAPHY_PATH, "geography data"));
     const sameAsLookup = JSON.parse(readFile(PEAK_SAMEAS_PATH, "peak sameAs lookup"));
-
-    const geographyEntries = Array.isArray(geographyData)
-      ? geographyData
-      : Array.isArray(geographyData?.places)
-        ? geographyData.places
-        : Array.isArray(geographyData?.items)
-          ? geographyData.items
-          : Array.isArray(geographyData?.["@graph"])
-            ? geographyData["@graph"]
-            : [];
-    const geographyById = Object.fromEntries(
-      geographyEntries
-        .map((entry) => [cleanText(entry?.id || entry?.identifier || entry?.slug), entry])
-        .filter(([id, entry]) => id && entry)
-    );
-    const resolveGeographyRef = (label, candidates) => {
-      const match = candidates
-        .map((candidate) => geographyById[candidate])
-        .find((entry) => entry && cleanText(entry["@id"]));
-      if (!match) {
-        throw new Error(`Missing geography reference for ${label}. Checked ids: ${candidates.join(', ')}`);
-      }
-      return match;
-    };
-    const geographyRefs = {
-      usfs: resolveGeographyRef("USFS organization", ["org-usfs", "usfs", "organization-usfs"]),
-      usa: resolveGeographyRef("USA", ["country-usa", "usa", "us", "united-states"]),
-      newEngland: resolveGeographyRef("New England", ["region-new-england", "new-england"]),
-      newHampshire: resolveGeographyRef("New Hampshire", ["state-nh", "new-hampshire", "nh"]),
-      wmnf: resolveGeographyRef("WMNF", ["place-wmnf", "wmnf", "white-mountain-national-forest"]),
-    };
     Object.entries(data).forEach(([slug, peak]) => {
       const links = Array.isArray(sameAsLookup?.[slug]) ? sameAsLookup[slug].filter(Boolean) : [];
       if (links.length) {
@@ -1551,8 +1465,7 @@ const main = () => {
               rangeValue || null,
               lang,
               name,
-              localizedName,
-              geographyRefs
+              localizedName
             )
           ),
           BREADCRUMB_LD: escapeScriptJson(
