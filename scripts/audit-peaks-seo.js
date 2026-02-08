@@ -8,8 +8,10 @@ const TARGET_DIRS = [path.join(ROOT, 'peaks'), path.join(ROOT, 'fr', 'peaks')];
 const EXPECTED_NAME = 'Nathan Sobol';
 const EXPECTED_COPYRIGHT = '© Nathan Sobol';
 const EXPECTED_LICENSE = 'https://creativecommons.org/licenses/by-nc-nd/4.0/';
+const TRANSITION_REQUIRED_FIELDS = ['containedInPlace', 'landManager'];
 
 const failures = [];
+const warnings = [];
 
 const collectHtmlFiles = (dir) => {
   if (!fs.existsSync(dir)) return [];
@@ -34,10 +36,20 @@ const parseJsonLdBlocks = (html) => {
   return blocks;
 };
 
-const getMountainSchema = (jsonBlocks) => jsonBlocks.find((obj) => obj && obj['@type'] === 'Mountain');
+const hasSchemaType = (obj, type) => {
+  if (!obj) return false;
+  if (obj['@type'] === type) return true;
+  return Array.isArray(obj['@type']) && obj['@type'].includes(type);
+};
+
+const getMountainSchema = (jsonBlocks) => jsonBlocks.find((obj) => hasSchemaType(obj, 'Mountain'));
 
 const check = (condition, message) => {
   if (!condition) failures.push(message);
+};
+
+const checkTransition = (condition, message) => {
+  if (!condition) warnings.push(message);
 };
 
 for (const dir of TARGET_DIRS) {
@@ -58,6 +70,10 @@ for (const dir of TARGET_DIRS) {
     const mountain = getMountainSchema(jsonBlocks);
     check(!!mountain, `${rel}: missing Mountain JSON-LD`);
     if (!mountain) continue;
+
+    for (const field of TRANSITION_REQUIRED_FIELDS) {
+      checkTransition(Boolean(mountain[field]), `${rel}: Mountain JSON-LD missing ${field} (required after full regeneration)`);
+    }
 
     const sameAs = Array.isArray(mountain.sameAs) ? mountain.sameAs : [];
     check(sameAs.length > 0, `${rel}: sameAs missing or empty`);
@@ -97,4 +113,13 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log('Audit passed: peak pages contain expected image metadata, license fields, thumbnails, hero image references, and sameAs links.');
+if (warnings.length) {
+  console.warn(`Audit passed with ${warnings.length} transition warning(s):`);
+  for (const warning of warnings) {
+    console.warn(`- ${warning}`);
+  }
+} else {
+  console.log('Audit passed with no transition warnings.');
+}
+
+console.log('Peak page audit validated image metadata, license fields, thumbnails, hero image references, sameAs links, and Mountain schema detection.');
