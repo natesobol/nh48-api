@@ -258,7 +258,6 @@ function reorder(list, startIndex, endIndex) {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   let insertIndex = endIndex;
-  if (insertIndex > startIndex) insertIndex -= 1;
   if (insertIndex < 0) insertIndex = 0;
   if (insertIndex > result.length) insertIndex = result.length;
   result.splice(insertIndex, 0, removed);
@@ -346,13 +345,16 @@ function PeakPlannerApp() {
         const templateDayTrips = Array.isArray(templates?.dayTripGroups) ? templates.dayTripGroups : [];
         setFinishStrategies(templateStrategies);
         setDayTripGroups(templateDayTrips);
+        let allowedSlugs = null;
         if (nh48) {
           const nameToSlug = {};
           const graph = {};
           const seasonalMap = {};
+          const canonicalSlugs = new Set();
           Object.values(nh48).forEach((entry) => {
             const slug = entry.slug || entry.peakName?.toLowerCase().replace(/[^a-z0-9]+/g, '-');
             if (!slug) return;
+            canonicalSlugs.add(slug);
             graph[slug] = new Set();
             if (entry.peakName) nameToSlug[entry.peakName] = slug;
             if (entry['Peak Name']) nameToSlug[entry['Peak Name']] = slug;
@@ -381,14 +383,30 @@ function PeakPlannerApp() {
           setAdjacencyMap(finalized);
           setSeasonBuckets(seasonalMap);
           localSeasonBuckets = seasonalMap;
+          allowedSlugs = canonicalSlugs;
         } else {
           setAdjacencyMap({});
           setSeasonBuckets({});
           localSeasonBuckets = {};
+          const overlaySlugs = new Set();
+          if (overlay) {
+            Object.entries(overlay).forEach(([slugKey, overlayEntry]) => {
+              if (slugKey) overlaySlugs.add(slugKey);
+              if (overlayEntry?.slug) overlaySlugs.add(overlayEntry.slug);
+            });
+          }
+          if (overlaySlugs.size > 0) {
+            allowedSlugs = overlaySlugs;
+            console.warn('NH48 adjacency dataset unavailable; using overlay slugs for planner scope.');
+          } else {
+            console.warn('NH48 adjacency and overlay datasets unavailable; using full manifest scope.');
+          }
         }
         const map = {};
         Object.values(data).forEach((entry) => {
           const slug = entry.slug || entry.peakName?.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          if (!slug) return;
+          if (allowedSlugs && !allowedSlugs.has(slug)) return;
           const elevation = entry['Elevation (ft)'] ? Number.parseInt(entry['Elevation (ft)'], 10) : null;
           map[slug] = {
             slug,
@@ -1201,15 +1219,18 @@ function PeakPlannerApp() {
     return React.createElement('div', {
       ref: provided.innerRef,
       ...provided.draggableProps,
+      ...provided.dragHandleProps,
       style,
       className: `itinerary-row${snapshot.isDragging ? ' is-dragging' : ''}${matchesFilters ? ' is-highlighted' : ''}${isSelected ? ' is-selected' : ''}`,
       onContextMenu: (event) => openContextMenu(event, { type: 'peak', id: peak.id })
     }, [
-      React.createElement('span', {
-        className: 'itinerary-index drag-handle',
-        style: indexStyle,
-        ...provided.dragHandleProps
-      }, displayIndex),
+      React.createElement('div', { className: 'itinerary-left', 'aria-hidden': 'true' }, [
+        React.createElement('span', { className: 'itinerary-grab-rail' }),
+        React.createElement('span', {
+          className: 'itinerary-index',
+          style: indexStyle
+        }, displayIndex)
+      ]),
       React.createElement('div', {
         className: 'itinerary-photo-banner',
         style: { backgroundImage: `url('${photoUrl}')` }
@@ -1262,6 +1283,23 @@ function PeakPlannerApp() {
     });
     return map;
   }, [itinerary]);
+  const getDisplayIndexForPeak = (peakId, fallbackIndex) => {
+    const mapped = displayOrderMap.get(peakId);
+    if (Number.isFinite(mapped)) return mapped;
+    let index = 1;
+    for (const item of itinerary) {
+      if (item.type === 'peak') {
+        if (item.id === peakId) return index;
+        index += 1;
+        continue;
+      }
+      for (const peak of item.items) {
+        if (peak.id === peakId) return index;
+        index += 1;
+      }
+    }
+    return fallbackIndex;
+  };
 
   return React.createElement('div', { className: 'planner-shell' },
     finishStrategies.length
@@ -1540,7 +1578,7 @@ function PeakPlannerApp() {
                           draggableId: `peak-${peak.id}`,
                           index: peakIndex
                         }, (peakProvided, peakSnapshot) =>
-                          renderPeakRow(peak, displayOrderMap.get(peak.id) || peakIndex + 1, peakProvided, peakSnapshot)
+                          renderPeakRow(peak, getDisplayIndexForPeak(peak.id, peakIndex + 1), peakProvided, peakSnapshot)
                         )
                       ) : [React.createElement('div', { key: 'empty', className: 'group-empty' }, 'Group is empty.')]),
                       groupProvided.placeholder
@@ -1556,7 +1594,7 @@ function PeakPlannerApp() {
               draggableId: `peak-${item.id}`,
               index
             }, (prov, snapshot) =>
-              renderPeakRow(item, displayOrderMap.get(item.id) || index + 1, prov, snapshot)
+              renderPeakRow(item, getDisplayIndexForPeak(item.id, index + 1), prov, snapshot)
             );
           }),
           itinerary.length === 0 && !loading && !loadError

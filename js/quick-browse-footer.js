@@ -652,7 +652,7 @@
       const label = link.querySelector('.nh48-quick-footer__link-label');
       const text = label ? label.textContent.trim() : link.textContent.trim();
       ensureThumbnailOnLink(link, text);
-    }
+    });
   };
 
   const initializeFooters = async () => {
