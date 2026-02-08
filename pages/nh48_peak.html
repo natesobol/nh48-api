@@ -283,10 +283,21 @@
         background-position:center;
         background-repeat:no-repeat;
         background-color:var(--panel);
-        display:flex;
-        align-items:flex-end;
+        display:grid;
+        grid-template-columns:minmax(0, 1fr) auto;
+        gap:1rem;
+        align-items:start;
         margin:12px 0 16px;
         overflow:hidden;
+      }
+      .peak-hero-content,
+      .peak-tools{
+        position:relative;
+        z-index:1;
+      }
+      .peak-hero-content{
+        display:grid;
+        gap:10px;
       }
       .peak-hero::before{
         content:"";
@@ -296,18 +307,33 @@
         background:linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.65));
       }
       .peak-hero-title{
-        position:relative;
         margin:0;
         font-size:2rem;
-        z-index:1;
         text-shadow:0 4px 10px rgba(0,0,0,0.5);
       }
-      .controls-row{
+      .peak-hero-meta{
+        display:flex;
+        flex-wrap:wrap;
+        gap:10px;
+        font-size:0.9rem;
+      }
+      .peak-tools{
+        display:flex;
+        flex-direction:column;
+        align-items:flex-end;
+        gap:0.5rem;
+      }
+      .peak-tools .button-row{
         display:flex;
         align-items:flex-start;
-        gap:16px 20px;
         flex-wrap:wrap;
-        margin:12px 0 16px;
+        justify-content:flex-end;
+        gap:0.5rem;
+      }
+      .peak-tools-elevation{
+        font-size:0.85rem;
+        color:var(--muted);
+        text-shadow:0 2px 4px rgba(0,0,0,0.35);
       }
       .icon-btn{
         display:inline-flex;
@@ -579,7 +605,7 @@
       }
       .units-control label{
         font-size:0.75rem;
-        color:#ffffff;
+        color:var(--muted);
         text-transform:uppercase;
         letter-spacing:0.8px;
       }
@@ -645,19 +671,6 @@
       .ml-3{
         margin-left:0.75rem;
       }
-      .back-guide{
-        display:inline-flex;
-        align-items:center;
-        gap:6px;
-        color:var(--ink);
-        text-decoration:none;
-        font-weight:800;
-        margin:4px 0 16px;
-        letter-spacing:0.2px;
-      }
-      .back-guide:hover{
-        color:var(--accent);
-      }
       .related-trails{
         margin:16px 0 20px;
         padding:12px 16px;
@@ -686,6 +699,16 @@
       }
       @media(max-width:640px){
         h1{ margin:0 0 12px; font-size:clamp(18px,5vw,24px); }
+      }
+      @media(max-width:900px){
+        .peak-hero{
+          grid-template-columns:1fr;
+        }
+        .peak-tools,
+        .peak-tools .button-row{
+          align-items:flex-start;
+          justify-content:flex-start;
+        }
       }
 
       /* MEDIA / CAROUSEL ---------------------------------------------------- */
@@ -1316,27 +1339,35 @@
         <a href="/catalog" data-i18n="peak.back">Back to NH48 Peak Catalog</a>
       </div>
       <header id="peakHero" class="peak-hero no-print" aria-label="Peak banner">
-        <h1 id="peakHeroTitle" class="peak-hero-title" data-i18n="peak.loading">Loading…</h1>
-      </header>
-      <div class="controls-row no-print">
-        <div class="units-control">
-          <label for="unitsSelect" data-i18n="common.unitsLabel">Units</label>
-          <select id="unitsSelect" data-i18n="common.units" data-i18n-attr="aria-label" aria-label="Select units">
-            <option value="feet" data-i18n="common.unitsFeet">Feet</option>
-          <option value="meters" data-i18n="common.unitsMeters">Meters</option>
-          </select>
+        <div class="peak-hero-content">
+          <h1 id="peakHeroTitle" class="peak-hero-title" data-i18n="peak.loading">Loading…</h1>
+          <div class="peak-hero-meta" aria-label="Peak key details">
+            <span id="peakHeroProminence">—</span>
+            <span id="peakHeroRange">—</span>
+          </div>
         </div>
-        <button id="printBtn" class="icon-btn no-print" title="Print trail sheet">
-          <span class="iconify" data-icon="mdi:printer" aria-hidden="true"></span>
-          <span class="sr-only">Print</span>
-        </button>
-        <button id="shareBtn" class="icon-btn no-print" title="Share social card" aria-label="Share social card">
-          <span class="iconify" data-icon="mdi:share-outline" aria-hidden="true"></span>
-          <span class="sr-only">Share</span>
-        </button>
-      </div>
-      <a class="back-guide no-print" href="/nh-4000-footers-info">NH48 Info</a>
-      <h1 id="peakTitle" class="no-print" data-i18n="peak.loading">Loading…</h1>
+        <div class="peak-tools" aria-label="Peak tools">
+          <div class="button-row">
+            <button id="printBtn" class="icon-btn no-print" data-i18n="common.print" data-i18n-attr="aria-label" aria-label="Print">
+              <span class="iconify" data-icon="mdi:printer" aria-hidden="true"></span>
+              <span class="sr-only" data-i18n="common.print">Print</span>
+            </button>
+            <button id="shareBtn" class="icon-btn no-print" data-i18n="common.share" data-i18n-attr="aria-label" aria-label="Share">
+              <span class="iconify" data-icon="mdi:share-outline" aria-hidden="true"></span>
+              <span class="sr-only" data-i18n="common.share">Share</span>
+            </button>
+            <div class="units-control">
+              <label for="unitsSelect" data-i18n="common.unitsLabel">Units</label>
+              <select id="unitsSelect" data-i18n="common.units" data-i18n-attr="aria-label" aria-label="Select units">
+                <option value="feet" data-i18n="common.unitsFeet">Feet</option>
+                <option value="meters" data-i18n="common.unitsMeters">Meters</option>
+              </select>
+            </div>
+          </div>
+          <div id="peakToolsElevation" class="peak-tools-elevation">—</div>
+        </div>
+      </header>
+      <h1 id="peakTitle" class="sr-only" data-i18n="peak.loading">Loading…</h1>
 
       <!-- MEDIA / CAROUSEL ---------------------------------------------------->
       <div class="media no-print" id="media" hidden>
@@ -1608,6 +1639,21 @@
             heroTitle.removeAttribute('data-i18n');
           }
         }
+      }
+
+      function updateHeroBannerDetails(peak){
+        const promEl = document.getElementById('peakHeroProminence');
+        const rangeEl = document.getElementById('peakHeroRange');
+        const elevEl = document.getElementById('peakToolsElevation');
+        if(!promEl || !rangeEl || !elevEl || !peak) return;
+        const prominence = formatFeetValue(peak['Prominence (ft)']);
+        const range = safeText(peak['Range / Subrange']) || '—';
+        const elevationLabel = t('peak.generalInfo.elevation');
+        const prominenceLabel = t('peak.generalInfo.prominence');
+        const rangeLabel = t('peak.generalInfo.range');
+        promEl.textContent = `${prominenceLabel}: ${prominence}`;
+        rangeEl.textContent = `${rangeLabel}: ${range}`;
+        elevEl.textContent = `${elevationLabel}: ${formatFeetValue(peak['Elevation (ft)'])}`;
       }
 
       function parseCoordinates(coordStr){
@@ -1898,6 +1944,9 @@
         }
         if(persist){
           localStorage.setItem(UNIT_STORAGE_KEY, units);
+        }
+        if(currentPeak){
+          updateHeroBannerDetails(currentPeak);
         }
       }
 
@@ -4342,6 +4391,7 @@
           }
 
           buildPeakDescription(p);
+          updateHeroBannerDetails(p);
           // Build general info panel
           buildGeneralInfo(p);
           buildPrintSummary(p, name);
@@ -4413,6 +4463,7 @@
           updatePeakTitle(name);
           const { canonicalUrl, descriptionText } = updateHeadMeta(currentPeak, currentSlug, name, currentPrimaryMeta);
           buildPeakDescription(currentPeak);
+          updateHeroBannerDetails(currentPeak);
           buildGeneralInfo(currentPeak);
           buildPrintSummary(currentPeak, name);
           const routes = currentPeak['Standard Routes'] || [];
