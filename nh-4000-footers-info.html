@@ -348,27 +348,25 @@
     <script src="/js/quick-browse-footer.js" defer></script>
     <style>
       :root{
-        --bg:#0a0a0a;
-        --panel:#12121a;
+        --background:#0a0a0a;
+        --surface:#12121a;
         --card:#171a22;
-
-        --ink:#ffffff;
-        --muted:#cbd5e1;
-
-        /* softened separators */
-        --stroke: rgba(255, 255, 255, 0.15);
-
-        /* hero card styling */
+        --text:#ffffff;
+        --muted:#c6d1df;
+        --border: rgba(255, 255, 255, 0.15);
+        --primary:#22c55e;
+        --primary-strong:#4ade80;
         --card-gradient: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
         --card-border: rgba(203, 213, 245, 0.12);
         --card-radius: 20px;
         --card-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
 
-        /* green accent */
-        --accent:#22c55e;
-        --accent-strong:#4ade80;
-
-        /* remove/ignore accent-2 entirely */
+        --bg: var(--background);
+        --panel: var(--surface);
+        --ink: var(--text);
+        --stroke: var(--border);
+        --accent: var(--primary);
+        --accent-strong: var(--primary-strong);
       }
       *,
       *::before,
@@ -443,38 +441,10 @@
         background: var(--accent-strong);
         transform: translateY(-1px);
       }
-      .quick-facts {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 12px;
-        margin-top: 18px;
-      }
       .snapshot-title {
         margin: 18px 0 8px;
         font-size: 1.15rem;
         color: var(--ink);
-      }
-      .condensed-facts {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin: 10px 0 18px;
-      }
-      .condensed-facts div {
-        padding: 8px 14px;
-        border-radius: 999px;
-        background: var(--card-gradient);
-        border: 1px solid var(--card-border);
-        font-size: 0.95rem;
-        color: var(--ink);
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        box-shadow: var(--card-shadow);
-      }
-      .condensed-facts strong {
-        font-weight: 700;
-        color: var(--accent-strong);
       }
       .toc {
         margin: 12px 0 0;
@@ -482,54 +452,52 @@
         border: none;
         background: transparent;
       }
-      .toc ul {
+      .toc ol {
         list-style: none;
         padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+        margin: 14px 0 0;
+        counter-reset: toc-items;
+        display: grid;
+        gap: 8px;
+      }
+      .toc li {
+        counter-increment: toc-items;
+      }
+      .toc li::before {
+        content: "🧭 " counter(toc-items) ".";
+        color: var(--primary);
+        font-weight: 700;
+        margin-right: 8px;
       }
       .toc a {
         color: var(--muted);
         text-decoration: none;
-        border-left: 2px solid transparent;
-        padding: 6px 0 6px 12px;
+        padding: 6px 0;
         font-weight: 600;
         font-size: 0.95rem;
       }
       .toc a:hover,
       .toc a:focus-visible {
         color: var(--accent);
-        border-left-color: var(--accent);
         outline: 2px solid rgba(34, 197, 94, 0.4);
         outline-offset: 3px;
         border-radius: 6px;
       }
       .toc a.active {
         color: var(--accent);
-        border-left-color: var(--accent);
       }
-      .toc-difficulty {
-        display: grid;
-        grid-template-columns: minmax(220px, 0.65fr) minmax(0, 1fr);
-        gap: 28px;
-        align-items: start;
-        margin: 24px 0 40px;
+      .toc-layout {
+        margin: 24px 0 28px;
       }
       .toc-panel {
-        position: sticky;
-        top: 80px;
-        align-self: start;
-        max-height: calc(100vh - 100px);
-        overflow-y: auto;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
         padding: 24px;
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(203, 213, 245, 0.12);
-        border-radius: 20px;
       }
       .toc-panel .snapshot-title {
-        margin: 0 0 12px;
+        margin: 0;
+        font-size: clamp(1.35rem, 2.4vw, 1.8rem);
       }
       .hero-card {
         background: var(--card-gradient);
@@ -543,25 +511,33 @@
         border-color: rgba(34, 197, 94, 0.3);
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
       }
-      .fact-card {
-        background: var(--card-gradient);
-        border: 1px solid var(--card-border);
-        padding: 14px;
-        border-radius: var(--card-radius);
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
+      main.wrap {
+        counter-reset: section-count 1;
       }
-      .fact-label {
-        text-transform: uppercase;
-        letter-spacing: 0.9px;
+      .section {
+        margin: 28px 0;
+      }
+      .section-banner {
+        background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(17, 24, 39, 0.86));
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 20px;
+        margin-bottom: 14px;
+      }
+      .section-banner h2 {
+        margin: 0;
+        font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+        font-weight: 500;
+      }
+      .section-banner h2::before {
+        counter-increment: section-count;
+        content: counter(section-count) ". ";
+        color: var(--primary);
         font-weight: 700;
-        color: #c8f6db;
-        font-size: 12px;
       }
-      .fact-value {
-        font-size: 22px;
-        font-weight: 800;
+      .section-banner h2 a {
+        color: inherit;
+        text-decoration: none;
       }
       section {
         margin: 24px 0 20px;
@@ -577,7 +553,7 @@
       }
       .content-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: 1fr;
         gap: 18px;
         align-items: start;
       }
@@ -715,7 +691,9 @@
         background: var(--card-gradient);
         border: 1px solid var(--card-border);
         border-radius: var(--card-radius);
-        padding: 12px;
+        padding: 16px;
+        width: 100%;
+        min-height: 400px;
       }
       #peakMap {
         width: 100%;
@@ -741,7 +719,7 @@
       }
       .range-list {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        grid-template-columns: 1fr;
         gap: 12px;
         margin-top: 8px;
       }
@@ -807,7 +785,7 @@
 
       .effort-details {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: 1fr;
         gap: 20px;
       }
       .hero-effort {
@@ -849,7 +827,7 @@
       }
       .difficulty-guide .tiers-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: 1fr;
         gap: 14px;
       }
       .tier-badge {
@@ -968,7 +946,7 @@
       }
       .trip-combos .combos-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: 1fr;
         gap: 20px;
       }
       .combo-card {
@@ -1044,7 +1022,7 @@
       }
       .risk-stats .risk-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        grid-template-columns: 1fr;
         gap: 20px;
       }
       .risk-stats .risk-box {
@@ -1094,7 +1072,7 @@
       }
       .strategy-tiles {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        grid-template-columns: 1fr;
         gap: 20px;
       }
       .strategy-tile {
@@ -1141,12 +1119,8 @@
         header.hero {
           grid-template-columns: 1fr;
         }
-        .toc-difficulty {
-          grid-template-columns: 1fr;
-        }
-        .toc-panel {
-          position: static;
-          max-height: none;
+        .toc-layout {
+          margin-top: 16px;
         }
         .official-layout {
           grid-template-columns: 1fr;
@@ -1290,54 +1264,16 @@
         </details>
       </section>
 
-      <section id="stats-overview" aria-label="NH48 quick stats">
-        <h2 class="snapshot-title">NH48 Snapshot</h2>
-        <div class="quick-facts condensed-facts" aria-label="NH48 Snapshot">
-          <div><strong>48 Peaks</strong></div>
-          <div><strong>~250–500 mi trails</strong></div>
-          <div><strong>~170K ft gain (≈6× Everest)</strong></div>
-          <div><strong>~20–30 typical trips</strong></div>
-          <div><strong>1–4 years typical</strong></div>
-        </div>
-        <div class="quick-facts" id="quickFacts">
-          <div class="fact-card hero-card">
-            <span class="fact-label">Total Peaks</span>
-            <span class="fact-value" id="factCount">48</span>
-            <small class="muted">AMC-recognized 4,000-footers (confirm for updates)</small>
-          </div>
-          <div class="fact-card hero-card">
-            <span class="fact-label">Total Trail Distance</span>
-            <span class="fact-value">~350 mi</span>
-            <small class="muted">Ranges ~250–500 miles depending on groupings</small>
-          </div>
-          <div class="fact-card hero-card">
-            <span class="fact-label">Highest Summit</span>
-            <span class="fact-value" id="factHigh">Mount Washington – 6,288 ft</span>
-            <small class="muted">Presidential Range</small>
-          </div>
-          <div class="fact-card hero-card">
-            <span class="fact-label">Cumulative Elevation</span>
-            <span class="fact-value" id="factTotal">177,546 ft</span>
-            <small class="muted">Sum of all summit elevations</small>
-          </div>
-          <div class="fact-card hero-card">
-            <span class="fact-label">API Ready</span>
-            <span class="fact-value">JSON, GeoJSON, Images</span>
-            <small class="muted">Open data for maps, apps, and trackers</small>
-          </div>
-        </div>
-      </section>
-
-      <section class="toc-difficulty" aria-label="Table of contents and difficulty guide">
-        <div class="toc-panel">
+      <section class="toc-layout" aria-label="Table of contents">
+        <div class="toc-panel panel">
           <h2 class="snapshot-title">Table of Contents</h2>
           <nav class="toc" aria-label="Table of contents">
-            <ul>
+            <ol>
+              <li><a href="#range-map" aria-label="Range map section">Range Map</a></li>
               <li><a href="#day-trip-groupings" aria-label="Day trip groupings section">Day Trip Groupings</a></li>
               <li><a href="#what-is-nh48" aria-label="What is the NH48 section">What is the NH48?</a></li>
+              <li><a href="#peak-difficulty-guide" aria-label="Difficulty guide section">Difficulty Guide</a></li>
               <li><a href="#official-peak-list" aria-label="Official peak list section">Official Peak List</a></li>
-              <li><a href="#peak-difficulty-guide" aria-label="Difficulty filter section">Difficulty Filters</a></li>
-              <li><a href="#range-map" aria-label="Range map section">Range Map</a></li>
               <li><a href="#difficulty-strategy" aria-label="Peak strategy section">Peak Strategy</a></li>
               <li><a href="#risk-preparedness" aria-label="Risk and preparedness section">Risk &amp; Preparedness</a></li>
               <li><a href="#completion-strategies" aria-label="Finish strategies section">Finish Strategies</a></li>
@@ -1345,14 +1281,61 @@
               <li><a href="#history" aria-label="History section">History</a></li>
               <li><a href="#data-api" aria-label="Data and API section">Data &amp; API</a></li>
               <li><a href="#faq" aria-label="Frequently asked questions section">FAQ</a></li>
-            </ul>
+            </ol>
           </nav>
         </div>
       </section>
 
+      <section class="section" id="range-map" aria-label="Range map">
+        <div class="section-banner">
+          <h2><a href="#range-map">Range Map</a></h2>
+        </div>
+        <div class="panel hero-card map-shell">
+          <p>Use range cards to focus the list and map together for faster planning.</p>
+          <div class="range-list" id="rangeList"></div>
+          <svg id="peakMap" role="img" aria-label="Map of all 48 New Hampshire 4,000 foot peaks"></svg>
+          <div class="map-legend">
+            <span><span class="legend-dot" style="background:#22c55e"></span><span id="mapLegendLabel">NH48 Summits (All ranges)</span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="peak-difficulty-guide" aria-label="Peak Difficulty Guide">
+        <div class="section-banner">
+          <h2><a href="#peak-difficulty-guide">Difficulty Guide</a></h2>
+        </div>
+        <div class="panel difficulty-guide">
+          <p>Use these tier buttons to prioritize one difficulty level in the sortable table.</p>
+          <div class="tiers-container">
+            <button class="tier-badge tier-beginner" type="button" data-difficulty="beginner">
+              <span class="tier-count">~10</span>
+              <span class="tier-name">Beginner Friendly</span>
+              <span class="tier-examples">Tecumseh, Pierce, Jackson, Osceola, Waumbek</span>
+            </button>
+            <button class="tier-badge tier-moderate" type="button" data-difficulty="moderate">
+              <span class="tier-count">~15</span>
+              <span class="tier-name">Moderate</span>
+              <span class="tier-examples">Hancocks, Cabot, Galehead, Passaconaway</span>
+            </button>
+            <button class="tier-badge tier-challenging" type="button" data-difficulty="challenging">
+              <span class="tier-count">~15</span>
+              <span class="tier-name">Challenging</span>
+              <span class="tier-examples">Lafayette, Lincoln, Carrigain, Wildcats</span>
+            </button>
+            <button class="tier-badge tier-severe" type="button" data-difficulty="severe">
+              <span class="tier-count">~8</span>
+              <span class="tier-name">Alpine / Exposed</span>
+              <span class="tier-examples">Washington, Adams, Jefferson, Madison, Bonds</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
       <!-- Day Trip Groupings Section - Migrated from homepage -->
-      <section class="trip-combos" id="day-trip-groupings" aria-label="Popular Day Trip Groupings">
-        <h2>Popular Day Trip Groupings</h2>
+      <section class="section trip-combos" id="day-trip-groupings" aria-label="Popular Day Trip Groupings">
+        <div class="section-banner">
+          <h2><a href="#day-trip-groupings">Popular Day Trip Groupings</a></h2>
+        </div>
         <p>Maximize your summit count with these classic multi-peak routes. Experienced hikers often complete multiple peaks per trip.</p>
         
         <div class="combos-grid">
@@ -1428,8 +1411,10 @@
         </div>
       </section>
 
-      <section id="what-is-nh48">
-        <h2>What is the NH48?</h2>
+      <section class="section" id="what-is-nh48">
+        <div class="section-banner">
+          <h2><a href="#what-is-nh48">What is the NH48?</a></h2>
+        </div>
         <p>
           The New Hampshire 48 refers to mountains that meet the AMC Four-Thousand-Footer Club standard of at least 4,000 feet above sea level and 200 feet of topographic prominence. NH48.info is not affiliated with the AMC; this overview summarizes information gathered from public references and hiker contributions.
         </p>
@@ -1438,8 +1423,10 @@
         </p>
       </section>
 
-      <section id="official-peak-list">
-        <h2>Current NH 4,000-Footer List</h2>
+      <section class="section" id="official-peak-list">
+        <div class="section-banner">
+          <h2><a href="#official-peak-list">Current NH 4,000-Footer List</a></h2>
+        </div>
         <p>
           Peaks shown here reflect the summits recognized by the AMC at the time of publication. Tap a range filter to see the peaks clustered by geography, or click a summit name to open its detailed page. Each row pulls live attributes from the NH48 manifest so the table stays synchronized with the photo-rich peak templates.
         </p>
@@ -1474,46 +1461,13 @@
               </table>
             </div>
           </div>
-          <section class="difficulty-guide" id="peak-difficulty-guide" aria-label="Peak Difficulty Guide">
-            <h2>Difficulty Filters</h2>
-            <p>Use these tier buttons to prioritize one difficulty level in the sortable table.</p>
-            <div class="tiers-container">
-              <button class="tier-badge tier-beginner" type="button" data-difficulty="beginner">
-                <span class="tier-count">~10</span>
-                <span class="tier-name">Beginner Friendly</span>
-                <span class="tier-examples">Tecumseh, Pierce, Jackson, Osceola, Waumbek</span>
-              </button>
-              <button class="tier-badge tier-moderate" type="button" data-difficulty="moderate">
-                <span class="tier-count">~15</span>
-                <span class="tier-name">Moderate</span>
-                <span class="tier-examples">Hancocks, Cabot, Galehead, Passaconaway</span>
-              </button>
-              <button class="tier-badge tier-challenging" type="button" data-difficulty="challenging">
-                <span class="tier-count">~15</span>
-                <span class="tier-name">Challenging</span>
-                <span class="tier-examples">Lafayette, Lincoln, Carrigain, Wildcats</span>
-              </button>
-              <button class="tier-badge tier-severe" type="button" data-difficulty="severe">
-                <span class="tier-count">~8</span>
-                <span class="tier-name">Alpine / Exposed</span>
-                <span class="tier-examples">Washington, Adams, Jefferson, Madison, Bonds</span>
-              </button>
-            </div>
-          </section>
-          <div class="panel hero-card map-shell" id="range-map">
-            <h2>Range Map</h2>
-            <p>Use range cards to focus the list and map together for faster planning.</p>
-            <div class="range-list" id="rangeList"></div>
-            <svg id="peakMap" role="img" aria-label="Map of all 48 New Hampshire 4,000 foot peaks"></svg>
-            <div class="map-legend">
-              <span><span class="legend-dot" style="background:#22c55e"></span><span id="mapLegendLabel">NH48 Summits (All ranges)</span></span>
-            </div>
-          </div>
         </div>
       </section>
 
-      <section id="difficulty-strategy">
-        <h2>Peak Strategy Highlights</h2>
+      <section class="section" id="difficulty-strategy">
+        <div class="section-banner">
+          <h2><a href="#difficulty-strategy">Peak Strategy Highlights</a></h2>
+        </div>
         <p>
           Difficulty is subjective and conditions change quickly. Use the table filters above for tier sorting, then apply these route-planning examples as conditions, weather, and experience allow.
         </p>
@@ -1539,8 +1493,10 @@
 
 
       <!-- Risk & Preparedness Section - Migrated from homepage -->
-      <section class="risk-stats" id="risk-preparedness" aria-label="Risk Factors and Preparedness">
-        <h2>Risk Factors &amp; Preparedness</h2>
+      <section class="section risk-stats" id="risk-preparedness" aria-label="Risk Factors and Preparedness">
+        <div class="section-banner">
+          <h2><a href="#risk-preparedness">Risk Factors &amp; Preparedness</a></h2>
+        </div>
         <p>Weather changes quickly in the White Mountains; preparation is essential and rescue can take hours.</p>
         
         <div class="risk-grid stacked-grid">
@@ -1571,8 +1527,10 @@
       </section>
 
       <!-- Finish Strategies Section - Migrated from homepage -->
-      <section class="strategy-section" id="completion-strategies" aria-label="Finish Strategies">
-        <h2>Choose Your Finish Strategy</h2>
+      <section class="section strategy-section" id="completion-strategies" aria-label="Finish Strategies">
+        <div class="section-banner">
+          <h2><a href="#completion-strategies">Choose Your Finish Strategy</a></h2>
+        </div>
         <p>There's no single way to finish the list - pick the approach that matches your lifestyle and goals.</p>
         
         <div class="strategy-tiles stacked-grid">
@@ -1599,8 +1557,10 @@
         </div>
       </section>
 
-      <section id="seasonal-considerations">
-        <h2>Seasonal Considerations</h2>
+      <section class="section" id="seasonal-considerations">
+        <div class="section-banner">
+          <h2><a href="#seasonal-considerations">Seasonal Considerations</a></h2>
+        </div>
         <p>
           Strategies shift every year as trailheads, roads, and weather patterns change. The AMC tracks winter finishers separately because road closures, avalanche zones, and snowpack reshape the effort. Use the toggle to switch between summer and winter planning and verify access and forecasts with official sources.
         </p>
@@ -1621,8 +1581,10 @@
         </div>
       </section>
 
-      <section id="history">
-        <h2>History &amp; Rules Recap</h2>
+      <section class="section" id="history">
+        <div class="section-banner">
+          <h2><a href="#history">History &amp; Rules Recap</a></h2>
+        </div>
         <p>
           The AMC Four-Thousand-Footer Club launched officially in 1957 to encourage hikers into the deeper corners of the White Mountain National Forest. According to AMC guidelines, a peak must have 200 feet of prominence from any connecting col. Human-powered ascents are expected—using the Cog Railway or Cannon’s tramway does not meet the guidelines.
         </p>
@@ -1632,8 +1594,10 @@
         <p><a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>.</p>
       </section>
 
-      <section id="data-api">
-        <h2>Data &amp; API Resources</h2>
+      <section class="section" id="data-api">
+        <div class="section-banner">
+          <h2><a href="#data-api">Data &amp; API Resources</a></h2>
+        </div>
         <p>
           NH48.info exposes every peak as JSON so developers can build their own dashboards, weather overlays, or GPX generators. These community tools may contain inaccuracies and should be verified before use for navigation. The manifest powering this page includes elevations, coordinates, route notes, exposure ratings, and captioned photography with alt text. Grab the files directly or mirror them through a CDN.
         </p>
@@ -1648,8 +1612,10 @@
         <a class="cta" href="https://github.com/natesobol/nh48-api">Use the API</a>
       </section>
 
-      <section id="faq">
-        <h2>Frequently Asked Questions</h2>
+      <section class="section" id="faq">
+        <div class="section-banner">
+          <h2><a href="#faq">Frequently Asked Questions</a></h2>
+        </div>
         <p>
           These responses summarize common hiker opinions and may not reflect official AMC guidance. For definitive answers, <a href="https://www.amc4000footer.org/faq" target="_blank" rel="noopener">visit the official AMC FAQ</a>.
         </p>
@@ -1850,7 +1816,7 @@
             renderRangeFilters();
             renderRangeList();
             renderPeakTable();
-            renderMap();
+            scheduleMapRender();
           });
           container.appendChild(btn);
         });
@@ -1882,7 +1848,7 @@
             renderRangeFilters();
             renderRangeList();
             renderPeakTable();
-            renderMap();
+            scheduleMapRender();
             window.scrollTo({ top: document.getElementById('official-peak-list').offsetTop - 60, behavior: 'smooth' });
           });
           title.appendChild(h);
@@ -1955,19 +1921,15 @@
         });
         updateSortIndicators();
       }
+      let mapRenderQueued = false;
 
-      function renderQuickFacts() {
-        if (!peaks.length) {
-          document.getElementById('factTotal').textContent = 'Unavailable';
-          document.getElementById('factHigh').textContent = 'Unavailable';
-          return;
-        }
-        const totalElevation = peaks.reduce((sum, p) => sum + (p.elevation || 0), 0);
-        document.getElementById('factTotal').textContent = `${totalElevation.toLocaleString()} ft`;
-        const highest = [...peaks].sort((a, b) => (b.elevation || 0) - (a.elevation || 0))[0];
-        if (highest) {
-          document.getElementById('factHigh').textContent = `${highest.name} – ${highest.elevation?.toLocaleString() || '—'} ft`;
-        }
+      function scheduleMapRender() {
+        if (mapRenderQueued) return;
+        mapRenderQueued = true;
+        requestAnimationFrame(() => {
+          mapRenderQueued = false;
+          renderMap();
+        });
       }
 
       function renderMap() {
@@ -2105,8 +2067,6 @@
 
       function renderDataLoadError(message) {
         document.getElementById('peakTableBody').innerHTML = `<tr><td colspan="5">${message}</td></tr>`;
-        document.getElementById('factTotal').textContent = 'Unavailable';
-        document.getElementById('factHigh').textContent = 'Unavailable';
         const map = document.getElementById('peakMap');
         map.innerHTML = '<text x="10" y="30" fill="#cbd5e1">Map data unavailable.</text>';
       }
@@ -2237,7 +2197,7 @@
             renderRangeFilters();
             renderRangeList();
             renderPeakTable();
-            renderMap();
+            scheduleMapRender();
             const list = document.getElementById('official-peak-list');
             if (list) {
               list.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2250,9 +2210,8 @@
           .then((data) => {
             hydratePeaks(data);
             renderPeakTable();
-            renderQuickFacts();
             renderItemListSchema();
-            renderMap();
+            scheduleMapRender();
           })
           .catch((err) => {
             console.error('Failed to load peak data', err);
@@ -2262,6 +2221,16 @@
 
       document.addEventListener('DOMContentLoaded', () => {
         setupTocObserver();
+        const mapSection = document.getElementById('range-map');
+        if (mapSection) {
+          const mapObserver = new IntersectionObserver((entries, observer) => {
+            if (entries.some((entry) => entry.isIntersecting)) {
+              scheduleMapRender();
+              observer.disconnect();
+            }
+          }, { threshold: 0.2 });
+          mapObserver.observe(mapSection);
+        }
         loadRanges().finally(() => {
           init();
         });
