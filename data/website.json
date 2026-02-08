@@ -5,12 +5,22 @@
   "name": "NH48pics",
   "url": "https://nh48.info/",
   "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
-  "inLanguage": ["en", "fr"],
-  "publisher": { "@id": "https://nh48.info/#organization" },
-  "copyrightHolder": { "@id": "https://nh48.info/#organization" },
+  "sameAs": [
+    "https://www.instagram.com/nate_dumps_pics/"
+  ],
+  "inLanguage": [
+    "en",
+    "fr"
+  ],
+  "publisher": {
+    "@id": "https://nh48.info/#organization"
+  },
+  "copyrightHolder": {
+    "@id": "https://nh48.info/#organization"
+  },
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://nh48.info/catalog?q={search_term_string}",
+    "target": "https://nh48.info/search?q={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }

@@ -15,6 +15,10 @@
 // page becomes indexable while still delivering the full SPA
 // experience once the JS hydrates on the client.
 
+let globalSchemaCache = null;
+let creativeWorksCache = null;
+let collectionsCache = null;
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -32,10 +36,17 @@ export default {
     const RAW_BUILD_META_URL = `${RAW_BASE}/build-meta.json`;
     const RAW_MOUNTAIN_DESCRIPTIONS_URL = `${RAW_BASE}/data/nh48/mountain-descriptions.txt`;
     const RAW_SAME_AS_URL = `${RAW_BASE}/data/sameAs.json`;
+    const RAW_ORGANIZATION_URL = `${RAW_BASE}/data/organization.json`;
+    const RAW_PERSON_URL = `${RAW_BASE}/data/person.json`;
+    const RAW_WEBSITE_URL = `${RAW_BASE}/data/website.json`;
+    const RAW_CREATIVEWORKS_URL = `${RAW_BASE}/data/creativeWorks.json`;
+    const RAW_COLLECTIONS_URL = `${RAW_BASE}/data/collections.json`;
     const EN_TRANS_URL = `${RAW_BASE}/i18n/en.json`;
     const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
     const SITE_NAME = url.hostname;
     const DEFAULT_IMAGE = `${SITE}/nh48-preview.png`;
+    const DEFAULT_LOGO = `${SITE}/nh48API_logo.png`;
+    const SITE_URL = `${SITE}/`;
     const howkerDataRoutes = {
       '/data/howker-ridge-status.geojson': {
         key: 'howker-ridge-status.geojson',
@@ -58,6 +69,7 @@ export default {
       acquireLicensePageUrl: 'https://nh48.info/contact'
     };
     const CATALOG_IMAGE_LICENSE_URL = 'https://creativecommons.org/licenses/by-nc-nd/4.0/';
+    const INSTAGRAM_URL = 'https://www.instagram.com/nate_dumps_pics/';
 
     const buildMeta = await fetchBuildMeta(RAW_BUILD_META_URL);
     const buildDate = buildMeta?.buildDate || '';
@@ -435,6 +447,16 @@ export default {
 
     if (pathname === '/projects/plant-map' || pathname === '/projects/plant-map/') {
       const canonical = `${SITE}${pathname}`;
+      const creativeWorks = await loadCreativeWorks();
+      const plantMapCreativeWork = buildCreativeWorkNode({
+        entry: creativeWorks['projects/plant-map'],
+        fallbackType: 'Article',
+        id: `${canonical}#article`,
+        url: canonical,
+        name: 'Howker Ridge Plant Log Map',
+        description: 'Interactive map to explore and record alpine plant observations along the Howker Ridge Trail.',
+        thumbnailUrl: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg'
+      });
       return serveTemplatePage({
         templatePath: 'pages/projects/plant-map.html',
         pathname,
@@ -447,7 +469,7 @@ export default {
           imageAlt: 'Mount Madison ridge view with alpine terrain and distant peaks',
           ogType: 'website'
         },
-        jsonLd: []
+        jsonLd: [plantMapCreativeWork]
       });
     }
 
@@ -663,32 +685,32 @@ export default {
         return new Response('Internal Server Error', { status: 500 });
       }
     }
-    
+
     // Check if this is a static file request (but not an SSR route)
     const hasStaticExtension = staticExtensions.some(ext => pathname.toLowerCase().endsWith(ext));
     const hasStaticPrefix = staticPrefixes.some(prefix => pathname.startsWith(prefix));
     const isStaticFile = staticFiles.includes(pathname);
-    const isSSRRoute = pathname === '/' || pathname === '/fr' || pathname === '/fr/' || 
-                       pathname.startsWith('/peak/') || pathname.startsWith('/fr/peak/') ||
-                       pathname.startsWith('/peaks/') || pathname.startsWith('/fr/peaks/') ||
-                       pathname.startsWith('/guest/') || pathname.startsWith('/fr/guest/') ||
-                       pathname === '/catalog' || pathname === '/catalog/' ||
-                       pathname === '/fr/catalog' || pathname === '/fr/catalog/' ||
-                       pathname === '/trails' || pathname === '/trails/' ||
-                       pathname === '/fr/trails' || pathname === '/fr/trails/' ||
-                       pathname === '/long-trails' || pathname === '/long-trails/' ||
-                       pathname === '/fr/long-trails' || pathname === '/fr/long-trails/' ||
-                       pathname === '/dataset' || pathname === '/dataset/' ||
-                       pathname.startsWith('/dataset/') || pathname.startsWith('/fr/dataset/') ||
-               pathname === '/plant-catalog' || pathname === '/plant-catalog/' ||
-               pathname === '/projects/plant-map' || pathname === '/projects/plant-map/' ||
-               pathname === '/projects/hrt-info' || pathname === '/projects/hrt-info/' ||
-               pathname === '/howker-ridge' || pathname === '/howker-ridge/' ||
-               pathname.startsWith('/howker-ridge/poi') ||
-               pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
-               pathname === '/nh-4000-footers-info.html' || pathname === '/nh-4000-footers-info' ||
-                       pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant)/) !== null;
-    
+    const isSSRRoute = pathname === '/' || pathname === '/fr' || pathname === '/fr/' ||
+      pathname.startsWith('/peak/') || pathname.startsWith('/fr/peak/') ||
+      pathname.startsWith('/peaks/') || pathname.startsWith('/fr/peaks/') ||
+      pathname.startsWith('/guest/') || pathname.startsWith('/fr/guest/') ||
+      pathname === '/catalog' || pathname === '/catalog/' ||
+      pathname === '/fr/catalog' || pathname === '/fr/catalog/' ||
+      pathname === '/trails' || pathname === '/trails/' ||
+      pathname === '/fr/trails' || pathname === '/fr/trails/' ||
+      pathname === '/long-trails' || pathname === '/long-trails/' ||
+      pathname === '/fr/long-trails' || pathname === '/fr/long-trails/' ||
+      pathname === '/dataset' || pathname === '/dataset/' ||
+      pathname.startsWith('/dataset/') || pathname.startsWith('/fr/dataset/') ||
+      pathname === '/plant-catalog' || pathname === '/plant-catalog/' ||
+      pathname === '/projects/plant-map' || pathname === '/projects/plant-map/' ||
+      pathname === '/projects/hrt-info' || pathname === '/projects/hrt-info/' ||
+      pathname === '/howker-ridge' || pathname === '/howker-ridge/' ||
+      pathname.startsWith('/howker-ridge/poi') ||
+      pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
+      pathname === '/nh-4000-footers-info.html' || pathname === '/nh-4000-footers-info' ||
+      pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant)/) !== null;
+
     // Serve static files from GitHub (but not SSR routes even if they have extensions)
     if ((hasStaticPrefix || isStaticFile || hasStaticExtension) && !isSSRRoute) {
       const githubUrl = `${RAW_BASE}${pathname}`;
@@ -697,12 +719,12 @@ export default {
           headers: { 'User-Agent': 'NH48-SSR/1.0' },
           cf: { cacheTtl: 0, cacheEverything: false }
         });
-        
+
         if (!res.ok) {
           console.log(`[Static] Not found: ${githubUrl} (${res.status})`);
           return new Response('Not Found', { status: 404 });
         }
-        
+
         // Determine content type based on file extension
         const ext = pathname.split('.').pop().toLowerCase();
         const contentTypes = {
@@ -725,10 +747,10 @@ export default {
           'webmanifest': 'application/manifest+json',
           'html': 'text/html; charset=utf-8'
         };
-        
+
         const contentType = contentTypes[ext] || 'application/octet-stream';
         const body = await res.arrayBuffer();
-        
+
         return new Response(body, {
           status: 200,
           headers: {
@@ -753,12 +775,12 @@ export default {
     //   /guest/{slug}, /fr/guest/{slug} (legacy)
     //   /peaks/{slug}, /fr/peaks/{slug} (alternative)
     const isFrench = parts[0] === 'fr';
-    
+
     // Find slug position - look for peak-related keywords
     const peakKeywords = ['peak', 'peaks', 'guest'];
     let slugIdx = -1;
     let routeType = null;
-    
+
     for (let i = 0; i < parts.length; i++) {
       if (peakKeywords.includes(parts[i])) {
         slugIdx = i + 1;
@@ -766,12 +788,12 @@ export default {
         break;
       }
     }
-    
+
     // Fallback to default position if no keyword found
     if (slugIdx === -1) {
       slugIdx = isFrench ? 2 : 1;
     }
-    
+
     const slug = parts[slugIdx] || '';
     const lang = isFrench ? 'fr' : 'en';
     const pathNoLocale = isFrench ? `/${parts.slice(1).join('/')}` || '/' : pathname;
@@ -801,7 +823,7 @@ export default {
         if (res.ok) {
           return await res.json();
         }
-      } catch (_) {}
+      } catch (_) { }
       return {};
     }
 
@@ -878,7 +900,7 @@ export default {
             }
           });
         }
-      } catch (_) {}
+      } catch (_) { }
       return map;
     }
 
@@ -892,7 +914,7 @@ export default {
             peaks = JSON.parse(await obj.text());
           }
         }
-      } catch (_) {}
+      } catch (_) { }
       if (!peaks) {
         // Fallback to GitHub raw URL (not SITE, since there's no origin)
         try {
@@ -910,7 +932,7 @@ export default {
 
     async function loadPartial(name, url) {
       try {
-        const res = await fetch(url, { 
+        const res = await fetch(url, {
           headers: { 'User-Agent': 'NH48-SSR/1.0' },
           cf: { cacheTtl: 0, cacheEverything: false }
         });
@@ -931,9 +953,248 @@ export default {
       return await res.json();
     }
 
+    function ensureInstagramSameAs(node) {
+      if (!node || typeof node !== 'object') return node;
+      const type = node['@type'];
+      const types = Array.isArray(type) ? type : [type];
+      if (!types.includes('Organization') && !types.includes('Person') && !types.includes('WebSite')) {
+        return node;
+      }
+      const sameAs = Array.isArray(node.sameAs)
+        ? [...node.sameAs]
+        : node.sameAs
+          ? [node.sameAs]
+          : [];
+      if (!sameAs.includes(INSTAGRAM_URL)) {
+        sameAs.unshift(INSTAGRAM_URL);
+      }
+      return { ...node, sameAs };
+    }
+
+    function collectJsonLdIds(block, ids) {
+      if (!block || typeof block !== 'object') return;
+      if (Array.isArray(block['@graph'])) {
+        block['@graph'].forEach((node) => collectJsonLdIds(node, ids));
+        return;
+      }
+      const nodeId = typeof block['@id'] === 'string' ? block['@id'] : '';
+      if (nodeId) ids.add(nodeId);
+    }
+
+    function mergeJsonLdBlocks(blocks, globalNodes) {
+      const merged = Array.isArray(blocks) ? [...blocks] : [];
+      const ids = new Set();
+      merged.forEach((block) => collectJsonLdIds(block, ids));
+
+      (globalNodes || []).forEach((node) => {
+        if (!node || typeof node !== 'object') return;
+        const nodeId = typeof node['@id'] === 'string' ? node['@id'] : '';
+        if (nodeId && ids.has(nodeId)) return;
+        merged.push(node);
+        if (nodeId) ids.add(nodeId);
+      });
+      return merged;
+    }
+
+    async function loadGlobalSchemaNodes() {
+      if (globalSchemaCache) return globalSchemaCache;
+
+      const [orgData, personData, websiteData] = await Promise.all([
+        loadJsonCache('schema:org', RAW_ORGANIZATION_URL),
+        loadJsonCache('schema:person', RAW_PERSON_URL),
+        loadJsonCache('schema:website', RAW_WEBSITE_URL)
+      ]);
+
+      const fallbackOrganization = {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        '@id': `${SITE}/#organization`,
+        name: 'NH48pics',
+        url: `${SITE}/`,
+        logo: {
+          '@type': 'ImageObject',
+          url: DEFAULT_LOGO,
+          width: 512,
+          height: 512
+        },
+        sameAs: [
+          INSTAGRAM_URL,
+          'https://www.facebook.com/natedumpspics',
+          'https://www.etsy.com/shop/NH48pics'
+        ]
+      };
+      const fallbackPerson = {
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        '@id': `${SITE}/#person-nathan-sobol`,
+        name: 'Nathan Sobol',
+        url: `${SITE}/about/`,
+        sameAs: [
+          INSTAGRAM_URL,
+          'https://www.facebook.com/natedumpspics',
+          'https://www.etsy.com/shop/NH48pics'
+        ],
+        worksFor: { '@id': `${SITE}/#organization` }
+      };
+      const fallbackWebsite = {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        '@id': `${SITE}/#website`,
+        name: 'NH48pics',
+        url: `${SITE}/`,
+        sameAs: [INSTAGRAM_URL],
+        publisher: { '@id': `${SITE}/#organization` }
+      };
+
+      const nodes = [
+        ensureInstagramSameAs(orgData || fallbackOrganization),
+        ensureInstagramSameAs(personData || fallbackPerson),
+        ensureInstagramSameAs(websiteData || fallbackWebsite)
+      ].filter(Boolean);
+
+      globalSchemaCache = nodes;
+      return nodes;
+    }
+
+    async function loadCreativeWorks() {
+      if (creativeWorksCache) return creativeWorksCache;
+      const data = await loadJsonCache('creativeWorks', RAW_CREATIVEWORKS_URL);
+      creativeWorksCache = data && typeof data === 'object' ? data : {};
+      return creativeWorksCache;
+    }
+
+    async function loadCollections() {
+      if (collectionsCache) return collectionsCache;
+      const data = await loadJsonCache('collections', RAW_COLLECTIONS_URL);
+      collectionsCache = data && typeof data === 'object' ? data : {};
+      return collectionsCache;
+    }
+
+    function buildCreativeSameAs() {
+      return [
+        SITE_URL,
+        INSTAGRAM_URL,
+        'https://www.facebook.com/natedumpspics',
+        'https://www.etsy.com/shop/NH48pics'
+      ];
+    }
+
+    function buildCreativeWorkNode({
+      entry,
+      fallbackType,
+      id,
+      url,
+      name,
+      description,
+      thumbnailUrl,
+      associatedMedia,
+      datePublished,
+      imageObjects
+    }) {
+      const type = entry?.type || fallbackType || 'CreativeWork';
+      const normalizedType = Array.isArray(type) ? type : [type];
+      const isHowTo = normalizedType.includes('HowTo') || normalizedType.includes('EducationalCourse');
+      const isArticle = normalizedType.includes('BlogPosting') || normalizedType.includes('Article');
+      const isPhotograph = normalizedType.includes('Photograph');
+      const imageRef = (() => {
+        if (entry?.imageUrl) return entry.imageUrl;
+        if (entry?.thumbnail) return entry.thumbnail;
+        if (!entry?.imageSlug || !Array.isArray(imageObjects)) return undefined;
+        const match = imageObjects.find((img) => {
+          const imgId = typeof img?.['@id'] === 'string' ? img['@id'] : '';
+          const imgUrl = typeof img?.url === 'string' ? img.url : '';
+          return imgId.includes(entry.imageSlug) || imgUrl.includes(entry.imageSlug);
+        });
+        return match?.['@id'] ? { '@id': match['@id'] } : match?.url;
+      })();
+      const creativeType = normalizedType.includes('CreativeWork')
+        ? normalizedType
+        : ['CreativeWork', ...normalizedType];
+      const node = {
+        '@context': 'https://schema.org',
+        '@type': isHowTo || isArticle ? normalizedType : creativeType,
+        '@id': id,
+        url,
+        name: entry?.name || name,
+        headline: isArticle ? (entry?.name || name) : undefined,
+        description: entry?.description || description,
+        thumbnailUrl: entry?.thumbnail || thumbnailUrl,
+        datePublished: entry?.datePublished || datePublished,
+        publisher: { '@id': `${SITE}/#organization` },
+        creator: { '@id': `${SITE}/#person-nathan-sobol` },
+        sameAs: buildCreativeSameAs(),
+        image: imageRef || undefined,
+        mainEntityOfPage: { '@id': url },
+        isPartOf: { '@id': `${SITE}/#organization` },
+        associatedMedia: associatedMedia?.length ? associatedMedia : undefined
+      };
+      if (isHowTo) {
+        const steps = Array.isArray(entry?.steps) ? entry.steps : [];
+        node.step = steps.map((step, index) => ({
+          '@type': 'HowToStep',
+          name: String(step),
+          position: index + 1
+        }));
+      }
+      if (isPhotograph) {
+        node['@type'] = ['CreativeWork', 'Photograph'];
+      }
+      Object.keys(node).forEach((key) => node[key] === undefined && delete node[key]);
+      return node;
+    }
+
+    function buildCollectionObject({ entry, canonicalUrl, items }) {
+      if (!entry || typeof entry !== 'object') return null;
+      const hasPart = Array.isArray(entry.items) && entry.items.length
+        ? entry.items.map((slug) => ({ '@id': `${SITE}/${slug}` }))
+        : items;
+      if (!hasPart || !hasPart.length) return null;
+      return {
+        '@context': 'https://schema.org',
+        '@type': ['Collection', 'ImageGallery'],
+        '@id': `${canonicalUrl}#collection`,
+        name: entry.name,
+        description: entry.description,
+        hasPart,
+        publisher: { '@id': `${SITE}/#organization` },
+        creator: { '@id': `${SITE}/#person-nathan-sobol` }
+      };
+    }
+
+    function buildSportsActivityLocation(entry, canonicalUrl) {
+      const loc = entry?.sportsLocation;
+      if (!loc || typeof loc !== 'object') return null;
+      const latitude = Number(loc.latitude);
+      const longitude = Number(loc.longitude);
+      const address = {
+        '@type': 'PostalAddress',
+        addressLocality: loc.addressLocality,
+        addressRegion: loc.addressRegion,
+        addressCountry: loc.addressCountry
+      };
+      Object.keys(address).forEach((key) => address[key] === undefined && delete address[key]);
+      const node = {
+        '@context': 'https://schema.org',
+        '@type': 'SportsActivityLocation',
+        '@id': `${canonicalUrl}#sports-location`,
+        name: loc.name || 'Trailhead',
+        description: loc.description,
+        sport: 'Hiking',
+        geo: Number.isFinite(latitude) && Number.isFinite(longitude)
+          ? { '@type': 'GeoCoordinates', latitude, longitude }
+          : undefined,
+        containedInPlace: { '@id': `${SITE}/#place-wmnf` },
+        address
+      };
+      if (!Object.keys(address).length) {
+        delete node.address;
+      }
+      return node;
+    }
+
     async function loadTextCache(key, url) {
       try {
-        const res = await fetch(url, { 
+        const res = await fetch(url, {
           headers: { 'User-Agent': 'NH48-SSR/1.0' },
           cf: { cacheTtl: 0, cacheEverything: false }
         });
@@ -1008,10 +1269,10 @@ export default {
       // Only strip specific meta tags that we'll replace with SSR versions
       // Keep everything else intact to avoid breaking the page structure
       let result = html;
-      
+
       // Remove title tag
       result = result.replace(/<title[^>]*>[^<]*<\/title>/gi, '');
-      
+
       // Remove specific meta tags (single line each)
       result = result.replace(/<meta[^>]*name\s*=\s*["']description["'][^>]*>/gi, '');
       result = result.replace(/<meta[^>]*name\s*=\s*["']keywords["'][^>]*>/gi, '');
@@ -1019,14 +1280,14 @@ export default {
       result = result.replace(/<meta[^>]*property\s*=\s*["']og:[^"']*["'][^>]*>/gi, '');
       result = result.replace(/<meta[^>]*name\s*=\s*["']twitter:[^"']*["'][^>]*>/gi, '');
       result = result.replace(/<meta[^>]*property\s*=\s*["']twitter:[^"']*["'][^>]*>/gi, '');
-      
+
       // Remove canonical and alternate links
       result = result.replace(/<link[^>]*rel\s*=\s*["']canonical["'][^>]*>/gi, '');
       result = result.replace(/<link[^>]*rel\s*=\s*["']alternate["'][^>]*>/gi, '');
-      
+
       // Note: We intentionally do NOT remove JSON-LD scripts here
       // Duplicate JSON-LD is harmless and trying to remove it was breaking the page
-      
+
       return result;
     }
 
@@ -1072,6 +1333,7 @@ export default {
         `<meta property="og:image:width" content="1200" />`,
         `<meta property="og:image:height" content="630" />`,
         `<meta property="og:image:alt" content="${esc(meta.imageAlt || meta.title)}" />`,
+        `<meta property="og:logo" content="${meta.logo || DEFAULT_LOGO}" />`,
         `<meta property="og:url" content="${meta.canonical}" />`,
         `<meta name="twitter:card" content="${meta.twitterCard || 'summary_large_image'}" />`,
         `<meta name="twitter:site" content="@nate_dumps_pics" />`,
@@ -1504,6 +1766,7 @@ export default {
         .slice(0, 10)
         .map((photo) => {
           if (!photo || !photo.url) return null;
+          const isFineArt = !!photo.isFineArt;
           const { width, height } = parseImageDimensions(photo);
           const keywords = buildPhotoKeywords(photo);
           const contentLocation = buildContentLocation(photo);
@@ -1511,8 +1774,8 @@ export default {
           const exifData = buildExifData(photo);
           const copyrightNotice = pickFirstNonEmpty(photo?.iptc?.copyrightNotice, photo.copyrightNotice, RIGHTS_DEFAULTS.copyrightNotice);
           const acquireLicensePage = pickFirstNonEmpty(photo.acquireLicensePage, RIGHTS_DEFAULTS.licenseUrl, RIGHTS_DEFAULTS.acquireLicensePageUrl);
-          return {
-            '@type': 'ImageObject',
+          const imageObject = {
+            '@type': isFineArt ? ['ImageObject', 'Photograph', 'VisualArtwork'] : ['ImageObject', 'Photograph'],
             contentUrl: photo.url,
             url: photo.url,
             name: buildPhotoTitleUnique(peakName, photo),
@@ -1529,8 +1792,28 @@ export default {
             contentLocation,
             exifData
           };
+          if (isFineArt) {
+            imageObject.artform = 'Photography';
+            imageObject.artEdition = 'Open edition';
+            imageObject.artMedium = 'Digital photography';
+          }
+          return imageObject;
         })
         .filter(Boolean);
+      const creativeWork = {
+        '@context': 'https://schema.org',
+        '@type': ['CreativeWork', 'Photograph'],
+        '@id': `${canonicalUrl}#creativework`,
+        url: canonicalUrl,
+        name: `${peakName} fine-art photograph`,
+        description: summaryText || `Fine-art photograph of ${peakName} in the White Mountains.`,
+        image: imageUrl,
+        associatedMedia: imageObjects.length ? imageObjects : undefined,
+        publisher: { '@id': `${SITE}/#organization` },
+        creator: { '@id': `${SITE}/#person-nathan-sobol` },
+        sameAs: buildCreativeSameAs(),
+        mainEntityOfPage: { '@id': `${canonicalUrl}#webpage` }
+      };
       // Guard against missing fields in peakData to avoid undefined errors
       const dogFriendly = peakData && typeof peakData === 'object'
         ? (peakData['Dog Friendly'] || peakData.dogFriendly || '')
@@ -1660,7 +1943,7 @@ export default {
           { '@type': 'ListItem', position: 3, name: peakName, item: canonicalUrl }
         ]
       };
-      return { mountain, hikingTrail, breadcrumb };
+      return { mountain, hikingTrail, breadcrumb, creativeWork, imageObjects };
     }
 
     async function serveCatalog() {
@@ -1693,8 +1976,9 @@ export default {
         const thumbUrl = normalizeCatalogPhotoUrl(primaryPhoto.url, { width: 400, format: 'jpg' });
         const imageId = `${SITE}/peak/${slug}#photo`;
         const peakSameAs = Array.isArray(sameAsLookup?.[slug]) ? sameAsLookup[slug] : [];
+        const isFineArt = !!primaryPhoto.isFineArt;
         const imageObject = {
-          '@type': 'ImageObject',
+          '@type': isFineArt ? ['ImageObject', 'Photograph', 'VisualArtwork'] : ['ImageObject', 'Photograph'],
           '@id': imageId,
           url: fullUrl,
           contentUrl: fullUrl,
@@ -1709,6 +1993,11 @@ export default {
           license: CATALOG_IMAGE_LICENSE_URL,
           sameAs: peakSameAs
         };
+        if (isFineArt) {
+          imageObject.artform = 'Photography';
+          imageObject.artEdition = 'Open edition';
+          imageObject.artMedium = 'Digital photography';
+        }
         imageObjects.push(imageObject);
 
         itemListElement.push({
@@ -1764,6 +2053,30 @@ export default {
           { '@type': 'ListItem', position: 2, name: isFrench ? 'Catalogue des sommets' : 'Peak Catalog', item: canonicalUrl }
         ]
       };
+      const creativeWorks = await loadCreativeWorks();
+      const catalogCreativeWork = buildCreativeWorkNode({
+        entry: creativeWorks.catalog,
+        fallbackType: 'ImageGallery',
+        id: `${canonicalUrl}#creativework-gallery`,
+        url: canonicalUrl,
+        name: 'NH48 Summit Photo Gallery',
+        description: 'A gallery of summit photographs for all 48 New Hampshire four-thousand-footers.',
+        thumbnailUrl: heroImage,
+        associatedMedia: imageObjects.map((img) => ({ '@id': img['@id'] })),
+        datePublished: '2024-01-01'
+      });
+      const collections = await loadCollections();
+      const collectionItems = itemListElement.map((item) => ({ '@id': item.item['@id'] }));
+      const catalogCollection = buildCollectionObject({
+        entry: collections.catalog,
+        canonicalUrl,
+        items: collectionItems
+      });
+      const globalSchemaNodes = await loadGlobalSchemaNodes();
+      const jsonLdBlocks = mergeJsonLdBlocks(
+        [datasetSchema, imageGallerySchema, peakItemListSchema, breadcrumbSchema, catalogCreativeWork, catalogCollection],
+        globalSchemaNodes
+      );
 
       const tplResp = await fetch(RAW_CATALOG_URL, NO_CACHE_FETCH);
       if (!tplResp.ok) {
@@ -1803,10 +2116,9 @@ export default {
         `<link rel="alternate" hreflang="en" href="${SITE}/catalog" />`,
         `<link rel="alternate" hreflang="fr" href="${SITE}/fr/catalog" />`,
         `<link rel="alternate" hreflang="x-default" href="${SITE}/catalog" />`,
-        `<script type="application/ld+json">${JSON.stringify(datasetSchema).replace(/</g, '\\u003c')}</script>`,
-        `<script type="application/ld+json">${JSON.stringify(imageGallerySchema).replace(/</g, '\\u003c')}</script>`,
-        `<script type="application/ld+json">${JSON.stringify(peakItemListSchema).replace(/</g, '\\u003c')}</script>`,
-        `<script type="application/ld+json">${JSON.stringify(breadcrumbSchema).replace(/</g, '\\u003c')}</script>`
+        ...jsonLdBlocks.map(
+          (block) => `<script type="application/ld+json">${JSON.stringify(block).replace(/</g, '\\u003c')}</script>`
+        )
       ].join('\n');
       html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
 
@@ -1824,7 +2136,7 @@ export default {
       const rawHtml = await loadTextCache(`tpl:${templatePath}`, templateUrl);
       if (!rawHtml || rawHtml.length < 100) {
         console.error(`[serveTemplatePage] Template empty or unavailable: ${templateUrl}`);
-        return new Response(`<!DOCTYPE html><html><head><title>Error</title></head><body><h1>Template Unavailable</h1><p>Could not load: ${templatePath}</p><p>URL: ${templateUrl}</p><p>Length: ${rawHtml ? rawHtml.length : 0} bytes</p></body></html>`, { 
+        return new Response(`<!DOCTYPE html><html><head><title>Error</title></head><body><h1>Template Unavailable</h1><p>Could not load: ${templatePath}</p><p>URL: ${templateUrl}</p><p>Length: ${rawHtml ? rawHtml.length : 0} bytes</p></body></html>`, {
           status: 500,
           headers: { 'Content-Type': 'text/html; charset=utf-8' }
         });
@@ -1838,9 +2150,11 @@ export default {
       html = stripHeadMeta(html);
       html = injectNavFooter(html, navHtml, footerHtml, pathname, routeId);
       html = injectBuildDate(html, buildDate);
+      const globalSchemaNodes = await loadGlobalSchemaNodes();
+      const mergedJsonLd = mergeJsonLdBlocks(jsonLd || [], globalSchemaNodes);
       const metaBlock = buildMetaBlock({
         ...meta,
-        jsonLd
+        jsonLd: mergedJsonLd
       });
       html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
       return new Response(html, {
@@ -1862,6 +2176,17 @@ export default {
       const description = isFrench
         ? 'NH48 API fournit des données ouvertes et structurées pour les 48 sommets de 4 000 pieds du New Hampshire. Explorez le catalogue, les sentiers et les photos.'
         : 'Complete the NH48 challenge: 48 peaks, ~350 miles, ~170,000 feet of elevation gain. Browse difficulty tiers, day trip groupings, and peak progression guides for New Hampshire\'s four-thousand-footers.';
+      const creativeWorks = await loadCreativeWorks();
+      const homepageCreativeWork = buildCreativeWorkNode({
+        entry: creativeWorks.index,
+        fallbackType: 'CreativeWorkSeries',
+        id: `${canonical}#creativework-series`,
+        url: canonical,
+        name: 'NH48pics Fine Art Collection',
+        description: 'A curated series of fine-art photographs capturing the beauty of New Hampshire\'s 4,000-footers and alpine flora.',
+        thumbnailUrl: DEFAULT_IMAGE,
+        datePublished: '2024-01-01'
+      });
       const jsonLd = [
         {
           '@context': 'https://schema.org',
@@ -1878,10 +2203,9 @@ export default {
           },
           description: 'Professional mountain photography covering the New Hampshire 4,000-footers and beyond.',
           sameAs: [
-            'https://www.instagram.com/nate_dumps_pics',
+            INSTAGRAM_URL,
             'https://www.facebook.com/natedumpspics',
-            'https://www.etsy.com/shop/NH48pics',
-            'https://github.com/natesobol/nh48-api'
+            'https://www.etsy.com/shop/NH48pics'
           ],
           address: {
             '@type': 'PostalAddress',
@@ -1897,8 +2221,8 @@ export default {
           '@id': `${SITE}/#person-nathan-sobol`,
           name: 'Nathan Sobol',
           alternateName: 'Nathan Sobol Photography',
-          url: `${SITE}/about`,
-          image: `${SITE}/nh48-preview.png`,
+          url: `${SITE}/about/`,
+          image: `${SITE}/nathan-sobol.jpg`,
           description: 'Nathan Sobol is a landscape photographer and hiker who has documented every 4,000-footer in New Hampshire. As the founder of NH48pics, he combines his passion for the White Mountains with professional photography, offering high-quality prints and trail resources.',
           jobTitle: ['Landscape Photographer', 'Founder of NH48pics'],
           worksFor: { '@id': `${SITE}/#organization` },
@@ -1913,7 +2237,7 @@ export default {
           },
           knowsLanguage: ['en'],
           sameAs: [
-            'https://www.instagram.com/nate_dumps_pics',
+            INSTAGRAM_URL,
             'https://www.facebook.com/natedumpspics',
             'https://www.etsy.com/shop/NH48pics'
           ]
@@ -1925,15 +2249,17 @@ export default {
           name: 'NH48pics',
           url: `${SITE}/`,
           description: 'Fine-art photography and trail resources for the NH 48 4,000-footers.',
+          sameAs: [INSTAGRAM_URL],
           publisher: { '@id': `${SITE}/#organization` },
           copyrightHolder: { '@id': `${SITE}/#organization` },
           potentialAction: {
             '@type': 'SearchAction',
-            target: `${SITE}/catalog?q={search_term_string}`,
+            target: `${SITE}/search?q={search_term_string}`,
             'query-input': 'required name=search_term_string'
           },
           inLanguage: ['en', 'fr']
         },
+        homepageCreativeWork,
         {
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
@@ -2293,6 +2619,18 @@ export default {
 
     if (pathNoLocale === '/trails' || pathNoLocale === '/trails/') {
       const canonical = `${SITE}${pathname}`;
+      const creativeWorks = await loadCreativeWorks();
+      const trailsCreativeWork = buildCreativeWorkNode({
+        entry: creativeWorks.trails,
+        fallbackType: 'CreativeWork',
+        id: `${canonical}#creativework`,
+        url: canonical,
+        name: isFrench ? 'Carte des sentiers WMNF' : 'WMNF Trails Map',
+        description: isFrench
+          ? 'Explorez les sentiers de la White Mountain National Forest avec une carte interactive.'
+          : 'Explore White Mountain National Forest trails with an interactive map.',
+        thumbnailUrl: DEFAULT_IMAGE
+      });
       return serveTemplatePage({
         templatePath: 'trails/index.html',
         pathname,
@@ -2309,12 +2647,24 @@ export default {
           imageAlt: isFrench ? 'Carte des sentiers WMNF' : 'WMNF trails map',
           ogType: 'website'
         },
-        jsonLd: []
+        jsonLd: [trailsCreativeWork]
       });
     }
 
     if (pathNoLocale === '/long-trails' || pathNoLocale === '/long-trails/') {
       const canonical = `${SITE}${pathname}`;
+      const creativeWorks = await loadCreativeWorks();
+      const longTrailsCreativeWork = buildCreativeWorkNode({
+        entry: creativeWorks['long-trails'],
+        fallbackType: 'CreativeWork',
+        id: `${canonical}#creativework`,
+        url: canonical,
+        name: isFrench ? 'Carte des sentiers longue distance' : 'Long-Distance Trails Map',
+        description: isFrench
+          ? 'Carte interactive des grands sentiers longue distance en Amérique du Nord.'
+          : 'Interactive map of major long-distance trails across North America.',
+        thumbnailUrl: DEFAULT_IMAGE
+      });
       return serveTemplatePage({
         templatePath: 'long-trails/index.html',
         pathname,
@@ -2331,7 +2681,7 @@ export default {
           imageAlt: isFrench ? 'Carte des sentiers longue distance' : 'Long-distance trails map',
           ogType: 'website'
         },
-        jsonLd: []
+        jsonLd: [longTrailsCreativeWork]
       });
     }
 
@@ -2341,6 +2691,44 @@ export default {
       const plantCatalogDesc = isFrench
         ? 'Catalogue de plantes alpines avec photos et descriptions détaillées.'
         : 'Alpine plant catalog with photos and detailed descriptions.';
+      const plantData = await loadJsonCache('howker-plants', `${RAW_BASE}/data/howker-plants`);
+      const plantItems = Array.isArray(plantData) ? plantData : [];
+      const plantImageObjects = plantItems
+        .filter((plant) => Array.isArray(plant.imgs) && plant.imgs.length)
+        .slice(0, 60)
+        .map((plant, index) => ({
+          '@type': ['ImageObject', 'Photograph'],
+          '@id': `${canonical}#plant-photo-${index + 1}`,
+          url: plant.imgs[0],
+          contentUrl: plant.imgs[0],
+          name: `${plant.common} photo`,
+          caption: `${plant.common} (${plant.latin})`,
+          description: plant.teaser || plant.desc || plantCatalogDesc,
+          creditText: RIGHTS_DEFAULTS.creatorName,
+          creator: { '@id': `${SITE}/#person-nathan-sobol` },
+          copyrightHolder: { '@id': `${SITE}/#person-nathan-sobol` },
+          copyrightNotice: `© ${RIGHTS_DEFAULTS.creatorName}`,
+          license: CATALOG_IMAGE_LICENSE_URL
+        }));
+      const creativeWorks = await loadCreativeWorks();
+      const plantCatalogCreativeWork = buildCreativeWorkNode({
+        entry: creativeWorks['plant-catalog'],
+        fallbackType: 'ImageGallery',
+        id: `${canonical}#creativework-gallery`,
+        url: canonical,
+        name: plantCatalogTitle,
+        description: plantCatalogDesc,
+        thumbnailUrl: DEFAULT_IMAGE,
+        associatedMedia: plantImageObjects.map((img) => ({ '@id': img['@id'] })),
+        imageObjects: plantImageObjects
+      });
+      const collections = await loadCollections();
+      const plantCollectionItems = plantItems.map((plant) => ({ '@id': `${SITE}/plant/${plant.id}` }));
+      const plantCatalogCollection = buildCollectionObject({
+        entry: collections['plant-catalog'],
+        canonicalUrl: canonical,
+        items: plantCollectionItems
+      });
       const jsonLd = [
         buildDatasetSchema({
           canonicalUrl: canonical,
@@ -2353,7 +2741,10 @@ export default {
           spatialCoverage: { '@type': 'Place', name: 'White Mountain National Forest' },
           license: 'https://creativecommons.org/licenses/by/4.0/',
           publisher: { '@id': `${SITE}/#organization` }
-        })
+        }),
+        plantCatalogCreativeWork,
+        plantCatalogCollection,
+        ...plantImageObjects
       ];
       return serveTemplatePage({
         templatePath: 'pages/plant_catalog.html',
@@ -2377,6 +2768,20 @@ export default {
 
     if (pathNoLocale === '/projects/hrt-info' || pathNoLocale === '/projects/hrt-info/') {
       const canonical = `${SITE}${pathname}`;
+      const creativeWorks = await loadCreativeWorks();
+      const howkerInfoCreativeWork = buildCreativeWorkNode({
+        entry: creativeWorks['projects/hrt-info'],
+        fallbackType: 'HowTo',
+        id: `${canonical}#howto`,
+        url: canonical,
+        name: isFrench ? 'Infos sur le sentier Howker Ridge' : 'Howker Ridge Trail Guide',
+        description: isFrench
+          ? 'Informations détaillées sur le sentier Howker Ridge : statistiques, terrain, accès et sécurité.'
+          : 'Detailed information about the Howker Ridge Trail: stats, terrain, access, and safety.',
+        thumbnailUrl: DEFAULT_IMAGE
+      });
+      const sportsLocation = buildSportsActivityLocation(creativeWorks['projects/hrt-info'], canonical);
+      const jsonLd = [howkerInfoCreativeWork, sportsLocation].filter(Boolean);
       return serveTemplatePage({
         templatePath: isFrench ? 'pages/hrt_info.fr.html' : 'pages/hrt_info.html',
         pathname,
@@ -2393,12 +2798,26 @@ export default {
           imageAlt: isFrench ? 'Vue du Mount Madison' : 'Mount Madison ridge view',
           ogType: 'website'
         },
-        jsonLd: []
+        jsonLd
       });
     }
 
     if (pathNoLocale === '/howker-ridge' || pathNoLocale === '/howker-ridge/') {
       const canonical = `${SITE}${pathname}`;
+      const creativeWorks = await loadCreativeWorks();
+      const howkerCreativeWork = buildCreativeWorkNode({
+        entry: creativeWorks['howker-ridge'],
+        fallbackType: 'HowTo',
+        id: `${canonical}#howto`,
+        url: canonical,
+        name: isFrench ? 'Howker Ridge : carte et donnees' : 'Howker Ridge Trail Map and Guide',
+        description: isFrench
+          ? 'Carte interactive, telechargements GPS et meteo actuelle pour le sentier Howker Ridge.'
+          : 'Interactive map, GPS downloads, and current weather for the Howker Ridge Trail.',
+        thumbnailUrl: DEFAULT_IMAGE
+      });
+      const sportsLocation = buildSportsActivityLocation(creativeWorks['howker-ridge'], canonical);
+      const jsonLd = [howkerCreativeWork, sportsLocation].filter(Boolean);
       return serveTemplatePage({
         templatePath: 'pages/howker_ridge.html',
         pathname,
@@ -2415,12 +2834,26 @@ export default {
           imageAlt: isFrench ? 'Vue du Mount Madison' : 'Mount Madison ridge view',
           ogType: 'website'
         },
-        jsonLd: []
+        jsonLd
       });
     }
 
     if (pathNoLocale === '/howker-ridge/poi' || pathNoLocale === '/howker-ridge/poi/') {
       const canonical = `${SITE}${pathname}`;
+      const creativeWorks = await loadCreativeWorks();
+      const howkerPoiCreativeWork = buildCreativeWorkNode({
+        entry: creativeWorks['howker-ridge/poi'],
+        fallbackType: 'Article',
+        id: `${canonical}#article`,
+        url: canonical,
+        name: isFrench ? 'Point d\u2019interet Howker Ridge' : 'Howker Ridge Points of Interest',
+        description: isFrench
+          ? 'Details sur un point d\u2019interet du sentier Howker Ridge.'
+          : 'Trail highlights and points of interest along the Howker Ridge Trail.',
+        thumbnailUrl: DEFAULT_IMAGE
+      });
+      const sportsLocation = buildSportsActivityLocation(creativeWorks['howker-ridge/poi'], canonical);
+      const jsonLd = [howkerPoiCreativeWork, sportsLocation].filter(Boolean);
       return serveTemplatePage({
         templatePath: 'pages/howker_poi.html',
         pathname,
@@ -2437,7 +2870,7 @@ export default {
           imageAlt: isFrench ? 'Vue du Mount Madison' : 'Mount Madison ridge view',
           ogType: 'website'
         },
-        jsonLd: []
+        jsonLd
       });
     }
 
@@ -2451,6 +2884,34 @@ export default {
       const title = `${plant.common} (${plant.latin})`;
       const description = plant.teaser || plant.desc || `Profile for ${plant.common}.`;
       const image = Array.isArray(plant.imgs) && plant.imgs.length ? plant.imgs[0] : DEFAULT_IMAGE;
+      const plantImageObjects = Array.isArray(plant.imgs)
+        ? plant.imgs.map((imgUrl, index) => ({
+          '@type': ['ImageObject', 'Photograph'],
+          '@id': `${canonical}#plant-photo-${index + 1}`,
+          url: imgUrl,
+          contentUrl: imgUrl,
+          name: `${plant.common} photo ${index + 1}`,
+          caption: `${plant.common} (${plant.latin})`,
+          description: description,
+          creditText: RIGHTS_DEFAULTS.creatorName,
+          creator: { '@id': `${SITE}/#person-nathan-sobol` },
+          copyrightHolder: { '@id': `${SITE}/#person-nathan-sobol` },
+          copyrightNotice: `© ${RIGHTS_DEFAULTS.creatorName}`,
+          license: CATALOG_IMAGE_LICENSE_URL
+        }))
+        : [];
+      const creativeWorks = await loadCreativeWorks();
+      const plantCreativeWork = buildCreativeWorkNode({
+        entry: creativeWorks[`plant/${slug}`],
+        fallbackType: 'ImageGallery',
+        id: `${canonical}#creativework-gallery`,
+        url: canonical,
+        name: `${plant.common} - Fine-Art Macro Gallery`,
+        description,
+        thumbnailUrl: image,
+        associatedMedia: plantImageObjects.map((img) => ({ '@id': img['@id'] })),
+        imageObjects: plantImageObjects
+      });
       const jsonLd = [
         {
           '@context': 'https://schema.org',
@@ -2460,7 +2921,9 @@ export default {
           description,
           image: plant.imgs || image,
           url: canonical
-        }
+        },
+        plantCreativeWork,
+        ...plantImageObjects
       ];
       return serveTemplatePage({
         templatePath: 'pages/plant.html',
@@ -2493,8 +2956,8 @@ export default {
           '@id': `${SITE}/#person-nathan-sobol`,
           name: 'Nathan Sobol',
           alternateName: 'Nathan Sobol Photography',
-          url: `${SITE}/about`,
-          image: `${SITE}/nh48-preview.png`,
+          url: `${SITE}/about/`,
+          image: `${SITE}/nathan-sobol.jpg`,
           description: 'Nathan Sobol is a landscape photographer and hiker who has documented every 4,000-footer in New Hampshire. As the founder of NH48pics, he combines his passion for the White Mountains with professional photography, offering high-quality prints and trail resources.',
           jobTitle: ['Landscape Photographer', 'Founder of NH48pics'],
           worksFor: { '@id': `${SITE}/#organization` },
@@ -2509,7 +2972,7 @@ export default {
           },
           knowsLanguage: ['en'],
           sameAs: [
-            'https://www.instagram.com/nate_dumps_pics',
+            INSTAGRAM_URL,
             'https://www.facebook.com/natedumpspics',
             'https://www.etsy.com/shop/NH48pics'
           ]
@@ -2529,10 +2992,9 @@ export default {
           },
           description: 'Professional mountain photography covering the New Hampshire 4,000-footers and beyond.',
           sameAs: [
-            'https://www.instagram.com/nate_dumps_pics',
+            INSTAGRAM_URL,
             'https://www.facebook.com/natedumpspics',
-            'https://www.etsy.com/shop/NH48pics',
-            'https://github.com/natesobol/nh48-api'
+            'https://www.etsy.com/shop/NH48pics'
           ],
           address: {
             '@type': 'PostalAddress',
@@ -2549,11 +3011,12 @@ export default {
           name: 'NH48pics',
           url: `${SITE}/`,
           description: 'Fine-art photography and trail resources for the NH 48 4,000-footers.',
+          sameAs: [INSTAGRAM_URL],
           publisher: { '@id': `${SITE}/#organization` },
           copyrightHolder: { '@id': `${SITE}/#organization` },
           potentialAction: {
             '@type': 'SearchAction',
-            target: `${SITE}/catalog?q={search_term_string}`,
+            target: `${SITE}/search?q={search_term_string}`,
             'query-input': 'required name=search_term_string'
           },
           inLanguage: ['en', 'fr']
@@ -2569,7 +3032,7 @@ export default {
           canonical,
           alternateEn: `${SITE}/about`,
           alternateFr: `${SITE}/fr/about`,
-          image: `${SITE}/nh48-preview.png`,
+          image: `${SITE}/nathan-sobol.jpg`,
           imageAlt: 'Nathan Sobol – NH48pics',
           ogType: 'profile'
         },
@@ -2616,7 +3079,7 @@ export default {
     const peakRoutes = ['peak', 'peaks', 'guest'];
     const routeKeyword = isFrench ? parts[1] : parts[0];
     const isPeakRoute = peakRoutes.includes(routeKeyword);
-    
+
     if (!isPeakRoute || !slug) {
       // No matching route found - return 404
       console.log(`[Worker] 404: ${pathname} (not a recognized route)`);
@@ -2625,7 +3088,7 @@ export default {
         headers: { 'Content-Type': 'text/html; charset=utf-8' }
       });
     }
-    
+
     console.log(`[Worker] Processing peak route: ${pathname}, slug: ${slug}, lang: ${lang}, type: ${routeKeyword}`);
 
     // Find the peak by slug in the loaded dataset
@@ -2700,7 +3163,13 @@ export default {
     const primaryCaption = primaryPhoto
       ? buildPhotoCaptionUnique(peakName, primaryPhoto)
       : peakName;
-    const { mountain = {}, hikingTrail = {}, breadcrumb = {} } = buildJsonLd(
+    const {
+      mountain = {},
+      hikingTrail = {},
+      breadcrumb = {},
+      creativeWork = {},
+      imageObjects = []
+    } = buildJsonLd(
       peak,
       peakName,
       elevation,
@@ -2712,6 +3181,11 @@ export default {
       summaryVal,
       photos,
       peak
+    );
+    const globalSchemaNodes = await loadGlobalSchemaNodes();
+    const jsonLdBlocks = mergeJsonLdBlocks(
+      [mountain, hikingTrail, breadcrumb, creativeWork, ...imageObjects],
+      globalSchemaNodes
     );
 
     // Fetch the raw interactive HTML template from GitHub
@@ -2765,9 +3239,9 @@ export default {
       `<link rel="alternate" hreflang="en" href="${canonicalEn}" />`,
       `<link rel="alternate" hreflang="fr" href="${canonicalFr}" />`,
       `<link rel="alternate" hreflang="x-default" href="${canonicalX}" />`,
-      `<script type="application/ld+json">${JSON.stringify(mountain).replace(/</g, '\\u003c')}</script>`,
-      `<script type="application/ld+json">${JSON.stringify(hikingTrail).replace(/</g, '\\u003c')}</script>`,
-      `<script type="application/ld+json">${JSON.stringify(breadcrumb).replace(/</g, '\\u003c')}</script>`
+      ...jsonLdBlocks.map(
+        (block) => `<script type="application/ld+json">${JSON.stringify(block).replace(/</g, '\\u003c')}</script>`
+      )
     ].join('\n');
     html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
 

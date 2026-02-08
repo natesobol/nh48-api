@@ -1,0 +1,107 @@
+{
+    "index": {
+        "type": "CreativeWorkSeries",
+        "name": "NH48pics Fine Art Collection",
+        "description": "A curated series of fine-art photographs capturing the beauty of New Hampshire's 4,000-footers and alpine flora.",
+        "thumbnail": "https://nh48.info/nh48-preview.png",
+        "associatedMediaSlugs": [],
+        "datePublished": "2024-01-01"
+    },
+    "catalog": {
+        "type": "ImageGallery",
+        "name": "NH48 Summit Photo Gallery",
+        "description": "A gallery of summit photographs for all 48 New Hampshire four-thousand-footers.",
+        "thumbnail": "https://nh48.info/nh48-preview.png",
+        "associatedMediaSlugs": [],
+        "datePublished": "2024-01-01"
+    },
+    "plant-catalog": {
+        "type": "ImageGallery",
+        "name": "Howker Ridge Plant Catalog",
+        "description": "A gallery of macro photos for plant species found along the Howker Ridge trail.",
+        "thumbnail": "https://nh48.info/nh48-preview.png",
+        "associatedMediaSlugs": [],
+        "datePublished": "2024-05-01"
+    },
+    "projects/hrt-info": {
+        "type": "HowTo",
+        "name": "Howker Ridge Trail Guide",
+        "description": "Step-by-step guidance for hiking the Howker Ridge Trail, including route overview, safety tips and seasonal advice.",
+        "steps": [
+            "Start at the trailhead",
+            "Climb the ridge to the first viewpoint",
+            "Follow the ridge to the summit zone",
+            "Return via the same route"
+        ],
+        "imageSlug": "howker-trail-hero",
+        "datePublished": "2023-07-15",
+        "sportsLocation": {
+            "name": "Howker Ridge Trailhead",
+            "description": "Starting point for the Howker Ridge Trail on Mount Madison.",
+            "latitude": 44.3685,
+            "longitude": -71.2841,
+            "addressLocality": "Gorham",
+            "addressRegion": "NH",
+            "addressCountry": "US"
+        }
+    },
+    "howker-ridge": {
+        "type": "HowTo",
+        "name": "Howker Ridge Trail Map and Guide",
+        "description": "Interactive map, GPS downloads, and hiking guidance for the Howker Ridge Trail.",
+        "steps": [
+            "Review trail conditions and weather",
+            "Download GPS tracks",
+            "Follow the ridge route to the summit",
+            "Return safely to the trailhead"
+        ],
+        "imageSlug": "howker-trail-hero",
+        "datePublished": "2023-07-15",
+        "sportsLocation": {
+            "name": "Howker Ridge Trailhead",
+            "description": "Starting point for the Howker Ridge Trail on Mount Madison.",
+            "latitude": 44.3685,
+            "longitude": -71.2841,
+            "addressLocality": "Gorham",
+            "addressRegion": "NH",
+            "addressCountry": "US"
+        }
+    },
+    "howker-ridge/poi": {
+        "type": "Article",
+        "name": "Howker Ridge Points of Interest",
+        "description": "Trail highlights and points of interest along the Howker Ridge Trail.",
+        "imageSlug": "howker-trail-hero",
+        "datePublished": "2023-07-15",
+        "sportsLocation": {
+            "name": "Howker Ridge Trailhead",
+            "description": "Starting point for the Howker Ridge Trail on Mount Madison.",
+            "latitude": 44.3685,
+            "longitude": -71.2841,
+            "addressLocality": "Gorham",
+            "addressRegion": "NH",
+            "addressCountry": "US"
+        }
+    },
+    "projects/plant-map": {
+        "type": "Article",
+        "name": "Howker Ridge Plant Log Map",
+        "description": "Interactive plant log map for alpine observations along the Howker Ridge Trail.",
+        "imageSlug": "howker-plant-map-hero",
+        "datePublished": "2024-05-01"
+    },
+    "trails": {
+        "type": "CreativeWork",
+        "name": "WMNF Trails Map",
+        "description": "Interactive map of White Mountain National Forest trails and route options.",
+        "imageSlug": "wmnf-trails-hero",
+        "datePublished": "2024-01-01"
+    },
+    "long-trails": {
+        "type": "CreativeWork",
+        "name": "Long-Distance Trails Map",
+        "description": "Interactive map of major long-distance trails across North America.",
+        "imageSlug": "long-trails-hero",
+        "datePublished": "2024-01-01"
+    }
+}

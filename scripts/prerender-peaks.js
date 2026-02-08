@@ -9,6 +9,10 @@ const NAV_PARTIAL_PATH = path.join(ROOT, "pages", "nav.html");
 const QUICK_FOOTER_PATH = path.join(ROOT, "pages", "footer.html");
 const DATA_PATH = path.join(ROOT, "data", "nh48.json");
 const GEOGRAPHY_PATH = path.join(ROOT, "data", "geography.json");
+const ORGANIZATION_PATH = path.join(ROOT, "data", "organization.json");
+const WEBSITE_PATH = path.join(ROOT, "data", "website.json");
+const PERSON_PATH = path.join(ROOT, "data", "person.json");
+const CREATIVEWORKS_PATH = path.join(ROOT, "data", "creativeWorks.json");
 const OUTPUT_DIR = path.join(ROOT, "peaks");
 const CANONICAL_BASE = "https://nh48.info/peak";
 const HOME_URL = "https://nh48.info/";
@@ -26,6 +30,7 @@ const IMAGE_LICENSE_URL = "https://creativecommons.org/licenses/by-nc-nd/4.0/";
 const PEAK_SAMEAS_PATH = path.join(ROOT, "data", "peak-sameas.json");
 const AUTHOR_NAME = "Nathan Sobol";
 const TWITTER_HANDLE = "@nate_dumps_pics";
+const INSTAGRAM_URL = "https://www.instagram.com/nate_dumps_pics/";
 
 const I18N = {
   en: JSON.parse(fs.readFileSync(path.join(ROOT, "i18n", "en.json"), "utf8")),
@@ -400,8 +405,12 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
   const keywords = buildKeywords(photo);
   const exifData = buildExifSummary(photo);
   const propertyValues = buildPhotoPropertyValues(photo);
+  const isFineArt = !!photo.isFineArt;
+  const imageTypes = isFineArt
+    ? ['ImageObject', 'Photograph', 'VisualArtwork']
+    : ['ImageObject', 'Photograph'];
   const imageObject = {
-    '@type': 'ImageObject',
+    '@type': imageTypes,
     '@id': imageId,
     url: normalizedUrl,
     contentUrl: normalizedUrl,
@@ -429,6 +438,11 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
     width,
     height,
   };
+  if (isFineArt) {
+    imageObject.artform = 'Photography';
+    imageObject.artEdition = 'Open edition';
+    imageObject.artMedium = 'Digital photography';
+  }
 
   const contentLocation = buildContentLocation(photo);
   if (contentLocation) {
@@ -470,7 +484,7 @@ const pickPrimaryPhoto = (photos, peakName, langCode, canonicalUrl) => {
       "mountain landscape",
     ].filter(Boolean);
     const fallbackImageObject = {
-      '@type': 'ImageObject',
+      '@type': ['ImageObject', 'Photograph'],
       '@id': `${canonicalUrl}#img-001`,
       url: FALLBACK_IMAGE,
       contentUrl: FALLBACK_IMAGE,
@@ -818,56 +832,53 @@ const buildBreadcrumbJson = (pageName, canonicalUrl, catalogUrl, homeUrl, labels
   2
 );
 
-const buildWebPageSchema = (pageName, canonicalUrl, descriptionText, primaryImage, langCode, mapId) => JSON.stringify(
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": `${canonicalUrl}#webpage`,
-    name: `${pageName} — White Mountain National Forest`,
-    description: descriptionText,
-    url: canonicalUrl,
-    inLanguage: langCode === 'fr' ? 'fr-FR' : 'en-US',
-    hasMap: mapId ? { "@id": mapId } : undefined,
-    mainEntity: {
-      "@type": "Mountain",
-      "@id": `${canonicalUrl}#mountain`,
-      name: pageName,
-    },
-    isPartOf: {
-      "@type": "WebSite",
-      "@id": "https://nh48.info/#website",
-      name: "NH48pics",
-      url: "https://nh48.info/",
-      publisher: {
-        "@type": "Organization",
-        "@id": "https://nh48.info/#organization",
-        name: "NH48pics",
-        url: "https://nh48.info/",
-        logo: {
-          "@type": "ImageObject",
-          url: "https://nh48.info/nh48API_logo.png",
-          width: 512,
-          height: 512
-        }
+const buildWebPageSchema = (
+  pageName,
+  canonicalUrl,
+  descriptionText,
+  primaryImage,
+  langCode,
+  mapId,
+  organizationNode,
+  webSiteNode
+) => {
+  const webSiteId = cleanText(webSiteNode?.["@id"]) || "https://nh48.info/#website";
+  const organizationId = cleanText(organizationNode?.["@id"]) || "https://nh48.info/#organization";
+  return JSON.stringify(
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "@id": `${canonicalUrl}#webpage`,
+      name: `${pageName} — White Mountain National Forest`,
+      description: descriptionText,
+      url: canonicalUrl,
+      inLanguage: langCode === 'fr' ? 'fr-FR' : 'en-US',
+      hasMap: mapId ? { "@id": mapId } : undefined,
+      mainEntity: {
+        "@type": "Mountain",
+        "@id": `${canonicalUrl}#mountain`,
+        name: pageName,
+      },
+      isPartOf: { "@id": webSiteId },
+      publisher: { "@id": organizationId },
+      primaryImageOfPage: primaryImage?.url ? {
+        "@type": "ImageObject",
+        url: primaryImage.url,
+        width: primaryImage.width,
+        height: primaryImage.height
+      } : undefined,
+      breadcrumb: {
+        "@id": `${canonicalUrl}#breadcrumb`
+      },
+      potentialAction: {
+        "@type": "ReadAction",
+        target: canonicalUrl
       }
     },
-    primaryImageOfPage: primaryImage?.url ? {
-      "@type": "ImageObject",
-      url: primaryImage.url,
-      width: primaryImage.width,
-      height: primaryImage.height
-    } : undefined,
-    breadcrumb: {
-      "@id": `${canonicalUrl}#breadcrumb`
-    },
-    potentialAction: {
-      "@type": "ReadAction",
-      target: canonicalUrl
-    }
-  },
-  null,
-  2
-);
+    null,
+    2
+  );
+};
 
 const buildMapSchema = (peakName, canonicalUrl, coordinates) => {
   if (!coordinates?.latitude || !coordinates?.longitude) return null;
@@ -904,7 +915,7 @@ const buildFAQSchema = (peakName, routes, difficulty, time, langCode) => {
         name: isEnglish ? `What are the main hiking routes to ${peakName}?` : `Quels sont les principaux itinéraires de randonnée vers ${peakName} ?`,
         acceptedAnswer: {
           "@type": "Answer",
-          text: isEnglish 
+          text: isEnglish
             ? `The main routes to ${peakName} include: ${routeNames.join(', ')}.`
             : `Les principaux itinéraires vers ${peakName} incluent : ${routeNames.join(', ')}.`
         }
@@ -1043,6 +1054,74 @@ const dedupeJsonLdNodesById = (nodes) => {
   return deduped;
 };
 
+const normalizeSchemaNode = (node, fallback) => {
+  if (!node || typeof node !== "object") return fallback;
+  const copy = { ...node };
+  delete copy["@context"];
+  return { ...fallback, ...copy };
+};
+
+const buildCreativeSameAs = () => [
+  HOME_URL,
+  INSTAGRAM_URL,
+  "https://www.facebook.com/natedumpspics",
+  "https://www.etsy.com/shop/NH48pics"
+];
+
+const resolveImageBySlug = (imageObjects, imageSlug) => {
+  if (!imageSlug) return null;
+  return (imageObjects || []).find((img) => {
+    const imgId = cleanText(img?.["@id"] || "");
+    const imgUrl = cleanText(img?.url || "");
+    return imgId.includes(imageSlug) || imgUrl.includes(imageSlug);
+  }) || null;
+};
+
+const buildCreativeWorkForPeak = ({
+  entry,
+  canonicalUrl,
+  peakName,
+  descriptionText,
+  primaryImage,
+  imageObjects,
+  publisherNode,
+  personNode,
+  webPageNode
+}) => {
+  const type = entry?.type || "Photograph";
+  const typeList = Array.isArray(type) ? type : [type];
+  const creativeTypes = typeList.includes("CreativeWork")
+    ? typeList
+    : ["CreativeWork", ...typeList];
+  const resolvedPrimary = resolveImageBySlug(imageObjects, entry?.imageSlug) || primaryImage;
+  const associatedMedia = Array.isArray(entry?.associatedMediaSlugs) && entry.associatedMediaSlugs.length
+    ? entry.associatedMediaSlugs
+      .map((slug) => resolveImageBySlug(imageObjects, slug))
+      .filter(Boolean)
+      .map((img) => ({ "@id": img["@id"] }))
+    : (imageObjects || []).map((img) => ({ "@id": img["@id"] }));
+
+  const node = {
+    "@type": creativeTypes,
+    "@id": `${canonicalUrl}#creativework`,
+    url: canonicalUrl,
+    name: entry?.name || `${peakName} fine-art photograph`,
+    description: entry?.description || descriptionText,
+    thumbnailUrl: entry?.thumbnail || resolvedPrimary?.url || undefined,
+    datePublished: entry?.datePublished,
+    publisher: { "@id": publisherNode["@id"] },
+    creator: { "@id": personNode["@id"] },
+    sameAs: buildCreativeSameAs(),
+    isPartOf: { "@id": publisherNode["@id"] },
+    mainEntityOfPage: { "@id": webPageNode["@id"] },
+    image: resolvedPrimary?.["@id"] ? [{ "@id": resolvedPrimary["@id"] }] : undefined,
+    associatedMedia: associatedMedia.length ? associatedMedia : undefined
+  };
+
+  Object.keys(node).forEach((key) => node[key] === undefined && delete node[key]);
+  return node;
+};
+
 const buildJsonLd = (
   peak,
   canonicalUrl,
@@ -1053,7 +1132,11 @@ const buildJsonLd = (
   langConfig,
   englishName,
   localizedName,
-  geographyRefs
+  geographyRefs,
+  organizationData,
+  websiteData,
+  personData,
+  creativeEntry
 ) => {
   const peakName = cleanText(localizedName || peak.peakName || peak["Peak Name"] || peak.slug);
   const elevationFt = numberFrom(peak["Elevation (ft)"]);
@@ -1165,7 +1248,7 @@ const buildJsonLd = (
     name: "White Mountain National Forest",
   };
 
-  const publisherNode = {
+  const publisherNode = normalizeSchemaNode(organizationData, {
     "@type": "Organization",
     "@id": "https://nh48.info/#organization",
     name: "NH48pics",
@@ -1179,10 +1262,9 @@ const buildJsonLd = (
     },
     description: "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
     sameAs: [
-      "https://www.instagram.com/nate_dumps_pics",
+      "https://www.instagram.com/nate_dumps_pics/",
       "https://www.facebook.com/natedumpspics",
-      "https://www.etsy.com/shop/NH48pics",
-      "https://github.com/natesobol/nh48-api"
+      "https://www.etsy.com/shop/NH48pics"
     ],
     address: {
       "@type": "PostalAddress",
@@ -1191,7 +1273,7 @@ const buildJsonLd = (
       addressCountry: "US"
     },
     founder: { "@id": "https://nh48.info/#person-nathan-sobol" }
-  };
+  });
 
   const dataCatalogNode = {
     "@type": "DataCatalog",
@@ -1201,30 +1283,38 @@ const buildJsonLd = (
     publisher: { "@id": publisherNode["@id"] },
   };
 
-  const personNode = {
+  const personNode = normalizeSchemaNode(personData, {
     "@type": "Person",
     "@id": "https://nh48.info/#person-nathan-sobol",
     name: "Nathan Sobol",
     alternateName: "Nathan Sobol Photography",
-    url: "https://nh48.info/about",
+    url: "https://nh48.info/about/",
     sameAs: [
-      "https://www.instagram.com/nate_dumps_pics",
+      "https://www.instagram.com/nate_dumps_pics/",
       "https://www.facebook.com/natedumpspics",
       "https://www.etsy.com/shop/NH48pics"
     ],
     worksFor: { "@id": publisherNode["@id"] }
-  };
+  });
 
-  const webSiteNode = {
+  const webSiteNode = normalizeSchemaNode(websiteData, {
     "@type": "WebSite",
     "@id": "https://nh48.info/#website",
     name: "NH48pics",
     url: HOME_URL,
     description: "Fine-art photography and trail resources for the NH 48 4,000-footers.",
+    sameAs: [
+      "https://www.instagram.com/nate_dumps_pics/"
+    ],
     publisher: { "@id": publisherNode["@id"] },
     copyrightHolder: { "@id": publisherNode["@id"] },
-    inLanguage: ["en", "fr"]
-  };
+    inLanguage: ["en", "fr"],
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://nh48.info/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  });
 
   const webPageNode = {
     "@type": "WebPage",
@@ -1233,6 +1323,18 @@ const buildJsonLd = (
     name: `${peakName} — White Mountain National Forest`,
     isPartOf: { "@id": webSiteNode["@id"] },
   };
+
+  const creativeWorkNode = buildCreativeWorkForPeak({
+    entry: creativeEntry,
+    canonicalUrl,
+    peakName,
+    descriptionText,
+    primaryImage,
+    imageObjects: imageObjects || [],
+    publisherNode,
+    personNode,
+    webPageNode
+  });
 
   const mountainNode = {
     "@type": "Mountain",
@@ -1296,6 +1398,7 @@ const buildJsonLd = (
     publisherNode,
     personNode,
     webSiteNode,
+    creativeWorkNode,
     whiteMountainForestNode,
     geoNode,
     imageGallery,
@@ -1431,6 +1534,10 @@ const main = () => {
     const data = readJsonFile(DATA_PATH, "data");
     const geographyData = readJsonFile(GEOGRAPHY_PATH, "geography data");
     const sameAsLookup = readJsonFile(PEAK_SAMEAS_PATH, "peak sameAs lookup");
+    const organizationData = readJsonFile(ORGANIZATION_PATH, "organization data");
+    const websiteData = readJsonFile(WEBSITE_PATH, "website data");
+    const personData = readJsonFile(PERSON_PATH, "person data");
+    const creativeWorks = readJsonFile(CREATIVEWORKS_PATH, "creative works");
 
     const geographyEntries = Array.isArray(geographyData)
       ? geographyData
@@ -1627,14 +1734,27 @@ const main = () => {
               lang,
               name,
               localizedName,
-              geographyRefs
+              geographyRefs,
+              organizationData,
+              websiteData,
+              personData,
+              creativeWorks?.[`peak/${slug}`] || creativeWorks?.[slug]
             )
           ),
           BREADCRUMB_LD: escapeScriptJson(
             buildBreadcrumbJson(localizedName, canonicalUrl, lang.catalogUrl, lang.homeUrl, lang.labels)
           ),
           WEBPAGE_SCHEMA: escapeScriptJson(
-            buildWebPageSchema(localizedName, canonicalUrl, descriptionText, primaryPhoto, lang.code, mapId)
+            buildWebPageSchema(
+              localizedName,
+              canonicalUrl,
+              descriptionText,
+              primaryPhoto,
+              lang.code,
+              mapId,
+              organizationData,
+              websiteData
+            )
           ),
           MAP_SCHEMA: mapSchema
             ? `<script type="application/ld+json">${escapeScriptJson(mapSchema)}</script>`
@@ -1643,7 +1763,7 @@ const main = () => {
             const faqJson = buildFAQSchema(localizedName, peak["Standard Routes"], difficulty, time, lang.code);
             return faqJson ? `<script type="application/ld+json">${escapeScriptJson(faqJson)}</script>` : "";
           })(),
-          GEO_POSITION: coordinates.latitude && coordinates.longitude 
+          GEO_POSITION: coordinates.latitude && coordinates.longitude
             ? `${coordinates.latitude};${coordinates.longitude}`
             : "",
           GEO_PLACENAME: escapeHtml(localizedName),
