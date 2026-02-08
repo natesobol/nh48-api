@@ -1,0 +1,222 @@
+{
+  "version": 1,
+  "dayTripGroups": [
+    {
+      "id": "presidential",
+      "name": "Presidential Traverse",
+      "description": "Madison, Adams, Jefferson, Washington, Monroe, Eisenhower, Pierce.",
+      "peaks": [
+        "mount-madison",
+        "mount-adams",
+        "mount-jefferson",
+        "mount-washington",
+        "mount-monroe",
+        "mount-eisenhower",
+        "mount-pierce"
+      ]
+    },
+    {
+      "id": "franconia",
+      "name": "Franconia Ridge Loop",
+      "description": "Flume, Liberty, Lincoln, Lafayette.",
+      "peaks": [
+        "mount-flume",
+        "mount-liberty",
+        "mount-lincoln",
+        "mount-lafayette"
+      ]
+    },
+    {
+      "id": "bonds",
+      "name": "Bonds Traverse",
+      "description": "Bondcliff, Bond, West Bond.",
+      "peaks": [
+        "bondcliff",
+        "mount-bond",
+        "west-bond"
+      ]
+    },
+    {
+      "id": "pemi",
+      "name": "Pemi Loop",
+      "description": "Flume, Liberty, Lincoln, Lafayette, Garfield, Galehead, South Twin, West Bond, Bond, Bondcliff.",
+      "peaks": [
+        "mount-flume",
+        "mount-liberty",
+        "mount-lincoln",
+        "mount-lafayette",
+        "mount-garfield",
+        "galehead-mountain",
+        "south-twin-mountain",
+        "west-bond",
+        "mount-bond",
+        "bondcliff"
+      ]
+    },
+    {
+      "id": "twinRange",
+      "name": "Twin Range",
+      "description": "South Twin, North Twin, Galehead.",
+      "peaks": [
+        "south-twin-mountain",
+        "north-twin-mountain",
+        "galehead-mountain"
+      ]
+    },
+    {
+      "id": "hancocks",
+      "name": "Hancocks Loop",
+      "description": "North Hancock, South Hancock.",
+      "peaks": [
+        "mount-hancock",
+        "mount-hancock-south"
+      ]
+    },
+    {
+      "id": "kinsmans",
+      "name": "Kinsmans",
+      "description": "North Kinsman, South Kinsman.",
+      "peaks": [
+        "north-kinsman-mountain",
+        "south-kinsman-mountain"
+      ]
+    },
+    {
+      "id": "osceolas",
+      "name": "Osceolas",
+      "description": "Mount Osceola, East Osceola.",
+      "peaks": [
+        "mount-osceola",
+        "mount-osceola-east"
+      ]
+    },
+    {
+      "id": "willeyRange",
+      "name": "Willey Range",
+      "description": "Mount Tom, Field, Willey.",
+      "peaks": [
+        "mount-tom",
+        "mount-field",
+        "mount-willey"
+      ]
+    },
+    {
+      "id": "carterMoriah",
+      "name": "Carter-Moriah Traverse",
+      "description": "Carter Dome, South Carter, Middle Carter, Moriah.",
+      "peaks": [
+        "carter-dome",
+        "south-carter-mountain",
+        "middle-carter-mountain",
+        "mount-moriah"
+      ]
+    }
+  ],
+  "finishStrategies": [
+    {
+      "id": "fast-finish",
+      "name": "Fast Finish",
+      "icon": "🚀",
+      "duration": "~1 Year",
+      "tripRange": "18–20 Day Hikes",
+      "summary": "Efficient multi-peak days with flexible scheduling.",
+      "layout": {
+        "type": "groupings",
+        "groupOrder": [
+          "presidential",
+          "franconia",
+          "pemi",
+          "bonds",
+          "carterMoriah",
+          "willeyRange",
+          "twinRange",
+          "hancocks",
+          "kinsmans",
+          "osceolas"
+        ],
+        "leftoverSort": "difficulty"
+      }
+    },
+    {
+      "id": "efficient-trips",
+      "name": "Efficient Trips",
+      "icon": "⚡",
+      "duration": "1–2 Years",
+      "tripRange": "8–15 Trips",
+      "summary": "Aggressive linkups and long traverses for strong hikers.",
+      "layout": {
+        "type": "groupings",
+        "groupOrder": [
+          "presidential",
+          "pemi",
+          "franconia",
+          "bonds",
+          "carterMoriah",
+          "willeyRange",
+          "twinRange",
+          "hancocks",
+          "kinsmans",
+          "osceolas"
+        ],
+        "leftoverSort": "difficulty"
+      }
+    },
+    {
+      "id": "weekend-warrior",
+      "name": "Weekend Warrior",
+      "icon": "🗓️",
+      "duration": "2–4 Years",
+      "tripRange": "30–40 Day Hikes",
+      "summary": "Steady progress with 2–3 peaks per trip.",
+      "layout": {
+        "type": "groupings",
+        "groupOrder": [
+          "franconia",
+          "kinsmans",
+          "hancocks",
+          "osceolas",
+          "willeyRange",
+          "twinRange",
+          "carterMoriah"
+        ],
+        "leftoverSort": "difficulty"
+      }
+    },
+    {
+      "id": "range-by-range",
+      "name": "Range-by-Range",
+      "icon": "🧭",
+      "duration": "2–3 Years",
+      "tripRange": "16–25 Day Hikes",
+      "summary": "Finish one range at a time to reduce travel and logistics.",
+      "layout": {
+        "type": "range",
+        "leftoverSort": "difficulty"
+      }
+    },
+    {
+      "id": "seasonal-split",
+      "name": "Seasonal Split",
+      "icon": "🍂",
+      "duration": "3–5 Years",
+      "tripRange": "25–40 Day Hikes",
+      "summary": "Group by seasonal suitability (winter-friendly vs summer/fall).",
+      "layout": {
+        "type": "seasonal",
+        "leftoverSort": "difficulty"
+      }
+    },
+    {
+      "id": "scenic-journey",
+      "name": "Scenic Journey",
+      "icon": "🌄",
+      "duration": "4–6+ Years",
+      "tripRange": "40+ Day Hikes",
+      "summary": "Savor each peak and explore alternate routes.",
+      "layout": {
+        "type": "flat",
+        "leftoverSort": "difficulty"
+      }
+    }
+  ]
+}

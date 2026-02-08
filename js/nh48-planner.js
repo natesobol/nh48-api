@@ -6,119 +6,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'https://esm.sh/reac
 import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
 import { DragDropContext, Droppable, Draggable } from 'https://esm.sh/@hello-pangea/dnd@18.0.1?deps=react@18.2.0,react-dom@18.2.0';
 
-const DAY_TRIP_GROUPS = [
-  {
-    id: 'presidential',
-    name: 'Presidential Traverse',
-    description: 'Madison, Adams, Jefferson, Washington, Monroe, Eisenhower, Pierce',
-    peaks: [
-      'mount-madison',
-      'mount-adams',
-      'mount-jefferson',
-      'mount-washington',
-      'mount-monroe',
-      'mount-eisenhower',
-      'mount-pierce'
-    ]
-  },
-  {
-    id: 'franconia',
-    name: 'Franconia Ridge Loop',
-    description: 'Flume, Liberty, Lincoln, Lafayette',
-    peaks: [
-      'mount-flume',
-      'mount-liberty',
-      'mount-lincoln',
-      'mount-lafayette'
-    ]
-  },
-  {
-    id: 'bonds',
-    name: 'Bonds Traverse',
-    description: 'Bondcliff, Bond, West Bond',
-    peaks: [
-      'bondcliff',
-      'mount-bond',
-      'west-bond'
-    ]
-  },
-  {
-    id: 'pemi',
-    name: 'Pemi Loop',
-    description: 'Flume, Liberty, Lincoln, Lafayette, Garfield, Galehead, South Twin, West Bond, Bond, Bondcliff',
-    peaks: [
-      'mount-flume',
-      'mount-liberty',
-      'mount-lincoln',
-      'mount-lafayette',
-      'mount-garfield',
-      'galehead-mountain',
-      'south-twin-mountain',
-      'west-bond',
-      'mount-bond',
-      'bondcliff'
-    ]
-  },
-  {
-    id: 'twinRange',
-    name: 'Twin Range',
-    description: 'South Twin, North Twin, Galehead',
-    peaks: [
-      'south-twin-mountain',
-      'north-twin-mountain',
-      'galehead-mountain'
-    ]
-  },
-  {
-    id: 'hancocks',
-    name: 'Hancocks Loop',
-    description: 'North Hancock, South Hancock',
-    peaks: [
-      'mount-hancock',
-      'mount-hancock-south'
-    ]
-  },
-  {
-    id: 'kinsmans',
-    name: 'Kinsmans',
-    description: 'North and South Kinsman',
-    peaks: [
-      'north-kinsman-mountain',
-      'south-kinsman-mountain'
-    ]
-  },
-  {
-    id: 'osceolas',
-    name: 'Osceolas',
-    description: 'Mount Osceola, East Osceola',
-    peaks: [
-      'mount-osceola',
-      'mount-osceola-east'
-    ]
-  },
-  {
-    id: 'willeyRange',
-    name: 'Willey Range',
-    description: 'Tom, Field, Willey',
-    peaks: [
-      'mount-tom',
-      'mount-field',
-      'mount-willey'
-    ]
-  },
-  {
-    id: 'carterMoriah',
-    name: 'Carter-Moriah Traverse',
-    description: 'Carter Dome, South Carter, Middle Carter, Moriah',
-    peaks: [
-      'carter-dome',
-      'south-carter-mountain',
-      'middle-carter-mountain',
-      'mount-moriah'
-    ]
-  }
-];
-
 const DIFFICULTY_MAP = {
   'mount-tecumseh': 'beginner',
   'mount-waumbek': 'beginner',
@@ -161,16 +48,16 @@ const DIFFICULTY_SORT_OVERRIDES = {
 };
 
 const STORAGE_KEY = 'nh48-planner-itinerary-v1';
+const ROUTE_METRICS_KEY = 'nh48-planner-route-metrics-open';
+const RANGE_COLOR_FALLBACK = '#22c55e';
 
 const RISK_FACTORS = [
   { id: 'AboveTreelineExposure', label: 'Above-treeline exposure', color: '#f97316' },
-  { id: 'SevereWeather', label: 'Severe weather', color: '#ef4444' },
   { id: 'LongBailout', label: 'Long bailout', color: '#f59e0b' },
   { id: 'LimitedWater', label: 'Limited water', color: '#facc15' },
-  { id: 'Navigation', label: 'Navigation', color: '#a855f7' },
   { id: 'ScrambleSteep', label: 'Scramble / steep', color: '#fb7185' },
   { id: 'UnbridgedRiverCrossings', label: 'Unbridged crossings', color: '#38bdf8' },
-  { id: 'NoCellService', label: 'No cell service', color: '#94a3b8' }
+  { id: 'NoCellService', label: 'Especially Unreliable Cell Service', color: '#94a3b8' }
 ];
 
 const RISK_PRIORITY = RISK_FACTORS.map((risk) => risk.id);
@@ -182,6 +69,7 @@ const RISK_LABEL_LOOKUP = RISK_FACTORS.reduce((acc, risk) => {
   acc[risk.id] = risk.label;
   return acc;
 }, {});
+const ALLOWED_RISK_IDS = new Set(RISK_FACTORS.map((risk) => risk.id));
 
 const DEFAULT_NUMERIC_FILTER = { min: '', max: '' };
 
@@ -271,11 +159,17 @@ function serializeItinerary(list) {
 function hydrateItinerary(serialized, peaksMap) {
   if (!Array.isArray(serialized)) return null;
   const list = [];
+  const seen = new Set();
   serialized.forEach((item) => {
     if (item.type === 'group') {
       const items = (item.items || [])
         .map((slug) => peaksMap[slug])
         .filter(Boolean)
+        .filter((peak) => {
+          if (seen.has(peak.slug)) return false;
+          seen.add(peak.slug);
+          return true;
+        })
         .map((peak) => buildPeakItem(peak));
       if (items.length) {
         list.push({
@@ -288,7 +182,10 @@ function hydrateItinerary(serialized, peaksMap) {
       }
     } else if (item.type === 'peak') {
       const peak = peaksMap[item.id];
-      if (peak) list.push(buildPeakItem(peak));
+      if (peak && !seen.has(peak.slug)) {
+        seen.add(peak.slug);
+        list.push(buildPeakItem(peak));
+      }
     }
   });
   return list.length ? list : null;
@@ -324,6 +221,39 @@ function buildPeakItem(details) {
   };
 }
 
+// Returns the primary photo URL for a given peak slug.
+// This follows the naming pattern used on the site: slug/slug__001.jpg.
+function getPeakPhotoUrl(slug) {
+  return `https://photos.nh48.info/${slug}/${slug}__001.jpg`;
+}
+
+function sortPeaksByDifficulty(peaks) {
+  return [...peaks].sort((a, b) => {
+    const aTier = DIFFICULTY_ORDER.indexOf(a.difficulty || 'moderate');
+    const bTier = DIFFICULTY_ORDER.indexOf(b.difficulty || 'moderate');
+    if (aTier !== bTier) return aTier - bTier;
+    const aOverride = DIFFICULTY_SORT_OVERRIDES[a.slug] ?? 0;
+    const bOverride = DIFFICULTY_SORT_OVERRIDES[b.slug] ?? 0;
+    if (aOverride !== bOverride) return aOverride - bOverride;
+    const aVal = Number.isFinite(a.elevation) ? a.elevation : null;
+    const bVal = Number.isFinite(b.elevation) ? b.elevation : null;
+    if (aVal !== null && bVal !== null && aVal !== bVal) return aVal - bVal;
+    return (a.name || '').localeCompare(b.name || '');
+  });
+}
+
+function classifySeasonBucket(text) {
+  const value = (text || '').toLowerCase();
+  const hasWinter = value.includes('winter');
+  const hasSpring = value.includes('spring');
+  const hasSummer = value.includes('summer');
+  const hasFall = value.includes('fall') || value.includes('foliage');
+  if (hasWinter && !hasSummer && !hasFall && !hasSpring) return 'winter';
+  if (hasWinter && (hasSummer || hasFall)) return 'shoulder';
+  if (hasSpring) return 'shoulder';
+  return 'summer';
+}
+
 function reorder(list, startIndex, endIndex) {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
@@ -341,6 +271,29 @@ function PeakPlannerApp() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [hasOverlay, setHasOverlay] = useState(true);
+  const [rangeColors, setRangeColors] = useState({});
+  const [rangeOrder, setRangeOrder] = useState([]);
+  const [finishStrategies, setFinishStrategies] = useState([]);
+  const [dayTripGroups, setDayTripGroups] = useState([]);
+  const [activeStrategyId, setActiveStrategyId] = useState(null);
+  const [pendingStrategyId, setPendingStrategyId] = useState(null);
+  const [pendingStrategySource, setPendingStrategySource] = useState(null);
+  const [showStrategyPrompt, setShowStrategyPrompt] = useState(false);
+  const [loadedSavedItinerary, setLoadedSavedItinerary] = useState(false);
+  const [seasonBuckets, setSeasonBuckets] = useState({});
+  const [routeMetricsOpen, setRouteMetricsOpen] = useState(() => {
+    try {
+      return window.localStorage.getItem(ROUTE_METRICS_KEY) === 'true';
+    } catch (err) {
+      return false;
+    }
+  });
+  const [adjacencyMap, setAdjacencyMap] = useState({});
+  const [selectionWarning, setSelectionWarning] = useState('');
+  const undoStackRef = useRef([]);
+  const redoStackRef = useRef([]);
+  const [undoCount, setUndoCount] = useState(0);
+  const [redoCount, setRedoCount] = useState(0);
 
   const [activeRiskFilters, setActiveRiskFilters] = useState(new Set());
   const [activeRangeGroups, setActiveRangeGroups] = useState(new Set());
@@ -349,7 +302,13 @@ function PeakPlannerApp() {
   const [timeFilter, setTimeFilter] = useState({ ...DEFAULT_NUMERIC_FILTER });
   const [bailoutFilter, setBailoutFilter] = useState({ ...DEFAULT_NUMERIC_FILTER });
   const [selectedPeakIds, setSelectedPeakIds] = useState(new Set());
+  const [draggingType, setDraggingType] = useState(null);
+  const [contextMenu, setContextMenu] = useState(null);
   const groupCounterRef = useRef(1);
+  const strategyParam = useMemo(() => {
+    if (typeof window === 'undefined') return null;
+    return new URLSearchParams(window.location.search).get('strategy');
+  }, []);
   useEffect(() => {
     Promise.all([
       fetch('/manifest_out.json').then((r) => {
@@ -358,9 +317,75 @@ function PeakPlannerApp() {
       }),
       fetch('/data/nh48_enriched_overlay.json')
         .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null),
+      fetch('/data/wmnf-ranges.json')
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null),
+      fetch('/data/nh48.json')
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null),
+      fetch('/data/nh48-planner-templates.json')
+        .then((r) => (r.ok ? r.json() : null))
         .catch(() => null)
     ])
-      .then(([data, overlay]) => {
+      .then(([data, overlay, ranges, nh48, templates]) => {
+        const colorMap = {};
+        const orderedRanges = [];
+        let localSeasonBuckets = {};
+        if (ranges) {
+          Object.values(ranges).forEach((range) => {
+            if (range.rangeName) {
+              colorMap[range.rangeName] = range.color || RANGE_COLOR_FALLBACK;
+              orderedRanges.push(range.rangeName);
+            }
+          });
+        }
+        setRangeColors(colorMap);
+        setRangeOrder(orderedRanges);
+        const templateStrategies = Array.isArray(templates?.finishStrategies) ? templates.finishStrategies : [];
+        const templateDayTrips = Array.isArray(templates?.dayTripGroups) ? templates.dayTripGroups : [];
+        setFinishStrategies(templateStrategies);
+        setDayTripGroups(templateDayTrips);
+        if (nh48) {
+          const nameToSlug = {};
+          const graph = {};
+          const seasonalMap = {};
+          Object.values(nh48).forEach((entry) => {
+            const slug = entry.slug || entry.peakName?.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            if (!slug) return;
+            graph[slug] = new Set();
+            if (entry.peakName) nameToSlug[entry.peakName] = slug;
+            if (entry['Peak Name']) nameToSlug[entry['Peak Name']] = slug;
+            seasonalMap[slug] = classifySeasonBucket(entry['Best Seasons to Hike']);
+          });
+          Object.values(nh48).forEach((entry) => {
+            const slug = entry.slug || entry.peakName?.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            if (!slug || !graph[slug]) return;
+            const neighbors = Array.isArray(entry['Nearby 4000-footer Connections'])
+              ? entry['Nearby 4000-footer Connections']
+              : [];
+            neighbors.forEach((name) => {
+              const neighborSlug = nameToSlug[name];
+              if (neighborSlug && neighborSlug !== slug) {
+                graph[slug].add(neighborSlug);
+                if (graph[neighborSlug]) {
+                  graph[neighborSlug].add(slug);
+                }
+              }
+            });
+          });
+          const finalized = {};
+          Object.entries(graph).forEach(([slug, set]) => {
+            finalized[slug] = Array.from(set);
+          });
+          setAdjacencyMap(finalized);
+          setSeasonBuckets(seasonalMap);
+          localSeasonBuckets = seasonalMap;
+        } else {
+          setAdjacencyMap({});
+          setSeasonBuckets({});
+          localSeasonBuckets = {};
+        }
         const map = {};
         Object.values(data).forEach((entry) => {
           const slug = entry.slug || entry.peakName?.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -384,9 +409,13 @@ function PeakPlannerApp() {
           Object.entries(overlay).forEach(([slugKey, overlayEntry]) => {
             const slug = overlayEntry.slug || slugKey;
             if (!map[slug]) return;
+            const rawRiskFactors = Array.isArray(overlayEntry.risk_factors)
+              ? overlayEntry.risk_factors
+              : (Array.isArray(overlayEntry.riskFactors) ? overlayEntry.riskFactors : []);
+            const filteredRiskFactors = rawRiskFactors.filter((risk) => ALLOWED_RISK_IDS.has(risk));
             map[slug] = {
               ...map[slug],
-              riskFactors: overlayEntry.risk_factors || overlayEntry.riskFactors || [],
+              riskFactors: filteredRiskFactors,
               prepNotes: overlayEntry.prep_notes || overlayEntry.prepNotes || '',
               riskEvidence: overlayEntry.risk_evidence || overlayEntry.riskEvidence || [],
               riskReview: overlayEntry.risk_review || overlayEntry.riskReview || null,
@@ -408,9 +437,36 @@ function PeakPlannerApp() {
         setHasOverlay(Boolean(overlay));
         setPeaksMap(map);
         const saved = loadSavedItinerary(map);
+        setLoadedSavedItinerary(Boolean(saved));
         const baseItinerary = saved || buildDifficultyGroups(map);
+        undoStackRef.current = [];
+        redoStackRef.current = [];
+        setUndoCount(0);
+        setRedoCount(0);
         setItinerary(baseItinerary);
+        setActiveStrategyId(null);
+        if (strategyParam) {
+          const requestedStrategy = templateStrategies.find((strategy) => strategy.id === strategyParam);
+          if (requestedStrategy) {
+            if (saved) {
+              setPendingStrategyId(requestedStrategy.id);
+              setPendingStrategySource('query');
+              setShowStrategyPrompt(true);
+            } else {
+              const generated = buildItineraryFromStrategy(requestedStrategy, {
+                dayTripGroups: templateDayTrips,
+                rangeOrder: orderedRanges,
+                seasonBuckets: localSeasonBuckets
+              });
+              if (generated.length) {
+                setItinerary(generated);
+                setActiveStrategyId(requestedStrategy.id);
+              }
+            }
+          }
+        }
         setSelectedPeakIds(new Set());
+        setSelectionWarning('');
         setLoading(false);
       })
       .catch((err) => {
@@ -438,6 +494,64 @@ function PeakPlannerApp() {
     }
   }, [itinerary]);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(ROUTE_METRICS_KEY, routeMetricsOpen ? 'true' : 'false');
+    } catch (err) {
+      console.warn('Failed to persist route metrics state', err);
+    }
+  }, [routeMetricsOpen]);
+
+  const isSelectionContiguous = useMemo(() => {
+    const ids = Array.from(selectedPeakIds);
+    if (ids.length <= 1) return true;
+    if (!adjacencyMap || !Object.keys(adjacencyMap).length) return false;
+    const selectedSet = new Set(ids);
+    const queue = [ids[0]];
+    const seen = new Set([ids[0]]);
+    while (queue.length) {
+      const current = queue.shift();
+      const neighbors = adjacencyMap[current] || [];
+      neighbors.forEach((neighbor) => {
+        if (selectedSet.has(neighbor) && !seen.has(neighbor)) {
+          seen.add(neighbor);
+          queue.push(neighbor);
+        }
+      });
+    }
+    return ids.every((id) => seen.has(id));
+  }, [selectedPeakIds, adjacencyMap]);
+
+  useEffect(() => {
+    if (selectedPeakIds.size === 0) {
+      setSelectionWarning('');
+      return;
+    }
+    if (!adjacencyMap || !Object.keys(adjacencyMap).length) {
+      setSelectionWarning('Adjacency data is unavailable. Grouping is disabled right now.');
+      return;
+    }
+    if (!isSelectionContiguous) {
+      setSelectionWarning('Selected peaks aren’t contiguous. Group only adjacent/related peaks.');
+      return;
+    }
+    setSelectionWarning('');
+  }, [selectedPeakIds, adjacencyMap, isSelectionContiguous]);
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    const handleClick = () => setContextMenu(null);
+    const handleKey = (event) => {
+      if (event.key === 'Escape') setContextMenu(null);
+    };
+    window.addEventListener('click', handleClick, true);
+    window.addEventListener('keydown', handleKey);
+    return () => {
+      window.removeEventListener('click', handleClick, true);
+      window.removeEventListener('keydown', handleKey);
+    };
+  }, [contextMenu]);
+
   const filtersActive = useMemo(() => (
     activeRiskFilters.size > 0
     || activeRangeGroups.size > 0
@@ -456,6 +570,207 @@ function PeakPlannerApp() {
     });
     return active;
   }, [itinerary]);
+
+  const pushUndoSnapshot = (snapshot) => {
+    const nextUndo = [...undoStackRef.current, snapshot];
+    if (nextUndo.length > 20) nextUndo.shift();
+    undoStackRef.current = nextUndo;
+    redoStackRef.current = [];
+    setUndoCount(nextUndo.length);
+    setRedoCount(0);
+  };
+  const applyItineraryUpdate = (updater) => {
+    setItinerary((prev) => {
+      const next = updater(prev);
+      if (next === prev) return prev;
+      pushUndoSnapshot(serializeItinerary(prev));
+      return next;
+    });
+  };
+
+  const handleUndo = () => {
+    if (!undoStackRef.current.length) return;
+    const currentSnapshot = serializeItinerary(itinerary);
+    const previous = undoStackRef.current.pop();
+    redoStackRef.current = [...redoStackRef.current, currentSnapshot].slice(-20);
+    setUndoCount(undoStackRef.current.length);
+    setRedoCount(redoStackRef.current.length);
+    const restored = hydrateItinerary(previous, peaksMap) || [];
+    setItinerary(restored);
+    setSelectedPeakIds(new Set());
+    setSelectionWarning('');
+  };
+
+  const handleRedo = () => {
+    if (!redoStackRef.current.length) return;
+    const currentSnapshot = serializeItinerary(itinerary);
+    const nextSnapshot = redoStackRef.current.pop();
+    undoStackRef.current = [...undoStackRef.current, currentSnapshot].slice(-20);
+    setUndoCount(undoStackRef.current.length);
+    setRedoCount(redoStackRef.current.length);
+    const restored = hydrateItinerary(nextSnapshot, peaksMap) || [];
+    setItinerary(restored);
+    setSelectedPeakIds(new Set());
+    setSelectionWarning('');
+  };
+
+  const resolveRangeName = (value) => {
+    if (!value || typeof value !== 'string') return null;
+    if (rangeColors[value]) return value;
+    const normalized = value.toLowerCase();
+    if (normalized.includes('presidential')) return 'Presidential Range';
+    if (normalized.includes('franconia')) return 'Franconia Range';
+    if (normalized.includes('kinsman') || normalized.includes('moosilauke') || normalized.includes('cannon')) {
+      return 'Kinsman Range';
+    }
+    if (normalized.includes('carter') || normalized.includes('moriah') || normalized.includes('wildcat')) {
+      return 'Carter-Moriah Range';
+    }
+    if (normalized.includes('twin') || normalized.includes('bond')) return 'Twin Range';
+    if (normalized.includes('willey') || normalized.includes('field') || normalized.includes('tom')) return 'Willey Range';
+    if (normalized.includes('pilot') || normalized.includes('pliny') || normalized.includes('kilkenny') || normalized.includes('cabot') || normalized.includes('waumbek')) {
+      return 'Pilot–Pliny Range';
+    }
+    if (normalized.includes('sandwich') || normalized.includes('waterville') || normalized.includes('osceola') || normalized.includes('tripyramid') || normalized.includes('tecumseh') || normalized.includes('passaconaway') || normalized.includes('whiteface')) {
+      return 'Sandwich / Waterville Range';
+    }
+    if (normalized.includes('pemigewasset') || normalized.includes('pemi') || normalized.includes('wilderness')) {
+      return 'Pemigewasset Wilderness';
+    }
+    return value;
+  };
+
+  const getRangeColor = (value) => {
+    const resolved = resolveRangeName(value);
+    if (resolved && rangeColors[resolved]) return rangeColors[resolved];
+    return RANGE_COLOR_FALLBACK;
+  };
+
+  const getGroupGradient = (group) => {
+    const counts = new Map();
+    group.items.forEach((peak) => {
+      const rangeName = resolveRangeName(peak.rangeGroup || peak.range);
+      if (!rangeName) return;
+      counts.set(rangeName, (counts.get(rangeName) || 0) + 1);
+    });
+    if (!counts.size) return null;
+    const ordered = Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([rangeName]) => getRangeColor(rangeName));
+    const uniqueColors = Array.from(new Set(ordered));
+    const topColors = uniqueColors.slice(0, 3);
+    const accent = topColors[0];
+    if (topColors.length === 1) {
+      return { border: topColors[0], accent };
+    }
+    const gradient = `linear-gradient(120deg, ${topColors.join(', ')})`;
+    return { border: gradient, accent };
+  };
+
+  const clearStrategyQueryParam = () => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has('strategy')) return;
+    url.searchParams.delete('strategy');
+    const next = `${url.pathname}${url.search}${url.hash}`;
+    window.history.replaceState({}, '', next);
+  };
+
+  const buildItineraryFromStrategy = (strategy, overrides = {}) => {
+    if (!strategy || !strategy.layout) return [];
+
+    const strategyDayTripGroups = Array.isArray(overrides.dayTripGroups) ? overrides.dayTripGroups : dayTripGroups;
+    const strategyRangeOrder = Array.isArray(overrides.rangeOrder) ? overrides.rangeOrder : rangeOrder;
+    const strategySeasonBuckets = overrides.seasonBuckets || seasonBuckets;
+    const used = new Set();
+    const groupedItems = [];
+    const allPeaks = Object.values(peaksMap);
+    const dayTripMap = new Map(strategyDayTripGroups.map((group) => [group.id, group]));
+
+    const addGroupBySlugs = (groupId, groupName, kind, slugs) => {
+      const items = [];
+      (slugs || []).forEach((slug) => {
+        if (!slug || used.has(slug)) return;
+        const peak = peaksMap[slug];
+        if (!peak) return;
+        used.add(slug);
+        items.push(buildPeakItem(peak));
+      });
+      if (!items.length) return;
+      groupedItems.push({
+        type: 'group',
+        id: groupId,
+        name: groupName,
+        kind,
+        items
+      });
+    };
+
+    const addLeftovers = () => {
+      const leftovers = sortPeaksByDifficulty(
+        allPeaks.filter((peak) => !used.has(peak.slug))
+      ).map((peak) => buildPeakItem(peak));
+      return leftovers;
+    };
+
+    if (strategy.layout.type === 'groupings') {
+      (strategy.layout.groupOrder || []).forEach((groupId) => {
+        const group = dayTripMap.get(groupId);
+        if (!group) return;
+        addGroupBySlugs(`daytrip-${group.id}`, group.name, 'day-trip', group.peaks);
+      });
+      return [...groupedItems, ...addLeftovers()];
+    }
+
+    if (strategy.layout.type === 'range') {
+      const rangeBuckets = new Map();
+      allPeaks.forEach((peak) => {
+        const label = resolveRangeName(peak.rangeGroup || peak.range) || 'Other';
+        if (!rangeBuckets.has(label)) rangeBuckets.set(label, []);
+        rangeBuckets.get(label).push(peak);
+      });
+
+      const orderedRanges = [];
+      strategyRangeOrder.forEach((name) => {
+        const normalized = resolveRangeName(name) || name;
+        if (rangeBuckets.has(normalized) && !orderedRanges.includes(normalized)) {
+          orderedRanges.push(normalized);
+        }
+      });
+      Array.from(rangeBuckets.keys())
+        .sort((a, b) => a.localeCompare(b))
+        .forEach((name) => {
+          if (!orderedRanges.includes(name)) orderedRanges.push(name);
+        });
+
+      orderedRanges.forEach((rangeName) => {
+        const peaks = sortPeaksByDifficulty(rangeBuckets.get(rangeName) || []);
+        addGroupBySlugs(`strategy-range-${rangeName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, rangeName, 'range', peaks.map((peak) => peak.slug));
+      });
+      return [...groupedItems, ...addLeftovers()];
+    }
+
+    if (strategy.layout.type === 'seasonal') {
+      const seasonalOrder = [
+        ['winter', 'Winter-friendly'],
+        ['shoulder', 'Shoulder Season'],
+        ['summer', 'Summer/Fall']
+      ];
+      seasonalOrder.forEach(([bucketId, label]) => {
+        const peaks = sortPeaksByDifficulty(
+          allPeaks.filter((peak) => (strategySeasonBuckets[peak.slug] || 'summer') === bucketId)
+        );
+        addGroupBySlugs(`strategy-season-${bucketId}`, label, 'seasonal', peaks.map((peak) => peak.slug));
+      });
+      return [...groupedItems, ...addLeftovers()];
+    }
+
+    if (strategy.layout.type === 'flat') {
+      return sortPeaksByDifficulty(allPeaks).map((peak) => buildPeakItem(peak));
+    }
+
+    return [];
+  };
 
   const peakMatchesFilters = (peak) => {
     if (!filtersActive) return true;
@@ -539,15 +854,22 @@ function PeakPlannerApp() {
     });
   };
 
-  const clearSelection = () => setSelectedPeakIds(new Set());
+  const clearSelection = () => {
+    setSelectedPeakIds(new Set());
+    setSelectionWarning('');
+  };
 
   const handleGroupSelected = () => {
     if (selectedPeaks.length < 2) return;
+    if (!isSelectionContiguous) {
+      setSelectionWarning('Selected peaks aren’t contiguous. Group only adjacent/related peaks.');
+      return;
+    }
     const groupId = `custom-${Date.now()}-${groupCounterRef.current}`;
     const groupName = `Custom Group ${groupCounterRef.current}`;
     groupCounterRef.current += 1;
 
-    setItinerary((prev) => {
+    applyItineraryUpdate((prev) => {
       const next = [];
       const collected = [];
       let insertIndex = null;
@@ -593,7 +915,7 @@ function PeakPlannerApp() {
   };
 
   const handleUngroup = (groupId) => {
-    setItinerary((prev) => {
+    applyItineraryUpdate((prev) => {
       const index = prev.findIndex((item) => item.type === 'group' && item.id === groupId);
       if (index === -1) return prev;
       const group = prev[index];
@@ -603,14 +925,64 @@ function PeakPlannerApp() {
     clearSelection();
   };
 
+  const applyStrategyById = (strategyId, options = {}) => {
+    const { skipUndo = false } = options;
+    const strategy = finishStrategies.find((entry) => entry.id === strategyId);
+    if (!strategy) return;
+    const nextItinerary = buildItineraryFromStrategy(strategy);
+    if (!nextItinerary.length) return;
+    if (skipUndo) {
+      undoStackRef.current = [];
+      redoStackRef.current = [];
+      setUndoCount(0);
+      setRedoCount(0);
+      setItinerary(nextItinerary);
+    } else {
+      applyItineraryUpdate(() => nextItinerary);
+    }
+    setActiveStrategyId(strategyId);
+    clearSelection();
+  };
+
+  const requestStrategyApply = (strategyId, source = 'toolbar') => {
+    if (!strategyId) return;
+    if (loadedSavedItinerary) {
+      setPendingStrategyId(strategyId);
+      setPendingStrategySource(source);
+      setShowStrategyPrompt(true);
+      return;
+    }
+    applyStrategyById(strategyId);
+  };
+
+  const confirmStrategyReplace = () => {
+    if (!pendingStrategyId) return;
+    applyStrategyById(pendingStrategyId);
+    if (pendingStrategySource === 'query') {
+      clearStrategyQueryParam();
+    }
+    setPendingStrategyId(null);
+    setPendingStrategySource(null);
+    setShowStrategyPrompt(false);
+  };
+
+  const cancelStrategyReplace = () => {
+    if (pendingStrategySource === 'query') {
+      clearStrategyQueryParam();
+    }
+    setPendingStrategyId(null);
+    setPendingStrategySource(null);
+    setShowStrategyPrompt(false);
+  };
+
   const handleAutoGroupById = (presetId) => {
     if (!presetId) return;
-    const preset = DAY_TRIP_GROUPS.find((set) => set.id === presetId);
+    const preset = dayTripGroups.find((set) => set.id === presetId);
     if (!preset) return;
     const slugSet = new Set(preset.peaks);
     const groupId = `daytrip-${preset.id}`;
 
-    setItinerary((prev) => {
+    applyItineraryUpdate((prev) => {
       const cleaned = prev.filter((item) => !(item.type === 'group' && item.id === groupId));
       const next = [];
       const collected = [];
@@ -651,6 +1023,16 @@ function PeakPlannerApp() {
     clearSelection();
   };
 
+  const openContextMenu = (event, payload) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setContextMenu({
+      ...payload,
+      x: event.clientX,
+      y: event.clientY
+    });
+  };
+
   const getHighlightColor = (peak) => {
     if (!filtersActive) return null;
     if (activeRiskFilters.size > 0) {
@@ -667,8 +1049,11 @@ function PeakPlannerApp() {
     const { destination, source } = result;
     if (!destination) return;
     if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+    if (result.draggableId.startsWith('group-') && destination.droppableId.startsWith('group-')) {
+      return;
+    }
 
-    setItinerary((prev) => {
+    applyItineraryUpdate((prev) => {
       const next = [...prev];
       const getGroupIndex = (id) => next.findIndex((item) => item.type === 'group' && item.id === id);
       const sourceIsRoot = source.droppableId === 'root';
@@ -757,6 +1142,7 @@ function PeakPlannerApp() {
 
   const rangeChip = (group) => {
     const isActive = activeRangeGroups.has(group);
+    const color = getRangeColor(group);
     return React.createElement('button', {
       key: group,
       type: 'button',
@@ -764,7 +1150,7 @@ function PeakPlannerApp() {
       onClick: () => toggleRangeGroup(group),
       disabled: !hasOverlay,
       'aria-pressed': isActive ? 'true' : 'false',
-      style: { '--chip-color': '#38bdf8' }
+      style: { '--chip-color': color }
     }, group);
   };
 
@@ -789,8 +1175,10 @@ function PeakPlannerApp() {
 
   const renderRiskTags = (peak) => {
     if (filtersActive || !peak.riskFactors || !peak.riskFactors.length) return null;
+    const safeRisks = peak.riskFactors.filter((risk) => ALLOWED_RISK_IDS.has(risk));
+    if (!safeRisks.length) return null;
     return React.createElement('div', { className: 'risk-tags' },
-      peak.riskFactors.map((risk) => React.createElement('span', { key: risk, className: 'risk-tag' }, [
+      safeRisks.map((risk) => React.createElement('span', { key: risk, className: 'risk-tag' }, [
         React.createElement('span', { className: 'risk-tag-dot', style: { background: RISK_COLOR_LOOKUP[risk] || '#94a3b8' } }),
         React.createElement('span', null, RISK_LABEL_LOOKUP[risk] || risk)
       ]))
@@ -800,6 +1188,7 @@ function PeakPlannerApp() {
   const renderPeakRow = (peak, displayIndex, provided, snapshot) => {
     const matchesFilters = filtersActive && peakMatchesFilters(peak);
     const highlightColor = matchesFilters ? getHighlightColor(peak) : null;
+    const photoUrl = getPeakPhotoUrl(peak.slug);
     const dragStyle = provided.draggableProps?.style || {};
     const style = highlightColor
       ? { ...dragStyle, '--highlight-color': highlightColor }
@@ -807,31 +1196,39 @@ function PeakPlannerApp() {
     const indexStyle = highlightColor
       ? { background: `linear-gradient(135deg, ${highlightColor}, #0ea5e9)` }
       : undefined;
+    const isSelected = selectedPeakIds.has(peak.id);
 
     return React.createElement('div', {
       ref: provided.innerRef,
       ...provided.draggableProps,
-      ...provided.dragHandleProps,
       style,
-      className: `itinerary-row${snapshot.isDragging ? ' is-dragging' : ''}${matchesFilters ? ' is-highlighted' : ''}`
+      className: `itinerary-row${snapshot.isDragging ? ' is-dragging' : ''}${matchesFilters ? ' is-highlighted' : ''}${isSelected ? ' is-selected' : ''}`,
+      onContextMenu: (event) => openContextMenu(event, { type: 'peak', id: peak.id })
     }, [
       React.createElement('span', {
         className: 'itinerary-index drag-handle',
-        style: indexStyle
+        style: indexStyle,
+        ...provided.dragHandleProps
       }, displayIndex),
-      React.createElement('div', { className: 'itinerary-details' }, [
-        React.createElement('div', { className: 'itinerary-name-row' }, [
-          React.createElement('input', {
-            type: 'checkbox',
-            className: 'row-checkbox',
-            checked: selectedPeakIds.has(peak.id),
-            onChange: () => togglePeakSelection(peak.id),
-            onMouseDown: (event) => event.stopPropagation(),
-            onTouchStart: (event) => event.stopPropagation()
-          }),
-          React.createElement('span', { className: 'itinerary-name' }, peak.name)
+      React.createElement('div', {
+        className: 'itinerary-photo-banner',
+        style: { backgroundImage: `url('${photoUrl}')` }
+      }, [
+        React.createElement('div', { className: 'itinerary-details' }, [
+          React.createElement('div', { className: 'itinerary-name-row' }, [
+            React.createElement('input', {
+              type: 'checkbox',
+              className: 'row-checkbox',
+              checked: isSelected,
+              onChange: () => togglePeakSelection(peak.id),
+              onMouseDown: (event) => event.stopPropagation(),
+              onTouchStart: (event) => event.stopPropagation(),
+              'aria-label': isSelected ? `Deselect ${peak.name}` : `Select ${peak.name}`
+            }),
+            React.createElement('span', { className: 'itinerary-name' }, peak.name)
+          ]),
+          renderMetrics(peak)
         ]),
-        renderMetrics(peak),
         renderRiskTags(peak)
       ]),
       React.createElement('span', { className: 'itinerary-range' }, peak.rangeGroup || peak.range || 'Range TBD')
@@ -845,14 +1242,48 @@ function PeakPlannerApp() {
   };
 
   const emptyMessage = 'No peaks available.';
+  const canGroupSelection = selectedPeaks.length >= 2 && isSelectionContiguous;
 
-  let displayCounter = 0;
-  const nextDisplayIndex = () => {
-    displayCounter += 1;
-    return displayCounter;
-  };
+  const displayOrderMap = useMemo(() => {
+    const map = new Map();
+    let index = 1;
+    const addPeak = (peak) => {
+      if (!map.has(peak.id)) {
+        map.set(peak.id, index);
+        index += 1;
+      }
+    };
+    itinerary.forEach((item) => {
+      if (item.type === 'peak') {
+        addPeak(item);
+      } else {
+        item.items.forEach(addPeak);
+      }
+    });
+    return map;
+  }, [itinerary]);
 
   return React.createElement('div', { className: 'planner-shell' },
+    finishStrategies.length
+      ? React.createElement('div', { className: 'strategy-toolbar' }, [
+        React.createElement('span', { className: 'strategy-toolbar-label' }, 'Finish strategy templates'),
+        React.createElement('div', { className: 'strategy-toolbar-list' },
+          finishStrategies.map((strategy) => {
+            const isActive = activeStrategyId === strategy.id;
+            return React.createElement('button', {
+              key: strategy.id,
+              type: 'button',
+              className: `strategy-pill${isActive ? ' is-active' : ''}`,
+              onClick: () => requestStrategyApply(strategy.id, 'toolbar'),
+              title: `${strategy.duration} | ${strategy.tripRange}`
+            }, [
+              React.createElement('span', { className: 'strategy-pill-icon' }, strategy.icon || ' '),
+              React.createElement('span', { className: 'strategy-pill-name' }, strategy.name)
+            ]);
+          })
+        )
+      ])
+      : null,
     React.createElement('div', { className: `planner-filters${!hasOverlay ? ' is-disabled' : ''}` }, [
       React.createElement('div', { className: 'filters-header' }, [
         React.createElement('h3', null, 'Filters'),
@@ -876,113 +1307,126 @@ function PeakPlannerApp() {
               : React.createElement('span', { className: 'filter-empty' }, 'Range groups unavailable.')
           )
         ]),
-        React.createElement('div', { className: 'filter-block' }, [
-          React.createElement('span', { className: 'filter-title' }, 'Route metrics'),
-          React.createElement('div', { className: 'filter-numbers' }, [
-            React.createElement('label', null, 'Distance (mi)'),
-            React.createElement('div', { className: 'numeric-range' }, [
-              React.createElement('input', {
-                type: 'number',
-                min: '0',
-                step: '0.1',
-                placeholder: 'Min',
-                value: distanceFilter.min,
-                onChange: (e) => setDistanceFilter((prev) => ({ ...prev, min: e.target.value })),
-                disabled: !hasOverlay
-              }),
-              React.createElement('span', { className: 'range-sep' }, 'to'),
-              React.createElement('input', {
-                type: 'number',
-                min: '0',
-                step: '0.1',
-                placeholder: 'Max',
-                value: distanceFilter.max,
-                onChange: (e) => setDistanceFilter((prev) => ({ ...prev, max: e.target.value })),
-                disabled: !hasOverlay
-              })
-            ]),
-            React.createElement('label', null, 'Elevation gain (ft)'),
-            React.createElement('div', { className: 'numeric-range' }, [
-              React.createElement('input', {
-                type: 'number',
-                min: '0',
-                step: '100',
-                placeholder: 'Min',
-                value: gainFilter.min,
-                onChange: (e) => setGainFilter((prev) => ({ ...prev, min: e.target.value })),
-                disabled: !hasOverlay
-              }),
-              React.createElement('span', { className: 'range-sep' }, 'to'),
-              React.createElement('input', {
-                type: 'number',
-                min: '0',
-                step: '100',
-                placeholder: 'Max',
-                value: gainFilter.max,
-                onChange: (e) => setGainFilter((prev) => ({ ...prev, max: e.target.value })),
-                disabled: !hasOverlay
-              })
-            ]),
-            React.createElement('label', null, 'Estimated time (hrs)'),
-            React.createElement('div', { className: 'numeric-range' }, [
-              React.createElement('input', {
-                type: 'number',
-                min: '0',
-                step: '0.1',
-                placeholder: 'Min',
-                value: timeFilter.min,
-                onChange: (e) => setTimeFilter((prev) => ({ ...prev, min: e.target.value })),
-                disabled: !hasOverlay
-              }),
-              React.createElement('span', { className: 'range-sep' }, 'to'),
-              React.createElement('input', {
-                type: 'number',
-                min: '0',
-                step: '0.1',
-                placeholder: 'Max',
-                value: timeFilter.max,
-                onChange: (e) => setTimeFilter((prev) => ({ ...prev, max: e.target.value })),
-                disabled: !hasOverlay
-              })
-            ]),
-            React.createElement('label', null, 'Bailout distance (mi)'),
-            React.createElement('div', { className: 'numeric-range' }, [
-              React.createElement('input', {
-                type: 'number',
-                min: '0',
-                step: '0.1',
-                placeholder: 'Min',
-                value: bailoutFilter.min,
-                onChange: (e) => setBailoutFilter((prev) => ({ ...prev, min: e.target.value })),
-                disabled: !hasOverlay
-              }),
-              React.createElement('span', { className: 'range-sep' }, 'to'),
-              React.createElement('input', {
-                type: 'number',
-                min: '0',
-                step: '0.1',
-                placeholder: 'Max',
-                value: bailoutFilter.max,
-                onChange: (e) => setBailoutFilter((prev) => ({ ...prev, max: e.target.value })),
-                disabled: !hasOverlay
-              })
+        React.createElement('div', { className: `filter-block metrics-block${routeMetricsOpen ? ' is-open' : ''}` }, [
+          React.createElement('button', {
+            type: 'button',
+            className: 'metrics-toggle',
+            onClick: () => setRouteMetricsOpen((prev) => !prev),
+            'aria-expanded': routeMetricsOpen ? 'true' : 'false',
+            'aria-controls': 'routeMetricsPanel'
+          }, [
+            React.createElement('span', null, 'Route metrics'),
+            React.createElement('span', { className: 'metrics-toggle-icon' }, routeMetricsOpen ? 'Hide' : 'Show')
+          ]),
+          routeMetricsOpen
+            ? React.createElement('div', { className: 'filter-numbers', id: 'routeMetricsPanel' }, [
+              React.createElement('label', null, 'Distance (mi)'),
+              React.createElement('div', { className: 'numeric-range' }, [
+                React.createElement('input', {
+                  type: 'number',
+                  min: '0',
+                  step: '0.1',
+                  placeholder: 'Min',
+                  value: distanceFilter.min,
+                  onChange: (e) => setDistanceFilter((prev) => ({ ...prev, min: e.target.value })),
+                  disabled: !hasOverlay
+                }),
+                React.createElement('span', { className: 'range-sep' }, 'to'),
+                React.createElement('input', {
+                  type: 'number',
+                  min: '0',
+                  step: '0.1',
+                  placeholder: 'Max',
+                  value: distanceFilter.max,
+                  onChange: (e) => setDistanceFilter((prev) => ({ ...prev, max: e.target.value })),
+                  disabled: !hasOverlay
+                })
+              ]),
+              React.createElement('label', null, 'Elevation gain (ft)'),
+              React.createElement('div', { className: 'numeric-range' }, [
+                React.createElement('input', {
+                  type: 'number',
+                  min: '0',
+                  step: '100',
+                  placeholder: 'Min',
+                  value: gainFilter.min,
+                  onChange: (e) => setGainFilter((prev) => ({ ...prev, min: e.target.value })),
+                  disabled: !hasOverlay
+                }),
+                React.createElement('span', { className: 'range-sep' }, 'to'),
+                React.createElement('input', {
+                  type: 'number',
+                  min: '0',
+                  step: '100',
+                  placeholder: 'Max',
+                  value: gainFilter.max,
+                  onChange: (e) => setGainFilter((prev) => ({ ...prev, max: e.target.value })),
+                  disabled: !hasOverlay
+                })
+              ]),
+              React.createElement('label', null, 'Estimated time (hrs)'),
+              React.createElement('div', { className: 'numeric-range' }, [
+                React.createElement('input', {
+                  type: 'number',
+                  min: '0',
+                  step: '0.1',
+                  placeholder: 'Min',
+                  value: timeFilter.min,
+                  onChange: (e) => setTimeFilter((prev) => ({ ...prev, min: e.target.value })),
+                  disabled: !hasOverlay
+                }),
+                React.createElement('span', { className: 'range-sep' }, 'to'),
+                React.createElement('input', {
+                  type: 'number',
+                  min: '0',
+                  step: '0.1',
+                  placeholder: 'Max',
+                  value: timeFilter.max,
+                  onChange: (e) => setTimeFilter((prev) => ({ ...prev, max: e.target.value })),
+                  disabled: !hasOverlay
+                })
+              ]),
+              React.createElement('label', null, 'Bailout distance (mi)'),
+              React.createElement('div', { className: 'numeric-range' }, [
+                React.createElement('input', {
+                  type: 'number',
+                  min: '0',
+                  step: '0.1',
+                  placeholder: 'Min',
+                  value: bailoutFilter.min,
+                  onChange: (e) => setBailoutFilter((prev) => ({ ...prev, min: e.target.value })),
+                  disabled: !hasOverlay
+                }),
+                React.createElement('span', { className: 'range-sep' }, 'to'),
+                React.createElement('input', {
+                  type: 'number',
+                  min: '0',
+                  step: '0.1',
+                  placeholder: 'Max',
+                  value: bailoutFilter.max,
+                  onChange: (e) => setBailoutFilter((prev) => ({ ...prev, max: e.target.value })),
+                  disabled: !hasOverlay
+                })
+              ])
             ])
-          ])
+            : null
         ])
       ]),
       React.createElement('div', { className: 'auto-group' }, [
         React.createElement('span', { className: 'filter-title' }, 'Auto-group day trips'),
         React.createElement('div', { className: 'auto-group-toggles' },
-          DAY_TRIP_GROUPS.map((set) => {
-            const isActive = activeDayTripIds.has(set.id);
-            return React.createElement('button', {
-              key: set.id,
-              type: 'button',
-              className: `toggle-button${isActive ? ' is-active' : ''}`,
-              onClick: () => handleAutoGroupById(set.id),
-              title: set.description
-            }, set.name);
-          })
+          dayTripGroups.length
+            ? dayTripGroups.map((set) => {
+              const isActive = activeDayTripIds.has(set.id);
+              return React.createElement('button', {
+                key: set.id,
+                type: 'button',
+                className: `toggle-button${isActive ? ' is-active' : ''}`,
+                onClick: () => handleAutoGroupById(set.id),
+                title: set.description
+              }, set.name);
+            })
+            : React.createElement('span', { className: 'filter-empty' }, 'Templates unavailable.')
         ),
         React.createElement('span', { className: 'filter-note' }, 'Create a grouped panel for a classic NH48 day-trip.')
       ]),
@@ -990,28 +1434,54 @@ function PeakPlannerApp() {
         ? React.createElement('div', { className: 'filter-note' }, 'Risk and route filters are unavailable because the overlay failed to load.')
         : null
     ]),
-    React.createElement('div', { className: 'group-actions' }, [
-      React.createElement('span', { className: 'group-status' }, `${selectedPeaks.length} selected`),
-      React.createElement('button', {
-        type: 'button',
-        className: 'group-btn',
-        onClick: handleGroupSelected,
-        disabled: selectedPeaks.length < 2
-      }, 'Group selected'),
-      React.createElement('button', {
-        type: 'button',
-        className: 'group-btn ghost',
-        onClick: clearSelection,
-        disabled: selectedPeakIds.size === 0
-      }, 'Clear selection')
-    ]),
+    selectedPeakIds.size > 0
+      ? React.createElement('div', { className: 'selection-actions' }, [
+        React.createElement('span', { className: 'group-status' }, `${selectedPeaks.length} selected`),
+        React.createElement('button', {
+          type: 'button',
+          className: 'group-btn',
+          onClick: handleGroupSelected,
+          disabled: !canGroupSelection
+        }, 'Group selected'),
+        React.createElement('button', {
+          type: 'button',
+          className: 'group-btn ghost',
+          onClick: clearSelection
+        }, 'Clear'),
+        React.createElement('button', {
+          type: 'button',
+          className: 'group-btn ghost',
+          onClick: handleUndo,
+          disabled: undoCount === 0
+        }, 'Undo'),
+        React.createElement('button', {
+          type: 'button',
+          className: 'group-btn ghost',
+          onClick: handleRedo,
+          disabled: redoCount === 0
+        }, 'Redo')
+      ])
+      : null,
+    selectionWarning
+      ? React.createElement('div', { className: 'selection-warning' }, selectionWarning)
+      : null,
     loading
       ? React.createElement('div', { className: 'planner-status' }, 'Loading peak data...')
       : null,
     loadError
       ? React.createElement('div', { className: 'planner-status' }, loadError)
       : null,
-    React.createElement(DragDropContext, { onDragEnd },
+    React.createElement(DragDropContext, {
+      onDragStart: (start) => {
+        const isGroup = start.draggableId.startsWith('group-');
+        setDraggingType(isGroup ? 'group' : 'peak');
+        setContextMenu(null);
+      },
+      onDragEnd: (result) => {
+        setDraggingType(null);
+        onDragEnd(result);
+      }
+    },
       React.createElement(Droppable, { droppableId: 'root' }, (provided) =>
         React.createElement('div', {
           ref: provided.innerRef,
@@ -1025,12 +1495,23 @@ function PeakPlannerApp() {
                 draggableId: `group-${item.id}`,
                 index
               }, (prov, snapshot) =>
-                React.createElement('div', {
+                (() => {
+                  const groupMeta = getGroupGradient(item);
+                  const dragStyle = prov.draggableProps?.style || {};
+                  const style = groupMeta
+                    ? { ...dragStyle, '--group-border': groupMeta.border, '--group-accent': groupMeta.accent }
+                    : dragStyle;
+                  return React.createElement('div', {
                   ref: prov.innerRef,
                   ...prov.draggableProps,
+                  style,
                   className: `itinerary-group${snapshot.isDragging ? ' is-dragging' : ''}`
                 }, [
-                  React.createElement('div', { className: 'group-header', ...prov.dragHandleProps }, [
+                  React.createElement('div', {
+                    className: 'group-header',
+                    ...prov.dragHandleProps,
+                    onContextMenu: (event) => openContextMenu(event, { type: 'group', id: item.id })
+                  }, [
                     React.createElement('span', {
                       className: 'drag-handle group-handle'
                     }, 'drag'),
@@ -1047,11 +1528,11 @@ function PeakPlannerApp() {
                       onTouchStart: (event) => event.stopPropagation()
                     }, 'Ungroup')
                   ]),
-                  React.createElement(Droppable, { droppableId: `group-${item.id}` }, (groupProvided) =>
+                  React.createElement(Droppable, { droppableId: `group-${item.id}`, isDropDisabled: draggingType === 'group' }, (groupProvided) =>
                     React.createElement('div', {
                       ref: groupProvided.innerRef,
                       ...groupProvided.droppableProps,
-                      className: 'group-list'
+                      className: `group-list${draggingType === 'group' ? ' is-disabled' : ''}`
                     }, [
                       ...(item.items.length ? item.items.map((peak, peakIndex) =>
                         React.createElement(Draggable, {
@@ -1059,13 +1540,14 @@ function PeakPlannerApp() {
                           draggableId: `peak-${peak.id}`,
                           index: peakIndex
                         }, (peakProvided, peakSnapshot) =>
-                          renderPeakRow(peak, nextDisplayIndex(), peakProvided, peakSnapshot)
+                          renderPeakRow(peak, displayOrderMap.get(peak.id) || peakIndex + 1, peakProvided, peakSnapshot)
                         )
                       ) : [React.createElement('div', { key: 'empty', className: 'group-empty' }, 'Group is empty.')]),
                       groupProvided.placeholder
                     ])
                   )
-                ])
+                ]);
+                })()
               );
             }
 
@@ -1074,7 +1556,7 @@ function PeakPlannerApp() {
               draggableId: `peak-${item.id}`,
               index
             }, (prov, snapshot) =>
-              renderPeakRow(item, nextDisplayIndex(), prov, snapshot)
+              renderPeakRow(item, displayOrderMap.get(item.id) || index + 1, prov, snapshot)
             );
           }),
           itinerary.length === 0 && !loading && !loadError
@@ -1083,7 +1565,75 @@ function PeakPlannerApp() {
           provided.placeholder
         ])
       )
-    )
+    ),
+    showStrategyPrompt
+      ? React.createElement('div', { className: 'strategy-modal-backdrop', role: 'presentation' },
+        React.createElement('div', { className: 'strategy-modal', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'strategyModalTitle' }, [
+          React.createElement('h3', { id: 'strategyModalTitle' }, 'Replace saved itinerary?'),
+          React.createElement('p', null, 'A saved itinerary already exists. Applying this strategy will replace your current list.'),
+          React.createElement('div', { className: 'strategy-modal-actions' }, [
+            React.createElement('button', {
+              type: 'button',
+              className: 'group-btn ghost',
+              onClick: cancelStrategyReplace
+            }, 'Cancel'),
+            React.createElement('button', {
+              type: 'button',
+              className: 'group-btn',
+              onClick: confirmStrategyReplace
+            }, 'Replace')
+          ])
+        ])
+      )
+      : null,
+    contextMenu
+      ? React.createElement('div', {
+        className: 'context-menu',
+        style: {
+          top: `${contextMenu.y}px`,
+          left: `${contextMenu.x}px`
+        }
+      }, [
+        contextMenu.type === 'peak'
+          ? React.createElement('button', {
+            type: 'button',
+            onClick: (event) => {
+              event.stopPropagation();
+              togglePeakSelection(contextMenu.id);
+              setContextMenu(null);
+            }
+          }, selectedPeakIds.has(contextMenu.id) ? 'Remove from selection' : 'Add to selection')
+          : null,
+        contextMenu.type === 'group'
+          ? React.createElement('button', {
+            type: 'button',
+            onClick: (event) => {
+              event.stopPropagation();
+              handleUngroup(contextMenu.id);
+              setContextMenu(null);
+            }
+          }, 'Ungroup')
+          : null,
+        React.createElement('button', {
+          type: 'button',
+          onClick: (event) => {
+            event.stopPropagation();
+            handleUndo();
+            setContextMenu(null);
+          },
+          disabled: undoCount === 0
+        }, 'Undo'),
+        React.createElement('button', {
+          type: 'button',
+          onClick: (event) => {
+            event.stopPropagation();
+            handleRedo();
+            setContextMenu(null);
+          },
+          disabled: redoCount === 0
+        }, 'Redo')
+      ])
+      : null
   );
 }
 
