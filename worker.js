@@ -31,6 +31,7 @@ export default {
     const RAW_FOOTER_URL = `${RAW_BASE}/pages/footer.html`;
     const RAW_BUILD_META_URL = `${RAW_BASE}/build-meta.json`;
     const RAW_MOUNTAIN_DESCRIPTIONS_URL = `${RAW_BASE}/data/nh48/mountain-descriptions.txt`;
+    const RAW_SAME_AS_URL = `${RAW_BASE}/data/sameAs.json`;
     const EN_TRANS_URL = `${RAW_BASE}/i18n/en.json`;
     const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
     const SITE_NAME = url.hostname;
@@ -56,6 +57,7 @@ export default {
       licenseUrl: 'https://nh48.info/license',
       acquireLicensePageUrl: 'https://nh48.info/contact'
     };
+    const CATALOG_IMAGE_LICENSE_URL = 'https://creativecommons.org/licenses/by-nc-nd/4.0/';
 
     const buildMeta = await fetchBuildMeta(RAW_BUILD_META_URL);
     const buildDate = buildMeta?.buildDate || '';
@@ -1338,6 +1340,35 @@ export default {
       };
     }
 
+    function toPositiveInteger(value, fallback) {
+      const num = Number(value);
+      if (!Number.isFinite(num) || num <= 0) return fallback;
+      return Math.round(num);
+    }
+
+    function normalizeCatalogPhotoUrl(url, { width = 1600, format = 'jpg' } = {}) {
+      if (!url) return '';
+      const widthVal = toPositiveInteger(width, 1600);
+      const fmt = typeof format === 'string' && format.trim() ? format.trim() : 'jpg';
+      const options = `format=${fmt},quality=85,width=${widthVal},metadata=keep`;
+      try {
+        const parsed = new URL(url);
+        if (parsed.hostname !== 'photos.nh48.info') return url;
+        const path = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
+        return `https://photos.nh48.info/cdn-cgi/image/${options}${path}`;
+      } catch (_) {
+        return url;
+      }
+    }
+
+    function getPrimaryPhoto(photos) {
+      const list = Array.isArray(photos) ? photos : [];
+      const normalized = list.map((photo) => (typeof photo === 'string' ? { url: photo } : photo)).filter((photo) => photo && photo.url);
+      if (!normalized.length) return null;
+      const explicitPrimary = normalized.find((photo) => photo.isPrimary === true || String(photo.isPrimary).toLowerCase() === 'true');
+      return explicitPrimary || normalized[0];
+    }
+
     function buildDataCatalogSchema({ canonicalUrl, title, description, datasets }) {
       return {
         '@context': 'https://schema.org',
@@ -1648,36 +1679,58 @@ export default {
         : 'Preview of the NH48 Peak Catalog with peak photos and data.';
 
       const peaks = await loadPeaks();
-      const peakList = Array.isArray(peaks) ? peaks : Object.values(peaks || {});
-      const photos = [];
-      for (const peak of peakList) {
-        if (!peak) continue;
-        const peakName = peak.peakName || peak.name || peak['Peak Name'] || '';
-        const peakPhotos = Array.isArray(peak.photos) ? peak.photos : [];
-        for (const photo of peakPhotos) {
-          const data = typeof photo === 'string' ? { url: photo } : photo;
-          if (!data || !data.url) continue;
-          photos.push({ peakName, data });
-        }
+      const peakEntries = Array.isArray(peaks)
+        ? peaks.map((peak, index) => [peak?.slug || `peak-${index + 1}`, peak])
+        : Object.entries(peaks || {});
+      const sameAsLookup = await loadJsonCache('sameAs', RAW_SAME_AS_URL) || {};
+
+      const imageObjects = [];
+      const itemListElement = [];
+      for (let i = 0; i < peakEntries.length; i += 1) {
+        const [slug, peak] = peakEntries[i] || [];
+        if (!peak || !slug) continue;
+        const peakName = peak.peakName || peak.name || peak['Peak Name'] || slug;
+        const primaryPhoto = getPrimaryPhoto(peak.photos);
+        if (!primaryPhoto || !primaryPhoto.url) continue;
+        const fullUrl = normalizeCatalogPhotoUrl(primaryPhoto.url, { width: 1600, format: 'jpg' });
+        const thumbUrl = normalizeCatalogPhotoUrl(primaryPhoto.url, { width: 400, format: 'jpg' });
+        const imageId = `${SITE}/peak/${slug}#photo`;
+        const peakSameAs = Array.isArray(sameAsLookup?.[slug]) ? sameAsLookup[slug] : [];
+        const imageObject = {
+          '@type': 'ImageObject',
+          '@id': imageId,
+          url: fullUrl,
+          contentUrl: fullUrl,
+          thumbnailUrl: thumbUrl,
+          name: buildPhotoTitleUnique(peakName, primaryPhoto),
+          caption: buildPhotoCaptionUnique(peakName, primaryPhoto),
+          description: buildPhotoCaptionUnique(peakName, primaryPhoto),
+          creditText: RIGHTS_DEFAULTS.creatorName,
+          creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
+          copyrightHolder: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
+          copyrightNotice: `© ${RIGHTS_DEFAULTS.creatorName}`,
+          license: CATALOG_IMAGE_LICENSE_URL,
+          sameAs: peakSameAs
+        };
+        imageObjects.push(imageObject);
+
+        itemListElement.push({
+          '@type': 'ListItem',
+          position: i + 1,
+          item: {
+            '@type': 'Mountain',
+            '@id': `${SITE}/peak/${slug}#mountain`,
+            name: peakName,
+            url: `${SITE}/peak/${slug}`,
+            image: { '@id': imageId },
+            elevation: formatFeet(peak['Elevation (ft)'] || peak.elevation),
+            prominence: formatFeet(peak['Prominence (ft)'] || peak.prominence),
+            sameAs: peakSameAs
+          }
+        });
       }
 
-      const imageObjects = photos.slice(0, 1000).map(({ peakName, data }) => {
-        const photoMeta = { ...data };
-        const exifData = buildExifData(photoMeta);
-        return {
-          '@type': 'ImageObject',
-          contentUrl: photoMeta.url,
-          url: photoMeta.url,
-          name: buildPhotoTitleUnique(peakName, photoMeta),
-          caption: buildPhotoCaptionUnique(peakName, photoMeta),
-          creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
-          creditText: RIGHTS_DEFAULTS.creditText,
-          copyrightNotice: RIGHTS_DEFAULTS.copyrightNotice,
-          license: RIGHTS_DEFAULTS.licenseUrl,
-          acquireLicensePage: RIGHTS_DEFAULTS.acquireLicensePageUrl,
-          exifData
-        };
-      });
+      const heroImage = imageObjects[0]?.url || DEFAULT_IMAGE;
 
       const datasetSchema = buildCatalogDataset({
         canonicalUrl,
@@ -1685,6 +1738,35 @@ export default {
         description,
         imageObjects
       });
+      const imageGallerySchema = {
+        '@context': 'https://schema.org',
+        '@type': 'ImageGallery',
+        '@id': `${canonicalUrl}#image-gallery`,
+        name: 'NH48 Summit Photo Gallery',
+        description: 'Primary summit photographs for all 48 New Hampshire four-thousand-footers in the NH48 catalog.',
+        creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
+        license: CATALOG_IMAGE_LICENSE_URL,
+        about: { '@type': 'Dataset', '@id': `${canonicalUrl}#dataset`, name: title },
+        associatedMedia: imageObjects
+      };
+      const peakItemListSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        '@id': `${canonicalUrl}#peak-item-list`,
+        name: 'NH48 Peak Catalog Mountain List',
+        itemListOrder: 'https://schema.org/ItemListOrderAscending',
+        numberOfItems: itemListElement.length,
+        itemListElement
+      };
+      const breadcrumbSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        '@id': `${canonicalUrl}#breadcrumbs`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: isFrench ? 'Accueil' : 'Home', item: isFrench ? `${SITE}/fr` : SITE },
+          { '@type': 'ListItem', position: 2, name: isFrench ? 'Catalogue des sommets' : 'Peak Catalog', item: canonicalUrl }
+        ]
+      };
 
       const tplResp = await fetch(RAW_CATALOG_URL, NO_CACHE_FETCH);
       if (!tplResp.ok) {
@@ -1710,19 +1792,22 @@ export default {
         `<meta property="og:type" content="website" />`,
         `<meta property="og:title" content="${esc(title)}" />`,
         `<meta property="og:description" content="${esc(description)}" />`,
-        `<meta property="og:image" content="${DEFAULT_IMAGE}" />`,
+        `<meta property="og:image" content="${heroImage}" />`,
         `<meta property="og:image:alt" content="${esc(altText)}" />`,
         `<meta property="og:url" content="${canonicalUrl}" />`,
         `<meta name="twitter:card" content="summary_large_image" />`,
         `<meta name="twitter:url" content="${canonicalUrl}" />`,
         `<meta name="twitter:title" content="${esc(title)}" />`,
         `<meta name="twitter:description" content="${esc(description)}" />`,
-        `<meta name="twitter:image" content="${DEFAULT_IMAGE}" />`,
+        `<meta name="twitter:image" content="${heroImage}" />`,
         `<link rel="canonical" href="${canonicalUrl}" />`,
         `<link rel="alternate" hreflang="en" href="${SITE}/catalog" />`,
         `<link rel="alternate" hreflang="fr" href="${SITE}/fr/catalog" />`,
         `<link rel="alternate" hreflang="x-default" href="${SITE}/catalog" />`,
-        `<script type="application/ld+json">${JSON.stringify(datasetSchema).replace(/</g, '\\u003c')}</script>`
+        `<script type="application/ld+json">${JSON.stringify(datasetSchema).replace(/</g, '\\u003c')}</script>`,
+        `<script type="application/ld+json">${JSON.stringify(imageGallerySchema).replace(/</g, '\\u003c')}</script>`,
+        `<script type="application/ld+json">${JSON.stringify(peakItemListSchema).replace(/</g, '\\u003c')}</script>`,
+        `<script type="application/ld+json">${JSON.stringify(breadcrumbSchema).replace(/</g, '\\u003c')}</script>`
       ].join('\n');
       html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
 

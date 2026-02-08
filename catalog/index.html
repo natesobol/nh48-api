@@ -316,7 +316,7 @@
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-ranges.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-ranges.json'
       ];
-      const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85,width=720';
+      const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85,width=720,metadata=keep';
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
       const PHOTO_BASE = new URL(PHOTO_BASE_URL);
       const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
