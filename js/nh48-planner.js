@@ -349,7 +349,6 @@ function PeakPlannerApp() {
   const [timeFilter, setTimeFilter] = useState({ ...DEFAULT_NUMERIC_FILTER });
   const [bailoutFilter, setBailoutFilter] = useState({ ...DEFAULT_NUMERIC_FILTER });
   const [selectedPeakIds, setSelectedPeakIds] = useState(new Set());
-  const [selectedDayTripId, setSelectedDayTripId] = useState('');
   const groupCounterRef = useRef(1);
   useEffect(() => {
     Promise.all([
@@ -447,6 +446,16 @@ function PeakPlannerApp() {
     || isFilterActive(timeFilter)
     || isFilterActive(bailoutFilter)
   ), [activeRiskFilters, activeRangeGroups, distanceFilter, gainFilter, timeFilter, bailoutFilter]);
+
+  const activeDayTripIds = useMemo(() => {
+    const active = new Set();
+    itinerary.forEach((item) => {
+      if (item.type === 'group' && item.kind === 'day-trip' && item.id?.startsWith('daytrip-')) {
+        active.add(item.id.replace('daytrip-', ''));
+      }
+    });
+    return active;
+  }, [itinerary]);
 
   const peakMatchesFilters = (peak) => {
     if (!filtersActive) return true;
@@ -594,9 +603,9 @@ function PeakPlannerApp() {
     clearSelection();
   };
 
-  const handleAutoGroup = () => {
-    if (!selectedDayTripId) return;
-    const preset = DAY_TRIP_GROUPS.find((set) => set.id === selectedDayTripId);
+  const handleAutoGroupById = (presetId) => {
+    if (!presetId) return;
+    const preset = DAY_TRIP_GROUPS.find((set) => set.id === presetId);
     if (!preset) return;
     const slugSet = new Set(preset.peaks);
     const groupId = `daytrip-${preset.id}`;
@@ -639,8 +648,6 @@ function PeakPlannerApp() {
       next.unshift(groupItem);
       return next;
     });
-
-    setSelectedDayTripId('');
     clearSelection();
   };
 
@@ -804,13 +811,13 @@ function PeakPlannerApp() {
     return React.createElement('div', {
       ref: provided.innerRef,
       ...provided.draggableProps,
+      ...provided.dragHandleProps,
       style,
       className: `itinerary-row${snapshot.isDragging ? ' is-dragging' : ''}${matchesFilters ? ' is-highlighted' : ''}`
     }, [
       React.createElement('span', {
         className: 'itinerary-index drag-handle',
-        style: indexStyle,
-        ...provided.dragHandleProps
+        style: indexStyle
       }, displayIndex),
       React.createElement('div', { className: 'itinerary-details' }, [
         React.createElement('div', { className: 'itinerary-name-row' }, [
@@ -818,7 +825,9 @@ function PeakPlannerApp() {
             type: 'checkbox',
             className: 'row-checkbox',
             checked: selectedPeakIds.has(peak.id),
-            onChange: () => togglePeakSelection(peak.id)
+            onChange: () => togglePeakSelection(peak.id),
+            onMouseDown: (event) => event.stopPropagation(),
+            onTouchStart: (event) => event.stopPropagation()
           }),
           React.createElement('span', { className: 'itinerary-name' }, peak.name)
         ]),
@@ -963,23 +972,18 @@ function PeakPlannerApp() {
       ]),
       React.createElement('div', { className: 'auto-group' }, [
         React.createElement('span', { className: 'filter-title' }, 'Auto-group day trips'),
-        React.createElement('div', { className: 'auto-group-controls' }, [
-          React.createElement('select', {
-            value: selectedDayTripId,
-            onChange: (e) => setSelectedDayTripId(e.target.value)
-          }, [
-            React.createElement('option', { key: 'none', value: '' }, 'Select a day-trip group'),
-            ...DAY_TRIP_GROUPS.map((set) =>
-              React.createElement('option', { key: set.id, value: set.id }, set.name)
-            )
-          ]),
-          React.createElement('button', {
-            type: 'button',
-            className: 'group-btn',
-            onClick: handleAutoGroup,
-            disabled: !selectedDayTripId
-          }, 'Group hike')
-        ]),
+        React.createElement('div', { className: 'auto-group-toggles' },
+          DAY_TRIP_GROUPS.map((set) => {
+            const isActive = activeDayTripIds.has(set.id);
+            return React.createElement('button', {
+              key: set.id,
+              type: 'button',
+              className: `toggle-button${isActive ? ' is-active' : ''}`,
+              onClick: () => handleAutoGroupById(set.id),
+              title: set.description
+            }, set.name);
+          })
+        ),
         React.createElement('span', { className: 'filter-note' }, 'Create a grouped panel for a classic NH48 day-trip.')
       ]),
       !hasOverlay
@@ -1026,10 +1030,9 @@ function PeakPlannerApp() {
                   ...prov.draggableProps,
                   className: `itinerary-group${snapshot.isDragging ? ' is-dragging' : ''}`
                 }, [
-                  React.createElement('div', { className: 'group-header' }, [
+                  React.createElement('div', { className: 'group-header', ...prov.dragHandleProps }, [
                     React.createElement('span', {
-                      className: 'drag-handle group-handle',
-                      ...prov.dragHandleProps
+                      className: 'drag-handle group-handle'
                     }, 'drag'),
                     React.createElement('div', { className: 'group-title' }, [
                       React.createElement('strong', null, item.name),
@@ -1039,7 +1042,9 @@ function PeakPlannerApp() {
                     React.createElement('button', {
                       type: 'button',
                       className: 'group-btn ghost',
-                      onClick: () => handleUngroup(item.id)
+                      onClick: () => handleUngroup(item.id),
+                      onMouseDown: (event) => event.stopPropagation(),
+                      onTouchStart: (event) => event.stopPropagation()
                     }, 'Ungroup')
                   ]),
                   React.createElement(Droppable, { droppableId: `group-${item.id}` }, (groupProvided) =>
