@@ -722,8 +722,9 @@
             const text = await res.text();
             const cleaned = cleanJSON(text);
             const obj = JSON.parse(cleaned);
-            if(obj && typeof obj === 'object'){
-              return obj;
+            const sanitized = sanitizeRangesData(obj);
+            if(sanitized){
+              return sanitized;
             }
           }catch(err){
             console.warn(`Failed to fetch ranges from ${url}:`, err);
@@ -732,8 +733,53 @@
         throw new Error('All range endpoints failed');
       }
 
+      function normalizeRangeToken(value){
+        return String(value || '').trim().toLowerCase();
+      }
+
+      function isDisallowedRangeToken(value){
+        return normalizeRangeToken(value) === 'other';
+      }
+
+      function sanitizeRangesData(raw){
+        if(!raw || typeof raw !== 'object') return null;
+        const cleaned = {};
+        for(const [slug, range] of Object.entries(raw)){
+          if(!range || typeof range !== 'object') continue;
+          const rangeName = range.rangeName || range.name || slug || '';
+          const rangeSlug = range.slug || slug || '';
+          const category = range.category || '';
+          if(isDisallowedRangeToken(rangeName) || isDisallowedRangeToken(rangeSlug) || isDisallowedRangeToken(category)){
+            continue;
+          }
+          cleaned[slug] = range;
+        }
+        return Object.keys(cleaned).length ? cleaned : null;
+      }
+
       function normalizeToken(value){
         return String(value || '').trim().toLowerCase();
+      }
+
+      function normalizePeakNameForRangeMatch(value){
+        const raw = String(value || '').toLowerCase();
+        const stripped = raw
+          .replace(/[\u2019']/g, '')
+          .replace(/[().]/g, '')
+          .replace(/[-–—]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+        if(!stripped) return '';
+        const tokens = stripped.split(' ').filter(Boolean);
+        const stopwords = new Set(['mount', 'mt', 'mountain', 'peak']);
+        const cleaned = tokens.filter(token => !stopwords.has(token));
+        const directions = new Set(['north', 'south', 'east', 'west']);
+        const directionTokens = cleaned.filter(token => directions.has(token));
+        const otherTokens = cleaned.filter(token => !directions.has(token));
+        const ordered = directionTokens.length && otherTokens.length
+          ? [...directionTokens, ...otherTokens]
+          : cleaned;
+        return ordered.join(' ');
       }
 
       function translateSeason(value){
@@ -1081,23 +1127,34 @@
         }
         empty.hidden = true;
 
-        const orderedRanges = Object.entries(rangesData || {}).map(([slug, range]) => ({
-          id: range.slug,
-          slug,
-          name: range?.rangeName || slug,
-          peaks: Array.isArray(range?.peakList)
-            ? list.filter(p => range.peakList.includes(p.peakName))
-            : []
-        }));
+        const peakIndex = new Map();
+        list.forEach(peak => {
+          const peakName = peak?.peakName || peak?.['Peak Name'] || '';
+          const key = normalizePeakNameForRangeMatch(peakName);
+          if(key && !peakIndex.has(key)){
+            peakIndex.set(key, peak);
+          }
+        });
 
-        const unmatchedPeaks = list.filter(p => !orderedRanges.some(range => range.peaks.includes(p)));
+        const matchedPeaks = new Set();
+        const orderedRanges = Object.entries(rangesData || {}).map(([slug, range]) => {
+          const rangeId = range?.slug || slug;
+          const peakList = Array.isArray(range?.peakList) ? range.peakList : [];
+          const peaks = peakList
+            .map(name => peakIndex.get(normalizePeakNameForRangeMatch(name)))
+            .filter(Boolean);
+          peaks.forEach(peak => matchedPeaks.add(peak));
+          return {
+            id: rangeId,
+            slug,
+            name: range?.rangeName || slug,
+            peaks
+          };
+        }).filter(range => range.peaks.length > 0);
+
+        const unmatchedPeaks = list.filter(peak => !matchedPeaks.has(peak));
         if(unmatchedPeaks.length > 0){
-          orderedRanges.push({
-            id: 'other',
-            slug: 'other',
-            name: 'Other',
-            peaks: unmatchedPeaks
-          });
+          console.warn('Unmatched peaks not assigned to WMNF ranges:', unmatchedPeaks.map(p => p?.peakName || p?.['Peak Name'] || p?.slug));
         }
 
         const jumpLinksContainer = document.querySelector('#rangeJumpLinks .jump-links');

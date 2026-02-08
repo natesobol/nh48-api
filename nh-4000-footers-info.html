@@ -471,7 +471,7 @@
         counter-increment: toc-items;
       }
       .toc li::before {
-        content: "🧭 " counter(toc-items) ".";
+        content: counter(toc-items) ".";
         color: var(--primary);
         font-weight: 700;
         margin-right: 8px;
@@ -518,9 +518,6 @@
         border-color: rgba(34, 197, 94, 0.3);
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
       }
-      main.wrap {
-        counter-reset: section-count 1;
-      }
       .section {
         margin: 28px 0;
       }
@@ -535,12 +532,6 @@
         margin: 0;
         font-size: clamp(1.6rem, 2.6vw, 2.1rem);
         font-weight: 500;
-      }
-      .section-banner h2::before {
-        counter-increment: section-count;
-        content: counter(section-count) ". ";
-        color: var(--primary);
-        font-weight: 700;
       }
       .section-banner h2 a {
         color: inherit;
@@ -1279,15 +1270,15 @@
           <h2 class="snapshot-title">Table of Contents</h2>
           <nav class="toc" aria-label="Table of contents">
             <ol>
-              <li><a href="#range-map" aria-label="Range map section">Range Map</a></li>
-              <li><a href="#day-trip-groupings" aria-label="Day trip groupings section">Day Trip Groupings</a></li>
               <li><a href="#what-is-nh48" aria-label="What is the NH48 section">What is the NH48?</a></li>
-              <li><a href="#peak-difficulty-guide" aria-label="Difficulty guide section">Difficulty Guide</a></li>
+              <li><a href="#range-map" aria-label="Range map section">Range Map</a></li>
               <li><a href="#official-peak-list" aria-label="Official peak list section">Official Peak List</a></li>
+              <li><a href="#day-trip-groupings" aria-label="Day trip groupings section">Day Trip Groupings</a></li>
               <li><a href="#difficulty-strategy" aria-label="Peak strategy section">Peak Strategy</a></li>
+              <li><a href="#peak-difficulty-guide" aria-label="Difficulty guide section">Difficulty Guide</a></li>
               <li><a href="#risk-preparedness" aria-label="Risk and preparedness section">Risk &amp; Preparedness</a></li>
-              <li><a href="#completion-strategies" aria-label="Finish strategies section">Finish Strategies</a></li>
               <li><a href="#seasonal-considerations" aria-label="Seasonal considerations section">Seasonal Considerations</a></li>
+              <li><a href="#completion-strategies" aria-label="Finish strategies section">Finish Strategies</a></li>
               <li><a href="#history" aria-label="History section">History</a></li>
               <li><a href="#data-api" aria-label="Data and API section">Data &amp; API</a></li>
               <li><a href="#faq" aria-label="Frequently asked questions section">FAQ</a></li>
@@ -1296,7 +1287,19 @@
         </div>
       </section>
 
-      <section class="section" id="range-map" aria-label="Range map">
+      <section class="section" id="what-is-nh48">
+        <div class="section-banner">
+          <h2><a href="#what-is-nh48">What is the NH48?</a></h2>
+        </div>
+        <p>
+          The New Hampshire 48 refers to mountains that meet the AMC Four-Thousand-Footer Club standard of at least 4,000 feet above sea level and 200 feet of topographic prominence. NH48.info is not affiliated with the AMC; this overview summarizes information gathered from public references and hiker contributions.
+        </p>
+        <p>
+          The idea dates to 1931 when Dartmouth librarian Nathaniel L. Goodrich outlined an early list. Refined USGS surveys and AMC guidelines eventually set the list at 48 peaks—adding Bondcliff and Galehead while excluding shoulder summits like Mt. Guyot and Mt. Clay. Readers should confirm criteria and routes with the Appalachian Mountain Club before planning trips.
+        </p>
+      </section>
+
+<section class="section" id="range-map" aria-label="Range map">
         <div class="section-banner">
           <h2><a href="#range-map">Range Map</a></h2>
         </div>
@@ -1310,39 +1313,48 @@
         </div>
       </section>
 
-      <section class="section" id="peak-difficulty-guide" aria-label="Peak Difficulty Guide">
+<section class="section" id="official-peak-list">
         <div class="section-banner">
-          <h2><a href="#peak-difficulty-guide">Difficulty Guide</a></h2>
+          <h2><a href="#official-peak-list">Current NH 4,000-Footer List</a></h2>
         </div>
-        <div class="panel difficulty-guide">
-          <p>Use these tier buttons to prioritize one difficulty level in the sortable table.</p>
-          <div class="tiers-container">
-            <button class="tier-badge tier-beginner" type="button" data-difficulty="beginner">
-              <span class="tier-count">~10</span>
-              <span class="tier-name">Beginner Friendly</span>
-              <span class="tier-examples">Tecumseh, Pierce, Jackson, Osceola, Waumbek</span>
-            </button>
-            <button class="tier-badge tier-moderate" type="button" data-difficulty="moderate">
-              <span class="tier-count">~15</span>
-              <span class="tier-name">Moderate</span>
-              <span class="tier-examples">Hancocks, Cabot, Galehead, Passaconaway</span>
-            </button>
-            <button class="tier-badge tier-challenging" type="button" data-difficulty="challenging">
-              <span class="tier-count">~15</span>
-              <span class="tier-name">Challenging</span>
-              <span class="tier-examples">Lafayette, Lincoln, Carrigain, Wildcats</span>
-            </button>
-            <button class="tier-badge tier-severe" type="button" data-difficulty="severe">
-              <span class="tier-count">~8</span>
-              <span class="tier-name">Alpine / Exposed</span>
-              <span class="tier-examples">Washington, Adams, Jefferson, Madison, Bonds</span>
-            </button>
+        <p>
+          Peaks shown here reflect the summits recognized by the AMC at the time of publication. Tap a range filter to see the peaks clustered by geography, or click a summit name to open its detailed page. Each row pulls live attributes from the NH48 manifest so the table stays synchronized with the photo-rich peak templates.
+        </p>
+        <p>
+          <a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>. Please confirm prominence, elevation, and trail guidance with the AMC before relying on this table.
+        </p>
+        <div class="official-layout">
+          <div class="official-table">
+            <div class="range-filters" id="rangeFilters" aria-label="Filter peaks by range"></div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Peak</th>
+                    <th data-sort-key="elevation" aria-sort="none">
+                      <button class="sort-button" type="button" data-sort="elevation" aria-label="Sort by elevation">
+                        Elevation (ft)
+                        <span class="sort-indicator" aria-hidden="true"></span>
+                      </button>
+                    </th>
+                    <th data-sort-key="range" aria-sort="none">
+                      <button class="sort-button" type="button" data-sort="range" aria-label="Sort by range">
+                        Range
+                        <span class="sort-indicator" aria-hidden="true"></span>
+                      </button>
+                    </th>
+                    <th>Difficulty</th>
+                    <th>Best For</th>
+                  </tr>
+                </thead>
+                <tbody id="peakTableBody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Day Trip Groupings Section - Migrated from homepage -->
-      <section class="section trip-combos" id="day-trip-groupings" aria-label="Popular Day Trip Groupings">
+<section class="section trip-combos" id="day-trip-groupings" aria-label="Popular Day Trip Groupings">
         <div class="section-banner">
           <h2><a href="#day-trip-groupings">Popular Day Trip Groupings</a></h2>
         </div>
@@ -1421,60 +1433,7 @@
         </div>
       </section>
 
-      <section class="section" id="what-is-nh48">
-        <div class="section-banner">
-          <h2><a href="#what-is-nh48">What is the NH48?</a></h2>
-        </div>
-        <p>
-          The New Hampshire 48 refers to mountains that meet the AMC Four-Thousand-Footer Club standard of at least 4,000 feet above sea level and 200 feet of topographic prominence. NH48.info is not affiliated with the AMC; this overview summarizes information gathered from public references and hiker contributions.
-        </p>
-        <p>
-          The idea dates to 1931 when Dartmouth librarian Nathaniel L. Goodrich outlined an early list. Refined USGS surveys and AMC guidelines eventually set the list at 48 peaks—adding Bondcliff and Galehead while excluding shoulder summits like Mt. Guyot and Mt. Clay. Readers should confirm criteria and routes with the Appalachian Mountain Club before planning trips.
-        </p>
-      </section>
-
-      <section class="section" id="official-peak-list">
-        <div class="section-banner">
-          <h2><a href="#official-peak-list">Current NH 4,000-Footer List</a></h2>
-        </div>
-        <p>
-          Peaks shown here reflect the summits recognized by the AMC at the time of publication. Tap a range filter to see the peaks clustered by geography, or click a summit name to open its detailed page. Each row pulls live attributes from the NH48 manifest so the table stays synchronized with the photo-rich peak templates.
-        </p>
-        <p>
-          <a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>. Please confirm prominence, elevation, and trail guidance with the AMC before relying on this table.
-        </p>
-        <div class="official-layout">
-          <div class="official-table">
-            <div class="range-filters" id="rangeFilters" aria-label="Filter peaks by range"></div>
-            <div class="table-scroll">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Peak</th>
-                    <th data-sort-key="elevation" aria-sort="none">
-                      <button class="sort-button" type="button" data-sort="elevation" aria-label="Sort by elevation">
-                        Elevation (ft)
-                        <span class="sort-indicator" aria-hidden="true"></span>
-                      </button>
-                    </th>
-                    <th data-sort-key="range" aria-sort="none">
-                      <button class="sort-button" type="button" data-sort="range" aria-label="Sort by range">
-                        Range
-                        <span class="sort-indicator" aria-hidden="true"></span>
-                      </button>
-                    </th>
-                    <th>Difficulty</th>
-                    <th>Best For</th>
-                  </tr>
-                </thead>
-                <tbody id="peakTableBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="difficulty-strategy">
+<section class="section" id="difficulty-strategy">
         <div class="section-banner">
           <h2><a href="#difficulty-strategy">Peak Strategy Highlights</a></h2>
         </div>
@@ -1503,7 +1462,41 @@
 
 
       <!-- Risk & Preparedness Section - Migrated from homepage -->
-      <section class="section risk-stats" id="risk-preparedness" aria-label="Risk Factors and Preparedness">
+
+<section class="section" id="peak-difficulty-guide" aria-label="Peak Difficulty Guide">
+        <div class="section-banner">
+          <h2><a href="#peak-difficulty-guide">Difficulty Guide</a></h2>
+        </div>
+        <div class="panel difficulty-guide">
+          <p>Use these tier buttons to prioritize one difficulty level in the sortable table.</p>
+          <div class="tiers-container">
+            <button class="tier-badge tier-beginner" type="button" data-difficulty="beginner">
+              <span class="tier-count">~10</span>
+              <span class="tier-name">Beginner Friendly</span>
+              <span class="tier-examples">Tecumseh, Pierce, Jackson, Osceola, Waumbek</span>
+            </button>
+            <button class="tier-badge tier-moderate" type="button" data-difficulty="moderate">
+              <span class="tier-count">~15</span>
+              <span class="tier-name">Moderate</span>
+              <span class="tier-examples">Hancocks, Cabot, Galehead, Passaconaway</span>
+            </button>
+            <button class="tier-badge tier-challenging" type="button" data-difficulty="challenging">
+              <span class="tier-count">~15</span>
+              <span class="tier-name">Challenging</span>
+              <span class="tier-examples">Lafayette, Lincoln, Carrigain, Wildcats</span>
+            </button>
+            <button class="tier-badge tier-severe" type="button" data-difficulty="severe">
+              <span class="tier-count">~8</span>
+              <span class="tier-name">Alpine / Exposed</span>
+              <span class="tier-examples">Washington, Adams, Jefferson, Madison, Bonds</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Day Trip Groupings Section - Migrated from homepage -->
+
+<section class="section risk-stats" id="risk-preparedness" aria-label="Risk Factors and Preparedness">
         <div class="section-banner">
           <h2><a href="#risk-preparedness">Risk Factors &amp; Preparedness</a></h2>
         </div>
@@ -1537,7 +1530,32 @@
       </section>
 
       <!-- Finish Strategies Section - Migrated from homepage -->
-      <section class="section strategy-section" id="completion-strategies" aria-label="Finish Strategies">
+
+<section class="section" id="seasonal-considerations">
+        <div class="section-banner">
+          <h2><a href="#seasonal-considerations">Seasonal Considerations</a></h2>
+        </div>
+        <p>
+          Strategies shift every year as trailheads, roads, and weather patterns change. The AMC tracks winter finishers separately because road closures, avalanche zones, and snowpack reshape the effort. Use the toggle to switch between summer and winter planning and verify access and forecasts with official sources.
+        </p>
+        <div class="toggle-group" role="tablist" aria-label="Toggle hiking season">
+          <button id="summerBtn" class="active" type="button" role="tab" aria-pressed="true" aria-selected="true" aria-controls="seasonTable">Summer</button>
+          <button id="winterBtn" type="button" role="tab" aria-pressed="false" aria-selected="false" aria-controls="seasonTable">Winter</button>
+        </div>
+        <div class="table-scroll season-table">
+          <table id="seasonTable">
+            <thead>
+              <tr>
+                <th>Focus</th>
+                <th id="seasonHeading">Summer Strategy</th>
+              </tr>
+            </thead>
+            <tbody id="seasonRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+<section class="section strategy-section" id="completion-strategies" aria-label="Finish Strategies">
         <div class="section-banner">
           <h2><a href="#completion-strategies">Choose Your Finish Strategy</a></h2>
         </div>
@@ -1567,31 +1585,7 @@
         </div>
       </section>
 
-      <section class="section" id="seasonal-considerations">
-        <div class="section-banner">
-          <h2><a href="#seasonal-considerations">Seasonal Considerations</a></h2>
-        </div>
-        <p>
-          Strategies shift every year as trailheads, roads, and weather patterns change. The AMC tracks winter finishers separately because road closures, avalanche zones, and snowpack reshape the effort. Use the toggle to switch between summer and winter planning and verify access and forecasts with official sources.
-        </p>
-        <div class="toggle-group" role="tablist" aria-label="Toggle hiking season">
-          <button id="summerBtn" class="active" type="button" role="tab" aria-pressed="true" aria-selected="true" aria-controls="seasonTable">Summer</button>
-          <button id="winterBtn" type="button" role="tab" aria-pressed="false" aria-selected="false" aria-controls="seasonTable">Winter</button>
-        </div>
-        <div class="table-scroll season-table">
-          <table id="seasonTable">
-            <thead>
-              <tr>
-                <th>Focus</th>
-                <th id="seasonHeading">Summer Strategy</th>
-              </tr>
-            </thead>
-            <tbody id="seasonRows"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="section" id="history">
+<section class="section" id="history">
         <div class="section-banner">
           <h2><a href="#history">History &amp; Rules Recap</a></h2>
         </div>
@@ -1604,7 +1598,7 @@
         <p><a href="https://www.amc4000footer.org/" target="_blank" rel="noopener">Visit Official AMC 4000 Site for comprehensive details</a>.</p>
       </section>
 
-      <section class="section" id="data-api">
+<section class="section" id="data-api">
         <div class="section-banner">
           <h2><a href="#data-api">Data &amp; API Resources</a></h2>
         </div>
@@ -1622,7 +1616,7 @@
         <a class="cta" href="https://github.com/natesobol/nh48-api">Use the API</a>
       </section>
 
-      <section class="section" id="faq">
+<section class="section" id="faq">
         <div class="section-banner">
           <h2><a href="#faq">Frequently Asked Questions</a></h2>
         </div>
@@ -1646,6 +1640,7 @@
           <p>Use the /peak/slug/ format shown in the Current NH 4,000-Footer List. Each peak page includes a “Back to the NH48 Info” link for reciprocal navigation.</p>
         </div>
       </section>
+
     </main>
 
     <script>
@@ -1932,6 +1927,7 @@
         updateSortIndicators();
       }
       let mapRenderQueued = false;
+      let mapResizeObserver = null;
 
       function scheduleMapRender() {
         if (mapRenderQueued) return;
@@ -1963,8 +1959,11 @@
         const minLon = Math.min(...lons);
         const maxLon = Math.max(...lons);
         const padding = 20;
-        const width = map.clientWidth && map.clientWidth > 0 ? map.clientWidth : 800;
-        const height = map.clientHeight && map.clientHeight > 0 ? map.clientHeight : 360;
+        const mapBounds = map.getBoundingClientRect();
+        const width = Math.max(map.clientWidth || 0, mapBounds.width || 0, 800);
+        const height = Math.max(map.clientHeight || 0, mapBounds.height || 0, 360);
+        map.setAttribute('width', width);
+        map.setAttribute('height', height);
         map.setAttribute('viewBox', `0 0 ${width} ${height}`);
         map.setAttribute('preserveAspectRatio', 'xMidYMid meet');
         const latSpan = maxLat - minLat || 1;
@@ -2079,6 +2078,16 @@
         document.getElementById('peakTableBody').innerHTML = `<tr><td colspan="5">${message}</td></tr>`;
         const map = document.getElementById('peakMap');
         map.innerHTML = '<text x="10" y="30" fill="#cbd5e1">Map data unavailable.</text>';
+      }
+
+      function observeMapResize() {
+        if (mapResizeObserver) return;
+        const map = document.getElementById('peakMap');
+        if (!map || typeof ResizeObserver === 'undefined') return;
+        mapResizeObserver = new ResizeObserver(() => {
+          scheduleMapRender();
+        });
+        mapResizeObserver.observe(map);
       }
 
       function renderItemListSchema() {
@@ -2232,6 +2241,7 @@
       document.addEventListener('DOMContentLoaded', () => {
         setupTocObserver();
         const mapSection = document.getElementById('range-map');
+        observeMapResize();
         if (mapSection) {
           const mapObserver = new IntersectionObserver((entries, observer) => {
             if (entries.some((entry) => entry.isIntersecting)) {
