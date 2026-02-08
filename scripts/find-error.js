@@ -1,6 +1,8 @@
 const fs = require('fs');
+const path = require('path');
 
-const content = fs.readFileSync('data/nh48.json', 'utf8');
+const rootDir = path.resolve(__dirname, '..');
+const content = fs.readFileSync(path.join(rootDir, 'data', 'nh48.json'), 'utf8');
 
 // Try to parse and catch error
 try {

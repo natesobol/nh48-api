@@ -1,5 +1,8 @@
 const fs = require('fs');
-const data = fs.readFileSync('/workspaces/nh48-api/data/nh48.json', 'utf8');
+const path = require('path');
+
+const rootDir = path.resolve(__dirname, '..');
+const data = fs.readFileSync(path.join(rootDir, 'data', 'nh48.json'), 'utf8');
 console.log('File length:', data.length);
 console.log('First 3 bytes (BOM check):', data.charCodeAt(0), data.charCodeAt(1), data.charCodeAt(2));
 console.log('Chars 585-615:', JSON.stringify(data.substring(585, 615)));

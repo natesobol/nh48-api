@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const directoryPath = path.join(__dirname, 'data/long-trails');
+const directoryPath = path.join(__dirname, '..', 'data', 'long-trails');
 
 fs.readdir(directoryPath, (err, files) => {
   if (err) return console.error('Unable to scan directory:', err);

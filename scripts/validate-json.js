@@ -1,6 +1,11 @@
 const fs = require('fs');
+const path = require('path');
 
-const filePath = process.argv[2] || 'data/nh48.json';
+const rootDir = path.resolve(__dirname, '..');
+const cliArg = process.argv[2];
+const filePath = cliArg
+  ? path.resolve(process.cwd(), cliArg)
+  : path.join(rootDir, 'data', 'nh48.json');
 
 try {
   const content = fs.readFileSync(filePath, 'utf8');

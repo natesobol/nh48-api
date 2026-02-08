@@ -1,5 +1,8 @@
 const fs = require('fs');
-const data = fs.readFileSync('data/nh48.json', 'utf8');
+const path = require('path');
+
+const rootDir = path.resolve(__dirname, '..');
+const data = fs.readFileSync(path.join(rootDir, 'data', 'nh48.json'), 'utf8');
 // Show context around position 593
 const pos = 593;
 console.log('Character at position', pos, ':', JSON.stringify(data[pos]));

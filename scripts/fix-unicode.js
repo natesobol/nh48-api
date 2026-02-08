@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const filePath = path.join(__dirname, 'nh-4000-footers-info.html');
+const filePath = path.join(__dirname, '..', 'nh-4000-footers-info.html');
 let content = fs.readFileSync(filePath, 'utf8');
 
 // Find the problematic line and fix it

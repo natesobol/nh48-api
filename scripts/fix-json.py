@@ -3,7 +3,8 @@
 
 import os
 
-file_path = 'data/long-trails-full.json'
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+file_path = os.path.join(root_dir, 'data', 'long-trails-full.json')
 
 with open(file_path, 'r') as f:
     lines = f.readlines()

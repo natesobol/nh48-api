@@ -7,7 +7,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const filePath = path.join(__dirname, 'data', 'long-trails-full.json');
+const ROOT = path.resolve(__dirname, '..');
+const filePath = path.join(ROOT, 'data', 'long-trails-full.json');
 const VALID_LINES = 44310;
 
 console.log('Reading file...');
