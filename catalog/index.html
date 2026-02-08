@@ -68,31 +68,250 @@
     </noscript>
 
     <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Dataset",
-        "name": "NH48 API – New Hampshire 4000-Footers Data",
-        "description": "Structured data and photos for the 48 four-thousand-foot peaks of the White Mountain National Forest, including elevation, prominence, difficulty, routes and rich photo metadata.",
-        "url": "https://nh48.info/",
-        "license": "https://creativecommons.org/licenses/by/4.0/",
-        "creator": {
-          "@type": "Person",
-          "name": "Nathan Sobol",
-          "url": "https://www.nh48pics.com/"
-        },
-        "keywords": ["NH48", "White Mountains", "4000 footers", "hiking data", "peak metadata", "photo metadata", "open dataset"],
-        "distribution": {
-          "@type": "DataDownload",
-          "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json",
-          "encodingFormat": "application/json"
-        },
-        "temporalCoverage": "2025-12-06/2025-12-06",
-        "spatialCoverage": {
-          "@type": "Place",
-          "name": "White Mountain National Forest",
-          "geo": {"@type": "GeoShape", "circle": "44.15 -71.34 50km"}
-        }
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Dataset",
+      "@id": "https://nh48.info/catalog/#dataset",
+      "name": "NH48 API – New Hampshire 4000-Footers Data",
+      "description": "Structured data and photos for the 48 four-thousand-foot peaks of the White Mountain National Forest, including elevation, prominence, difficulty, routes and rich photo metadata.",
+      "url": "https://nh48.info/",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "creator": {
+        "@type": "Person",
+        "name": "Nathan Sobol",
+        "url": "https://www.nh48pics.com/"
+      },
+      "keywords": [
+        "NH48",
+        "White Mountains",
+        "4000 footers",
+        "hiking data",
+        "peak metadata",
+        "photo metadata",
+        "open dataset"
+      ],
+      "distribution": {
+        "@type": "DataDownload",
+        "contentUrl": "https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json",
+        "encodingFormat": "application/json"
+      },
+      "temporalCoverage": "2025-12-06/2025-12-06",
+      "spatialCoverage": {
+        "@id": "https://nh48.info/catalog/#wmnf"
       }
+    },
+    {
+      "@type": "TouristDestination",
+      "@id": "https://nh48.info/catalog/#destination",
+      "name": "NH48 Peak Catalog",
+      "url": "https://nh48.info/catalog",
+      "containedInPlace": [
+        {
+          "@id": "https://nh48.info/catalog/#wmnf"
+        },
+        {
+          "@id": "https://nh48.info/catalog/#new-hampshire"
+        },
+        {
+          "@id": "https://nh48.info/catalog/#new-england"
+        },
+        {
+          "@id": "https://nh48.info/catalog/#usa"
+        }
+      ],
+      "landManager": {
+        "@id": "https://nh48.info/catalog/#usfs"
+      },
+      "includesAttraction": [
+        {
+          "@id": "https://nh48.info/peak/bondcliff/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/cannon-mountain/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/carter-dome/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/middle-carter-mountain/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/middle-tripyramid/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-adams/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-carrigain/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-eisenhower/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-field/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-garfield/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-hale/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-hancock/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-isolation/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-jackson/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-jefferson/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-lafayette/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-liberty/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-lincoln/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-madison/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-monroe/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-moosilauke/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-moriah/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-passaconaway/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-pierce/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-tecumseh/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-tom/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-washington/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-waumbek/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-whiteface/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-willey/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/north-tripyramid/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/north-twin-mountain/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/owls-head/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/south-carter-mountain/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/south-kinsman-mountain/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/south-twin-mountain/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/west-bond/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/wildcat-mountain-a/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/zealand-mountain/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/galehead-mountain/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-bond/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-cabot/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-flume/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-hancock-south/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-osceola/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/mount-osceola-east/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/north-kinsman-mountain/#mountain"
+        },
+        {
+          "@id": "https://nh48.info/peak/wildcat-mountain-d/#mountain"
+        }
+      ]
+    },
+    {
+      "@type": "Place",
+      "@id": "https://nh48.info/catalog/#wmnf",
+      "name": "White Mountain National Forest",
+      "geo": {
+        "@type": "GeoShape",
+        "circle": "44.15 -71.34 50km"
+      },
+      "containedInPlace": {
+        "@id": "https://nh48.info/catalog/#new-hampshire"
+      }
+    },
+    {
+      "@type": "AdministrativeArea",
+      "@id": "https://nh48.info/catalog/#new-hampshire",
+      "name": "New Hampshire",
+      "containedInPlace": {
+        "@id": "https://nh48.info/catalog/#new-england"
+      }
+    },
+    {
+      "@type": "AdministrativeArea",
+      "@id": "https://nh48.info/catalog/#new-england",
+      "name": "New England",
+      "containedInPlace": {
+        "@id": "https://nh48.info/catalog/#usa"
+      }
+    },
+    {
+      "@type": "Country",
+      "@id": "https://nh48.info/catalog/#usa",
+      "name": "United States"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://nh48.info/catalog/#usfs",
+      "name": "U.S. Forest Service",
+      "url": "https://www.fs.usda.gov/"
+    }
+  ]
+}
     </script>
     <script type="application/ld+json" id="breadcrumb-structured-data">
       {
