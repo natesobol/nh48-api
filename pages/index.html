@@ -978,6 +978,12 @@
       line-height: 1.6;
     }
 
+    .seo-content .seo-text::after {
+      content: "";
+      display: block;
+      clear: both;
+    }
+
     .seo-content .seo-text h2 {
       margin: 0 0 12px;
       font-size: 1.35rem;
@@ -1006,6 +1012,41 @@
       border-color: rgba(34, 197, 94, 0.7);
     }
 
+    .seo-content .wiki-float {
+      float: right;
+      margin: 0 0 1rem 1rem;
+      max-width: 300px;
+      border-radius: 10px;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      background: rgba(8, 12, 20, 0.6);
+      padding: 10px;
+    }
+
+    .seo-content .wiki-float--clear {
+      clear: right;
+    }
+
+    .seo-content .wiki-float img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .seo-content .wiki-float figcaption {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      line-height: 1.35;
+      color: #b9cdf7;
+    }
+
+    .seo-content .wiki-float figcaption small {
+      display: block;
+      color: #9fb2e8;
+      margin-top: 4px;
+    }
+
     .seo-links {
       margin: 16px 0 0;
       padding-left: 20px;
@@ -1013,6 +1054,7 @@
       color: #b9cdf7;
       display: grid;
       gap: 6px;
+      clear: both;
     }
 
     .seo-links a {
@@ -1024,6 +1066,15 @@
     .seo-links a:focus-visible {
       color: #7ee0a3;
       text-decoration: underline;
+    }
+
+    @media (max-width: 860px) {
+      .seo-content .wiki-float,
+      .seo-content .wiki-float--clear {
+        float: none;
+        max-width: 100%;
+        margin: 0 0 1rem;
+      }
     }
     .nh48-lang {
       display: flex;
@@ -2132,10 +2183,62 @@
          <summary>About NH48 and the datasets</summary>
          <div class="seo-text">
            <h2>About NH48 and the datasets</h2>
+           <figure class="wiki-float">
+             <a href="/peak/mount-adams" title="View Mount Adams page">
+               <img
+                 src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-adams/mount-adams__003.jpg"
+                 alt="Forested mountain ridge and summit of Mount Adams in the White Mountain National Forest under a partly cloudy sky."
+                 width="300"
+                 loading="lazy"
+                 decoding="async"
+               />
+             </a>
+             <figcaption>
+               <strong>Mount Adams (5,774 ft)</strong><br/>
+               Forested ridgelines and alpine terrain in the Presidential Range.<br/>
+               <small>(c) Nathan Sobol; Canon EOS 5DS R; 1 sec, ISO 100; captured Aug 28, 2025.</small>
+               <small>Home -> Peak Catalog -> Mount Adams</small>
+             </figcaption>
+           </figure>
+
            <p>NH48.info is a volunteer‑run resource for New Hampshire’s 48 four‑thousand‑foot peaks and the wider White Mountain trail system. It is maintained as a public reference and archive, publishing open datasets, trail maps, elevation profiles, species observations and high‑resolution photos for hikers, naturalists and researchers. Because the content is curated in spare time, conditions and regulations may change. Please verify route status with official sources, and if you spot an error or omission, use the Send Edit to Author link to submit corrections.</p>
            <a class="seo-cta" href="/submit-edit" style="color:#22c55e;">Send Edit to Author</a>
+           <figure class="wiki-float wiki-float--clear">
+             <a href="/peak/mount-lafayette" title="View Mount Lafayette page">
+               <img
+                 src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/mount-lafayette/mount-lafayette__003.jpg"
+                 alt="Forested mountain ridge and summit of Mount Lafayette in the White Mountain National Forest under a partly cloudy sky."
+                 width="300"
+                 loading="lazy"
+                 decoding="async"
+               />
+             </a>
+             <figcaption>
+               <strong>Mount Lafayette (5,249 ft)</strong><br/>
+               Franconia Ridge terrain overlooking the White Mountains.<br/>
+               <small>(c) Nathan Sobol; Canon EOS 5DS R; 1 sec, ISO 100; captured Aug 15, 2025.</small>
+               <small>Home -> Peak Catalog -> Mount Lafayette</small>
+             </figcaption>
+           </figure>
            <p><strong><a href="/catalog" style="color:#22c55e;">NH48 Peak Catalog</a></strong> – Explore detailed entries for all 48 peaks with summit coordinates, route descriptions, difficulty grades, elevation and prominence data, trail exposure, range categorization and curated photo sets. Sort by elevation, prominence or trail exposure, filter by range (Presidential, Franconia Ridge, Twins &amp; Bonds, Carter‑Moriah &amp; Wildcats, Kinsman, Osceola &amp; Tripyramids, etc.), and view results in grid or list format.</p>
            <p><strong><a href="/catalog/ranges" style="color:#22c55e;">Range Catalog</a></strong> – Browse the NH48 peaks organized by their mountain range and compare statistics across ranges.</p>
+           <figure class="wiki-float wiki-float--clear">
+             <a href="/peak/bondcliff" title="View Bondcliff page">
+               <img
+                 src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,metadata=keep/bondcliff/bondcliff__003.jpg"
+                 alt="Forested mountain ridge and summit of Bondcliff in the White Mountain National Forest under a partly cloudy sky."
+                 width="300"
+                 loading="lazy"
+                 decoding="async"
+               />
+             </a>
+             <figcaption>
+               <strong>Bondcliff (4,265 ft)</strong><br/>
+               Pemigewasset Wilderness ridges with layered summit views.<br/>
+               <small>(c) Nathan Sobol; Canon EOS 5D Mark IV; 35mm F1.4 DG HSM | Art 012, 1/125 sec, ISO 125; captured Jun 15, 2023.</small>
+               <small>Home -> Peak Catalog -> Bondcliff</small>
+             </figcaption>
+           </figure>
            <p><strong><a href="/photos/" style="color:#22c55e;">NH48 Photos</a></strong> – Browse high‑resolution images from the peaks and trails with alt text and metadata for research and inspiration.</p>
            <p><strong><a href="/peakid-game.html" style="color:#22c55e;">PeakID Game</a></strong> – Match summit photos to the correct four‑thousand‑footer names across multiple rounds of drag‑and‑drop play.</p>
            <p><strong><a href="/timed-peakid-game.html" style="color:#22c55e;">Timed PeakID Game</a></strong> – Race the clock by matching falling summit photos to the correct peak names.</p>
@@ -2547,6 +2650,6 @@
       page: location.pathname
     });
   </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"dae671bca6324baa829e17d4b424a76a","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" data-cf-beacon='{"version":"2024.11.0","token":"dae671bca6324baa829e17d4b424a76a","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>

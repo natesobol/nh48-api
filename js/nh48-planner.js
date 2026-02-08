@@ -1,8 +1,9 @@
 // NH48 Peak Planning Tool
-// React 18 + @hello-pangea/dnd (loaded via CDN in nh48-planner.html)
+// React 18 + @hello-pangea/dnd (ESM via esm.sh)
 
-const { useEffect, useMemo, useState } = React;
-const { DragDropContext, Droppable, Draggable } = window.PangeaDnD || {};
+import React, { useEffect, useMemo, useState } from 'https://esm.sh/react@18.2.0';
+import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
+import { DragDropContext, Droppable, Draggable } from 'https://esm.sh/@hello-pangea/dnd@18.0.1?deps=react@18.2.0,react-dom@18.2.0';
 
 const PRESET_SETS = [
   {
@@ -192,14 +193,6 @@ function PeakPlannerApp() {
     setItinerary(updated);
   };
 
-  if (!window.PangeaDnD) {
-    return React.createElement('div', { className: 'planner-shell' },
-      React.createElement('p', { className: 'planner-status' },
-        'Drag-and-drop libraries failed to load. Please refresh the page.'
-      )
-    );
-  }
-
   return React.createElement('div', { className: 'planner-shell' },
     React.createElement('div', { className: 'planner-controls' },
       React.createElement('label', { htmlFor: 'presetSelect' }, 'Choose a preset route:'),
@@ -267,6 +260,6 @@ function PeakPlannerApp() {
 
 const rootEl = document.getElementById('planner-root');
 if (rootEl) {
-  const root = ReactDOM.createRoot(rootEl);
+  const root = createRoot(rootEl);
   root.render(React.createElement(PeakPlannerApp));
 }
