@@ -65,6 +65,10 @@ for (const dir of TARGET_DIRS) {
       sameAs.some((url) => typeof url === 'string' && /^https?:\/\//.test(url) && !url.includes('nh48.info')),
       `${rel}: sameAs has no external URL`
     );
+    check(
+      sameAs.every((url) => typeof url === 'string' && !/\/search\b|[?&](q|query|search)=/i.test(url)),
+      `${rel}: sameAs contains search-style URL`
+    );
 
     const primary = mountain.primaryImageOfPage && mountain.primaryImageOfPage['@id'];
     const imageIds = Array.isArray(mountain.image) ? mountain.image.map((img) => img && img['@id']).filter(Boolean) : [];
