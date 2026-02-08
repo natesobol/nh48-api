@@ -43,6 +43,7 @@
   <meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__002.jpg">
   <meta name="twitter:image:alt" content="Alpine boulder field on Mount Madison">
   <link rel="stylesheet" href="/css/dataset-page.css">
+  <script type="module" src="/js/i18n.js"></script>
   <script src="/js/unified-footer.js" defer></script>
   <style>
     * ,
@@ -407,6 +408,9 @@
                 link.setAttribute('aria-current', 'page');
               }
             });
+            if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+              window.NH48_I18N.refreshLangPicker();
+            }
           })
           .catch((err) => console.error('Navigation failed to load', err));
       }

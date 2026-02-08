@@ -351,6 +351,7 @@
       }
     </script>
     <link rel="stylesheet" href="/css/quick-browse-footer.css" />
+    <script type="module" src="/js/i18n.js"></script>
     <script src="/js/quick-browse-footer.js" defer></script>
     <style>
       :root{
@@ -1221,6 +1222,9 @@
                   link.setAttribute('aria-current', 'page');
                 }
               });
+              if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+                window.NH48_I18N.refreshLangPicker();
+              }
             })
             .catch((err) => console.error('Navigation failed to load', err));
         }

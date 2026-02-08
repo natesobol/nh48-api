@@ -750,6 +750,7 @@
       }
     }
   </style>
+  <script type="module" src="/js/i18n.js"></script>
 </head>
 <body data-route="long-trails" data-page="long-trails">
   <div id="nav-placeholder"></div>
@@ -770,13 +771,16 @@
                 .map(value => value.trim())
                 .filter(Boolean);
 
-              if (routes.includes(activeRoute)) {
-                link.classList.add('active');
-                link.setAttribute('aria-current', 'page');
-              }
-            });
-          })
-          .catch(err => console.error('Failed to load navigation:', err));
+            if (routes.includes(activeRoute)) {
+              link.classList.add('active');
+              link.setAttribute('aria-current', 'page');
+            }
+          });
+          if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+            window.NH48_I18N.refreshLangPicker();
+          }
+        })
+        .catch(err => console.error('Failed to load navigation:', err));
       }
 
       });

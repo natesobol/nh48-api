@@ -17,14 +17,28 @@ const RANGE_BASE = 'https://nh48.info/range';
 const PHOTO_BASE_URL = 'https://photos.nh48.info';
 const PHOTO_PATH_PREFIX = '/nh48-photos/';
 const STATIC_PAGE_ENTRIES = [
-  { loc: 'https://nh48.info/', file: 'index.html' },
-  { loc: 'https://nh48.info/catalog', file: 'catalog.html' },
+  { loc: 'https://nh48.info/', file: 'pages/index.html' },
+  { loc: 'https://nh48.info/fr/', file: 'i18n/fr.html' },
+  { loc: 'https://nh48.info/catalog', file: 'catalog/index.html' },
+  { loc: 'https://nh48.info/fr/catalog', file: 'catalog/index.html' },
   { loc: 'https://nh48.info/catalog/ranges', file: 'catalog/ranges/index.html' },
   { loc: 'https://nh48.info/photos/', file: 'photos/index.html' },
   { loc: 'https://nh48.info/trails', file: 'trails/index.html' },
+  { loc: 'https://nh48.info/fr/trails', file: 'trails/index.html' },
   { loc: 'https://nh48.info/long-trails', file: 'long-trails/index.html' },
+  { loc: 'https://nh48.info/fr/long-trails', file: 'long-trails/index.html' },
+  { loc: 'https://nh48.info/dataset', file: 'dataset/index.html' },
+  { loc: 'https://nh48.info/fr/dataset', file: 'dataset/index.html' },
+  { loc: 'https://nh48.info/dataset/wmnf-trails', file: 'dataset/wmnf-trails/index.html' },
+  { loc: 'https://nh48.info/fr/dataset/wmnf-trails', file: 'dataset/wmnf-trails/index.html' },
+  { loc: 'https://nh48.info/dataset/long-trails', file: 'dataset/long-trails/index.html' },
+  { loc: 'https://nh48.info/fr/dataset/long-trails', file: 'dataset/long-trails/index.html' },
+  { loc: 'https://nh48.info/dataset/howker-plants', file: 'dataset/howker-plants/index.html' },
+  { loc: 'https://nh48.info/fr/dataset/howker-plants', file: 'dataset/howker-plants/index.html' },
   { loc: 'https://nh48.info/plant-catalog', file: 'pages/plant_catalog.html' },
+  { loc: 'https://nh48.info/fr/plant-catalog', file: 'pages/plant_catalog.html' },
   { loc: 'https://nh48.info/projects/hrt-info', file: 'pages/hrt_info.html' },
+  { loc: 'https://nh48.info/fr/projects/hrt-info', file: 'pages/hrt_info.fr.html' },
   { loc: 'https://nh48.info/projects/plant-map', file: 'pages/projects/plant-map.html' },
   {
     loc: 'https://nh48.info/projects/howker-map-editor',
@@ -33,7 +47,12 @@ const STATIC_PAGE_ENTRIES = [
     priority: 0.5,
   },
   { loc: 'https://nh48.info/howker-ridge', file: 'pages/howker_ridge.html' },
+  { loc: 'https://nh48.info/fr/howker-ridge', file: 'pages/howker_ridge.html' },
+  { loc: 'https://nh48.info/howker-ridge/poi', file: 'pages/howker_poi.html' },
+  { loc: 'https://nh48.info/fr/howker-ridge/poi', file: 'pages/howker_poi.html' },
   { loc: 'https://nh48.info/virtual-hike', file: 'pages/virtual_hike.html' },
+  { loc: 'https://nh48.info/submit-edit', file: 'pages/submit_edit.html' },
+  { loc: 'https://nh48.info/fr/submit-edit', file: 'pages/submit_edit.html' },
   { loc: 'https://nh48.info/peakid-game', file: 'peakid-game.html' },
   { loc: 'https://nh48.info/timed-peakid-game', file: 'timed-peakid-game.html' },
   {
@@ -44,10 +63,12 @@ const STATIC_PAGE_ENTRIES = [
   },
   { loc: 'https://nh48.info/nh-4000-footers-info', file: 'nh-4000-footers-info.html' },
   { loc: 'https://nh48.info/about', file: 'pages/about.html' },
+  { loc: 'https://nh48.info/fr/about', file: 'pages/about.html' },
 ];
 const STATIC_IMAGE_ENTRIES = [
   {
     loc: 'https://nh48.info/',
+    file: 'pages/index.html',
     images: [
       {
         url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/bondcliff/bondcliff__001.jpg',
@@ -58,6 +79,7 @@ const STATIC_IMAGE_ENTRIES = [
   },
   {
     loc: 'https://nh48.info/catalog',
+    file: 'catalog/index.html',
     images: [
       {
         url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__002.jpg',
@@ -67,7 +89,19 @@ const STATIC_IMAGE_ENTRIES = [
     ],
   },
   {
+    loc: 'https://nh48.info/catalog/ranges',
+    file: 'catalog/ranges/index.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__001.jpg',
+        title: 'Mount Lafayette highlights in the NH48 Range Catalog',
+        caption: 'Mount Lafayette featured in the NH48 range catalog.',
+      },
+    ],
+  },
+  {
     loc: 'https://nh48.info/photos/',
+    file: 'photos/index.html',
     images: [
       {
         url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__001.jpg',
@@ -77,7 +111,74 @@ const STATIC_IMAGE_ENTRIES = [
     ],
   },
   {
+    loc: 'https://nh48.info/trails',
+    file: 'trails/index.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-garfield/mount-garfield__002.jpg',
+        title: 'Summit cairn on Mount Garfield looking over the Pemigewasset',
+        caption: 'Summit cairn on Mount Garfield featured on the NH48 trails page.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/long-trails',
+    file: 'long-trails/index.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/west-bond/west-bond__001.jpg',
+        title: 'West Bond summit rocks overlooking Zealand Valley and Bondcliff',
+        caption: 'West Bond summit photo featured on the NH48 long-trails page.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/dataset',
+    file: 'dataset/index.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/galehead-mountain/galehead-mountain__001.jpg',
+        title: 'View of the Twin Range from the wooded spur on Galehead Mountain',
+        caption: 'Dataset hub preview image featuring Galehead Mountain.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/dataset/wmnf-trails',
+    file: 'dataset/wmnf-trails/index.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__003.jpg',
+        title: 'Summit buildings and alpine terrain on Mount Washington',
+        caption: 'WMNF trails dataset preview image showing Mount Washington.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/dataset/long-trails',
+    file: 'dataset/long-trails/index.html',
+    images: [
+      {
+        url: 'https://nh48.info/Long_Trails_Logo.png',
+        title: 'Long Trails open data logo for the Appalachian Trail, PCT, and CDT dataset',
+        caption: 'Long Trails dataset logo.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/dataset/howker-plants',
+    file: 'dataset/howker-plants/index.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__002.jpg',
+        title: 'Alpine boulder field on Mount Madison',
+        caption: 'Howker plants dataset preview image featuring Mount Madison.',
+      },
+    ],
+  },
+  {
     loc: 'https://nh48.info/nh-4000-footers-info',
+    file: 'nh-4000-footers-info.html',
     images: [
       {
         url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__001.jpg',
@@ -88,6 +189,7 @@ const STATIC_IMAGE_ENTRIES = [
   },
   {
     loc: 'https://nh48.info/projects/plant-map',
+    file: 'pages/projects/plant-map.html',
     images: [
       {
         url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg',
@@ -97,7 +199,52 @@ const STATIC_IMAGE_ENTRIES = [
     ],
   },
   {
+    loc: 'https://nh48.info/projects/hrt-info',
+    file: 'pages/hrt_info.html',
+    images: [
+      {
+        url: 'https://howker.nh48.info/cdn-cgi/image/format=webp,quality=85,width=1200/third-howk/third-howk-001.jpg',
+        title: 'Third Howk ridgeline with alpine terrain and sweeping views',
+        caption: 'Howker Ridge Trail guide preview image.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/howker-ridge',
+    file: 'pages/howker_ridge.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg',
+        title: 'Mount Madison ridge view with alpine terrain and distant peaks',
+        caption: 'Howker Ridge trail map preview image.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/howker-ridge/poi',
+    file: 'pages/howker_poi.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg',
+        title: 'Mount Madison ridge view with alpine terrain and distant peaks',
+        caption: 'Howker Ridge points of interest preview image.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/plant-catalog',
+    file: 'pages/plant_catalog.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg',
+        title: 'Mount Madison ridge view with alpine terrain and distant peaks',
+        caption: 'Alpine plant catalog preview image.',
+      },
+    ],
+  },
+  {
     loc: 'https://nh48.info/virtual-hike',
+    file: 'pages/virtual_hike.html',
     images: [
       {
         url: 'https://nh48.info/assets/virtual-hike-thumbnail.jpg',
@@ -107,7 +254,19 @@ const STATIC_IMAGE_ENTRIES = [
     ],
   },
   {
+    loc: 'https://nh48.info/peakid-game',
+    file: 'peakid-game.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__002.jpg',
+        title: 'Franconia Ridge trail climbing toward the Mount Lafayette summit cone',
+        caption: 'PeakID game preview image featuring Mount Lafayette.',
+      },
+    ],
+  },
+  {
     loc: 'https://nh48.info/timed-peakid-game',
+    file: 'timed-peakid-game.html',
     images: [
       {
         url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__002.jpg',
@@ -269,7 +428,16 @@ function uniqueify(text, photo, usedSet) {
     return out;
   }
   const source = pickFirstNonEmpty(photo.photoId, photo.filename, photo.url);
-  const id = source ? source.slice(-12) : 'image';
+  let id = 'image';
+  if (source) {
+    try {
+      const url = new URL(source, 'https://nh48.info');
+      const base = path.basename(url.pathname);
+      id = base || source.slice(-12);
+    } catch (err) {
+      id = source.slice(-12);
+    }
+  }
   out = `${out} (${id})`;
   usedSet.add(out);
   return out;
@@ -356,13 +524,15 @@ const rangeSlugs = Object.keys(rangesData).sort();
 const buildPlantImageEntries = () => {
   const entries = [];
   if (!Array.isArray(plantData)) return entries;
+  const plantLastmod = getGitLastmod(PLANTS_PATH);
   for (const plant of plantData) {
     if (!plant) continue;
     const name = normalizeTextForWeb(plant.common || plant.latin || plant.id || 'Plant');
     const imgs = Array.isArray(plant.imgs) && plant.imgs.length ? plant.imgs : (plant.img ? [plant.img] : []);
     const images = dedupeImages(buildImageEntries(imgs, name));
     if (images.length) {
-      entries.push({ loc: `https://nh48.info/plant/${encodeURIComponent(plant.id)}`, images });
+      entries.push({ loc: `https://nh48.info/plant/${encodeURIComponent(plant.id)}`, images, lastmod: plantLastmod });
+      entries.push({ loc: `https://nh48.info/fr/plant/${encodeURIComponent(plant.id)}`, images, lastmod: plantLastmod });
     }
   }
   return entries;
@@ -404,6 +574,10 @@ const buildPageSitemap = () => {
         loc: `https://nh48.info/plant/${encodeURIComponent(plant.id)}`,
         lastmod: plantLastmod,
       });
+      urls.push({
+        loc: `https://nh48.info/fr/plant/${encodeURIComponent(plant.id)}`,
+        lastmod: plantLastmod,
+      });
     });
   }
 
@@ -439,15 +613,18 @@ const buildImageSitemap = () => {
     const name = peak.peakName || peak['Peak Name'] || slug;
     const images = dedupeImages(buildImageEntries(peak.photos, name));
     if (!images.length) return;
-    urlEntries.push({ loc: `${PEAK_BASE}/${slug}`, images });
-    urlEntries.push({ loc: `${PEAK_BASE}/${slug}/photos`, images });
+    const lastmod = getGitLastmod(path.join('peaks', slug, 'index.html'));
+    urlEntries.push({ loc: `${PEAK_BASE}/${slug}`, images, lastmod });
+    urlEntries.push({ loc: `${PEAK_BASE}/${slug}/photos`, images, lastmod });
     allImages.push(...images);
   });
 
   if (allImages.length) {
+    const photosLastmod = getGitLastmod('photos/index.html');
     urlEntries.unshift({
       loc: 'https://nh48.info/photos/',
       images: dedupeImages(allImages),
+      lastmod: photosLastmod,
     });
   }
 
@@ -455,6 +632,7 @@ const buildImageSitemap = () => {
   urlEntries.push(...plantEntries);
   const staticEntries = STATIC_IMAGE_ENTRIES.map((entry) => ({
     ...entry,
+    lastmod: entry.file ? getGitLastmod(entry.file) : undefined,
     images: dedupeImages(
       (entry.images || []).map((image) => ({
         ...image,
@@ -472,6 +650,9 @@ const buildImageSitemap = () => {
   urlEntries.forEach((entry) => {
     xmlParts.push('  <url>');
     xmlParts.push(`    <loc>${escapeXml(entry.loc)}</loc>`);
+    if (entry.lastmod) {
+      xmlParts.push(`    <lastmod>${escapeXml(entry.lastmod)}</lastmod>`);
+    }
     const usedTitles = new Set();
     const usedCaptions = new Set();
     entry.images.forEach((image) => {
