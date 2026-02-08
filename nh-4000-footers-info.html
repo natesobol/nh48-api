@@ -708,6 +708,15 @@
       tr:hover td {
         background: rgba(255, 255, 255, 0.05);
       }
+      tr.hazard-row td {
+        background: var(--hazard-bg, rgba(239, 68, 68, 0.08));
+      }
+      tr.hazard-row td:first-child {
+        border-left: 4px solid var(--hazard-color, #ef4444);
+      }
+      tr.hazard-row:hover td {
+        background: var(--hazard-bg-hover, rgba(239, 68, 68, 0.15));
+      }
       .map-shell {
         background: var(--card-gradient);
         border: 1px solid var(--card-border);
@@ -1191,6 +1200,36 @@
         position: relative;
         overflow: hidden;
         text-align: left;
+        display: block;
+        width: 100%;
+        appearance: none;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      }
+      .risk-stats .risk-box:hover {
+        border-color: rgba(239, 68, 68, 0.5);
+        box-shadow: 0 12px 28px rgba(239, 68, 68, 0.12);
+        transform: translateY(-1px);
+      }
+      .risk-stats .risk-box:focus-visible {
+        outline: 2px solid rgba(94, 234, 212, 0.6);
+        outline-offset: 2px;
+      }
+      .risk-stats .risk-box.is-active {
+        border-color: var(--risk-color, #ef4444);
+        box-shadow: 0 0 0 2px var(--risk-color, #ef4444);
+      }
+      .risk-stats .risk-box.is-active .risk-title,
+      .risk-stats .risk-box.is-active .risk-value {
+        color: var(--risk-color, #f87171);
+      }
+      .risk-stats .risk-box.is-disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+        transform: none;
+        box-shadow: none;
       }
       .risk-stats .risk-box .risk-title {
         display: flex;
@@ -1677,29 +1716,29 @@
         <p>Weather changes quickly in the White Mountains; preparation is essential and rescue can take hours.</p>
         
         <div class="risk-grid stacked-grid">
-          <div class="risk-box">
+          <button class="risk-box" type="button" data-risk="AboveTreelineExposure" aria-pressed="false">
             <span class="risk-title">🏔️ Above Treeline Exposure</span>
             <span class="risk-value">15 Peaks</span>
             <p class="risk-description">Significant stretches above treeline with no shelter from weather. Lightning, high winds, and whiteout conditions are real dangers.</p>
-          </div>
+          </button>
           
-          <div class="risk-box">
+          <button class="risk-box" type="button" data-risk="SevereWeather" aria-pressed="false">
             <span class="risk-title">🌩️ Severe Weather Risks</span>
             <span class="risk-value">~10 Peaks</span>
             <p class="risk-description">Washington holds the record for highest wind speed ever recorded. Presidential Range peaks regularly experience hurricane-force winds.</p>
-          </div>
+          </button>
           
-          <div class="risk-box">
+          <button class="risk-box" type="button" data-risk="LongBailout" aria-pressed="false">
             <span class="risk-title">🚶 Long Bailout Distances</span>
             <span class="risk-value">Up to 9-10 Miles</span>
             <p class="risk-description">Remote peaks like Owl's Head, Bonds, and Isolation require long approaches. If something goes wrong, help is far away.</p>
-          </div>
+          </button>
           
-          <div class="risk-box">
+          <button class="risk-box" type="button" data-risk="LimitedWater" aria-pressed="false">
             <span class="risk-title">💧 Limited Water Sources</span>
             <span class="risk-value">Many Routes Dry</span>
             <p class="risk-description">Unlike some mountain ranges, many NH trails have no reliable water sources. Carry all water you need - typically 2-4 liters per hike.</p>
-          </div>
+          </button>
         </div>
       </section>
 
@@ -1859,6 +1898,43 @@
         '#f59e0b'
       ];
 
+      const RISK_PALETTE = {
+        AboveTreelineExposure: '#f97316',
+        SevereWeather: '#ef4444',
+        LongBailout: '#f59e0b',
+        LimitedWater: '#facc15',
+        Navigation: '#a855f7',
+        ScrambleSteep: '#fb7185',
+        UnbridgedRiverCrossings: '#38bdf8',
+        NoCellService: '#94a3b8'
+      };
+
+      const RISK_PRIORITY = [
+        'AboveTreelineExposure',
+        'SevereWeather',
+        'LongBailout',
+        'LimitedWater',
+        'Navigation',
+        'ScrambleSteep',
+        'UnbridgedRiverCrossings',
+        'NoCellService'
+      ];
+
+      const RISK_LABELS = {
+        AboveTreelineExposure: 'Above-treeline exposure',
+        SevereWeather: 'Severe weather',
+        LongBailout: 'Long bailout',
+        LimitedWater: 'Limited water',
+        Navigation: 'Navigation',
+        ScrambleSteep: 'Scramble / steep',
+        UnbridgedRiverCrossings: 'Unbridged crossings',
+        NoCellService: 'No cell service'
+      };
+
+      const activeRiskFilters = new Set();
+      let riskFiltersEnabled = false;
+      let riskButtons = [];
+
       const buildRangeLookup = (data) => {
         const nameToSlug = {};
         Object.values(data).forEach((entry) => {
@@ -1986,6 +2062,109 @@
         return null;
       }
 
+      function hexToRgba(hex, alpha) {
+        if (!hex || typeof hex !== 'string') return `rgba(239, 68, 68, ${alpha})`;
+        let value = hex.replace('#', '').trim();
+        if (value.length === 3) {
+          value = value.split('').map((c) => c + c).join('');
+        }
+        if (value.length !== 6) return `rgba(239, 68, 68, ${alpha})`;
+        const r = parseInt(value.slice(0, 2), 16);
+        const g = parseInt(value.slice(2, 4), 16);
+        const b = parseInt(value.slice(4, 6), 16);
+        if ([r, g, b].some((v) => Number.isNaN(v))) return `rgba(239, 68, 68, ${alpha})`;
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+
+      function peakMatchesRisk(peak) {
+        if (!activeRiskFilters.size) return true;
+        const factors = Array.isArray(peak.riskFactors) ? peak.riskFactors : [];
+        return Array.from(activeRiskFilters).every((risk) => factors.includes(risk));
+      }
+
+      function filterPeaksByRisk(list) {
+        if (!activeRiskFilters.size) return list;
+        return list.filter(peakMatchesRisk);
+      }
+
+      function getRiskColorForPeak(peak) {
+        if (!activeRiskFilters.size) return null;
+        const factors = Array.isArray(peak.riskFactors) ? peak.riskFactors : [];
+        for (const risk of RISK_PRIORITY) {
+          if (activeRiskFilters.has(risk) && factors.includes(risk)) {
+            return RISK_PALETTE[risk] || '#ef4444';
+          }
+        }
+        return null;
+      }
+
+      function getPeakColor(peak) {
+        const riskColor = getRiskColorForPeak(peak);
+        return riskColor || rangeColors[peak.range] || '#22c55e';
+      }
+
+      function updateRiskButtonStates() {
+        if (!riskButtons.length) return;
+        riskButtons.forEach((btn) => {
+          const risk = btn.dataset.risk;
+          if (risk && RISK_PALETTE[risk]) {
+            btn.style.setProperty('--risk-color', RISK_PALETTE[risk]);
+          }
+          const isActive = activeRiskFilters.has(risk);
+          btn.classList.toggle('is-active', isActive);
+          btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+      }
+
+      function setRiskFiltersEnabled(enabled) {
+        riskFiltersEnabled = enabled;
+        if (!riskButtons.length) return;
+        riskButtons.forEach((btn) => {
+          btn.classList.toggle('is-disabled', !enabled);
+          btn.setAttribute('aria-disabled', !enabled ? 'true' : 'false');
+          if (!enabled) {
+            btn.classList.remove('is-active');
+            btn.setAttribute('aria-pressed', 'false');
+          }
+        });
+      }
+
+      function updateRiskCounts() {
+        if (!riskButtons.length) return;
+        riskButtons.forEach((btn) => {
+          const risk = btn.dataset.risk;
+          const valueEl = btn.querySelector('.risk-value');
+          if (!valueEl) return;
+          const count = peaks.filter((peak) => Array.isArray(peak.riskFactors) && peak.riskFactors.includes(risk)).length;
+          valueEl.textContent = `${count} Peaks`;
+        });
+      }
+
+      function setupRiskFilters() {
+        riskButtons = Array.from(document.querySelectorAll('.risk-box[data-risk]'));
+        if (!riskButtons.length) return;
+        riskButtons.forEach((btn) => {
+          const risk = btn.dataset.risk;
+          if (risk && RISK_PALETTE[risk]) {
+            btn.style.setProperty('--risk-color', RISK_PALETTE[risk]);
+          }
+          btn.addEventListener('click', () => {
+            if (!riskFiltersEnabled) return;
+            if (activeRiskFilters.has(risk)) {
+              activeRiskFilters.delete(risk);
+            } else {
+              activeRiskFilters.add(risk);
+            }
+            selectedPeakSlug = null;
+            updateRiskButtonStates();
+            renderPeakTable();
+            scheduleMapRender();
+          });
+        });
+        setRiskFiltersEnabled(false);
+        updateRiskButtonStates();
+      }
+
       function getRange(entry, slug) {
         if (rangeLookup[slug]) return rangeLookup[slug];
         const range = entry['Range / Subrange'];
@@ -2103,7 +2282,8 @@
       function renderPeakTable() {
         const tbody = document.getElementById('peakTableBody');
         tbody.innerHTML = '';
-        const filtered = currentRange === 'All' ? peaks : peaks.filter((p) => p.range === currentRange);
+        let filtered = currentRange === 'All' ? peaks : peaks.filter((p) => p.range === currentRange);
+        filtered = filterPeaksByRisk(filtered);
         const sorted = [...filtered].sort((a, b) => {
           if (sortState.key === 'elevation') {
             const aVal = a.elevation ?? (sortState.direction === 'asc' ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY);
@@ -2126,10 +2306,22 @@
           }
           return a.name.localeCompare(b.name);
         });
+        if (!sorted.length) {
+          tbody.innerHTML = '<tr><td colspan="5">No peaks match the current filters.</td></tr>';
+          updateSortIndicators();
+          return;
+        }
 
         sorted.forEach((peak) => {
           const tr = document.createElement('tr');
           tr.classList.add(`tier-${peak.difficulty}`);
+          const riskColor = getRiskColorForPeak(peak);
+          if (riskColor) {
+            tr.classList.add('hazard-row');
+            tr.style.setProperty('--hazard-color', riskColor);
+            tr.style.setProperty('--hazard-bg', hexToRgba(riskColor, 0.08));
+            tr.style.setProperty('--hazard-bg-hover', hexToRgba(riskColor, 0.16));
+          }
           const peakCell = document.createElement('td');
           const link = document.createElement('a');
           link.href = `/peak/${peak.slug}/`;
@@ -2204,9 +2396,31 @@
         const legendItems = document.getElementById('mapLegendItems');
         const legendDot = document.getElementById('mapLegendDot');
         if (legendItems) legendItems.innerHTML = '';
+        const activeRisks = RISK_PRIORITY.filter((risk) => activeRiskFilters.has(risk));
         if (peakFocus) {
           if (legendLabel) legendLabel.textContent = `NH48 Summit: ${peakFocus.name}`;
-          if (legendDot) legendDot.style.background = rangeColors[peakFocus.range] || '#22c55e';
+          if (legendDot) legendDot.style.background = getPeakColor(peakFocus);
+          return;
+        }
+        if (activeRisks.length) {
+          const labels = activeRisks.map((risk) => RISK_LABELS[risk] || risk);
+          if (legendLabel) legendLabel.textContent = `Risk Filters: ${labels.join(', ')}`;
+          if (legendDot) {
+            legendDot.style.background = activeRisks.length === 1 ? (RISK_PALETTE[activeRisks[0]] || '#ef4444') : '#94a3b8';
+          }
+          if (!legendItems) return;
+          activeRisks.forEach((risk) => {
+            const item = document.createElement('span');
+            item.className = 'map-legend-item';
+            const dot = document.createElement('span');
+            dot.className = 'legend-dot';
+            dot.style.background = RISK_PALETTE[risk] || '#ef4444';
+            const label = document.createElement('span');
+            label.textContent = RISK_LABELS[risk] || risk;
+            item.appendChild(dot);
+            item.appendChild(label);
+            legendItems.appendChild(item);
+          });
           return;
         }
         if (!activeRanges.length) {
@@ -2231,21 +2445,29 @@
         });
       }
 
-      function renderMap() {
-        const map = document.getElementById('peakMap');
-        map.innerHTML = '';
+      function getFilteredMapPeaks() {
         const coords = peaks.filter((p) => p.coords);
         const activeRanges = getActiveMapRanges();
         const peakFocus = selectedPeakSlug ? peaks.find((p) => p.slug === selectedPeakSlug) : null;
         let filtered = coords;
         if (peakFocus) {
           filtered = coords.filter((p) => p.slug === selectedPeakSlug);
-        } else if (activeRanges.length) {
-          filtered = coords.filter((p) => activeRanges.includes(p.range));
+        } else {
+          filtered = filterPeaksByRisk(coords);
+          if (activeRanges.length) {
+            filtered = filtered.filter((p) => activeRanges.includes(p.range));
+          }
         }
+        return { coords, filtered, activeRanges, peakFocus };
+      }
+
+      function renderMap() {
+        const map = document.getElementById('peakMap');
+        map.innerHTML = '';
+        const { coords, filtered, activeRanges, peakFocus } = getFilteredMapPeaks();
         updateMapLegend(activeRanges, peakFocus);
         if (!filtered.length) {
-          map.innerHTML = '<text x="10" y="30" fill="#cbd5e1">No coordinate data available.</text>';
+          map.innerHTML = coords.length ? '<text x="10" y="30" fill="#cbd5e1">No peaks match the current filters.</text>' : '<text x="10" y="30" fill="#cbd5e1">No coordinate data available.</text>';
           renderLeafletMap(filtered);
           return;
         }
@@ -2323,7 +2545,7 @@
         filtered.forEach((peak) => {
           const { x, y } = project(peak.coords.lat, peak.coords.lon);
           const circle = document.createElementNS(ns, 'circle');
-          const color = rangeColors[peak.range] || '#22c55e';
+          const color = getPeakColor(peak);
           circle.setAttribute('cx', x);
           circle.setAttribute('cy', y);
           circle.setAttribute('r', peakFocus ? 7 : 5);
@@ -2386,7 +2608,8 @@
       }
 
       function renderDataLoadError(message) {
-        document.getElementById('peakTableBody').innerHTML = `<tr><td colspan="4">${message}</td></tr>`;
+        setRiskFiltersEnabled(false);
+        document.getElementById('peakTableBody').innerHTML = `<tr><td colspan="5">${message}</td></tr>`;
         const map = document.getElementById('peakMap');
         map.innerHTML = '<text x="10" y="30" fill="#cbd5e1">Map data unavailable.</text>';
         renderLeafletMap([]);
@@ -2430,7 +2653,7 @@
         if (!points || !points.length) return;
         const isPeakFocus = points.length === 1 && selectedPeakSlug && points[0]?.slug === selectedPeakSlug;
         const latLngs = points.map((peak) => {
-          const color = rangeColors[peak.range] || '#22c55e';
+          const color = getPeakColor(peak);
           const latLng = [peak.coords.lat, peak.coords.lon];
           const marker = L.circleMarker(latLng, {
             radius: isPeakFocus ? 7 : 5,
@@ -2476,15 +2699,7 @@
               }
             }
           }, 60);
-          const activeRanges = getActiveMapRanges();
-          const coords = peaks.filter((p) => p.coords);
-          const peakFocus = selectedPeakSlug ? peaks.find((p) => p.slug === selectedPeakSlug) : null;
-          let filtered = coords;
-          if (peakFocus) {
-            filtered = coords.filter((p) => p.slug === selectedPeakSlug);
-          } else if (activeRanges.length) {
-            filtered = coords.filter((p) => activeRanges.includes(p.range));
-          }
+          const { filtered } = getFilteredMapPeaks();
           renderLeafletMap(filtered);
         }
       }
@@ -2557,10 +2772,14 @@
         });
       }
 
-      function hydratePeaks(data) {
+      function hydratePeaks(data, overlay) {
         rangeLookup = buildRangeLookup(data);
         peaks = Object.values(data).map((entry) => {
           const slug = entry.slug || entry.peakName?.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          const overlayEntry = overlay && overlay[slug] ? overlay[slug] : null;
+          const overlayLat = overlayEntry && Number.isFinite(overlayEntry.latitude) ? overlayEntry.latitude : null;
+          const overlayLon = overlayEntry && Number.isFinite(overlayEntry.longitude) ? overlayEntry.longitude : null;
+          const coords = overlayLat !== null && overlayLon !== null ? { lat: overlayLat, lon: overlayLon } : parseCoords(entry.Coordinates);
           return {
             slug,
             name: entry.peakName || entry['Peak Name'],
@@ -2568,7 +2787,25 @@
             prominence: parseInt(entry['Prominence (ft)'], 10) || null,
             range: getRange(entry, slug),
             difficulty: difficultyMap[slug] || 'moderate',
-            coords: parseCoords(entry.Coordinates)
+            coords,
+            latitude: overlayLat ?? coords?.lat ?? null,
+            longitude: overlayLon ?? coords?.lon ?? null,
+            rangeGroup: overlayEntry?.range_group || null,
+            rangeRaw: overlayEntry?.range_raw || entry['Range / Subrange'] || null,
+            primaryRoute: overlayEntry?.primary_route || null,
+            primaryDistanceMi: overlayEntry?.primary_distance_mi ?? null,
+            primaryGainFt: overlayEntry?.primary_gain_ft ?? null,
+            trailTypePrimary: overlayEntry?.trail_type_primary ?? null,
+            difficultyTextPrimary: overlayEntry?.difficulty_text_primary ?? null,
+            estimatedTimeHours: overlayEntry?.estimated_time_hours ?? null,
+            riskFactors: Array.isArray(overlayEntry?.risk_factors) ? overlayEntry.risk_factors : [],
+            prepNotes: overlayEntry?.prep_notes || null,
+            bailoutDistanceMi: overlayEntry?.bailout_distance_mi ?? null,
+            riskEvidence: Array.isArray(overlayEntry?.risk_evidence) ? overlayEntry.risk_evidence : [],
+            riskReview: overlayEntry?.risk_review || null,
+            commonGroupings: Array.isArray(overlayEntry?.common_groupings) ? overlayEntry.common_groupings : [],
+            finishStrategySuggestions: Array.isArray(overlayEntry?.finish_strategy_suggestions) ? overlayEntry.finish_strategy_suggestions : [],
+            trailheadCoordinates: overlayEntry?.trailhead_coordinates || null
           };
         });
       }
@@ -2576,6 +2813,7 @@
       function init() {
         renderRangeFilters();
         renderRangeList();
+        setupRiskFilters();
         renderSeasonTable('summer');
         updateSeasonToggle('summer');
         const seasonButtons = {
@@ -2627,13 +2865,27 @@
           });
         });
 
-        fetch('/manifest_out.json')
-          .then((r) => r.json())
-          .then((data) => {
-            hydratePeaks(data);
+        Promise.all([
+          fetch('/manifest_out.json').then((r) => r.json()),
+          fetch('/data/nh48_enriched_overlay.json')
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null)
+        ])
+          .then(([data, overlay]) => {
+            if (!overlay) {
+              console.warn('Overlay data unavailable; risk filters disabled.');
+              setRiskFiltersEnabled(false);
+            } else {
+              setRiskFiltersEnabled(true);
+            }
+            hydratePeaks(data, overlay);
             renderPeakTable();
             renderItemListSchema();
             scheduleMapRender();
+            if (overlay) {
+              updateRiskCounts();
+              updateRiskButtonStates();
+            }
           })
           .catch((err) => {
             console.error('Failed to load peak data', err);
@@ -2680,9 +2932,11 @@
         const clearBtn = document.getElementById('mapClearFilters');
         if (clearBtn) {
           clearBtn.addEventListener('click', () => {
+            activeRiskFilters.clear();
             selectedRanges.clear();
             selectedPeakSlug = null;
             currentRange = 'All';
+            updateRiskButtonStates();
             renderRangeFilters();
             renderRangeList();
             renderPeakTable();

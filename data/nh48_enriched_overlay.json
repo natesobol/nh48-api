@@ -1,0 +1,3538 @@
+{
+  "bondcliff": {
+    "peak_id": "bondcliff",
+    "slug": "bondcliff",
+    "mountain": "Bondcliff",
+    "latitude": 44.14065,
+    "longitude": -71.54062,
+    "range_group": "Twin Range",
+    "range_raw": "Twin Range - Bonds.",
+    "primary_route": {
+      "Route Name": "Lincoln Woods > Wilderness Trail > Bondcliff Trail - out & back.",
+      "Distance (mi)": "18.0",
+      "Elevation Gain (ft)": "3,000",
+      "Difficulty": "Very difficult",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 18.0,
+    "primary_gain_ft": 3000,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Very difficult",
+    "estimated_time_hours": 11.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "LongBailout",
+      "LimitedWater",
+      "Navigation",
+      "ScrambleSteep",
+      "UnbridgedRiverCrossings",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone. None short \u2013 must retreat to Lincoln Woods - ~9 miles. or continue over Bonds to Zealand - even longer.. Nearest shelter is Guyot campsite - 3 miles ",
+    "bailout_distance_mi": 9.0,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - summit and ridge are fully exposed, sheer drop on cliff edge.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Flat approach on old railroad grade, then long gradual climb; above treeline near summit with rocky footing",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - long time spent above treeline in remote area \u2013 dangerous in bad weather.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Emergency Bailout Options",
+        "value": "None short \u2013 must retreat to Lincoln Woods - ~9 miles. or continue over Bonds to Zealand - even longer.. Nearest shelter is Guyot campsite - 3 miles beyond Bondcliff.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited - brook crossings early on Wilderness Trail; one small brook on Bondcliff Trail ~3 mi in; none after.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None - deep wilderness; do not expect signal until maybe back near Lincoln Woods trailhead.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No major scrambles - some large rock steps ascending ridge; careful footing on cliff edge.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Flat approach on old railroad grade, then long gradual climb; above treeline near summit with rocky footing",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Flat approach on old railroad grade, then long gradual climb; above treeline near summit with rocky footing",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "cannon-mountain": {
+    "peak_id": "cannon-mountain",
+    "slug": "cannon-mountain",
+    "mountain": "Cannon Mountain",
+    "latitude": 44.15417,
+    "longitude": -71.69917,
+    "range_group": "Kinsman Range",
+    "range_raw": "Kinsman Range",
+    "primary_route": {
+      "Route Name": "Kinsman Ridge Trail - via Lonesome Lake and Hi-Cannon.",
+      "Distance (mi)": "5.9",
+      "Elevation Gain (ft)": "2,300",
+      "Difficulty": "Moderate",
+      "Trail Type": "Loop - semi-loop using Hi-Cannon up, Kinsman Ridge down."
+    },
+    "primary_distance_mi": 5.9,
+    "primary_gain_ft": 2300,
+    "trail_type_primary": "Loop - semi-loop using Hi-Cannon up, Kinsman Ridge down.",
+    "difficulty_text_primary": "Moderate",
+    "estimated_time_hours": 5.0,
+    "risk_factors": [
+      "ScrambleSteep"
+    ],
+    "prep_notes": "Carry the 10 essentials and prepare for rough footing and rapid weather changes.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Minor - a few ledgy areas where hands may be used; one ladder on Hi-Cannon Trail.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steep sections with rocky, eroded trail; Hi-Cannon has ladder rung and narrow ledge; upper mountain crosses ski trails - gravel/grass.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "carter-dome": {
+    "peak_id": "carter-dome",
+    "slug": "carter-dome",
+    "mountain": "Carter Dome",
+    "latitude": 44.25667,
+    "longitude": -71.175,
+    "range_group": "Carter-Moriah Range",
+    "range_raw": "Carter-Moriah Range",
+    "primary_route": {
+      "Route Name": "19 Mile Brook Trail > Carter Dome Trail - via Carter Notch.",
+      "Distance (mi)": "10.2",
+      "Elevation Gain (ft)": "3,500",
+      "Difficulty": "Difficult",
+      "Trail Type": "Out & back - or loop via Imp Trail."
+    },
+    "primary_distance_mi": 10.2,
+    "primary_gain_ft": 3500,
+    "trail_type_primary": "Out & back - or loop via Imp Trail.",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 7.0,
+    "risk_factors": [
+      "SevereWeather",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": 19.0,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "Medium - summit in trees but ridge and Mt. Hight exposed to wind.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - possible line-of-sight to Gorham from Mt. Hight, but generally weak.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - steady uphill trail, no technical scrambles.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Wooded mountain trails, moderately steep; rocky and rooty sections, some slabs near Carter Notch",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "middle-carter-mountain": {
+    "peak_id": "middle-carter-mountain",
+    "slug": "middle-carter-mountain",
+    "mountain": "Middle Carter Mountain",
+    "latitude": 44.3108,
+    "longitude": -71.1674,
+    "range_group": "Carter-Moriah Range",
+    "range_raw": "Carter-Moriah Range",
+    "primary_route": {
+      "Route Name": "19 Mile Brook Trail > Carter Dome Trail > Carter-Moriah Trail - via South Carter.",
+      "Distance (mi)": "12.7",
+      "Elevation Gain (ft)": "3,750",
+      "Difficulty": "Very difficult",
+      "Trail Type": "Loop - over South Carter."
+    },
+    "primary_distance_mi": 12.7,
+    "primary_gain_ft": 3750,
+    "trail_type_primary": "Loop - over South Carter.",
+    "difficulty_text_primary": "Very difficult",
+    "estimated_time_hours": 9.0,
+    "risk_factors": [
+      "LimitedWater",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": 19.0,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited - water source at 19 Mile Brook for first 1.9 mi; none on ridge crest.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - some signals on ridge near Imp Face area; mostly weak/none.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - a few steep rocky bits but generally hike-able.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Typical White Mountain ridge: lots of roots and rocks, short steep pitches between cols",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "middle-tripyramid": {
+    "peak_id": "middle-tripyramid",
+    "slug": "middle-tripyramid",
+    "mountain": "Middle Tripyramid",
+    "latitude": 43.96471,
+    "longitude": -71.43995,
+    "range_group": "Sandwich / Waterville Range",
+    "range_raw": "Sandwich Range",
+    "primary_route": {
+      "Route Name": "Pine Bend Brook > Mt. Tripyramid Trail - North & Middle loop.",
+      "Distance (mi)": "11.0",
+      "Elevation Gain (ft)": "3,100",
+      "Difficulty": "Difficult",
+      "Trail Type": "Loop - via both North & Middle peaks."
+    },
+    "primary_distance_mi": 11.0,
+    "primary_gain_ft": 3100,
+    "trail_type_primary": "Loop - via both North & Middle peaks.",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 8.0,
+    "risk_factors": [
+      "LongBailout",
+      "LimitedWater",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone. Retreat to nearest trailhead: descend Sabbaday Brook Trail if nearer Middle and conditions bad - long but safer than slides.; otherwise Pine Bend back out",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Emergency Bailout Options",
+        "value": "Retreat to nearest trailhead: descend Sabbaday Brook Trail if nearer Middle and conditions bad - long but safer than slides.; otherwise Pine Bend back out",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Yes - Sabbaday Brook along its trail; Pine Bend Brook on that trail.; none on ridge itself",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None - very limited in valley and on wooded summits.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - between North and Middle peaks it\u2019s steep but just hiking; if coming up North Slide, then the scramble was on North\u2019s side.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Ridge between North and Middle is steep and rough but forested; Sabbaday approach is gradual then steep near ridge with some mud/stream in places",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-adams": {
+    "peak_id": "mount-adams",
+    "slug": "mount-adams",
+    "mountain": "Mount Adams",
+    "latitude": 44.32056,
+    "longitude": -71.29139,
+    "range_group": "Presidential Range",
+    "range_raw": "Presidential Range - Northern Presidentials.",
+    "primary_route": {
+      "Route Name": "Airline & Valley Way Loop - via Durand Ridge.",
+      "Distance (mi)": "9.0",
+      "Elevation Gain (ft)": "4,500",
+      "Difficulty": "Extremely difficult",
+      "Trail Type": "Semi-loop"
+    },
+    "primary_distance_mi": 9.0,
+    "primary_gain_ft": 4500,
+    "trail_type_primary": "Semi-loop",
+    "difficulty_text_primary": "Extremely difficult",
+    "estimated_time_hours": 8.5,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "LimitedWater",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - long stretches above treeline, steep drop-offs.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Rocky and rough trail, extensive boulder scrambling near summit",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - subject to strong winds and rapid weather changes.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited - stream near base; Madison Spring Hut water when open.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - occasionally a signal at summit; generally none in valley.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Yes - class 2+ boulder scrambling on upper mountain.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Rocky and rough trail, extensive boulder scrambling near summit",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-carrigain": {
+    "peak_id": "mount-carrigain",
+    "slug": "mount-carrigain",
+    "mountain": "Mount Carrigain",
+    "latitude": 44.09639,
+    "longitude": -71.43222,
+    "range_group": "Pemigewasset Wilderness",
+    "range_raw": "Pemigewasset Wilderness - Carrigain.",
+    "primary_route": {
+      "Route Name": "Signal Ridge Trail - out & back.",
+      "Distance (mi)": "10.0",
+      "Elevation Gain (ft)": "3,250",
+      "Difficulty": "Difficult",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 10.0,
+    "primary_gain_ft": 3250,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 7.0,
+    "risk_factors": [
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None/spotty - very limited due to remote location; occasional signal from tower if any.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - steep hiking but no hand-and-foot climbing required.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Moderate grade through forest, then steep switchbacks; open ridge with some rock underfoot near summit",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-eisenhower": {
+    "peak_id": "mount-eisenhower",
+    "slug": "mount-eisenhower",
+    "mountain": "Mount Eisenhower",
+    "latitude": 44.25833,
+    "longitude": -71.35333,
+    "range_group": "Presidential Range",
+    "range_raw": "Presidential Range - Southern.",
+    "primary_route": {
+      "Route Name": "Edmands Path - western approach.",
+      "Distance (mi)": "6.6",
+      "Elevation Gain (ft)": "2,750",
+      "Difficulty": "Moderate",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 6.6,
+    "primary_gain_ft": 2750,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Moderate",
+    "estimated_time_hours": 4.5,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "LimitedWater",
+      "Navigation",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "Medium - short above-treeline section, but summit is exposed.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Smooth, well-graded path for most of ascent; rocky alpine cone near summit",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - summit above treeline \u2013 wind and weather can be intense.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited - seasonal small brook low on Edmands Path; otherwise none on trail.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - some reception on summit and ridge, none in lower forest.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-field": {
+    "peak_id": "mount-field",
+    "slug": "mount-field",
+    "mountain": "Mount Field",
+    "latitude": 44.19639,
+    "longitude": -71.44417,
+    "range_group": "Willey Range",
+    "range_raw": "Willey Range",
+    "primary_route": {
+      "Route Name": "Willey Range Traverse - Avalon Trail > Willey Range Trail.",
+      "Distance (mi)": "10.0",
+      "Elevation Gain (ft)": "3,400",
+      "Difficulty": "Difficult",
+      "Trail Type": "Semi-loop - includes Tom & Willey."
+    },
+    "primary_distance_mi": 10.0,
+    "primary_gain_ft": 3400,
+    "trail_type_primary": "Semi-loop - includes Tom & Willey.",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 6.0,
+    "risk_factors": [
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - Crawford Notch has very limited signal; summit may get none or brief signal.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Minor - short steep scramble up Mount Avalon spur if visited; none required for Field itself.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steep in sections - Avalon Trail has short, very steep pitch to Avalon spur.; typical rooty and rocky footing",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-garfield": {
+    "peak_id": "mount-garfield",
+    "slug": "mount-garfield",
+    "mountain": "Mount Garfield",
+    "latitude": 44.18833,
+    "longitude": -71.61167,
+    "range_group": "Franconia Range",
+    "range_raw": "Franconia Range",
+    "primary_route": {
+      "Route Name": "Garfield Trail - via Garfield Ridge Trail.",
+      "Distance (mi)": "10.0",
+      "Elevation Gain (ft)": "3,000",
+      "Difficulty": "Moderate/Difficult",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 10.0,
+    "primary_gain_ft": 3000,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Moderate/Difficult",
+    "estimated_time_hours": 6.0,
+    "risk_factors": [
+      "LongBailout",
+      "Navigation",
+      "ScrambleSteep",
+      "UnbridgedRiverCrossings",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone. Descend back via Garfield Trail - fastest exit.; Garfield Ridge Trail leads to AMC Galehead Hut - ~1.3 miles away. for shelter if needed",
+    "bailout_distance_mi": 1.3,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Emergency Bailout Options",
+        "value": "Descend back via Garfield Trail - fastest exit.; Garfield Ridge Trail leads to AMC Galehead Hut - ~1.3 miles away. for shelter if needed",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - often none until summit, where a weak signal may be picked up.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - final few yards to summit foundation are rocky but not a scramble.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Moderate grade on old fire road path; final push steeper with switchbacks; rocky summit area",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Moderate grade on old fire road path; final push steeper with switchbacks; rocky summit area",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-hale": {
+    "peak_id": "mount-hale",
+    "slug": "mount-hale",
+    "mountain": "Mount Hale",
+    "latitude": 44.20389,
+    "longitude": -71.5375,
+    "range_group": "Twin Range",
+    "range_raw": "Twin Range",
+    "primary_route": {
+      "Route Name": "Hale Brook Trail - direct ascent.",
+      "Distance (mi)": "4.4",
+      "Elevation Gain (ft)": "2,300",
+      "Difficulty": "Moderate",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 4.4,
+    "primary_gain_ft": 2300,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Moderate",
+    "estimated_time_hours": 3.5,
+    "risk_factors": [
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None/spotty - generally no signal due to valley location.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - just hiking, no scrambles needed.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steady moderate grade on Hale Brook Trail with switchbacks; footing generally good with typical rocks and roots",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-hancock": {
+    "peak_id": "mount-hancock",
+    "slug": "mount-hancock",
+    "mountain": "Mount Hancock - North Peak.",
+    "latitude": 44.08368,
+    "longitude": -71.49369,
+    "range_group": "Pemigewasset Wilderness",
+    "range_raw": "Pemigewasset Wilderness - Hancock Range.",
+    "primary_route": {
+      "Route Name": "Hancock Loop Trail - via Hancock Notch & Cedar Brook.",
+      "Distance (mi)": "9.8",
+      "Elevation Gain (ft)": "2,650",
+      "Difficulty": "Moderate/Difficult",
+      "Trail Type": "Loop - climbing South then North Hancock or vice versa."
+    },
+    "primary_distance_mi": 9.8,
+    "primary_gain_ft": 2650,
+    "trail_type_primary": "Loop - climbing South then North Hancock or vice versa.",
+    "difficulty_text_primary": "Moderate/Difficult",
+    "estimated_time_hours": 6.0,
+    "risk_factors": [
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None - remote valley approach; summits generally no reception.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - steep ascent/descent on loose gravel and roots, but no hand-and-foot rock climbing.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Gentle approach, then very steep, loose trail section on loop; soft forest floor in many areas",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-isolation": {
+    "peak_id": "mount-isolation",
+    "slug": "mount-isolation",
+    "mountain": "Mount Isolation",
+    "latitude": 44.21479,
+    "longitude": -71.30924,
+    "range_group": "Presidential Range",
+    "range_raw": "Presidential Range - Montalban Ridge.",
+    "primary_route": {
+      "Route Name": "Rocky Branch Trail > Isolation Trail > Davis Path - standard.",
+      "Distance (mi)": "14.6",
+      "Elevation Gain (ft)": "3,400",
+      "Difficulty": "Very difficult",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 14.6,
+    "primary_gain_ft": 3400,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Very difficult",
+    "estimated_time_hours": 9.0,
+    "risk_factors": [
+      "LongBailout",
+      "LimitedWater",
+      "Navigation",
+      "ScrambleSteep",
+      "UnbridgedRiverCrossings",
+      "NoCellService"
+    ],
+    "prep_notes": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone. None quick \u2013 retreat back down Rocky Branch - long but straightforward. or down Davis Path north to AMC Lakes of Clouds hut - far. if absolutely needed; isolation truly isolated",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Emergency Bailout Options",
+        "value": "None quick \u2013 retreat back down Rocky Branch - long but straightforward. or down Davis Path north to AMC Lakes of Clouds hut - far. if absolutely needed; isolation truly isolated",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Yes - Rocky Branch crossings \u2013 several fords; Isolation Trail follows brook with water access until final climb; carry sufficient water for Davis Path section.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None - very poor in Rocky Branch valley; perhaps minimal at summit if lucky \u2013 extremely unreliable.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No major scrambles via Rocky Branch - just rough trail conditions.; via Glen Boulder there is steep scrambling near Slide Peak - class 2. with exposure",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Long approach through Wilderness: muddy, many stream crossings - water hazard in wet seasons.; final Davis Path section moderate; if via Glen Boulder, significant above-treeline steep sections",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Long approach through Wilderness: muddy, many stream crossings - water hazard in wet seasons.; final Davis Path section moderate; if via Glen Boulder, significant above-treeline steep sections",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-jackson": {
+    "peak_id": "mount-jackson",
+    "slug": "mount-jackson",
+    "mountain": "Mount Jackson",
+    "latitude": 44.20333,
+    "longitude": -71.37583,
+    "range_group": "Presidential Range",
+    "range_raw": "Presidential Range - Southern.",
+    "primary_route": {
+      "Route Name": "Webster-Jackson Trail - Jackson Branch.",
+      "Distance (mi)": "5.2",
+      "Elevation Gain (ft)": "2,150",
+      "Difficulty": "Moderate",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 5.2,
+    "primary_gain_ft": 2150,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Moderate",
+    "estimated_time_hours": 4.0,
+    "risk_factors": [
+      "LongBailout",
+      "LimitedWater",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone. Descend back to Crawford Notch - short distance.; Mizpah Hut ~1.5 miles north if continuing on AT for shelter",
+    "bailout_distance_mi": 1.5,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Emergency Bailout Options",
+        "value": "Descend back to Crawford Notch - short distance.; Mizpah Hut ~1.5 miles north if continuing on AT for shelter",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited - Silver Cascade Brook near trail beginning; after that, mostly dry ridge.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - possible at summit due to line-of-sight to Mt Washington area transmitter; weak elsewhere.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Yes, minor - last pitch to summit requires a short scramble up rocks, class 2.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Gentle to moderate grade until steep final cone; final 0.1 mi involves rocky ledges that can be slick",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-jefferson": {
+    "peak_id": "mount-jefferson",
+    "slug": "mount-jefferson",
+    "mountain": "Mount Jefferson",
+    "latitude": 44.30417,
+    "longitude": -71.31667,
+    "range_group": "Presidential Range",
+    "range_raw": "Presidential Range - Northern.",
+    "primary_route": {
+      "Route Name": "Caps Ridge Trail - direct ascent.",
+      "Distance (mi)": "5.0",
+      "Elevation Gain (ft)": "2,700",
+      "Difficulty": "Difficult - steep, with rock scrambles.",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 5.0,
+    "primary_gain_ft": 2700,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Difficult - steep, with rock scrambles.",
+    "estimated_time_hours": 5.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "LimitedWater",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - open ridge with significant exposure on scrambles.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Rocky trail with large boulders; \u2018Caps\u2019 are open rock ledges requiring hands",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - fully exposed to wind and weather above treeline.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "No reliable water on trail - carry all water.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - possible near summit; likely none on approach.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Yes - class 2\u20133 scrambles on Caps Ridge route.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Rocky trail with large boulders; \u2018Caps\u2019 are open rock ledges requiring hands",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-lafayette": {
+    "peak_id": "mount-lafayette",
+    "slug": "mount-lafayette",
+    "mountain": "Mount Lafayette",
+    "latitude": 44.16028,
+    "longitude": -71.64417,
+    "range_group": "Franconia Range",
+    "range_raw": "Franconia Range",
+    "primary_route": {
+      "Route Name": "Franconia Ridge Loop - Falling Waters & Old Bridle Path.",
+      "Distance (mi)": "8.9",
+      "Elevation Gain (ft)": "3,900",
+      "Difficulty": "Very difficult",
+      "Trail Type": "Loop - ridge traverse."
+    },
+    "primary_distance_mi": 8.9,
+    "primary_gain_ft": 3900,
+    "trail_type_primary": "Loop - ridge traverse.",
+    "difficulty_text_primary": "Very difficult",
+    "estimated_time_hours": 7.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - extended above-treeline ridge with steep drop-offs.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steep, rocky ascent; alpine ridge with talus and some slab sections",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - ridge is exposed to wind, fog, thunderstorms.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - some reception at summits/ridge, weak in notch.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Minor - some rocky scrambles along ridge, generally class 2.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steep, rocky ascent; alpine ridge with talus and some slab sections",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-liberty": {
+    "peak_id": "mount-liberty",
+    "slug": "mount-liberty",
+    "mountain": "Mount Liberty",
+    "latitude": 44.10083,
+    "longitude": -71.64417,
+    "range_group": "Franconia Range",
+    "range_raw": "Franconia Range",
+    "primary_route": {
+      "Route Name": "Liberty Spring Trail - AT. \u2013 direct route",
+      "Distance (mi)": "8.0",
+      "Elevation Gain (ft)": "3,250",
+      "Difficulty": "Moderate/Difficult",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 8.0,
+    "primary_gain_ft": 3250,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Moderate/Difficult",
+    "estimated_time_hours": 6.0,
+    "risk_factors": [
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - possible at summit; limited along approach in woods.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No major scrambles - Flume Slide route has scrambles, but Liberty Spring route does not.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Sturdy, well-traveled trail - Liberty Spring. with rocky steps; steep final 0.3 mi spur to summit",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-lincoln": {
+    "peak_id": "mount-lincoln",
+    "slug": "mount-lincoln",
+    "mountain": "Mount Lincoln",
+    "latitude": 44.14833,
+    "longitude": -71.64444,
+    "range_group": "Franconia Range",
+    "range_raw": "Franconia Range",
+    "primary_route": {
+      "Route Name": "Franconia Ridge Loop - via Falling Waters Trail.",
+      "Distance (mi)": "8.9",
+      "Elevation Gain (ft)": "3,900",
+      "Difficulty": "Very difficult",
+      "Trail Type": "Loop - includes Mount Lafayette."
+    },
+    "primary_distance_mi": 8.9,
+    "primary_gain_ft": 3900,
+    "trail_type_primary": "Loop - includes Mount Lafayette.",
+    "difficulty_text_primary": "Very difficult",
+    "estimated_time_hours": 7.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "Navigation",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - narrow ridge with steep drop-offs on either side.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steep ascent next to waterfalls, then rocky alpine ridge trail",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - ridge highly exposed to wind, lightning in storms.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - some signal on ridge; unreliable in valley.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-madison": {
+    "peak_id": "mount-madison",
+    "slug": "mount-madison",
+    "mountain": "Mount Madison",
+    "latitude": 44.32833,
+    "longitude": -71.27667,
+    "range_group": "Presidential Range",
+    "range_raw": "Presidential Range - Northern.",
+    "primary_route": {
+      "Route Name": "Valley Way & Osgood Trail - via Madison Hut.",
+      "Distance (mi)": "8.3",
+      "Elevation Gain (ft)": "4,100",
+      "Difficulty": "Very difficult",
+      "Trail Type": "Out & back - same route."
+    },
+    "primary_distance_mi": 8.3,
+    "primary_gain_ft": 4100,
+    "trail_type_primary": "Out & back - same route.",
+    "difficulty_text_primary": "Very difficult",
+    "estimated_time_hours": 8.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "Navigation",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - fully above treeline on summit cone.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steep, rocky trail; extensive boulders near summit",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - very exposed to wind/cold above treeline.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - possibly at summit; generally weak elsewhere.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-monroe": {
+    "peak_id": "mount-monroe",
+    "slug": "mount-monroe",
+    "mountain": "Mount Monroe",
+    "latitude": 44.25537,
+    "longitude": -71.32154,
+    "range_group": "Presidential Range",
+    "range_raw": "Presidential Range - Southern.",
+    "primary_route": {
+      "Route Name": "Ammonoosuc Ravine Trail & Crawford Path",
+      "Distance (mi)": "7.0",
+      "Elevation Gain (ft)": "2,900",
+      "Difficulty": "Difficult",
+      "Trail Type": "Out & back - or loop via Jewel Trail."
+    },
+    "primary_distance_mi": 7.0,
+    "primary_gain_ft": 2900,
+    "trail_type_primary": "Out & back - or loop via Jewel Trail.",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 5.5,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "Navigation",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - entire summit above treeline, exposed to weather.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Rocky alpine terrain; steep ascent from hut over talus",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - very exposed to wind, rapid weather shifts.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - possible near summit and hut; unreliable.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-moosilauke": {
+    "peak_id": "mount-moosilauke",
+    "slug": "mount-moosilauke",
+    "mountain": "Mount Moosilauke",
+    "latitude": 44.02472,
+    "longitude": -71.8303,
+    "range_group": "Kinsman Range",
+    "range_raw": "Kinsman Range - Western White Mountains.",
+    "primary_route": {
+      "Route Name": "Gorge Brook Trail Loop - via Carriage Rd & Snapper.",
+      "Distance (mi)": "7.5",
+      "Elevation Gain (ft)": "2,450",
+      "Difficulty": "Moderate",
+      "Trail Type": "Loop"
+    },
+    "primary_distance_mi": 7.5,
+    "primary_gain_ft": 2450,
+    "trail_type_primary": "Loop",
+    "difficulty_text_primary": "Moderate",
+    "estimated_time_hours": 6.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - large treeless summit, fully exposed to elements.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Mix of smooth footpath and rocky sections; alpine tundra on summit flats",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - summit often windy with rapidly changing weather.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - often a signal at summit due to open exposure; weak or none in ravines.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - Beaver Brook route has steep wooden steps by cascades, but no technical rock climbing.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Mix of smooth footpath and rocky sections; alpine tundra on summit flats",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-moriah": {
+    "peak_id": "mount-moriah",
+    "slug": "mount-moriah",
+    "mountain": "Mount Moriah",
+    "latitude": 44.3325,
+    "longitude": -71.1375,
+    "range_group": "Carter-Moriah Range",
+    "range_raw": "Carter-Moriah Range",
+    "primary_route": {
+      "Route Name": "Stony Brook Trail > Carter-Moriah Trail",
+      "Distance (mi)": "10.0",
+      "Elevation Gain (ft)": "3,150",
+      "Difficulty": "Difficult",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 10.0,
+    "primary_gain_ft": 3150,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 7.0,
+    "risk_factors": [
+      "ScrambleSteep",
+      "UnbridgedRiverCrossings",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - better near Gorham end; summit sometimes gets signal from Androscoggin valley.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Minor - climbing a few short ledges where hands might be used for balance \u2013 class 2.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Moderately steep, with some rocky ledges to ascend - especially via Carter-Moriah trail from Gorham which includes several ledgy knobs.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Moderately steep, with some rocky ledges to ascend - especially via Carter-Moriah trail from Gorham which includes several ledgy knobs.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-passaconaway": {
+    "peak_id": "mount-passaconaway",
+    "slug": "mount-passaconaway",
+    "mountain": "Mount Passaconaway",
+    "latitude": 43.95417,
+    "longitude": -71.38111,
+    "range_group": "Sandwich / Waterville Range",
+    "range_raw": "Sandwich Range",
+    "primary_route": {
+      "Route Name": "Dicey\u2019s Mill Trail - standard ascent.",
+      "Distance (mi)": "9.2",
+      "Elevation Gain (ft)": "2,950",
+      "Difficulty": "Difficult",
+      "Trail Type": "Out & back - or loop with Blueberry Ledge."
+    },
+    "primary_distance_mi": 9.2,
+    "primary_gain_ft": 2950,
+    "trail_type_primary": "Out & back - or loop with Blueberry Ledge.",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 6.0,
+    "risk_factors": [
+      "LimitedWater",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Yes - Wonalancet River at Dicey\u2019s Mill crossing ~1.7 mi in; small brook on lower Blueberry Ledge; none high up.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None/spotty - remote area; possibly a weak signal near Wonalancet but unreliable.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No on Dicey\u2019s Mill - just steep hiking.; Yes on Blueberry Ledge Trail - several short class 2 ledge scrambles.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Gentle at start - old woods roads., then steady steep in upper mountain; well-maintained trails but rocky and rooty near top; Blueberry Ledges involve rock slabs",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-pierce": {
+    "peak_id": "mount-pierce",
+    "slug": "mount-pierce",
+    "mountain": "Mount Pierce",
+    "latitude": 44.22694,
+    "longitude": -71.36528,
+    "range_group": "Presidential Range",
+    "range_raw": "Presidential Range - Southern.",
+    "primary_route": {
+      "Route Name": "Crawford Path - Appalachian Trail. \u2013 direct",
+      "Distance (mi)": "6.4",
+      "Elevation Gain (ft)": "2,400",
+      "Difficulty": "Moderate",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 6.4,
+    "primary_gain_ft": 2400,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Moderate",
+    "estimated_time_hours": 4.5,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "Navigation",
+      "UnbridgedRiverCrossings",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "Medium - summit ledges just at treeline; not as exposed as higher Presis.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Well-maintained historic path with moderate grades; rocky but relatively even footing by White Mtn standards",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - possible signal at summit outlook; generally weak in notch.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Well-maintained historic path with moderate grades; rocky but relatively even footing by White Mtn standards",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-tecumseh": {
+    "peak_id": "mount-tecumseh",
+    "slug": "mount-tecumseh",
+    "mountain": "Mount Tecumseh",
+    "latitude": 43.96667,
+    "longitude": -71.55667,
+    "range_group": "Sandwich / Waterville Range",
+    "range_raw": "Osceola Range - Waterville Valley.",
+    "primary_route": {
+      "Route Name": "Mt. Tecumseh Trail - Waterville Valley ski area side.",
+      "Distance (mi)": "5.0",
+      "Elevation Gain (ft)": "2,300",
+      "Difficulty": "Moderate",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 5.0,
+    "primary_gain_ft": 2300,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Moderate",
+    "estimated_time_hours": 3.5,
+    "risk_factors": [
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Good/Spotty - close to Waterville Valley resort \u2013 some reception on ski slopes; summit itself spotty but likely some signal towards resort.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-tom": {
+    "peak_id": "mount-tom",
+    "slug": "mount-tom",
+    "mountain": "Mount Tom",
+    "latitude": 44.22889,
+    "longitude": -71.44417,
+    "range_group": "Willey Range",
+    "range_raw": "Willey Range",
+    "primary_route": {
+      "Route Name": "Avalon Trail > A-Z Trail > Mount Tom Spur",
+      "Distance (mi)": "5.8",
+      "Elevation Gain (ft)": "2,150",
+      "Difficulty": "Moderate",
+      "Trail Type": "Out & back - or loop with Field & Willey."
+    },
+    "primary_distance_mi": 5.8,
+    "primary_gain_ft": 2150,
+    "trail_type_primary": "Out & back - or loop with Field & Willey.",
+    "difficulty_text_primary": "Moderate",
+    "estimated_time_hours": 3.5,
+    "risk_factors": [
+      "ScrambleSteep",
+      "UnbridgedRiverCrossings",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - likely none in notch or on summit; possibly slight signal at outlook.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - straightforward hiking, occasionally steep but no scrambles.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Moderate grade through hardwoods then fir; relatively smooth footing with some rocky sections, never extremely steep",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Moderate grade through hardwoods then fir; relatively smooth footing with some rocky sections, never extremely steep",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-washington": {
+    "peak_id": "mount-washington",
+    "slug": "mount-washington",
+    "mountain": "Mount Washington",
+    "latitude": 44.2705,
+    "longitude": -71.30325,
+    "range_group": "Presidential Range",
+    "range_raw": "Presidential Range",
+    "primary_route": {
+      "Route Name": "Tuckerman Ravine & Lion Head Trail Loop",
+      "Distance (mi)": "8.4",
+      "Elevation Gain (ft)": "4,300",
+      "Difficulty": "Extremely difficult",
+      "Trail Type": "Semi-loop - out via Tuckerman, back via Lion Head."
+    },
+    "primary_distance_mi": 8.4,
+    "primary_gain_ft": 4300,
+    "trail_type_primary": "Semi-loop - out via Tuckerman, back via Lion Head.",
+    "difficulty_text_primary": "Extremely difficult",
+    "estimated_time_hours": 9.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "LimitedWater",
+      "Navigation",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - significant exposure to wind and drop-offs.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Very rocky and steep, with extensive boulder fields above treeline",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - extreme weather common.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited - water at Hermit Lake shelters; none on upper mountain.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - generally some signal near summit; weak or none in ravines.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-waumbek": {
+    "peak_id": "mount-waumbek",
+    "slug": "mount-waumbek",
+    "mountain": "Mount Waumbek",
+    "latitude": 44.42833,
+    "longitude": -71.36972,
+    "range_group": "Pilot-Pliny Range",
+    "range_raw": "Pliny Range",
+    "primary_route": {
+      "Route Name": "Starr King Trail - via Mt Starr King.",
+      "Distance (mi)": "7.2",
+      "Elevation Gain (ft)": "2,700",
+      "Difficulty": "Moderate",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 7.2,
+    "primary_gain_ft": 2700,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Moderate",
+    "estimated_time_hours": 4.5,
+    "risk_factors": [
+      "LimitedWater",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited - no major water sources on trail; an old spring near Starr King summit sometimes flows lightly, but plan to carry water.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - some reception at Starr King outlook facing civilization; generally weak on Waumbek summit.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - steady uphill walk, no scrambles required.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Gentle to moderate grade old bridle path; footing generally smooth with some rocky sections; mossy boreal forest near top",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-whiteface": {
+    "peak_id": "mount-whiteface",
+    "slug": "mount-whiteface",
+    "mountain": "Mount Whiteface",
+    "latitude": 43.935,
+    "longitude": -71.42167,
+    "range_group": "Sandwich / Waterville Range",
+    "range_raw": "Sandwich Range",
+    "primary_route": {
+      "Route Name": "Blueberry Ledge Trail - south via Blueberry Ledges.",
+      "Distance (mi)": "8.4",
+      "Elevation Gain (ft)": "2,900",
+      "Difficulty": "Moderate/Difficult",
+      "Trail Type": "Out & back - or loop with Tom Wiggin or Dicey\u2019s Mill."
+    },
+    "primary_distance_mi": 8.4,
+    "primary_gain_ft": 2900,
+    "trail_type_primary": "Out & back - or loop with Tom Wiggin or Dicey\u2019s Mill.",
+    "difficulty_text_primary": "Moderate/Difficult",
+    "estimated_time_hours": 6.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "LongBailout",
+      "LimitedWater",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone. Descend same way if on Blueberry Ledge - fastest.; from Rollins Trail mid-way one could drop via Tom Wiggin - steep, unofficial. or Dicey\u2019s Mill - lo",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - Blueberry Ledges are steep and exposed in spots, requiring care; great vistas though.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Blueberry Ledge Trail is moderate low, then very steep and ledgy high up - including rock scrambles.; Rollins Trail ridge mostly gentle and wooded",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "Medium - exposed ledges can be dangerous when wet/icy; otherwise much of route is forested.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Emergency Bailout Options",
+        "value": "Descend same way if on Blueberry Ledge - fastest.; from Rollins Trail mid-way one could drop via Tom Wiggin - steep, unofficial. or Dicey\u2019s Mill - longer exit through Ferncroft.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited - small brook near start of Blueberry Ledge Trail; none on ridge or upper mountain.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - occasionally at trailhead/fields in Wonalancet; possibly on open ledges with sight south.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Yes - class 2+ scrambles on upper Blueberry Ledges \u2013 hands needed to climb several rock pitches.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Blueberry Ledge Trail is moderate low, then very steep and ledgy high up - including rock scrambles.; Rollins Trail ridge mostly gentle and wooded",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-willey": {
+    "peak_id": "mount-willey",
+    "slug": "mount-willey",
+    "mountain": "Mount Willey",
+    "latitude": 44.18667,
+    "longitude": -71.43333,
+    "range_group": "Willey Range",
+    "range_raw": "Willey Range",
+    "primary_route": {
+      "Route Name": "Willey Range Trail - from Ethan Pond Trail via Kedron Flume.",
+      "Distance (mi)": "5.4",
+      "Elevation Gain (ft)": "2,900",
+      "Difficulty": "Difficult",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 5.4,
+    "primary_gain_ft": 2900,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 4.5,
+    "risk_factors": [
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None/spotty - Crawford Notch has very limited cell coverage; assume none on trail.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - steep but aided by ladders; no true rock scramble required.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steep climb from notch with wooden ladders on upper Willey Range Trail; typical White Mountain rocks and roots",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "north-tripyramid": {
+    "peak_id": "north-tripyramid",
+    "slug": "north-tripyramid",
+    "mountain": "North Tripyramid",
+    "latitude": 43.97333,
+    "longitude": -71.4473,
+    "range_group": "Sandwich / Waterville Range",
+    "range_raw": "Sandwich Range",
+    "primary_route": {
+      "Route Name": "Pine Bend Brook Trail > Mt. Tripyramid Trail - North Slide up, South Slide down loop.",
+      "Distance (mi)": "11.0",
+      "Elevation Gain (ft)": "3,100",
+      "Difficulty": "Difficult",
+      "Trail Type": "Loop - over Middle Peak."
+    },
+    "primary_distance_mi": 11.0,
+    "primary_gain_ft": 3100,
+    "trail_type_primary": "Loop - over Middle Peak.",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 8.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "LongBailout",
+      "LimitedWater",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone. Retreat back down Pine Bend Brook Trail - both slides are one-way challenges once started.; Sabbaday Brook Trail offers alternate exit from between N",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - if ascending North Slide: very steep open slide face with significant exposure; otherwise low on wooded trail.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "If via slides: loose rock and slab on slides - very steep.; otherwise typical steep, rough wooded trail with many roots",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - on slide route \u2013 dangerous when wet or icy; wooded route is low exposure.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Emergency Bailout Options",
+        "value": "Retreat back down Pine Bend Brook Trail - both slides are one-way challenges once started.; Sabbaday Brook Trail offers alternate exit from between North and Middle - long, many crossings.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Yes - Pine Bend Brook along lower trail provides water for first couple miles; none on upper mountain.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None - remote ravine; summit wooded \u2013 assume no signal.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Yes - North Slide is a class 3 scramble on loose slabs; alternate Pine Bend route avoids major scrambles.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "If via slides: loose rock and slab on slides - very steep.; otherwise typical steep, rough wooded trail with many roots",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "north-twin-mountain": {
+    "peak_id": "north-twin-mountain",
+    "slug": "north-twin-mountain",
+    "mountain": "North Twin Mountain",
+    "latitude": 44.16667,
+    "longitude": -71.5625,
+    "range_group": "Twin Range",
+    "range_raw": "Twin Range",
+    "primary_route": {
+      "Route Name": "North Twin Trail - to summit and back.",
+      "Distance (mi)": "8.6",
+      "Elevation Gain (ft)": "2,950",
+      "Difficulty": "Moderate/Difficult",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 8.6,
+    "primary_gain_ft": 2950,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Moderate/Difficult",
+    "estimated_time_hours": 6.0,
+    "risk_factors": [
+      "ScrambleSteep",
+      "UnbridgedRiverCrossings",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - mostly none until perhaps a weak signal at viewpoint near summit.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - just steep hiking, no hand-over-hand needed.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Forest trail with steady grade; several river crossings - Little River.; typical roots and rocks",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Forest trail with steady grade; several river crossings - Little River.; typical roots and rocks",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "owls-head": {
+    "peak_id": "owls-head",
+    "slug": "owls-head",
+    "mountain": "Owl's Head",
+    "latitude": 44.14,
+    "longitude": -71.61167,
+    "range_group": "Franconia Range",
+    "range_raw": "Franconia Range - Pemigewasset Wilderness.",
+    "primary_route": {
+      "Route Name": "Lincoln Woods > Wilderness Trail > Owl\u2019s Head Path - Slide.",
+      "Distance (mi)": "18.4",
+      "Elevation Gain (ft)": "2,900",
+      "Difficulty": "Very difficult",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 18.4,
+    "primary_gain_ft": 2900,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Very difficult",
+    "estimated_time_hours": 11.0,
+    "risk_factors": [
+      "LongBailout",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone. None easy \u2013 must return via same long route; nearest help is Franconia Falls area which is still 8+ miles from road",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Emergency Bailout Options",
+        "value": "None easy \u2013 must return via same long route; nearest help is Franconia Falls area which is still 8+ miles from road",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None - deep wilderness valley; do not expect signal anywhere on route.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Minor - going up the slide requires use of hands on loose rock - class 2; no technical rock climbing.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Extremely long flat approach, then very steep loose slide - gravel, scree. for 1,000 ft gain; herd path in thick forest on ridge",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "south-carter-mountain": {
+    "peak_id": "south-carter-mountain",
+    "slug": "south-carter-mountain",
+    "mountain": "South Carter Mountain",
+    "latitude": 44.30167,
+    "longitude": -71.17528,
+    "range_group": "Carter-Moriah Range",
+    "range_raw": "Carter-Moriah Range",
+    "primary_route": {
+      "Route Name": "19 Mile Brook > Carter Dome Trail > Carter-Moriah - via Zeta Pass.",
+      "Distance (mi)": "12.7",
+      "Elevation Gain (ft)": "3,750",
+      "Difficulty": "Very difficult",
+      "Trail Type": "Loop - together with Middle Carter."
+    },
+    "primary_distance_mi": 12.7,
+    "primary_gain_ft": 3750,
+    "trail_type_primary": "Loop - together with Middle Carter.",
+    "difficulty_text_primary": "Very difficult",
+    "estimated_time_hours": 8.0,
+    "risk_factors": [
+      "LimitedWater",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited - 19 Mile Brook at start; none on ridge except possible seasonal seeps near Zeta Pass.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - occasional reception at higher points or clearings, but not reliable.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - just some steep climbs; no hand-and-foot scrambling required.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Mossy, root-filled ridge trail with short steep sections; generally moderate footing",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "south-kinsman-mountain": {
+    "peak_id": "south-kinsman-mountain",
+    "slug": "south-kinsman-mountain",
+    "mountain": "South Kinsman Mountain",
+    "latitude": 44.123,
+    "longitude": -71.73667,
+    "range_group": "Kinsman Range",
+    "range_raw": "Kinsman Range - Western White Mountains.",
+    "primary_route": {
+      "Route Name": "Mount Kinsman Trail > Kinsman Ridge Trail - via North Kinsman.",
+      "Distance (mi)": "10.0",
+      "Elevation Gain (ft)": "3,950",
+      "Difficulty": "Difficult",
+      "Trail Type": "Out & back - hits North & South peaks."
+    },
+    "primary_distance_mi": 10.0,
+    "primary_gain_ft": 3950,
+    "trail_type_primary": "Out & back - hits North & South peaks.",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 8.0,
+    "risk_factors": [
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - some reception near summits or at Lonesome Lake hut, mostly weak elsewhere.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Minor - a few steep ledges on Fishin\u2019 Jimmy Trail where hands may help; none on Mt Kinsman Trail.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steep rocky sections - Fishin\u2019 Jimmy has wooden blocks on steep slabs.; Mount Kinsman Trail more gradual",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "south-twin-mountain": {
+    "peak_id": "south-twin-mountain",
+    "slug": "south-twin-mountain",
+    "mountain": "South Twin Mountain",
+    "latitude": 44.16,
+    "longitude": -71.55417,
+    "range_group": "Twin Range",
+    "range_raw": "Twin Range",
+    "primary_route": {
+      "Route Name": "North Twin Trail via North Twin - out & back.",
+      "Distance (mi)": "11.2",
+      "Elevation Gain (ft)": "3,700",
+      "Difficulty": "Difficult",
+      "Trail Type": "Out & back - over North Twin."
+    },
+    "primary_distance_mi": 11.2,
+    "primary_gain_ft": 3700,
+    "trail_type_primary": "Out & back - over North Twin.",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 8.0,
+    "risk_factors": [
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - occasionally at summit; generally weak in valleys.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - just steep hiking; summit approach is steep but not technical.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steep, rocky final climb; lower trails gradual with typical roots and rocks",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "west-bond": {
+    "peak_id": "west-bond",
+    "slug": "west-bond",
+    "mountain": "West Bond",
+    "latitude": 44.15473,
+    "longitude": -71.54351,
+    "range_group": "Twin Range",
+    "range_raw": "Twin Range - Bonds.",
+    "primary_route": {
+      "Route Name": "Zealand Road > Zealand Trail > Twinway > West Bond Spur - Bonds Traverse.",
+      "Distance (mi)": "19.8",
+      "Elevation Gain (ft)": "3,950",
+      "Difficulty": "Extremely difficult",
+      "Trail Type": "Traverse - point-to-point."
+    },
+    "primary_distance_mi": 19.8,
+    "primary_gain_ft": 3950,
+    "trail_type_primary": "Traverse - point-to-point.",
+    "difficulty_text_primary": "Extremely difficult",
+    "estimated_time_hours": 11.0,
+    "risk_factors": [
+      "SevereWeather",
+      "LimitedWater",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - very remote, summit and ridge exposed to weather with no nearby shelters.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited - water at Zealand Hut and streams on lower Bondcliff Trail; none on ridge itself.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None - extremely remote; do not expect any signal in the Pemi wilderness.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No major scrambles - just short steep sections on spur trail, class 2.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Long wilderness trails, gradual at start then steep; summit spur is rough and rocky",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "wildcat-mountain-a": {
+    "peak_id": "wildcat-mountain-a",
+    "slug": "wildcat-mountain-a",
+    "mountain": "Wildcat Mountain - A Peak.",
+    "latitude": 44.24444,
+    "longitude": -71.2225,
+    "range_group": "Carter-Moriah Range",
+    "range_raw": "Carter-Moriah Range",
+    "primary_route": {
+      "Route Name": "Wildcat Ridge Trail - via Glen Ellis Falls, up over Wildcat Ridge.",
+      "Distance (mi)": "8.5",
+      "Elevation Gain (ft)": "3,150",
+      "Difficulty": "Very difficult",
+      "Trail Type": "Loop - requires car spot or road walk."
+    },
+    "primary_distance_mi": 8.5,
+    "primary_gain_ft": 3150,
+    "trail_type_primary": "Loop - requires car spot or road walk.",
+    "difficulty_text_primary": "Very difficult",
+    "estimated_time_hours": 7.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "LongBailout",
+      "LimitedWater",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone. After summiting A, one could descend to Carter Notch Hut for shelter; otherwise turn around back to Pinkham Notch - no short bailout on ridge.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - Wildcat Ridge Trail has steep ledges with significant exposure.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Extremely steep, rocky ascents on Ridge Trail including wood ladders and ledges; generally rugged",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - ridge is exposed in places; weather can make ledges dangerous.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Emergency Bailout Options",
+        "value": "After summiting A, one could descend to Carter Notch Hut for shelter; otherwise turn around back to Pinkham Notch - no short bailout on ridge.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Yes - Glen Ellis River at start; small streams near base of ridge; none along ridge itself.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty - possible line-of-sight to Mt Washington auto road towers; otherwise limited.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Yes - class 2 scrambles and use of hands climbing ledges on Wildcat Ridge Trail.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Extremely steep, rocky ascents on Ridge Trail including wood ladders and ledges; generally rugged",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "zealand-mountain": {
+    "peak_id": "zealand-mountain",
+    "slug": "zealand-mountain",
+    "mountain": "Zealand Mountain",
+    "latitude": 44.17967,
+    "longitude": -71.52133,
+    "range_group": "Twin Range",
+    "range_raw": "Twin Range",
+    "primary_route": {
+      "Route Name": "Zealand Trail > Twinway - via Zealand Hut & Zeacliff.",
+      "Distance (mi)": "11.0",
+      "Elevation Gain (ft)": "2,300",
+      "Difficulty": "Difficult",
+      "Trail Type": "Out & back - or traverse over Bonds."
+    },
+    "primary_distance_mi": 11.0,
+    "primary_gain_ft": 2300,
+    "trail_type_primary": "Out & back - or traverse over Bonds.",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 7.0,
+    "risk_factors": [
+      "SevereWeather",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "Low - mostly sheltered; caution on Zeacliff in high winds.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None - valley is remote; maybe very limited near Zeacliff due to line-of-sight.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "No - all hiking; steep bits have stairs or switchbacks.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Easy grade to Zealand Hut, then moderate climb to Zeacliff - rocky.; gentle, mossy ridge to summit sign",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "galehead-mountain": {
+    "peak_id": "galehead-mountain",
+    "slug": "galehead-mountain",
+    "mountain": "Galehead Mountain",
+    "latitude": 44.18528,
+    "longitude": -71.57361,
+    "range_group": "Twin Range",
+    "range_raw": "Twin Range",
+    "primary_route": {
+      "Route Name": "Gale River Trail \u2192 Garfield Ridge Trail \u2192 Frost Trail",
+      "Distance (mi)": "10.2",
+      "Elevation Gain (ft)": "2657",
+      "Difficulty": "Moderate",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 10.2,
+    "primary_gain_ft": 2657,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Moderate",
+    "estimated_time_hours": 6.5,
+    "risk_factors": [
+      "UnbridgedRiverCrossings",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Limited/None \u2013 AMC notes there is no Wi\u2011Fi or cell service at Galehead Hut",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Gentle grades along Gale River with rocky/rooty sections, small stream crossings and rock staircases near the hut",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-bond": {
+    "peak_id": "mount-bond",
+    "slug": "mount-bond",
+    "mountain": "Mount Bond",
+    "latitude": 44.15306,
+    "longitude": -71.53,
+    "range_group": "Twin Range",
+    "range_raw": "Twin Range - Bonds.",
+    "primary_route": {
+      "Route Name": "Lincoln Woods \u2192 Wilderness Trail \u2192 Bondcliff Trail \u2192 West\u00a0Bond Spur - Bonds Traverse.",
+      "Distance (mi)": "22.6",
+      "Elevation Gain (ft)": "4800",
+      "Difficulty": "Extremely difficult",
+      "Trail Type": "Point\u2011to\u2011point traverse"
+    },
+    "primary_distance_mi": 22.6,
+    "primary_gain_ft": 4800,
+    "trail_type_primary": "Point\u2011to\u2011point traverse",
+    "difficulty_text_primary": "Extremely difficult",
+    "estimated_time_hours": 11.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "LimitedWater",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High - long stretches above treeline along exposed ridges.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Long, remote approach on old railroad grade followed by gradual climb; rocky alpine ridge with open ledges and talus",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - fully exposed ridge.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited \u2013 the last reliable water is a stream on Bondcliff Trail about 3\u00a0miles in; none on the ridge",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty/None \u2013 AMC notes less than half of the Pemigewasset Wilderness has cell service",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Minor \u2013 rocky steps but no technical scrambles",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Long, remote approach on old railroad grade followed by gradual climb; rocky alpine ridge with open ledges and talus",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-cabot": {
+    "peak_id": "mount-cabot",
+    "slug": "mount-cabot",
+    "mountain": "Mount Cabot",
+    "latitude": 44.506,
+    "longitude": -71.41433,
+    "range_group": "Pilot-Pliny Range",
+    "range_raw": "Pilot Range",
+    "primary_route": {
+      "Route Name": "Bunnell Notch Trail \u2192 Kilkenny Ridge Trail",
+      "Distance (mi)": "9.6",
+      "Elevation Gain (ft)": "2950",
+      "Difficulty": "Moderate",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 9.6,
+    "primary_gain_ft": 2950,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Moderate",
+    "estimated_time_hours": 8.0,
+    "risk_factors": [
+      "LimitedWater",
+      "NoCellService"
+    ],
+    "prep_notes": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited \u2013 streams along Bunnell Notch Trail but no potable water at Cabot Cabin",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty/None \u2013 remote range; cell service generally unreliable",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-flume": {
+    "peak_id": "mount-flume",
+    "slug": "mount-flume",
+    "mountain": "Mount Flume",
+    "latitude": 44.10889,
+    "longitude": -71.62778,
+    "range_group": "Franconia Range",
+    "range_raw": "Franconia Range",
+    "primary_route": {
+      "Route Name": "Flume Slide Trail \u2192 Liberty Spring Trail \u2192 Franconia Ridge - loop with Mount Liberty.",
+      "Distance (mi)": "10.1",
+      "Elevation Gain (ft)": "3500",
+      "Difficulty": "Very difficult",
+      "Trail Type": "Loop"
+    },
+    "primary_distance_mi": 10.1,
+    "primary_gain_ft": 3500,
+    "trail_type_primary": "Loop",
+    "difficulty_text_primary": "Very difficult",
+    "estimated_time_hours": 6.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "LimitedWater",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High on Flume Slide and summit; moderate on Liberty Spring approach",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Long approach on old road, then extremely steep and loose rock slabs on Flume Slide; Liberty Spring route is more gradual but rocky",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - exposed ledges and open summit.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Yes \u2013 lower Flume Slide Trail follows a brook and Liberty Spring has water; none on the summit ridge",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Poor \u2013 the Pemigewasset Wilderness generally lacks cell service",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Yes \u2013 the Flume Slide requires class\u00a02\u20133 scrambling on slick rock slabs",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Long approach on old road, then extremely steep and loose rock slabs on Flume Slide; Liberty Spring route is more gradual but rocky",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-hancock-south": {
+    "peak_id": "mount-hancock-south",
+    "slug": "mount-hancock-south",
+    "mountain": "Mount Hancock - South Peak.",
+    "latitude": 44.07333,
+    "longitude": -71.48722,
+    "range_group": "Pemigewasset Wilderness",
+    "range_raw": "Pemigewasset Wilderness - Hancock Range.",
+    "primary_route": {
+      "Route Name": "Hancock Loop Trail - via Hancock Notch & Cedar Brook.",
+      "Distance (mi)": "9.8",
+      "Elevation Gain (ft)": "2638",
+      "Difficulty": "Moderate/Difficult",
+      "Trail Type": "Loop"
+    },
+    "primary_distance_mi": 9.8,
+    "primary_gain_ft": 2638,
+    "trail_type_primary": "Loop",
+    "difficulty_text_primary": "Moderate/Difficult",
+    "estimated_time_hours": 6.0,
+    "risk_factors": [
+      "LimitedWater",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Yes \u2013 streams along Hancock Notch and Cedar Brook Trails during the first half of the loop; none on the ridge",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "None/Spotty \u2013 deep in the Pemigewasset Wilderness where cell service is patchy",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Minor \u2013 steep hiking on loose scree but no technical hand\u2011and\u2011foot scrambling",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Long flat approach along the North Fork of Hancock Branch with several brook crossings, followed by a very steep climb on loose gravel to the ridge and a steep descent from South Hancock",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-osceola": {
+    "peak_id": "mount-osceola",
+    "slug": "mount-osceola",
+    "mountain": "Mount Osceola",
+    "latitude": 44.00161,
+    "longitude": -71.53561,
+    "range_group": "Sandwich / Waterville Range",
+    "range_raw": "Sandwich Range",
+    "primary_route": {
+      "Route Name": "Mount Osceola Trail - Tripoli Road.",
+      "Distance (mi)": "6.4",
+      "Elevation Gain (ft)": "2100",
+      "Difficulty": "Moderate",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 6.4,
+    "primary_gain_ft": 2100,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Moderate",
+    "estimated_time_hours": 5.0,
+    "risk_factors": [
+      "LimitedWater",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited \u2013 small brooks near the trailhead; no reliable water on the ridge",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty \u2013 proximity to Waterville Valley ski area provides occasional signal but it is unreliable",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Yes \u2013 the \u2018Chimney\u2019 between East and main peaks requires class\u00a02\u20133 scrambling; a bypass exists",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Well\u2011graded path from Tripoli Road with moderate rocky sections; via Greeley Ponds it is steeper and rougher and includes the rock chimney between peaks",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "mount-osceola-east": {
+    "peak_id": "mount-osceola-east",
+    "slug": "mount-osceola-east",
+    "mountain": "Mount Osceola - East Peak.",
+    "latitude": 44.00611,
+    "longitude": -71.52028,
+    "range_group": "Sandwich / Waterville Range",
+    "range_raw": "Sandwich Range",
+    "primary_route": {
+      "Route Name": "Greeley Ponds Trail \u2192 Mount Osceola Trail - via East\u00a0Peak.",
+      "Distance (mi)": "7.6",
+      "Elevation Gain (ft)": "3100",
+      "Difficulty": "Difficult",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 7.6,
+    "primary_gain_ft": 3100,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 6.0,
+    "risk_factors": [
+      "LimitedWater",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Water Availability",
+        "value": "Limited \u2013 small brooks near trailheads; no water on the ridge",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty \u2013 some signal near Tripoli Road but little on the ridge",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Yes \u2013 the chimney between peaks is a steep rock chute requiring class\u00a02\u20133 scrambling",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steep, rocky ridge connecting from the main peak with a rock chimney requiring hands or bypass; footing is rough and slippery when wet",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "north-kinsman-mountain": {
+    "peak_id": "north-kinsman-mountain",
+    "slug": "north-kinsman-mountain",
+    "mountain": "North Kinsman Mountain",
+    "latitude": 44.123,
+    "longitude": -71.73833,
+    "range_group": "Kinsman Range",
+    "range_raw": "Kinsman Range",
+    "primary_route": {
+      "Route Name": "Lonesome Lake Trail \u2192 Cascade Brook Trail \u2192 Fishin\u2019\u00a0Jimmy Trail \u2192 Kinsman Ridge Trail",
+      "Distance (mi)": "9.8",
+      "Elevation Gain (ft)": "3550",
+      "Difficulty": "Difficult",
+      "Trail Type": "Out & back - continuing over South\u00a0Kinsman."
+    },
+    "primary_distance_mi": 9.8,
+    "primary_gain_ft": 3550,
+    "trail_type_primary": "Out & back - continuing over South\u00a0Kinsman.",
+    "difficulty_text_primary": "Difficult",
+    "estimated_time_hours": 7.0,
+    "risk_factors": [
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty \u2013 some signal near Franconia Notch and at the viewpoint, generally weak elsewhere",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Minor \u2013 steep rock slabs require hands in places but wood steps aid the ascent",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steady climb to Lonesome Lake followed by rough, rooty Fishin\u2019\u00a0Jimmy Trail with rock steps and bolted wooden steps on steep slabs; final ridge climb is steep but manageable",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  },
+  "wildcat-mountain-d": {
+    "peak_id": "wildcat-mountain-d",
+    "slug": "wildcat-mountain-d",
+    "mountain": "Wildcat Mountain - D Peak.",
+    "latitude": 44.25889,
+    "longitude": -71.2,
+    "range_group": "Carter-Moriah Range",
+    "range_raw": "Carter-Moriah Range",
+    "primary_route": {
+      "Route Name": "Wildcat Ridge Trail - via Glen Ellis Falls.",
+      "Distance (mi)": "4.7",
+      "Elevation Gain (ft)": "2150",
+      "Difficulty": "Very difficult",
+      "Trail Type": "Out & back"
+    },
+    "primary_distance_mi": 4.7,
+    "primary_gain_ft": 2150,
+    "trail_type_primary": "Out & back",
+    "difficulty_text_primary": "Very difficult",
+    "estimated_time_hours": 4.0,
+    "risk_factors": [
+      "AboveTreelineExposure",
+      "SevereWeather",
+      "Navigation",
+      "ScrambleSteep",
+      "NoCellService"
+    ],
+    "prep_notes": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone.",
+    "bailout_distance_mi": null,
+    "risk_evidence": [
+      {
+        "type": "dataset_field",
+        "field": "Exposure Level",
+        "value": "High on Wildcat Ridge Trail due to steep ledges; moderate via ski trail",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steep climb from Glen Ellis Falls with immediate ascent up rocky ledges; Wildcat Ridge is rugged with constant ups and downs; ski trail is grassy and gradual",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Weather Exposure Rating",
+        "value": "High - steep ledges and exposed sections.",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Cell Reception Quality",
+        "value": "Spotty \u2013 some signal near Pinkham Notch and the ski area but unreliable on the ridge",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Scramble Sections",
+        "value": "Yes \u2013 Wildcat Ridge Trail includes class\u00a02 scrambles and steep ledges requiring hands",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Terrain Character",
+        "value": "Steep climb from Glen Ellis Falls with immediate ascent up rocky ledges; Wildcat Ridge is rugged with constant ups and downs; ski trail is grassy and gradual",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      },
+      {
+        "type": "dataset_field",
+        "field": "Derived",
+        "value": "Navigation added due to AboveTreelineExposure or (NoCellService+LongBailout)",
+        "source_title": "NH48 JSON dataset",
+        "source_url": "data/nh48.json"
+      }
+    ],
+    "risk_review": {
+      "status": "generated",
+      "confidence": 0.8,
+      "last_reviewed": "2026-02-08"
+    },
+    "common_groupings": [],
+    "finish_strategy_suggestions": [],
+    "trailhead_coordinates": null
+  }
+}
