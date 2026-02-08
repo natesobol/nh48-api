@@ -122,6 +122,28 @@ const LANGUAGE_CONFIGS = [
   },
 ];
 
+const ACCEPTED_LANG_CODES = LANGUAGE_CONFIGS.map((lang) => lang.code);
+
+const parseSelectedLanguageConfigs = (args) => {
+  const langArg = args.find((arg) => arg.startsWith("--lang="));
+
+  if (!langArg) {
+    return LANGUAGE_CONFIGS;
+  }
+
+  const selectedLangCode = cleanText(langArg.slice("--lang=".length)).toLowerCase();
+  const selectedConfig = LANGUAGE_CONFIGS.find((lang) => lang.code === selectedLangCode);
+
+  if (!selectedConfig) {
+    console.error(
+      `Invalid --lang value \"${selectedLangCode || "(empty)"}\". Accepted values: ${ACCEPTED_LANG_CODES.join(", ")}.`
+    );
+    process.exit(1);
+  }
+
+  return [selectedConfig];
+};
+
 process.on("uncaughtException", (err) => {
   console.error("Unhandled error during prerender:", err);
   process.exit(1);
@@ -1242,6 +1264,8 @@ const readFile = (filePath, label) => {
 
 const main = () => {
   try {
+    const selectedLanguageConfigs = parseSelectedLanguageConfigs(process.argv.slice(2));
+
     console.log("Starting peak prerender...");
     console.log(`Template path: ${TEMPLATE_PATH}`);
     console.log(`Data path: ${DATA_PATH}`);
@@ -1275,7 +1299,7 @@ const main = () => {
       const summary = cleanText(peak["Terrain Character"] || peak["View Type"] || "");
       const coordinates = parseCoordinates(peak["Coordinates"]);
 
-      LANGUAGE_CONFIGS.forEach((lang) => {
+      selectedLanguageConfigs.forEach((lang) => {
         const canonicalUrl = `${lang.canonicalBase}/${slug}/`;
         const localizedName = localizePeakName(name, lang.code);
         const formattedElevation = formatFeet(elevation);
