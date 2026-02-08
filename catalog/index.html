@@ -311,7 +311,11 @@
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json'
       ];
-      const RANGES_DATA_URL = '/data/wmnf-ranges.json';
+      const RANGE_DATA_URLS = [
+        '/data/wmnf-ranges.json',
+        'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-ranges.json',
+        'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-ranges.json'
+      ];
       const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85,width=720';
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
       const PHOTO_BASE = new URL(PHOTO_BASE_URL);
@@ -489,14 +493,21 @@
       }
 
       async function fetchRanges(){
-        const res = await fetch(RANGES_DATA_URL, { mode: 'cors' });
-        if(!res.ok){
-          throw new Error(`Failed to load ranges: ${res.status} ${res.statusText}`);
+        for(const url of RANGE_DATA_URLS){
+          try{
+            const res = await fetch(url, { mode: 'cors' });
+            if(!res.ok) continue;
+            const text = await res.text();
+            const cleaned = cleanJSON(text);
+            const obj = JSON.parse(cleaned);
+            if(obj && typeof obj === 'object'){
+              return obj;
+            }
+          }catch(err){
+            console.warn(`Failed to fetch ranges from ${url}:`, err);
+          }
         }
-        const text = await res.text();
-        const cleaned = cleanJSON(text);
-        const obj = JSON.parse(cleaned);
-        return obj && typeof obj === 'object' ? obj : {};
+        throw new Error('All range endpoints failed');
       }
 
       function normalizeToken(value){
@@ -849,7 +860,7 @@
         empty.hidden = true;
 
         const orderedRanges = Object.entries(rangesData || {}).map(([slug, range]) => ({
-          id: range?.slug || slug,
+          id: range.slug,
           slug,
           name: range?.rangeName || slug,
           peaks: Array.isArray(range?.peakList)
