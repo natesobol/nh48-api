@@ -18,10 +18,11 @@ const FALLBACK_IMAGE = "https://nh48.info/nh48-preview.png";
 const PHOTO_BASE_URL = "https://photos.nh48.info";
 const PHOTO_BASE = new URL(PHOTO_BASE_URL);
 const PHOTO_PATH_PREFIX = "/nh48-photos/";
-const IMAGE_TRANSFORM_OPTIONS = "format=webp,quality=85";
+const IMAGE_TRANSFORM_OPTIONS = "format=webp,quality=85,metadata=keep";
 const IMAGE_TRANSFORM_PREFIX = `${PHOTO_BASE.origin}/cdn-cgi/image/${IMAGE_TRANSFORM_OPTIONS}`;
 const DEFAULT_SITE_NAME = "NH48 Peak Guide";
-const IMAGE_LICENSE_URL = "https://nh48.info/license";
+const IMAGE_LICENSE_URL = "https://creativecommons.org/licenses/by-nc-nd/4.0/";
+const PEAK_SAMEAS_PATH = path.join(ROOT, "data", "peak-sameas.json");
 const AUTHOR_NAME = "Nathan Sobol";
 const TWITTER_HANDLE = "@nate_dumps_pics";
 
@@ -351,6 +352,10 @@ const buildContentLocation = (photo) => {
 
 const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
   const normalizedUrl = normalizePhotoUrl(photo.url) || FALLBACK_IMAGE;
+  const thumbnailUrl = normalizedUrl.replace(
+    /cdn-cgi\/image\/[^/]+/,
+    'cdn-cgi/image/width=400,format=webp,metadata=keep'
+  );
   const { width: parsedWidth, height: parsedHeight } = parseDimensions(photo.dimensions || photo.dimension || '');
   const width = parsedWidth || undefined;
   const height = parsedHeight || undefined;
@@ -362,13 +367,11 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
   const headline =
     cleanText(photo[`headline_${langCode}`]) || cleanText(photo.headline) || `${peakName} — White Mountain National Forest`;
   const description = cleanText(extendedDescription || photo.caption || '');
-  const creatorName = cleanText(photo.author || photo.creator || photo.iptc?.creator || AUTHOR_NAME) || AUTHOR_NAME;
-  const creditText = cleanText(photo.iptc?.creditLine || photo.creditText || creatorName || AUTHOR_NAME) || AUTHOR_NAME;
+  const creatorName = AUTHOR_NAME;
+  const creditText = AUTHOR_NAME;
   const publisherName = cleanText(photo.iptc?.featuredOrgName) || TWITTER_HANDLE;
-  const copyrightNotice = cleanText(photo.iptc?.copyrightNotice) || `© ${AUTHOR_NAME}`;
-  const copyrightHolderName =
-    cleanText(photo.iptc?.creditLine || photo.creditText || photo.iptc?.creator || creatorName || AUTHOR_NAME) ||
-    AUTHOR_NAME;
+  const copyrightNotice = `© ${AUTHOR_NAME}`;
+  const copyrightHolderName = AUTHOR_NAME;
   const rightsUsageTerms = cleanText(photo.iptc?.rightsUsageTerms || photo.rightsUsageTerms);
   const licenseUrl = IMAGE_LICENSE_URL;
   const keywords = buildKeywords(photo);
@@ -391,6 +394,7 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
     acquireLicensePage: licenseUrl,
     usageInfo: rightsUsageTerms || licenseUrl,
     copyrightHolder: { '@type': 'Person', name: copyrightHolderName },
+    thumbnailUrl,
     contentSize: cleanText(photo.fileSize),
     uploadDate: cleanText(photo.fileCreateDate || photo.captureDate),
     dateCreated: cleanText(photo.captureDate || photo.fileCreateDate),
@@ -459,6 +463,7 @@ const pickPrimaryPhoto = (photos, peakName, langCode, canonicalUrl) => {
       acquireLicensePage: IMAGE_LICENSE_URL,
       usageInfo: IMAGE_LICENSE_URL,
       copyrightHolder: { '@type': 'Person', name: AUTHOR_NAME },
+      thumbnailUrl: FALLBACK_IMAGE,
       keywords: fallbackKeywords,
       contentLocation: {
         '@type': 'Place',
@@ -1063,14 +1068,15 @@ const buildJsonLd = (
           name: photoSet.primary.headline || peakName,
           caption: photoSet.primary.description || descriptionText,
           description: photoSet.primary.extendedDescription || photoSet.primary.description || descriptionText,
-          creditText: photoSet.primary.creditText || photoSet.primary.creator || AUTHOR_NAME,
-          creator: { '@type': 'Person', name: photoSet.primary.creator || AUTHOR_NAME },
-          author: { '@type': 'Person', name: photoSet.primary.creator || AUTHOR_NAME },
+          creditText: AUTHOR_NAME,
+          creator: { '@type': 'Person', name: AUTHOR_NAME },
+          author: { '@type': 'Person', name: AUTHOR_NAME },
           copyrightNotice: `© ${AUTHOR_NAME}`,
           license: IMAGE_LICENSE_URL,
           acquireLicensePage: IMAGE_LICENSE_URL,
           usageInfo: IMAGE_LICENSE_URL,
-          copyrightHolder: { '@type': 'Person', name: photoSet.primary.creator || AUTHOR_NAME },
+          copyrightHolder: { '@type': 'Person', name: AUTHOR_NAME },
+          thumbnailUrl: photoSet.primary.url || undefined,
           keywords: photoSet.primary.keywords?.length ? photoSet.primary.keywords : undefined,
           contentLocation: {
             '@type': 'Place',
@@ -1085,7 +1091,10 @@ const buildJsonLd = (
       : undefined;
 
   const primaryImage = imageObjects?.find((img) => img.representativeOfPage) || imageObjects?.[0];
-  const imageList = imageObjects?.filter((img) => !img.representativeOfPage);
+  const imageList = imageObjects ? [...imageObjects] : [];
+  if (primaryImage && !imageList.find((img) => img['@id'] === primaryImage['@id'])) {
+    imageList.unshift(primaryImage);
+  }
 
   const imageGallery = imageObjects?.length
     ? {
@@ -1107,7 +1116,7 @@ const buildJsonLd = (
     url: canonicalUrl,
     author: AUTHOR_NAME,
     inLanguage: langConfig.code === "fr" ? "fr-FR" : "en-US",
-    image: imageList?.length ? imageList.map((img) => ({ '@id': img['@id'] })) : undefined,
+    image: imageList.length ? imageList.map((img) => ({ '@id': img['@id'] })) : undefined,
     primaryImageOfPage: primaryImage ? { '@id': primaryImage['@id'] } : undefined,
     geo: coordinates.latitude && coordinates.longitude
       ? {
@@ -1242,6 +1251,13 @@ const main = () => {
     const navMenuPartial = readFile(NAV_PARTIAL_PATH, "navigation menu partial");
     const quickBrowseFooterPartial = readFile(QUICK_FOOTER_PATH, "quick browse footer partial");
     const data = JSON.parse(readFile(DATA_PATH, "data"));
+    const sameAsLookup = JSON.parse(readFile(PEAK_SAMEAS_PATH, "peak sameAs lookup"));
+    Object.entries(data).forEach(([slug, peak]) => {
+      const links = Array.isArray(sameAsLookup?.[slug]) ? sameAsLookup[slug].filter(Boolean) : [];
+      if (links.length) {
+        peak.sameAs = links;
+      }
+    });
     const slugs = Object.keys(data).sort();
 
     console.log(`Rendering ${slugs.length} peak pages...`);
