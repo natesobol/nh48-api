@@ -523,19 +523,41 @@
         margin: 28px 0;
       }
       .section-banner {
-        background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(17, 24, 39, 0.86));
-        border: 1px solid var(--border);
+        position: relative;
+        width: 100%;
+        min-height: 240px;
+        background-size: cover;
+        background-position: center;
         border-radius: 14px;
-        padding: 18px 20px;
+        padding: 20px;
         margin-bottom: 14px;
+        display: flex;
+        align-items: flex-end;
+      }
+      .section-banner::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.75) 100%);
+        border-radius: inherit;
+        pointer-events: none;
+      }
+      .section-banner.light-text h2 a {
+        color: #ffffff;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+      }
+      .section-banner.dark-text h2 a {
+        color: #0f172a;
+        text-shadow: 0 1px 4px rgba(255, 255, 255, 0.6);
       }
       .section-banner h2 {
+        position: relative;
+        z-index: 1;
         margin: 0;
         font-size: clamp(1.6rem, 2.6vw, 2.1rem);
         font-weight: 500;
       }
       .section-banner h2 a {
-        color: inherit;
         text-decoration: none;
       }
       section {
@@ -788,22 +810,23 @@
       }
       .range-list {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
         gap: 10px;
         margin-top: 14px;
       }
       .range-card {
         background: rgba(15, 23, 42, 0.7);
         border: 1px solid rgba(148, 163, 184, 0.2);
-        padding: 10px 12px;
+        padding: 8px 12px;
         border-radius: 12px;
-        display: inline-flex;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
         align-items: center;
-        justify-content: space-between;
         gap: 10px;
         color: var(--ink);
         font-weight: 600;
         cursor: pointer;
+        min-height: 44px;
         transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
       }
       .range-card.active {
@@ -812,8 +835,10 @@
         transform: translateY(-1px);
       }
       .range-card__name {
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         letter-spacing: 0.2px;
+        line-height: 1.15;
+        word-break: keep-all;
       }
       .range-card__dot {
         width: 10px;
@@ -824,12 +849,13 @@
       }
       .range-card__chip {
         background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(148, 163, 184, 0.4);
+        border: 1px solid rgba(148, 163, 184, 0.35);
         border-radius: 999px;
         padding: 2px 8px;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         color: var(--muted);
+        white-space: nowrap;
       }
       .table-actions {
         display: inline-flex;
@@ -1422,7 +1448,7 @@
       </section>
 
       <section class="section" id="what-is-nh48">
-        <div class="section-banner">
+        <div class="section-banner light-text" style="background-image: url('https://photos.nh48.info/mount-pierce/mount-pierce__002.jpg');">
           <h2><a href="#what-is-nh48">What is the NH48?</a></h2>
         </div>
         <p>
@@ -1434,15 +1460,15 @@
       </section>
 
 <section class="section" id="range-map" aria-label="Range map">
-        <div class="section-banner">
+        <div class="section-banner light-text" style="background-image: url('https://photos.nh48.info/mount-lafayette/mount-lafayette__002.jpg');">
           <h2><a href="#range-map">Range Map</a></h2>
         </div>
         <div class="panel hero-card map-shell">
           <p>Use range cards to focus the list and map together for faster planning.</p>
           <div class="map-toggle-row">
             <div class="map-toggle-group" role="tablist" aria-label="Map style">
-              <button type="button" id="mapStyleStylized" class="active" role="tab" aria-selected="true">Stylized</button>
-              <button type="button" id="mapStyleOsm" role="tab" aria-selected="false">OSM Topo</button>
+              <button type="button" id="mapStyleOsm" class="active" role="tab" aria-selected="true">OSM Topo</button>
+              <button type="button" id="mapStyleStylized" role="tab" aria-selected="false">Stylized</button>
             </div>
             <div class="map-controls" aria-label="Map controls">
               <button class="map-control-btn" type="button" id="mapZoomIn">Zoom in</button>
@@ -1462,7 +1488,7 @@
       </section>
 
 <section class="section" id="official-peak-list">
-        <div class="section-banner">
+        <div class="section-banner light-text" style="background-image: url('https://photos.nh48.info/mount-carrigain/mount-carrigain__002.jpg');">
           <h2><a href="#official-peak-list">Current NH 4,000-Footer List</a></h2>
         </div>
         <p>
@@ -1503,7 +1529,7 @@
       </section>
 
 <section class="section trip-combos" id="day-trip-groupings" aria-label="Popular Day Trip Groupings">
-        <div class="section-banner">
+        <div class="section-banner light-text" style="background-image: url('https://photos.nh48.info/mount-adams/mount-adams__002.jpg');">
           <h2><a href="#day-trip-groupings">Popular Day Trip Groupings</a></h2>
         </div>
         <p>Maximize your summit count with these classic multi-peak routes. Experienced hikers often complete multiple peaks per trip.</p>
@@ -1582,7 +1608,7 @@
       </section>
 
 <section class="section" id="difficulty-strategy">
-        <div class="section-banner">
+        <div class="section-banner light-text" style="background-image: url('https://photos.nh48.info/bondcliff/bondcliff__003.jpg');">
           <h2><a href="#difficulty-strategy">Peak Strategy Highlights</a></h2>
         </div>
         <p>
@@ -1612,7 +1638,7 @@
       <!-- Risk & Preparedness Section - Migrated from homepage -->
 
 <section class="section" id="peak-difficulty-guide" aria-label="Peak Difficulty Guide">
-        <div class="section-banner">
+        <div class="section-banner light-text" style="background-image: url('https://photos.nh48.info/mount-jackson/mount-jackson__002.jpg');">
           <h2><a href="#peak-difficulty-guide">Difficulty Guide</a></h2>
         </div>
         <div class="panel difficulty-guide">
@@ -1645,7 +1671,7 @@
       <!-- Day Trip Groupings Section - Migrated from homepage -->
 
 <section class="section risk-stats" id="risk-preparedness" aria-label="Risk Factors and Preparedness">
-        <div class="section-banner">
+        <div class="section-banner light-text" style="background-image: url('https://photos.nh48.info/mount-washington/mount-washington__002.jpg');">
           <h2><a href="#risk-preparedness">Risk Factors &amp; Preparedness</a></h2>
         </div>
         <p>Weather changes quickly in the White Mountains; preparation is essential and rescue can take hours.</p>
@@ -1680,7 +1706,7 @@
       <!-- Finish Strategies Section - Migrated from homepage -->
 
 <section class="section" id="seasonal-considerations">
-        <div class="section-banner">
+        <div class="section-banner dark-text" style="background-image: url('https://photos.nh48.info/mount-waumbek/mount-waumbek__002.jpg');">
           <h2><a href="#seasonal-considerations">Seasonal Considerations</a></h2>
         </div>
         <p>
@@ -1704,7 +1730,7 @@
       </section>
 
 <section class="section strategy-section" id="completion-strategies" aria-label="Finish Strategies">
-        <div class="section-banner">
+        <div class="section-banner light-text" style="background-image: url('https://photos.nh48.info/mount-lafayette/mount-lafayette__003.jpg');">
           <h2><a href="#completion-strategies">Choose Your Finish Strategy</a></h2>
         </div>
         <p>There's no single way to finish the list - pick the approach that matches your lifestyle and goals.</p>
@@ -1734,7 +1760,7 @@
       </section>
 
 <section class="section" id="history">
-        <div class="section-banner">
+        <div class="section-banner light-text" style="background-image: url('https://photos.nh48.info/mount-adams/mount-adams__003.jpg');">
           <h2><a href="#history">History &amp; Rules Recap</a></h2>
         </div>
         <p>
@@ -1747,7 +1773,7 @@
       </section>
 
 <section class="section" id="data-api">
-        <div class="section-banner">
+        <div class="section-banner light-text" style="background-image: url('https://photos.nh48.info/mount-tecumseh/mount-tecumseh__002.jpg');">
           <h2><a href="#data-api">Data &amp; API Resources</a></h2>
         </div>
         <p>
@@ -1765,7 +1791,7 @@
       </section>
 
 <section class="section" id="faq">
-        <div class="section-banner">
+        <div class="section-banner light-text" style="background-image: url('https://photos.nh48.info/mount-liberty/mount-liberty__002.jpg');">
           <h2><a href="#faq">Frequently Asked Questions</a></h2>
         </div>
         <p>
@@ -2135,7 +2161,7 @@
       let leafletLayer = null;
       let leafletMarkers = null;
       let leafletBounds = null;
-      let activeMapStyle = 'stylized';
+      let activeMapStyle = 'osm';
 
       function scheduleMapRender() {
         if (mapRenderQueued) return;
@@ -2639,6 +2665,7 @@
         }
         loadRanges().finally(() => {
           init();
+          setMapStyle('osm');
         });
       });
   </script>
