@@ -1383,6 +1383,39 @@ const readFile = (filePath, label) => {
   }
 };
 
+const readJsonFile = (filePath, label) => {
+  const raw = readFile(filePath, label);
+  const cleaned = raw.replace(/^\uFEFF/, "");
+  try {
+    return JSON.parse(cleaned);
+  } catch (err) {
+    const message = err && err.message ? err.message : String(err);
+    const match = message.match(/position (\d+)/);
+    if (match) {
+      const pos = Number(match[1]);
+      const start = Math.max(0, pos - 120);
+      const end = Math.min(cleaned.length, pos + 120);
+      const context = cleaned.slice(start, end);
+      console.error(`Failed to parse ${label} at ${filePath} (position ${pos}).`);
+      console.error("Context:", context);
+    } else {
+      console.error(`Failed to parse ${label} at ${filePath}.`);
+    }
+
+    const lastClose = Math.max(cleaned.lastIndexOf("}"), cleaned.lastIndexOf("]"));
+    if (lastClose > -1 && lastClose < cleaned.length - 1) {
+      const truncated = cleaned.slice(0, lastClose + 1).trimEnd();
+      try {
+        console.warn(`Recovered ${label} by truncating trailing data after position ${lastClose}.`);
+        return JSON.parse(truncated);
+      } catch (recoveryErr) {
+        console.error("Recovery parse failed:", recoveryErr);
+      }
+    }
+    throw err;
+  }
+};
+
 const main = () => {
   try {
     const selectedLanguageConfigs = parseSelectedLanguageConfigs(process.argv.slice(2));
@@ -1395,9 +1428,9 @@ const main = () => {
     const template = readFile(TEMPLATE_PATH, "template");
     const navMenuPartial = readFile(NAV_PARTIAL_PATH, "navigation menu partial");
     const quickBrowseFooterPartial = readFile(QUICK_FOOTER_PATH, "quick browse footer partial");
-    const data = JSON.parse(readFile(DATA_PATH, "data"));
-    const geographyData = JSON.parse(readFile(GEOGRAPHY_PATH, "geography data"));
-    const sameAsLookup = JSON.parse(readFile(PEAK_SAMEAS_PATH, "peak sameAs lookup"));
+    const data = readJsonFile(DATA_PATH, "data");
+    const geographyData = readJsonFile(GEOGRAPHY_PATH, "geography data");
+    const sameAsLookup = readJsonFile(PEAK_SAMEAS_PATH, "peak sameAs lookup");
 
     const geographyEntries = Array.isArray(geographyData)
       ? geographyData

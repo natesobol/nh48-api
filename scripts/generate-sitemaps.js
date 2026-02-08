@@ -119,9 +119,41 @@ const STATIC_IMAGE_ENTRIES = [
 ];
 const IMAGE_LICENSE_URL = 'https://nh48.info/licensing';
 
-const data = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
-const rangesData = JSON.parse(fs.readFileSync(RANGES_DATA_PATH, 'utf8'));
-const plantData = JSON.parse(fs.readFileSync(PLANTS_PATH, 'utf8'));
+const readJsonFile = (filePath, label) => {
+  const raw = fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, '');
+  try {
+    return JSON.parse(raw);
+  } catch (err) {
+    const message = err && err.message ? err.message : String(err);
+    const match = message.match(/position (\d+)/);
+    if (match) {
+      const pos = Number(match[1]);
+      const start = Math.max(0, pos - 120);
+      const end = Math.min(raw.length, pos + 120);
+      const context = raw.slice(start, end);
+      console.error(`Failed to parse ${label} at ${filePath} (position ${pos}).`);
+      console.error('Context:', context);
+    } else {
+      console.error(`Failed to parse ${label} at ${filePath}.`);
+    }
+
+    const lastClose = Math.max(raw.lastIndexOf('}'), raw.lastIndexOf(']'));
+    if (lastClose > -1 && lastClose < raw.length - 1) {
+      const truncated = raw.slice(0, lastClose + 1).trimEnd();
+      try {
+        console.warn(`Recovered ${label} by truncating trailing data after position ${lastClose}.`);
+        return JSON.parse(truncated);
+      } catch (recoveryErr) {
+        console.error('Recovery parse failed:', recoveryErr);
+      }
+    }
+    throw err;
+  }
+};
+
+const data = readJsonFile(DATA_PATH, 'data');
+const rangesData = readJsonFile(RANGES_DATA_PATH, 'range data');
+const plantData = readJsonFile(PLANTS_PATH, 'plant data');
 
 // Normalize strings for web output. Fixes common mojibake (â€” → —, etc.)
 // and replaces em/en dashes with a simple hyphen for XML.
