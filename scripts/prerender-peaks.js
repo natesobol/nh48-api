@@ -122,6 +122,28 @@ const LANGUAGE_CONFIGS = [
   },
 ];
 
+const ACCEPTED_LANG_CODES = LANGUAGE_CONFIGS.map((lang) => lang.code);
+
+const parseSelectedLanguageConfigs = (args) => {
+  const langArg = args.find((arg) => arg.startsWith("--lang="));
+
+  if (!langArg) {
+    return LANGUAGE_CONFIGS;
+  }
+
+  const selectedLangCode = cleanText(langArg.slice("--lang=".length)).toLowerCase();
+  const selectedConfig = LANGUAGE_CONFIGS.find((lang) => lang.code === selectedLangCode);
+
+  if (!selectedConfig) {
+    console.error(
+      `Invalid --lang value \"${selectedLangCode || "(empty)"}\". Accepted values: ${ACCEPTED_LANG_CODES.join(", ")}.`
+    );
+    process.exit(1);
+  }
+
+  return [selectedConfig];
+};
+
 process.on("uncaughtException", (err) => {
   console.error("Unhandled error during prerender:", err);
   process.exit(1);
@@ -1001,6 +1023,23 @@ const buildPeakAdditionalProperties = (peak) => {
   return properties;
 };
 
+const dedupeJsonLdNodesById = (nodes) => {
+  const seen = new Set();
+  const deduped = [];
+
+  nodes.forEach((node) => {
+    if (!node || typeof node !== "object") return;
+    const nodeId = cleanText(node["@id"] || "");
+    if (nodeId) {
+      if (seen.has(nodeId)) return;
+      seen.add(nodeId);
+    }
+    deduped.push(node);
+  });
+
+  return deduped;
+};
+
 const buildJsonLd = (
   peak,
   canonicalUrl,
@@ -1018,6 +1057,7 @@ const buildJsonLd = (
   const difficulty = cleanText(peak["Difficulty"]);
   const trailType = cleanText(peak["Trail Type"]);
   const routeEntities = buildRouteEntities(peak["Standard Routes"], peak, canonicalUrl);
+  const routeRefs = routeEntities.map((route) => ({ "@id": route["@id"] }));
   const sameAsLinks = Array.isArray(peak.sameAs)
     ? peak.sameAs.filter(Boolean)
     : peak.sameAs
@@ -1099,9 +1139,10 @@ const buildJsonLd = (
   const imageGallery = imageObjects?.length
     ? {
       '@type': 'ImageGallery',
+      '@id': `${canonicalUrl}#image-gallery`,
       name: `${peakName} photo gallery`,
       description: `Photos of ${peakName} in the White Mountains`,
-      associatedMedia: imageObjects,
+      associatedMedia: imageObjects.map((img) => ({ '@id': img['@id'] })),
     }
     : undefined;
 
@@ -1118,13 +1159,7 @@ const buildJsonLd = (
     inLanguage: langConfig.code === "fr" ? "fr-FR" : "en-US",
     image: imageList.length ? imageList.map((img) => ({ '@id': img['@id'] })) : undefined,
     primaryImageOfPage: primaryImage ? { '@id': primaryImage['@id'] } : undefined,
-    geo: coordinates.latitude && coordinates.longitude
-      ? {
-        "@type": "GeoCoordinates",
-        latitude: coordinates.latitude,
-        longitude: coordinates.longitude,
-      }
-      : undefined,
+    geo: geoNode ? { "@id": geoNode["@id"] } : undefined,
     elevation: elevationFt != null
       ? {
         "@type": "QuantitativeValue",
@@ -1141,7 +1176,7 @@ const buildJsonLd = (
       : undefined,
     containedInPlace: { "@type": "Place", name: "White Mountain National Forest" },
     additionalProperty: additionalProperty.length ? additionalProperty : undefined,
-    hasPart: routeEntities.length ? routeEntities : undefined,
+    hasPart: routeRefs.length ? routeRefs : undefined,
     containsPlace: (() => {
       const trailhead = cleanText(peak["Most Common Trailhead"] || "");
       const parking = cleanText(peak["Parking Notes"] || "");
@@ -1151,23 +1186,35 @@ const buildJsonLd = (
       if (parking) place.description = parking;
       return place;
     })(),
-    isPartOf: {
-      "@type": "DataCatalog",
-      name: "NH48 Peak Dataset",
-      url: "https://nh48.info/catalog",
-    },
+    isPartOf: { "@id": dataCatalogNode["@id"] },
     sameAs: sameAsLinks.length ? sameAsLinks : undefined,
-    subjectOf: imageGallery ? [imageGallery] : undefined,
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `${canonicalUrl}#webpage`,
-      url: canonicalUrl,
-      name: `${peakName} — White Mountain National Forest`,
-    },
+    subjectOf: imageGallery ? [{ '@id': imageGallery['@id'] }] : undefined,
+    mainEntityOfPage: { "@id": webPageNode["@id"] },
   };
 
-  Object.keys(jsonLd).forEach((key) => jsonLd[key] === undefined && delete jsonLd[key]);
-  return JSON.stringify(jsonLd, null, 2);
+  Object.keys(mountainNode).forEach((key) => mountainNode[key] === undefined && delete mountainNode[key]);
+
+  const graph = dedupeJsonLdNodesById([
+    mountainNode,
+    webPageNode,
+    dataCatalogNode,
+    publisherNode,
+    webSiteNode,
+    whiteMountainForestNode,
+    geoNode,
+    imageGallery,
+    ...(imageObjects || []),
+    ...routeEntities,
+  ]);
+
+  return JSON.stringify(
+    {
+      "@context": "https://schema.org",
+      "@graph": graph,
+    },
+    null,
+    2
+  );
 };
 
 const TRAIL_KEYWORDS = [
@@ -1242,6 +1289,8 @@ const readFile = (filePath, label) => {
 
 const main = () => {
   try {
+    const selectedLanguageConfigs = parseSelectedLanguageConfigs(process.argv.slice(2));
+
     console.log("Starting peak prerender...");
     console.log(`Template path: ${TEMPLATE_PATH}`);
     console.log(`Data path: ${DATA_PATH}`);
@@ -1275,7 +1324,7 @@ const main = () => {
       const summary = cleanText(peak["Terrain Character"] || peak["View Type"] || "");
       const coordinates = parseCoordinates(peak["Coordinates"]);
 
-      LANGUAGE_CONFIGS.forEach((lang) => {
+      selectedLanguageConfigs.forEach((lang) => {
         const canonicalUrl = `${lang.canonicalBase}/${slug}/`;
         const localizedName = localizePeakName(name, lang.code);
         const formattedElevation = formatFeet(elevation);
