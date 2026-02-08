@@ -1001,6 +1001,23 @@ const buildPeakAdditionalProperties = (peak) => {
   return properties;
 };
 
+const dedupeJsonLdNodesById = (nodes) => {
+  const seen = new Set();
+  const deduped = [];
+
+  nodes.forEach((node) => {
+    if (!node || typeof node !== "object") return;
+    const nodeId = cleanText(node["@id"] || "");
+    if (nodeId) {
+      if (seen.has(nodeId)) return;
+      seen.add(nodeId);
+    }
+    deduped.push(node);
+  });
+
+  return deduped;
+};
+
 const buildJsonLd = (
   peak,
   canonicalUrl,
@@ -1018,6 +1035,7 @@ const buildJsonLd = (
   const difficulty = cleanText(peak["Difficulty"]);
   const trailType = cleanText(peak["Trail Type"]);
   const routeEntities = buildRouteEntities(peak["Standard Routes"], peak, canonicalUrl);
+  const routeRefs = routeEntities.map((route) => ({ "@id": route["@id"] }));
   const sameAsLinks = Array.isArray(peak.sameAs)
     ? peak.sameAs.filter(Boolean)
     : peak.sameAs
@@ -1099,14 +1117,60 @@ const buildJsonLd = (
   const imageGallery = imageObjects?.length
     ? {
       '@type': 'ImageGallery',
+      '@id': `${canonicalUrl}#image-gallery`,
       name: `${peakName} photo gallery`,
       description: `Photos of ${peakName} in the White Mountains`,
-      associatedMedia: imageObjects,
+      associatedMedia: imageObjects.map((img) => ({ '@id': img['@id'] })),
     }
     : undefined;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
+  const geoNode = coordinates.latitude && coordinates.longitude
+    ? {
+      "@type": "GeoCoordinates",
+      "@id": `${canonicalUrl}#geo`,
+      latitude: coordinates.latitude,
+      longitude: coordinates.longitude,
+    }
+    : undefined;
+
+  const whiteMountainForestNode = {
+    "@type": "Place",
+    "@id": `${canonicalUrl}#white-mountain-national-forest`,
+    name: "White Mountain National Forest",
+  };
+
+  const publisherNode = {
+    "@type": "Organization",
+    "@id": "https://nh48.info/#organization",
+    name: "NH48 Peak Guide",
+    url: HOME_URL,
+  };
+
+  const dataCatalogNode = {
+    "@type": "DataCatalog",
+    "@id": `${canonicalUrl}#nh48-peak-dataset`,
+    name: "NH48 Peak Dataset",
+    url: "https://nh48.info/catalog",
+    publisher: { "@id": publisherNode["@id"] },
+  };
+
+  const webSiteNode = {
+    "@type": "WebSite",
+    "@id": "https://nh48.info/#website",
+    name: "NH48 Peak Guide",
+    url: HOME_URL,
+    publisher: { "@id": publisherNode["@id"] },
+  };
+
+  const webPageNode = {
+    "@type": "WebPage",
+    "@id": `${canonicalUrl}#webpage`,
+    url: canonicalUrl,
+    name: `${peakName} — White Mountain National Forest`,
+    isPartOf: { "@id": webSiteNode["@id"] },
+  };
+
+  const mountainNode = {
     "@type": "Mountain",
     "@id": `${canonicalUrl}#mountain`,
     name: peakName,
@@ -1118,13 +1182,7 @@ const buildJsonLd = (
     inLanguage: langConfig.code === "fr" ? "fr-FR" : "en-US",
     image: imageList.length ? imageList.map((img) => ({ '@id': img['@id'] })) : undefined,
     primaryImageOfPage: primaryImage ? { '@id': primaryImage['@id'] } : undefined,
-    geo: coordinates.latitude && coordinates.longitude
-      ? {
-        "@type": "GeoCoordinates",
-        latitude: coordinates.latitude,
-        longitude: coordinates.longitude,
-      }
-      : undefined,
+    geo: geoNode ? { "@id": geoNode["@id"] } : undefined,
     elevation: elevationFt != null
       ? {
         "@type": "QuantitativeValue",
@@ -1139,9 +1197,9 @@ const buildJsonLd = (
         unitText: "FT",
       }
       : undefined,
-    containedInPlace: { "@type": "Place", name: "White Mountain National Forest" },
+    containedInPlace: { "@id": whiteMountainForestNode["@id"] },
     additionalProperty: additionalProperty.length ? additionalProperty : undefined,
-    hasPart: routeEntities.length ? routeEntities : undefined,
+    hasPart: routeRefs.length ? routeRefs : undefined,
     containsPlace: (() => {
       const trailhead = cleanText(peak["Most Common Trailhead"] || "");
       const parking = cleanText(peak["Parking Notes"] || "");
@@ -1151,23 +1209,35 @@ const buildJsonLd = (
       if (parking) place.description = parking;
       return place;
     })(),
-    isPartOf: {
-      "@type": "DataCatalog",
-      name: "NH48 Peak Dataset",
-      url: "https://nh48.info/catalog",
-    },
+    isPartOf: { "@id": dataCatalogNode["@id"] },
     sameAs: sameAsLinks.length ? sameAsLinks : undefined,
-    subjectOf: imageGallery ? [imageGallery] : undefined,
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `${canonicalUrl}#webpage`,
-      url: canonicalUrl,
-      name: `${peakName} — White Mountain National Forest`,
-    },
+    subjectOf: imageGallery ? [{ '@id': imageGallery['@id'] }] : undefined,
+    mainEntityOfPage: { "@id": webPageNode["@id"] },
   };
 
-  Object.keys(jsonLd).forEach((key) => jsonLd[key] === undefined && delete jsonLd[key]);
-  return JSON.stringify(jsonLd, null, 2);
+  Object.keys(mountainNode).forEach((key) => mountainNode[key] === undefined && delete mountainNode[key]);
+
+  const graph = dedupeJsonLdNodesById([
+    mountainNode,
+    webPageNode,
+    dataCatalogNode,
+    publisherNode,
+    webSiteNode,
+    whiteMountainForestNode,
+    geoNode,
+    imageGallery,
+    ...(imageObjects || []),
+    ...routeEntities,
+  ]);
+
+  return JSON.stringify(
+    {
+      "@context": "https://schema.org",
+      "@graph": graph,
+    },
+    null,
+    2
+  );
 };
 
 const TRAIL_KEYWORDS = [
