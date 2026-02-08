@@ -3877,10 +3877,22 @@
     <div class="site-nav-dropdown">
       <button type="button" data-route="dataset-home" data-routes="home,dataset-home">NH48</button>
       <div class="site-nav-submenu site-nav-submenu--divided" aria-label="NH48 dataset short links">
-        <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Guide</a>
-        <a href="/nh48-planner.html" data-route="nh48-planner">Peak Planning Tool</a>
-        <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
-        <a href="/catalog/ranges" data-route="range-catalog" data-routes="range-catalog,range-detail">Range Catalog</a>
+        <div class="site-nav-submenu-group">
+          <button type="button" class="submenu-centered">View Peaks</button>
+          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="NH48 peak views menu">
+            <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
+            <a href="/catalog/ranges" data-route="range-catalog" data-routes="range-catalog,range-detail">Range Catalog</a>
+            <a href="/photos/" data-route="photos">NH48 Photos</a>
+          </div>
+        </div>
+        <div class="site-nav-submenu-group">
+          <button type="button" class="submenu-centered">Info &amp; Tools</button>
+          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="NH48 info and tools menu">
+            <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Guide</a>
+            <a href="/nh48-planner.html" data-route="nh48-planner">Peak Planning Tool</a>
+            <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48 Data &amp; API</a>
+          </div>
+        </div>
         <div class="site-nav-submenu-group">
           <button type="button" class="submenu-centered" data-i18n="nav.games">Games</button>
           <div class="site-nav-submenu site-nav-submenu--nested" aria-label="NH48 games menu">
@@ -3889,8 +3901,6 @@
             <a href="/pages/puzzle-game.html" data-route="puzzle-game" data-i18n="nav.puzzleGame">Jigsaw Puzzle</a>
           </div>
         </div>
-        <a href="/photos/" data-route="photos">NH48 Photos</a>
-        <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48 Data &amp; API</a>
       </div>
     </div>
     <div class="site-nav-dropdown">
