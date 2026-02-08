@@ -25,3 +25,69 @@
     "name": "White Mountain National Forest"
   }
 ]
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@id": "https://nh48.info/#org-usfs",
+      "@type": "GovernmentOrganization",
+      "name": "United States Forest Service",
+      "sameAs": [
+        "https://www.fs.usda.gov/",
+        "https://en.wikipedia.org/wiki/United_States_Forest_Service",
+        "https://www.wikidata.org/wiki/Q193727"
+      ]
+    },
+    {
+      "@id": "https://nh48.info/#place-usa",
+      "@type": "AdministrativeArea",
+      "name": "United States",
+      "sameAs": [
+        "https://en.wikipedia.org/wiki/United_States",
+        "https://www.wikidata.org/wiki/Q30",
+        "https://www.geonames.org/6252001"
+      ]
+    },
+    {
+      "@id": "https://nh48.info/#place-new-england",
+      "@type": "AdministrativeArea",
+      "name": "New England",
+      "isPartOf": {
+        "@id": "https://nh48.info/#place-usa"
+      },
+      "sameAs": [
+        "https://en.wikipedia.org/wiki/New_England",
+        "https://www.wikidata.org/wiki/Q1384"
+      ]
+    },
+    {
+      "@id": "https://nh48.info/#place-new-hampshire",
+      "@type": "AdministrativeArea",
+      "name": "New Hampshire",
+      "isPartOf": {
+        "@id": "https://nh48.info/#place-new-england"
+      },
+      "sameAs": [
+        "https://en.wikipedia.org/wiki/New_Hampshire",
+        "https://www.wikidata.org/wiki/Q759",
+        "https://www.geonames.org/5090174"
+      ]
+    },
+    {
+      "@id": "https://nh48.info/#place-wmnf",
+      "@type": "Place",
+      "name": "White Mountain National Forest",
+      "containedInPlace": {
+        "@id": "https://nh48.info/#place-new-hampshire"
+      },
+      "landManager": {
+        "@id": "https://nh48.info/#org-usfs"
+      },
+      "sameAs": [
+        "https://www.fs.usda.gov/whitemountain",
+        "https://en.wikipedia.org/wiki/White_Mountain_National_Forest",
+        "https://www.wikidata.org/wiki/Q1206419"
+      ]
+    }
+  ]
+}
