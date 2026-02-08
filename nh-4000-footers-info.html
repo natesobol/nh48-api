@@ -1710,11 +1710,13 @@
           <h2><a href="#seasonal-considerations">Seasonal Considerations</a></h2>
         </div>
         <p>
-          Strategies shift every year as trailheads, roads, and weather patterns change. The AMC tracks winter finishers separately because road closures, avalanche zones, and snowpack reshape the effort. Use the toggle to switch between summer and winter planning and verify access and forecasts with official sources.
+          Strategies shift every year as trailheads, roads, and weather patterns change. The AMC tracks winter finishers separately because road closures, avalanche zones, and snowpack reshape the effort. Use the toggle to switch between summer, fall, winter, and spring planning and verify access and forecasts with official sources.
         </p>
         <div class="toggle-group" role="tablist" aria-label="Toggle hiking season">
           <button id="summerBtn" class="active" type="button" role="tab" aria-pressed="true" aria-selected="true" aria-controls="seasonTable">Summer</button>
+          <button id="fallBtn" type="button" role="tab" aria-pressed="false" aria-selected="false" aria-controls="seasonTable">Fall</button>
           <button id="winterBtn" type="button" role="tab" aria-pressed="false" aria-selected="false" aria-controls="seasonTable">Winter</button>
+          <button id="springBtn" type="button" role="tab" aria-pressed="false" aria-selected="false" aria-controls="seasonTable">Spring</button>
         </div>
         <div class="table-scroll season-table">
           <table id="seasonTable">
@@ -1944,18 +1946,36 @@
 
       const seasonRows = {
         summer: [
-          ['Trail access', 'Many trailheads open after mud season, but check for temporary closures or construction detours.'],
+          ['Trail access', 'Many trailheads open after mud season, but check WMNF alerts and AMC updates for closures or construction detours.'],
           ['Gear', 'Light layers, sun protection, bug netting in early summer, and traction for lingering monorail snow.'],
-          ['Strategy', 'Many hikers start at dawn for Lafayette–Lincoln or the Bonds to avoid thunderstorms and crowds.'],
+          ['Strategy', 'Long days allow big mileage, but plan early starts for exposed ridges and carry a headlamp for storm delays.'],
           ['Road notes', 'Tripoli Road (Tecumseh/Osceola) and Zealand Road often open after mud season; confirm status with official updates.'],
-          ['Navigation', 'Above-treeline routes on Washington, Jefferson, and Adams require careful rock hopping and bailout awareness.']
+          ['Navigation', 'Above-treeline routes on Washington, Jefferson, and Adams require careful rock hopping, bailout awareness, and staying on trail to protect fragile alpine terrain.'],
+          ['Additional hazards', 'Thunderstorms, heat exhaustion, and biting insects are common; check the Mt. Washington Observatory forecast before committing to exposed routes.']
+        ],
+        fall: [
+          ['Trail access', 'Roads and trailheads remain mostly open through mid-October, but gate closures begin after Columbus Day; leaf-peeper traffic can crowd parking. Expect first snows above 3,500 ft by November and occasional maintenance closures.'],
+          ['Gear', 'Dress for variable conditions with warm layers, hats, and gloves; pack rain gear and waterproof boots for wet leaves and early snow. Carry microspikes by late fall and wear blaze orange during hunting season (mid-Oct to Dec).'],
+          ['Strategy', 'Shorter days demand early starts and a headlamp; plan to be off exposed ridges by mid-afternoon and avoid steep leaf-covered descents in the dark.'],
+          ['Road notes', 'Seasonal roads like Tripoli Road and Zealand Road often close in mid-October; the Kancamagus Highway remains open year-round. Check NH DOT or WMNF for closure dates.'],
+          ['Navigation', 'Fallen leaves hide rocks, roots, and wet ledges, and above-treeline trails can ice early; carry traction, map, and GPS and verify junctions.'],
+          ['Additional hazards', 'Hunting season and early freezes raise hypothermia risk after sunset; keep dogs visible and confirm conditions with the AMC, WMNF, and Mt. Washington Observatory.']
         ],
         winter: [
-          ['Trail access', 'Gated roads (Zealand, Tripoli, Sawyer River) often add miles to Osceola, Zealand, and Carrigain; verify current access.'],
+          ['Trail access', 'Gated roads (Zealand, Tripoli, Sawyer River) often add miles to Osceola, Zealand, and Carrigain; verify current access with WMNF and AMC updates.'],
           ['Gear', 'Snowshoes (when depth >8"), microspikes, goggles, four-season shells, and hot backups for electronics.'],
-          ['Strategy', 'Short daylight usually demands pre-dawn starts; sheltered routes (Pierce, Waumbek, Tecumseh) are popular in high winds.'],
+          ['Strategy', 'Short daylight usually demands pre-dawn starts and a headlamp; sheltered routes (Pierce, Waumbek, Tecumseh) are popular in high winds.'],
           ['Road notes', 'Cog Railway and Cannon tram do not count toward AMC credit; plan self-propelled ascents from winter lots.'],
-          ['Navigation', 'Whiteouts on the Presidential Range make cairn-to-cairn travel hazardous—carry map, compass, and GPX.']
+          ['Navigation', 'Whiteouts on the Presidential Range make cairn-to-cairn travel hazardous; carry map, compass, and GPX and stay on trail to protect alpine terrain.'],
+          ['Additional hazards', 'Frostbite, avalanches, and ice dams are real risks; review avalanche bulletins and the Mt. Washington Observatory forecast before committing.']
+        ],
+        spring: [
+          ['Trail access', 'Mud season limits access: many USFS roads (Tripoli, Zealand, Sawyer River) remain gated until late May, adding miles to peaks like Osceola, Carrigain, and Zealand. Some trails close temporarily to protect them from erosion. Snowpack persists on north-facing slopes into June and water crossings may be high.'],
+          ['Gear', 'Prepare for shoulder-season conditions: winter traction remains necessary (snowshoes early, microspikes later). Waterproof boots, gaiters, and dry socks are essential; pack insect repellent for black flies and mosquitoes in May and June and do tick checks after hikes.'],
+          ['Strategy', 'Plan for slow travel on rotten snow and mud, start early to cross swollen streams before afternoon melt, and favor south-facing routes for less snow. Carry a headlamp as days lengthen but weather remains volatile.'],
+          ['Road notes', 'Gated roads add 2-4 miles to Osceola, Zealand, Carrigain, and Hale approaches. The Mount Washington Auto Road and Cannon Tramway may be closed for spring maintenance; mechanical ascents do not count toward AMC credit anyway.'],
+          ['Navigation', 'Snow bridges can collapse as thaw progresses; have backup routes for impassable crossings. Deep snow hides trail corridors, so use GPS tracks and a compass and watch for avalanche danger in steep gullies like Tuckerman's Ravine.'],
+          ['Additional hazards', 'Deep mud causes erosion, so hike through the center of muddy sections. Black flies peak in late May and June and ticks can carry Lyme disease; treat clothing with permethrin and confirm conditions with WMNF alerts.']
         ]
       };
 
@@ -2329,7 +2349,13 @@
       function renderSeasonTable(season) {
         const tbody = document.getElementById('seasonRows');
         const heading = document.getElementById('seasonHeading');
-        heading.textContent = season === 'winter' ? 'Winter Strategy' : 'Summer Strategy';
+        const seasonLabels = {
+          summer: 'Summer',
+          fall: 'Fall',
+          winter: 'Winter',
+          spring: 'Spring'
+        };
+        heading.textContent = `${seasonLabels[season] || 'Summer'} Strategy`;
         tbody.innerHTML = '';
         seasonRows[season].forEach(([topic, detail]) => {
           const tr = document.createElement('tr');
@@ -2344,15 +2370,19 @@
       }
 
       function updateSeasonToggle(season) {
-        const isSummer = season === 'summer';
-        const summerBtn = document.getElementById('summerBtn');
-        const winterBtn = document.getElementById('winterBtn');
-        summerBtn.classList.toggle('active', isSummer);
-        winterBtn.classList.toggle('active', !isSummer);
-        summerBtn.setAttribute('aria-pressed', isSummer ? 'true' : 'false');
-        winterBtn.setAttribute('aria-pressed', !isSummer ? 'true' : 'false');
-        summerBtn.setAttribute('aria-selected', isSummer ? 'true' : 'false');
-        winterBtn.setAttribute('aria-selected', !isSummer ? 'true' : 'false');
+        const seasonButtons = {
+          summer: document.getElementById('summerBtn'),
+          fall: document.getElementById('fallBtn'),
+          winter: document.getElementById('winterBtn'),
+          spring: document.getElementById('springBtn')
+        };
+        Object.entries(seasonButtons).forEach(([key, button]) => {
+          if (!button) return;
+          const isActive = season === key;
+          button.classList.toggle('active', isActive);
+          button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+          button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
       }
 
       function renderDataLoadError(message) {
@@ -2548,13 +2578,18 @@
         renderRangeList();
         renderSeasonTable('summer');
         updateSeasonToggle('summer');
-        document.getElementById('summerBtn').addEventListener('click', () => {
-          updateSeasonToggle('summer');
-          renderSeasonTable('summer');
-        });
-        document.getElementById('winterBtn').addEventListener('click', () => {
-          updateSeasonToggle('winter');
-          renderSeasonTable('winter');
+        const seasonButtons = {
+          summer: document.getElementById('summerBtn'),
+          fall: document.getElementById('fallBtn'),
+          winter: document.getElementById('winterBtn'),
+          spring: document.getElementById('springBtn')
+        };
+        Object.entries(seasonButtons).forEach(([key, button]) => {
+          if (!button) return;
+          button.addEventListener('click', () => {
+            updateSeasonToggle(key);
+            renderSeasonTable(key);
+          });
         });
 
         document.querySelectorAll('[data-sort]').forEach((button) => {

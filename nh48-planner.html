@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Peak Planning Tool | NH48</title>
+    <meta
+      name="description"
+      content="Plan NH48 day-trip traverses with a drag-and-drop itinerary builder based on popular NH 4,000-footer groupings."
+    />
+    <link rel="icon" href="/favicons/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/x-icon" href="/favicons/favicon.ico" />
+    <link rel="stylesheet" href="/css/quick-browse-footer.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" src="/js/i18n.js"></script>
+    <style>
+      :root {
+        --background: #0a0a0a;
+        --surface: #111522;
+        --card: #171b2b;
+        --text: #f8fafc;
+        --muted: #cbd5f5;
+        --border: rgba(255, 255, 255, 0.14);
+        --primary: #22c55e;
+        --primary-strong: #4ade80;
+        --accent: #38bdf8;
+        --shadow: 0 18px 40px rgba(5, 8, 20, 0.45);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: 'Noto Sans', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background: var(--background);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: var(--primary);
+      }
+      a:hover {
+        color: var(--primary-strong);
+      }
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 18px 20px 70px;
+      }
+      .section {
+        margin: 30px 0;
+      }
+      .section-banner {
+        position: relative;
+        width: 100%;
+        min-height: 250px;
+        background-size: cover;
+        background-position: center;
+        border-radius: 16px;
+        padding: 22px 24px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: flex-end;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .section-banner::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(3, 6, 17, 0.75) 80%);
+        border-radius: inherit;
+        pointer-events: none;
+      }
+      .section-banner h2 {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-size: clamp(1.8rem, 3vw, 2.3rem);
+        font-weight: 600;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+      }
+      .section-banner h2 a {
+        text-decoration: none;
+        color: #ffffff;
+      }
+      .planner-shell {
+        background: var(--surface);
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        padding: 22px;
+        display: grid;
+        gap: 18px;
+        box-shadow: var(--shadow);
+      }
+      .planner-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+      .planner-controls label {
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .planner-controls select {
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 0.95rem;
+        min-width: 240px;
+      }
+      .planner-controls select:focus {
+        outline: 2px solid rgba(34, 197, 94, 0.5);
+        outline-offset: 2px;
+      }
+      .preset-meta {
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+      .preset-meta strong {
+        color: var(--text);
+      }
+      .itinerary-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .itinerary-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 16px;
+        align-items: center;
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: var(--card);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        cursor: grab;
+        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      }
+      .itinerary-row.is-dragging {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.5);
+        transform: scale(1.01);
+      }
+      .itinerary-index {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: #0b111b;
+        font-weight: 700;
+        display: grid;
+        place-items: center;
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+      }
+      .itinerary-name {
+        font-weight: 600;
+        font-size: 1rem;
+      }
+      .itinerary-range {
+        font-size: 0.85rem;
+        color: var(--muted);
+        text-align: right;
+      }
+      .itinerary-empty {
+        border: 1px dashed rgba(148, 163, 184, 0.3);
+        border-radius: 14px;
+        padding: 20px;
+        text-align: center;
+        color: var(--muted);
+        background: rgba(15, 23, 42, 0.4);
+      }
+      .planner-status {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      .planner-status strong {
+        color: var(--text);
+      }
+      @media (max-width: 720px) {
+        .planner-controls {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .planner-controls select {
+          width: 100%;
+        }
+        .itinerary-row {
+          grid-template-columns: auto 1fr;
+          grid-template-rows: auto auto;
+        }
+        .itinerary-range {
+          grid-column: 1 / -1;
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+  <body data-route="nh48-planner" data-page="nh48-planner">
+    <div id="nav-placeholder"></div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const navPlaceholder = document.getElementById('nav-placeholder');
+        const footerPlaceholder = document.getElementById('footer-placeholder');
+        const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+        if (navPlaceholder) {
+          fetch('/pages/nav.html')
+            .then((r) => r.text())
+            .then((html) => {
+              navPlaceholder.innerHTML = html;
+              const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+              links.forEach((link) => {
+                const routes = (link.dataset.routes || link.dataset.route || '')
+                  .split(',')
+                  .map((value) => value.trim())
+                  .filter(Boolean);
+
+                if (routes.includes(activeRoute)) {
+                  link.classList.add('active');
+                  link.setAttribute('aria-current', 'page');
+                }
+              });
+              if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+                window.NH48_I18N.refreshLangPicker();
+              }
+            })
+            .catch((err) => console.error('Navigation failed to load', err));
+        }
+
+        if (footerPlaceholder) {
+          fetch('/pages/footer.html')
+            .then((r) => r.text())
+            .then((html) => {
+              footerPlaceholder.innerHTML = html;
+            })
+            .catch((err) => console.error('Footer failed to load', err));
+        }
+      });
+    </script>
+
+    <main class="wrap">
+      <section class="section" id="peak-planner">
+        <div
+          class="section-banner"
+          style="background-image: url('https://photos.nh48.info/mount-madison/mount-madison__002.jpg');"
+        >
+          <h2><a href="#peak-planner">Peak Planning Tool</a></h2>
+        </div>
+        <p>
+          Use this interactive planner to organize your NH48 hiking journey. Select from pre-made
+          traverses or build your own itinerary by dragging peaks into your preferred order. The
+          tool automatically numbers each stop to streamline your planning process. All data comes
+          from the live NH48 manifest; confirm conditions and routes with official sources.
+        </p>
+        <div id="planner-root"></div>
+      </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/@hello-pangea/dnd@13.1.0/dist/hello-pangea-dnd.umd.js"></script>
+    <script src="/js/nh48-planner.js"></script>
+  </body>
+</html>
