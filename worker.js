@@ -484,39 +484,7 @@ export default {
         'Access-Control-Allow-Origin': '*'
       };
 
-      const mergeFeatureCollections = (primary, secondary) => {
-        const primaryFeatures = Array.isArray(primary?.features) ? primary.features : [];
-        const secondaryFeatures = Array.isArray(secondary?.features) ? secondary.features : [];
-        const seen = new Set();
-        const merged = [];
-
-        for (const feature of primaryFeatures) {
-          const name = feature?.properties?.name;
-          if (typeof name === 'string' && name.trim()) {
-            seen.add(name.trim());
-          }
-          merged.push(feature);
-        }
-
-        for (const feature of secondaryFeatures) {
-          const name = feature?.properties?.name;
-          const keyName = typeof name === 'string' ? name.trim() : '';
-          if (keyName && seen.has(keyName)) {
-            continue;
-          }
-          merged.push(feature);
-          if (keyName) {
-            seen.add(keyName);
-          }
-        }
-
-        return {
-          type: 'FeatureCollection',
-          features: merged
-        };
-      };
-
-      if (env.HOWKER_DATA && pathname !== '/data/howker-ridge-pois.geojson') {
+      if (env.HOWKER_DATA) {
         const object = await env.HOWKER_DATA.get(key);
         if (object) {
           const body = await object.arrayBuffer();
@@ -532,37 +500,6 @@ export default {
 
       const githubUrl = `${RAW_BASE}${pathname}`;
       try {
-        if (pathname === '/data/howker-ridge-pois.geojson') {
-          const [r2Object, githubRes] = await Promise.all([
-            env.HOWKER_DATA ? env.HOWKER_DATA.get(key) : Promise.resolve(null),
-            fetch(githubUrl, {
-              headers: { 'User-Agent': 'NH48-SSR/1.0' },
-              cf: { cacheTtl: 0, cacheEverything: false }
-            })
-          ]);
-
-          const githubOk = githubRes.ok;
-          if (!githubOk) {
-            console.log(`[Static] Not found: ${githubUrl} (${githubRes.status})`);
-          }
-
-          const r2Json = r2Object ? await r2Object.json().catch(() => null) : null;
-          const githubJson = githubOk ? await githubRes.json().catch(() => null) : null;
-
-          if (r2Json || githubJson) {
-            const merged = mergeFeatureCollections(r2Json, githubJson);
-            return new Response(JSON.stringify(merged), {
-              status: 200,
-              headers: {
-                'Content-Type': contentType,
-                ...cacheHeaders
-              }
-            });
-          }
-
-          return new Response('Not Found', { status: 404 });
-        }
-
         const res = await fetch(githubUrl, {
           headers: { 'User-Agent': 'NH48-SSR/1.0' },
           cf: { cacheTtl: 0, cacheEverything: false }
