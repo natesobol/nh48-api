@@ -1224,17 +1224,18 @@ function PeakPlannerApp() {
       className: `itinerary-row${snapshot.isDragging ? ' is-dragging' : ''}${matchesFilters ? ' is-highlighted' : ''}${isSelected ? ' is-selected' : ''}`,
       onContextMenu: (event) => openContextMenu(event, { type: 'peak', id: peak.id })
     }, [
-      React.createElement('div', { className: 'itinerary-left', 'aria-hidden': 'true' }, [
-        React.createElement('span', { className: 'itinerary-grab-rail' }),
-        React.createElement('span', {
-          className: 'itinerary-index',
-          style: indexStyle
-        }, displayIndex)
-      ]),
       React.createElement('div', {
         className: 'itinerary-photo-banner',
         style: { backgroundImage: `url('${photoUrl}')` }
       }, [
+        React.createElement('span', { className: 'itinerary-grab-rail', 'aria-hidden': 'true' }),
+        React.createElement('div', { className: 'itinerary-banner-top' }, [
+          React.createElement('span', {
+            className: 'itinerary-index',
+            style: indexStyle
+          }, displayIndex),
+          React.createElement('span', { className: 'itinerary-range' }, peak.rangeGroup || peak.range || 'Range TBD')
+        ]),
         React.createElement('div', { className: 'itinerary-details' }, [
           React.createElement('div', { className: 'itinerary-name-row' }, [
             React.createElement('input', {
@@ -1251,8 +1252,7 @@ function PeakPlannerApp() {
           renderMetrics(peak)
         ]),
         renderRiskTags(peak)
-      ]),
-      React.createElement('span', { className: 'itinerary-range' }, peak.rangeGroup || peak.range || 'Range TBD')
+      ])
     ]);
   };
 

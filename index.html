@@ -2129,7 +2129,7 @@
         const startX = Math.random() * Math.max(1, viewport.width - labelWidth);
         const startY = Math.random() * Math.max(1, viewport.height - labelHeight);
 
-        floatingLabels.push({
+        const labelObj = {
           el: label,
           x: startX,
           y: startY,
@@ -2140,7 +2140,9 @@
           typingIndex: 0,
           typingForward: true,
           typingTimeout: null
-        });
+        };
+        floatingLabels.push(labelObj);
+        return labelObj;
       };
 
       const startTypingAnimation = (labelObj) => {
@@ -2198,8 +2200,6 @@
       };
 
       spawnNextLabel();
-
-      floatingLabels.forEach((labelObj) => startTypingAnimation(labelObj));
 
       const updateViewport = () => {
         viewport.width = window.innerWidth;

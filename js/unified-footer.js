@@ -692,8 +692,7 @@
           { href: "https://nh48pics.com", text: "NH48 Pics", external: true },
           { href: "https://nh48.app", text: "Peak Bagger", external: true },
           { href: "https://www.instagram.com/nate_dumps_pics/", text: "@nate_dumps_pics", external: true, className: "nh48-quick-footer__meta-link--instagram" }
-        ],
-        }
+        ]
       }
     },
     
