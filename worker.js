@@ -1613,6 +1613,9 @@ export default {
         const parsed = new URL(url);
         if (parsed.hostname !== 'photos.nh48.info') return url;
         const path = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
+        if (path.includes('/cdn-cgi/image/')) {
+          return url;
+        }
         return `https://photos.nh48.info/cdn-cgi/image/${options}${path}`;
       } catch (_) {
         return url;

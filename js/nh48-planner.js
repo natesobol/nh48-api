@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'https://esm.sh/reac
 import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
 import { DragDropContext, Droppable, Draggable } from 'https://esm.sh/@hello-pangea/dnd@18.0.1?deps=react@18.2.0,react-dom@18.2.0';
 
-const PRESET_SETS = [
+const DAY_TRIP_GROUPS = [
   {
     id: 'presidential',
     name: 'Presidential Traverse',
@@ -119,6 +119,49 @@ const PRESET_SETS = [
   }
 ];
 
+const DIFFICULTY_MAP = {
+  'mount-tecumseh': 'beginner',
+  'mount-waumbek': 'beginner',
+  'mount-pierce': 'beginner',
+  'mount-jackson': 'beginner',
+  'mount-osceola': 'beginner',
+  'mount-hale': 'beginner',
+  'mount-carrigain': 'challenging',
+  'owls-head': 'challenging',
+  'mount-isolation': 'challenging',
+  'mount-whiteface': 'challenging',
+  'mount-passaconaway': 'challenging',
+  'wildcat-mountain-a': 'challenging',
+  'wildcat-mountain-d': 'challenging',
+  'mount-washington': 'severe',
+  'mount-adams': 'severe',
+  'mount-jefferson': 'severe',
+  'mount-madison': 'severe',
+  'mount-lafayette': 'severe',
+  'mount-lincoln': 'severe',
+  'bondcliff': 'severe',
+  'mount-monroe': 'severe'
+};
+
+const DIFFICULTY_ORDER = ['beginner', 'moderate', 'challenging', 'severe'];
+const DIFFICULTY_LABELS = {
+  beginner: 'Beginner Friendly',
+  moderate: 'Moderate',
+  challenging: 'Challenging',
+  severe: 'Severe / Exposed'
+};
+
+const DIFFICULTY_SORT_OVERRIDES = {
+  'mount-tecumseh': -100,
+  'mount-pierce': -90,
+  'mount-waumbek': -80,
+  'mount-jackson': -70,
+  'mount-adams': 900,
+  'mount-madison': 910
+};
+
+const STORAGE_KEY = 'nh48-planner-itinerary-v1';
+
 const RISK_FACTORS = [
   { id: 'AboveTreelineExposure', label: 'Above-treeline exposure', color: '#f97316' },
   { id: 'SevereWeather', label: 'Severe weather', color: '#ef4444' },
@@ -165,6 +208,104 @@ function withinFilter(value, filter) {
   return true;
 }
 
+function resolveDifficulty(entry, slug) {
+  if (DIFFICULTY_MAP[slug]) return DIFFICULTY_MAP[slug];
+  const raw = `${entry?.Difficulty || ''}`.toLowerCase();
+  if (raw.includes('extremely') || raw.includes('very')) return 'severe';
+  if (raw.includes('difficult')) return 'challenging';
+  if (raw.includes('moderate')) return 'moderate';
+  return 'moderate';
+}
+
+function buildDifficultyGroups(peaksMap) {
+  const groups = DIFFICULTY_ORDER.map((tier) => ({
+    type: 'group',
+    id: `difficulty-${tier}`,
+    name: DIFFICULTY_LABELS[tier] || tier,
+    kind: 'difficulty',
+    items: []
+  }));
+  const groupIndex = groups.reduce((acc, group, idx) => {
+    acc[group.id] = idx;
+    return acc;
+  }, {});
+  Object.values(peaksMap).forEach((peak) => {
+    const tier = peak.difficulty || 'moderate';
+    const groupId = `difficulty-${tier}`;
+    const idx = groupIndex[groupId];
+    if (idx === undefined) return;
+    groups[idx].items.push(buildPeakItem(peak));
+  });
+  groups.forEach((group) => {
+    group.items.sort((a, b) => {
+      const aOverride = DIFFICULTY_SORT_OVERRIDES[a.slug] ?? 0;
+      const bOverride = DIFFICULTY_SORT_OVERRIDES[b.slug] ?? 0;
+      if (aOverride !== bOverride) return aOverride - bOverride;
+      const aVal = Number.isFinite(a.elevation) ? a.elevation : null;
+      const bVal = Number.isFinite(b.elevation) ? b.elevation : null;
+      if (aVal !== null && bVal !== null && aVal !== bVal) return aVal - bVal;
+      return a.name.localeCompare(b.name);
+    });
+  });
+  return groups.filter((group) => group.items.length);
+}
+
+function serializeItinerary(list) {
+  return list.map((item) => {
+    if (item.type === 'group') {
+      return {
+        type: 'group',
+        id: item.id,
+        name: item.name,
+        kind: item.kind || 'custom',
+        items: item.items.map((peak) => peak.slug)
+      };
+    }
+    return {
+      type: 'peak',
+      id: item.slug
+    };
+  });
+}
+
+function hydrateItinerary(serialized, peaksMap) {
+  if (!Array.isArray(serialized)) return null;
+  const list = [];
+  serialized.forEach((item) => {
+    if (item.type === 'group') {
+      const items = (item.items || [])
+        .map((slug) => peaksMap[slug])
+        .filter(Boolean)
+        .map((peak) => buildPeakItem(peak));
+      if (items.length) {
+        list.push({
+          type: 'group',
+          id: item.id || `group-${Date.now()}`,
+          name: item.name || 'Group',
+          kind: item.kind || 'custom',
+          items
+        });
+      }
+    } else if (item.type === 'peak') {
+      const peak = peaksMap[item.id];
+      if (peak) list.push(buildPeakItem(peak));
+    }
+  });
+  return list.length ? list : null;
+}
+
+function loadSavedItinerary(peaksMap) {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return hydrateItinerary(parsed, peaksMap);
+  } catch (err) {
+    console.warn('Failed to load saved itinerary', err);
+    return null;
+  }
+}
+
 function buildPeakItem(details) {
   return {
     type: 'peak',
@@ -173,20 +314,14 @@ function buildPeakItem(details) {
     name: details.name,
     range: details.range,
     rangeGroup: details.rangeGroup || '',
+    elevation: details.elevation ?? null,
+    difficulty: details.difficulty || 'moderate',
     riskFactors: details.riskFactors || [],
     primaryDistanceMi: details.primaryDistanceMi ?? null,
     primaryGainFt: details.primaryGainFt ?? null,
     estimatedTimeHours: details.estimatedTimeHours ?? null,
     bailoutDistanceMi: details.bailoutDistanceMi ?? null
   };
-}
-
-function buildItinerary(preset, peaksMap) {
-  if (!preset) return [];
-  return preset.peaks.map((slug) => {
-    const details = peaksMap[slug] || { slug, name: slug, range: '' };
-    return buildPeakItem(details);
-  });
 }
 
 function reorder(list, startIndex, endIndex) {
@@ -200,18 +335,9 @@ function reorder(list, startIndex, endIndex) {
   return result;
 }
 
-function mapVisibleIndexToActual(mapping, index, totalLength) {
-  if (!mapping) return null;
-  if (index < mapping.length) return mapping[index];
-  if (mapping.length === 0) return totalLength;
-  const lastActual = mapping[mapping.length - 1];
-  return Math.min(totalLength, lastActual + 1);
-}
-
 function PeakPlannerApp() {
   const [peaksMap, setPeaksMap] = useState({});
   const [itinerary, setItinerary] = useState([]);
-  const [selectedSetId, setSelectedSetId] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [hasOverlay, setHasOverlay] = useState(true);
@@ -223,6 +349,7 @@ function PeakPlannerApp() {
   const [timeFilter, setTimeFilter] = useState({ ...DEFAULT_NUMERIC_FILTER });
   const [bailoutFilter, setBailoutFilter] = useState({ ...DEFAULT_NUMERIC_FILTER });
   const [selectedPeakIds, setSelectedPeakIds] = useState(new Set());
+  const [selectedDayTripId, setSelectedDayTripId] = useState('');
   const groupCounterRef = useRef(1);
   useEffect(() => {
     Promise.all([
@@ -238,11 +365,13 @@ function PeakPlannerApp() {
         const map = {};
         Object.values(data).forEach((entry) => {
           const slug = entry.slug || entry.peakName?.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          const elevation = entry['Elevation (ft)'] ? Number.parseInt(entry['Elevation (ft)'], 10) : null;
           map[slug] = {
             slug,
             name: entry.peakName || entry['Peak Name'] || slug,
-            elevation: entry['Elevation (ft)'] || '',
+            elevation: Number.isFinite(elevation) ? elevation : null,
             range: entry['Range / Subrange'] || '',
+            difficulty: resolveDifficulty(entry, slug),
             rangeGroup: '',
             riskFactors: [],
             primaryDistanceMi: null,
@@ -279,6 +408,10 @@ function PeakPlannerApp() {
 
         setHasOverlay(Boolean(overlay));
         setPeaksMap(map);
+        const saved = loadSavedItinerary(map);
+        const baseItinerary = saved || buildDifficultyGroups(map);
+        setItinerary(baseItinerary);
+        setSelectedPeakIds(new Set());
         setLoading(false);
       })
       .catch((err) => {
@@ -288,22 +421,6 @@ function PeakPlannerApp() {
       });
   }, []);
 
-  useEffect(() => {
-    if (!selectedSetId) {
-      setItinerary([]);
-      setSelectedPeakIds(new Set());
-      return;
-    }
-    const preset = PRESET_SETS.find((set) => set.id === selectedSetId);
-    setItinerary(buildItinerary(preset, peaksMap));
-    setSelectedPeakIds(new Set());
-  }, [selectedSetId, peaksMap]);
-
-  const activePreset = useMemo(
-    () => PRESET_SETS.find((set) => set.id === selectedSetId),
-    [selectedSetId]
-  );
-
   const rangeGroupOptions = useMemo(() => {
     const groups = new Set();
     Object.values(peaksMap).forEach((peak) => {
@@ -311,6 +428,16 @@ function PeakPlannerApp() {
     });
     return Array.from(groups).sort((a, b) => a.localeCompare(b));
   }, [peaksMap]);
+
+  useEffect(() => {
+    if (!itinerary.length) return;
+    try {
+      const payload = serializeItinerary(itinerary);
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (err) {
+      console.warn('Failed to save itinerary', err);
+    }
+  }, [itinerary]);
 
   const filtersActive = useMemo(() => (
     activeRiskFilters.size > 0
@@ -338,68 +465,24 @@ function PeakPlannerApp() {
     return true;
   };
 
-  const filteredView = useMemo(() => {
-    const root = [];
-    const groupMaps = {};
-
-    itinerary.forEach((item, idx) => {
-      if (item.type === 'group') {
-        const visibleItems = [];
-        const visibleMap = [];
-        item.items.forEach((peak, peakIdx) => {
-          if (peakMatchesFilters(peak)) {
-            visibleItems.push(peak);
-            visibleMap.push({ item: peak, actualIndex: peakIdx });
-          }
-        });
-        groupMaps[item.id] = visibleMap;
-        root.push({
-          item: { ...item, visibleItems },
-          actualIndex: idx
-        });
-      } else if (item.type === 'peak') {
-        if (!filtersActive || peakMatchesFilters(item)) {
-          root.push({ item, actualIndex: idx });
-        }
-      }
-    });
-
-    return { root, groupMaps };
-  }, [itinerary, filtersActive, activeRiskFilters, activeRangeGroups, distanceFilter, gainFilter, timeFilter, bailoutFilter]);
-
-  const visiblePeakIds = useMemo(() => {
-    const ids = new Set();
-    filteredView.root.forEach((entry) => {
-      if (entry.item.type === 'peak') {
-        ids.add(entry.item.id);
-      } else {
-        entry.item.visibleItems.forEach((peak) => ids.add(peak.id));
-      }
-    });
-    return ids;
-  }, [filteredView]);
-
-  const selectedVisiblePeaks = useMemo(() => {
+  const selectedPeaks = useMemo(() => {
     const collected = [];
     itinerary.forEach((item) => {
       if (item.type === 'peak') {
-        if (selectedPeakIds.has(item.id) && visiblePeakIds.has(item.id)) {
+        if (selectedPeakIds.has(item.id)) {
           collected.push(item);
         }
       } else {
         item.items.forEach((peak) => {
-          if (selectedPeakIds.has(peak.id) && visiblePeakIds.has(peak.id)) {
+          if (selectedPeakIds.has(peak.id)) {
             collected.push(peak);
           }
         });
       }
     });
     return collected;
-  }, [itinerary, selectedPeakIds, visiblePeakIds]);
+  }, [itinerary, selectedPeakIds]);
 
-  const handleSetChange = (e) => {
-    setSelectedSetId(e.target.value);
-  };
   const toggleRiskFilter = (risk) => {
     if (!hasOverlay) return;
     setActiveRiskFilters((prev) => {
@@ -450,7 +533,7 @@ function PeakPlannerApp() {
   const clearSelection = () => setSelectedPeakIds(new Set());
 
   const handleGroupSelected = () => {
-    if (selectedVisiblePeaks.length < 2) return;
+    if (selectedPeaks.length < 2) return;
     const groupId = `custom-${Date.now()}-${groupCounterRef.current}`;
     const groupName = `Custom Group ${groupCounterRef.current}`;
     groupCounterRef.current += 1;
@@ -462,7 +545,7 @@ function PeakPlannerApp() {
 
       prev.forEach((item) => {
         if (item.type === 'peak') {
-          if (selectedPeakIds.has(item.id) && visiblePeakIds.has(item.id)) {
+          if (selectedPeakIds.has(item.id)) {
             if (insertIndex === null) insertIndex = next.length;
             collected.push(item);
           } else {
@@ -471,7 +554,7 @@ function PeakPlannerApp() {
         } else {
           const remaining = [];
           item.items.forEach((peak) => {
-            if (selectedPeakIds.has(peak.id) && visiblePeakIds.has(peak.id)) {
+            if (selectedPeakIds.has(peak.id)) {
               if (insertIndex === null) insertIndex = next.length;
               collected.push(peak);
             } else {
@@ -489,6 +572,7 @@ function PeakPlannerApp() {
         type: 'group',
         id: groupId,
         name: groupName,
+        kind: 'custom',
         items: collected
       };
       const safeIndex = insertIndex === null ? next.length : insertIndex;
@@ -510,124 +594,142 @@ function PeakPlannerApp() {
     clearSelection();
   };
 
-  const getRiskColor = (peak) => {
-    if (activeRiskFilters.size === 0) return null;
-    for (const risk of RISK_PRIORITY) {
-      if (activeRiskFilters.has(risk) && peak.riskFactors && peak.riskFactors.includes(risk)) {
-        return RISK_COLOR_LOOKUP[risk] || '#ef4444';
+  const handleAutoGroup = () => {
+    if (!selectedDayTripId) return;
+    const preset = DAY_TRIP_GROUPS.find((set) => set.id === selectedDayTripId);
+    if (!preset) return;
+    const slugSet = new Set(preset.peaks);
+    const groupId = `daytrip-${preset.id}`;
+
+    setItinerary((prev) => {
+      const cleaned = prev.filter((item) => !(item.type === 'group' && item.id === groupId));
+      const next = [];
+      const collected = [];
+
+      cleaned.forEach((item) => {
+        if (item.type === 'peak') {
+          if (slugSet.has(item.slug)) {
+            collected.push(item);
+          } else {
+            next.push(item);
+          }
+        } else {
+          const remaining = [];
+          item.items.forEach((peak) => {
+            if (slugSet.has(peak.slug)) {
+              collected.push(peak);
+            } else {
+              remaining.push(peak);
+            }
+          });
+          if (remaining.length) {
+            next.push({ ...item, items: remaining });
+          }
+        }
+      });
+
+      if (!collected.length) return prev;
+      const groupItem = {
+        type: 'group',
+        id: groupId,
+        name: preset.name,
+        kind: 'day-trip',
+        items: collected
+      };
+      next.unshift(groupItem);
+      return next;
+    });
+
+    setSelectedDayTripId('');
+    clearSelection();
+  };
+
+  const getHighlightColor = (peak) => {
+    if (!filtersActive) return null;
+    if (activeRiskFilters.size > 0) {
+      for (const risk of RISK_PRIORITY) {
+        if (activeRiskFilters.has(risk) && peak.riskFactors && peak.riskFactors.includes(risk)) {
+          return RISK_COLOR_LOOKUP[risk] || '#ef4444';
+        }
       }
+      return null;
     }
-    return null;
+    return '#38bdf8';
   };
   const onDragEnd = (result) => {
     const { destination, source } = result;
     if (!destination) return;
     if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
-    const rootMapping = filteredView.root.map((entry) => entry.actualIndex);
-    const groupMappings = Object.fromEntries(
-      Object.entries(filteredView.groupMaps).map(([id, entries]) => [id, entries.map((entry) => entry.actualIndex)])
-    );
-
-    const sourceIsRoot = source.droppableId === 'root';
-    const destIsRoot = destination.droppableId === 'root';
-    const sourceGroupId = sourceIsRoot ? null : source.droppableId.replace('group-', '');
-    const destGroupId = destIsRoot ? null : destination.droppableId.replace('group-', '');
-
-    if (sourceIsRoot) {
-      const sourceActual = rootMapping[source.index];
-      if (sourceActual === undefined) return;
-      const draggedItem = itinerary[sourceActual];
-      if (!draggedItem) return;
-
-      if (draggedItem.type === 'group' && !destIsRoot) {
-        return;
-      }
-
-      if (destIsRoot) {
-        const destActual = mapVisibleIndexToActual(rootMapping, destination.index, itinerary.length);
-        if (destActual === null || destActual === undefined) return;
-        setItinerary((prev) => reorder(prev, sourceActual, destActual));
-        return;
-      }
-
-      if (draggedItem.type !== 'peak') return;
-      const destGroupIndex = itinerary.findIndex((item) => item.type === 'group' && item.id === destGroupId);
-      if (destGroupIndex === -1) return;
-      const destGroup = itinerary[destGroupIndex];
-      const destMapping = groupMappings[destGroupId] || [];
-      const destActual = mapVisibleIndexToActual(destMapping, destination.index, destGroup.items.length);
-
-      setItinerary((prev) => {
-        const next = [...prev];
-        const [moved] = next.splice(sourceActual, 1);
-        const groupIdx = next.findIndex((item) => item.type === 'group' && item.id === destGroupId);
-        if (groupIdx === -1) return prev;
-        const group = next[groupIdx];
-        const updatedItems = [...group.items];
-        const insertAt = destActual === null || destActual === undefined ? updatedItems.length : destActual;
-        updatedItems.splice(insertAt, 0, moved);
-        next[groupIdx] = { ...group, items: updatedItems };
-        return next;
-      });
-      return;
-    }
-
-    const sourceGroupIndex = itinerary.findIndex((item) => item.type === 'group' && item.id === sourceGroupId);
-    if (sourceGroupIndex === -1) return;
-    const sourceGroup = itinerary[sourceGroupIndex];
-    const sourceMapping = groupMappings[sourceGroupId] || [];
-    const sourceActual = sourceMapping[source.index];
-    if (sourceActual === undefined) return;
-
-    if (destIsRoot) {
-      const destActual = mapVisibleIndexToActual(rootMapping, destination.index, itinerary.length);
-      if (destActual === null || destActual === undefined) return;
-      setItinerary((prev) => {
-        const next = [...prev];
-        const groupIdx = next.findIndex((item) => item.type === 'group' && item.id === sourceGroupId);
-        if (groupIdx === -1) return prev;
-        const group = next[groupIdx];
-        const groupItems = [...group.items];
-        const [moved] = groupItems.splice(sourceActual, 1);
-        if (groupItems.length === 0) {
-          next.splice(groupIdx, 1);
-        } else {
-          next[groupIdx] = { ...group, items: groupItems };
-        }
-        const insertAt = destActual;
-        next.splice(insertAt, 0, moved);
-        return next;
-      });
-      return;
-    }
-
-    const destGroupIndex = itinerary.findIndex((item) => item.type === 'group' && item.id === destGroupId);
-    if (destGroupIndex === -1) return;
-    const destGroup = itinerary[destGroupIndex];
-    const destMapping = groupMappings[destGroupId] || [];
-    const destActual = mapVisibleIndexToActual(destMapping, destination.index, destGroup.items.length);
-
     setItinerary((prev) => {
       const next = [...prev];
-      const srcIdx = next.findIndex((item) => item.type === 'group' && item.id === sourceGroupId);
-      const dstIdx = next.findIndex((item) => item.type === 'group' && item.id === destGroupId);
-      if (srcIdx === -1 || dstIdx === -1) return prev;
-      const srcGroup = next[srcIdx];
-      const dstGroup = next[dstIdx];
-      const srcItems = [...srcGroup.items];
-      const dstItems = [...dstGroup.items];
-      const [moved] = srcItems.splice(sourceActual, 1);
-      const insertAt = destActual === null || destActual === undefined ? dstItems.length : destActual;
-      dstItems.splice(insertAt, 0, moved);
-      if (srcItems.length === 0) {
-        next.splice(srcIdx, 1);
-      } else {
-        next[srcIdx] = { ...srcGroup, items: srcItems };
+      const getGroupIndex = (id) => next.findIndex((item) => item.type === 'group' && item.id === id);
+      const sourceIsRoot = source.droppableId === 'root';
+      const destIsRoot = destination.droppableId === 'root';
+
+      if (sourceIsRoot) {
+        const sourceItem = next[source.index];
+        if (!sourceItem) return prev;
+        if (destIsRoot) {
+          return reorder(next, source.index, destination.index);
+        }
+        if (sourceItem.type === 'group') return prev;
+
+        const destGroupId = destination.droppableId.replace('group-', '');
+        const destGroupIndex = getGroupIndex(destGroupId);
+        if (destGroupIndex === -1) return prev;
+        const destGroup = next[destGroupIndex];
+        const updatedItems = [...destGroup.items];
+        updatedItems.splice(destination.index, 0, sourceItem);
+        next.splice(source.index, 1);
+        const adjustedDestIndex = destGroupIndex > source.index ? destGroupIndex - 1 : destGroupIndex;
+        next[adjustedDestIndex] = { ...destGroup, items: updatedItems };
+        return next;
       }
-      const adjustedDstIdx = srcIdx !== dstIdx && srcIdx < dstIdx ? dstIdx - 1 : dstIdx;
-      next[adjustedDstIdx] = { ...dstGroup, items: dstItems };
-      return next;
+
+      const sourceGroupId = source.droppableId.replace('group-', '');
+      const sourceGroupIndex = getGroupIndex(sourceGroupId);
+      if (sourceGroupIndex === -1) return prev;
+      const sourceGroup = next[sourceGroupIndex];
+      const sourceItems = [...sourceGroup.items];
+      const [moved] = sourceItems.splice(source.index, 1);
+      if (!moved) return prev;
+
+      if (destIsRoot) {
+        let updatedList = [...next];
+        if (sourceItems.length === 0) {
+          updatedList.splice(sourceGroupIndex, 1);
+        } else {
+          updatedList[sourceGroupIndex] = { ...sourceGroup, items: sourceItems };
+        }
+        let insertIndex = destination.index;
+        if (sourceItems.length === 0 && sourceGroupIndex < insertIndex) insertIndex -= 1;
+        updatedList.splice(insertIndex, 0, moved);
+        return updatedList;
+      }
+
+      const destGroupId = destination.droppableId.replace('group-', '');
+      const destGroupIndex = getGroupIndex(destGroupId);
+      if (destGroupIndex === -1) return prev;
+      const destGroup = next[destGroupIndex];
+      if (sourceGroupId === destGroupId) {
+        const reorderedItems = [...destGroup.items];
+        reorderedItems.splice(source.index, 1);
+        reorderedItems.splice(destination.index, 0, moved);
+        next[destGroupIndex] = { ...destGroup, items: reorderedItems };
+        return next;
+      }
+      const destItems = [...destGroup.items];
+      destItems.splice(destination.index, 0, moved);
+      let updatedList = [...next];
+      if (sourceItems.length === 0) {
+        updatedList.splice(sourceGroupIndex, 1);
+      } else {
+        updatedList[sourceGroupIndex] = { ...sourceGroup, items: sourceItems };
+      }
+      const adjustedDestIndex = sourceItems.length === 0 && sourceGroupIndex < destGroupIndex ? destGroupIndex - 1 : destGroupIndex;
+      updatedList[adjustedDestIndex] = { ...destGroup, items: destItems };
+      return updatedList;
     });
   };
   const riskChip = (risk) => {
@@ -638,7 +740,8 @@ function PeakPlannerApp() {
       className: `chip-button${isActive ? ' is-active' : ''}${!hasOverlay ? ' is-disabled' : ''}`,
       onClick: () => toggleRiskFilter(risk.id),
       disabled: !hasOverlay,
-      'aria-pressed': isActive ? 'true' : 'false'
+      'aria-pressed': isActive ? 'true' : 'false',
+      style: { '--chip-color': risk.color }
     }, [
       React.createElement('span', { className: 'chip-dot', style: { background: risk.color } }),
       React.createElement('span', null, risk.label)
@@ -653,7 +756,8 @@ function PeakPlannerApp() {
       className: `chip-button${isActive ? ' is-active' : ''}${!hasOverlay ? ' is-disabled' : ''}`,
       onClick: () => toggleRangeGroup(group),
       disabled: !hasOverlay,
-      'aria-pressed': isActive ? 'true' : 'false'
+      'aria-pressed': isActive ? 'true' : 'false',
+      style: { '--chip-color': '#38bdf8' }
     }, group);
   };
 
@@ -687,19 +791,25 @@ function PeakPlannerApp() {
   };
 
   const renderPeakRow = (peak, displayIndex, provided, snapshot) => {
-    const riskColor = getRiskColor(peak);
-    const style = riskColor
-      ? { background: `linear-gradient(135deg, ${riskColor}, #0ea5e9)` }
+    const matchesFilters = filtersActive && peakMatchesFilters(peak);
+    const highlightColor = matchesFilters ? getHighlightColor(peak) : null;
+    const dragStyle = provided.draggableProps?.style || {};
+    const style = highlightColor
+      ? { ...dragStyle, '--highlight-color': highlightColor }
+      : dragStyle;
+    const indexStyle = highlightColor
+      ? { background: `linear-gradient(135deg, ${highlightColor}, #0ea5e9)` }
       : undefined;
 
     return React.createElement('div', {
       ref: provided.innerRef,
       ...provided.draggableProps,
-      className: `itinerary-row${snapshot.isDragging ? ' is-dragging' : ''}`
+      style,
+      className: `itinerary-row${snapshot.isDragging ? ' is-dragging' : ''}${matchesFilters ? ' is-highlighted' : ''}`
     }, [
       React.createElement('span', {
         className: 'itinerary-index drag-handle',
-        style,
+        style: indexStyle,
         ...provided.dragHandleProps
       }, displayIndex),
       React.createElement('div', { className: 'itinerary-details' }, [
@@ -719,9 +829,13 @@ function PeakPlannerApp() {
     ]);
   };
 
-  const emptyMessage = !selectedSetId
-    ? 'Choose a preset to load peaks, then drag items to reorder your day.'
-    : 'No peaks match the current filters.';
+  const getGroupLabel = (group) => {
+    if (group.kind === 'day-trip') return 'Day-trip group';
+    if (group.kind === 'difficulty') return 'Difficulty group';
+    return 'Custom group';
+  };
+
+  const emptyMessage = 'No peaks available.';
 
   let displayCounter = 0;
   const nextDisplayIndex = () => {
@@ -730,27 +844,6 @@ function PeakPlannerApp() {
   };
 
   return React.createElement('div', { className: 'planner-shell' },
-    React.createElement('div', { className: 'planner-controls' },
-      React.createElement('label', { htmlFor: 'presetSelect' }, 'Choose a preset route:'),
-      React.createElement('select', {
-        id: 'presetSelect',
-        value: selectedSetId,
-        onChange: handleSetChange
-      }, [
-        React.createElement('option', { key: 'none', value: '' }, '-- Select --'),
-        ...PRESET_SETS.map((set) =>
-          React.createElement('option', { key: set.id, value: set.id }, set.name)
-        )
-      ])
-    ),
-    activePreset
-      ? React.createElement('div', { className: 'preset-meta' },
-          React.createElement('strong', null, `${activePreset.name}: `),
-          activePreset.description
-        )
-      : React.createElement('div', { className: 'preset-meta' },
-          'Select a preset to populate your itinerary.'
-        ),
     React.createElement('div', { className: `planner-filters${!hasOverlay ? ' is-disabled' : ''}` }, [
       React.createElement('div', { className: 'filters-header' }, [
         React.createElement('h3', null, 'Filters'),
@@ -868,17 +961,38 @@ function PeakPlannerApp() {
           ])
         ])
       ]),
+      React.createElement('div', { className: 'auto-group' }, [
+        React.createElement('span', { className: 'filter-title' }, 'Auto-group day trips'),
+        React.createElement('div', { className: 'auto-group-controls' }, [
+          React.createElement('select', {
+            value: selectedDayTripId,
+            onChange: (e) => setSelectedDayTripId(e.target.value)
+          }, [
+            React.createElement('option', { key: 'none', value: '' }, 'Select a day-trip group'),
+            ...DAY_TRIP_GROUPS.map((set) =>
+              React.createElement('option', { key: set.id, value: set.id }, set.name)
+            )
+          ]),
+          React.createElement('button', {
+            type: 'button',
+            className: 'group-btn',
+            onClick: handleAutoGroup,
+            disabled: !selectedDayTripId
+          }, 'Group hike')
+        ]),
+        React.createElement('span', { className: 'filter-note' }, 'Create a grouped panel for a classic NH48 day-trip.')
+      ]),
       !hasOverlay
         ? React.createElement('div', { className: 'filter-note' }, 'Risk and route filters are unavailable because the overlay failed to load.')
         : null
     ]),
     React.createElement('div', { className: 'group-actions' }, [
-      React.createElement('span', { className: 'group-status' }, `${selectedVisiblePeaks.length} selected`),
+      React.createElement('span', { className: 'group-status' }, `${selectedPeaks.length} selected`),
       React.createElement('button', {
         type: 'button',
         className: 'group-btn',
         onClick: handleGroupSelected,
-        disabled: selectedVisiblePeaks.length < 2
+        disabled: selectedPeaks.length < 2
       }, 'Group selected'),
       React.createElement('button', {
         type: 'button',
@@ -900,8 +1014,7 @@ function PeakPlannerApp() {
           ...provided.droppableProps,
           className: 'itinerary-list'
         }, [
-          ...filteredView.root.map((entry, index) => {
-            const item = entry.item;
+          ...itinerary.map((item, index) => {
             if (item.type === 'group') {
               return React.createElement(Draggable, {
                 key: `group-${item.id}`,
@@ -920,6 +1033,7 @@ function PeakPlannerApp() {
                     }, 'drag'),
                     React.createElement('div', { className: 'group-title' }, [
                       React.createElement('strong', null, item.name),
+                      React.createElement('span', { className: 'group-badge' }, getGroupLabel(item)),
                       React.createElement('span', { className: 'group-meta' }, `${item.items.length} peaks`)
                     ]),
                     React.createElement('button', {
@@ -934,7 +1048,7 @@ function PeakPlannerApp() {
                       ...groupProvided.droppableProps,
                       className: 'group-list'
                     }, [
-                      ...(item.visibleItems.length ? item.visibleItems.map((peak, peakIndex) =>
+                      ...(item.items.length ? item.items.map((peak, peakIndex) =>
                         React.createElement(Draggable, {
                           key: `peak-${peak.id}`,
                           draggableId: `peak-${peak.id}`,
@@ -942,7 +1056,7 @@ function PeakPlannerApp() {
                         }, (peakProvided, peakSnapshot) =>
                           renderPeakRow(peak, nextDisplayIndex(), peakProvided, peakSnapshot)
                         )
-                      ) : [React.createElement('div', { key: 'empty', className: 'group-empty' }, 'No peaks match current filters.')]),
+                      ) : [React.createElement('div', { key: 'empty', className: 'group-empty' }, 'Group is empty.')]),
                       groupProvided.placeholder
                     ])
                   )
@@ -958,7 +1072,7 @@ function PeakPlannerApp() {
               renderPeakRow(item, nextDisplayIndex(), prov, snapshot)
             );
           }),
-          filteredView.root.length === 0 && !loading && !loadError
+          itinerary.length === 0 && !loading && !loadError
             ? React.createElement('div', { className: 'itinerary-empty' }, emptyMessage)
             : null,
           provided.placeholder

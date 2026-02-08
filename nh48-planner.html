@@ -98,29 +98,6 @@
         gap: 18px;
         box-shadow: var(--shadow);
       }
-      .planner-controls {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: center;
-      }
-      .planner-controls label {
-        font-weight: 600;
-        color: var(--muted);
-      }
-      .planner-controls select {
-        background: var(--card);
-        color: var(--text);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 10px 12px;
-        font-size: 0.95rem;
-        min-width: 240px;
-      }
-      .planner-controls select:focus {
-        outline: 2px solid rgba(34, 197, 94, 0.5);
-        outline-offset: 2px;
-      }
       .planner-filters {
         background: rgba(15, 23, 42, 0.5);
         border: 1px solid rgba(148, 163, 184, 0.2);
@@ -190,8 +167,10 @@
         border-color: rgba(56, 189, 248, 0.8);
       }
       .chip-button.is-active {
-        background: rgba(34, 197, 94, 0.2);
-        border-color: rgba(34, 197, 94, 0.7);
+        border: 1px solid transparent;
+        background:
+          linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)) padding-box,
+          linear-gradient(120deg, var(--chip-color, #38bdf8), rgba(34, 197, 94, 0.7)) border-box;
       }
       .chip-button.is-disabled {
         cursor: not-allowed;
@@ -266,14 +245,6 @@
         opacity: 0.5;
         cursor: not-allowed;
       }
-      .preset-meta {
-        color: var(--muted);
-        font-size: 0.95rem;
-        line-height: 1.4;
-      }
-      .preset-meta strong {
-        color: var(--text);
-      }
       .itinerary-list {
         display: flex;
         flex-direction: column;
@@ -290,6 +261,23 @@
         border: 1px solid rgba(148, 163, 184, 0.2);
         cursor: grab;
         transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+        position: relative;
+        z-index: 0;
+      }
+      .itinerary-row.is-highlighted {
+        border-color: transparent;
+      }
+      .itinerary-row.is-highlighted::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: 16px;
+        background: linear-gradient(120deg, var(--highlight-color, #38bdf8), rgba(34, 197, 94, 0.5));
+        z-index: 0;
+      }
+      .itinerary-row > * {
+        position: relative;
+        z-index: 1;
       }
       .itinerary-row.is-dragging {
         background: rgba(34, 197, 94, 0.1);
@@ -379,6 +367,15 @@
         display: grid;
         gap: 2px;
       }
+      .group-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
       .group-meta {
         font-size: 0.8rem;
         color: var(--muted);
@@ -400,6 +397,24 @@
         letter-spacing: 0.1em;
         color: var(--muted);
       }
+      .auto-group {
+        display: grid;
+        gap: 8px;
+      }
+      .auto-group-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      .auto-group select {
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 8px 12px;
+        min-width: 220px;
+      }
       .itinerary-empty {
         border: 1px dashed rgba(148, 163, 184, 0.3);
         border-radius: 14px;
@@ -416,13 +431,6 @@
         color: var(--text);
       }
       @media (max-width: 720px) {
-        .planner-controls {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-        .planner-controls select {
-          width: 100%;
-        }
         .filters-header {
           flex-direction: column;
           align-items: flex-start;
@@ -494,10 +502,12 @@
           <h2><a href="#peak-planner">Peak Planning Tool</a></h2>
         </div>
         <p>
-          Use this interactive planner to organize your NH48 hiking journey. Select from pre-made
-          traverses or build your own itinerary by dragging peaks into your preferred order. The
-          tool automatically numbers each stop to streamline your planning process. All data comes
-          from the live NH48 manifest; confirm conditions and routes with official sources.
+          Use this interactive planner to organize your NH48 hiking journey. The full list loads
+          automatically and starts grouped by difficulty, so easier hikes like Tecumseh and Pierce
+          rise to the top while the most demanding peaks sit at the end. Drag peaks to reorder,
+          group day-trip classics from the filters, and use the highlighting controls to spot
+          risks and route traits without hiding anything. All data comes from the live NH48
+          manifest; confirm conditions and routes with official sources.
         </p>
         <div id="planner-root"></div>
       </section>
