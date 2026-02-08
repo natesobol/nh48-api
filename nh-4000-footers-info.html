@@ -43,6 +43,7 @@
     <meta name="twitter:title" content="NH 48 4,000-Footers: Unofficial Community Information" />
     <meta name="twitter:description" content="Friendly, community-compiled info on New Hampshire's 4,000-footers with live data, maps, and planning notes." />
     <meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__001.jpg" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -693,12 +694,69 @@
         width: 100%;
         min-height: 400px;
       }
+      .map-toggle-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .map-toggle-group {
+        display: inline-flex;
+        border: 1px solid rgba(203, 213, 245, 0.2);
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(15, 23, 42, 0.5);
+      }
+      .map-toggle-group button {
+        background: transparent;
+        border: none;
+        color: var(--ink);
+        padding: 8px 14px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .map-toggle-group button.active {
+        background: var(--accent);
+        color: var(--bg);
+      }
+      .map-controls {
+        display: inline-flex;
+        gap: 8px;
+      }
+      .map-control-btn {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(203, 213, 245, 0.25);
+        color: var(--ink);
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .map-control-btn:hover,
+      .map-control-btn:focus-visible {
+        border-color: rgba(34, 197, 94, 0.5);
+        color: var(--accent);
+      }
       #peakMap {
         width: 100%;
         height: 520px;
         background: rgba(10, 12, 20, 0.65);
         border-radius: 16px;
         border: 1px solid rgba(203, 213, 245, 0.18);
+      }
+      #peakMapLeaflet {
+        width: 100%;
+        height: 520px;
+        border-radius: 16px;
+        border: 1px solid rgba(203, 213, 245, 0.18);
+        overflow: hidden;
+        display: none;
+      }
+      .leaflet-container {
+        background: #0b1220;
       }
       .map-legend {
         display: flex;
@@ -707,6 +765,19 @@
         flex-wrap: wrap;
         color: var(--muted);
         font-size: 14px;
+      }
+      .map-legend-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      .map-legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+        color: var(--ink);
       }
       .legend-dot {
         width: 12px;
@@ -717,19 +788,82 @@
       }
       .range-list {
         display: grid;
-        grid-template-columns: 1fr;
-        gap: 12px;
-        margin-top: 8px;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+        margin-top: 14px;
       }
       .range-card {
-        background: var(--card-gradient);
-        border: 1px solid var(--card-border);
-        padding: 12px;
-        border-radius: var(--card-radius);
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        padding: 10px 12px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        color: var(--ink);
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
       }
       .range-card.active {
+        border-color: rgba(34, 197, 94, 0.6);
+        box-shadow: 0 10px 22px rgba(34, 197, 94, 0.2);
+        transform: translateY(-1px);
+      }
+      .range-card__name {
+        font-size: 0.95rem;
+        letter-spacing: 0.2px;
+      }
+      .range-card__dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
+      }
+      .range-card__chip {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .table-actions {
+        display: inline-flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .table-action {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        color: var(--ink);
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .table-action:hover,
+      .table-action:focus-visible {
         border-color: rgba(34, 197, 94, 0.5);
-        box-shadow: 0 12px 32px rgba(34, 197, 94, 0.12);
+        color: var(--accent);
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
       }
       .toggle-group {
         display: inline-flex;
@@ -1305,11 +1439,25 @@
         </div>
         <div class="panel hero-card map-shell">
           <p>Use range cards to focus the list and map together for faster planning.</p>
-          <div class="range-list" id="rangeList"></div>
-          <svg id="peakMap" role="img" aria-label="Map of all 48 New Hampshire 4,000 foot peaks"></svg>
-          <div class="map-legend">
-            <span><span class="legend-dot" style="background:#22c55e"></span><span id="mapLegendLabel">NH48 Summits (All ranges)</span></span>
+          <div class="map-toggle-row">
+            <div class="map-toggle-group" role="tablist" aria-label="Map style">
+              <button type="button" id="mapStyleStylized" class="active" role="tab" aria-selected="true">Stylized</button>
+              <button type="button" id="mapStyleOsm" role="tab" aria-selected="false">OSM Topo</button>
+            </div>
+            <div class="map-controls" aria-label="Map controls">
+              <button class="map-control-btn" type="button" id="mapZoomIn">Zoom in</button>
+              <button class="map-control-btn" type="button" id="mapZoomOut">Zoom out</button>
+              <button class="map-control-btn" type="button" id="mapReset">Reset view</button>
+              <button class="map-control-btn" type="button" id="mapClearFilters">Clear filters</button>
+            </div>
           </div>
+          <svg id="peakMap" role="img" aria-label="Map of all 48 New Hampshire 4,000 foot peaks"></svg>
+          <div id="peakMapLeaflet" role="img" aria-label="OpenStreetMap topographic view of NH48 peaks"></div>
+          <div class="map-legend">
+            <span><span class="legend-dot" id="mapLegendDot" style="background:#22c55e"></span><span id="mapLegendLabel">NH48 Summits (All ranges)</span></span>
+            <div class="map-legend-items" id="mapLegendItems"></div>
+          </div>
+          <div class="range-list" id="rangeList" aria-label="Map range filters"></div>
         </div>
       </section>
 
@@ -1344,7 +1492,7 @@
                       </button>
                     </th>
                     <th>Difficulty</th>
-                    <th>Best For</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="peakTableBody"></tbody>
@@ -1643,6 +1791,7 @@
 
     </main>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
       let canonicalRanges = [];
 
@@ -1663,6 +1812,24 @@
       let rangeOrder = ['All'];
       let rangeDescriptions = {};
       let rangeLookup = {};
+      let rangeColors = {};
+      const selectedRanges = new Set();
+      let selectedPeakSlug = null;
+
+      const RANGE_COLOR_PALETTE = [
+        '#22c55e',
+        '#38bdf8',
+        '#f97316',
+        '#a855f7',
+        '#facc15',
+        '#14b8a6',
+        '#e879f9',
+        '#60a5fa',
+        '#f472b6',
+        '#84cc16',
+        '#fb7185',
+        '#f59e0b'
+      ];
 
       const buildRangeLookup = (data) => {
         const nameToSlug = {};
@@ -1689,6 +1856,10 @@
         rangeOrder = ['All', ...canonicalRanges.map((range) => range.name)];
         rangeDescriptions = canonicalRanges.reduce((acc, range) => {
           acc[range.name] = range.description;
+          return acc;
+        }, {});
+        rangeColors = canonicalRanges.reduce((acc, range, index) => {
+          acc[range.name] = RANGE_COLOR_PALETTE[index % RANGE_COLOR_PALETTE.length];
           return acc;
         }, {});
       }
@@ -1769,20 +1940,6 @@
         return null;
       }
 
-      function bestFor(entry, slug) {
-        if (entry['View Type']) return entry['View Type'];
-        if (entry['Terrain Character']) return entry['Terrain Character'];
-        const custom = {
-          'mount-tecumseh': 'First NH48 summit / family-friendly',
-          'mount-waumbek': 'Low exposure forest hike',
-          'mount-washington': 'Alpine weather & observatory views',
-          'mount-lafayette': 'Franconia Ridge panorama',
-          'owls-head': 'Remote endurance loop',
-          'bondcliff': 'Iconic cliff ledge panorama'
-        };
-        return custom[slug] || 'Classic NH48 experience';
-      }
-
       function getRange(entry, slug) {
         if (rangeLookup[slug]) return rangeLookup[slug];
         const range = entry['Range / Subrange'];
@@ -1818,6 +1975,8 @@
           btn.setAttribute('aria-controls', 'peakTableBody');
           btn.addEventListener('click', () => {
             currentRange = label;
+            selectedRanges.clear();
+            selectedPeakSlug = null;
             renderRangeFilters();
             renderRangeList();
             renderPeakTable();
@@ -1831,39 +1990,68 @@
         const list = document.getElementById('rangeList');
         list.innerHTML = '';
         rangeOrder.filter((r) => r !== 'All').forEach((range) => {
-          const card = document.createElement('div');
-          card.className = 'range-card hero-card';
-          card.classList.toggle('active', currentRange === range);
-          const title = document.createElement('div');
-          title.style.display = 'flex';
-          title.style.justifyContent = 'space-between';
-          title.style.alignItems = 'center';
-          const h = document.createElement('h3');
-          h.textContent = range;
-          h.style.margin = '0 0 6px';
-          const filterBtn = document.createElement('button');
-          filterBtn.className = `chip ${currentRange === range ? 'active' : ''}`;
-          filterBtn.textContent = 'Filter';
-          filterBtn.type = 'button';
-          filterBtn.setAttribute('aria-controls', 'peakTableBody');
-          filterBtn.setAttribute('aria-label', `Filter peaks to ${range}`);
-          filterBtn.setAttribute('aria-pressed', currentRange === range ? 'true' : 'false');
-          filterBtn.addEventListener('click', () => {
-            currentRange = range;
-            renderRangeFilters();
+          const card = document.createElement('button');
+          card.className = 'range-card';
+          card.type = 'button';
+          const isActive = selectedRanges.has(range);
+          card.classList.toggle('active', isActive);
+          card.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+          const desc = rangeDescriptions[range] || '';
+          card.setAttribute('aria-label', desc ? `${range}. ${desc}` : range);
+          if (desc) card.setAttribute('title', desc);
+
+          const nameWrap = document.createElement('span');
+          nameWrap.style.display = 'inline-flex';
+          nameWrap.style.alignItems = 'center';
+          nameWrap.style.gap = '8px';
+
+          const dot = document.createElement('span');
+          dot.className = 'range-card__dot';
+          dot.style.background = rangeColors[range] || '#22c55e';
+
+          const label = document.createElement('span');
+          label.className = 'range-card__name';
+          label.textContent = range;
+
+          const hiddenDesc = document.createElement('span');
+          hiddenDesc.className = 'sr-only';
+          hiddenDesc.textContent = desc;
+
+          const status = document.createElement('span');
+          status.className = 'range-card__chip';
+          status.textContent = isActive ? 'Selected' : 'Select';
+
+          nameWrap.appendChild(dot);
+          nameWrap.appendChild(label);
+          nameWrap.appendChild(hiddenDesc);
+          card.appendChild(nameWrap);
+          card.appendChild(status);
+          card.addEventListener('click', () => {
+            if (selectedRanges.has(range)) {
+              selectedRanges.delete(range);
+            } else {
+              selectedRanges.add(range);
+            }
+            selectedPeakSlug = null;
             renderRangeList();
-            renderPeakTable();
             scheduleMapRender();
-            window.scrollTo({ top: document.getElementById('official-peak-list').offsetTop - 60, behavior: 'smooth' });
           });
-          title.appendChild(h);
-          title.appendChild(filterBtn);
-          const desc = document.createElement('p');
-          desc.textContent = rangeDescriptions[range] || '';
-          card.appendChild(title);
-          card.appendChild(desc);
           list.appendChild(card);
         });
+      }
+
+      function focusMapOnPeak(peak) {
+        if (!peak) return;
+        selectedPeakSlug = peak.slug;
+        selectedRanges.clear();
+        currentRange = 'All';
+        renderRangeFilters();
+        renderRangeList();
+        scheduleMapRender();
+        const mapSection = document.getElementById('range-map');
+        if (mapSection) {
+          mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }
 
       function renderPeakTable() {
@@ -1914,20 +2102,40 @@
           difficultyBadge.textContent = `${peak.difficulty.charAt(0).toUpperCase()}${peak.difficulty.slice(1)}`;
           diffCell.appendChild(difficultyBadge);
 
-          const bestCell = document.createElement('td');
-          bestCell.textContent = peak.bestFor;
+          const actionCell = document.createElement('td');
+          const actionWrap = document.createElement('div');
+          actionWrap.className = 'table-actions';
+          const viewLink = document.createElement('a');
+          viewLink.className = 'table-action';
+          viewLink.href = `/peak/${peak.slug}/`;
+          viewLink.textContent = 'Details';
+          viewLink.setAttribute('aria-label', `Open ${peak.name} detail page`);
+          const mapBtn = document.createElement('button');
+          mapBtn.className = 'table-action';
+          mapBtn.type = 'button';
+          mapBtn.textContent = 'Map';
+          mapBtn.setAttribute('aria-label', `Show ${peak.name} on the map`);
+          mapBtn.addEventListener('click', () => focusMapOnPeak(peak));
+          actionWrap.appendChild(viewLink);
+          actionWrap.appendChild(mapBtn);
+          actionCell.appendChild(actionWrap);
 
           tr.appendChild(peakCell);
           tr.appendChild(elevCell);
           tr.appendChild(rangeCell);
           tr.appendChild(diffCell);
-          tr.appendChild(bestCell);
+          tr.appendChild(actionCell);
           tbody.appendChild(tr);
         });
         updateSortIndicators();
       }
       let mapRenderQueued = false;
       let mapResizeObserver = null;
+      let leafletMap = null;
+      let leafletLayer = null;
+      let leafletMarkers = null;
+      let leafletBounds = null;
+      let activeMapStyle = 'stylized';
 
       function scheduleMapRender() {
         if (mapRenderQueued) return;
@@ -1938,17 +2146,61 @@
         });
       }
 
+      function getActiveMapRanges() {
+        if (selectedPeakSlug) return [];
+        if (selectedRanges.size > 0) return Array.from(selectedRanges);
+        if (currentRange && currentRange !== 'All') return [currentRange];
+        return [];
+      }
+
+      function updateMapLegend(activeRanges, peakFocus) {
+        const legendLabel = document.getElementById('mapLegendLabel');
+        const legendItems = document.getElementById('mapLegendItems');
+        const legendDot = document.getElementById('mapLegendDot');
+        if (legendItems) legendItems.innerHTML = '';
+        if (peakFocus) {
+          if (legendLabel) legendLabel.textContent = `NH48 Summit: ${peakFocus.name}`;
+          if (legendDot) legendDot.style.background = rangeColors[peakFocus.range] || '#22c55e';
+          return;
+        }
+        if (!activeRanges.length) {
+          if (legendLabel) legendLabel.textContent = 'NH48 Summits (All ranges)';
+          if (legendDot) legendDot.style.background = '#22c55e';
+          return;
+        }
+        if (legendLabel) legendLabel.textContent = 'NH48 Summits (Selected ranges)';
+        if (legendDot) legendDot.style.background = '#94a3b8';
+        if (!legendItems) return;
+        activeRanges.forEach((range) => {
+          const item = document.createElement('span');
+          item.className = 'map-legend-item';
+          const dot = document.createElement('span');
+          dot.className = 'legend-dot';
+          dot.style.background = rangeColors[range] || '#22c55e';
+          const label = document.createElement('span');
+          label.textContent = range;
+          item.appendChild(dot);
+          item.appendChild(label);
+          legendItems.appendChild(item);
+        });
+      }
+
       function renderMap() {
         const map = document.getElementById('peakMap');
-        const legendLabel = document.getElementById('mapLegendLabel');
         map.innerHTML = '';
         const coords = peaks.filter((p) => p.coords);
-        const filtered = currentRange === 'All' ? coords : coords.filter((p) => p.range === currentRange);
-        if (legendLabel) {
-          legendLabel.textContent = currentRange === 'All' ? 'NH48 Summits (All ranges)' : `NH48 Summits (${currentRange})`;
+        const activeRanges = getActiveMapRanges();
+        const peakFocus = selectedPeakSlug ? peaks.find((p) => p.slug === selectedPeakSlug) : null;
+        let filtered = coords;
+        if (peakFocus) {
+          filtered = coords.filter((p) => p.slug === selectedPeakSlug);
+        } else if (activeRanges.length) {
+          filtered = coords.filter((p) => activeRanges.includes(p.range));
         }
+        updateMapLegend(activeRanges, peakFocus);
         if (!filtered.length) {
           map.innerHTML = '<text x="10" y="30" fill="#cbd5e1">No coordinate data available.</text>';
+          renderLeafletMap(filtered);
           return;
         }
         const boundsSource = filtered.length ? filtered : coords;
@@ -2025,24 +2277,27 @@
         filtered.forEach((peak) => {
           const { x, y } = project(peak.coords.lat, peak.coords.lon);
           const circle = document.createElementNS(ns, 'circle');
+          const color = rangeColors[peak.range] || '#22c55e';
           circle.setAttribute('cx', x);
           circle.setAttribute('cy', y);
-          circle.setAttribute('r', 5);
-          circle.setAttribute('fill', '#22c55e');
+          circle.setAttribute('r', peakFocus ? 7 : 5);
+          circle.setAttribute('fill', color);
           circle.setAttribute('stroke', 'var(--bg)');
-          circle.setAttribute('stroke-width', '1');
+          circle.setAttribute('stroke-width', peakFocus ? '2' : '1');
           circle.setAttribute('aria-label', peak.name);
           circle.addEventListener('mouseenter', () => {
             circle.setAttribute('fill', '#4ade80');
           });
           circle.addEventListener('mouseleave', () => {
-            circle.setAttribute('fill', '#22c55e');
+            circle.setAttribute('fill', color);
           });
           circle.addEventListener('click', () => {
             window.open(`/peak/${peak.slug}/`, '_blank');
           });
           map.appendChild(circle);
         });
+
+        renderLeafletMap(filtered);
       }
 
       function renderSeasonTable(season) {
@@ -2075,9 +2330,10 @@
       }
 
       function renderDataLoadError(message) {
-        document.getElementById('peakTableBody').innerHTML = `<tr><td colspan="5">${message}</td></tr>`;
+        document.getElementById('peakTableBody').innerHTML = `<tr><td colspan="4">${message}</td></tr>`;
         const map = document.getElementById('peakMap');
         map.innerHTML = '<text x="10" y="30" fill="#cbd5e1">Map data unavailable.</text>';
+        renderLeafletMap([]);
       }
 
       function observeMapResize() {
@@ -2088,6 +2344,93 @@
           scheduleMapRender();
         });
         mapResizeObserver.observe(map);
+      }
+
+      function initLeafletMap() {
+        if (leafletMap || typeof L === 'undefined') return;
+        const container = document.getElementById('peakMapLeaflet');
+        if (!container) return;
+        leafletMap = L.map(container, {
+          zoomControl: false,
+          scrollWheelZoom: false,
+          dragging: true,
+          doubleClickZoom: false,
+          boxZoom: false,
+          keyboard: false,
+          tap: false
+        });
+        leafletLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+          maxZoom: 17,
+          attribution: 'Map data © OpenStreetMap contributors, SRTM | Tiles © OpenTopoMap'
+        }).addTo(leafletMap);
+        leafletMarkers = L.layerGroup().addTo(leafletMap);
+      }
+
+      function renderLeafletMap(points) {
+        if (activeMapStyle !== 'osm') return;
+        initLeafletMap();
+        if (!leafletMap || !leafletMarkers) return;
+        leafletMarkers.clearLayers();
+        if (!points || !points.length) return;
+        const isPeakFocus = points.length === 1 && selectedPeakSlug && points[0]?.slug === selectedPeakSlug;
+        const latLngs = points.map((peak) => {
+          const color = rangeColors[peak.range] || '#22c55e';
+          const latLng = [peak.coords.lat, peak.coords.lon];
+          const marker = L.circleMarker(latLng, {
+            radius: isPeakFocus ? 7 : 5,
+            color: '#0b1220',
+            weight: 1,
+            fillColor: color,
+            fillOpacity: 0.95
+          });
+          marker.bindTooltip(peak.name, { direction: 'top', offset: [0, -6], opacity: 0.9 });
+          marker.on('click', () => {
+            window.open(`/peak/${peak.slug}/`, '_blank');
+          });
+          marker.addTo(leafletMarkers);
+          return latLng;
+        });
+        leafletBounds = L.latLngBounds(latLngs);
+        leafletMap.fitBounds(leafletBounds.pad(0.2), { animate: false });
+      }
+
+      function setMapStyle(style) {
+        activeMapStyle = style;
+        const stylizedBtn = document.getElementById('mapStyleStylized');
+        const osmBtn = document.getElementById('mapStyleOsm');
+        const svgMap = document.getElementById('peakMap');
+        const leafletEl = document.getElementById('peakMapLeaflet');
+        if (stylizedBtn && osmBtn) {
+          stylizedBtn.classList.toggle('active', style === 'stylized');
+          osmBtn.classList.toggle('active', style === 'osm');
+          stylizedBtn.setAttribute('aria-selected', style === 'stylized' ? 'true' : 'false');
+          osmBtn.setAttribute('aria-selected', style === 'osm' ? 'true' : 'false');
+        }
+        if (svgMap && leafletEl) {
+          svgMap.style.display = style === 'stylized' ? 'block' : 'none';
+          leafletEl.style.display = style === 'osm' ? 'block' : 'none';
+        }
+        if (style === 'osm') {
+          initLeafletMap();
+          setTimeout(() => {
+            if (leafletMap) {
+              leafletMap.invalidateSize();
+              if (leafletBounds) {
+                leafletMap.fitBounds(leafletBounds.pad(0.2), { animate: false });
+              }
+            }
+          }, 60);
+          const activeRanges = getActiveMapRanges();
+          const coords = peaks.filter((p) => p.coords);
+          const peakFocus = selectedPeakSlug ? peaks.find((p) => p.slug === selectedPeakSlug) : null;
+          let filtered = coords;
+          if (peakFocus) {
+            filtered = coords.filter((p) => p.slug === selectedPeakSlug);
+          } else if (activeRanges.length) {
+            filtered = coords.filter((p) => activeRanges.includes(p.range));
+          }
+          renderLeafletMap(filtered);
+        }
       }
 
       function renderItemListSchema() {
@@ -2106,7 +2449,7 @@
             position: index + 1,
             name: peak.name,
             url: `https://nh48.info/peak/${peak.slug}/`,
-            description: `${peak.range} — ${peak.bestFor}`
+            description: `${peak.range} peak`
           }))
         };
         script.textContent = JSON.stringify(itemList, null, 2);
@@ -2169,7 +2512,6 @@
             prominence: parseInt(entry['Prominence (ft)'], 10) || null,
             range: getRange(entry, slug),
             difficulty: difficultyMap[slug] || 'moderate',
-            bestFor: bestFor(entry, slug),
             coords: parseCoords(entry.Coordinates)
           };
         });
@@ -2242,6 +2584,50 @@
         setupTocObserver();
         const mapSection = document.getElementById('range-map');
         observeMapResize();
+        const stylizedBtn = document.getElementById('mapStyleStylized');
+        const osmBtn = document.getElementById('mapStyleOsm');
+        if (stylizedBtn && osmBtn) {
+          stylizedBtn.addEventListener('click', () => setMapStyle('stylized'));
+          osmBtn.addEventListener('click', () => setMapStyle('osm'));
+        }
+        const zoomInBtn = document.getElementById('mapZoomIn');
+        const zoomOutBtn = document.getElementById('mapZoomOut');
+        const resetBtn = document.getElementById('mapReset');
+        if (zoomInBtn) {
+          zoomInBtn.addEventListener('click', () => {
+            if (activeMapStyle === 'osm' && leafletMap) {
+              leafletMap.zoomIn();
+            }
+          });
+        }
+        if (zoomOutBtn) {
+          zoomOutBtn.addEventListener('click', () => {
+            if (activeMapStyle === 'osm' && leafletMap) {
+              leafletMap.zoomOut();
+            }
+          });
+        }
+        if (resetBtn) {
+          resetBtn.addEventListener('click', () => {
+            if (activeMapStyle === 'osm' && leafletMap) {
+              if (leafletBounds) {
+                leafletMap.fitBounds(leafletBounds.pad(0.2), { animate: false });
+              }
+            }
+          });
+        }
+        const clearBtn = document.getElementById('mapClearFilters');
+        if (clearBtn) {
+          clearBtn.addEventListener('click', () => {
+            selectedRanges.clear();
+            selectedPeakSlug = null;
+            currentRange = 'All';
+            renderRangeFilters();
+            renderRangeList();
+            renderPeakTable();
+            scheduleMapRender();
+          });
+        }
         if (mapSection) {
           const mapObserver = new IntersectionObserver((entries, observer) => {
             if (entries.some((entry) => entry.isIntersecting)) {
