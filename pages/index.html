@@ -729,6 +729,8 @@
       text-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
       opacity: 0;
       transition: opacity 0.6s ease;
+      filter: brightness(0.7);
+      animation: peakLabelBrightnessPulse 9s ease-in-out infinite;
     }
 
     .peak-label--name {
@@ -752,6 +754,16 @@
       50%,
       100% {
         opacity: 1;
+      }
+    }
+
+    @keyframes peakLabelBrightnessPulse {
+      0%,
+      100% {
+        filter: brightness(0.6);
+      }
+      50% {
+        filter: brightness(1.08);
       }
     }
 
@@ -2449,7 +2461,7 @@
         fitLabelSize(label, desiredSize);
 
         const scale = randomInRange(0.92, 1.18);
-        const speed = randomInRange(22, 48);
+        const speed = randomInRange(10, 24);
         const angle = Math.random() * Math.PI * 2;
         const velocity = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
         const labelWidth = label.offsetWidth * scale;
@@ -2473,10 +2485,10 @@
       };
 
       const startTypingAnimation = (labelObj) => {
-        const typingSpeed = randomInRange(90, 150);
-        const deleteSpeed = randomInRange(65, 110);
-        const visibleDuration = randomInRange(5000, 9000);
-        const hiddenDuration = randomInRange(1800, 3200);
+        const typingSpeed = randomInRange(140, 230);
+        const deleteSpeed = randomInRange(120, 190);
+        const visibleDuration = randomInRange(12000, 18000);
+        const hiddenDuration = randomInRange(6000, 9000);
 
         const clearTypingTimeout = () => {
           if (labelObj.typingTimeout) {
@@ -2519,10 +2531,55 @@
           if (index >= peaks.length) return;
           const labelObj = createFloatingLabel(peaks[index], 'name');
           startTypingAnimation(labelObj);
-          const nextDelay = randomInRange(1200, 2400);
+          const nextDelay = randomInRange(3000, 5200);
           setTimeout(() => spawnNextLabel(index + 1), nextDelay);
         };
         spawnNextLabel();
+      };
+
+      const getScaledDimensions = (label) => ({
+        width: Math.max(1, label.el.offsetWidth * label.scale),
+        height: Math.max(1, label.el.offsetHeight * label.scale)
+      });
+
+      const resolveLabelCollisions = () => {
+        for (let i = 0; i < floatingLabels.length; i += 1) {
+          const a = floatingLabels[i];
+          const aDims = getScaledDimensions(a);
+          const aCenterX = a.x + aDims.width / 2;
+          const aCenterY = a.y + aDims.height / 2;
+
+          for (let j = i + 1; j < floatingLabels.length; j += 1) {
+            const b = floatingLabels[j];
+            const bDims = getScaledDimensions(b);
+            const bCenterX = b.x + bDims.width / 2;
+            const bCenterY = b.y + bDims.height / 2;
+
+            const dx = bCenterX - aCenterX;
+            const dy = bCenterY - aCenterY;
+            const overlapX = (aDims.width + bDims.width) / 2 - Math.abs(dx);
+            const overlapY = (aDims.height + bDims.height) / 2 - Math.abs(dy);
+            if (overlapX <= 0 || overlapY <= 0) continue;
+
+            if (overlapX < overlapY) {
+              const direction = dx === 0 ? (Math.random() < 0.5 ? -1 : 1) : Math.sign(dx);
+              const push = overlapX / 2 + 0.5;
+              a.x -= direction * push;
+              b.x += direction * push;
+              const avx = a.vx;
+              a.vx = b.vx * 0.92;
+              b.vx = avx * 0.92;
+            } else {
+              const direction = dy === 0 ? (Math.random() < 0.5 ? -1 : 1) : Math.sign(dy);
+              const push = overlapY / 2 + 0.5;
+              a.y -= direction * push;
+              b.y += direction * push;
+              const avy = a.vy;
+              a.vy = b.vy * 0.92;
+              b.vy = avy * 0.92;
+            }
+          }
+        }
       };
 
       const updateViewport = () => {
@@ -2537,8 +2594,7 @@
         lastTime = timestamp;
 
         floatingLabels.forEach((label) => {
-          const scaledWidth = label.el.offsetWidth * label.scale;
-          const scaledHeight = label.el.offsetHeight * label.scale;
+          const { width: scaledWidth, height: scaledHeight } = getScaledDimensions(label);
           label.x += label.vx * delta;
           label.y += label.vy * delta;
 
@@ -2560,6 +2616,9 @@
 
           label.el.style.transform = `translate3d(${label.x}px, ${label.y}px, 0) scale(${label.scale})`;
         });
+
+        // Labels react physically only with other labels; no coupling to floating photos.
+        resolveLabelCollisions();
 
         requestAnimationFrame(animate);
       };
