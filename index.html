@@ -745,6 +745,25 @@
     .peak-label--name {
       font-size: 1.35rem;
       letter-spacing: 0.18px;
+      font-weight: 700;
+    }
+
+    .peak-label--typing::after {
+      content: ' _';
+      display: inline-block;
+      color: currentColor;
+      animation: peakLabelCursorBlink 1s steps(1, end) infinite;
+    }
+
+    @keyframes peakLabelCursorBlink {
+      0%,
+      49% {
+        opacity: 0;
+      }
+      50%,
+      100% {
+        opacity: 1;
+      }
     }
 
     @media (max-width: 768px) {
@@ -2090,42 +2109,74 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const peaks = [
-        'Washington',
-        'Adams',
-        'Jefferson',
-        'Madison',
-        'Moosilauke',
-        'Carrigain',
-        'Lincoln',
-        'Lafayette',
-        'South Twin',
-        'Cannon',
-        'Eisenhower',
-        'Pierce'
+      const fallbackPeaks = [
+        'Mount Washington',
+        'Mount Adams',
+        'Mount Jefferson',
+        'Mount Madison',
+        'Mount Moosilauke',
+        'Mount Carrigain',
+        'Mount Lincoln',
+        'Mount Lafayette',
+        'South Twin Mountain',
+        'Cannon Mountain',
+        'Mount Eisenhower',
+        'Mount Pierce'
       ];
 
       const container = document.getElementById('floating-peaks');
+      if (!container) return;
       const floatingLabels = [];
       const viewport = { width: window.innerWidth, height: window.innerHeight };
-
       const randomInRange = (min, max) => min + Math.random() * (max - min);
+      const shuffle = (list) => [...list].sort(() => Math.random() - 0.5);
+
+      async function loadPeakNames() {
+        try {
+          const response = await fetch('/data/nh48.json', { headers: { Accept: 'application/json' } });
+          if (!response.ok) throw new Error('Failed to load nh48.json');
+          const data = await response.json();
+          const names = Object.values(data)
+            .map((entry) => entry.peakName || entry['Peak Name'])
+            .filter((name) => typeof name === 'string' && name.trim().length);
+          const uniqueNames = Array.from(new Set(names));
+          return uniqueNames.length ? shuffle(uniqueNames).slice(0, 18) : fallbackPeaks;
+        } catch {
+          return fallbackPeaks;
+        }
+      }
+
+      function fitLabelSize(label, desiredRem) {
+        const minRem = viewport.width < 768 ? 0.95 : 1.1;
+        const maxWidth = Math.max(220, viewport.width * (viewport.width < 768 ? 0.72 : 0.82));
+        let rem = desiredRem;
+        label.style.fontSize = `${rem}rem`;
+        for (let i = 0; i < 10 && label.offsetWidth > maxWidth && rem > minRem; i += 1) {
+          rem *= 0.88;
+          label.style.fontSize = `${rem}rem`;
+        }
+        return rem;
+      }
 
       const createFloatingLabel = (text, variant) => {
         const label = document.createElement('div');
-        label.classList.add('peak-label', `peak-label--${variant}`);
+        label.classList.add('peak-label', `peak-label--${variant}`, 'peak-label--typing');
         label.textContent = '';
+        label.style.opacity = 0;
 
-        const scale = 1.18 + Math.random() * 0.55;
-        const speed = randomInRange(25, 55);
+        const sizePool = viewport.width < 768
+          ? [1, 1.2, 1.4, 1.8, 2.4, 3.2]
+          : [1, 1.4, 1.8, 2.6, 3.6, 4.8, 6.2, 8];
+        const desiredSize = sizePool[Math.floor(Math.random() * sizePool.length)];
+        container.appendChild(label);
+        fitLabelSize(label, desiredSize);
+
+        const scale = randomInRange(0.92, 1.18);
+        const speed = randomInRange(22, 48);
         const angle = Math.random() * Math.PI * 2;
         const velocity = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
-
-        container.appendChild(label);
-
         const labelWidth = label.offsetWidth * scale;
         const labelHeight = label.offsetHeight * scale;
-
         const startX = Math.random() * Math.max(1, viewport.width - labelWidth);
         const startY = Math.random() * Math.max(1, viewport.height - labelHeight);
 
@@ -2138,7 +2189,6 @@
           scale,
           fullText: text,
           typingIndex: 0,
-          typingForward: true,
           typingTimeout: null
         };
         floatingLabels.push(labelObj);
@@ -2146,70 +2196,65 @@
       };
 
       const startTypingAnimation = (labelObj) => {
-        const typingSpeed = randomInRange(110, 170);
-        const deleteSpeed = randomInRange(90, 150);
-        const visibleDuration = randomInRange(20000, 30000);
-        const hiddenDuration = randomInRange(20000, 30000);
+        const typingSpeed = randomInRange(90, 150);
+        const deleteSpeed = randomInRange(65, 110);
+        const visibleDuration = randomInRange(5000, 9000);
+        const hiddenDuration = randomInRange(1800, 3200);
 
-        const step = () => {
+        const clearTypingTimeout = () => {
           if (labelObj.typingTimeout) {
             clearTimeout(labelObj.typingTimeout);
+            labelObj.typingTimeout = null;
           }
-
-          const typeForward = () => {
-            if (labelObj.typingIndex < labelObj.fullText.length) {
-              labelObj.typingIndex += 1;
-              labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
-              labelObj.el.style.opacity = 1;
-              labelObj.typingTimeout = setTimeout(typeForward, typingSpeed);
-            } else {
-              labelObj.typingTimeout = setTimeout(startDeleting, visibleDuration);
-            }
-          };
-
-          const startDeleting = () => {
-            if (labelObj.typingIndex > 0) {
-              labelObj.typingIndex -= 1;
-              labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
-              labelObj.typingTimeout = setTimeout(startDeleting, deleteSpeed);
-            } else {
-              labelObj.el.style.opacity = 0;
-              labelObj.typingTimeout = setTimeout(() => {
-                labelObj.typingIndex = 0;
-                typeForward();
-              }, hiddenDuration);
-            }
-          };
-
-          typeForward();
         };
 
-        step();
+        const typeForward = () => {
+          if (labelObj.typingIndex < labelObj.fullText.length) {
+            labelObj.typingIndex += 1;
+            labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
+            labelObj.el.style.opacity = 1;
+            labelObj.typingTimeout = setTimeout(typeForward, typingSpeed);
+          } else {
+            labelObj.typingTimeout = setTimeout(startDeleting, visibleDuration);
+          }
+        };
+
+        const startDeleting = () => {
+          if (labelObj.typingIndex > 0) {
+            labelObj.typingIndex -= 1;
+            labelObj.el.textContent = labelObj.fullText.slice(0, labelObj.typingIndex);
+            labelObj.typingTimeout = setTimeout(startDeleting, deleteSpeed);
+          } else {
+            labelObj.el.style.opacity = 0;
+            labelObj.typingTimeout = setTimeout(() => {
+              labelObj.typingIndex = 0;
+              typeForward();
+            }, hiddenDuration);
+          }
+        };
+
+        clearTypingTimeout();
+        typeForward();
       };
 
-      const spawnNextLabel = (index = 0) => {
-        if (index >= peaks.length) {
-          return;
-        }
-
-        const labelObj = createFloatingLabel(peaks[index], 'name');
-        startTypingAnimation(labelObj);
-
-        const nextDelay = randomInRange(3000, 5000);
-        setTimeout(() => spawnNextLabel(index + 1), nextDelay);
+      const spawnLabels = (peaks) => {
+        const spawnNextLabel = (index = 0) => {
+          if (index >= peaks.length) return;
+          const labelObj = createFloatingLabel(peaks[index], 'name');
+          startTypingAnimation(labelObj);
+          const nextDelay = randomInRange(1200, 2400);
+          setTimeout(() => spawnNextLabel(index + 1), nextDelay);
+        };
+        spawnNextLabel();
       };
-
-      spawnNextLabel();
 
       const updateViewport = () => {
         viewport.width = window.innerWidth;
         viewport.height = window.innerHeight;
       };
-
       window.addEventListener('resize', updateViewport);
 
       let lastTime = performance.now();
-
       const animate = (timestamp) => {
         const delta = (timestamp - lastTime) / 1000;
         lastTime = timestamp;
@@ -2217,7 +2262,6 @@
         floatingLabels.forEach((label) => {
           const scaledWidth = label.el.offsetWidth * label.scale;
           const scaledHeight = label.el.offsetHeight * label.scale;
-
           label.x += label.vx * delta;
           label.y += label.vy * delta;
 
@@ -2243,7 +2287,10 @@
         requestAnimationFrame(animate);
       };
 
-      requestAnimationFrame(animate);
+      loadPeakNames().then((peaks) => {
+        spawnLabels(peaks);
+        requestAnimationFrame(animate);
+      });
     });
   </script>
   <script>

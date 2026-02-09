@@ -97,6 +97,134 @@
         display: grid;
         gap: 18px;
         box-shadow: var(--shadow);
+        position: relative;
+      }
+      .planner-command-bar {
+        position: sticky;
+        top: 76px;
+        z-index: 40;
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) minmax(240px, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        background: rgba(8, 12, 24, 0.92);
+        backdrop-filter: blur(6px);
+      }
+      .command-left {
+        display: grid;
+        gap: 4px;
+      }
+      .command-title {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+      }
+      .command-progress {
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+      .command-badge {
+        justify-self: start;
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        border: 1px solid rgba(34, 197, 94, 0.45);
+        background: rgba(20, 83, 45, 0.34);
+        color: #dcfce7;
+        font-size: 0.75rem;
+        padding: 3px 9px;
+      }
+      .command-search-wrap {
+        min-width: 0;
+      }
+      .command-search {
+        width: 100%;
+        min-height: 38px;
+        border-radius: 10px;
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: rgba(15, 23, 42, 0.58);
+        color: var(--text);
+        padding: 8px 12px;
+        font-size: 0.9rem;
+      }
+      .command-search::placeholder {
+        color: rgba(203, 213, 245, 0.65);
+      }
+      .command-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .command-btn {
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: rgba(15, 23, 42, 0.62);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 6px 10px;
+        font-size: 0.82rem;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .command-btn:hover {
+        border-color: rgba(56, 189, 248, 0.6);
+      }
+      .command-btn.is-active {
+        border-color: rgba(34, 197, 94, 0.68);
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.2) inset;
+      }
+      .command-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      .template-segment {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        position: relative;
+      }
+      .template-btn {
+        background: rgba(10, 16, 31, 0.7);
+      }
+      .template-more-wrap {
+        position: relative;
+      }
+      .template-more-menu {
+        position: absolute;
+        top: calc(100% + 6px);
+        right: 0;
+        min-width: 210px;
+        display: grid;
+        gap: 4px;
+        padding: 8px;
+        border-radius: 10px;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        background: rgba(8, 12, 24, 0.98);
+        box-shadow: 0 12px 28px rgba(2, 6, 23, 0.6);
+      }
+      .template-more-item {
+        text-align: left;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(15, 23, 42, 0.62);
+        color: var(--text);
+        border-radius: 8px;
+        padding: 6px 9px;
+        font-size: 0.82rem;
+        cursor: pointer;
+      }
+      .template-more-item.is-active {
+        border-color: rgba(34, 197, 94, 0.62);
+        background: rgba(20, 83, 45, 0.28);
+      }
+      .planner-filter-drawer {
+        display: none;
+      }
+      .planner-filter-drawer.is-open {
+        display: block;
       }
       .strategy-toolbar {
         display: grid;
@@ -148,15 +276,13 @@
         justify-content: center;
       }
       .planner-filters {
-        background: rgba(9, 12, 20, 0.55);
-        border: 1px solid rgba(56, 189, 248, 0.18);
+        background: rgba(9, 12, 20, 0.62);
+        border: 1px solid rgba(148, 163, 184, 0.2);
         border-radius: 16px;
         padding: 16px;
         display: grid;
         gap: 14px;
-        box-shadow:
-          0 0 0 1px rgba(9, 12, 20, 0.55) inset,
-          0 0 20px rgba(56, 189, 248, 0.12);
+        box-shadow: 0 0 0 1px rgba(9, 12, 20, 0.55) inset;
       }
       .planner-filters.is-disabled {
         opacity: 0.7;
@@ -187,6 +313,40 @@
       .filters-grid {
         display: grid;
         gap: 14px;
+      }
+      .drawer-columns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+      }
+      .active-filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .active-filter-chip {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        border: 1px solid rgba(34, 197, 94, 0.45);
+        background: rgba(20, 83, 45, 0.28);
+        color: #dcfce7;
+        font-size: 0.75rem;
+        padding: 3px 8px;
+      }
+      .chip-grid-limited {
+        max-height: 92px;
+        overflow: hidden;
+        align-content: flex-start;
+      }
+      .show-more-button {
+        justify-self: start;
+        border: 1px solid rgba(148, 163, 184, 0.26);
+        background: rgba(15, 23, 42, 0.58);
+        color: var(--muted);
+        border-radius: 8px;
+        padding: 4px 8px;
+        font-size: 0.76rem;
+        cursor: pointer;
       }
       .filter-block {
         display: grid;
@@ -379,7 +539,8 @@
       }
       .itinerary-grab-rail {
         position: absolute;
-        left: 8px;
+        right: 8px;
+        left: auto;
         top: 8px;
         bottom: 8px;
         width: 9px;
@@ -415,7 +576,7 @@
         background-size: cover;
         background-position: center 30%;
         border-radius: 12px;
-        padding: 8px 12px 8px 46px;
+        padding: 8px 42px 8px 12px;
         min-height: 76px;
         display: grid;
         align-content: center;
@@ -448,13 +609,15 @@
         width: 30px;
         height: 30px;
         border-radius: 999px;
-        background: linear-gradient(135deg, var(--primary), var(--accent));
-        color: #0b111b;
+        background: linear-gradient(145deg, #1e293b, #334155);
+        color: #f8fafc;
         font-weight: 700;
         font-size: 0.88rem;
         display: grid;
         place-items: center;
-        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+        box-shadow:
+          inset 0 0 0 1px rgba(148, 163, 184, 0.3),
+          0 4px 12px rgba(15, 23, 42, 0.62);
       }
       .itinerary-details {
         display: grid;
@@ -466,15 +629,48 @@
         gap: 8px;
       }
       .row-checkbox {
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
         margin: 0;
-        accent-color: #22c55e;
+        appearance: none;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.72);
+        background: rgba(15, 23, 42, 0.84);
         cursor: pointer;
+        display: inline-block;
+        transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+      }
+      .row-checkbox:hover {
+        border-color: rgba(56, 189, 248, 0.75);
+      }
+      .row-checkbox:checked {
+        border-color: rgba(74, 222, 128, 0.9);
+        background:
+          radial-gradient(circle at center, rgba(220, 252, 231, 0.95) 0 30%, rgba(74, 222, 128, 0.9) 32% 48%, rgba(6, 95, 70, 0.95) 50% 100%);
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.32), 0 0 10px rgba(34, 197, 94, 0.22);
+      }
+      .row-checkbox:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.7), 0 0 0 4px rgba(2, 6, 23, 0.8);
       }
       .itinerary-name {
         font-weight: 600;
         font-size: 1rem;
+      }
+      .itinerary-peak-link {
+        color: var(--primary-strong);
+        text-decoration-color: rgba(74, 222, 128, 0.8);
+        text-underline-offset: 2px;
+        text-shadow: 0 1px 3px rgba(2, 6, 23, 0.8);
+      }
+      .itinerary-peak-link:hover,
+      .itinerary-peak-link:focus-visible {
+        color: #bbf7d0;
+      }
+      .itinerary-peak-link:focus-visible {
+        outline: 2px solid rgba(74, 222, 128, 0.8);
+        outline-offset: 2px;
+        border-radius: 4px;
       }
       .itinerary-meta {
         font-size: 0.85rem;
@@ -484,6 +680,13 @@
       .itinerary-photo-banner .itinerary-name,
       .itinerary-photo-banner .itinerary-meta {
         color: #ffffff;
+      }
+      .itinerary-photo-banner .itinerary-name.itinerary-peak-link {
+        color: var(--primary-strong);
+      }
+      .itinerary-photo-banner .itinerary-name.itinerary-peak-link:hover,
+      .itinerary-photo-banner .itinerary-name.itinerary-peak-link:focus-visible {
+        color: #bbf7d0;
       }
       .risk-tags {
         display: flex;
@@ -686,7 +889,19 @@
       .planner-status strong {
         color: var(--text);
       }
-      @media (max-width: 720px) {
+      @media (max-width: 980px) {
+        .planner-command-bar {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+        .command-right {
+          justify-content: flex-start;
+        }
+        .drawer-columns {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 640px) {
         .filters-header {
           flex-direction: column;
           align-items: flex-start;
@@ -699,7 +914,7 @@
         }
         .itinerary-photo-banner {
           min-height: 64px;
-          padding: 8px 10px 8px 42px;
+          padding: 8px 36px 8px 10px;
           gap: 5px;
         }
         .itinerary-index {
@@ -717,6 +932,18 @@
         .risk-tag {
           font-size: 0.68rem;
           padding: 1px 7px;
+        }
+        .command-search {
+          min-height: 36px;
+          font-size: 0.85rem;
+        }
+        .command-btn {
+          padding: 6px 9px;
+          font-size: 0.76rem;
+        }
+        .template-segment {
+          width: 100%;
+          flex-wrap: wrap;
         }
       }
     </style>

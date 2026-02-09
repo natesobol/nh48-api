@@ -49,7 +49,10 @@ const DIFFICULTY_SORT_OVERRIDES = {
 
 const STORAGE_KEY = 'nh48-planner-itinerary-v1';
 const ROUTE_METRICS_KEY = 'nh48-planner-route-metrics-open';
+const FILTER_DRAWER_KEY = 'nh48-planner-filters-open';
 const RANGE_COLOR_FALLBACK = '#22c55e';
+const USE_COMMAND_BAR_LAYOUT = true;
+const SEGMENTED_TEMPLATE_IDS = ['fast-finish', 'efficient-trips', 'scenic-journey'];
 
 const RISK_FACTORS = [
   { id: 'AboveTreelineExposure', label: 'Above-treeline exposure', color: '#f97316' },
@@ -227,6 +230,81 @@ function getPeakPhotoUrl(slug) {
   return `https://photos.nh48.info/${slug}/${slug}__001.jpg`;
 }
 
+function getPeakDetailUrl(slug) {
+  return `/peak/${slug}/`;
+}
+
+function buildImageAdditionalProperties(photo) {
+  const specs = [
+    ['cameraMaker', 'Camera Maker'],
+    ['cameraModel', 'Camera Model'],
+    ['camera', 'Camera'],
+    ['lens', 'Lens'],
+    ['fStop', 'Aperture'],
+    ['shutterSpeed', 'Shutter Speed'],
+    ['iso', 'ISO'],
+    ['focalLength', 'Focal Length']
+  ];
+  const props = [];
+  specs.forEach(([field, label]) => {
+    if (!photo[field]) return;
+    props.push({
+      '@type': 'PropertyValue',
+      name: label,
+      value: String(photo[field])
+    });
+  });
+  return props;
+}
+
+function buildPlannerImageObjectGraph(rawNh48Data) {
+  if (!rawNh48Data || typeof rawNh48Data !== 'object') return [];
+  const graph = [];
+  Object.entries(rawNh48Data).forEach(([slugKey, entry]) => {
+    if (!entry || typeof entry !== 'object') return;
+    const slug = entry.slug || slugKey;
+    if (!slug) return;
+    const photos = Array.isArray(entry.photos) ? entry.photos : [];
+    const primary = photos.find((photo) => photo && photo.isPrimary)
+      || photos.find((photo) => typeof photo?.filename === 'string' && photo.filename.includes('__001'))
+      || photos[0]
+      || null;
+    const photoUrl = primary?.url || getPeakPhotoUrl(slug);
+    const creatorName = primary?.author || primary?.iptc?.creator || 'Unknown';
+    const altText = primary?.alt || entry.peakName || entry['Peak Name'] || slug;
+    const description = primary?.extendedDescription || primary?.title || altText;
+    const keywords = Array.from(new Set([
+      ...(Array.isArray(primary?.tags) ? primary.tags : []),
+      ...(Array.isArray(primary?.iptc?.keywords) ? primary.iptc.keywords : [])
+    ].filter(Boolean).map((keyword) => String(keyword))));
+    const additionalProperty = buildImageAdditionalProperties(primary || {});
+    const imageObject = {
+      '@type': 'ImageObject',
+      '@id': `${photoUrl}#planner-image`,
+      name: primary?.title || `${entry.peakName || entry['Peak Name'] || slug} summit photo`,
+      description,
+      caption: altText,
+      contentUrl: photoUrl,
+      url: photoUrl,
+      creator: {
+        '@type': 'Person',
+        name: creatorName
+      },
+      associatedArticle: `https://nh48.info/peak/${slug}/`
+    };
+    if (primary?.width) imageObject.width = primary.width;
+    if (primary?.height) imageObject.height = primary.height;
+    if (primary?.captureDate) imageObject.dateCreated = primary.captureDate;
+    if (primary?.captureDate || primary?.fileCreateDate) {
+      imageObject.datePublished = primary.captureDate || primary.fileCreateDate;
+    }
+    if (keywords.length) imageObject.keywords = keywords;
+    if (additionalProperty.length) imageObject.additionalProperty = additionalProperty;
+    graph.push(imageObject);
+  });
+  return graph;
+}
+
 function sortPeaksByDifficulty(peaks) {
   return [...peaks].sort((a, b) => {
     const aTier = DIFFICULTY_ORDER.indexOf(a.difficulty || 'moderate');
@@ -280,6 +358,7 @@ function PeakPlannerApp() {
   const [showStrategyPrompt, setShowStrategyPrompt] = useState(false);
   const [loadedSavedItinerary, setLoadedSavedItinerary] = useState(false);
   const [seasonBuckets, setSeasonBuckets] = useState({});
+  const [rawNh48Data, setRawNh48Data] = useState(null);
   const [routeMetricsOpen, setRouteMetricsOpen] = useState(() => {
     try {
       return window.localStorage.getItem(ROUTE_METRICS_KEY) === 'true';
@@ -287,6 +366,18 @@ function PeakPlannerApp() {
       return false;
     }
   });
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(() => {
+    try {
+      return window.localStorage.getItem(FILTER_DRAWER_KEY) === 'true';
+    } catch (err) {
+      return false;
+    }
+  });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showAllRiskChips, setShowAllRiskChips] = useState(false);
+  const [showAllRangeChips, setShowAllRangeChips] = useState(false);
+  const [templateMenuOpen, setTemplateMenuOpen] = useState(false);
+  const [lastSaveTimestamp, setLastSaveTimestamp] = useState(null);
   const [adjacencyMap, setAdjacencyMap] = useState({});
   const [selectionWarning, setSelectionWarning] = useState('');
   const undoStackRef = useRef([]);
@@ -304,6 +395,7 @@ function PeakPlannerApp() {
   const [draggingType, setDraggingType] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
   const groupCounterRef = useRef(1);
+  const templateMenuRef = useRef(null);
   const strategyParam = useMemo(() => {
     if (typeof window === 'undefined') return null;
     return new URLSearchParams(window.location.search).get('strategy');
@@ -345,6 +437,7 @@ function PeakPlannerApp() {
         const templateDayTrips = Array.isArray(templates?.dayTripGroups) ? templates.dayTripGroups : [];
         setFinishStrategies(templateStrategies);
         setDayTripGroups(templateDayTrips);
+        setRawNh48Data(nh48 || null);
         let allowedSlugs = null;
         if (nh48) {
           const nameToSlug = {};
@@ -489,10 +582,32 @@ function PeakPlannerApp() {
       })
       .catch((err) => {
         console.error('Failed to load manifest', err);
+        setRawNh48Data(null);
         setLoadError('Unable to load peak data. Please refresh or try again later.');
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    const scriptId = 'plannerImageObjectSchema';
+    const existing = document.getElementById(scriptId);
+    const graph = buildPlannerImageObjectGraph(rawNh48Data);
+    if (!graph.length) {
+      if (existing) existing.remove();
+      return;
+    }
+    const payload = {
+      '@context': 'https://schema.org',
+      '@graph': graph
+    };
+    const scriptEl = existing || document.createElement('script');
+    scriptEl.type = 'application/ld+json';
+    scriptEl.id = scriptId;
+    scriptEl.textContent = JSON.stringify(payload);
+    if (!existing) {
+      document.head.appendChild(scriptEl);
+    }
+  }, [rawNh48Data]);
 
   const rangeGroupOptions = useMemo(() => {
     const groups = new Set();
@@ -507,6 +622,7 @@ function PeakPlannerApp() {
     try {
       const payload = serializeItinerary(itinerary);
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      setLastSaveTimestamp(Date.now());
     } catch (err) {
       console.warn('Failed to save itinerary', err);
     }
@@ -519,6 +635,14 @@ function PeakPlannerApp() {
       console.warn('Failed to persist route metrics state', err);
     }
   }, [routeMetricsOpen]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(FILTER_DRAWER_KEY, filterDrawerOpen ? 'true' : 'false');
+    } catch (err) {
+      console.warn('Failed to persist filter drawer state', err);
+    }
+  }, [filterDrawerOpen]);
 
   const isSelectionContiguous = useMemo(() => {
     const ids = Array.from(selectedPeakIds);
@@ -560,7 +684,11 @@ function PeakPlannerApp() {
     if (!contextMenu) return;
     const handleClick = () => setContextMenu(null);
     const handleKey = (event) => {
-      if (event.key === 'Escape') setContextMenu(null);
+      if (event.key === 'Escape') {
+        setContextMenu(null);
+        setTemplateMenuOpen(false);
+        setFilterDrawerOpen(false);
+      }
     };
     window.addEventListener('click', handleClick, true);
     window.addEventListener('keydown', handleKey);
@@ -570,6 +698,27 @@ function PeakPlannerApp() {
     };
   }, [contextMenu]);
 
+  useEffect(() => {
+    if (!templateMenuOpen) return;
+    const handleWindowClick = (event) => {
+      if (templateMenuRef.current && !templateMenuRef.current.contains(event.target)) {
+        setTemplateMenuOpen(false);
+      }
+    };
+    window.addEventListener('click', handleWindowClick, true);
+    return () => window.removeEventListener('click', handleWindowClick, true);
+  }, [templateMenuOpen]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key !== 'Escape') return;
+      setTemplateMenuOpen(false);
+      setFilterDrawerOpen(false);
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, []);
+
   const filtersActive = useMemo(() => (
     activeRiskFilters.size > 0
     || activeRangeGroups.size > 0
@@ -578,6 +727,7 @@ function PeakPlannerApp() {
     || isFilterActive(timeFilter)
     || isFilterActive(bailoutFilter)
   ), [activeRiskFilters, activeRangeGroups, distanceFilter, gainFilter, timeFilter, bailoutFilter]);
+  const searchActive = searchQuery.trim().length > 0;
 
   const activeDayTripIds = useMemo(() => {
     const active = new Set();
@@ -588,6 +738,76 @@ function PeakPlannerApp() {
     });
     return active;
   }, [itinerary]);
+
+  const plannerStats = useMemo(() => {
+    let plannedCount = 0;
+    let groupCount = 0;
+    let totalDistanceMi = 0;
+    let totalGainFt = 0;
+    const seen = new Set();
+    const addPeak = (peak) => {
+      if (!peak || seen.has(peak.id)) return;
+      seen.add(peak.id);
+      plannedCount += 1;
+      if (Number.isFinite(peak.primaryDistanceMi)) totalDistanceMi += peak.primaryDistanceMi;
+      if (Number.isFinite(peak.primaryGainFt)) totalGainFt += peak.primaryGainFt;
+    };
+    itinerary.forEach((item) => {
+      if (item.type === 'group') {
+        groupCount += 1;
+        item.items.forEach(addPeak);
+      } else {
+        addPeak(item);
+      }
+    });
+    return {
+      plannedCount,
+      groupCount,
+      totalDistanceMi: Number(totalDistanceMi.toFixed(1)),
+      totalGainFt: Math.round(totalGainFt)
+    };
+  }, [itinerary]);
+
+  const activeFilterBadges = useMemo(() => {
+    const badges = [];
+    if (searchActive) {
+      badges.push({ id: 'search', label: `Search: "${searchQuery.trim()}"` });
+    }
+    activeRiskFilters.forEach((riskId) => {
+      badges.push({ id: `risk-${riskId}`, label: RISK_LABEL_LOOKUP[riskId] || riskId });
+    });
+    activeRangeGroups.forEach((group) => {
+      badges.push({ id: `range-${group}`, label: group });
+    });
+    const numericPairs = [
+      ['distance', 'Distance', distanceFilter],
+      ['gain', 'Gain', gainFilter],
+      ['time', 'Time', timeFilter],
+      ['bailout', 'Bailout', bailoutFilter]
+    ];
+    numericPairs.forEach(([id, label, filter]) => {
+      const min = parseNumberInput(filter.min);
+      const max = parseNumberInput(filter.max);
+      if (min === null && max === null) return;
+      if (min !== null && max !== null) {
+        badges.push({ id: `${id}-range`, label: `${label}: ${min}-${max}` });
+      } else if (min !== null) {
+        badges.push({ id: `${id}-min`, label: `${label} >= ${min}` });
+      } else if (max !== null) {
+        badges.push({ id: `${id}-max`, label: `${label} <= ${max}` });
+      }
+    });
+    return badges;
+  }, [
+    searchActive,
+    searchQuery,
+    activeRiskFilters,
+    activeRangeGroups,
+    distanceFilter,
+    gainFilter,
+    timeFilter,
+    bailoutFilter
+  ]);
 
   const pushUndoSnapshot = (snapshot) => {
     const nextUndo = [...undoStackRef.current, snapshot];
@@ -790,9 +1010,22 @@ function PeakPlannerApp() {
     return [];
   };
 
+  const peakMatchesSearch = (peak) => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return true;
+    const haystack = [
+      peak.name || '',
+      peak.rangeGroup || '',
+      peak.range || '',
+      ...(peak.riskFactors || []).map((risk) => RISK_LABEL_LOOKUP[risk] || risk)
+    ]
+      .join(' ')
+      .toLowerCase();
+    return haystack.includes(query);
+  };
+
   const peakMatchesFilters = (peak) => {
-    if (!filtersActive) return true;
-    if (activeRangeGroups.size > 0 && !activeRangeGroups.has(peak.rangeGroup)) {
+    if (activeRangeGroups.size > 0 && !activeRangeGroups.has(peak.rangeGroup || peak.range)) {
       return false;
     }
     if (activeRiskFilters.size > 0) {
@@ -804,6 +1037,7 @@ function PeakPlannerApp() {
     if (!withinFilter(peak.primaryGainFt, gainFilter)) return false;
     if (!withinFilter(peak.estimatedTimeHours, timeFilter)) return false;
     if (!withinFilter(peak.bailoutDistanceMi, bailoutFilter)) return false;
+    if (!peakMatchesSearch(peak)) return false;
     return true;
   };
 
@@ -858,6 +1092,7 @@ function PeakPlannerApp() {
     setGainFilter({ ...DEFAULT_NUMERIC_FILTER });
     setTimeFilter({ ...DEFAULT_NUMERIC_FILTER });
     setBailoutFilter({ ...DEFAULT_NUMERIC_FILTER });
+    setSearchQuery('');
   };
 
   const togglePeakSelection = (peakId) => {
@@ -875,6 +1110,36 @@ function PeakPlannerApp() {
   const clearSelection = () => {
     setSelectedPeakIds(new Set());
     setSelectionWarning('');
+  };
+
+  const handleSaveNow = () => {
+    try {
+      const payload = serializeItinerary(itinerary);
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      setLastSaveTimestamp(Date.now());
+    } catch (err) {
+      console.warn('Failed to save itinerary', err);
+    }
+  };
+
+  const handleExport = () => {
+    try {
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        itinerary: serializeItinerary(itinerary)
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = 'nh48-planner-itinerary.json';
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.warn('Failed to export itinerary', err);
+    }
   };
 
   const handleGroupSelected = () => {
@@ -1212,7 +1477,11 @@ function PeakPlannerApp() {
       ? { ...dragStyle, '--highlight-color': highlightColor }
       : dragStyle;
     const indexStyle = highlightColor
-      ? { background: `linear-gradient(135deg, ${highlightColor}, #0ea5e9)` }
+      ? {
+        background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.96))',
+        boxShadow: `0 0 0 1px ${highlightColor}88, 0 6px 14px rgba(2, 6, 23, 0.56)`,
+        color: '#f8fafc'
+      }
       : undefined;
     const isSelected = selectedPeakIds.has(peak.id);
 
@@ -1247,7 +1516,16 @@ function PeakPlannerApp() {
               onTouchStart: (event) => event.stopPropagation(),
               'aria-label': isSelected ? `Deselect ${peak.name}` : `Select ${peak.name}`
             }),
-            React.createElement('span', { className: 'itinerary-name' }, peak.name)
+            React.createElement('a', {
+              className: 'itinerary-name itinerary-peak-link',
+              href: getPeakDetailUrl(peak.slug),
+              target: '_blank',
+              rel: 'noopener',
+              onMouseDown: (event) => event.stopPropagation(),
+              onTouchStart: (event) => event.stopPropagation(),
+              onClick: (event) => event.stopPropagation(),
+              'aria-label': `Open ${peak.name} peak details`
+            }, peak.name)
           ]),
           renderMetrics(peak)
         ]),
@@ -1301,177 +1579,354 @@ function PeakPlannerApp() {
     return fallbackIndex;
   };
 
-  return React.createElement('div', { className: 'planner-shell' },
-    finishStrategies.length
-      ? React.createElement('div', { className: 'strategy-toolbar' }, [
-        React.createElement('span', { className: 'strategy-toolbar-label' }, 'Finish strategy templates'),
-        React.createElement('div', { className: 'strategy-toolbar-list' },
-          finishStrategies.map((strategy) => {
-            const isActive = activeStrategyId === strategy.id;
-            return React.createElement('button', {
-              key: strategy.id,
-              type: 'button',
-              className: `strategy-pill${isActive ? ' is-active' : ''}`,
-              onClick: () => requestStrategyApply(strategy.id, 'toolbar'),
-              title: `${strategy.duration} | ${strategy.tripRange}`
-            }, [
-              React.createElement('span', { className: 'strategy-pill-icon' }, strategy.icon || ' '),
-              React.createElement('span', { className: 'strategy-pill-name' }, strategy.name)
-            ]);
-          })
-        )
-      ])
-      : null,
-    React.createElement('div', { className: `planner-filters${!hasOverlay ? ' is-disabled' : ''}` }, [
-      React.createElement('div', { className: 'filters-header' }, [
-        React.createElement('h3', null, 'Filters'),
-        React.createElement('button', {
-          type: 'button',
-          className: 'filter-clear',
-          onClick: clearFilters,
-          disabled: !hasOverlay
-        }, 'Clear Filters')
-      ]),
-      React.createElement('div', { className: 'filters-grid' }, [
-        React.createElement('div', { className: 'filter-block' }, [
-          React.createElement('span', { className: 'filter-title' }, 'Risk factors'),
-          React.createElement('div', { className: 'filter-chips' }, RISK_FACTORS.map(riskChip))
-        ]),
-        React.createElement('div', { className: 'filter-block' }, [
-          React.createElement('span', { className: 'filter-title' }, 'Range groups'),
-          React.createElement('div', { className: 'filter-chips' },
-            rangeGroupOptions.length
-              ? rangeGroupOptions.map(rangeChip)
-              : React.createElement('span', { className: 'filter-empty' }, 'Range groups unavailable.')
-          )
-        ]),
-        React.createElement('div', { className: `filter-block metrics-block${routeMetricsOpen ? ' is-open' : ''}` }, [
-          React.createElement('button', {
+  const segmentedStrategies = useMemo(
+    () => finishStrategies.filter((strategy) => SEGMENTED_TEMPLATE_IDS.includes(strategy.id)),
+    [finishStrategies]
+  );
+  const overflowStrategies = useMemo(
+    () => finishStrategies.filter((strategy) => !SEGMENTED_TEMPLATE_IDS.includes(strategy.id)),
+    [finishStrategies]
+  );
+  const visibleRiskFactors = useMemo(
+    () => (showAllRiskChips ? RISK_FACTORS : RISK_FACTORS.slice(0, 6)),
+    [showAllRiskChips]
+  );
+  const visibleRangeGroups = useMemo(
+    () => (showAllRangeChips ? rangeGroupOptions : rangeGroupOptions.slice(0, 8)),
+    [showAllRangeChips, rangeGroupOptions]
+  );
+  const activeFilterCount = activeFilterBadges.length;
+  const hasAnySearchOrFilter = filtersActive || searchActive;
+  const isListLocked = hasAnySearchOrFilter;
+  const renderedItinerary = useMemo(() => {
+    if (!hasAnySearchOrFilter) return itinerary;
+    return itinerary
+      .map((item) => {
+        if (item.type === 'peak') {
+          return peakMatchesFilters(item) ? item : null;
+        }
+        const visibleItems = item.items.filter(peakMatchesFilters);
+        return { ...item, items: visibleItems };
+      })
+      .filter(Boolean);
+  }, [
+    itinerary,
+    hasAnySearchOrFilter,
+    activeRiskFilters,
+    activeRangeGroups,
+    distanceFilter,
+    gainFilter,
+    timeFilter,
+    bailoutFilter,
+    searchQuery
+  ]);
+
+  const progressText = `${plannerStats.plannedCount}/48 planned • ${plannerStats.groupCount} grouped • ${plannerStats.totalDistanceMi} mi • ${plannerStats.totalGainFt.toLocaleString()} ft`;
+  const activeTemplate = finishStrategies.find((strategy) => strategy.id === activeStrategyId) || null;
+
+  const filtersPanel = React.createElement('div', { className: `planner-filters${!hasOverlay ? ' is-disabled' : ''}` }, [
+    React.createElement('div', { className: 'filters-header' }, [
+      React.createElement('h3', null, 'Filters'),
+      React.createElement('button', {
+        type: 'button',
+        className: 'filter-clear',
+        onClick: clearFilters,
+        disabled: !hasOverlay
+      }, 'Clear all')
+    ]),
+    activeFilterBadges.length
+      ? React.createElement('div', { className: 'active-filter-row' },
+        activeFilterBadges.map((badge) => React.createElement('span', { key: badge.id, className: 'active-filter-chip' }, badge.label))
+      )
+      : React.createElement('div', { className: 'filter-empty' }, 'No active filters.'),
+    React.createElement('div', { className: 'filters-grid drawer-columns' }, [
+      React.createElement('div', { className: 'filter-block' }, [
+        React.createElement('span', { className: 'filter-title' }, 'Risk factors'),
+        React.createElement('div', { className: `filter-chips${showAllRiskChips ? '' : ' chip-grid-limited'}` }, visibleRiskFactors.map(riskChip)),
+        RISK_FACTORS.length > visibleRiskFactors.length
+          ? React.createElement('button', {
             type: 'button',
-            className: 'metrics-toggle',
-            onClick: () => setRouteMetricsOpen((prev) => !prev),
-            'aria-expanded': routeMetricsOpen ? 'true' : 'false',
-            'aria-controls': 'routeMetricsPanel'
-          }, [
-            React.createElement('span', null, 'Route metrics'),
-            React.createElement('span', { className: 'metrics-toggle-icon' }, routeMetricsOpen ? 'Hide' : 'Show')
-          ]),
-          routeMetricsOpen
-            ? React.createElement('div', { className: 'filter-numbers', id: 'routeMetricsPanel' }, [
-              React.createElement('label', null, 'Distance (mi)'),
-              React.createElement('div', { className: 'numeric-range' }, [
-                React.createElement('input', {
-                  type: 'number',
-                  min: '0',
-                  step: '0.1',
-                  placeholder: 'Min',
-                  value: distanceFilter.min,
-                  onChange: (e) => setDistanceFilter((prev) => ({ ...prev, min: e.target.value })),
-                  disabled: !hasOverlay
-                }),
-                React.createElement('span', { className: 'range-sep' }, 'to'),
-                React.createElement('input', {
-                  type: 'number',
-                  min: '0',
-                  step: '0.1',
-                  placeholder: 'Max',
-                  value: distanceFilter.max,
-                  onChange: (e) => setDistanceFilter((prev) => ({ ...prev, max: e.target.value })),
-                  disabled: !hasOverlay
-                })
-              ]),
-              React.createElement('label', null, 'Elevation gain (ft)'),
-              React.createElement('div', { className: 'numeric-range' }, [
-                React.createElement('input', {
-                  type: 'number',
-                  min: '0',
-                  step: '100',
-                  placeholder: 'Min',
-                  value: gainFilter.min,
-                  onChange: (e) => setGainFilter((prev) => ({ ...prev, min: e.target.value })),
-                  disabled: !hasOverlay
-                }),
-                React.createElement('span', { className: 'range-sep' }, 'to'),
-                React.createElement('input', {
-                  type: 'number',
-                  min: '0',
-                  step: '100',
-                  placeholder: 'Max',
-                  value: gainFilter.max,
-                  onChange: (e) => setGainFilter((prev) => ({ ...prev, max: e.target.value })),
-                  disabled: !hasOverlay
-                })
-              ]),
-              React.createElement('label', null, 'Estimated time (hrs)'),
-              React.createElement('div', { className: 'numeric-range' }, [
-                React.createElement('input', {
-                  type: 'number',
-                  min: '0',
-                  step: '0.1',
-                  placeholder: 'Min',
-                  value: timeFilter.min,
-                  onChange: (e) => setTimeFilter((prev) => ({ ...prev, min: e.target.value })),
-                  disabled: !hasOverlay
-                }),
-                React.createElement('span', { className: 'range-sep' }, 'to'),
-                React.createElement('input', {
-                  type: 'number',
-                  min: '0',
-                  step: '0.1',
-                  placeholder: 'Max',
-                  value: timeFilter.max,
-                  onChange: (e) => setTimeFilter((prev) => ({ ...prev, max: e.target.value })),
-                  disabled: !hasOverlay
-                })
-              ]),
-              React.createElement('label', null, 'Bailout distance (mi)'),
-              React.createElement('div', { className: 'numeric-range' }, [
-                React.createElement('input', {
-                  type: 'number',
-                  min: '0',
-                  step: '0.1',
-                  placeholder: 'Min',
-                  value: bailoutFilter.min,
-                  onChange: (e) => setBailoutFilter((prev) => ({ ...prev, min: e.target.value })),
-                  disabled: !hasOverlay
-                }),
-                React.createElement('span', { className: 'range-sep' }, 'to'),
-                React.createElement('input', {
-                  type: 'number',
-                  min: '0',
-                  step: '0.1',
-                  placeholder: 'Max',
-                  value: bailoutFilter.max,
-                  onChange: (e) => setBailoutFilter((prev) => ({ ...prev, max: e.target.value })),
-                  disabled: !hasOverlay
-                })
-              ])
-            ])
-            : null
-        ])
+            className: 'show-more-button',
+            onClick: () => setShowAllRiskChips(true)
+          }, `Show ${RISK_FACTORS.length - visibleRiskFactors.length} more`)
+          : null,
+        showAllRiskChips && RISK_FACTORS.length > 6
+          ? React.createElement('button', {
+            type: 'button',
+            className: 'show-more-button',
+            onClick: () => setShowAllRiskChips(false)
+          }, 'Show less')
+          : null
       ]),
-      React.createElement('div', { className: 'auto-group' }, [
-        React.createElement('span', { className: 'filter-title' }, 'Auto-group day trips'),
-        React.createElement('div', { className: 'auto-group-toggles' },
-          dayTripGroups.length
-            ? dayTripGroups.map((set) => {
-              const isActive = activeDayTripIds.has(set.id);
-              return React.createElement('button', {
-                key: set.id,
-                type: 'button',
-                className: `toggle-button${isActive ? ' is-active' : ''}`,
-                onClick: () => handleAutoGroupById(set.id),
-                title: set.description
-              }, set.name);
-            })
-            : React.createElement('span', { className: 'filter-empty' }, 'Templates unavailable.')
+      React.createElement('div', { className: 'filter-block' }, [
+        React.createElement('span', { className: 'filter-title' }, 'Grouping helpers'),
+        React.createElement('div', { className: `filter-chips${showAllRangeChips ? '' : ' chip-grid-limited'}` },
+          visibleRangeGroups.length
+            ? visibleRangeGroups.map(rangeChip)
+            : React.createElement('span', { className: 'filter-empty' }, 'Range groups unavailable.')
         ),
-        React.createElement('span', { className: 'filter-note' }, 'Create a grouped panel for a classic NH48 day-trip.')
+        rangeGroupOptions.length > visibleRangeGroups.length
+          ? React.createElement('button', {
+            type: 'button',
+            className: 'show-more-button',
+            onClick: () => setShowAllRangeChips(true)
+          }, `Show ${rangeGroupOptions.length - visibleRangeGroups.length} more`)
+          : null,
+        showAllRangeChips && rangeGroupOptions.length > 8
+          ? React.createElement('button', {
+            type: 'button',
+            className: 'show-more-button',
+            onClick: () => setShowAllRangeChips(false)
+          }, 'Show less')
+          : null,
+        React.createElement('div', { className: 'auto-group' }, [
+          React.createElement('span', { className: 'filter-title' }, 'Auto-group day trips'),
+          React.createElement('div', { className: 'auto-group-toggles' },
+            dayTripGroups.length
+              ? dayTripGroups.map((set) => {
+                const isActive = activeDayTripIds.has(set.id);
+                return React.createElement('button', {
+                  key: set.id,
+                  type: 'button',
+                  className: `toggle-button${isActive ? ' is-active' : ''}`,
+                  onClick: () => handleAutoGroupById(set.id),
+                  title: set.description
+                }, set.name);
+              })
+              : React.createElement('span', { className: 'filter-empty' }, 'Templates unavailable.')
+          ),
+          React.createElement('span', { className: 'filter-note' }, 'Create a grouped panel for a classic NH48 day-trip.')
+        ])
+      ])
+    ]),
+    React.createElement('div', { className: `filter-block metrics-block${routeMetricsOpen ? ' is-open' : ''}` }, [
+      React.createElement('button', {
+        type: 'button',
+        className: 'metrics-toggle',
+        onClick: () => setRouteMetricsOpen((prev) => !prev),
+        'aria-expanded': routeMetricsOpen ? 'true' : 'false',
+        'aria-controls': 'routeMetricsPanel'
+      }, [
+        React.createElement('span', null, 'Route metrics'),
+        React.createElement('span', { className: 'metrics-toggle-icon' }, routeMetricsOpen ? 'Hide' : 'Show')
       ]),
-      !hasOverlay
-        ? React.createElement('div', { className: 'filter-note' }, 'Risk and route filters are unavailable because the overlay failed to load.')
+      routeMetricsOpen
+        ? React.createElement('div', { className: 'filter-numbers', id: 'routeMetricsPanel' }, [
+          React.createElement('label', null, 'Distance (mi)'),
+          React.createElement('div', { className: 'numeric-range' }, [
+            React.createElement('input', {
+              type: 'number',
+              min: '0',
+              step: '0.1',
+              placeholder: 'Min',
+              value: distanceFilter.min,
+              onChange: (e) => setDistanceFilter((prev) => ({ ...prev, min: e.target.value })),
+              disabled: !hasOverlay
+            }),
+            React.createElement('span', { className: 'range-sep' }, 'to'),
+            React.createElement('input', {
+              type: 'number',
+              min: '0',
+              step: '0.1',
+              placeholder: 'Max',
+              value: distanceFilter.max,
+              onChange: (e) => setDistanceFilter((prev) => ({ ...prev, max: e.target.value })),
+              disabled: !hasOverlay
+            })
+          ]),
+          React.createElement('label', null, 'Elevation gain (ft)'),
+          React.createElement('div', { className: 'numeric-range' }, [
+            React.createElement('input', {
+              type: 'number',
+              min: '0',
+              step: '100',
+              placeholder: 'Min',
+              value: gainFilter.min,
+              onChange: (e) => setGainFilter((prev) => ({ ...prev, min: e.target.value })),
+              disabled: !hasOverlay
+            }),
+            React.createElement('span', { className: 'range-sep' }, 'to'),
+            React.createElement('input', {
+              type: 'number',
+              min: '0',
+              step: '100',
+              placeholder: 'Max',
+              value: gainFilter.max,
+              onChange: (e) => setGainFilter((prev) => ({ ...prev, max: e.target.value })),
+              disabled: !hasOverlay
+            })
+          ]),
+          React.createElement('label', null, 'Estimated time (hrs)'),
+          React.createElement('div', { className: 'numeric-range' }, [
+            React.createElement('input', {
+              type: 'number',
+              min: '0',
+              step: '0.1',
+              placeholder: 'Min',
+              value: timeFilter.min,
+              onChange: (e) => setTimeFilter((prev) => ({ ...prev, min: e.target.value })),
+              disabled: !hasOverlay
+            }),
+            React.createElement('span', { className: 'range-sep' }, 'to'),
+            React.createElement('input', {
+              type: 'number',
+              min: '0',
+              step: '0.1',
+              placeholder: 'Max',
+              value: timeFilter.max,
+              onChange: (e) => setTimeFilter((prev) => ({ ...prev, max: e.target.value })),
+              disabled: !hasOverlay
+            })
+          ]),
+          React.createElement('label', null, 'Bailout distance (mi)'),
+          React.createElement('div', { className: 'numeric-range' }, [
+            React.createElement('input', {
+              type: 'number',
+              min: '0',
+              step: '0.1',
+              placeholder: 'Min',
+              value: bailoutFilter.min,
+              onChange: (e) => setBailoutFilter((prev) => ({ ...prev, min: e.target.value })),
+              disabled: !hasOverlay
+            }),
+            React.createElement('span', { className: 'range-sep' }, 'to'),
+            React.createElement('input', {
+              type: 'number',
+              min: '0',
+              step: '0.1',
+              placeholder: 'Max',
+              value: bailoutFilter.max,
+              onChange: (e) => setBailoutFilter((prev) => ({ ...prev, max: e.target.value })),
+              disabled: !hasOverlay
+            })
+          ])
+        ])
         : null
     ]),
+    !hasOverlay
+      ? React.createElement('div', { className: 'filter-note' }, 'Risk and route filters are unavailable because the overlay failed to load.')
+      : null
+  ]);
+
+  const commandBar = React.createElement('div', { className: 'planner-command-bar' }, [
+    React.createElement('div', { className: 'command-left' }, [
+      React.createElement('h3', { className: 'command-title' }, 'NH48 Peak Planner'),
+      React.createElement('div', { className: 'command-progress' }, progressText),
+      activeTemplate
+        ? React.createElement('span', { className: 'command-badge' }, `Template: ${activeTemplate.name}`)
+        : null
+    ]),
+    React.createElement('div', { className: 'command-search-wrap' }, [
+      React.createElement('input', {
+        type: 'search',
+        className: 'command-search',
+        value: searchQuery,
+        onChange: (event) => setSearchQuery(event.target.value),
+        placeholder: 'Search peaks, groups, routes...',
+        'aria-label': 'Search peaks, groups, routes'
+      })
+    ]),
+    React.createElement('div', { className: 'command-right' }, [
+      React.createElement('div', { className: 'template-segment', ref: templateMenuRef }, [
+        ...segmentedStrategies.map((strategy) =>
+          React.createElement('button', {
+            key: strategy.id,
+            type: 'button',
+            className: `command-btn template-btn${activeStrategyId === strategy.id ? ' is-active' : ''}`,
+            onClick: () => requestStrategyApply(strategy.id, 'toolbar'),
+            title: `${strategy.duration} | ${strategy.tripRange}`
+          }, `${strategy.icon || ''} ${strategy.name}`.trim())
+        ),
+        overflowStrategies.length
+          ? React.createElement('div', { className: 'template-more-wrap' }, [
+            React.createElement('button', {
+              type: 'button',
+              className: `command-btn template-btn${templateMenuOpen ? ' is-open' : ''}`,
+              onClick: () => setTemplateMenuOpen((prev) => !prev),
+              'aria-expanded': templateMenuOpen ? 'true' : 'false',
+              'aria-controls': 'templateMoreMenu'
+            }, 'More'),
+            templateMenuOpen
+              ? React.createElement('div', { className: 'template-more-menu', id: 'templateMoreMenu' },
+                overflowStrategies.map((strategy) =>
+                  React.createElement('button', {
+                    key: strategy.id,
+                    type: 'button',
+                    className: `template-more-item${activeStrategyId === strategy.id ? ' is-active' : ''}`,
+                    onClick: () => {
+                      requestStrategyApply(strategy.id, 'toolbar');
+                      setTemplateMenuOpen(false);
+                    }
+                  }, `${strategy.icon || ''} ${strategy.name}`.trim())
+                )
+              )
+              : null
+          ])
+          : null
+      ]),
+      React.createElement('button', {
+        type: 'button',
+        className: `command-btn${filterDrawerOpen ? ' is-active' : ''}`,
+        onClick: () => setFilterDrawerOpen((prev) => !prev),
+        'aria-expanded': filterDrawerOpen ? 'true' : 'false',
+        'aria-controls': 'plannerFilterDrawer'
+      }, `Filters (${activeFilterCount})`),
+      React.createElement('button', {
+        type: 'button',
+        className: 'command-btn',
+        onClick: handleUndo,
+        disabled: undoCount === 0
+      }, 'Undo'),
+      React.createElement('button', {
+        type: 'button',
+        className: 'command-btn',
+        onClick: handleRedo,
+        disabled: redoCount === 0
+      }, 'Redo'),
+      React.createElement('button', {
+        type: 'button',
+        className: 'command-btn',
+        onClick: handleSaveNow
+      }, lastSaveTimestamp ? 'Saved' : 'Save'),
+      React.createElement('button', {
+        type: 'button',
+        className: 'command-btn',
+        onClick: handleExport
+      }, 'Export')
+    ])
+  ]);
+
+  return React.createElement('div', { className: 'planner-shell' },
+    USE_COMMAND_BAR_LAYOUT
+      ? commandBar
+      : (
+        finishStrategies.length
+          ? React.createElement('div', { className: 'strategy-toolbar' }, [
+            React.createElement('span', { className: 'strategy-toolbar-label' }, 'Finish strategy templates'),
+            React.createElement('div', { className: 'strategy-toolbar-list' },
+              finishStrategies.map((strategy) => {
+                const isActive = activeStrategyId === strategy.id;
+                return React.createElement('button', {
+                  key: strategy.id,
+                  type: 'button',
+                  className: `strategy-pill${isActive ? ' is-active' : ''}`,
+                  onClick: () => requestStrategyApply(strategy.id, 'toolbar'),
+                  title: `${strategy.duration} | ${strategy.tripRange}`
+                }, [
+                  React.createElement('span', { className: 'strategy-pill-icon' }, strategy.icon || ' '),
+                  React.createElement('span', { className: 'strategy-pill-name' }, strategy.name)
+                ]);
+              })
+            )
+          ])
+          : null
+      ),
+    USE_COMMAND_BAR_LAYOUT
+      ? React.createElement('div', {
+        id: 'plannerFilterDrawer',
+        className: `planner-filter-drawer${filterDrawerOpen ? ' is-open' : ''}`
+      }, [filtersPanel])
+      : filtersPanel,
     selectedPeakIds.size > 0
       ? React.createElement('div', { className: 'selection-actions' }, [
         React.createElement('span', { className: 'group-status' }, `${selectedPeaks.length} selected`),
@@ -1509,29 +1964,35 @@ function PeakPlannerApp() {
     loadError
       ? React.createElement('div', { className: 'planner-status' }, loadError)
       : null,
+    isListLocked
+      ? React.createElement('div', { className: 'planner-status' }, 'Filtering is active. Clear filters to drag and reorder the full itinerary.')
+      : null,
     React.createElement(DragDropContext, {
       onDragStart: (start) => {
+        if (isListLocked) return;
         const isGroup = start.draggableId.startsWith('group-');
         setDraggingType(isGroup ? 'group' : 'peak');
         setContextMenu(null);
       },
       onDragEnd: (result) => {
         setDraggingType(null);
+        if (isListLocked) return;
         onDragEnd(result);
       }
     },
-      React.createElement(Droppable, { droppableId: 'root' }, (provided) =>
+      React.createElement(Droppable, { droppableId: 'root', isDropDisabled: isListLocked }, (provided) =>
         React.createElement('div', {
           ref: provided.innerRef,
           ...provided.droppableProps,
           className: 'itinerary-list'
         }, [
-          ...itinerary.map((item, index) => {
+          ...renderedItinerary.map((item, index) => {
             if (item.type === 'group') {
               return React.createElement(Draggable, {
                 key: `group-${item.id}`,
                 draggableId: `group-${item.id}`,
-                index
+                index,
+                isDragDisabled: isListLocked
               }, (prov, snapshot) =>
                 (() => {
                   const groupMeta = getGroupGradient(item);
@@ -1566,21 +2027,22 @@ function PeakPlannerApp() {
                       onTouchStart: (event) => event.stopPropagation()
                     }, 'Ungroup')
                   ]),
-                  React.createElement(Droppable, { droppableId: `group-${item.id}`, isDropDisabled: draggingType === 'group' }, (groupProvided) =>
+                  React.createElement(Droppable, { droppableId: `group-${item.id}`, isDropDisabled: draggingType === 'group' || isListLocked }, (groupProvided) =>
                     React.createElement('div', {
                       ref: groupProvided.innerRef,
                       ...groupProvided.droppableProps,
-                      className: `group-list${draggingType === 'group' ? ' is-disabled' : ''}`
+                      className: `group-list${draggingType === 'group' || isListLocked ? ' is-disabled' : ''}`
                     }, [
                       ...(item.items.length ? item.items.map((peak, peakIndex) =>
                         React.createElement(Draggable, {
                           key: `peak-${peak.id}`,
                           draggableId: `peak-${peak.id}`,
-                          index: peakIndex
+                          index: peakIndex,
+                          isDragDisabled: isListLocked
                         }, (peakProvided, peakSnapshot) =>
                           renderPeakRow(peak, getDisplayIndexForPeak(peak.id, peakIndex + 1), peakProvided, peakSnapshot)
                         )
-                      ) : [React.createElement('div', { key: 'empty', className: 'group-empty' }, 'Group is empty.')]),
+                      ) : [React.createElement('div', { key: 'empty', className: 'group-empty' }, hasAnySearchOrFilter ? 'No peaks match current filters.' : 'Group is empty.')]),
                       groupProvided.placeholder
                     ])
                   )
@@ -1592,13 +2054,14 @@ function PeakPlannerApp() {
             return React.createElement(Draggable, {
               key: `peak-${item.id}`,
               draggableId: `peak-${item.id}`,
-              index
+              index,
+              isDragDisabled: isListLocked
             }, (prov, snapshot) =>
               renderPeakRow(item, getDisplayIndexForPeak(item.id, index + 1), prov, snapshot)
             );
           }),
-          itinerary.length === 0 && !loading && !loadError
-            ? React.createElement('div', { className: 'itinerary-empty' }, emptyMessage)
+          renderedItinerary.length === 0 && !loading && !loadError
+            ? React.createElement('div', { className: 'itinerary-empty' }, hasAnySearchOrFilter ? 'No peaks match the active filters.' : emptyMessage)
             : null,
           provided.placeholder
         ])

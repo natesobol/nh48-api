@@ -2415,9 +2415,11 @@
       let mapResizeObserver = null;
       let leafletMap = null;
       let leafletLayer = null;
+      let leafletStylizedLayer = null;
       let leafletMarkers = null;
       let leafletBounds = null;
       let activeMapStyle = 'osm';
+      const STYLIZED_TILE_FILTER = 'brightness(0.4) invert(1) contrast(2)';
 
       function scheduleMapRender() {
         if (mapRenderQueued) return;
@@ -2507,108 +2509,9 @@
 
       function renderMap() {
         const map = document.getElementById('peakMap');
-        map.innerHTML = '';
+        if (map) map.innerHTML = '';
         const { coords, filtered, activeRanges, peakFocus } = getFilteredMapPeaks();
         updateMapLegend(activeRanges, peakFocus);
-        if (!filtered.length) {
-          map.innerHTML = coords.length ? '<text x="10" y="30" fill="#cbd5e1">No peaks match the current filters.</text>' : '<text x="10" y="30" fill="#cbd5e1">No coordinate data available.</text>';
-          renderLeafletMap(filtered);
-          return;
-        }
-        const boundsSource = filtered.length ? filtered : coords;
-        const lats = boundsSource.map((c) => c.coords.lat);
-        const lons = boundsSource.map((c) => c.coords.lon);
-        const minLat = Math.min(...lats);
-        const maxLat = Math.max(...lats);
-        const minLon = Math.min(...lons);
-        const maxLon = Math.max(...lons);
-        const padding = 20;
-        const mapBounds = map.getBoundingClientRect();
-        const width = Math.max(map.clientWidth || 0, mapBounds.width || 0, 800);
-        const height = Math.max(map.clientHeight || 0, mapBounds.height || 0, 360);
-        map.setAttribute('width', width);
-        map.setAttribute('height', height);
-        map.setAttribute('viewBox', `0 0 ${width} ${height}`);
-        map.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-        const latSpan = maxLat - minLat || 1;
-        const lonSpan = maxLon - minLon || 1;
-
-        function project(lat, lon) {
-          const x = ((lon - minLon) / lonSpan) * (width - padding * 2) + padding;
-          const y = ((maxLat - lat) / latSpan) * (height - padding * 2) + padding;
-          return { x, y };
-        }
-
-        const ns = 'http://www.w3.org/2000/svg';
-        const defs = document.createElementNS(ns, 'defs');
-        const gradient = document.createElementNS(ns, 'linearGradient');
-        gradient.setAttribute('id', 'topoGradient');
-        gradient.setAttribute('x1', '0%');
-        gradient.setAttribute('y1', '0%');
-        gradient.setAttribute('x2', '0%');
-        gradient.setAttribute('y2', '100%');
-        const stopA = document.createElementNS(ns, 'stop');
-        stopA.setAttribute('offset', '0%');
-        stopA.setAttribute('stop-color', '#0f172a');
-        const stopB = document.createElementNS(ns, 'stop');
-        stopB.setAttribute('offset', '100%');
-        stopB.setAttribute('stop-color', '#111827');
-        gradient.appendChild(stopA);
-        gradient.appendChild(stopB);
-        defs.appendChild(gradient);
-        map.appendChild(defs);
-
-        const backdrop = document.createElementNS(ns, 'rect');
-        backdrop.setAttribute('x', '0');
-        backdrop.setAttribute('y', '0');
-        backdrop.setAttribute('width', width);
-        backdrop.setAttribute('height', height);
-        backdrop.setAttribute('fill', 'url(#topoGradient)');
-        map.appendChild(backdrop);
-
-        const contourGroup = document.createElementNS(ns, 'g');
-        contourGroup.setAttribute('opacity', '0.4');
-        for (let i = 0; i < 10; i += 1) {
-          const baseY = (height / 11) * (i + 1);
-          const amplitude = 6 + (i % 3) * 4;
-          const frequency = (Math.PI * 2) / width;
-          let d = `M 0 ${baseY.toFixed(2)}`;
-          for (let x = 0; x <= width; x += 40) {
-            const y = baseY + Math.sin(x * frequency + i) * amplitude;
-            d += ` L ${x.toFixed(2)} ${y.toFixed(2)}`;
-          }
-          const path = document.createElementNS(ns, 'path');
-          path.setAttribute('d', d);
-          path.setAttribute('fill', 'none');
-          path.setAttribute('stroke', 'rgba(148, 163, 184, 0.35)');
-          path.setAttribute('stroke-width', '1');
-          contourGroup.appendChild(path);
-        }
-        map.appendChild(contourGroup);
-
-        filtered.forEach((peak) => {
-          const { x, y } = project(peak.coords.lat, peak.coords.lon);
-          const circle = document.createElementNS(ns, 'circle');
-          const color = getPeakColor(peak);
-          circle.setAttribute('cx', x);
-          circle.setAttribute('cy', y);
-          circle.setAttribute('r', peakFocus ? 7 : 5);
-          circle.setAttribute('fill', color);
-          circle.setAttribute('stroke', 'var(--bg)');
-          circle.setAttribute('stroke-width', peakFocus ? '2' : '1');
-          circle.setAttribute('aria-label', peak.name);
-          circle.addEventListener('mouseenter', () => {
-            circle.setAttribute('fill', '#4ade80');
-          });
-          circle.addEventListener('mouseleave', () => {
-            circle.setAttribute('fill', color);
-          });
-          circle.addEventListener('click', () => {
-            window.open(`/peak/${peak.slug}/`, '_blank');
-          });
-          map.appendChild(circle);
-        });
-
         renderLeafletMap(filtered);
       }
 
@@ -2684,17 +2587,59 @@
         });
         leafletLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
           maxZoom: 17,
-          attribution: 'Map data Â© OpenStreetMap contributors, SRTM | Tiles Â© OpenTopoMap'
+          attribution: 'Map data (c) OpenStreetMap contributors, SRTM | Tiles (c) OpenTopoMap'
         }).addTo(leafletMap);
+        leafletStylizedLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+          maxZoom: 17,
+          attribution: 'Map data (c) OpenStreetMap contributors, SRTM | Tiles (c) OpenTopoMap'
+        });
+        leafletStylizedLayer.on('tileload', (event) => {
+          if (!event?.tile) return;
+          event.tile.style.filter = STYLIZED_TILE_FILTER;
+        });
         leafletMarkers = L.layerGroup().addTo(leafletMap);
       }
 
+      function setLeafletMapHint(message) {
+        if (!leafletMap) return;
+        const container = leafletMap.getContainer();
+        if (!container) return;
+        let hint = container.querySelector('.map-empty-hint');
+        if (!message) {
+          if (hint) hint.remove();
+          return;
+        }
+        if (!hint) {
+          hint = document.createElement('div');
+          hint.className = 'map-empty-hint';
+          Object.assign(hint.style, {
+            position: 'absolute',
+            left: '12px',
+            top: '12px',
+            zIndex: '500',
+            padding: '8px 10px',
+            borderRadius: '8px',
+            border: '1px solid rgba(148,163,184,0.35)',
+            background: 'rgba(15,23,42,0.78)',
+            color: '#cbd5e1',
+            fontSize: '0.82rem',
+            pointerEvents: 'none'
+          });
+          container.appendChild(hint);
+        }
+        hint.textContent = message;
+      }
+
       function renderLeafletMap(points) {
-        if (activeMapStyle !== 'osm') return;
         initLeafletMap();
         if (!leafletMap || !leafletMarkers) return;
         leafletMarkers.clearLayers();
-        if (!points || !points.length) return;
+        if (!points || !points.length) {
+          const hasCoords = peaks.some((peak) => peak.coords);
+          setLeafletMapHint(hasCoords ? 'No peaks match the current filters.' : 'No coordinate data available.');
+          return;
+        }
+        setLeafletMapHint('');
         const isPeakFocus = points.length === 1 && selectedPeakSlug && points[0]?.slug === selectedPeakSlug;
         const latLngs = points.map((peak) => {
           const color = getPeakColor(peak);
@@ -2730,11 +2675,26 @@
           osmBtn.setAttribute('aria-selected', style === 'osm' ? 'true' : 'false');
         }
         if (svgMap && leafletEl) {
-          svgMap.style.display = style === 'stylized' ? 'block' : 'none';
-          leafletEl.style.display = style === 'osm' ? 'block' : 'none';
+          svgMap.style.display = 'none';
+          leafletEl.style.display = 'block';
         }
-        if (style === 'osm') {
-          initLeafletMap();
+        initLeafletMap();
+        if (leafletMap && leafletLayer && leafletStylizedLayer) {
+          if (style === 'stylized') {
+            if (leafletMap.hasLayer(leafletLayer)) {
+              leafletMap.removeLayer(leafletLayer);
+            }
+            if (!leafletMap.hasLayer(leafletStylizedLayer)) {
+              leafletStylizedLayer.addTo(leafletMap);
+            }
+          } else {
+            if (leafletMap.hasLayer(leafletStylizedLayer)) {
+              leafletMap.removeLayer(leafletStylizedLayer);
+            }
+            if (!leafletMap.hasLayer(leafletLayer)) {
+              leafletLayer.addTo(leafletMap);
+            }
+          }
           setTimeout(() => {
             if (leafletMap) {
               leafletMap.invalidateSize();
@@ -2743,11 +2703,10 @@
               }
             }
           }, 60);
-          const { filtered } = getFilteredMapPeaks();
-          renderLeafletMap(filtered);
         }
+        const { filtered } = getFilteredMapPeaks();
+        renderLeafletMap(filtered);
       }
-
       function renderItemListSchema() {
         if (itemListSchemaEl) itemListSchemaEl.remove();
         const script = document.createElement('script');
@@ -3019,21 +2978,21 @@
         const resetBtn = document.getElementById('mapReset');
         if (zoomInBtn) {
           zoomInBtn.addEventListener('click', () => {
-            if (activeMapStyle === 'osm' && leafletMap) {
+            if (leafletMap) {
               leafletMap.zoomIn();
             }
           });
         }
         if (zoomOutBtn) {
           zoomOutBtn.addEventListener('click', () => {
-            if (activeMapStyle === 'osm' && leafletMap) {
+            if (leafletMap) {
               leafletMap.zoomOut();
             }
           });
         }
         if (resetBtn) {
           resetBtn.addEventListener('click', () => {
-            if (activeMapStyle === 'osm' && leafletMap) {
+            if (leafletMap) {
               if (leafletBounds) {
                 leafletMap.fitBounds(leafletBounds.pad(0.2), { animate: false });
               }
@@ -3072,4 +3031,6 @@
   <div id="footer-placeholder"></div>
 </body>
 </html>
+
+
 
