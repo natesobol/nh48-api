@@ -11,6 +11,7 @@ import { LANGS } from './langConfig.js';
   let isApplying = false;
   let observer = null;
   let debounceTimer = null;
+  let navFitRaf = null;
 
   function getLangFromPath() {
     const path = window.location.pathname || '';
@@ -130,6 +131,98 @@ import { LANGS } from './langConfig.js';
       }
     });
     isApplying = false;
+    scheduleNavFit();
+  }
+
+  function countDistinctRows(elements) {
+    const tops = [];
+    elements.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (!rect.width && !rect.height) return;
+      const top = Math.round(rect.top);
+      const existing = tops.find(value => Math.abs(value - top) <= 3);
+      if (existing == null) tops.push(top);
+    });
+    return tops.length;
+  }
+
+  function getTopLevelNavItems(linksContainer) {
+    if (!linksContainer) return [];
+    return Array.from(linksContainer.children).filter(node => {
+      if (!(node instanceof HTMLElement)) return false;
+      const computed = window.getComputedStyle(node);
+      return computed.display !== 'none' && computed.visibility !== 'hidden';
+    });
+  }
+
+  function applyNavScale(linksContainer, scale) {
+    const scaled = {
+      font: Math.max(11, 15 * scale),
+      padY: Math.max(5, 8 * scale),
+      padX: Math.max(7, 14 * scale),
+      gap: Math.max(4, 8 * scale),
+      letter: Math.max(0.35, 0.8 * scale),
+      ctaFont: Math.max(11, 13 * scale),
+      ctaPadY: Math.max(5, 6 * scale),
+      ctaPadX: Math.max(9, 14 * scale),
+      langFont: Math.max(11, 13 * scale),
+      langPadY: Math.max(3, 4 * scale),
+      langPadX: Math.max(8, 10 * scale)
+    };
+    linksContainer.style.setProperty('--nav-link-font-size', `${scaled.font.toFixed(2)}px`);
+    linksContainer.style.setProperty('--nav-link-pad-y', `${scaled.padY.toFixed(2)}px`);
+    linksContainer.style.setProperty('--nav-link-pad-x', `${scaled.padX.toFixed(2)}px`);
+    linksContainer.style.setProperty('--nav-link-gap', `${scaled.gap.toFixed(2)}px`);
+    linksContainer.style.setProperty('--nav-link-letter-spacing', `${scaled.letter.toFixed(2)}px`);
+    linksContainer.style.setProperty('--nav-cta-font-size', `${scaled.ctaFont.toFixed(2)}px`);
+    linksContainer.style.setProperty('--nav-cta-pad-y', `${scaled.ctaPadY.toFixed(2)}px`);
+    linksContainer.style.setProperty('--nav-cta-pad-x', `${scaled.ctaPadX.toFixed(2)}px`);
+    linksContainer.style.setProperty('--lang-toggle-font-size', `${scaled.langFont.toFixed(2)}px`);
+    linksContainer.style.setProperty('--lang-toggle-pad-y', `${scaled.langPadY.toFixed(2)}px`);
+    linksContainer.style.setProperty('--lang-toggle-pad-x', `${scaled.langPadX.toFixed(2)}px`);
+  }
+
+  function fitTopNavToTwoRows() {
+    const linksContainer = document.querySelector('.site-nav .site-nav-links');
+    if (!linksContainer) return;
+    const navItems = getTopLevelNavItems(linksContainer);
+    if (!navItems.length) return;
+
+    const MAX_SCALE = 1.3;
+    const MIN_SCALE = 0.68;
+    const STEP = 0.04;
+    let scale = MAX_SCALE;
+    linksContainer.classList.remove('nav-links--tight');
+    linksContainer.classList.remove('nav-links--ultra-tight');
+    applyNavScale(linksContainer, scale);
+    let rows = countDistinctRows(navItems);
+
+    while (rows > 2 && scale > MIN_SCALE) {
+      scale = Math.max(MIN_SCALE, scale - STEP);
+      applyNavScale(linksContainer, scale);
+      rows = countDistinctRows(navItems);
+    }
+
+    if (rows > 2) {
+      linksContainer.classList.add('nav-links--tight');
+      applyNavScale(linksContainer, MIN_SCALE);
+      rows = countDistinctRows(navItems);
+    }
+
+    if (rows > 2) {
+      linksContainer.classList.add('nav-links--ultra-tight');
+      applyNavScale(linksContainer, 0.58);
+    }
+  }
+
+  function scheduleNavFit() {
+    if (navFitRaf) cancelAnimationFrame(navFitRaf);
+    navFitRaf = requestAnimationFrame(() => {
+      navFitRaf = null;
+      fitTopNavToTwoRows();
+      // Run a second pass after layout settles (fonts / translated labels).
+      setTimeout(fitTopNavToTwoRows, 120);
+    });
   }
 
   function scheduleApply() {
@@ -155,6 +248,7 @@ import { LANGS } from './langConfig.js';
       });
       if (hasTranslatableNodes) {
         scheduleApply();
+        scheduleNavFit();
       }
     });
     observer.observe(document.body, { childList: true, subtree: true });
@@ -256,7 +350,10 @@ import { LANGS } from './langConfig.js';
         if (event.target.closest('.nh48-lang-menu')) return;
         closeLangMenus();
       });
-      window.addEventListener('resize', closeLangMenus);
+      window.addEventListener('resize', () => {
+        closeLangMenus();
+        scheduleNavFit();
+      });
     }
 
     updateFlagButtons(currentLang);
@@ -299,6 +396,7 @@ import { LANGS } from './langConfig.js';
     container.appendChild(menu);
 
     initLangPicker();
+    scheduleNavFit();
   }
 
   async function setLang(lang) {
@@ -315,6 +413,7 @@ import { LANGS } from './langConfig.js';
     setDirection(lang);
     applyTranslations(document);
     initLangPicker();
+    scheduleNavFit();
     callbacks.forEach(cb => cb(lang));
   }
 
@@ -329,11 +428,13 @@ import { LANGS } from './langConfig.js';
     renderLangPicker();
     setLang(initialLang);
     initObserver();
+    scheduleNavFit();
   }
 
   function refreshLangPicker() {
     renderLangPicker();
     applyTranslations(document);
+    scheduleNavFit();
   }
 
   if (document.readyState === 'loading') {

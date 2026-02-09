@@ -52,7 +52,66 @@ const ROUTE_METRICS_KEY = 'nh48-planner-route-metrics-open';
 const FILTER_DRAWER_KEY = 'nh48-planner-filters-open';
 const RANGE_COLOR_FALLBACK = '#22c55e';
 const USE_COMMAND_BAR_LAYOUT = true;
-const SEGMENTED_TEMPLATE_IDS = ['fast-finish', 'efficient-trips', 'scenic-journey'];
+const SEGMENTED_TEMPLATE_IDS = ['efficient-trips', 'scenic-journey'];
+const DEFAULT_BANNER_POSITION = 'center 30%';
+const PLANNER_HOME_URL = 'https://nh48.info/';
+const PLANNER_GUIDE_URL = 'https://nh48.info/nh-4000-footers-info';
+const PLANNER_CANONICAL_URL = 'https://nh48.info/nh48-planner.html';
+const BANNER_POSITION_OVERRIDES = {
+  // Downward recenter to reduce excessive sky.
+  'mount-waumbek': 'center 56%',
+  'waumbek': 'center 56%',
+  'mount-hale': 'center 56%',
+  'hale': 'center 56%',
+  'mount-tom': 'center 56%',
+  'tom': 'center 56%',
+  'mount-moosilauke': 'center 56%',
+  'moosilauke': 'center 56%',
+  'mount-whiteface': 'center 56%',
+  'whiteface': 'center 56%',
+  'mount-moriah': 'center 56%',
+  'moriah': 'center 56%',
+  'wildcat-mountain-d': 'center 56%',
+  'wildcat-d': 'center 56%',
+  'north-kinsman-mountain': 'center 56%',
+  'north-kinsman': 'center 56%',
+  'mount-field': 'center 56%',
+  'field': 'center 56%',
+  'south-kinsman-mountain': 'center 56%',
+  'south-kinsman': 'center 56%',
+  'mount-hancock': 'center 56%',
+  'mount-hancock-north': 'center 56%',
+  'hancock': 'center 56%',
+  'wildcat-mountain-a': 'center 56%',
+  'wildcat-a': 'center 56%',
+  'middle-carter-mountain': 'center 56%',
+  'middle-carter': 'center 56%',
+  'mount-carrigain': 'center 56%',
+  'carrigain': 'center 56%',
+  'carter-dome': 'center 56%',
+  'west-bond': 'center 56%',
+  'mount-madison': 'center 56%',
+  'madison': 'center 56%',
+  // Upward recenter to reveal higher terrain detail.
+  'mount-pierce': 'center 22%',
+  'pierce': 'center 22%',
+  'cannon-mountain': 'center 22%',
+  'mount-cannon': 'center 22%',
+  'cannon': 'center 22%',
+  'mount-isolation': 'center 22%',
+  'isolation': 'center 22%',
+  'mount-passaconaway': 'center 22%',
+  'passaconaway': 'center 22%',
+  'mount-osceola-east': 'center 22%',
+  'east-osceola': 'center 22%',
+  'osceola-east': 'center 22%',
+  'mount-hancock-south': 'center 22%',
+  'south-hancock': 'center 22%',
+  'mount-monroe': 'center 22%',
+  'monroe': 'center 22%',
+  'mount-adams': 'center 22%',
+  'adams': 'center 22%'
+};
 
 const RISK_FACTORS = [
   { id: 'AboveTreelineExposure', label: 'Above-treeline exposure', color: '#f97316' },
@@ -74,7 +133,167 @@ const RISK_LABEL_LOOKUP = RISK_FACTORS.reduce((acc, risk) => {
 }, {});
 const ALLOWED_RISK_IDS = new Set(RISK_FACTORS.map((risk) => risk.id));
 
+const SHARE_PLATFORMS = [
+  {
+    name: 'Facebook',
+    buildUrl: (share) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(share.url)}`
+  },
+  {
+    name: 'X',
+    buildUrl: (share) => `https://twitter.com/intent/tweet?url=${encodeURIComponent(share.url)}&text=${encodeURIComponent(share.text)}`
+  },
+  {
+    name: 'LinkedIn',
+    buildUrl: (share) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(share.url)}`
+  },
+  {
+    name: 'Reddit',
+    buildUrl: (share) => `https://www.reddit.com/submit?url=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+  },
+  {
+    name: 'Email',
+    buildUrl: (share) => `mailto:?subject=${encodeURIComponent(share.text)}&body=${encodeURIComponent(share.url)}`
+  },
+  {
+    name: 'WhatsApp',
+    buildUrl: (share) => `https://wa.me/?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+  },
+  {
+    name: 'Bluesky',
+    buildUrl: (share) => `https://bsky.app/intent/compose?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+  },
+  {
+    name: 'Threads',
+    buildUrl: (share) => `https://www.threads.net/intent/post?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+  },
+  {
+    name: 'Telegram',
+    buildUrl: (share) => `https://t.me/share/url?url=${encodeURIComponent(share.url)}&text=${encodeURIComponent(share.text)}`
+  },
+  {
+    name: 'Weibo',
+    buildUrl: (share) => `https://service.weibo.com/share/share.php?url=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+  },
+  {
+    name: 'VK',
+    buildUrl: (share) => `https://vk.com/share.php?url=${encodeURIComponent(share.url)}`
+  },
+  {
+    name: 'Line',
+    buildUrl: (share) => `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(share.url)}`
+  },
+  {
+    name: 'KakaoTalk',
+    buildUrl: (share) => `https://story.kakao.com/share?url=${encodeURIComponent(share.url)}`
+  },
+  {
+    name: 'Mastodon',
+    buildUrl: (share) => `https://mastodon.social/share?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+  },
+  {
+    name: 'Pocket',
+    buildUrl: (share) => `https://getpocket.com/edit?url=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+  },
+  {
+    name: 'Tumblr',
+    buildUrl: (share) => `https://www.tumblr.com/widgets/share/tool?canonicalUrl=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+  },
+  {
+    name: 'Pinterest',
+    buildUrl: (share) => `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(share.url)}&description=${encodeURIComponent(share.text)}`
+  },
+  {
+    name: 'SMS',
+    buildUrl: (share) => `sms:?&body=${encodeURIComponent(`${share.text} ${share.url}`)}`
+  }
+];
+
+const ICON_REGISTRY = {
+  searchInput: 'assets/icons/user-interface/001-magnifying glass.png',
+  templatesHelp: 'assets/icons/user-interface/048-question.png',
+  efficientTrips: 'assets/icons/graphic-design/018-compass.png',
+  scenicJourney: 'assets/icons/user-interface/034-landscape.png',
+  templateMore: 'assets/icons/user-interface/024-folder.png',
+  filters: 'assets/icons/web-basics/114-filter.png',
+  undo: 'assets/icons/user-interface/018-arrows.png',
+  redo: 'assets/icons/user-interface/018-arrows.png',
+  saved: 'assets/icons/user-interface/040-checkmark.png',
+  export: 'assets/icons/web-basics/029-download.png',
+  selectionAdd: 'assets/icons/user-interface/040-checkmark.png',
+  selectionRemove: 'assets/icons/user-interface/039-cross.png',
+  ungroup: 'assets/icons/graphic-design/015-layers.png',
+  newTemplate: 'assets/icons/graphic-design/013-folder.png',
+  shareMenu: 'assets/icons/web-basics/120-share.png',
+  filterMenu: 'assets/icons/web-basics/114-filter.png',
+  openDrawer: 'assets/icons/user-interface/007-gear.png',
+  clearFilters: 'assets/icons/user-interface/022-bin.png',
+  riskHeading: 'assets/icons/user-interface/049-exclamation.png',
+  rangeHeading: 'assets/icons/user-interface/012-map.png',
+  shareFallback: 'assets/icons/web-basics/120-share.png',
+  shareEmail: 'assets/icons/user-interface/019-mail.png',
+  shareSms: 'assets/icons/user-interface/021-chatting.png',
+  sharePlane: 'assets/icons/user-interface/002-paper plane.png',
+  strategyFast: 'assets/icons/graphic-design/001-magic wand.png',
+  strategyWeekend: 'assets/icons/user-interface/036-calendar.png',
+  strategyRange: 'assets/icons/user-interface/012-map.png',
+  strategySeasonal: 'assets/icons/user-interface/032-weather.png'
+};
+
+const STRATEGY_ICON_LOOKUP = {
+  'fast-finish': 'strategyFast',
+  'efficient-trips': 'efficientTrips',
+  'weekend-warrior': 'strategyWeekend',
+  'range-by-range': 'strategyRange',
+  'seasonal-split': 'strategySeasonal',
+  'scenic-journey': 'scenicJourney'
+};
+
+const SHARE_ICON_LOOKUP = {
+  Email: 'shareEmail',
+  SMS: 'shareSms',
+  Telegram: 'sharePlane',
+  Line: 'sharePlane'
+};
+
 const DEFAULT_NUMERIC_FILTER = { min: '', max: '' };
+
+function iconSrc(path) {
+  return encodeURI(path);
+}
+
+function renderUiIcon(iconName, className = '') {
+  const path = ICON_REGISTRY[iconName];
+  if (!path) return null;
+  return React.createElement('img', {
+    src: iconSrc(path),
+    alt: '',
+    'aria-hidden': 'true',
+    className: `ui-icon${className ? ` ${className}` : ''}`,
+    loading: 'lazy',
+    decoding: 'async',
+    onError: (event) => {
+      event.currentTarget.style.display = 'none';
+      event.currentTarget.onerror = null;
+    }
+  });
+}
+
+function renderIconLabel(iconName, label, wrapperClass = 'ui-icon-btn') {
+  return React.createElement(
+    'span',
+    { className: wrapperClass },
+    renderUiIcon(iconName),
+    React.createElement('span', { className: 'ui-label' }, label)
+  );
+}
+
+function getStrategyIconName(strategyId) {
+  return STRATEGY_ICON_LOOKUP[strategyId] || 'templatesHelp';
+}
+
+function getShareIconName(platformName) {
+  return SHARE_ICON_LOOKUP[platformName] || 'shareFallback';
+}
 
 function parseNumberInput(value) {
   if (value === '' || value === null || value === undefined) return null;
@@ -227,11 +446,41 @@ function buildPeakItem(details) {
 // Returns the primary photo URL for a given peak slug.
 // This follows the naming pattern used on the site: slug/slug__001.jpg.
 function getPeakPhotoUrl(slug) {
-  return `https://photos.nh48.info/${slug}/${slug}__001.jpg`;
+  return `https://photos.nh48.info/cdn-cgi/image/format=webp,quality=82,width=1600/${slug}/${slug}__001.jpg`;
+}
+
+function getBannerPhotoPosition(slug) {
+  return BANNER_POSITION_OVERRIDES[slug] || DEFAULT_BANNER_POSITION;
 }
 
 function getPeakDetailUrl(slug) {
   return `/peak/${slug}/`;
+}
+
+function normalizePlannerPhotoUrl(rawUrl, slug, filename) {
+  if (rawUrl && typeof rawUrl === 'string') {
+    if (rawUrl.includes('/cdn-cgi/image/')) return rawUrl;
+    if (rawUrl.startsWith('https://photos.nh48.info/')) {
+      return rawUrl.replace(
+        'https://photos.nh48.info/',
+        'https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85/'
+      );
+    }
+    if (rawUrl.startsWith('http://photos.nh48.info/')) {
+      return rawUrl.replace(
+        'http://photos.nh48.info/',
+        'https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85/'
+      );
+    }
+    if (rawUrl.startsWith('/')) {
+      return `https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85${rawUrl}`;
+    }
+    return rawUrl;
+  }
+  if (filename && slug) {
+    return `https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85/${slug}/${filename}`;
+  }
+  return getPeakPhotoUrl(slug);
 }
 
 function buildImageAdditionalProperties(photo) {
@@ -264,45 +513,60 @@ function buildPlannerImageObjectGraph(rawNh48Data) {
     if (!entry || typeof entry !== 'object') return;
     const slug = entry.slug || slugKey;
     if (!slug) return;
+    const peakName = entry.peakName || entry['Peak Name'] || slug;
     const photos = Array.isArray(entry.photos) ? entry.photos : [];
-    const primary = photos.find((photo) => photo && photo.isPrimary)
-      || photos.find((photo) => typeof photo?.filename === 'string' && photo.filename.includes('__001'))
-      || photos[0]
-      || null;
-    const photoUrl = primary?.url || getPeakPhotoUrl(slug);
-    const creatorName = primary?.author || primary?.iptc?.creator || 'Unknown';
-    const altText = primary?.alt || entry.peakName || entry['Peak Name'] || slug;
-    const description = primary?.extendedDescription || primary?.title || altText;
-    const keywords = Array.from(new Set([
-      ...(Array.isArray(primary?.tags) ? primary.tags : []),
-      ...(Array.isArray(primary?.iptc?.keywords) ? primary.iptc.keywords : [])
-    ].filter(Boolean).map((keyword) => String(keyword))));
-    const additionalProperty = buildImageAdditionalProperties(primary || {});
-    const imageObject = {
-      '@type': 'ImageObject',
-      '@id': `${photoUrl}#planner-image`,
-      name: primary?.title || `${entry.peakName || entry['Peak Name'] || slug} summit photo`,
-      description,
-      caption: altText,
-      contentUrl: photoUrl,
-      url: photoUrl,
-      creator: {
-        '@type': 'Person',
-        name: creatorName
-      },
-      associatedArticle: `https://nh48.info/peak/${slug}/`
-    };
-    if (primary?.width) imageObject.width = primary.width;
-    if (primary?.height) imageObject.height = primary.height;
-    if (primary?.captureDate) imageObject.dateCreated = primary.captureDate;
-    if (primary?.captureDate || primary?.fileCreateDate) {
-      imageObject.datePublished = primary.captureDate || primary.fileCreateDate;
-    }
-    if (keywords.length) imageObject.keywords = keywords;
-    if (additionalProperty.length) imageObject.additionalProperty = additionalProperty;
-    graph.push(imageObject);
+    const photoList = photos.length ? photos : [{ url: getPeakPhotoUrl(slug), filename: `${slug}__001.jpg`, alt: peakName }];
+    photoList.forEach((photo, index) => {
+      const photoUrl = normalizePlannerPhotoUrl(photo?.url, slug, photo?.filename);
+      const creatorName = photo?.author || photo?.iptc?.creator || 'Unknown';
+      const altText = photo?.alt || peakName;
+      const description = photo?.extendedDescription || photo?.title || altText;
+      const keywords = Array.from(new Set([
+        ...(Array.isArray(photo?.tags) ? photo.tags : []),
+        ...(Array.isArray(photo?.iptc?.keywords) ? photo.iptc.keywords : [])
+      ].filter(Boolean).map((keyword) => String(keyword))));
+      const additionalProperty = buildImageAdditionalProperties(photo || {});
+      const imageObject = {
+        '@type': 'ImageObject',
+        '@id': `${photoUrl}#planner-image-${photo?.photoId || index + 1}`,
+        name: photo?.title || `${peakName} (${photo?.filename || `photo ${index + 1}`})`,
+        description,
+        caption: altText,
+        contentUrl: photoUrl,
+        url: photoUrl,
+        creator: {
+          '@type': 'Person',
+          name: creatorName
+        },
+        associatedArticle: `https://nh48.info/peak/${slug}/`
+      };
+      if (photo?.width) imageObject.width = photo.width;
+      if (photo?.height) imageObject.height = photo.height;
+      if (photo?.captureDate || photo?.fileCreateDate) {
+        imageObject.dateCreated = photo.captureDate || photo.fileCreateDate;
+      }
+      if (photo?.fileModifiedDate || photo?.captureDate || photo?.fileCreateDate) {
+        imageObject.datePublished = photo.fileModifiedDate || photo.captureDate || photo.fileCreateDate;
+      }
+      if (keywords.length) imageObject.keywords = keywords;
+      if (additionalProperty.length) imageObject.additionalProperty = additionalProperty;
+      graph.push(imageObject);
+    });
   });
   return graph;
+}
+
+function upsertJsonLdScript(id, payload) {
+  const existing = document.getElementById(id);
+  if (!payload) {
+    if (existing) existing.remove();
+    return;
+  }
+  const scriptEl = existing || document.createElement('script');
+  scriptEl.type = 'application/ld+json';
+  scriptEl.id = id;
+  scriptEl.textContent = JSON.stringify(payload);
+  if (!existing) document.head.appendChild(scriptEl);
 }
 
 function sortPeaksByDifficulty(peaks) {
@@ -377,9 +641,12 @@ function PeakPlannerApp() {
   const [showAllRiskChips, setShowAllRiskChips] = useState(false);
   const [showAllRangeChips, setShowAllRangeChips] = useState(false);
   const [templateMenuOpen, setTemplateMenuOpen] = useState(false);
+  const [templateHelpOpen, setTemplateHelpOpen] = useState(false);
   const [lastSaveTimestamp, setLastSaveTimestamp] = useState(null);
   const [adjacencyMap, setAdjacencyMap] = useState({});
+  const [photoLoadState, setPhotoLoadState] = useState({});
   const [selectionWarning, setSelectionWarning] = useState('');
+  const pendingPhotoLoadsRef = useRef(new Set());
   const undoStackRef = useRef([]);
   const redoStackRef = useRef([]);
   const [undoCount, setUndoCount] = useState(0);
@@ -396,6 +663,7 @@ function PeakPlannerApp() {
   const [contextMenu, setContextMenu] = useState(null);
   const groupCounterRef = useRef(1);
   const templateMenuRef = useRef(null);
+  const templateHelpRef = useRef(null);
   const strategyParam = useMemo(() => {
     if (typeof window === 'undefined') return null;
     return new URLSearchParams(window.location.search).get('strategy');
@@ -589,25 +857,44 @@ function PeakPlannerApp() {
   }, []);
 
   useEffect(() => {
-    const scriptId = 'plannerImageObjectSchema';
-    const existing = document.getElementById(scriptId);
     const graph = buildPlannerImageObjectGraph(rawNh48Data);
     if (!graph.length) {
-      if (existing) existing.remove();
+      upsertJsonLdScript('plannerImageObjectSchema', null);
       return;
     }
-    const payload = {
+    upsertJsonLdScript('plannerImageObjectSchema', {
       '@context': 'https://schema.org',
       '@graph': graph
-    };
-    const scriptEl = existing || document.createElement('script');
-    scriptEl.type = 'application/ld+json';
-    scriptEl.id = scriptId;
-    scriptEl.textContent = JSON.stringify(payload);
-    if (!existing) {
-      document.head.appendChild(scriptEl);
-    }
+    });
   }, [rawNh48Data]);
+
+  useEffect(() => {
+    upsertJsonLdScript('plannerBreadcrumbSchema', {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      '@id': `${PLANNER_CANONICAL_URL}#breadcrumbs`,
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: PLANNER_HOME_URL },
+        { '@type': 'ListItem', position: 2, name: 'NH48 Guide', item: PLANNER_GUIDE_URL },
+        { '@type': 'ListItem', position: 3, name: 'Peak Planning Tool', item: PLANNER_CANONICAL_URL }
+      ]
+    });
+    upsertJsonLdScript('plannerWebPageSchema', {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: 'NH48 Peak Planning Tool',
+      description: 'Interactive NH48 planner for grouping and reordering New Hampshire 4,000-foot peaks.',
+      url: PLANNER_CANONICAL_URL,
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'NH48 API',
+        url: 'https://nh48.info/'
+      },
+      breadcrumb: {
+        '@id': `${PLANNER_CANONICAL_URL}#breadcrumbs`
+      }
+    });
+  }, []);
 
   const rangeGroupOptions = useMemo(() => {
     const groups = new Set();
@@ -682,11 +969,19 @@ function PeakPlannerApp() {
 
   useEffect(() => {
     if (!contextMenu) return;
-    const handleClick = () => setContextMenu(null);
+    const handleClick = (event) => {
+      if (event.target.closest('.planner-context-shell')) return;
+      setContextMenu(null);
+    };
     const handleKey = (event) => {
       if (event.key === 'Escape') {
-        setContextMenu(null);
+        setContextMenu((prev) => {
+          if (!prev) return null;
+          if (prev.submenu) return { ...prev, submenu: null };
+          return null;
+        });
         setTemplateMenuOpen(false);
+        setTemplateHelpOpen(false);
         setFilterDrawerOpen(false);
       }
     };
@@ -699,20 +994,24 @@ function PeakPlannerApp() {
   }, [contextMenu]);
 
   useEffect(() => {
-    if (!templateMenuOpen) return;
+    if (!templateMenuOpen && !templateHelpOpen) return;
     const handleWindowClick = (event) => {
       if (templateMenuRef.current && !templateMenuRef.current.contains(event.target)) {
         setTemplateMenuOpen(false);
       }
+      if (templateHelpRef.current && !templateHelpRef.current.contains(event.target)) {
+        setTemplateHelpOpen(false);
+      }
     };
     window.addEventListener('click', handleWindowClick, true);
     return () => window.removeEventListener('click', handleWindowClick, true);
-  }, [templateMenuOpen]);
+  }, [templateMenuOpen, templateHelpOpen]);
 
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key !== 'Escape') return;
       setTemplateMenuOpen(false);
+      setTemplateHelpOpen(false);
       setFilterDrawerOpen(false);
     };
     window.addEventListener('keydown', handleEscape);
@@ -1229,6 +1528,8 @@ function PeakPlannerApp() {
 
   const requestStrategyApply = (strategyId, source = 'toolbar') => {
     if (!strategyId) return;
+    setTemplateMenuOpen(false);
+    setTemplateHelpOpen(false);
     if (loadedSavedItinerary) {
       setPendingStrategyId(strategyId);
       setPendingStrategySource(source);
@@ -1312,8 +1613,31 @@ function PeakPlannerApp() {
     setContextMenu({
       ...payload,
       x: event.clientX,
-      y: event.clientY
+      y: event.clientY,
+      submenu: null
     });
+  };
+
+  const closeContextMenu = () => setContextMenu(null);
+
+  const toggleContextSubmenu = (submenu) => {
+    setContextMenu((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        submenu: prev.submenu === submenu ? null : submenu
+      };
+    });
+  };
+
+  const setContextSubmenu = (submenu) => {
+    setContextMenu((prev) => (prev ? { ...prev, submenu } : null));
+  };
+
+  const openShareNetwork = (platform) => {
+    const shareUrl = platform.buildUrl(sharePayload);
+    window.open(shareUrl, '_blank', 'noopener,noreferrer');
+    closeContextMenu();
   };
 
   const getHighlightColor = (peak) => {
@@ -1472,6 +1796,8 @@ function PeakPlannerApp() {
     const matchesFilters = filtersActive && peakMatchesFilters(peak);
     const highlightColor = matchesFilters ? getHighlightColor(peak) : null;
     const photoUrl = getPeakPhotoUrl(peak.slug);
+    const backgroundPosition = getBannerPhotoPosition(peak.slug);
+    const isPhotoLoaded = Boolean(photoLoadState[photoUrl]);
     const dragStyle = provided.draggableProps?.style || {};
     const style = highlightColor
       ? { ...dragStyle, '--highlight-color': highlightColor }
@@ -1494,9 +1820,16 @@ function PeakPlannerApp() {
       onContextMenu: (event) => openContextMenu(event, { type: 'peak', id: peak.id })
     }, [
       React.createElement('div', {
-        className: 'itinerary-photo-banner',
-        style: { backgroundImage: `url('${photoUrl}')` }
+        className: `itinerary-photo-banner${isPhotoLoaded ? '' : ' is-loading'}`,
+        style: {
+          backgroundImage: `url('${photoUrl}')`,
+          backgroundPosition
+        }
       }, [
+        !isPhotoLoaded && React.createElement('div', {
+          className: 'itinerary-photo-loading',
+          'aria-hidden': 'true'
+        }, React.createElement('span', { className: 'itinerary-photo-spinner' })),
         React.createElement('span', { className: 'itinerary-grab-rail', 'aria-hidden': 'true' }),
         React.createElement('div', { className: 'itinerary-banner-top' }, [
           React.createElement('span', {
@@ -1579,6 +1912,35 @@ function PeakPlannerApp() {
     return fallbackIndex;
   };
 
+  useEffect(() => {
+    const urlsToLoad = new Set();
+    itinerary.forEach((item) => {
+      if (item.type === 'group') {
+        item.items.forEach((peak) => {
+          urlsToLoad.add(getPeakPhotoUrl(peak.slug));
+        });
+        return;
+      }
+      urlsToLoad.add(getPeakPhotoUrl(item.slug));
+    });
+    urlsToLoad.forEach((url) => {
+      if (photoLoadState[url]) return;
+      if (pendingPhotoLoadsRef.current.has(url)) return;
+      pendingPhotoLoadsRef.current.add(url);
+      const probe = new Image();
+      probe.decoding = 'async';
+      probe.onload = () => {
+        pendingPhotoLoadsRef.current.delete(url);
+        setPhotoLoadState((prev) => (prev[url] ? prev : { ...prev, [url]: true }));
+      };
+      probe.onerror = () => {
+        pendingPhotoLoadsRef.current.delete(url);
+        setPhotoLoadState((prev) => (prev[url] ? prev : { ...prev, [url]: true }));
+      };
+      probe.src = url;
+    });
+  }, [itinerary, photoLoadState]);
+
   const segmentedStrategies = useMemo(
     () => finishStrategies.filter((strategy) => SEGMENTED_TEMPLATE_IDS.includes(strategy.id)),
     [finishStrategies]
@@ -1623,6 +1985,91 @@ function PeakPlannerApp() {
 
   const progressText = `${plannerStats.plannedCount}/48 planned • ${plannerStats.groupCount} grouped • ${plannerStats.totalDistanceMi} mi • ${plannerStats.totalGainFt.toLocaleString()} ft`;
   const activeTemplate = finishStrategies.find((strategy) => strategy.id === activeStrategyId) || null;
+  const itinerarySchemaItems = useMemo(() => {
+    const items = [];
+    itinerary.forEach((entry) => {
+      if (entry.type === 'peak') {
+        items.push(entry);
+        return;
+      }
+      entry.items.forEach((peak) => items.push(peak));
+    });
+    return items;
+  }, [itinerary]);
+
+  useEffect(() => {
+    const listItems = itinerarySchemaItems.map((peak, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: peak.name,
+      item: `https://nh48.info/peak/${peak.slug}/`
+    }));
+    upsertJsonLdScript('plannerItinerarySchema', {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'NH48 Planner Itinerary',
+      itemListOrder: 'https://schema.org/ItemListOrderAscending',
+      numberOfItems: listItems.length,
+      itemListElement: listItems
+    });
+  }, [itinerarySchemaItems]);
+
+  const sharePayload = useMemo(() => {
+    const url = new URL(PLANNER_CANONICAL_URL);
+    if (activeStrategyId) url.searchParams.set('strategy', activeStrategyId);
+    const query = searchQuery.trim();
+    if (query) url.searchParams.set('q', query);
+    if (activeRiskFilters.size) {
+      url.searchParams.set('risks', Array.from(activeRiskFilters).sort().join(','));
+    }
+    if (activeRangeGroups.size) {
+      url.searchParams.set('ranges', Array.from(activeRangeGroups).sort().join(','));
+    }
+    const numericFilters = [
+      ['distanceMin', distanceFilter.min],
+      ['distanceMax', distanceFilter.max],
+      ['gainMin', gainFilter.min],
+      ['gainMax', gainFilter.max],
+      ['timeMin', timeFilter.min],
+      ['timeMax', timeFilter.max],
+      ['bailoutMin', bailoutFilter.min],
+      ['bailoutMax', bailoutFilter.max]
+    ];
+    numericFilters.forEach(([key, value]) => {
+      if (value !== '' && value !== null && value !== undefined) {
+        url.searchParams.set(key, String(value));
+      }
+    });
+    const activeTemplateName = activeTemplate?.name ? ` (${activeTemplate.name})` : '';
+    return {
+      url: url.toString(),
+      text: `Plan your NH48 itinerary${activeTemplateName} with the NH48 Peak Planner`
+    };
+  }, [
+    activeStrategyId,
+    activeTemplate?.name,
+    searchQuery,
+    activeRiskFilters,
+    activeRangeGroups,
+    distanceFilter,
+    gainFilter,
+    timeFilter,
+    bailoutFilter
+  ]);
+
+  const renderFilterTitle = (iconName, label) => React.createElement(
+    'span',
+    { className: 'filter-title with-icon' },
+    renderUiIcon(iconName),
+    React.createElement('span', null, label)
+  );
+
+  const renderMenuItemContent = (iconName, label, className = 'menu-item-content') => React.createElement(
+    'span',
+    { className },
+    renderUiIcon(iconName),
+    React.createElement('span', null, label)
+  );
 
   const filtersPanel = React.createElement('div', { className: `planner-filters${!hasOverlay ? ' is-disabled' : ''}` }, [
     React.createElement('div', { className: 'filters-header' }, [
@@ -1641,7 +2088,7 @@ function PeakPlannerApp() {
       : React.createElement('div', { className: 'filter-empty' }, 'No active filters.'),
     React.createElement('div', { className: 'filters-grid drawer-columns' }, [
       React.createElement('div', { className: 'filter-block' }, [
-        React.createElement('span', { className: 'filter-title' }, 'Risk factors'),
+        renderFilterTitle('riskHeading', 'Risk factors'),
         React.createElement('div', { className: `filter-chips${showAllRiskChips ? '' : ' chip-grid-limited'}` }, visibleRiskFactors.map(riskChip)),
         RISK_FACTORS.length > visibleRiskFactors.length
           ? React.createElement('button', {
@@ -1659,7 +2106,7 @@ function PeakPlannerApp() {
           : null
       ]),
       React.createElement('div', { className: 'filter-block' }, [
-        React.createElement('span', { className: 'filter-title' }, 'Grouping helpers'),
+        renderFilterTitle('rangeHeading', 'Grouping helpers'),
         React.createElement('div', { className: `filter-chips${showAllRangeChips ? '' : ' chip-grid-limited'}` },
           visibleRangeGroups.length
             ? visibleRangeGroups.map(rangeChip)
@@ -1680,7 +2127,7 @@ function PeakPlannerApp() {
           }, 'Show less')
           : null,
         React.createElement('div', { className: 'auto-group' }, [
-          React.createElement('span', { className: 'filter-title' }, 'Auto-group day trips'),
+          renderFilterTitle('newTemplate', 'Auto-group day trips'),
           React.createElement('div', { className: 'auto-group-toggles' },
             dayTripGroups.length
               ? dayTripGroups.map((set) => {
@@ -1707,7 +2154,7 @@ function PeakPlannerApp() {
         'aria-expanded': routeMetricsOpen ? 'true' : 'false',
         'aria-controls': 'routeMetricsPanel'
       }, [
-        React.createElement('span', null, 'Route metrics'),
+        renderFilterTitle('filters', 'Route metrics'),
         React.createElement('span', { className: 'metrics-toggle-icon' }, routeMetricsOpen ? 'Hide' : 'Show')
       ]),
       routeMetricsOpen
@@ -1817,84 +2264,297 @@ function PeakPlannerApp() {
         : null
     ]),
     React.createElement('div', { className: 'command-search-wrap' }, [
+      renderUiIcon('searchInput', 'command-search-icon'),
       React.createElement('input', {
         type: 'search',
-        className: 'command-search',
+        className: 'command-search command-search-has-icon',
         value: searchQuery,
         onChange: (event) => setSearchQuery(event.target.value),
         placeholder: 'Search peaks, groups, routes...',
         'aria-label': 'Search peaks, groups, routes'
       })
     ]),
-    React.createElement('div', { className: 'command-right' }, [
-      React.createElement('div', { className: 'template-segment', ref: templateMenuRef }, [
-        ...segmentedStrategies.map((strategy) =>
-          React.createElement('button', {
-            key: strategy.id,
-            type: 'button',
-            className: `command-btn template-btn${activeStrategyId === strategy.id ? ' is-active' : ''}`,
-            onClick: () => requestStrategyApply(strategy.id, 'toolbar'),
-            title: `${strategy.duration} | ${strategy.tripRange}`
-          }, `${strategy.icon || ''} ${strategy.name}`.trim())
-        ),
-        overflowStrategies.length
-          ? React.createElement('div', { className: 'template-more-wrap' }, [
-            React.createElement('button', {
-              type: 'button',
-              className: `command-btn template-btn${templateMenuOpen ? ' is-open' : ''}`,
-              onClick: () => setTemplateMenuOpen((prev) => !prev),
-              'aria-expanded': templateMenuOpen ? 'true' : 'false',
-              'aria-controls': 'templateMoreMenu'
-            }, 'More'),
-            templateMenuOpen
-              ? React.createElement('div', { className: 'template-more-menu', id: 'templateMoreMenu' },
-                overflowStrategies.map((strategy) =>
-                  React.createElement('button', {
-                    key: strategy.id,
-                    type: 'button',
-                    className: `template-more-item${activeStrategyId === strategy.id ? ' is-active' : ''}`,
-                    onClick: () => {
-                      requestStrategyApply(strategy.id, 'toolbar');
-                      setTemplateMenuOpen(false);
-                    }
-                  }, `${strategy.icon || ''} ${strategy.name}`.trim())
-                )
-              )
-              : null
+    React.createElement('div', { className: 'command-templates template-segment', ref: templateMenuRef }, [
+      React.createElement('div', {
+        className: 'template-help-wrap',
+        ref: templateHelpRef,
+        onMouseEnter: () => setTemplateHelpOpen(true),
+        onMouseLeave: () => setTemplateHelpOpen(false)
+      }, [
+        React.createElement('button', {
+          type: 'button',
+          className: `template-help-trigger${templateHelpOpen ? ' is-open' : ''}`,
+          onClick: () => setTemplateHelpOpen((prev) => !prev),
+          'aria-expanded': templateHelpOpen ? 'true' : 'false',
+          'aria-controls': 'templateHelpPopover'
+        }, renderIconLabel('templatesHelp', 'Templates')),
+        templateHelpOpen
+          ? React.createElement('div', {
+            className: 'template-help-popover',
+            id: 'templateHelpPopover',
+            role: 'dialog'
+          }, [
+            React.createElement('strong', null, 'How templates work'),
+            React.createElement('p', null, 'Templates pre-arrange the full NH48 list with curated groupings.'),
+            React.createElement('p', null, 'If a saved itinerary exists, you will be prompted before replacing it.')
           ])
           : null
       ]),
+      ...segmentedStrategies.map((strategy) =>
+        React.createElement('button', {
+          key: strategy.id,
+          type: 'button',
+          className: `command-btn template-btn${activeStrategyId === strategy.id ? ' is-active' : ''}`,
+          onClick: () => requestStrategyApply(strategy.id, 'toolbar'),
+          title: `${strategy.duration} | ${strategy.tripRange}`
+        }, renderIconLabel(getStrategyIconName(strategy.id), strategy.name))
+      ),
+      overflowStrategies.length
+        ? React.createElement('div', { className: 'template-more-wrap' }, [
+          React.createElement('button', {
+            type: 'button',
+            className: `command-btn template-btn${templateMenuOpen ? ' is-open' : ''}`,
+            onClick: () => setTemplateMenuOpen((prev) => !prev),
+            'aria-expanded': templateMenuOpen ? 'true' : 'false',
+            'aria-controls': 'templateMoreMenu'
+          }, [
+            renderIconLabel('templateMore', 'More'),
+            React.createElement('span', { className: 'more-arrow', 'aria-hidden': 'true' }, '▾')
+          ]),
+          templateMenuOpen
+            ? React.createElement('div', { className: 'template-more-menu', id: 'templateMoreMenu' },
+              overflowStrategies.map((strategy) =>
+                React.createElement('button', {
+                  key: strategy.id,
+                  type: 'button',
+                  className: `template-more-item${activeStrategyId === strategy.id ? ' is-active' : ''}`,
+                  onClick: () => requestStrategyApply(strategy.id, 'toolbar')
+                }, renderIconLabel(getStrategyIconName(strategy.id), strategy.name, 'submenu-item-content'))
+              )
+            )
+            : null
+        ])
+        : null
+    ]),
+    React.createElement('div', { className: 'command-actions' }, [
       React.createElement('button', {
         type: 'button',
         className: `command-btn${filterDrawerOpen ? ' is-active' : ''}`,
         onClick: () => setFilterDrawerOpen((prev) => !prev),
         'aria-expanded': filterDrawerOpen ? 'true' : 'false',
         'aria-controls': 'plannerFilterDrawer'
-      }, `Filters (${activeFilterCount})`),
+      }, renderIconLabel('filters', `Filters (${activeFilterCount})`)),
       React.createElement('button', {
         type: 'button',
         className: 'command-btn',
         onClick: handleUndo,
         disabled: undoCount === 0
-      }, 'Undo'),
+      }, renderIconLabel('undo', 'Undo', 'ui-icon-btn undo-icon-wrap')),
       React.createElement('button', {
         type: 'button',
         className: 'command-btn',
         onClick: handleRedo,
         disabled: redoCount === 0
-      }, 'Redo'),
+      }, renderIconLabel('redo', 'Redo')),
       React.createElement('button', {
         type: 'button',
         className: 'command-btn',
         onClick: handleSaveNow
-      }, lastSaveTimestamp ? 'Saved' : 'Save'),
+      }, renderIconLabel('saved', lastSaveTimestamp ? 'Saved' : 'Save')),
       React.createElement('button', {
         type: 'button',
         className: 'command-btn',
         onClick: handleExport
-      }, 'Export')
+      }, renderIconLabel('export', 'Export'))
     ])
   ]);
+
+  const contextMenuRoot = contextMenu
+    ? React.createElement('div', {
+      className: 'context-menu',
+      style: {
+        top: `${contextMenu.y}px`,
+        left: `${contextMenu.x}px`
+      }
+    }, [
+      contextMenu.type === 'peak'
+        ? React.createElement('button', {
+          type: 'button',
+          className: 'context-menu-item',
+          onClick: (event) => {
+            event.stopPropagation();
+            togglePeakSelection(contextMenu.id);
+            closeContextMenu();
+          }
+        }, renderMenuItemContent(
+          selectedPeakIds.has(contextMenu.id) ? 'selectionRemove' : 'selectionAdd',
+          selectedPeakIds.has(contextMenu.id) ? 'Remove from selection' : 'Add to selection'
+        ))
+        : null,
+      contextMenu.type === 'group'
+        ? React.createElement('button', {
+          type: 'button',
+          className: 'context-menu-item',
+          onClick: (event) => {
+            event.stopPropagation();
+            handleUngroup(contextMenu.id);
+            closeContextMenu();
+          }
+        }, renderMenuItemContent('ungroup', 'Ungroup'))
+        : null,
+      React.createElement('button', {
+        type: 'button',
+        className: `context-menu-item has-submenu${contextMenu.submenu === 'template' ? ' is-open' : ''}`,
+        onMouseEnter: () => setContextSubmenu('template'),
+        onClick: (event) => {
+          event.stopPropagation();
+          toggleContextSubmenu('template');
+        }
+      }, [
+        renderMenuItemContent('newTemplate', 'New Template'),
+        React.createElement('span', { className: 'context-arrow', 'aria-hidden': 'true' }, '▸')
+      ]),
+      React.createElement('button', {
+        type: 'button',
+        className: `context-menu-item has-submenu${contextMenu.submenu === 'share' ? ' is-open' : ''}`,
+        onMouseEnter: () => setContextSubmenu('share'),
+        onClick: (event) => {
+          event.stopPropagation();
+          toggleContextSubmenu('share');
+        }
+      }, [
+        renderMenuItemContent('shareMenu', 'Share Page'),
+        React.createElement('span', { className: 'context-arrow', 'aria-hidden': 'true' }, '▸')
+      ]),
+      React.createElement('button', {
+        type: 'button',
+        className: `context-menu-item has-submenu${contextMenu.submenu === 'filter' ? ' is-open' : ''}`,
+        onMouseEnter: () => setContextSubmenu('filter'),
+        onClick: (event) => {
+          event.stopPropagation();
+          toggleContextSubmenu('filter');
+        }
+      }, [
+        renderMenuItemContent('filterMenu', 'Filter'),
+        React.createElement('span', { className: 'context-arrow', 'aria-hidden': 'true' }, '▸')
+      ]),
+      React.createElement('button', {
+        type: 'button',
+        className: 'context-menu-item',
+        onClick: (event) => {
+          event.stopPropagation();
+          handleUndo();
+          closeContextMenu();
+        },
+        disabled: undoCount === 0
+      }, renderMenuItemContent('undo', 'Undo')),
+      React.createElement('button', {
+        type: 'button',
+        className: 'context-menu-item',
+        onClick: (event) => {
+          event.stopPropagation();
+          handleRedo();
+          closeContextMenu();
+        },
+        disabled: redoCount === 0
+      }, renderMenuItemContent('redo', 'Redo'))
+    ])
+    : null;
+
+  const contextMenuSubmenu = contextMenu && contextMenu.submenu
+    ? React.createElement('div', {
+      className: 'context-menu context-submenu',
+      style: {
+        top: `${contextMenu.y}px`,
+        left: `${contextMenu.x + 196}px`
+      }
+    }, (
+      contextMenu.submenu === 'template'
+        ? finishStrategies.map((strategy) => React.createElement('button', {
+          key: strategy.id,
+          type: 'button',
+          className: `context-menu-item${activeStrategyId === strategy.id ? ' is-active' : ''}`,
+          onClick: (event) => {
+            event.stopPropagation();
+            requestStrategyApply(strategy.id, 'context-menu');
+            closeContextMenu();
+          }
+        }, renderMenuItemContent(getStrategyIconName(strategy.id), strategy.name, 'submenu-item-content')))
+        : contextMenu.submenu === 'share'
+          ? SHARE_PLATFORMS.map((platform) => React.createElement('button', {
+            key: platform.name,
+            type: 'button',
+            className: 'context-menu-item',
+            onClick: (event) => {
+              event.stopPropagation();
+              openShareNetwork(platform);
+            }
+          }, renderMenuItemContent(getShareIconName(platform.name), platform.name, 'submenu-item-content')))
+          : [
+            React.createElement('button', {
+              key: 'open-drawer',
+              type: 'button',
+              className: 'context-menu-item',
+              onClick: (event) => {
+                event.stopPropagation();
+                setFilterDrawerOpen(true);
+                closeContextMenu();
+              }
+            }, renderMenuItemContent('openDrawer', 'Open Full Filters Drawer', 'submenu-item-content')),
+            React.createElement('button', {
+              key: 'clear-filters',
+              type: 'button',
+              className: 'context-menu-item',
+              onClick: (event) => {
+                event.stopPropagation();
+                clearFilters();
+                closeContextMenu();
+              },
+              disabled: !filtersActive && !searchActive
+            }, renderMenuItemContent('clearFilters', 'Clear Filters', 'submenu-item-content')),
+            React.createElement('div', { key: 'divider-1', className: 'context-menu-divider' }),
+            React.createElement('span', { key: 'risk-label', className: 'context-menu-heading' }, [
+              renderUiIcon('riskHeading'),
+              React.createElement('span', null, 'Risk filters')
+            ]),
+            ...RISK_FACTORS.map((risk) => React.createElement('button', {
+              key: `risk-${risk.id}`,
+              type: 'button',
+              className: `context-menu-item${activeRiskFilters.has(risk.id) ? ' is-active' : ''}`,
+              onClick: (event) => {
+                event.stopPropagation();
+                toggleRiskFilter(risk.id);
+              },
+              disabled: !hasOverlay
+            }, [
+              renderMenuItemContent('riskHeading', risk.label, 'submenu-item-content'),
+              activeRiskFilters.has(risk.id)
+                ? React.createElement('span', { className: 'context-check', 'aria-hidden': 'true' }, '✓')
+                : null
+            ])),
+            React.createElement('div', { key: 'divider-2', className: 'context-menu-divider' }),
+            React.createElement('span', { key: 'range-label', className: 'context-menu-heading' }, [
+              renderUiIcon('rangeHeading'),
+              React.createElement('span', null, 'Range filters')
+            ]),
+            ...rangeGroupOptions.map((group) => React.createElement('button', {
+              key: `range-${group}`,
+              type: 'button',
+              className: `context-menu-item${activeRangeGroups.has(group) ? ' is-active' : ''}`,
+              onClick: (event) => {
+                event.stopPropagation();
+                toggleRangeGroup(group);
+              },
+              disabled: !hasOverlay
+            }, [
+              renderMenuItemContent('rangeHeading', group, 'submenu-item-content'),
+              activeRangeGroups.has(group)
+                ? React.createElement('span', { className: 'context-check', 'aria-hidden': 'true' }, '✓')
+                : null
+            ]))
+          ]
+    ))
+    : null;
 
   return React.createElement('div', { className: 'planner-shell' },
     USE_COMMAND_BAR_LAYOUT
@@ -2088,51 +2748,9 @@ function PeakPlannerApp() {
       )
       : null,
     contextMenu
-      ? React.createElement('div', {
-        className: 'context-menu',
-        style: {
-          top: `${contextMenu.y}px`,
-          left: `${contextMenu.x}px`
-        }
-      }, [
-        contextMenu.type === 'peak'
-          ? React.createElement('button', {
-            type: 'button',
-            onClick: (event) => {
-              event.stopPropagation();
-              togglePeakSelection(contextMenu.id);
-              setContextMenu(null);
-            }
-          }, selectedPeakIds.has(contextMenu.id) ? 'Remove from selection' : 'Add to selection')
-          : null,
-        contextMenu.type === 'group'
-          ? React.createElement('button', {
-            type: 'button',
-            onClick: (event) => {
-              event.stopPropagation();
-              handleUngroup(contextMenu.id);
-              setContextMenu(null);
-            }
-          }, 'Ungroup')
-          : null,
-        React.createElement('button', {
-          type: 'button',
-          onClick: (event) => {
-            event.stopPropagation();
-            handleUndo();
-            setContextMenu(null);
-          },
-          disabled: undoCount === 0
-        }, 'Undo'),
-        React.createElement('button', {
-          type: 'button',
-          onClick: (event) => {
-            event.stopPropagation();
-            handleRedo();
-            setContextMenu(null);
-          },
-          disabled: redoCount === 0
-        }, 'Redo')
+      ? React.createElement('div', { className: 'planner-context-shell' }, [
+        contextMenuRoot,
+        contextMenuSubmenu
       ])
       : null
   );
