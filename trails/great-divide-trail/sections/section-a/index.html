@@ -3,9 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Section A: Waterton Lakes (International Boundary) to Coleman – Great Divide Trail (Canada) – NH48</title>
+  <title>Section A: Waterton Lakes (International Boundary) to Coleman - Great Divide Trail (Canada) - NH48</title>
   <meta name="description" content="Section A: Waterton Lakes (International Boundary) to Coleman on the Great Divide Trail (Canada) (90.1 miles, difficulty 8).">
   <link rel="canonical" href="https://nh48.info/trails/great-divide-trail/sections/section-a/">
+  <script id="page-webpage-schema" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Section A: Waterton Lakes (International Boundary) to Coleman - Great Divide Trail (Canada) - NH48",
+  "description": "Section A: Waterton Lakes (International Boundary) to Coleman on the Great Divide Trail (Canada) (90.1 miles, difficulty 8).",
+  "url": "https://nh48.info/trails/great-divide-trail/sections/section-a/",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "NH48 API",
+    "url": "https://nh48.info/"
+  },
+  "about": {
+    "@type": "Route",
+    "name": "Great Divide Trail (Canada)",
+    "identifier": "great-divide-trail",
+    "description": "Section A: Waterton Lakes (International Boundary) to Coleman",
+    "url": "https://nh48.info/trails/great-divide-trail/"
+  }
+}</script>
+  <script id="page-breadcrumb-schema" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://nh48.info/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Long Trails",
+      "item": "https://nh48.info/long-trails/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Great Divide Trail (Canada)",
+      "item": "https://nh48.info/trails/great-divide-trail/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Section A: Waterton Lakes (International Boundary) to Coleman",
+      "item": "https://nh48.info/trails/great-divide-trail/sections/section-a/"
+    }
+  ]
+}</script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <style>
     body {
@@ -13,6 +63,39 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background: #1a1d23;
       color: #ffffff;
+    }
+    .breadcrumbs {
+      max-width: 960px;
+      margin: 18px auto 0;
+      padding: 0 20px;
+      color: #d9dde5;
+      font-size: 0.92rem;
+    }
+    .breadcrumbs ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .breadcrumbs li::after {
+      content: "/";
+      margin-left: 0.3rem;
+      color: rgba(217, 221, 229, 0.58);
+    }
+    .breadcrumbs li:last-child::after {
+      display: none;
+    }
+    .breadcrumbs a {
+      color: #7dd3fc;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .breadcrumbs [aria-current="page"] {
+      color: #ffffff;
+      text-decoration: none;
     }
     header {
       padding: 24px 20px 12px;
@@ -67,6 +150,14 @@
   </style>
 </head>
 <body>
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/long-trails/">Long Trails</a></li>
+      <li><a href="/trails/great-divide-trail/">Great Divide Trail (Canada)</a></li>
+      <li><span aria-current="page">Section A: Waterton Lakes (International Boundary) to Coleman</span></li>
+    </ol>
+  </nav>
   <header>
     <h1>Section A: Waterton Lakes (International Boundary) to Coleman</h1>
     <p>Great Divide Trail (Canada)</p>
@@ -75,14 +166,14 @@
     <div class="stats">
       <div><strong>Distance</strong><span>90.1 mi</span></div>
       <div><strong>Difficulty</strong><span>8</span></div>
-      <div><strong>Mile range</strong><span>0–90.1</span></div>
+      <div><strong>Mile range</strong><span>0-90.1</span></div>
       <div><strong>Jurisdictions</strong><span>Alberta</span></div>
       <div><strong>Tags</strong><span>National Park, burn areas, steep ridge</span></div>
     </div>
     <div id="map" class="map"></div>
     <div class="nav-links">
       <span></span>
-      <a href="/trails/great-divide-trail/sections/section-b/">Section B: Coleman to Kananaskis (Elk Pass) →</a>
+      <a href="/trails/great-divide-trail/sections/section-b/">Section B: Coleman to Kananaskis (Elk Pass) &rarr;</a>
     </div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>

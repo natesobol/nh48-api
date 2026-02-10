@@ -3,9 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Minnesota Line → Michigan (Upper Peninsula) Line – North Country National Scenic Trail – NH48</title>
+  <title>Minnesota Line → Michigan (Upper Peninsula) Line - North Country National Scenic Trail - NH48</title>
   <meta name="description" content="Minnesota Line → Michigan (Upper Peninsula) Line on the North Country National Scenic Trail (200 miles, difficulty 3).">
   <link rel="canonical" href="https://nh48.info/trails/north-country-trail/sections/wisconsin/">
+  <script id="page-webpage-schema" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Minnesota Line → Michigan (Upper Peninsula) Line - North Country National Scenic Trail - NH48",
+  "description": "Minnesota Line → Michigan (Upper Peninsula) Line on the North Country National Scenic Trail (200 miles, difficulty 3).",
+  "url": "https://nh48.info/trails/north-country-trail/sections/wisconsin/",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "NH48 API",
+    "url": "https://nh48.info/"
+  },
+  "about": {
+    "@type": "Route",
+    "name": "North Country National Scenic Trail",
+    "identifier": "north-country-trail",
+    "description": "Minnesota Line → Michigan (Upper Peninsula) Line",
+    "url": "https://nh48.info/trails/north-country-trail/"
+  }
+}</script>
+  <script id="page-breadcrumb-schema" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://nh48.info/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Long Trails",
+      "item": "https://nh48.info/long-trails/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "North Country National Scenic Trail",
+      "item": "https://nh48.info/trails/north-country-trail/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Minnesota Line → Michigan (Upper Peninsula) Line",
+      "item": "https://nh48.info/trails/north-country-trail/sections/wisconsin/"
+    }
+  ]
+}</script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <style>
     body {
@@ -13,6 +63,39 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background: #1a1d23;
       color: #ffffff;
+    }
+    .breadcrumbs {
+      max-width: 960px;
+      margin: 18px auto 0;
+      padding: 0 20px;
+      color: #d9dde5;
+      font-size: 0.92rem;
+    }
+    .breadcrumbs ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .breadcrumbs li::after {
+      content: "/";
+      margin-left: 0.3rem;
+      color: rgba(217, 221, 229, 0.58);
+    }
+    .breadcrumbs li:last-child::after {
+      display: none;
+    }
+    .breadcrumbs a {
+      color: #7dd3fc;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .breadcrumbs [aria-current="page"] {
+      color: #ffffff;
+      text-decoration: none;
     }
     header {
       padding: 24px 20px 12px;
@@ -67,6 +150,14 @@
   </style>
 </head>
 <body>
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/long-trails/">Long Trails</a></li>
+      <li><a href="/trails/north-country-trail/">North Country National Scenic Trail</a></li>
+      <li><span aria-current="page">Minnesota Line → Michigan (Upper Peninsula) Line</span></li>
+    </ol>
+  </nav>
   <header>
     <h1>Minnesota Line → Michigan (Upper Peninsula) Line</h1>
     <p>North Country National Scenic Trail</p>
@@ -75,14 +166,14 @@
     <div class="stats">
       <div><strong>Distance</strong><span>200 mi</span></div>
       <div><strong>Difficulty</strong><span>3</span></div>
-      <div><strong>Mile range</strong><span>1275–1475</span></div>
+      <div><strong>Mile range</strong><span>1275-1475</span></div>
       <div><strong>Jurisdictions</strong><span>[object Object]</span></div>
       <div><strong>Tags</strong><span>wisconsin</span></div>
     </div>
     <div id="map" class="map"></div>
     <div class="nav-links">
-      <a href="/trails/north-country-trail/sections/minnesota/">← Fort Abercrombie → Minnesota–Wisconsin Line</a>
-      <a href="/trails/north-country-trail/sections/michigan-upper-peninsula/">Michigan (Upper Peninsula) Line → Mackinac Bridge →</a>
+      <a href="/trails/north-country-trail/sections/minnesota/">&larr; Fort Abercrombie → Minnesota–Wisconsin Line</a>
+      <a href="/trails/north-country-trail/sections/michigan-upper-peninsula/">Michigan (Upper Peninsula) Line → Mackinac Bridge &rarr;</a>
     </div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>

@@ -3,9 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>US 278 (Piedmont) to AL/GA State Line – Pinhoti Trail – NH48</title>
+  <title>US 278 (Piedmont) to AL/GA State Line - Pinhoti Trail - NH48</title>
   <meta name="description" content="US 278 (Piedmont) to AL/GA State Line on the Pinhoti Trail (9.1 miles, difficulty 2).">
   <link rel="canonical" href="https://nh48.info/trails/pinhoti-trail/sections/section-11-us278-to-state-line/">
+  <script id="page-webpage-schema" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "US 278 (Piedmont) to AL/GA State Line - Pinhoti Trail - NH48",
+  "description": "US 278 (Piedmont) to AL/GA State Line on the Pinhoti Trail (9.1 miles, difficulty 2).",
+  "url": "https://nh48.info/trails/pinhoti-trail/sections/section-11-us278-to-state-line/",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "NH48 API",
+    "url": "https://nh48.info/"
+  },
+  "about": {
+    "@type": "Route",
+    "name": "Pinhoti Trail",
+    "identifier": "pinhoti-trail",
+    "description": "US 278 (Piedmont) to AL/GA State Line",
+    "url": "https://nh48.info/trails/pinhoti-trail/"
+  }
+}</script>
+  <script id="page-breadcrumb-schema" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://nh48.info/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Long Trails",
+      "item": "https://nh48.info/long-trails/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Pinhoti Trail",
+      "item": "https://nh48.info/trails/pinhoti-trail/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "US 278 (Piedmont) to AL/GA State Line",
+      "item": "https://nh48.info/trails/pinhoti-trail/sections/section-11-us278-to-state-line/"
+    }
+  ]
+}</script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <style>
     body {
@@ -13,6 +63,39 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background: #1a1d23;
       color: #ffffff;
+    }
+    .breadcrumbs {
+      max-width: 960px;
+      margin: 18px auto 0;
+      padding: 0 20px;
+      color: #d9dde5;
+      font-size: 0.92rem;
+    }
+    .breadcrumbs ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .breadcrumbs li::after {
+      content: "/";
+      margin-left: 0.3rem;
+      color: rgba(217, 221, 229, 0.58);
+    }
+    .breadcrumbs li:last-child::after {
+      display: none;
+    }
+    .breadcrumbs a {
+      color: #7dd3fc;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .breadcrumbs [aria-current="page"] {
+      color: #ffffff;
+      text-decoration: none;
     }
     header {
       padding: 24px 20px 12px;
@@ -67,6 +150,14 @@
   </style>
 </head>
 <body>
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/long-trails/">Long Trails</a></li>
+      <li><a href="/trails/pinhoti-trail/">Pinhoti Trail</a></li>
+      <li><span aria-current="page">US 278 (Piedmont) to AL/GA State Line</span></li>
+    </ol>
+  </nav>
   <header>
     <h1>US 278 (Piedmont) to AL/GA State Line</h1>
     <p>Pinhoti Trail</p>
@@ -75,14 +166,14 @@
     <div class="stats">
       <div><strong>Distance</strong><span>9.1 mi</span></div>
       <div><strong>Difficulty</strong><span>2</span></div>
-      <div><strong>Mile range</strong><span>152–161.1</span></div>
+      <div><strong>Mile range</strong><span>152-161.1</span></div>
       <div><strong>Jurisdictions</strong><span>AL (Calhoun), GA (Polk)</span></div>
       <div><strong>Tags</strong><span>Chief Ladiga Trail (connector), State Line</span></div>
     </div>
     <div id="map" class="map"></div>
     <div class="nav-links">
-      <a href="/trails/pinhoti-trail/sections/section-10-pine-glen-to-us278/">← Pine Glen Campground to US 278 (Piedmont)</a>
-      <a href="/trails/pinhoti-trail/sections/section-12-state-line-to-jackson-chapel/">Georgia State Line to Jackson Chapel Road (Esom Hill) →</a>
+      <a href="/trails/pinhoti-trail/sections/section-10-pine-glen-to-us278/">&larr; Pine Glen Campground to US 278 (Piedmont)</a>
+      <a href="/trails/pinhoti-trail/sections/section-12-state-line-to-jackson-chapel/">Georgia State Line to Jackson Chapel Road (Esom Hill) &rarr;</a>
     </div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>

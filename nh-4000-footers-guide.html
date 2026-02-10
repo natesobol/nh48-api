@@ -35,6 +35,51 @@
     <meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__005.jpg" />
     <meta property="og:image:alt" content="Cog railway grade and observation deck near the summit of Mount Washington" />
     <meta name="twitter:card" content="summary_large_image" />
+    <script id="page-webpage-schema" type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "The Complete Guide to the New Hampshire 48 4,000 Footers",
+        "description": "Authoritative NH48 guide with peak history, interactive 4,000 footer list, range filters, winter vs. summer planning tips, API links, and structured data for all 48 New Hampshire summits.",
+        "url": "https://nh48.info/nh-4000-footers-guide",
+        "inLanguage": "en",
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "NH48 API",
+          "url": "https://nh48.info/"
+        }
+      }
+    </script>
+    <script id="page-breadcrumb-schema" type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://nh48.info/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "NH48 Guide",
+            "item": "https://nh48.info/nh-4000-footers-guide"
+          }
+        ]
+      }
+    </script>
+    <script id="page-image-schema" type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ImageObject",
+        "name": "Mount Washington summit rail grade",
+        "description": "Cog railway grade and observation deck near the summit of Mount Washington.",
+        "url": "https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__005.jpg",
+        "contentUrl": "https://photos.nh48.info/mount-washington/mount-washington__005.jpg"
+      }
+    </script>
     <link rel="stylesheet" href="/css/quick-browse-footer.css" />
     <script src="/js/quick-browse-footer.js" defer></script>
     <style>
@@ -64,6 +109,38 @@
       }
       a {
         color: var(--accent);
+      }
+      .page-breadcrumbs {
+        margin: 0 0 12px;
+        padding: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+      .page-breadcrumbs ol {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        align-items: center;
+      }
+      .page-breadcrumbs li::after {
+        content: "/";
+        margin-left: 0.35rem;
+        color: rgba(203, 213, 225, 0.58);
+      }
+      .page-breadcrumbs li:last-child::after {
+        display: none;
+      }
+      .page-breadcrumbs a {
+        color: #86efac;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+      .page-breadcrumbs [aria-current="page"] {
+        color: #e2e8f0;
+        text-decoration: none;
       }
       .wrap {
         max-width: 1200px;
@@ -319,6 +396,12 @@
     </script>
 
     <main class="wrap">
+      <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li><span aria-current="page">NH48 Guide</span></li>
+        </ol>
+      </nav>
       <header class="hero">
         <p class="eyebrow">SEO pillar • Single source of truth</p>
         <h1>The Complete Guide to the New Hampshire 48 4,000 Footers</h1>

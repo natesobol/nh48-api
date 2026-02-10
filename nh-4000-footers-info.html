@@ -351,6 +351,26 @@
         ]
       }
     </script>
+    <script id="page-breadcrumb-schema" type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://nh48.info/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "NH48 Information Hub",
+            "item": "https://nh48.info/nh-4000-footers-info"
+          }
+        ]
+      }
+    </script>
     <link rel="stylesheet" href="/css/quick-browse-footer.css" />
     <script type="module" src="/js/i18n.js"></script>
     <script src="/js/quick-browse-footer.js" defer></script>
@@ -393,6 +413,38 @@
       }
       a:hover {
         color: var(--accent-strong);
+      }
+      .page-breadcrumbs {
+        margin: 0 0 12px;
+        padding: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+      .page-breadcrumbs ol {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        align-items: center;
+      }
+      .page-breadcrumbs li::after {
+        content: "/";
+        margin-left: 0.35rem;
+        color: rgba(203, 213, 225, 0.58);
+      }
+      .page-breadcrumbs li:last-child::after {
+        display: none;
+      }
+      .page-breadcrumbs a {
+        color: #86efac;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+      .page-breadcrumbs [aria-current="page"] {
+        color: #e2e8f0;
+        text-decoration: none;
       }
       .wrap {
         max-width: 1200px;
@@ -1436,6 +1488,12 @@
     </script>
 
     <main class="wrap">
+      <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li><span aria-current="page">NH48 Information Hub</span></li>
+        </ol>
+      </nav>
       <header class="hero">
         <div>
           <p class="eyebrow">Community compiled â€¢ Unofficial overview</p>

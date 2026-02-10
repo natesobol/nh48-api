@@ -3,9 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Eagle Creek - Painted Bluffs – Grand Enchantment Trail – NH48</title>
+  <title>Eagle Creek - Painted Bluffs - Grand Enchantment Trail - NH48</title>
   <meta name="description" content="Eagle Creek - Painted Bluffs on the Grand Enchantment Trail (23.9 miles, difficulty Strenuous).">
   <link rel="canonical" href="https://nh48.info/trails/grand-enchantment-trail/sections/eagle-creek-painted-bluffs/">
+  <script id="page-webpage-schema" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Eagle Creek - Painted Bluffs - Grand Enchantment Trail - NH48",
+  "description": "Eagle Creek - Painted Bluffs on the Grand Enchantment Trail (23.9 miles, difficulty Strenuous).",
+  "url": "https://nh48.info/trails/grand-enchantment-trail/sections/eagle-creek-painted-bluffs/",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "NH48 API",
+    "url": "https://nh48.info/"
+  },
+  "about": {
+    "@type": "Route",
+    "name": "Grand Enchantment Trail",
+    "identifier": "grand-enchantment-trail",
+    "description": "Eagle Creek - Painted Bluffs",
+    "url": "https://nh48.info/trails/grand-enchantment-trail/"
+  }
+}</script>
+  <script id="page-breadcrumb-schema" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://nh48.info/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Long Trails",
+      "item": "https://nh48.info/long-trails/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Grand Enchantment Trail",
+      "item": "https://nh48.info/trails/grand-enchantment-trail/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Eagle Creek - Painted Bluffs",
+      "item": "https://nh48.info/trails/grand-enchantment-trail/sections/eagle-creek-painted-bluffs/"
+    }
+  ]
+}</script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <style>
     body {
@@ -13,6 +63,39 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background: #1a1d23;
       color: #ffffff;
+    }
+    .breadcrumbs {
+      max-width: 960px;
+      margin: 18px auto 0;
+      padding: 0 20px;
+      color: #d9dde5;
+      font-size: 0.92rem;
+    }
+    .breadcrumbs ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .breadcrumbs li::after {
+      content: "/";
+      margin-left: 0.3rem;
+      color: rgba(217, 221, 229, 0.58);
+    }
+    .breadcrumbs li:last-child::after {
+      display: none;
+    }
+    .breadcrumbs a {
+      color: #7dd3fc;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .breadcrumbs [aria-current="page"] {
+      color: #ffffff;
+      text-decoration: none;
     }
     header {
       padding: 24px 20px 12px;
@@ -67,6 +150,14 @@
   </style>
 </head>
 <body>
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/long-trails/">Long Trails</a></li>
+      <li><a href="/trails/grand-enchantment-trail/">Grand Enchantment Trail</a></li>
+      <li><span aria-current="page">Eagle Creek - Painted Bluffs</span></li>
+    </ol>
+  </nav>
   <header>
     <h1>Eagle Creek - Painted Bluffs</h1>
     <p>Grand Enchantment Trail</p>
@@ -75,14 +166,14 @@
     <div class="stats">
       <div><strong>Distance</strong><span>23.9 mi</span></div>
       <div><strong>Difficulty</strong><span>Strenuous</span></div>
-      <div><strong>Mile range</strong><span>undefined–undefined</span></div>
+      <div><strong>Mile range</strong><span>undefined-undefined</span></div>
       <div><strong>Jurisdictions</strong><span>AZ</span></div>
       <div><strong>Tags</strong><span>canyon, river</span></div>
     </div>
     <div id="map" class="map"></div>
     <div class="nav-links">
-      <a href="/trails/grand-enchantment-trail/sections/old-safford-morenci-trail/">← Old Safford-Morenci Trail</a>
-      <a href="/trails/grand-enchantment-trail/sections/coronado-trail/">Coronado Trail →</a>
+      <a href="/trails/grand-enchantment-trail/sections/old-safford-morenci-trail/">&larr; Old Safford-Morenci Trail</a>
+      <a href="/trails/grand-enchantment-trail/sections/coronado-trail/">Coronado Trail &rarr;</a>
     </div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>

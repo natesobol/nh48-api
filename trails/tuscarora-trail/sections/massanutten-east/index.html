@@ -3,9 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Section 21: Massanutten East – Tuscarora Trail – NH48</title>
+  <title>Section 21: Massanutten East - Tuscarora Trail - NH48</title>
   <meta name="description" content="Section 21: Massanutten East on the Tuscarora Trail (15 miles, difficulty 3).">
   <link rel="canonical" href="https://nh48.info/trails/tuscarora-trail/sections/massanutten-east/">
+  <script id="page-webpage-schema" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Section 21: Massanutten East - Tuscarora Trail - NH48",
+  "description": "Section 21: Massanutten East on the Tuscarora Trail (15 miles, difficulty 3).",
+  "url": "https://nh48.info/trails/tuscarora-trail/sections/massanutten-east/",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "NH48 API",
+    "url": "https://nh48.info/"
+  },
+  "about": {
+    "@type": "Route",
+    "name": "Tuscarora Trail",
+    "identifier": "tuscarora-trail",
+    "description": "Section 21: Massanutten East",
+    "url": "https://nh48.info/trails/tuscarora-trail/"
+  }
+}</script>
+  <script id="page-breadcrumb-schema" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://nh48.info/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Long Trails",
+      "item": "https://nh48.info/long-trails/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Tuscarora Trail",
+      "item": "https://nh48.info/trails/tuscarora-trail/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Section 21: Massanutten East",
+      "item": "https://nh48.info/trails/tuscarora-trail/sections/massanutten-east/"
+    }
+  ]
+}</script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <style>
     body {
@@ -13,6 +63,39 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background: #1a1d23;
       color: #ffffff;
+    }
+    .breadcrumbs {
+      max-width: 960px;
+      margin: 18px auto 0;
+      padding: 0 20px;
+      color: #d9dde5;
+      font-size: 0.92rem;
+    }
+    .breadcrumbs ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .breadcrumbs li::after {
+      content: "/";
+      margin-left: 0.3rem;
+      color: rgba(217, 221, 229, 0.58);
+    }
+    .breadcrumbs li:last-child::after {
+      display: none;
+    }
+    .breadcrumbs a {
+      color: #7dd3fc;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .breadcrumbs [aria-current="page"] {
+      color: #ffffff;
+      text-decoration: none;
     }
     header {
       padding: 24px 20px 12px;
@@ -67,6 +150,14 @@
   </style>
 </head>
 <body>
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/long-trails/">Long Trails</a></li>
+      <li><a href="/trails/tuscarora-trail/">Tuscarora Trail</a></li>
+      <li><span aria-current="page">Section 21: Massanutten East</span></li>
+    </ol>
+  </nav>
   <header>
     <h1>Section 21: Massanutten East</h1>
     <p>Tuscarora Trail</p>
@@ -75,14 +166,14 @@
     <div class="stats">
       <div><strong>Distance</strong><span>15 mi</span></div>
       <div><strong>Difficulty</strong><span>3</span></div>
-      <div><strong>Mile range</strong><span>224–239</span></div>
+      <div><strong>Mile range</strong><span>224-239</span></div>
       <div><strong>Jurisdictions</strong><span>VA</span></div>
       <div><strong>Tags</strong><span>Virginia, Hiking, Moderate</span></div>
     </div>
     <div id="map" class="map"></div>
     <div class="nav-links">
-      <a href="/trails/tuscarora-trail/sections/massanutten-west/">← Section 20: Massanutten West</a>
-      <a href="/trails/tuscarora-trail/sections/mathews-arm/">Section 22: Mathews Arm →</a>
+      <a href="/trails/tuscarora-trail/sections/massanutten-west/">&larr; Section 20: Massanutten West</a>
+      <a href="/trails/tuscarora-trail/sections/mathews-arm/">Section 22: Mathews Arm &rarr;</a>
     </div>
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>

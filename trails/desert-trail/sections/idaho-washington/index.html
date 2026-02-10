@@ -3,9 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Idaho &amp; Washington – Desert Trail – NH48</title>
+  <title>Idaho &amp; Washington - Desert Trail - NH48</title>
   <meta name="description" content="Idaho &amp; Washington on the Desert Trail (223 miles, difficulty 4).">
   <link rel="canonical" href="https://nh48.info/trails/desert-trail/sections/idaho-washington/">
+  <script id="page-webpage-schema" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Idaho & Washington - Desert Trail - NH48",
+  "description": "Idaho & Washington on the Desert Trail (223 miles, difficulty 4).",
+  "url": "https://nh48.info/trails/desert-trail/sections/idaho-washington/",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "NH48 API",
+    "url": "https://nh48.info/"
+  },
+  "about": {
+    "@type": "Route",
+    "name": "Desert Trail",
+    "identifier": "desert-trail",
+    "description": "Idaho & Washington",
+    "url": "https://nh48.info/trails/desert-trail/"
+  }
+}</script>
+  <script id="page-breadcrumb-schema" type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://nh48.info/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Long Trails",
+      "item": "https://nh48.info/long-trails/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Desert Trail",
+      "item": "https://nh48.info/trails/desert-trail/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Idaho & Washington",
+      "item": "https://nh48.info/trails/desert-trail/sections/idaho-washington/"
+    }
+  ]
+}</script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <style>
     body {
@@ -13,6 +63,39 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background: #1a1d23;
       color: #ffffff;
+    }
+    .breadcrumbs {
+      max-width: 960px;
+      margin: 18px auto 0;
+      padding: 0 20px;
+      color: #d9dde5;
+      font-size: 0.92rem;
+    }
+    .breadcrumbs ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .breadcrumbs li::after {
+      content: "/";
+      margin-left: 0.3rem;
+      color: rgba(217, 221, 229, 0.58);
+    }
+    .breadcrumbs li:last-child::after {
+      display: none;
+    }
+    .breadcrumbs a {
+      color: #7dd3fc;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .breadcrumbs [aria-current="page"] {
+      color: #ffffff;
+      text-decoration: none;
     }
     header {
       padding: 24px 20px 12px;
@@ -67,6 +150,14 @@
   </style>
 </head>
 <body>
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/long-trails/">Long Trails</a></li>
+      <li><a href="/trails/desert-trail/">Desert Trail</a></li>
+      <li><span aria-current="page">Idaho &amp; Washington</span></li>
+    </ol>
+  </nav>
   <header>
     <h1>Idaho &amp; Washington</h1>
     <p>Desert Trail</p>
@@ -75,13 +166,13 @@
     <div class="stats">
       <div><strong>Distance</strong><span>223 mi</span></div>
       <div><strong>Difficulty</strong><span>4</span></div>
-      <div><strong>Mile range</strong><span>2000–2223</span></div>
+      <div><strong>Mile range</strong><span>2000-2223</span></div>
       <div><strong>Jurisdictions</strong><span>Washington, Idaho</span></div>
       <div><strong>Tags</strong><span>Selkirk Mountains, wilderness</span></div>
     </div>
     <div id="map" class="map"></div>
     <div class="nav-links">
-      <a href="/trails/desert-trail/sections/oregon/">← Oregon</a>
+      <a href="/trails/desert-trail/sections/oregon/">&larr; Oregon</a>
       <span></span>
     </div>
   </div>

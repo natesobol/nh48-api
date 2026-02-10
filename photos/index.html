@@ -68,6 +68,26 @@
         ]
       }
     </script>
+    <script id="page-breadcrumb-schema" type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://nh48.info/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "NH48 Photos",
+            "item": "https://nh48.info/photos/"
+          }
+        ]
+      }
+    </script>
 
     <title>Explore All NH48 Photos</title>
     <link rel="mask-icon" href="/favicons/favicon.ico" color="#22c55e">
@@ -110,6 +130,12 @@
     </script>
 
     <main class="wrap">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li aria-current="page">NH48 Photos</li>
+        </ol>
+      </nav>
       <div class="catalog-controls-panel photos-hero-panel">
         <div class="catalog-hero">
           <p class="kicker">NH48 Photo Hub</p>
