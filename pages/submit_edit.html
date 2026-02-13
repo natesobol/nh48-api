@@ -277,6 +277,16 @@ button:disabled{
   <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   <script>
+    const trackAnalytics = (name, params = {}) => {
+      if (window.NH48Analytics?.track) {
+        window.NH48Analytics.track(name, params);
+        return;
+      }
+      if (window.NH48_INFO_ANALYTICS?.logEvent) {
+        window.NH48_INFO_ANALYTICS.logEvent(name, params);
+      }
+    };
+
     const statusMessage = document.getElementById('statusMessage');
     const params = new URLSearchParams(window.location.search);
     const status = params.get('status');
@@ -288,6 +298,16 @@ button:disabled{
         : 'Something went wrong. Please try again.');
       if (status !== 'success') {
         statusMessage.classList.add('error');
+      }
+      if (status === 'success') {
+        trackAnalytics('submit_edit_success', {
+          source: 'query_status'
+        });
+      } else {
+        trackAnalytics('submit_edit_error', {
+          source: 'query_status',
+          status: status || 'error'
+        });
       }
     }
 
@@ -490,6 +510,9 @@ button:disabled{
     form.addEventListener('submit', (event) => {
       const bodyField = document.getElementById('bodyField');
       const plainText = quill.getText().trim();
+      trackAnalytics('submit_edit_attempt', {
+        has_text: plainText.length > 0
+      });
       if (!plainText) {
         event.preventDefault();
         alert('Please enter a message before submitting.');

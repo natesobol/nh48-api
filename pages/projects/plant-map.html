@@ -523,6 +523,16 @@ header p{
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin=""></script>
   <script>
+    const trackAnalytics = (name, params = {}) => {
+      if (window.NH48Analytics?.track) {
+        window.NH48Analytics.track(name, params);
+        return;
+      }
+      if (window.NH48_INFO_ANALYTICS?.logEvent) {
+        window.NH48_INFO_ANALYTICS.logEvent(name, params);
+      }
+    };
+
     const map = L.map('map', { zoomControl: false }).setView([44.336, -71.266], 14);
     const reportLayer = L.layerGroup().addTo(map);
     const speciesSelect = document.getElementById('speciesSelect');
@@ -857,6 +867,10 @@ header p{
       const lat = Number.parseFloat(latInput.value);
       const lng = Number.parseFloat(lngInput.value);
       const elevValue = elevInput.value ? Number.parseFloat(elevInput.value) : null;
+      trackAnalytics('plant_report_submit_attempt', {
+        has_species: Boolean(plantSlug),
+        has_coordinates: Number.isFinite(lat) && Number.isFinite(lng)
+      });
 
       if (!plantSlug) {
         setFormMessage('Please choose a plant species.', true);
@@ -890,10 +904,17 @@ header p{
         .then(() => {
           closeForm();
           statusMessage.textContent = 'Log recorded! Reports appear after review and approval.';
+          trackAnalytics('plant_report_submit_success', {
+            plant_slug: plantSlug
+          });
           loadReports();
         })
         .catch(err => {
           console.error('Failed to submit report', err);
+          trackAnalytics('plant_report_submit_error', {
+            plant_slug: plantSlug,
+            error_type: Number.isFinite(err?.status) ? String(err.status) : 'submit_failed'
+          });
           setFormMessage('Unable to submit right now. Please try again later.', true);
         });
     });

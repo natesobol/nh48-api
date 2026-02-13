@@ -34,6 +34,16 @@ const elements = {
   lightboxCaption: document.getElementById('photoLightboxCaption')
 };
 
+const trackAnalytics = (name, params = {}) => {
+  if (window.NH48Analytics?.track) {
+    window.NH48Analytics.track(name, params);
+    return;
+  }
+  if (window.NH48_INFO_ANALYTICS?.logEvent) {
+    window.NH48_INFO_ANALYTICS.logEvent(name, params);
+  }
+};
+
 const normalizeRange = (value) => {
   if (!value) return 'Other';
   return String(value).replace(/\.$/, '').trim();
@@ -132,6 +142,9 @@ const openLightbox = (src, captionText, altText) => {
   elements.lightbox.hidden = false;
   elements.lightbox.setAttribute('aria-hidden', 'false');
   document.body.classList.add('lightbox-open');
+  trackAnalytics('photos_lightbox_open', {
+    caption_length: (captionText || '').length
+  });
 };
 
 const closeLightbox = () => {
@@ -293,10 +306,16 @@ const init = async () => {
 };
 
 if (elements.search) {
+  let searchDebounce = null;
   elements.search.addEventListener('input', (event) => {
     state.search = event.target.value;
     state.page = 1;
     render();
+    if (searchDebounce) clearTimeout(searchDebounce);
+    const searchLength = (event.target.value || '').trim().length;
+    searchDebounce = setTimeout(() => {
+      trackAnalytics('photos_search', { search_length: searchLength });
+    }, 350);
   });
 }
 
@@ -305,6 +324,9 @@ if (elements.sort) {
     state.sort = event.target.value;
     state.page = 1;
     render();
+    trackAnalytics('photos_sort_change', {
+      sort: event.target.value || 'range'
+    });
   });
 }
 
@@ -314,6 +336,9 @@ if (elements.rangeFilters) {
     state.activeRanges = new Set(selected);
     state.page = 1;
     render();
+    trackAnalytics('photos_filter_change', {
+      selected_count: selected.length
+    });
   });
 }
 
@@ -322,6 +347,10 @@ if (elements.prev) {
     if (state.page > 1) {
       state.page -= 1;
       render();
+      trackAnalytics('photos_pagination', {
+        direction: 'prev',
+        page: state.page
+      });
     }
   });
 }
@@ -330,6 +359,10 @@ if (elements.next) {
   elements.next.addEventListener('click', () => {
     state.page += 1;
     render();
+    trackAnalytics('photos_pagination', {
+      direction: 'next',
+      page: state.page
+    });
   });
 }
 

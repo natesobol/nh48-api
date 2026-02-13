@@ -671,8 +671,9 @@ export default {
           return new Response('Not Found', { status: 404 });
         }
 
-        const body = await res.arrayBuffer();
-        return new Response(body, {
+        let html = await res.text();
+        html = injectAnalyticsCore(html);
+        return new Response(html, {
           status: 200,
           headers: {
             'Content-Type': 'text/html; charset=utf-8',
@@ -749,6 +750,19 @@ export default {
         };
 
         const contentType = contentTypes[ext] || 'application/octet-stream';
+        if (ext === 'html') {
+          let html = await res.text();
+          html = injectAnalyticsCore(html);
+          return new Response(html, {
+            status: 200,
+            headers: {
+              'Content-Type': contentType,
+              'Cache-Control': 'no-store',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        }
+
         const body = await res.arrayBuffer();
 
         return new Response(body, {
@@ -813,6 +827,23 @@ export default {
       return html
         .replace(/href="\.\.\//g, 'href="/')
         .replace(/src="\.\.\//g, 'src="/');
+    }
+
+    function hasLegacyAnalyticsMarkers(html) {
+      if (typeof html !== 'string' || !html) return false;
+      return /firebasejs|initializeApp|window\.NH48_INFO_ANALYTICS/i.test(html);
+    }
+
+    function injectAnalyticsCore(html) {
+      if (typeof html !== 'string' || !html) return html;
+      if (/data-nh48-analytics-core=["']1["']/i.test(html)) return html;
+      if (hasLegacyAnalyticsMarkers(html)) return html;
+
+      const scriptTag = '<script type="module" src="/js/analytics-core.js" data-nh48-analytics-core="1"></script>';
+      if (/<\/head>/i.test(html)) {
+        return html.replace(/<\/head>/i, `${scriptTag}\n</head>`);
+      }
+      return `${scriptTag}\n${html}`;
     }
 
     // Fetch translation dictionary if needed
@@ -2124,6 +2155,7 @@ export default {
         )
       ].join('\n');
       html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
+      html = injectAnalyticsCore(html);
 
       return new Response(html, {
         headers: {
@@ -2160,6 +2192,7 @@ export default {
         jsonLd: mergedJsonLd
       });
       html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
+      html = injectAnalyticsCore(html);
       return new Response(html, {
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
@@ -3076,6 +3109,33 @@ export default {
       });
     }
 
+    const trailSectionMatch = pathNoLocale.match(/^\/trails\/[^/]+\/sections\/[^/]+\/?$/i);
+    if (trailSectionMatch) {
+      const sectionPath = pathname.endsWith('/') ? pathname : `${pathname}/`;
+      const sectionUrl = `${RAW_BASE}${sectionPath}index.html`;
+
+      try {
+        const sectionResponse = await fetch(sectionUrl, {
+          headers: { 'User-Agent': 'NH48-SSR/1.0' },
+          cf: { cacheTtl: 0, cacheEverything: false }
+        });
+        if (sectionResponse.ok) {
+          let html = await sectionResponse.text();
+          html = injectAnalyticsCore(html);
+          return new Response(html, {
+            status: 200,
+            headers: {
+              'Content-Type': 'text/html; charset=utf-8',
+              'Cache-Control': 'no-store',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        }
+      } catch (err) {
+        console.error(`[TrailSection] Error loading ${sectionUrl}: ${err.message}`);
+      }
+    }
+
     // Only handle peak routes.  If the URL does not match, return 404
     // (static files are already handled by the static file serving block above)
     // Support: /peak/, /peaks/, /guest/, and their French variants
@@ -3247,6 +3307,7 @@ export default {
       )
     ].join('\n');
     html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
+    html = injectAnalyticsCore(html);
 
     // Return the modified interactive page with no-store caching for
     // immediate updates and consistent SEO metadata.

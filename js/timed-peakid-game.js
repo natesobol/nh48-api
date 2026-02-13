@@ -9,6 +9,16 @@
     return key;
   };
 
+  const trackAnalytics = (name, params = {}) => {
+    if (window.NH48Analytics?.track) {
+      window.NH48Analytics.track(name, params);
+      return;
+    }
+    if (window.NH48_INFO_ANALYTICS?.logEvent) {
+      window.NH48_INFO_ANALYTICS.logEvent(name, params);
+    }
+  };
+
   const scoreValue = document.querySelector('[data-score]');
   const livesValue = document.querySelector('[data-lives]');
   const timeValue = document.querySelector('[data-time]');
@@ -464,13 +474,21 @@
   };
 
   const endGame = () => {
+    if (!state.running) return;
     state.running = false;
     clearZoneHighlights();
     updateSpawnCountdown();
+    const accuracy = state.matches + state.misses > 0
+      ? Math.round((state.matches / (state.matches + state.misses)) * 100)
+      : 0;
+    trackAnalytics('timed_peakid_end', {
+      score: state.score,
+      matches: state.matches,
+      misses: state.misses,
+      accuracy,
+      duration_sec: Math.round(state.elapsed)
+    });
     if (gameOverOverlay) {
-      const accuracy = state.matches + state.misses > 0
-        ? Math.round((state.matches / (state.matches + state.misses)) * 100)
-        : 0;
       if (gameOverScore) gameOverScore.textContent = String(state.score);
       if (gameOverMatches) gameOverMatches.textContent = String(state.matches);
       if (gameOverMisses) gameOverMisses.textContent = String(state.misses);
@@ -496,6 +514,9 @@
     resetGame();
     initAudio();
     state.running = true;
+    trackAnalytics('timed_peakid_start', {
+      total_pieces: config.totalPieces
+    });
     gameOverOverlay?.classList.remove('active');
     state.lastFrame = null;
     updateSpawnCountdown();

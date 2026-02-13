@@ -1,0 +1,14 @@
+{
+  "name": "nh48-api",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test:analytics": "playwright test analytics-smoke.spec.js",
+    "test:analytics:headed": "playwright test analytics-smoke.spec.js --headed --project=chromium",
+    "test:analytics:debug": "playwright test analytics-smoke.spec.js --headed --project=chromium --debug"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "wrangler": "^4.3.0"
+  }
+}

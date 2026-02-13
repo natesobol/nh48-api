@@ -129,6 +129,16 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.109.0/Cesium.min.js"></script>
 <script>
+const trackAnalytics = (name, params = {}) => {
+  if (window.NH48Analytics?.track) {
+    window.NH48Analytics.track(name, params);
+    return;
+  }
+  if (window.NH48_INFO_ANALYTICS?.logEvent) {
+    window.NH48_INFO_ANALYTICS.logEvent(name, params);
+  }
+};
+
 // Helper to get query parameters
 function getQueryParam(name) {
   const params = new URLSearchParams(window.location.search);
@@ -174,13 +184,20 @@ async function init() {
         }
       });
       userMarkers.push(marker);
+      trackAnalytics('virtual_hike_marker_add', {
+        marker_count: userMarkers.length
+      });
     }
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
   // Clear button to remove all markers
   document.getElementById('clearBtn').addEventListener('click', function() {
+    const markerCount = userMarkers.length;
     userMarkers.forEach(entity => viewer.entities.remove(entity));
     userMarkers.length = 0;
+    trackAnalytics('virtual_hike_clear_markers', {
+      cleared_count: markerCount
+    });
   });
 
   // Load the GeoJSON trail data from the bundled copy first, then fall back to mirrors
@@ -244,6 +261,9 @@ async function init() {
       alert('No positions found for this trail.');
       return;
     }
+    trackAnalytics('virtual_hike_play', {
+      trail_name: decoded || ''
+    });
     // Create a set of sampled positions to fly through
     const total = positions.length;
     const flyPositions = [];

@@ -31,6 +31,16 @@ const elements = {
   photoMetaList: document.getElementById('photoMetaList')
 };
 
+function trackAnalytics(name, params = {}){
+  if(window.NH48Analytics?.track){
+    window.NH48Analytics.track(name, params);
+    return;
+  }
+  if(window.NH48_INFO_ANALYTICS?.logEvent){
+    window.NH48_INFO_ANALYTICS.logEvent(name, params);
+  }
+}
+
 function getPeakName(peak){
   return peak?.name || peak?.['Peak Name'] || peak?.peakName || peak?.['Peak'] || 'Unknown Peak';
 }
@@ -164,7 +174,7 @@ function buildPeaksTable(peaks){
     return `
       <tr>
         <td>${photoUrl ? `<img src="${photoUrl}" alt="${photo?.altText || photo?.alt || name}" class="peak-thumbnail" loading="lazy" decoding="async">` : '—'}</td>
-        <td><a href="/peak/${peak.slug}/">${name}</a></td>
+        <td><a href="/peak/${peak.slug}/" data-peak-slug="${peak.slug || ''}">${name}</a></td>
         <td>${formatElevation(elevation)}</td>
         <td>${difficulty || 'N/A'}</td>
       </tr>
@@ -349,6 +359,14 @@ async function init(){
       elements.empty.textContent = 'No peaks found for this range.';
       return;
     }
+    elements.peaksBody.addEventListener('click', (event) => {
+      const peakLink = event.target.closest('a[data-peak-slug]');
+      if(!peakLink) return;
+      trackAnalytics('range_peak_open', {
+        peak_slug: peakLink.getAttribute('data-peak-slug') || '',
+        range_slug: rangeSlug
+      });
+    });
     showRange(rangeInfo, peaksInRange, heroPhoto);
     elements.content.hidden = false;
   }catch(error){

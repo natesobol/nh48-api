@@ -962,6 +962,35 @@ table a:hover{
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin=""></script>
   <script>
+    const trackAnalytics = (name, params = {}) => {
+      if (window.NH48Analytics?.track) {
+        window.NH48Analytics.track(name, params);
+        return;
+      }
+      if (window.NH48_INFO_ANALYTICS?.logEvent) {
+        window.NH48_INFO_ANALYTICS.logEvent(name, params);
+      }
+    };
+
+    const throttle = (fn, waitMs) => {
+      let lastRun = 0;
+      return (...args) => {
+        const now = Date.now();
+        if (now - lastRun < waitMs) return;
+        lastRun = now;
+        fn(...args);
+      };
+    };
+
+    const detectMapNetwork = (text) => {
+      const normalized = (text || '').toLowerCase();
+      if (normalized.includes('onx')) return 'onx';
+      if (normalized.includes('alltrails')) return 'alltrails';
+      if (normalized.includes('gaia')) return 'gaia';
+      if (normalized.includes('caltopo')) return 'caltopo';
+      return 'other';
+    };
+
     const standardLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     });
@@ -970,6 +999,18 @@ table a:hover{
     });
 
     const map = L.map('map', { layers: [topoLayer] }).setView([44.336, -71.266], 13);
+    const emitMapMove = throttle(() => {
+      trackAnalytics('howker_map_move', {
+        zoom: map.getZoom()
+      });
+    }, 7000);
+    const emitMapZoom = throttle(() => {
+      trackAnalytics('howker_map_zoom', {
+        zoom: map.getZoom()
+      });
+    }, 7000);
+    map.on('moveend', emitMapMove);
+    map.on('zoomend', emitMapZoom);
 
     L.control.layers({ 'Topographic': topoLayer, 'Standard': standardLayer }, null, { position: 'topleft' }).addTo(map);
     L.control.scale({ position: 'bottomleft' }).addTo(map);
@@ -980,10 +1021,12 @@ table a:hover{
     const poiTableBody = document.getElementById('poiTableBody');
     const poiSearch = document.getElementById('poiSearch');
     const poiHeaders = document.querySelectorAll('#poiTable thead button');
+    const mapLinks = document.getElementById('map-links');
     const poiData = [];
     let sortKey = null;
     let sortAsc = true;
     let searchQuery = '';
+    let poiSearchDebounce = null;
     let photoCatalogBySlug = new Map();
 
     function slugify(name) {
@@ -1300,6 +1343,11 @@ table a:hover{
     poiSearch.addEventListener('input', () => {
       searchQuery = poiSearch.value.trim();
       updatePoiTable();
+      if (poiSearchDebounce) clearTimeout(poiSearchDebounce);
+      const searchLength = searchQuery.length;
+      poiSearchDebounce = setTimeout(() => {
+        trackAnalytics('poi_search', { search_length: searchLength });
+      }, 350);
     });
 
     poiHeaders.forEach(button => {
@@ -1313,6 +1361,10 @@ table a:hover{
         }
         updateSortIndicators(sortKey);
         updatePoiTable();
+        trackAnalytics('poi_sort', {
+          sort_key: sortKey || '',
+          direction: sortAsc ? 'asc' : 'desc'
+        });
       });
     });
     updateSortIndicators(sortKey);
@@ -1325,6 +1377,33 @@ table a:hover{
       const y = Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100));
       thumb.style.setProperty('--zoom-x', `${x}%`);
       thumb.style.setProperty('--zoom-y', `${y}%`);
+    });
+
+    if (mapLinks) {
+      mapLinks.addEventListener('click', (event) => {
+        const link = event.target.closest('a.map-link');
+        if (!link) return;
+        const href = link.getAttribute('href') || '';
+        if (link.hasAttribute('download') || /\.(gpx|kml)(\?|$)/i.test(href)) {
+          const match = href.match(/\.([a-z0-9]+)(?:\?|$)/i);
+          trackAnalytics('howker_gps_download', {
+            file_ext: match ? match[1].toLowerCase() : ''
+          });
+          return;
+        }
+        if (/^https?:\/\//i.test(href)) {
+          trackAnalytics('howker_external_map_click', {
+            network: detectMapNetwork(link.textContent || '')
+          });
+        }
+      });
+    }
+
+    document.addEventListener('click', (event) => {
+      const detailLink = event.target.closest('a[href*="/howker-ridge/poi?poi="]');
+      if (!detailLink) return;
+      const slug = new URL(detailLink.href, window.location.origin).searchParams.get('poi') || '';
+      trackAnalytics('poi_detail_open', { poi_slug: slug });
     });
 
     function normalizeType(type) {

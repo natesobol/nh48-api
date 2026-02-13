@@ -8,6 +8,16 @@
       ? window.NH48_I18N.t(key, vars)
       : key);
 
+  const trackAnalytics = (name, params = {}) => {
+    if (window.NH48Analytics?.track) {
+      window.NH48Analytics.track(name, params);
+      return;
+    }
+    if (window.NH48_INFO_ANALYTICS?.logEvent) {
+      window.NH48_INFO_ANALYTICS.logEvent(name, params);
+    }
+  };
+
   const state = {
     pieces: [],
     placedCount: 0,
@@ -22,7 +32,8 @@
     dragState: null,
     keyboardPieceId: null,
     peaks: [],
-    customImageUrl: null
+    customImageUrl: null,
+    selectionSource: 'select'
   };
 
   const elements = {
@@ -145,7 +156,11 @@
     const index = Math.floor(Math.random() * state.peaks.length);
     elements.photoSelect.value = String(index);
     elements.photoUpload.value = '';
+    state.selectionSource = 'random';
     announce(t('puzzle.randomPhotoAnnounce', { name: state.peaks[index].name }));
+    trackAnalytics('puzzle_random_photo', {
+      peak_name: state.peaks[index].name || ''
+    });
   };
 
   const getSelectedPhoto = () => {
@@ -529,10 +544,12 @@
       state.customImageUrl = URL.createObjectURL(file);
       imageSource = state.customImageUrl;
       photoCredit = t('puzzle.customPhotoLabel');
+      state.selectionSource = 'upload';
     } else {
       const selected = getSelectedPhoto();
       if (selected) {
         imageSource = selected.url;
+        state.selectionSource = state.selectionSource === 'random' ? 'random' : 'select';
         if (selected.credit) {
           photoCredit = t('puzzle.photoCredit', { credit: selected.credit });
         }
@@ -551,6 +568,11 @@
       const sourceCanvas = drawSourceCanvas(image, metrics.boardWidth, metrics.boardHeight);
       createPieces(sourceCanvas, metrics);
       startTimer();
+      trackAnalytics('puzzle_start', {
+        difficulty: state.rows,
+        source: state.selectionSource,
+        pieces_total: state.rows * state.cols
+      });
       announce(t('puzzle.startAnnounce'));
       elements.status.textContent = photoCredit;
     } catch (error) {
@@ -570,6 +592,11 @@
     elements.finalScreen.setAttribute('aria-hidden', 'false');
     document.body.classList.add('puzzle-complete');
     announce(t('puzzle.completeAnnounce'));
+    trackAnalytics('puzzle_complete', {
+      elapsed_sec: elapsedSeconds,
+      difficulty: state.rows,
+      pieces_total: state.totalPieces
+    });
   };
 
   const handleGlobalPointerUp = () => {
@@ -599,12 +626,19 @@
     elements.startButton.addEventListener('click', startPuzzle);
     elements.shuffleButton.addEventListener('click', shufflePieces);
     elements.randomButton.addEventListener('click', pickRandomPeak);
-    elements.difficultySelect.addEventListener('change', handleDifficultyChange);
+    elements.difficultySelect.addEventListener('change', () => {
+      handleDifficultyChange();
+      trackAnalytics('puzzle_difficulty_change', {
+        difficulty: state.rows
+      });
+    });
     elements.photoSelect.addEventListener('change', () => {
       elements.photoUpload.value = '';
+      state.selectionSource = 'select';
     });
     elements.photoUpload.addEventListener('change', () => {
       elements.photoSelect.value = '';
+      state.selectionSource = 'upload';
     });
     elements.restartButton.addEventListener('click', () => {
       resetGame();

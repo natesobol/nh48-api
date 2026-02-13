@@ -19,6 +19,16 @@
     return value === key ? fallback : value;
   };
 
+  const trackAnalytics = (name, params = {}) => {
+    if (window.NH48Analytics?.track) {
+      window.NH48Analytics.track(name, params);
+      return;
+    }
+    if (window.NH48_INFO_ANALYTICS?.logEvent) {
+      window.NH48_INFO_ANALYTICS.logEvent(name, params);
+    }
+  };
+
   const state = {
     rounds: [],
     currentRoundIndex: 0,
@@ -295,6 +305,11 @@
     playNextRoundSound();
     elements.submitButton.disabled = true;
     elements.submitButton.textContent = t('peakid.nextRound');
+    trackAnalytics('peakid_round_submit', {
+      round: state.currentRoundIndex + 1,
+      round_correct: state.roundCorrect,
+      round_incorrect: state.roundIncorrect
+    });
 
     const summary = t('peakid.roundSummary', {
       round: state.currentRoundIndex + 1,
@@ -334,6 +349,12 @@
       score: totalScore,
       total: TOTAL_ROUNDS * PEAKS_PER_ROUND
     });
+    trackAnalytics('peakid_game_complete', {
+      score: totalScore,
+      total: TOTAL_ROUNDS * PEAKS_PER_ROUND,
+      correct: state.totalCorrect,
+      incorrect: state.totalIncorrect
+    });
     updateSocialCardContent();
   };
 
@@ -350,6 +371,9 @@
     if (elements.splashBackground) {
       elements.splashBackground.classList.remove('active');
     }
+    trackAnalytics('peakid_game_start', {
+      source: 'restart'
+    });
     renderRound();
   };
 
@@ -886,6 +910,12 @@
       link.rel = 'noopener';
       link.textContent = platform.name;
       link.setAttribute('aria-label', `${t('peakid.socialShareHeading')}: ${platform.name}`);
+      link.dataset.network = platform.name.toLowerCase();
+      link.addEventListener('click', () => {
+        trackAnalytics('peakid_share_click', {
+          network: platform.name.toLowerCase()
+        });
+      });
 
       if (platform.category === 'major') {
         majorContainer.appendChild(link);
@@ -1009,6 +1039,10 @@
         link.download = fileName;
         link.href = dataUrl;
         link.click();
+        trackAnalytics('peakid_social_download', {
+          orientation,
+          score: state.totalCorrect
+        });
       });
     }
   };
@@ -1021,6 +1055,9 @@
       const peaks = Object.values(payload);
       state.rounds = buildRounds(peaks);
       renderRound();
+      trackAnalytics('peakid_game_start', {
+        source: 'init'
+      });
       initSocialCardHandlers();
       initSocialCardSettings();
       buildShareButtons();

@@ -154,6 +154,16 @@
       const searchInput = document.getElementById('searchInput');
       const sortSelect = document.getElementById('sortSelect');
 
+      function trackAnalytics(name, params = {}){
+        if(window.NH48Analytics?.track){
+          window.NH48Analytics.track(name, params);
+          return;
+        }
+        if(window.NH48_INFO_ANALYTICS?.logEvent){
+          window.NH48_INFO_ANALYTICS.logEvent(name, params);
+        }
+      }
+
       function getPlaceholder() {
         return 'data:image/svg+xml;utf8,' + encodeURIComponent(
           `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#172032"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#64748b" font-family="system-ui" font-size="22">No image</text></svg>`
@@ -303,7 +313,7 @@
           </div>
         `;
         return `
-          <a class="card card-link" href="/range/${range.slug}/">
+          <a class="card card-link" data-range-slug="${range.slug}" href="/range/${range.slug}/">
             ${imgMarkup}
             <div class="body">
               <h3>${range.name}</h3>
@@ -411,8 +421,29 @@
           loadingEl.style.display = 'none';
           render(ranges);
 
-          searchInput.addEventListener('input', () => render(ranges));
-          sortSelect.addEventListener('change', () => render(ranges));
+          let searchDebounce = null;
+          searchInput.addEventListener('input', (event) => {
+            render(ranges);
+            if(searchDebounce) clearTimeout(searchDebounce);
+            const searchLength = (event.target?.value || '').trim().length;
+            searchDebounce = setTimeout(() => {
+              trackAnalytics('range_catalog_search', { search_length: searchLength });
+            }, 350);
+          });
+
+          sortSelect.addEventListener('change', (event) => {
+            render(ranges);
+            trackAnalytics('range_catalog_sort_change', {
+              sort: event.target?.value || 'name'
+            });
+          });
+
+          gridEl.addEventListener('click', (event) => {
+            const card = event.target.closest('a.card-link');
+            if(!card) return;
+            const rangeSlug = card.getAttribute('data-range-slug') || '';
+            trackAnalytics('range_card_open', { range_slug: rangeSlug });
+          });
         }catch(error){
           console.error(error);
           loadingEl.style.display = 'none';

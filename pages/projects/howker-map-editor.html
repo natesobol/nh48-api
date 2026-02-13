@@ -917,6 +917,26 @@
       console.error('[HowkerEditor] Script error:', e.message, e.filename, e.lineno, e.colno);
     });
 
+    const trackAnalytics = (name, params = {}) => {
+      if (window.NH48Analytics?.track) {
+        window.NH48Analytics.track(name, params);
+        return;
+      }
+      if (window.NH48_INFO_ANALYTICS?.logEvent) {
+        window.NH48_INFO_ANALYTICS.logEvent(name, params);
+      }
+    };
+
+    const throttle = (fn, waitMs) => {
+      let lastRun = 0;
+      return (...args) => {
+        const now = Date.now();
+        if (now - lastRun < waitMs) return;
+        lastRun = now;
+        fn(...args);
+      };
+    };
+
     const TRAIL_URL = '/data/howker-ridge.geojson';
     const STATUS_URL = '/data/howker-ridge-status.geojson';
     const POI_URL = '/data/howker-ridge-pois.geojson';
@@ -1139,6 +1159,18 @@
       );
 
       map = L.map('map', { layers: [topoLayer], maxZoom: MAX_ZOOM }).setView([44.3, -71.3], 13);
+      const emitMapMove = throttle(() => {
+        trackAnalytics('howker_map_move', {
+          zoom: map.getZoom()
+        });
+      }, 7000);
+      const emitMapZoom = throttle(() => {
+        trackAnalytics('howker_map_zoom', {
+          zoom: map.getZoom()
+        });
+      }, 7000);
+      map.on('moveend', emitMapMove);
+      map.on('zoomend', emitMapZoom);
       L.control.layers(
         { Topographic: topoLayer, Standard: standardLayer },
         { Satellite: satelliteLayer },
@@ -2421,6 +2453,10 @@
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
+      trackAnalytics('howker_gps_download', {
+        file_ext: 'json',
+        source: 'editor'
+      });
     }
 
     function buildCardMeta() {
@@ -2716,6 +2752,10 @@
         link.remove();
         URL.revokeObjectURL(dlUrl);
         setStep('download', true, `Downloaded: ${filename}`);
+        trackAnalytics('howker_gps_download', {
+          file_ext: 'jpg',
+          source: 'share_card'
+        });
 
         const fd = new FormData();
         fd.append('password', pw);
@@ -2821,6 +2861,10 @@
         link.remove();
         URL.revokeObjectURL(url);
         setStatusMessage(`Topo Art downloaded: ${filename}`);
+        trackAnalytics('howker_gps_download', {
+          file_ext: 'png',
+          source: 'topo_art'
+        });
       } catch (err) {
         setStatusMessage(err?.message || 'Topo Art export failed.', true);
         console.error(err);
@@ -2993,6 +3037,9 @@
 
     function performSearch(query) {
       const trimmed = query.trim();
+      trackAnalytics('poi_search', {
+        search_length: trimmed.length
+      });
       if (!trimmed) {
         setStatusMessage('Enter a feature name to search.', true);
         return;

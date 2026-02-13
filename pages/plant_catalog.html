@@ -1233,6 +1233,24 @@ body.details-open .drawer.open {
   const grid = $("#grid");
   // Removed reference to drawer on the catalog page. We will redirect instead.
   const qEl=$("#q"), typeEl=$("#type"), habEl=$("#habitat"), bloomEl=$("#bloom");
+  const trackAnalytics = (name, params = {}) => {
+    if (window.NH48Analytics?.track) {
+      window.NH48Analytics.track(name, params);
+      return;
+    }
+    if (window.NH48_INFO_ANALYTICS?.logEvent) {
+      window.NH48_INFO_ANALYTICS.logEvent(name, params);
+    }
+  };
+  const emitPlantCatalogFilterChange = (trigger) => {
+    trackAnalytics('plant_catalog_filter_change', {
+      trigger,
+      search_length: (qEl.value || '').trim().length,
+      type: typeEl.value || '',
+      habitat: habEl.value || '',
+      bloom: bloomEl.value || ''
+    });
+  };
   const drawerContent = null; // no drawer on this page
   const themeToggle = document.getElementById('theme-toggle');
   const viewToggle  = document.getElementById('view-toggle');
@@ -1579,6 +1597,27 @@ body.details-open .drawer.open {
     stickyToggle.addEventListener('change', () => {
       const headerEl = document.querySelector('header');
       headerEl.classList.toggle('sticky', stickyToggle.checked);
+    });
+
+    let searchDebounce = null;
+    qEl.addEventListener('input', () => {
+      filter();
+      if (searchDebounce) clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => {
+        emitPlantCatalogFilterChange('q');
+      }, 350);
+    });
+    typeEl.addEventListener('change', () => {
+      filter();
+      emitPlantCatalogFilterChange('type');
+    });
+    habEl.addEventListener('change', () => {
+      filter();
+      emitPlantCatalogFilterChange('habitat');
+    });
+    bloomEl.addEventListener('change', () => {
+      filter();
+      emitPlantCatalogFilterChange('bloom');
     });
   })();
 

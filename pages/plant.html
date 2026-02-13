@@ -672,6 +672,15 @@ header.plant-hero.sticky h1{
 
   // DOM helpers
   const $ = s => document.querySelector(s);
+  const trackAnalytics = (name, params = {}) => {
+    if (window.NH48Analytics?.track) {
+      window.NH48Analytics.track(name, params);
+      return;
+    }
+    if (window.NH48_INFO_ANALYTICS?.logEvent) {
+      window.NH48_INFO_ANALYTICS.logEvent(name, params);
+    }
+  };
   const carouselEl = $("#carousel");
   const dotsEl = $("#dots");
   const prevBtn = document.getElementById('prevBtn');
@@ -805,6 +814,10 @@ header.plant-hero.sticky h1{
     ensureImgLoaded(carouselIdx);
     updateSlides();
     if (manual){
+      trackAnalytics('plant_detail_carousel_nav', {
+        action: 'next',
+        index: carouselIdx
+      });
       restartCarousel();
     }
   }
@@ -813,6 +826,10 @@ header.plant-hero.sticky h1{
     ensureImgLoaded(carouselIdx);
     updateSlides();
     if (manual){
+      trackAnalytics('plant_detail_carousel_nav', {
+        action: 'prev',
+        index: carouselIdx
+      });
       restartCarousel();
     }
   }
@@ -821,6 +838,10 @@ header.plant-hero.sticky h1{
     ensureImgLoaded(carouselIdx);
     updateSlides();
     if (manual){
+      trackAnalytics('plant_detail_carousel_nav', {
+        action: 'dot',
+        index: carouselIdx
+      });
       restartCarousel();
     }
   }
@@ -1061,8 +1082,8 @@ header.plant-hero.sticky h1{
   // Keyboard shortcuts for carousel navigation
   window.addEventListener('keydown', (e)=>{
     if (e.target && (/input|select|textarea/i).test(e.target.tagName)) return;
-    if (e.key === 'ArrowRight') { next(); }
-    if (e.key === 'ArrowLeft')  { prev(); }
+    if (e.key === 'ArrowRight') { next(true); }
+    if (e.key === 'ArrowLeft')  { prev(true); }
   });
 </script>
 <div id="footer-placeholder"></div>

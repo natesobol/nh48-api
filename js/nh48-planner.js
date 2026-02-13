@@ -606,6 +606,16 @@ function reorder(list, startIndex, endIndex) {
   return result;
 }
 
+function trackPlannerAnalytics(name, params = {}) {
+  if (window.NH48Analytics?.track) {
+    window.NH48Analytics.track(name, params);
+    return;
+  }
+  if (window.NH48_INFO_ANALYTICS?.logEvent) {
+    window.NH48_INFO_ANALYTICS.logEvent(name, params);
+  }
+}
+
 function PeakPlannerApp() {
   const [peaksMap, setPeaksMap] = useState({});
   const [itinerary, setItinerary] = useState([]);
@@ -664,6 +674,9 @@ function PeakPlannerApp() {
   const groupCounterRef = useRef(1);
   const templateMenuRef = useRef(null);
   const templateHelpRef = useRef(null);
+  const searchTrackTimerRef = useRef(null);
+  const searchTrackReadyRef = useRef(false);
+  const filterTrackReadyRef = useRef(false);
   const strategyParam = useMemo(() => {
     if (typeof window === 'undefined') return null;
     return new URLSearchParams(window.location.search).get('strategy');
@@ -1027,6 +1040,40 @@ function PeakPlannerApp() {
     || isFilterActive(bailoutFilter)
   ), [activeRiskFilters, activeRangeGroups, distanceFilter, gainFilter, timeFilter, bailoutFilter]);
   const searchActive = searchQuery.trim().length > 0;
+
+  useEffect(() => {
+    if (!searchTrackReadyRef.current) {
+      searchTrackReadyRef.current = true;
+      return;
+    }
+    if (searchTrackTimerRef.current) {
+      clearTimeout(searchTrackTimerRef.current);
+    }
+    const searchLength = searchQuery.trim().length;
+    searchTrackTimerRef.current = setTimeout(() => {
+      trackPlannerAnalytics('planner_search', { search_length: searchLength });
+    }, 350);
+    return () => {
+      if (searchTrackTimerRef.current) {
+        clearTimeout(searchTrackTimerRef.current);
+      }
+    };
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (!filterTrackReadyRef.current) {
+      filterTrackReadyRef.current = true;
+      return;
+    }
+    trackPlannerAnalytics('planner_filter_change', {
+      risk_count: activeRiskFilters.size,
+      range_count: activeRangeGroups.size,
+      distance_active: isFilterActive(distanceFilter),
+      gain_active: isFilterActive(gainFilter),
+      time_active: isFilterActive(timeFilter),
+      bailout_active: isFilterActive(bailoutFilter)
+    });
+  }, [activeRiskFilters, activeRangeGroups, distanceFilter, gainFilter, timeFilter, bailoutFilter]);
 
   const activeDayTripIds = useMemo(() => {
     const active = new Set();
@@ -1436,6 +1483,9 @@ function PeakPlannerApp() {
       anchor.click();
       document.body.removeChild(anchor);
       URL.revokeObjectURL(url);
+      trackPlannerAnalytics('planner_export', {
+        item_count: itinerary.length
+      });
     } catch (err) {
       console.warn('Failed to export itinerary', err);
     }
@@ -1528,6 +1578,11 @@ function PeakPlannerApp() {
 
   const requestStrategyApply = (strategyId, source = 'toolbar') => {
     if (!strategyId) return;
+    trackPlannerAnalytics('planner_strategy_apply', {
+      strategy_id: strategyId,
+      source,
+      stage: loadedSavedItinerary ? 'request_confirm' : 'apply'
+    });
     setTemplateMenuOpen(false);
     setTemplateHelpOpen(false);
     if (loadedSavedItinerary) {
@@ -1541,6 +1596,11 @@ function PeakPlannerApp() {
 
   const confirmStrategyReplace = () => {
     if (!pendingStrategyId) return;
+    trackPlannerAnalytics('planner_strategy_apply', {
+      strategy_id: pendingStrategyId,
+      source: pendingStrategySource || 'prompt',
+      stage: 'confirmed'
+    });
     applyStrategyById(pendingStrategyId);
     if (pendingStrategySource === 'query') {
       clearStrategyQueryParam();
@@ -1637,6 +1697,9 @@ function PeakPlannerApp() {
   const openShareNetwork = (platform) => {
     const shareUrl = platform.buildUrl(sharePayload);
     window.open(shareUrl, '_blank', 'noopener,noreferrer');
+    trackPlannerAnalytics('planner_share_click', {
+      network: (platform?.name || '').toLowerCase()
+    });
     closeContextMenu();
   };
 
