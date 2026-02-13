@@ -2014,50 +2014,85 @@ export default {
       for (let i = 0; i < peakEntries.length; i += 1) {
         const [slug, peak] = peakEntries[i] || [];
         if (!peak || !slug) continue;
-        const peakName = peak.peakName || peak.name || peak['Peak Name'] || slug;
-        const primaryPhoto = getPrimaryPhoto(peak.photos);
-        if (!primaryPhoto || !primaryPhoto.url) continue;
-        const fullUrl = normalizeCatalogPhotoUrl(primaryPhoto.url, { width: 1600, format: 'jpg' });
-        const thumbUrl = normalizeCatalogPhotoUrl(primaryPhoto.url, { width: 400, format: 'jpg' });
-        const imageId = `${SITE}/peak/${slug}#photo`;
+        const peakSlug = String(slug).trim();
+        const peakName = peak.peakName || peak.name || peak['Peak Name'] || peakSlug;
+        const peakUrl = isFrench
+          ? `${SITE}/fr/peak/${encodeURIComponent(peakSlug)}`
+          : `${SITE}/peak/${encodeURIComponent(peakSlug)}`;
+        const peakId = `${peakUrl}#mountain`;
         const peakSameAs = Array.isArray(sameAsLookup?.[slug]) ? sameAsLookup[slug] : [];
-        const isFineArt = !!primaryPhoto.isFineArt;
-        const imageObject = {
-          '@type': isFineArt ? ['ImageObject', 'Photograph', 'VisualArtwork'] : ['ImageObject', 'Photograph'],
-          '@id': imageId,
-          url: fullUrl,
-          contentUrl: fullUrl,
-          thumbnailUrl: thumbUrl,
-          name: buildPhotoTitleUnique(peakName, primaryPhoto),
-          caption: buildPhotoCaptionUnique(peakName, primaryPhoto),
-          description: buildPhotoCaptionUnique(peakName, primaryPhoto),
-          creditText: RIGHTS_DEFAULTS.creatorName,
-          creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
-          copyrightHolder: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
-          copyrightNotice: `© ${RIGHTS_DEFAULTS.creatorName}`,
-          license: CATALOG_IMAGE_LICENSE_URL,
+        const primaryPhoto = getPrimaryPhoto(peak.photos);
+
+        let imageId = '';
+        if (primaryPhoto && primaryPhoto.url) {
+          const fullUrl = normalizeCatalogPhotoUrl(primaryPhoto.url, { width: 1600, format: 'jpg' });
+          const thumbUrl = normalizeCatalogPhotoUrl(primaryPhoto.url, { width: 400, format: 'jpg' });
+          imageId = `${peakUrl}#photo`;
+          const isFineArt = !!primaryPhoto.isFineArt;
+          const imageObject = {
+            '@type': isFineArt ? ['ImageObject', 'Photograph', 'VisualArtwork'] : ['ImageObject', 'Photograph'],
+            '@id': imageId,
+            url: fullUrl,
+            contentUrl: fullUrl,
+            thumbnailUrl: thumbUrl,
+            name: buildPhotoTitleUnique(peakName, primaryPhoto),
+            caption: buildPhotoCaptionUnique(peakName, primaryPhoto),
+            description: buildPhotoCaptionUnique(peakName, primaryPhoto),
+            inLanguage: isFrench ? 'fr' : 'en',
+            creditText: RIGHTS_DEFAULTS.creditText,
+            creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName, url: `${SITE}/about` },
+            copyrightHolder: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
+            copyrightNotice: `(c) ${RIGHTS_DEFAULTS.creatorName}`,
+            license: CATALOG_IMAGE_LICENSE_URL,
+            acquireLicensePage: RIGHTS_DEFAULTS.acquireLicensePageUrl,
+            sameAs: peakSameAs
+          };
+          if (isFineArt) {
+            imageObject.artform = 'Photography';
+            imageObject.artEdition = 'Open edition';
+            imageObject.artMedium = 'Digital photography';
+          }
+          imageObjects.push(imageObject);
+        }
+
+        const rangeName = String(peak['Range / Subrange'] || peak.range || '').trim();
+        const trailType = String(peak['Trail Type'] || peak.trailType || '').trim();
+        const difficulty = String(peak['Difficulty'] || peak.difficulty || '').trim();
+        const exposure = String(peak['Exposure Level'] || peak['Weather Exposure Rating'] || peak.exposureLevel || '').trim();
+        const standardRoutes = String(peak['Standard Routes'] || peak.standardRoutes || '').trim();
+        const typicalCompletionTime = String(peak['Typical Completion Time'] || peak.typicalCompletionTime || '').trim();
+        const coords = parseCoords(peak.lat || peak.latitude || peak['Coordinates'] || '');
+
+        const additionalProperty = [
+          rangeName ? { '@type': 'PropertyValue', name: 'Range / Subrange', value: rangeName } : null,
+          trailType ? { '@type': 'PropertyValue', name: 'Trail Type', value: trailType } : null,
+          difficulty ? { '@type': 'PropertyValue', name: 'Difficulty', value: difficulty } : null,
+          exposure ? { '@type': 'PropertyValue', name: 'Exposure Level', value: exposure } : null,
+          standardRoutes ? { '@type': 'PropertyValue', name: 'Standard Routes', value: standardRoutes } : null,
+          typicalCompletionTime ? { '@type': 'PropertyValue', name: 'Typical Completion Time', value: typicalCompletionTime } : null
+        ].filter(Boolean);
+
+        const mountainNode = {
+          '@type': 'Mountain',
+          '@id': peakId,
+          name: peakName,
+          url: peakUrl,
+          identifier: peakSlug,
+          elevation: formatFeet(peak['Elevation (ft)'] || peak.elevation),
+          prominence: formatFeet(peak['Prominence (ft)'] || peak.prominence),
           sameAs: peakSameAs
         };
-        if (isFineArt) {
-          imageObject.artform = 'Photography';
-          imageObject.artEdition = 'Open edition';
-          imageObject.artMedium = 'Digital photography';
+        if (imageId) mountainNode.image = { '@id': imageId };
+        if (rangeName) mountainNode.containedInPlace = { '@type': 'Place', name: rangeName };
+        if (coords.lat !== null && coords.lon !== null) {
+          mountainNode.geo = { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon };
         }
-        imageObjects.push(imageObject);
+        if (additionalProperty.length) mountainNode.additionalProperty = additionalProperty;
 
         itemListElement.push({
           '@type': 'ListItem',
           position: i + 1,
-          item: {
-            '@type': 'Mountain',
-            '@id': `${SITE}/peak/${slug}#mountain`,
-            name: peakName,
-            url: `${SITE}/peak/${slug}`,
-            image: { '@id': imageId },
-            elevation: formatFeet(peak['Elevation (ft)'] || peak.elevation),
-            prominence: formatFeet(peak['Prominence (ft)'] || peak.prominence),
-            sameAs: peakSameAs
-          }
+          item: mountainNode
         });
       }
 
@@ -2130,6 +2165,8 @@ export default {
       let html = await tplResp.text();
       // Fix relative paths in template (../css/ -> /css/, etc.)
       html = fixRelativePaths(html);
+      // Keep a single worker-generated catalog schema graph.
+      html = stripJsonLdScripts(html);
       const [navHtml, footerHtml] = await Promise.all([
         loadPartial('nav', RAW_NAV_URL),
         loadPartial('footer', RAW_FOOTER_URL)
