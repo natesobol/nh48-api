@@ -2103,6 +2103,7 @@
     margin: 0;
     font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
     gap: 14px;
+    overflow: visible;
   }
 
   .site-nav-logo {
@@ -2176,6 +2177,8 @@
     justify-content: center;
     flex-wrap: wrap;
     text-align: center;
+    position: relative;
+    overflow: visible;
   }
 
   .site-nav-links a,
@@ -2213,12 +2216,13 @@
     display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
+    overflow: visible;
   }
 
   .site-nav-dropdown .site-nav-submenu {
     display: none;
     position: absolute;
-    top: 100%;
+    top: calc(100% + 6px);
     left: 0;
     background: #0f172a;
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -2227,6 +2231,7 @@
     padding: 12px 10px 10px;
     min-width: 200px;
     z-index: 10;
+    transform: translate(var(--submenu-shift-x, 0px), var(--submenu-shift-y, 0px));
   }
 
   .site-nav-submenu--wide {
@@ -2278,16 +2283,41 @@
     min-width: 300px;
   }
 
-  .site-nav-dropdown:hover .site-nav-submenu,
-  .site-nav-dropdown:focus-within .site-nav-submenu {
+  .site-nav-dropdown.is-open > .site-nav-submenu,
+  .site-nav-dropdown[data-open="true"] > .site-nav-submenu {
     display: flex;
     flex-direction: column;
     gap: 0;
   }
 
-  .site-nav-dropdown:hover .site-nav-submenu--nested,
-  .site-nav-dropdown:focus-within .site-nav-submenu--nested {
-    display: none;
+  .site-nav-dropdown.is-open > button,
+  .site-nav-dropdown[data-open="true"] > button,
+  .site-nav-dropdown.is-open > a,
+  .site-nav-dropdown[data-open="true"] > a {
+    color: #22c55e;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .site-nav-dropdown:hover > .site-nav-submenu,
+    .site-nav-dropdown:focus-within > .site-nav-submenu {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .site-nav-submenu-group:hover > .site-nav-submenu.site-nav-submenu--nested,
+    .site-nav-submenu-group:focus-within > .site-nav-submenu.site-nav-submenu--nested {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .site-nav-submenu-group:hover > button,
+    .site-nav-submenu-group:focus-within > button {
+      border-radius: 8px 0 0 8px;
+      background: rgba(255, 255, 255, 0.08);
+    }
   }
 
   .site-nav-dropdown .site-nav-submenu a,
@@ -2317,6 +2347,7 @@
 
   .site-nav-submenu-group {
     position: relative;
+    overflow: visible;
   }
 
   .site-nav-submenu-group > button {
@@ -2354,6 +2385,7 @@
     padding: 10px;
     min-width: 200px;
     z-index: 12;
+    transform: translate(var(--submenu-shift-x, 0px), var(--submenu-shift-y, 0px));
   }
 
   .site-nav-submenu.site-nav-submenu--nested::before {
@@ -2366,17 +2398,37 @@
     background: transparent;
   }
 
-  .site-nav-submenu-group:hover .site-nav-submenu--nested,
-  .site-nav-submenu-group:focus-within .site-nav-submenu.site-nav-submenu--nested {
+  .site-nav-submenu-group.is-open > .site-nav-submenu.site-nav-submenu--nested,
+  .site-nav-submenu-group[data-open="true"] > .site-nav-submenu.site-nav-submenu--nested {
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
 
-  .site-nav-submenu-group:hover > button,
-  .site-nav-submenu-group:focus-within > button {
+  .site-nav-submenu-group.is-open > button,
+  .site-nav-submenu-group[data-open="true"] > button {
     border-radius: 8px 0 0 8px;
     background: rgba(255, 255, 255, 0.08);
+  }
+
+  .site-nav-dropdown > .site-nav-submenu.open-up {
+    top: auto;
+    bottom: calc(100% + 6px);
+  }
+
+  .site-nav-submenu.site-nav-submenu--nested.open-left {
+    left: auto;
+    right: 100%;
+    margin-left: 0;
+    margin-right: -1px;
+    border-right: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px 0 0 10px;
+  }
+
+  .site-nav-submenu.site-nav-submenu--nested.open-left::before {
+    left: auto;
+    right: -12px;
   }
 
   .site-nav-submenu--nested > * + * {
@@ -2580,11 +2632,124 @@
     }
 
     .site-nav-links {
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      flex-direction: column;
+      align-items: stretch;
       row-gap: 6px;
-      justify-content: center;
+      justify-content: flex-start;
       width: 100%;
+      max-width: 720px;
       padding-bottom: 4px;
+    }
+
+    .site-nav-links > a,
+    .site-nav-links > .site-nav-dropdown > a,
+    .site-nav-links > .site-nav-dropdown > button,
+    .site-nav-links > .site-nav-cta {
+      width: 100%;
+      text-align: left;
+      justify-content: flex-start;
+    }
+
+    .site-nav-dropdown {
+      width: 100%;
+    }
+
+    .site-nav-dropdown > a,
+    .site-nav-dropdown > button {
+      width: 100%;
+      text-align: left;
+      position: relative;
+      padding-right: 38px;
+    }
+
+    .site-nav-dropdown > a::after,
+    .site-nav-dropdown > button::after {
+      content: "\25BE";
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      opacity: 0.75;
+    }
+
+    .site-nav-dropdown.is-open > a::after,
+    .site-nav-dropdown[data-open="true"] > a::after,
+    .site-nav-dropdown.is-open > button::after,
+    .site-nav-dropdown[data-open="true"] > button::after {
+      transform: translateY(-50%) rotate(180deg);
+    }
+
+    .site-nav-dropdown .site-nav-submenu,
+    .site-nav-submenu.site-nav-submenu--nested {
+      position: static;
+      top: auto;
+      right: auto;
+      left: auto;
+      bottom: auto;
+      margin: 6px 0 0;
+      min-width: 0;
+      width: 100%;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      transform: none !important;
+    }
+
+    .site-nav-dropdown:focus-within > .site-nav-submenu {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .site-nav-submenu.site-nav-submenu--nested {
+      border-left: 2px solid rgba(34, 197, 94, 0.35);
+      padding-left: 8px;
+      margin-top: 6px;
+    }
+
+    .site-nav-submenu-group:focus-within > .site-nav-submenu.site-nav-submenu--nested {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .site-nav-submenu-group > button {
+      padding-right: 36px;
+    }
+
+    .site-nav-submenu-group > button::after {
+      content: "\25BE";
+      font-size: 12px;
+    }
+
+    .site-nav-submenu-group.is-open > button::after,
+    .site-nav-submenu-group[data-open="true"] > button::after {
+      transform: translateY(-50%) rotate(180deg);
+    }
+
+    .site-nav-submenu-group.is-open > button,
+    .site-nav-submenu-group:focus-within > button,
+    .site-nav-submenu-group[data-open="true"] > button {
+      border-radius: 8px;
+    }
+
+    .site-nav-submenu.site-nav-submenu--nested::before {
+      display: none;
+    }
+
+    .site-nav-submenu.site-nav-submenu--nested.open-left {
+      border-right: 1px solid rgba(255, 255, 255, 0.12);
+      border-left: 2px solid rgba(34, 197, 94, 0.35);
+      border-radius: 10px;
+      margin-right: 0;
+    }
+
+    .nh48-lang {
+      justify-content: flex-start;
+      max-width: none;
+      width: 100%;
     }
 
     .site-nav-title {
@@ -2616,12 +2781,8 @@
       --lang-toggle-pad-x: 10px;
     }
 
-    .site-nav-submenu {
-      min-width: 180px;
-    }
-
     .nh48-lang {
-      justify-content: center;
+      justify-content: flex-start;
       max-width: none;
       width: 100%;
     }
@@ -2764,6 +2925,332 @@
     <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
   </div>
 </nav>
+<script>
+  (() => {
+    if (window.__NH48_NAV_MENU_READY) return;
+    window.__NH48_NAV_MENU_READY = true;
+
+    const nav = document.querySelector('.site-nav');
+    if (!nav) return;
+
+    const desktopQuery = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 901px)');
+    const viewportPadding = 8;
+    const closeDelayMs = 140;
+    let closeTimer = null;
+    let activeDropdown = null;
+    let submenuIdSeed = 0;
+
+    const isDesktopMode = () => desktopQuery.matches;
+
+    const dropdowns = Array.from(nav.querySelectorAll('.site-nav-dropdown')).filter((dropdown) =>
+      dropdown.querySelector(':scope > .site-nav-submenu')
+    );
+
+    const clearCloseTimer = () => {
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+    };
+
+    const ensureSubmenuId = (submenu) => {
+      if (!submenu.id) {
+        submenuIdSeed += 1;
+        submenu.id = `site-nav-submenu-${submenuIdSeed}`;
+      }
+      return submenu.id;
+    };
+
+    const getTopTrigger = (dropdown) => dropdown.querySelector(':scope > a, :scope > button');
+    const getTopSubmenu = (dropdown) => dropdown.querySelector(':scope > .site-nav-submenu');
+
+    const setExpanded = (trigger, open) => {
+      if (!trigger) return;
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+
+    const setOpenState = (node, open) => {
+      if (!node) return;
+      node.classList.toggle('is-open', open);
+      node.setAttribute('data-open', open ? 'true' : 'false');
+    };
+
+    const resetSubmenuPosition = (submenu) => {
+      if (!submenu) return;
+      submenu.classList.remove('open-left', 'open-up');
+      submenu.style.removeProperty('--submenu-shift-x');
+      submenu.style.removeProperty('--submenu-shift-y');
+    };
+
+    const applyShift = (submenu, shiftX, shiftY) => {
+      if (!submenu) return;
+      if (Math.abs(shiftX) > 0.5) submenu.style.setProperty('--submenu-shift-x', `${Math.round(shiftX)}px`);
+      else submenu.style.removeProperty('--submenu-shift-x');
+      if (Math.abs(shiftY) > 0.5) submenu.style.setProperty('--submenu-shift-y', `${Math.round(shiftY)}px`);
+      else submenu.style.removeProperty('--submenu-shift-y');
+    };
+
+    const clampTopLevelMenu = (dropdown) => {
+      if (!isDesktopMode()) return;
+      const trigger = getTopTrigger(dropdown);
+      const submenu = getTopSubmenu(dropdown);
+      if (!trigger || !submenu) return;
+
+      resetSubmenuPosition(submenu);
+      let rect = submenu.getBoundingClientRect();
+      const triggerRect = trigger.getBoundingClientRect();
+
+      const spaceAbove = triggerRect.top - viewportPadding;
+      const spaceBelow = window.innerHeight - triggerRect.bottom - viewportPadding;
+      if (rect.bottom > window.innerHeight - viewportPadding && spaceAbove > spaceBelow) {
+        submenu.classList.add('open-up');
+        rect = submenu.getBoundingClientRect();
+      }
+
+      let shiftX = 0;
+      let shiftY = 0;
+      if (rect.left < viewportPadding) shiftX += viewportPadding - rect.left;
+      if (rect.right > window.innerWidth - viewportPadding) shiftX -= rect.right - (window.innerWidth - viewportPadding);
+      if (rect.bottom > window.innerHeight - viewportPadding) shiftY -= rect.bottom - (window.innerHeight - viewportPadding);
+      if (rect.top + shiftY < viewportPadding) shiftY += viewportPadding - (rect.top + shiftY);
+      applyShift(submenu, shiftX, shiftY);
+    };
+
+    const clampNestedMenu = (group) => {
+      if (!isDesktopMode()) return;
+      const submenu = group.querySelector(':scope > .site-nav-submenu--nested');
+      if (!submenu) return;
+
+      resetSubmenuPosition(submenu);
+      let rect = submenu.getBoundingClientRect();
+
+      if (rect.right > window.innerWidth - viewportPadding) {
+        submenu.classList.add('open-left');
+        rect = submenu.getBoundingClientRect();
+      }
+
+      let shiftX = 0;
+      let shiftY = 0;
+      if (rect.left < viewportPadding) shiftX += viewportPadding - rect.left;
+      if (rect.right > window.innerWidth - viewportPadding) shiftX -= rect.right - (window.innerWidth - viewportPadding);
+      if (rect.bottom > window.innerHeight - viewportPadding) shiftY -= rect.bottom - (window.innerHeight - viewportPadding);
+      if (rect.top + shiftY < viewportPadding) shiftY += viewportPadding - (rect.top + shiftY);
+      applyShift(submenu, shiftX, shiftY);
+    };
+
+    const closeNestedGroups = (dropdown, exceptGroup = null) => {
+      const groups = dropdown.querySelectorAll('.site-nav-submenu-group');
+      groups.forEach((group) => {
+        if (exceptGroup && group === exceptGroup) return;
+        const groupTrigger = group.querySelector(':scope > button');
+        const nestedMenu = group.querySelector(':scope > .site-nav-submenu--nested');
+        setOpenState(group, false);
+        setExpanded(groupTrigger, false);
+        resetSubmenuPosition(nestedMenu);
+      });
+    };
+
+    const closeDropdown = (dropdown, options = {}) => {
+      const { focusTrigger = false } = options;
+      if (!dropdown) return;
+      const trigger = getTopTrigger(dropdown);
+      const submenu = getTopSubmenu(dropdown);
+      setOpenState(dropdown, false);
+      setExpanded(trigger, false);
+      resetSubmenuPosition(submenu);
+      closeNestedGroups(dropdown);
+      if (activeDropdown === dropdown) activeDropdown = null;
+      if (focusTrigger && trigger) trigger.focus();
+    };
+
+    const closeAllDropdowns = (options = {}) => {
+      dropdowns.forEach((dropdown) => closeDropdown(dropdown, options));
+    };
+
+    const openDropdown = (dropdown) => {
+      if (!dropdown) return;
+      if (activeDropdown && activeDropdown !== dropdown) {
+        closeDropdown(activeDropdown);
+      }
+      const trigger = getTopTrigger(dropdown);
+      setOpenState(dropdown, true);
+      setExpanded(trigger, true);
+      activeDropdown = dropdown;
+      clampTopLevelMenu(dropdown);
+    };
+
+    const toggleDropdown = (dropdown) => {
+      if (!dropdown) return;
+      if (dropdown.classList.contains('is-open')) closeDropdown(dropdown);
+      else openDropdown(dropdown);
+    };
+
+    const openNestedGroup = (group) => {
+      const dropdown = group.closest('.site-nav-dropdown');
+      if (!dropdown) return;
+      const groupTrigger = group.querySelector(':scope > button');
+      if (!dropdown.classList.contains('is-open')) openDropdown(dropdown);
+      closeNestedGroups(dropdown, group);
+      setOpenState(group, true);
+      setExpanded(groupTrigger, true);
+      clampNestedMenu(group);
+    };
+
+    const closeNestedGroup = (group) => {
+      const groupTrigger = group.querySelector(':scope > button');
+      const nestedMenu = group.querySelector(':scope > .site-nav-submenu--nested');
+      setOpenState(group, false);
+      setExpanded(groupTrigger, false);
+      resetSubmenuPosition(nestedMenu);
+    };
+
+    const toggleNestedGroup = (group) => {
+      if (group.classList.contains('is-open')) closeNestedGroup(group);
+      else openNestedGroup(group);
+    };
+
+    const scheduleCloseDropdown = (dropdown) => {
+      clearCloseTimer();
+      closeTimer = setTimeout(() => closeDropdown(dropdown), closeDelayMs);
+    };
+
+    const refreshOpenMenuPositions = () => {
+      if (!activeDropdown || !activeDropdown.classList.contains('is-open')) return;
+      clampTopLevelMenu(activeDropdown);
+      const openGroups = activeDropdown.querySelectorAll('.site-nav-submenu-group.is-open');
+      openGroups.forEach((group) => clampNestedMenu(group));
+    };
+
+    dropdowns.forEach((dropdown) => {
+      const trigger = getTopTrigger(dropdown);
+      const submenu = getTopSubmenu(dropdown);
+      if (!trigger || !submenu) return;
+
+      setOpenState(dropdown, false);
+      trigger.setAttribute('aria-haspopup', 'true');
+      trigger.setAttribute('aria-controls', ensureSubmenuId(submenu));
+      setExpanded(trigger, false);
+
+      const groups = dropdown.querySelectorAll('.site-nav-submenu-group');
+      groups.forEach((group) => {
+        const groupTrigger = group.querySelector(':scope > button');
+        const nestedSubmenu = group.querySelector(':scope > .site-nav-submenu--nested');
+        if (!groupTrigger || !nestedSubmenu) return;
+        setOpenState(group, false);
+        groupTrigger.setAttribute('aria-haspopup', 'true');
+        groupTrigger.setAttribute('aria-controls', ensureSubmenuId(nestedSubmenu));
+        setExpanded(groupTrigger, false);
+
+        groupTrigger.addEventListener('click', (event) => {
+          event.preventDefault();
+          toggleNestedGroup(group);
+        });
+
+        groupTrigger.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggleNestedGroup(group);
+          } else if (event.key === 'Escape') {
+            event.preventDefault();
+            closeNestedGroup(group);
+            groupTrigger.focus();
+          }
+        });
+
+        group.addEventListener('mouseenter', () => {
+          if (!isDesktopMode()) return;
+          openNestedGroup(group);
+        });
+
+        group.addEventListener('focusin', () => {
+          if (!isDesktopMode()) return;
+          openNestedGroup(group);
+        });
+
+        group.addEventListener('focusout', (event) => {
+          if (!isDesktopMode()) return;
+          const next = event.relatedTarget;
+          if (next instanceof Node && group.contains(next)) return;
+          closeNestedGroup(group);
+        });
+      });
+
+      trigger.addEventListener('click', (event) => {
+        const isAnchor = trigger.tagName === 'A';
+        if (isAnchor && isDesktopMode()) return;
+        event.preventDefault();
+        toggleDropdown(dropdown);
+      });
+
+      trigger.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          toggleDropdown(dropdown);
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          closeDropdown(dropdown, { focusTrigger: true });
+        }
+      });
+
+      dropdown.addEventListener('mouseenter', () => {
+        if (!isDesktopMode()) return;
+        clearCloseTimer();
+        openDropdown(dropdown);
+      });
+
+      dropdown.addEventListener('mouseleave', () => {
+        if (!isDesktopMode()) return;
+        scheduleCloseDropdown(dropdown);
+      });
+
+      dropdown.addEventListener('focusin', () => {
+        if (!isDesktopMode()) return;
+        clearCloseTimer();
+        openDropdown(dropdown);
+      });
+
+      dropdown.addEventListener('focusout', (event) => {
+        if (!isDesktopMode()) return;
+        const next = event.relatedTarget;
+        if (next instanceof Node && dropdown.contains(next)) return;
+        scheduleCloseDropdown(dropdown);
+      });
+    });
+
+    document.addEventListener('pointerdown', (event) => {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (nav.contains(target)) return;
+      closeAllDropdowns();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      if (!activeDropdown) return;
+      const trigger = getTopTrigger(activeDropdown);
+      closeDropdown(activeDropdown, { focusTrigger: true });
+      if (trigger) trigger.focus();
+    });
+
+    const handleViewportMutation = () => {
+      clearCloseTimer();
+      if (!isDesktopMode()) {
+        closeAllDropdowns();
+        return;
+      }
+      refreshOpenMenuPositions();
+    };
+
+    window.addEventListener('resize', handleViewportMutation, { passive: true });
+    window.addEventListener('scroll', refreshOpenMenuPositions, { passive: true });
+
+    if (typeof desktopQuery.addEventListener === 'function') {
+      desktopQuery.addEventListener('change', handleViewportMutation);
+    } else if (typeof desktopQuery.addListener === 'function') {
+      desktopQuery.addListener(handleViewportMutation);
+    }
+  })();
+</script>
 
     <div class="wrap">
       <nav class="breadcrumb-nav" aria-label="Breadcrumb">
