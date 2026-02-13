@@ -137,9 +137,90 @@ const STATIC_IMAGE_ENTRIES = [
     file: 'catalog/index.html',
     images: [
       {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/bondcliff/bondcliff__001.jpg',
+        title: 'Bondcliff ridgeline overlooking the Pemigewasset Wilderness',
+        caption: 'Bondcliff ridgeline featured in the NH48 Peak Catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-adams/mount-adams__001.jpg',
+        title: 'Mount Adams alpine summit cone',
+        caption: 'Mount Adams alpine terrain featured in the NH48 Peak Catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__001.jpg',
+        title: 'Mount Washington summit buildings and observatory',
+        caption: 'Mount Washington summit photo featured in the NH48 Peak Catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-liberty/mount-liberty__001.jpg',
+        title: 'Mount Liberty summit view toward Mount Flume',
+        caption: 'Mount Liberty summit view featured in the NH48 Peak Catalog.',
+      },
+      {
         url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__002.jpg',
         title: 'Franconia Ridge trail climbing toward the Mount Lafayette summit cone',
         caption: 'Franconia Ridge trail climbing toward Mount Lafayette, featured on the NH48 catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-carrigain/mount-carrigain__001.jpg',
+        title: 'Signal Ridge approach to Mount Carrigain',
+        caption: 'Mount Carrigain summit approach featured in the NH48 Peak Catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-garfield/mount-garfield__001.jpg',
+        title: 'Open ledges on Mount Garfield',
+        caption: 'Open ledges on Mount Garfield featured in the NH48 Peak Catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/galehead-mountain/galehead-mountain__001.jpg',
+        title: 'Twin Range view from Galehead Mountain',
+        caption: 'Galehead Mountain viewpoint featured in the NH48 Peak Catalog.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/fr/catalog',
+    file: 'catalog/index.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/bondcliff/bondcliff__001.jpg',
+        title: 'Bondcliff ridgeline overlooking the Pemigewasset Wilderness',
+        caption: 'Bondcliff ridgeline featured in the NH48 Peak Catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-adams/mount-adams__001.jpg',
+        title: 'Mount Adams alpine summit cone',
+        caption: 'Mount Adams alpine terrain featured in the NH48 Peak Catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__001.jpg',
+        title: 'Mount Washington summit buildings and observatory',
+        caption: 'Mount Washington summit photo featured in the NH48 Peak Catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-liberty/mount-liberty__001.jpg',
+        title: 'Mount Liberty summit view toward Mount Flume',
+        caption: 'Mount Liberty summit view featured in the NH48 Peak Catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__002.jpg',
+        title: 'Franconia Ridge trail climbing toward the Mount Lafayette summit cone',
+        caption: 'Franconia Ridge trail climbing toward Mount Lafayette, featured on the NH48 catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-carrigain/mount-carrigain__001.jpg',
+        title: 'Signal Ridge approach to Mount Carrigain',
+        caption: 'Mount Carrigain summit approach featured in the NH48 Peak Catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-garfield/mount-garfield__001.jpg',
+        title: 'Open ledges on Mount Garfield',
+        caption: 'Open ledges on Mount Garfield featured in the NH48 Peak Catalog.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/galehead-mountain/galehead-mountain__001.jpg',
+        title: 'Twin Range view from Galehead Mountain',
+        caption: 'Galehead Mountain viewpoint featured in the NH48 Peak Catalog.',
       },
     ],
   },
