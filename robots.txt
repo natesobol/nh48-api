@@ -1,5 +1,5 @@
 # NH48 API Robots Configuration
-# Last updated: 2026-01-17
+# Last updated: 2026-02-13
 
 # Allow all crawlers including Google and AI bots
 User-agent: *
@@ -24,6 +24,10 @@ Allow: /
 
 # OpenAI GPTBot - allowed
 User-agent: GPTBot
+Allow: /
+
+# OpenAI Search crawler - allowed
+User-agent: OAI-SearchBot
 Allow: /
 
 # Anthropic Claude - allowed

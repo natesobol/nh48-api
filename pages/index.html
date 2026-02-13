@@ -726,16 +726,16 @@
       pointer-events: none;
       transform-origin: center;
       will-change: transform;
-      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
       opacity: 0;
       transition: opacity 0.6s ease;
-      filter: brightness(0.7);
-      animation: peakLabelBrightnessPulse 9s ease-in-out infinite;
+      filter: brightness(0.78);
+      animation: peakLabelBrightnessPulse 11s ease-in-out infinite;
     }
 
     .peak-label--name {
-      font-size: 1.35rem;
-      letter-spacing: 0.18px;
+      font-size: 1rem;
+      letter-spacing: 0.12px;
       font-weight: 700;
     }
 
@@ -760,15 +760,15 @@
     @keyframes peakLabelBrightnessPulse {
       0%,
       100% {
-        filter: brightness(0.6);
+        filter: brightness(0.72);
       }
       50% {
-        filter: brightness(1.08);
+        filter: brightness(0.9);
       }
     }
 
     @media (max-width: 768px) {
-      #floating-peaks .peak-label:nth-child(n + 9) {
+      #floating-peaks .peak-label:nth-child(n + 3) {
         display: none;
       }
     }
@@ -859,6 +859,41 @@
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
       pointer-events: none;
       z-index: 2;
+    }
+
+    .dataset-card .ribbon-count {
+      position: absolute;
+      top: 0;
+      left: 0;
+      min-width: 108px;
+      padding: 5px 8px 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border: 1px solid rgba(214, 245, 223, 0.9);
+      border-radius: 0 8px 8px 8px;
+      background: rgba(9, 23, 19, 0.9);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+      transform: translate(8px, 42px);
+      pointer-events: none;
+      z-index: 2;
+      line-height: 1.15;
+      text-align: left;
+    }
+
+    .dataset-card .ribbon-count-top {
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #e7fff0;
+    }
+
+    .dataset-card .ribbon-count-bottom {
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: #6ff3a5;
     }
 
     .dataset-card .last-modified {
@@ -955,20 +990,51 @@
       border-color: rgba(59, 130, 246, 0.7);
     }
     .seo-gallery {
-      position: absolute;
-      left: -9999px;
-      top: auto;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
+      margin: 28px auto 14px;
+      max-width: 1200px;
+      width: 100%;
+      border: 1px solid rgba(34, 197, 94, 0.28);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(18, 33, 62, 0.55), rgba(7, 12, 28, 0.8));
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.28);
+      padding: 18px;
+    }
+    .seo-gallery h2 {
+      margin: 0 0 8px;
+      font-size: 1.35rem;
+      color: #22c55e;
+    }
+    .seo-gallery-intro {
+      margin: 0 0 12px;
+      color: #d5e8ff;
+      font-size: 0.96rem;
+      line-height: 1.5;
     }
     .seo-gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-      gap: 8px;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
     }
     .seo-gallery-item {
       margin: 0;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(8, 13, 28, 0.7);
+    }
+    .seo-gallery-item img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 3 / 2;
+      object-fit: cover;
+    }
+    .seo-gallery-item figcaption {
+      margin: 0;
+      padding: 8px 10px;
+      color: #d6e8ff;
+      font-size: 0.78rem;
+      line-height: 1.35;
     }
     .dataset-notes ul {
       margin: 0;
@@ -984,6 +1050,13 @@
       text-align: left;
       font-size: 0.95rem;
       color: #cfe1ff;
+    }
+
+    .seo-intro-visible {
+      margin: 0 0 14px;
+      color: #dcecff;
+      line-height: 1.6;
+      font-size: 0.98rem;
     }
 
     .seo-content details {
@@ -1105,6 +1178,14 @@
         float: none;
         max-width: 100%;
         margin: 0 0 1rem;
+      }
+
+      .seo-gallery {
+        padding: 14px;
+      }
+
+      .seo-gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
     .nh48-lang {
@@ -2031,6 +2112,20 @@
       .dataset-card .ribbon {
         width: 50%;
       }
+
+      .dataset-card .ribbon-count {
+        min-width: 94px;
+        padding: 4px 6px 5px;
+        transform: translate(6px, 38px);
+      }
+
+      .dataset-card .ribbon-count-top {
+        font-size: 0.6rem;
+      }
+
+      .dataset-card .ribbon-count-bottom {
+        font-size: 0.72rem;
+      }
     }
 
   </style>
@@ -2226,6 +2321,7 @@
       </section>
     </div>
     <section class="seo-content">
+      <p class="seo-intro-visible">NH48 is an open hub for New Hampshire 4,000-footers and White Mountains peaks, with a searchable peak catalog, trail data, and crawlable photo metadata for hikers, researchers, and search/AI systems.</p>
       <details>
          <summary>About NH48 and the datasets</summary>
          <div class="seo-text">
@@ -2317,80 +2413,57 @@
     <p class="meta" data-i18n="landing.author">Author: NH48.info</p>
   </main>
 
-  <section class="seo-gallery" aria-label="NH48 summit photo descriptions">
-    <h2 class="visually-hidden">NH48 summit photo descriptions</h2>
+  <section class="seo-gallery" aria-label="Featured NH48 summit photos">
+    <h2>Featured NH48 Photos</h2>
+    <p class="seo-gallery-intro">Featured summit photography from New Hampshire 4,000-footers with crawlable alt text, licensing context, and structured metadata.</p>
     <div class="seo-gallery-grid">
       <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/bondcliff/bondcliff__001.jpg" alt="Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route" title="Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route" loading="lazy" decoding="async" data-description="Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route" data-keywords="NH48, Bondcliff, Pemigewasset Wilderness, White Mountains, ridgeline">
-        <figcaption class="visually-hidden">Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/bondcliff/bondcliff__001.jpg" alt="Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route" title="Bondcliff ridgeline looking into the Pemigewasset Wilderness on the NH48 route" width="720" height="480" loading="eager" fetchpriority="high" decoding="async">
+        <figcaption>Bondcliff ridgeline above the Pemigewasset Wilderness.</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/bondcliff/bondcliff__002.jpg" alt="Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop" title="Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop" loading="lazy" decoding="async" data-description="Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop" data-keywords="NH48, Bondcliff, Pemigewasset, White Mountains, summit view">
-        <figcaption class="visually-hidden">Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/bondcliff/bondcliff__002.jpg" alt="Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop" title="Dramatic drop-off near the Bondcliff summit on the Pemigewasset Loop" width="720" height="480" loading="eager" fetchpriority="high" decoding="async">
+        <figcaption>Bondcliff summit terrain and ridgeline exposure.</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/galehead-mountain/galehead-mountain__001.jpg" alt="View of the Twin Range from the wooded spur on Galehead Mountain" title="View of the Twin Range from the wooded spur on Galehead Mountain" loading="lazy" decoding="async" data-description="View of the Twin Range from the wooded spur on Galehead Mountain" data-keywords="NH48, Galehead Mountain, Twin Range, White Mountains, viewpoint">
-        <figcaption class="visually-hidden">View of the Twin Range from the wooded spur on Galehead Mountain</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/galehead-mountain/galehead-mountain__001.jpg" alt="View of the Twin Range from the wooded spur on Galehead Mountain" title="View of the Twin Range from the wooded spur on Galehead Mountain" width="720" height="480" loading="lazy" decoding="async">
+        <figcaption>Twin Range view from Galehead Mountain.</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/galehead-mountain/galehead-mountain__002.jpg" alt="Galehead Hut and valley seen from the Galehead Mountain outlook" title="Galehead Hut and valley seen from the Galehead Mountain outlook" loading="lazy" decoding="async" data-description="Galehead Hut and valley seen from the Galehead Mountain outlook" data-keywords="NH48, Galehead Hut, Galehead Mountain, White Mountains, outlook">
-        <figcaption class="visually-hidden">Galehead Hut and valley seen from the Galehead Mountain outlook</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/galehead-mountain/galehead-mountain__002.jpg" alt="Galehead Hut and valley seen from the Galehead Mountain outlook" title="Galehead Hut and valley seen from the Galehead Mountain outlook" width="720" height="480" loading="lazy" decoding="async">
+        <figcaption>Galehead Hut and valley outlook.</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/middle-carter-mountain/middle-carter-mountain__001.jpg" alt="Forest path along Middle Carter Mountain crest toward Carter Dome" title="Forest path along Middle Carter Mountain crest toward Carter Dome" loading="lazy" decoding="async" data-description="Forest path along Middle Carter Mountain crest toward Carter Dome" data-keywords="NH48, Middle Carter Mountain, Carter Dome, White Mountains, ridge">
-        <figcaption class="visually-hidden">Forest path along Middle Carter Mountain crest toward Carter Dome</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/middle-carter-mountain/middle-carter-mountain__001.jpg" alt="Forest path along Middle Carter Mountain crest toward Carter Dome" title="Forest path along Middle Carter Mountain crest toward Carter Dome" width="720" height="480" loading="lazy" decoding="async">
+        <figcaption>Middle Carter crest toward Carter Dome.</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-adams/mount-adams__002.jpg" alt="Rocky alpine cone of Mount Adams above treeline in the Presidential Range" title="Rocky alpine cone of Mount Adams above treeline in the Presidential Range" loading="lazy" decoding="async" data-description="Rocky alpine cone of Mount Adams above treeline in the Presidential Range" data-keywords="NH48, Mount Adams, Presidential Range, White Mountains, alpine zone">
-        <figcaption class="visually-hidden">Rocky alpine cone of Mount Adams above treeline in the Presidential Range</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-adams/mount-adams__002.jpg" alt="Rocky alpine cone of Mount Adams above treeline in the Presidential Range" title="Rocky alpine cone of Mount Adams above treeline in the Presidential Range" width="720" height="480" loading="lazy" decoding="async">
+        <figcaption>Mount Adams alpine cone in the Presidential Range.</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-adams/mount-adams__005.jpg" alt="Mount Adams summit boulders with Mount Madison in the background" title="Mount Adams summit boulders with Mount Madison in the background" loading="lazy" decoding="async" data-description="Mount Adams summit boulders with Mount Madison in the background" data-keywords="NH48, Mount Adams, Mount Madison, White Mountains, summit">
-        <figcaption class="visually-hidden">Mount Adams summit boulders with Mount Madison in the background</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-adams/mount-adams__005.jpg" alt="Mount Adams summit boulders with Mount Madison in the background" title="Mount Adams summit boulders with Mount Madison in the background" width="720" height="480" loading="lazy" decoding="async">
+        <figcaption>Mount Adams summit boulders with Mount Madison.</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-carrigain/mount-carrigain__001.jpg" alt="Signal Ridge leading toward Mount Carrigain and its fire tower" title="Signal Ridge leading toward Mount Carrigain and its fire tower" loading="lazy" decoding="async" data-description="Signal Ridge leading toward Mount Carrigain and its fire tower" data-keywords="NH48, Mount Carrigain, Signal Ridge, White Mountains, fire tower">
-        <figcaption class="visually-hidden">Signal Ridge leading toward Mount Carrigain and its fire tower</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-carrigain/mount-carrigain__001.jpg" alt="Signal Ridge leading toward Mount Carrigain and its fire tower" title="Signal Ridge leading toward Mount Carrigain and its fire tower" width="720" height="480" loading="lazy" decoding="async">
+        <figcaption>Signal Ridge approach to Mount Carrigain.</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-garfield/mount-garfield__001.jpg" alt="Open ledges on Mount Garfield facing Franconia Ridge" title="Open ledges on Mount Garfield facing Franconia Ridge" loading="lazy" decoding="async" data-description="Open ledges on Mount Garfield facing Franconia Ridge" data-keywords="NH48, Mount Garfield, Franconia Ridge, White Mountains, ledge view">
-        <figcaption class="visually-hidden">Open ledges on Mount Garfield facing Franconia Ridge</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-garfield/mount-garfield__001.jpg" alt="Open ledges on Mount Garfield facing Franconia Ridge" title="Open ledges on Mount Garfield facing Franconia Ridge" width="720" height="480" loading="lazy" decoding="async">
+        <figcaption>Open ledges on Mount Garfield.</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-garfield/mount-garfield__002.jpg" alt="Summit cairn on Mount Garfield looking over the Pemigewasset" title="Summit cairn on Mount Garfield looking over the Pemigewasset" loading="lazy" decoding="async" data-description="Summit cairn on Mount Garfield looking over the Pemigewasset" data-keywords="NH48, Mount Garfield, Pemigewasset Wilderness, White Mountains, cairn">
-        <figcaption class="visually-hidden">Summit cairn on Mount Garfield looking over the Pemigewasset</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-lafayette/mount-lafayette__002.jpg" alt="Franconia Ridge trail climbing toward the Mount Lafayette summit cone" title="Franconia Ridge trail climbing toward the Mount Lafayette summit cone" width="720" height="480" loading="lazy" decoding="async">
+        <figcaption>Franconia Ridge climb toward Mount Lafayette.</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-hancock/mount-hancock__003.jpg" alt="Outlook from Mount Hancock toward the heart of the Pemigewasset Wilderness" title="Outlook from Mount Hancock toward the heart of the Pemigewasset Wilderness" loading="lazy" decoding="async" data-description="Outlook from Mount Hancock toward the heart of the Pemigewasset Wilderness" data-keywords="NH48, Mount Hancock, Pemigewasset Wilderness, White Mountains, vista">
-        <figcaption class="visually-hidden">Outlook from Mount Hancock toward the heart of the Pemigewasset Wilderness</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-liberty/mount-liberty__001.jpg" alt="Mount Liberty summit view toward Mount Flume along Franconia Ridge" title="Mount Liberty summit view toward Mount Flume along Franconia Ridge" width="720" height="480" loading="lazy" decoding="async">
+        <figcaption>Mount Liberty summit view toward Mount Flume.</figcaption>
       </figure>
       <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-lafayette/mount-lafayette__002.jpg" alt="Franconia Ridge trail climbing toward the Mount Lafayette summit cone" title="Franconia Ridge trail climbing toward the Mount Lafayette summit cone" loading="lazy" decoding="async" data-description="Franconia Ridge trail climbing toward the Mount Lafayette summit cone" data-keywords="NH48, Mount Lafayette, Franconia Ridge, White Mountains, trail">
-        <figcaption class="visually-hidden">Franconia Ridge trail climbing toward the Mount Lafayette summit cone</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-liberty/mount-liberty__001.jpg" alt="Mount Liberty summit view toward Mount Flume along Franconia Ridge" title="Mount Liberty summit view toward Mount Flume along Franconia Ridge" loading="lazy" decoding="async" data-description="Mount Liberty summit view toward Mount Flume along Franconia Ridge" data-keywords="NH48, Mount Liberty, Mount Flume, White Mountains, summit view">
-        <figcaption class="visually-hidden">Mount Liberty summit view toward Mount Flume along Franconia Ridge</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-washington/mount-washington__001.jpg" alt="Buildings and weather observatory atop Mount Washington in the White Mountains" title="Buildings and weather observatory atop Mount Washington in the White Mountains" loading="lazy" decoding="async" data-description="Buildings and weather observatory atop Mount Washington in the White Mountains" data-keywords="NH48, Mount Washington, Presidential Range, White Mountains, observatory">
-        <figcaption class="visually-hidden">Buildings and weather observatory atop Mount Washington in the White Mountains</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-washington/mount-washington__005.jpg" alt="Cog railway grade and observation deck near the summit of Mount Washington" title="Cog railway grade and observation deck near the summit of Mount Washington" loading="lazy" decoding="async" data-description="Cog railway grade and observation deck near the summit of Mount Washington" data-keywords="NH48, Mount Washington, Cog Railway, White Mountains, summit">
-        <figcaption class="visually-hidden">Cog railway grade and observation deck near the summit of Mount Washington</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/west-bond/mount-west-bond__005.jpg" alt="Mount West Bond spur looking down at Bondcliff and the Pemi" title="Mount West Bond spur looking down at Bondcliff and the Pemi" loading="lazy" decoding="async" data-description="Mount West Bond spur looking down at Bondcliff and the Pemi" data-keywords="NH48, Mount West Bond, Bondcliff, Pemigewasset Wilderness, White Mountains">
-        <figcaption class="visually-hidden">Mount West Bond spur looking down at Bondcliff and the Pemi</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/west-bond/west-bond__001.jpg" alt="West Bond summit rocks overlooking Zealand Valley and Bondcliff" title="West Bond summit rocks overlooking Zealand Valley and Bondcliff" loading="lazy" decoding="async" data-description="West Bond summit rocks overlooking Zealand Valley and Bondcliff" data-keywords="NH48, West Bond, Bondcliff, White Mountains, Zealand Valley">
-        <figcaption class="visually-hidden">West Bond summit rocks overlooking Zealand Valley and Bondcliff</figcaption>
-      </figure>
-      <figure class="seo-gallery-item">
-        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/west-bond/west-bond__002.jpg" alt="Approach to West Bond through krummholz with the Bonds beyond" title="Approach to West Bond through krummholz with the Bonds beyond" loading="lazy" decoding="async" data-description="Approach to West Bond through krummholz with the Bonds beyond" data-keywords="NH48, West Bond, Bondcliff, White Mountains, krummholz">
-        <figcaption class="visually-hidden">Approach to West Bond through krummholz with the Bonds beyond</figcaption>
+        <img src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=720/mount-washington/mount-washington__001.jpg" alt="Buildings and weather observatory atop Mount Washington in the White Mountains" title="Buildings and weather observatory atop Mount Washington in the White Mountains" width="720" height="480" loading="lazy" decoding="async">
+        <figcaption>Mount Washington summit buildings and observatory.</figcaption>
       </figure>
     </div>
   </section>
@@ -2418,8 +2491,12 @@
       if (!container) return;
       const floatingLabels = [];
       const viewport = { width: window.innerWidth, height: window.innerHeight };
+      const MAX_VISIBLE_LABELS_DESKTOP = 3;
+      const MAX_VISIBLE_LABELS_MOBILE = 2;
+      const maxVisibleLabels = viewport.width < 768 ? MAX_VISIBLE_LABELS_MOBILE : MAX_VISIBLE_LABELS_DESKTOP;
       const randomInRange = (min, max) => min + Math.random() * (max - min);
       const shuffle = (list) => [...list].sort(() => Math.random() - 0.5);
+      let peakNamePool = [...fallbackPeaks];
 
       async function loadPeakNames() {
         try {
@@ -2430,15 +2507,15 @@
             .map((entry) => entry.peakName || entry['Peak Name'])
             .filter((name) => typeof name === 'string' && name.trim().length);
           const uniqueNames = Array.from(new Set(names));
-          return uniqueNames.length ? shuffle(uniqueNames).slice(0, 18) : fallbackPeaks;
+          return uniqueNames.length ? shuffle(uniqueNames) : fallbackPeaks;
         } catch {
           return fallbackPeaks;
         }
       }
 
       function fitLabelSize(label, desiredRem) {
-        const minRem = viewport.width < 768 ? 0.95 : 1.1;
-        const maxWidth = Math.max(220, viewport.width * (viewport.width < 768 ? 0.72 : 0.82));
+        const minRem = viewport.width < 768 ? 0.68 : 0.82;
+        const maxWidth = Math.max(160, viewport.width * (viewport.width < 768 ? 0.38 : 0.46));
         let rem = desiredRem;
         label.style.fontSize = `${rem}rem`;
         for (let i = 0; i < 10 && label.offsetWidth > maxWidth && rem > minRem; i += 1) {
@@ -2455,14 +2532,14 @@
         label.style.opacity = 0;
 
         const sizePool = viewport.width < 768
-          ? [1, 1.2, 1.4, 1.8, 2.4, 3.2]
-          : [1, 1.4, 1.8, 2.6, 3.6, 4.8, 6.2, 8];
+          ? [0.72, 0.84, 0.96]
+          : [0.9, 1.05, 1.2];
         const desiredSize = sizePool[Math.floor(Math.random() * sizePool.length)];
         container.appendChild(label);
         fitLabelSize(label, desiredSize);
 
-        const scale = randomInRange(0.92, 1.18);
-        const speed = randomInRange(10, 24);
+        const scale = randomInRange(0.96, 1.04);
+        const speed = randomInRange(4, 9);
         const angle = Math.random() * Math.PI * 2;
         const velocity = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
         const labelWidth = label.offsetWidth * scale;
@@ -2485,11 +2562,18 @@
         return labelObj;
       };
 
+      const pickNextPeakName = (exclude = new Set()) => {
+        const source = peakNamePool.length ? peakNamePool : fallbackPeaks;
+        const candidates = source.filter((name) => !exclude.has(name));
+        const pool = candidates.length ? candidates : source;
+        return pool[Math.floor(Math.random() * pool.length)];
+      };
+
       const startTypingAnimation = (labelObj) => {
-        const typingSpeed = randomInRange(140, 230);
-        const deleteSpeed = randomInRange(120, 190);
-        const visibleDuration = randomInRange(12000, 18000);
-        const hiddenDuration = randomInRange(6000, 9000);
+        const typingSpeed = randomInRange(150, 240);
+        const deleteSpeed = randomInRange(130, 210);
+        const visibleDuration = randomInRange(7000, 10000);
+        const hiddenDuration = randomInRange(12000, 17000);
 
         const clearTypingTimeout = () => {
           if (labelObj.typingTimeout) {
@@ -2517,7 +2601,14 @@
           } else {
             labelObj.el.style.opacity = 0;
             labelObj.typingTimeout = setTimeout(() => {
+              const usedNames = new Set(
+                floatingLabels
+                  .filter((item) => item !== labelObj)
+                  .map((item) => item.fullText)
+              );
+              labelObj.fullText = pickNextPeakName(usedNames);
               labelObj.typingIndex = 0;
+              labelObj.el.textContent = '';
               typeForward();
             }, hiddenDuration);
           }
@@ -2527,15 +2618,14 @@
         typeForward();
       };
 
-      const spawnLabels = (peaks) => {
-        const spawnNextLabel = (index = 0) => {
-          if (index >= peaks.length) return;
-          const labelObj = createFloatingLabel(peaks[index], 'name');
+      const initLabelPool = (peaks) => {
+        peakNamePool = peaks.length ? peaks : [...fallbackPeaks];
+        for (let i = 0; i < maxVisibleLabels; i += 1) {
+          const usedNames = new Set(floatingLabels.map((label) => label.fullText));
+          const text = pickNextPeakName(usedNames);
+          const labelObj = createFloatingLabel(text, 'name');
           startTypingAnimation(labelObj);
-          const nextDelay = randomInRange(3000, 5200);
-          setTimeout(() => spawnNextLabel(index + 1), nextDelay);
-        };
-        spawnNextLabel();
+        }
       };
 
       const getScaledDimensions = (label) => ({
@@ -2625,7 +2715,7 @@
       };
 
       loadPeakNames().then((peaks) => {
-        spawnLabels(peaks);
+        initLabelPool(peaks);
         requestAnimationFrame(animate);
       });
     });
@@ -2724,6 +2814,25 @@
               ribbon.className = 'ribbon';
               ribbon.textContent = meta.ribbon;
               imageContainer.prepend(ribbon);
+            }
+          }
+
+          if (meta.countBannerTop && meta.countBannerBottom) {
+            const imageContainer = card.querySelector('.card-image');
+            if (imageContainer && !imageContainer.querySelector('.ribbon-count')) {
+              const banner = document.createElement('div');
+              banner.className = 'ribbon-count';
+
+              const top = document.createElement('span');
+              top.className = 'ribbon-count-top';
+              top.textContent = meta.countBannerTop;
+
+              const bottom = document.createElement('span');
+              bottom.className = 'ribbon-count-bottom';
+              bottom.textContent = meta.countBannerBottom;
+
+              banner.append(top, bottom);
+              imageContainer.appendChild(banner);
             }
           }
 

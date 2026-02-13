@@ -75,6 +75,61 @@ const STATIC_IMAGE_ENTRIES = [
         title: 'Bondcliff ridgeline looking into the Pemigewasset Wilderness',
         caption: 'Bondcliff ridgeline looking into the Pemigewasset Wilderness featured on the NH48 homepage.',
       },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/bondcliff/bondcliff__002.jpg',
+        title: 'Bondcliff summit drop-off and alpine ridgeline',
+        caption: 'Dramatic Bondcliff summit terrain along the Pemigewasset Loop.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/galehead-mountain/galehead-mountain__001.jpg',
+        title: 'Twin Range view from Galehead Mountain',
+        caption: 'Twin Range view from the wooded spur on Galehead Mountain.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/galehead-mountain/galehead-mountain__002.jpg',
+        title: 'Galehead Hut and valley from Galehead outlook',
+        caption: 'Galehead Hut and valley seen from the Galehead Mountain outlook.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/middle-carter-mountain/middle-carter-mountain__001.jpg',
+        title: 'Middle Carter crest toward Carter Dome',
+        caption: 'Forest crest route along Middle Carter Mountain toward Carter Dome.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-adams/mount-adams__002.jpg',
+        title: 'Mount Adams alpine cone in the Presidential Range',
+        caption: 'Rocky alpine cone of Mount Adams above treeline in the Presidential Range.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-adams/mount-adams__005.jpg',
+        title: 'Mount Adams summit boulders and Mount Madison backdrop',
+        caption: 'Summit boulders on Mount Adams with Mount Madison in the background.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-carrigain/mount-carrigain__001.jpg',
+        title: 'Signal Ridge leading toward Mount Carrigain',
+        caption: 'Signal Ridge approach to Mount Carrigain and the summit fire tower.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-garfield/mount-garfield__001.jpg',
+        title: 'Open ledges on Mount Garfield',
+        caption: 'Open ledges on Mount Garfield facing Franconia Ridge.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__002.jpg',
+        title: 'Franconia Ridge climb toward Mount Lafayette',
+        caption: 'Franconia Ridge trail climbing toward the Mount Lafayette summit cone.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-liberty/mount-liberty__001.jpg',
+        title: 'Mount Liberty summit view toward Mount Flume',
+        caption: 'Summit view from Mount Liberty toward Mount Flume on Franconia Ridge.',
+      },
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__001.jpg',
+        title: 'Mount Washington observatory and summit buildings',
+        caption: 'Summit buildings and weather observatory atop Mount Washington.',
+      },
     ],
   },
   {

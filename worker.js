@@ -69,6 +69,7 @@ export default {
       acquireLicensePageUrl: 'https://nh48.info/contact'
     };
     const CATALOG_IMAGE_LICENSE_URL = 'https://creativecommons.org/licenses/by-nc-nd/4.0/';
+    const HOME_SOCIAL_IMAGE = 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__001.jpg';
     const INSTAGRAM_URL = 'https://www.instagram.com/nate_dumps_pics/';
 
     const buildMeta = await fetchBuildMeta(RAW_BUILD_META_URL);
@@ -639,6 +640,11 @@ export default {
     const staticFiles = ['/manifest.json', '/nh48API_logo.png', '/robots.txt', '/sitemap.xml', '/nh48-preview.png', '/BingSiteAuth.xml', '/image-sitemap.xml', '/page-sitemap.xml'];
 
     const legacyRedirectMap = {
+      '/index.html': '/',
+      '/catalog.html': '/catalog',
+      '/long-trails.html': '/long-trails',
+      '/peak.html': '/catalog',
+      '/plant-catalog.html': '/plant-catalog',
       '/trails_app.html': '/trails',
       '/long_trails_app.html': '/long-trails',
       '/plant_catalog.html': '/plant-catalog',
@@ -655,7 +661,7 @@ export default {
     const legacyKey = pathname.startsWith('/fr/') ? pathname.replace(/^\/fr/, '') : pathname;
     if (legacyRedirectMap[legacyKey]) {
       const targetPath = pathname.startsWith('/fr/') ? `/fr${legacyRedirectMap[legacyKey]}` : legacyRedirectMap[legacyKey];
-      return Response.redirect(`${SITE}${targetPath}`, 301);
+      return Response.redirect(`${SITE}${targetPath}${url.search || ''}`, 301);
     }
 
     if (pathname === '/photos' || pathname === '/photos/') {
@@ -1320,6 +1326,11 @@ export default {
       // Duplicate JSON-LD is harmless and trying to remove it was breaking the page
 
       return result;
+    }
+
+    function stripJsonLdScripts(html) {
+      if (typeof html !== 'string' || !html) return html;
+      return html.replace(/<script[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi, '');
     }
 
     function injectBuildDate(html, isoString) {
@@ -2166,7 +2177,7 @@ export default {
       });
     }
 
-    async function serveTemplatePage({ templatePath, pathname, routeId, meta, jsonLd }) {
+    async function serveTemplatePage({ templatePath, pathname, routeId, meta, jsonLd, stripTemplateJsonLd = false }) {
       const templateUrl = `${RAW_BASE}/${templatePath}`;
       const rawHtml = await loadTextCache(`tpl:${templatePath}`, templateUrl);
       if (!rawHtml || rawHtml.length < 100) {
@@ -2182,6 +2193,9 @@ export default {
       ]);
       // Fix relative paths in template (../css/ -> /css/, etc.)
       let html = fixRelativePaths(rawHtml);
+      if (stripTemplateJsonLd) {
+        html = stripJsonLdScripts(html);
+      }
       html = stripHeadMeta(html);
       html = injectNavFooter(html, navHtml, footerHtml, pathname, routeId);
       html = injectBuildDate(html, buildDate);
@@ -2213,6 +2227,104 @@ export default {
         ? 'NH48 API fournit des données ouvertes et structurées pour les 48 sommets de 4 000 pieds du New Hampshire. Explorez le catalogue, les sentiers et les photos.'
         : 'Complete the NH48 challenge: 48 peaks, ~350 miles, ~170,000 feet of elevation gain. Browse difficulty tiers, day trip groupings, and peak progression guides for New Hampshire\'s four-thousand-footers.';
       const creativeWorks = await loadCreativeWorks();
+      const homepageFeaturedImages = [
+        {
+          slug: 'bondcliff',
+          file: 'bondcliff__001.jpg',
+          name: 'Bondcliff ridgeline looking into the Pemigewasset Wilderness',
+          caption: 'Bondcliff ridgeline overlooking the Pemigewasset Wilderness and layered White Mountains.'
+        },
+        {
+          slug: 'bondcliff',
+          file: 'bondcliff__002.jpg',
+          name: 'Bondcliff summit drop-off and alpine ridgeline',
+          caption: 'Dramatic Bondcliff summit terrain along the Pemigewasset Loop.'
+        },
+        {
+          slug: 'galehead-mountain',
+          file: 'galehead-mountain__001.jpg',
+          name: 'Twin Range view from Galehead Mountain',
+          caption: 'Twin Range view from the wooded spur on Galehead Mountain.'
+        },
+        {
+          slug: 'galehead-mountain',
+          file: 'galehead-mountain__002.jpg',
+          name: 'Galehead Hut and valley from Galehead outlook',
+          caption: 'Galehead Hut and valley seen from the Galehead Mountain outlook.'
+        },
+        {
+          slug: 'middle-carter-mountain',
+          file: 'middle-carter-mountain__001.jpg',
+          name: 'Middle Carter crest toward Carter Dome',
+          caption: 'Forest crest route along Middle Carter Mountain toward Carter Dome.'
+        },
+        {
+          slug: 'mount-adams',
+          file: 'mount-adams__002.jpg',
+          name: 'Mount Adams alpine cone in the Presidential Range',
+          caption: 'Rocky alpine cone of Mount Adams above treeline in the Presidential Range.'
+        },
+        {
+          slug: 'mount-adams',
+          file: 'mount-adams__005.jpg',
+          name: 'Mount Adams summit boulders and Mount Madison backdrop',
+          caption: 'Summit boulders on Mount Adams with Mount Madison in the background.'
+        },
+        {
+          slug: 'mount-carrigain',
+          file: 'mount-carrigain__001.jpg',
+          name: 'Signal Ridge leading toward Mount Carrigain',
+          caption: 'Signal Ridge approach to Mount Carrigain and the summit fire tower.'
+        },
+        {
+          slug: 'mount-garfield',
+          file: 'mount-garfield__001.jpg',
+          name: 'Open ledges on Mount Garfield',
+          caption: 'Open ledges on Mount Garfield facing Franconia Ridge.'
+        },
+        {
+          slug: 'mount-lafayette',
+          file: 'mount-lafayette__002.jpg',
+          name: 'Franconia Ridge climb toward Mount Lafayette',
+          caption: 'Franconia Ridge trail climbing toward the Mount Lafayette summit cone.'
+        },
+        {
+          slug: 'mount-liberty',
+          file: 'mount-liberty__001.jpg',
+          name: 'Mount Liberty summit view toward Mount Flume',
+          caption: 'Summit view from Mount Liberty toward Mount Flume on Franconia Ridge.'
+        },
+        {
+          slug: 'mount-washington',
+          file: 'mount-washington__001.jpg',
+          name: 'Mount Washington observatory and summit buildings',
+          caption: 'Summit buildings and weather observatory atop Mount Washington.'
+        }
+      ];
+      const homepageFeaturedImageSchema = homepageFeaturedImages.map((image, index) => {
+        const contentUrl = `https://photos.nh48.info/${image.slug}/${image.file}`;
+        const url = `https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/${image.slug}/${image.file}`;
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'ImageObject',
+          '@id': `${canonical}#featured-image-${index + 1}`,
+          url,
+          contentUrl,
+          name: image.name,
+          description: image.caption,
+          caption: image.caption,
+          inLanguage: isFrench ? 'fr' : 'en',
+          license: CATALOG_IMAGE_LICENSE_URL,
+          acquireLicensePage: RIGHTS_DEFAULTS.acquireLicensePageUrl,
+          creditText: RIGHTS_DEFAULTS.creditText,
+          copyrightNotice: RIGHTS_DEFAULTS.copyrightNotice,
+          creator: {
+            '@type': 'Person',
+            name: RIGHTS_DEFAULTS.creatorName,
+            url: `${SITE}/about`
+          }
+        };
+      });
       const homepageCreativeWork = buildCreativeWorkNode({
         entry: creativeWorks.index,
         fallbackType: 'CreativeWorkSeries',
@@ -2290,7 +2402,7 @@ export default {
           copyrightHolder: { '@id': `${SITE}/#organization` },
           potentialAction: {
             '@type': 'SearchAction',
-            target: `${SITE}/search?q={search_term_string}`,
+            target: `${SITE}/catalog?q={search_term_string}`,
             'query-input': 'required name=search_term_string'
           },
           inLanguage: ['en', 'fr']
@@ -2425,7 +2537,7 @@ export default {
             }
           ]
         }
-      ];
+      ].concat(homepageFeaturedImageSchema);
       return serveTemplatePage({
         templatePath: isFrench ? 'i18n/fr.html' : 'pages/index.html',
         pathname,
@@ -2436,11 +2548,14 @@ export default {
           canonical,
           alternateEn: `${SITE}/`,
           alternateFr: `${SITE}/fr/`,
-          image: DEFAULT_IMAGE,
-          imageAlt: isFrench ? 'Logo NH48 API' : 'NH48 API Logo',
+          image: HOME_SOCIAL_IMAGE,
+          imageAlt: isFrench
+            ? 'Bâtiments et observatoire météorologique au sommet du mont Washington'
+            : 'Buildings and weather observatory atop Mount Washington in the White Mountains',
           ogType: 'website'
         },
-        jsonLd
+        jsonLd,
+        stripTemplateJsonLd: true
       });
     }
 
@@ -3052,7 +3167,7 @@ export default {
           copyrightHolder: { '@id': `${SITE}/#organization` },
           potentialAction: {
             '@type': 'SearchAction',
-            target: `${SITE}/search?q={search_term_string}`,
+            target: `${SITE}/catalog?q={search_term_string}`,
             'query-input': 'required name=search_term_string'
           },
           inLanguage: ['en', 'fr']

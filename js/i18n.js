@@ -182,9 +182,31 @@ import { LANGS } from './langConfig.js';
     linksContainer.style.setProperty('--lang-toggle-pad-x', `${scaled.langPadX.toFixed(2)}px`);
   }
 
+  function clearNavScale(linksContainer) {
+    [
+      '--nav-link-font-size',
+      '--nav-link-pad-y',
+      '--nav-link-pad-x',
+      '--nav-link-gap',
+      '--nav-link-letter-spacing',
+      '--nav-cta-font-size',
+      '--nav-cta-pad-y',
+      '--nav-cta-pad-x',
+      '--lang-toggle-font-size',
+      '--lang-toggle-pad-y',
+      '--lang-toggle-pad-x'
+    ].forEach(prop => linksContainer.style.removeProperty(prop));
+  }
+
   function fitTopNavToTwoRows() {
     const linksContainer = document.querySelector('.site-nav .site-nav-links');
     if (!linksContainer) return;
+    if (window.innerWidth <= 900) {
+      linksContainer.classList.remove('nav-links--tight');
+      linksContainer.classList.remove('nav-links--ultra-tight');
+      clearNavScale(linksContainer);
+      return;
+    }
     const navItems = getTopLevelNavItems(linksContainer);
     if (!navItems.length) return;
 
