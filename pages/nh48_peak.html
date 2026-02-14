@@ -973,23 +973,24 @@
         }
       }
       .metadata-panel{
-        background:var(--panel);
-        border:1px solid var(--stroke);
-        border-radius:10px;
-        padding:12px;
+        background:linear-gradient(160deg, rgba(15, 23, 35, 0.96), rgba(10, 16, 27, 0.94));
+        border:1px solid rgba(61, 84, 124, 0.62);
+        border-radius:12px;
+        padding:14px;
         font-size:0.9rem;
         word-wrap:break-word;
         white-space:normal;
         width:100%;
         box-sizing:border-box;
-        box-shadow:0 12px 30px rgba(0,0,0,0.3);
+        box-shadow:0 12px 30px rgba(0,0,0,0.32);
       }
       .metadata-header{
         display:flex;
         justify-content:space-between;
         align-items:center;
-        margin-bottom:6px;
+        margin-bottom:10px;
         gap:8px;
+        width:100%;
       }
       .metadata-title{
         font-weight:600;
@@ -997,6 +998,8 @@
         font-size:0.85rem;
         text-transform:uppercase;
         letter-spacing:0.5px;
+        flex:1 1 auto;
+        min-width:0;
       }
       .meta-toggle{
         background:transparent;
@@ -1044,6 +1047,22 @@
         letter-spacing:0.38px;
         max-width:none;
       }
+      .metadata-group-header{
+        margin-top:10px;
+        font-weight:700;
+        color:#8ef2b9;
+        font-size:0.8rem;
+        text-transform:uppercase;
+        letter-spacing:0.52px;
+      }
+      .metadata-group-subheader{
+        margin-top:6px;
+        font-weight:700;
+        color:#d5e6ff;
+        font-size:0.75rem;
+        text-transform:uppercase;
+        letter-spacing:0.42px;
+      }
       .metadata-value{
         color:var(--ink);
         font-size:0.9rem;
@@ -1052,6 +1071,40 @@
         word-break:break-word;
         line-height:1.55;
         padding-left:8px;
+      }
+      .metadata-value.is-right-aligned{
+        text-align:right;
+        justify-self:end;
+      }
+      .metadata-value.is-left-aligned{
+        text-align:left;
+        justify-self:stretch;
+      }
+      #generalInfoPanel .metadata-value.is-clamped,
+      #photoMetadataPanel .metadata-value.is-clamped{
+        display:-webkit-box;
+        -webkit-line-clamp:2;
+        -webkit-box-orient:vertical;
+        overflow:hidden;
+      }
+      #generalInfoPanel .metadata-value,
+      #photoMetadataPanel .metadata-value{
+        max-width:min(100%, 68ch);
+      }
+      #photoMetadataPanel .metadata-row.is-desc-accessibility .metadata-value,
+      #photoMetadataPanel .metadata-value.is-unclamped{
+        display:block;
+        overflow:visible;
+        max-width:none;
+        white-space:normal;
+      }
+      #photoMetadataPanel .metadata-row.is-desc-accessibility .metadata-value{
+        text-align:left;
+        justify-self:stretch;
+        padding-left:14px;
+      }
+      #photoMetadataPanel .metadata-row.is-desc-accessibility{
+        grid-template-columns:minmax(128px, 200px) minmax(0, 1fr);
       }
       .description-body{
         font-size:1rem;
@@ -1069,13 +1122,16 @@
       .collapsible-content-fade{
         position:absolute;
         inset:auto 0 0 0;
-        height:44px;
-        background:linear-gradient(to bottom, rgba(10,10,10,0), rgba(10,10,10,0.94));
+        height:56px;
+        background:linear-gradient(to bottom, rgba(10,16,27,0), rgba(10,16,27,0.96));
         pointer-events:none;
         opacity:0;
         transition:opacity 0.2s ease;
       }
       .collapsible-content.is-collapsed .collapsible-content-fade{
+        opacity:1;
+      }
+      .experience-note-text.is-collapsed .collapsible-content-fade{
         opacity:1;
       }
       .panel-expand-btn{
@@ -1107,14 +1163,18 @@
         align-items:center;
         justify-content:space-between;
         gap:10px;
+        margin:20px 0 12px 0;
+        width:100%;
       }
       .section-title{
-        margin:20px 0 12px 0;
+        margin:0;
         font-size:1.05rem;
         font-weight:700;
         color:var(--accent);
         text-transform:uppercase;
         letter-spacing:0.5px;
+        flex:1 1 auto;
+        min-width:0;
       }
       .section-subtitle{
         margin:4px 0 10px;
@@ -1135,6 +1195,8 @@
         color:var(--accent);
         cursor:pointer;
         transition:transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        margin-left:auto;
+        flex:0 0 auto;
       }
       .panel-zoom-btn:hover{
         transform:scale(1.04);
@@ -1145,8 +1207,9 @@
         font-size:1.05rem;
       }
       @media(max-width:640px){
-        .section-title{ margin:16px 0 10px 0; font-size:0.95rem; }
+        .section-title{ margin:0; font-size:0.95rem; }
         .section-subtitle{ margin:2px 0 8px; font-size:0.84rem; }
+        .section-title-wrap{ margin:16px 0 10px 0; }
       }
       .info-grid{
         display:grid;
@@ -1155,17 +1218,17 @@
         margin-bottom:16px;
       }
       .info-panel{
-        background:var(--panel);
-        border:1px solid var(--stroke);
-        border-radius:10px;
-        padding:12px;
+        background:linear-gradient(160deg, rgba(15, 23, 35, 0.96), rgba(10, 16, 27, 0.94));
+        border:1px solid rgba(61, 84, 124, 0.62);
+        border-radius:12px;
+        padding:14px;
         font-size:0.9rem;
         width:100%;
         box-sizing:border-box;
-        box-shadow:0 10px 24px rgba(0,0,0,0.25);
+        box-shadow:0 12px 30px rgba(0,0,0,0.32);
       }
       @media(max-width:640px){
-        .info-panel{ padding:10px; font-size:0.85rem; }
+        .info-panel{ padding:12px; font-size:0.85rem; }
       }
       .info-label{
         font-weight:600;
@@ -1186,10 +1249,11 @@
       }
       .experience-notes{
         margin:18px 0 20px;
-        border:1px solid var(--stroke);
+        border:1px solid rgba(61, 84, 124, 0.62);
         border-radius:12px;
-        background:linear-gradient(155deg, rgba(17, 27, 40, 0.94), rgba(11, 18, 28, 0.94));
-        padding:12px;
+        background:linear-gradient(160deg, rgba(15, 23, 35, 0.96), rgba(10, 16, 27, 0.94));
+        padding:14px;
+        box-shadow:0 12px 30px rgba(0,0,0,0.32);
       }
       .experience-notes-grid{
         display:grid;
@@ -1197,10 +1261,10 @@
         gap:10px;
       }
       .experience-note{
-        border:1px solid var(--stroke);
-        border-radius:10px;
-        background:rgba(255,255,255,0.03);
-        padding:10px;
+        border:1px solid rgba(61, 84, 124, 0.58);
+        border-radius:12px;
+        background:linear-gradient(160deg, rgba(13, 21, 33, 0.96), rgba(9, 15, 25, 0.94));
+        padding:12px;
       }
       .experience-note h3{
         margin:0 0 6px;
@@ -1243,6 +1307,9 @@
         margin:10px 2px 0;
         color:var(--muted);
         font-size:0.8rem;
+      }
+      .detail-panel-cta{
+        margin-top:12px;
       }
       .trail-list{
         margin:0;
@@ -1306,24 +1373,13 @@
         outline:2px solid rgba(74,222,128,0.9);
         outline-offset:2px;
       }
-      #trailNamesGrid a{
-        color:#dff8e9;
-        text-decoration:none;
-        border-bottom:1px solid rgba(34,197,94,0.45);
-        transition:color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-      }
-      #trailNamesGrid a:hover,
-      #trailNamesGrid a:focus-visible{
-        color:#f0fff6;
-        border-color:rgba(74,222,128,0.95);
-        box-shadow:0 0 12px rgba(34,197,94,0.32);
-        transform:scale(1.02);
-      }
       .monthly-weather-card{
         padding:14px;
       }
       .monthly-weather-header{
         align-items:center;
+        justify-content:flex-end;
+        margin-bottom:4px;
       }
       #monthlyWeatherMonthSelect{
         min-height:34px;
@@ -1440,8 +1496,35 @@
         transform-origin:top left;
         width:calc(100% / var(--reader-scale-factor));
       }
+      .ui-tooltip{
+        position:fixed;
+        z-index:2500;
+        max-width:min(360px, calc(100vw - 20px));
+        padding:7px 10px;
+        border-radius:8px;
+        border:1px solid rgba(34,197,94,0.55);
+        background:rgba(8, 16, 27, 0.96);
+        color:#edfff5;
+        font-size:0.76rem;
+        line-height:1.35;
+        box-shadow:0 10px 24px rgba(0,0,0,0.38);
+        pointer-events:none;
+        opacity:0;
+        left:0;
+        top:0;
+        transform:translate(-50%, calc(-100% - 6px)) scale(0.98);
+        transition:opacity 60ms ease, transform 60ms ease;
+      }
+      .ui-tooltip.is-visible{
+        opacity:1;
+        transform:translate(-50%, calc(-100% - 8px)) scale(1);
+      }
       .icon-btn[aria-disabled="true"],
-      .icon-btn.is-disabled,
+      .icon-btn.is-disabled{
+        opacity:0.45;
+        cursor:not-allowed;
+        filter:grayscale(0.3);
+      }
       .primary-link-btn.is-disabled{
         opacity:0.45;
         cursor:not-allowed;
@@ -1456,17 +1539,23 @@
         .metadata-value{
           padding-left:4px;
         }
+        #photoMetadataPanel .metadata-row.is-desc-accessibility{
+          grid-template-columns:minmax(88px, 122px) minmax(0, 1fr);
+        }
+        #photoMetadataPanel .metadata-row.is-desc-accessibility .metadata-value{
+          padding-left:8px;
+        }
         .panel-reader-modal{
           padding:8px;
         }
       }
       .peak-map-panel{
-        border:1px solid var(--stroke);
+        border:1px solid rgba(61, 84, 124, 0.62);
         border-radius:12px;
-        background:linear-gradient(160deg, rgba(18,18,26,0.95), rgba(10,10,10,0.85));
+        background:linear-gradient(160deg, rgba(15, 23, 35, 0.96), rgba(10, 16, 27, 0.94));
         padding:14px;
         margin-bottom:16px;
-        box-shadow:0 12px 28px rgba(0,0,0,0.35);
+        box-shadow:0 12px 30px rgba(0,0,0,0.32);
       }
       .peak-map-header{
         display:flex;
@@ -1782,11 +1871,23 @@
         <div class="info-grid no-print" id="routesGrid" hidden></div>
       </section>
 
+      <section aria-labelledby="monthlyWeatherHeading" class="no-print" id="monthlyWeatherPanel" hidden>
+        <h2 id="monthlyWeatherHeading" class="section-title">Monthly Weather Averages</h2>
+        <div class="info-grid">
+          <article class="info-panel detail-panel monthly-weather-card">
+            <div class="metadata-header monthly-weather-header">
+              <label for="monthlyWeatherMonthSelect" class="sr-only" id="monthlyWeatherMonthLabel">Select month</label>
+              <select id="monthlyWeatherMonthSelect" aria-labelledby="monthlyWeatherMonthLabel"></select>
+            </div>
+            <div class="monthly-weather-metrics" id="monthlyWeatherMetrics"></div>
+            <p class="monthly-weather-disclaimer" id="monthlyWeatherDisclaimer"></p>
+          </article>
+        </div>
+      </section>
+
       <section aria-labelledby="relatedTrailsHeading" class="no-print" id="trailsHubSection">
         <h2 id="relatedTrailsHeading" class="section-title" data-i18n="peak.relatedTrails.title">Related Trails &amp; Routes</h2>
         <div class="info-grid" id="relatedTrailsGrid" hidden></div>
-        <h3 id="trailNamesHeading" class="section-subtitle" data-i18n="peak.section.trails">Associated Trails</h3>
-        <div class="info-grid" id="trailNamesGrid" hidden></div>
       </section>
 
       <section aria-labelledby="parkingAccessHeading" class="no-print" id="parkingAccessPanel" hidden>
@@ -1812,21 +1913,6 @@
       <section aria-labelledby="conditionsHeading" class="no-print" id="conditionsPanel">
         <h2 id="conditionsHeading" class="section-title" data-i18n="peak.section.conditions">Conditions &amp; Access</h2>
         <div class="info-grid" id="conditionsGrid" hidden></div>
-      </section>
-
-      <section aria-labelledby="monthlyWeatherHeading" class="no-print" id="monthlyWeatherPanel" hidden>
-        <h2 id="monthlyWeatherHeading" class="section-title">Monthly Weather Averages</h2>
-        <div class="info-grid">
-          <article class="info-panel detail-panel monthly-weather-card">
-            <div class="metadata-header monthly-weather-header">
-              <div class="metadata-title" id="monthlyWeatherTitle">Monthly Weather Averages</div>
-              <label for="monthlyWeatherMonthSelect" class="sr-only" id="monthlyWeatherMonthLabel">Select month</label>
-              <select id="monthlyWeatherMonthSelect" aria-labelledby="monthlyWeatherMonthLabel"></select>
-            </div>
-            <div class="monthly-weather-metrics" id="monthlyWeatherMetrics"></div>
-            <p class="monthly-weather-disclaimer" id="monthlyWeatherDisclaimer"></p>
-          </article>
-        </div>
       </section>
 
       <section aria-labelledby="trailTestedNotesHeading" class="no-print experience-notes" id="trailTestedNotesPanel" hidden>
@@ -2171,6 +2257,12 @@
         return String(value || '').trim().toLowerCase();
       }
 
+      function capitalizeFirstLetter(value){
+        const text = safeText(value).trim();
+        if(!text) return '';
+        return `${text.charAt(0).toUpperCase()}${text.slice(1)}`;
+      }
+
       function translateSeason(value){
         const key = normalizeToken(value);
         const map = {
@@ -2197,6 +2289,19 @@
           dusk: 'time.dusk'
         };
         return map[key] ? t(map[key]) : value;
+      }
+
+      function normalizeMetadataDisplayValue(key, value){
+        const normalizedKey = normalizeToken(key);
+        const normalizedValue = safeText(value).trim();
+        if(!normalizedValue) return '';
+        if(normalizedKey === 'season'){
+          return capitalizeFirstLetter(translateSeason(normalizedValue) || normalizedValue);
+        }
+        if(normalizedKey === 'timeofday'){
+          return capitalizeFirstLetter(translateTimeOfDay(normalizedValue) || normalizedValue);
+        }
+        return normalizedValue;
       }
 
       /**
@@ -3713,9 +3818,21 @@
         return merged;
       }
 
-      function makeRow(label, value){
+      function makeRow(label, value, options = {}){
+        const {
+          isMultiline = false,
+          isLeftAligned = false,
+          disableClamp = false,
+          groupKey = ''
+        } = options;
         const row = document.createElement('div');
         row.className = 'metadata-row';
+        if(isMultiline){
+          row.classList.add('is-multiline');
+        }
+        if(groupKey === 'desc-accessibility'){
+          row.classList.add('is-desc-accessibility');
+        }
 
         const lab = document.createElement('div');
         lab.className = 'metadata-label';
@@ -3723,7 +3840,9 @@
 
         const val = document.createElement('div');
         val.className = 'metadata-value';
-        val.textContent = value;
+        val.classList.add(disableClamp ? 'is-unclamped' : 'is-clamped');
+        val.classList.add(isLeftAligned ? 'is-left-aligned' : 'is-right-aligned');
+        val.textContent = safeText(value);
 
         row.appendChild(lab);
         row.appendChild(val);
@@ -3889,22 +4008,25 @@
         const shownValues = new Set();
         let shown = new Set(PRIMARY_META_KEYS);
 
-        const formatMetadataValue = (val) => {
+        const formatMetadataValue = (val, key = '') => {
           if(Array.isArray(val)){
-            return val.join(', ');
+            return val
+              .map((item) => normalizeMetadataDisplayValue(key, item))
+              .filter(Boolean)
+              .join(', ');
           }
           if(typeof val === 'object'){
             return JSON.stringify(val, null, 2);
           }
-          return String(val);
+          return normalizeMetadataDisplayValue(key, val);
         };
 
-        const addMetadataRow = (container, label, value, key) => {
-          const valueText = formatMetadataValue(value).trim();
+        const addMetadataRow = (container, label, value, key, rowOptions = {}) => {
+          const valueText = formatMetadataValue(value, key).trim();
           if(!valueText || shownValues.has(valueText)){
             return false;
           }
-          container.appendChild(makeRow(label, valueText));
+          container.appendChild(makeRow(label, valueText, rowOptions));
           shownValues.add(valueText);
           if(key){
             shown.add(key);
@@ -3938,9 +4060,7 @@
               shown.add('iptc');
 
               const groupHeader = document.createElement('div');
-              groupHeader.className = 'metadata-label';
-              groupHeader.style.marginTop = '10px';
-              groupHeader.style.fontWeight = 'bold';
+              groupHeader.className = 'metadata-group-header';
               groupHeader.textContent = group.label;
               extraWrap.appendChild(groupHeader);
 
@@ -3954,8 +4074,7 @@
 
               if(creatorFields.length){
                 const subHeader = document.createElement('div');
-                subHeader.className = 'metadata-label';
-                subHeader.style.marginTop = '6px';
+                subHeader.className = 'metadata-group-subheader';
                 subHeader.textContent = 'Creator & Credits';
                 extraWrap.appendChild(subHeader);
                 creatorFields.forEach(([label, value, key]) => {
@@ -3975,8 +4094,7 @@
 
               if(rightsFields.length){
                 const subHeader = document.createElement('div');
-                subHeader.className = 'metadata-label';
-                subHeader.style.marginTop = '6px';
+                subHeader.className = 'metadata-group-subheader';
                 subHeader.textContent = 'Rights & Licensing';
                 extraWrap.appendChild(subHeader);
                 rightsFields.forEach(([label, value, key]) => {
@@ -3986,8 +4104,7 @@
 
               if(Array.isArray(iptc.keywords) && iptc.keywords.length){
                 const subHeader = document.createElement('div');
-                subHeader.className = 'metadata-label';
-                subHeader.style.marginTop = '6px';
+                subHeader.className = 'metadata-group-subheader';
                 subHeader.textContent = 'Keywords';
                 extraWrap.appendChild(subHeader);
                 addMetadataRow(extraWrap, 'Keywords', iptc.keywords.join(', '), 'keywords');
@@ -3998,8 +4115,7 @@
               const locationRows = [...locationCreatedRows, ...locationShownRows];
               if(locationRows.length){
                 const subHeader = document.createElement('div');
-                subHeader.className = 'metadata-label';
-                subHeader.style.marginTop = '6px';
+                subHeader.className = 'metadata-group-subheader';
                 subHeader.textContent = 'Locations';
                 extraWrap.appendChild(subHeader);
                 locationRows.forEach(([label, value]) => addMetadataRow(extraWrap, label, value));
@@ -4029,7 +4145,7 @@
               delete miscIptc.iptcSubjectCode;
               Object.entries(miscIptc).forEach(([key, val]) => {
                 if(val === undefined || val === null) return;
-                const valueText = Array.isArray(val) ? val.join(', ') : String(val).trim();
+                const valueText = formatMetadataValue(val, key).trim();
                 if(valueText){
                   addMetadataRow(extraWrap, humanLabelFromKey(key), valueText, key);
                 }
@@ -4038,11 +4154,12 @@
             return;
           }
 
+          const isDescriptionsGroup = group.label === 'Descriptions & Accessibility';
           let groupFields = [];
           group.keys.forEach(key => {
             if(SKIP_META_KEYS.has(key)) return;
             if(displayMeta[key] !== undefined && displayMeta[key] !== null && String(displayMeta[key]).trim() !== '' && !shown.has(key)){
-              const valueText = formatMetadataValue(displayMeta[key]).trim();
+              const valueText = formatMetadataValue(displayMeta[key], key).trim();
               if(!valueText || shownValues.has(valueText)) return;
               groupFields.push([key, valueText]);
               shown.add(key);
@@ -4051,13 +4168,22 @@
           });
           if(groupFields.length > 0){
             const groupHeader = document.createElement('div');
-            groupHeader.className = 'metadata-label';
-            groupHeader.style.marginTop = '10px';
-            groupHeader.style.fontWeight = 'bold';
+            groupHeader.className = 'metadata-group-header';
             groupHeader.textContent = group.label;
             extraWrap.appendChild(groupHeader);
             groupFields.forEach(([key, val]) => {
-              extraWrap.appendChild(makeRow(humanLabelFromKey(key), val));
+              extraWrap.appendChild(makeRow(
+                humanLabelFromKey(key),
+                val,
+                isDescriptionsGroup
+                  ? {
+                    isMultiline: true,
+                    isLeftAligned: true,
+                    disableClamp: true,
+                    groupKey: 'desc-accessibility'
+                  }
+                  : {}
+              ));
             });
           }
         });
@@ -4184,6 +4310,18 @@
 
         const elev = p['Elevation (ft)'];
         const prom = p['Prominence (ft)'];
+        const bestSeasons = safeText(p['Best Seasons to Hike']).trim();
+        const normalizedSeasons = bestSeasons
+          ? bestSeasons
+            .split(/[;,/]/)
+            .map((chunk) => chunk.trim())
+            .filter(Boolean)
+            .map((chunk) => capitalizeFirstLetter(chunk))
+            .join(', ')
+          : '';
+        const waterAvailability = capitalizeFirstLetter(safeText(p['Water Availability']).trim());
+        const cellReception = capitalizeFirstLetter(safeText(p['Cell Reception Quality']).trim());
+        const typicalTime = safeText(p['Typical Completion Time']).trim();
 
         body.appendChild(makeRow(t('peak.generalInfo.elevation'), formatFeetValue(elev)));
         body.appendChild(makeRow(t('peak.generalInfo.prominence'), formatFeetValue(prom)));
@@ -4191,6 +4329,10 @@
         body.appendChild(makeRow(t('peak.generalInfo.trailType'), translateTrailType(p['Trail Type']) || '—'));
         body.appendChild(makeRow(t('peak.generalInfo.difficulty'), translateDifficulty(p['Difficulty']) || '—'));
         body.appendChild(makeRow(t('peak.generalInfo.exposure'), translateExposure(p['Exposure Level'] || p['Weather Exposure Rating']) || '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.typicalTime'), typicalTime || '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.bestSeasons'), normalizedSeasons || '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.waterAvailability'), waterAvailability || '—'));
+        body.appendChild(makeRow(t('peak.generalInfo.cellReception'), cellReception || '—'));
 
         panel.hidden = false;
         trackEvent('peak_general_info_rendered', { slug: currentSlug });
@@ -4372,45 +4514,6 @@
         ensureSectionZoomControl('trailsHubSection', 'relatedTrailsHeading');
       }
 
-      function renderTrailNames(trailNames = []){
-        const grid = document.getElementById('trailNamesGrid');
-        const heading = document.getElementById('trailNamesHeading');
-        if(!grid) return;
-        grid.innerHTML = '';
-        const names = Array.from(new Set((Array.isArray(trailNames) ? trailNames : [])
-          .map(name => safeText(name).trim())
-          .filter(Boolean)))
-          .sort((a, b) => a.localeCompare(b));
-
-        if(heading){
-          heading.textContent = `${translateWithFallback('peak.section.trails', 'Associated Trails')} (${names.length})`;
-          heading.hidden = names.length === 0;
-        }
-
-        if(!names.length){
-          grid.hidden = true;
-          trackEvent('peak_trail_names_empty', { slug: currentSlug });
-          return;
-        }
-
-        names.forEach((name) => {
-          const panel = document.createElement('div');
-          panel.className = 'info-panel';
-          panel.innerHTML = `
-            <div class="info-label">${escapeHtml(name)}</div>
-            <div class="info-value">
-              <a href="/trails?trail=${encodeURIComponent(name)}" target="_blank" rel="noopener">
-                ${escapeHtml(translateWithFallback('peak.relatedTrails.link', `${name} route`, { name }))}
-              </a>
-            </div>
-          `;
-          grid.appendChild(panel);
-        });
-        grid.hidden = false;
-        ensureSectionZoomControl('trailsHubSection', 'relatedTrailsHeading');
-        trackEvent('peak_trail_names_rendered', { slug: currentSlug, count: names.length });
-      }
-
       function buildDetailRows(items){
         return items
           .filter(item => item && safeText(item.value).trim())
@@ -4551,6 +4654,201 @@
               first.focus();
             }
           }
+        });
+      }
+
+      const TOOLTIP_SELECTOR = 'a[href], button, select, input:not([type="hidden"]), [role="button"], .dot';
+      let uiTooltipEl = null;
+      let tooltipShowTimer = null;
+      let tooltipHideTimer = null;
+      let tooltipTarget = null;
+
+      function ensureUiTooltipElement(){
+        if(uiTooltipEl && document.body.contains(uiTooltipEl)){
+          return uiTooltipEl;
+        }
+        uiTooltipEl = document.createElement('div');
+        uiTooltipEl.id = 'uiTooltip';
+        uiTooltipEl.className = 'ui-tooltip';
+        uiTooltipEl.setAttribute('role', 'tooltip');
+        uiTooltipEl.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(uiTooltipEl);
+        return uiTooltipEl;
+      }
+
+      function normalizeTooltipText(value){
+        return safeText(value).replace(/\s+/g, ' ').trim();
+      }
+
+      function preserveTitleAttribute(element){
+        if(!element || !element.getAttribute) return;
+        const title = element.getAttribute('title');
+        if(title && !element.hasAttribute('data-native-title')){
+          element.setAttribute('data-native-title', title);
+        }
+        if(title){
+          element.removeAttribute('title');
+        }
+      }
+
+      function resolveTooltipText(element){
+        if(!element || !element.getAttribute) return '';
+        preserveTitleAttribute(element);
+        const candidates = [
+          element.getAttribute('data-tooltip'),
+          element.getAttribute('aria-label'),
+          element.getAttribute('data-native-title'),
+          element.getAttribute('title'),
+          element.textContent
+        ];
+        for(const candidate of candidates){
+          const text = normalizeTooltipText(candidate);
+          if(text){
+            return text.length > 220 ? `${text.slice(0, 217)}...` : text;
+          }
+        }
+        return '';
+      }
+
+      function isTooltipEligible(element){
+        if(!element || !element.matches || !element.matches(TOOLTIP_SELECTOR)) return false;
+        if(element.closest('#uiTooltip')) return false;
+        if(element.hidden) return false;
+        if(element.getAttribute('aria-hidden') === 'true') return false;
+        return true;
+      }
+
+      function positionTooltip(target){
+        if(!uiTooltipEl || !target) return;
+        const rect = target.getBoundingClientRect();
+        const viewportPad = 8;
+        const maxLeft = window.innerWidth - viewportPad;
+        const minLeft = viewportPad;
+        let centerX = rect.left + (rect.width / 2);
+        centerX = Math.max(minLeft, Math.min(maxLeft, centerX));
+        let top = rect.top - 8;
+        if(top < 48){
+          top = rect.bottom + 8 + uiTooltipEl.offsetHeight;
+        }
+        uiTooltipEl.style.left = `${Math.round(centerX)}px`;
+        uiTooltipEl.style.top = `${Math.round(top)}px`;
+      }
+
+      function hideTooltip(){
+        if(!uiTooltipEl) return;
+        uiTooltipEl.classList.remove('is-visible');
+        uiTooltipEl.setAttribute('aria-hidden', 'true');
+      }
+
+      function showTooltip(target){
+        if(!isTooltipEligible(target)) return;
+        const tooltip = ensureUiTooltipElement();
+        const text = resolveTooltipText(target);
+        if(!text){
+          hideTooltip();
+          return;
+        }
+        tooltipTarget = target;
+        tooltip.textContent = text;
+        tooltip.setAttribute('aria-hidden', 'false');
+        positionTooltip(target);
+        tooltip.classList.add('is-visible');
+      }
+
+      function clearTooltipTimers(){
+        if(tooltipShowTimer){
+          clearTimeout(tooltipShowTimer);
+          tooltipShowTimer = null;
+        }
+        if(tooltipHideTimer){
+          clearTimeout(tooltipHideTimer);
+          tooltipHideTimer = null;
+        }
+      }
+
+      function scheduleTooltipShow(target){
+        clearTooltipTimers();
+        tooltipShowTimer = setTimeout(() => {
+          showTooltip(target);
+        }, 50);
+      }
+
+      function scheduleTooltipHide(){
+        clearTooltipTimers();
+        tooltipHideTimer = setTimeout(() => {
+          tooltipTarget = null;
+          hideTooltip();
+        }, 50);
+      }
+
+      function initInstantTooltips(){
+        ensureUiTooltipElement();
+        if(document.body.dataset.tooltipInit === 'true'){
+          return;
+        }
+        document.body.dataset.tooltipInit = 'true';
+
+        document.querySelectorAll(TOOLTIP_SELECTOR).forEach((el) => preserveTitleAttribute(el));
+
+        document.addEventListener('mouseover', (event) => {
+          const target = event.target && event.target.closest ? event.target.closest(TOOLTIP_SELECTOR) : null;
+          if(!target){
+            scheduleTooltipHide();
+            return;
+          }
+          if(target === tooltipTarget){
+            return;
+          }
+          scheduleTooltipShow(target);
+        });
+
+        document.addEventListener('mouseout', (event) => {
+          const leaving = event.target && event.target.closest ? event.target.closest(TOOLTIP_SELECTOR) : null;
+          if(!leaving) return;
+          const entering = event.relatedTarget && event.relatedTarget.closest
+            ? event.relatedTarget.closest(TOOLTIP_SELECTOR)
+            : null;
+          if(leaving === entering) return;
+          scheduleTooltipHide();
+        });
+
+        document.addEventListener('mousemove', (event) => {
+          if(!tooltipTarget || !uiTooltipEl || uiTooltipEl.getAttribute('aria-hidden') === 'true') return;
+          const within = event.target && event.target.closest ? event.target.closest(TOOLTIP_SELECTOR) : null;
+          if(within !== tooltipTarget) return;
+          positionTooltip(tooltipTarget);
+        });
+
+        document.addEventListener('focusin', (event) => {
+          const target = event.target && event.target.matches && event.target.matches(TOOLTIP_SELECTOR)
+            ? event.target
+            : null;
+          if(!target) return;
+          scheduleTooltipShow(target);
+        });
+
+        document.addEventListener('focusout', (event) => {
+          const target = event.target && event.target.matches && event.target.matches(TOOLTIP_SELECTOR)
+            ? event.target
+            : null;
+          if(!target) return;
+          scheduleTooltipHide();
+        });
+
+        window.addEventListener('scroll', () => {
+          if(!tooltipTarget){
+            hideTooltip();
+            return;
+          }
+          positionTooltip(tooltipTarget);
+        }, { passive: true });
+
+        window.addEventListener('resize', () => {
+          if(!tooltipTarget){
+            hideTooltip();
+            return;
+          }
+          positionTooltip(tooltipTarget);
         });
       }
 
@@ -5382,18 +5680,16 @@
       function renderMonthlyWeatherPanel(){
         const section = document.getElementById('monthlyWeatherPanel');
         const heading = document.getElementById('monthlyWeatherHeading');
-        const title = document.getElementById('monthlyWeatherTitle');
         const monthLabel = document.getElementById('monthlyWeatherMonthLabel');
         const select = document.getElementById('monthlyWeatherMonthSelect');
         const metrics = document.getElementById('monthlyWeatherMetrics');
         const disclaimer = document.getElementById('monthlyWeatherDisclaimer');
-        if(!section || !heading || !title || !select || !metrics || !monthLabel || !disclaimer){
+        if(!section || !heading || !select || !metrics || !monthLabel || !disclaimer){
           return;
         }
 
         const langCode = getSeoLang();
         heading.textContent = translateWithFallback('peak.weather.heading', langCode === 'fr' ? 'Moyennes meteo mensuelles' : 'Monthly Weather Averages');
-        title.textContent = heading.textContent;
         monthLabel.textContent = translateWithFallback('peak.weather.monthLabel', langCode === 'fr' ? 'Selectionner un mois' : 'Select month');
         disclaimer.textContent = translateWithFallback(
           'peak.weather.disclaimer',
@@ -5851,6 +6147,7 @@
       async function init(){
         initPanelReader();
         initMonthlyWeatherControls();
+        initInstantTooltips();
         const slug = getResolvedSlug();
         console.log('[Peak Init] Starting initialization for slug:', slug);
         
@@ -6020,7 +6317,6 @@
           const trailNames = p['Trail Names'] || [];
           renderRoutes(routes);
           renderRelatedTrails(routes, trailNames);
-          renderTrailNames(trailNames);
           renderParkingAndAccess(peakViewModel);
           renderDifficultyMetrics(peakViewModel);
           renderRiskAndPreparation(peakViewModel);
@@ -6093,7 +6389,6 @@
           const trailNames = currentPeak['Trail Names'] || [];
           renderRoutes(routes);
           renderRelatedTrails(routes, trailNames);
-          renderTrailNames(trailNames);
           renderParkingAndAccess(peakViewModel);
           renderDifficultyMetrics(peakViewModel);
           renderRiskAndPreparation(peakViewModel);
@@ -6126,7 +6421,6 @@
           const trailNames = currentPeak['Trail Names'] || [];
           renderRoutes(routes);
           renderRelatedTrails(routes, trailNames);
-          renderTrailNames(trailNames);
           renderParkingAndAccess(peakViewModel);
           renderDifficultyMetrics(peakViewModel);
           renderRiskAndPreparation(peakViewModel);

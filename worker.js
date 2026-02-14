@@ -1544,6 +1544,14 @@ export default {
       return `${snippet}\n${html}`;
     }
 
+    function injectMainStartHtml(html, snippet) {
+      if (!snippet || typeof snippet !== 'string') return html;
+      if (/<main[^>]*>/i.test(html)) {
+        return html.replace(/<main([^>]*)>/i, (match, attrs) => `<main${attrs}>\n${snippet}`);
+      }
+      return injectBodyStartHtml(html, snippet);
+    }
+
     async function buildSitewideAdvisoryBanner(isFrench = false) {
       const currentConditions = await loadCurrentConditions();
       const advisories = normalizeCurrentConditionsAdvisories(currentConditions);
@@ -3165,8 +3173,6 @@ export default {
       const altText = isFrench
         ? 'Apercu du catalogue NH48 avec photos et donnees des sommets.'
         : 'Preview of the NH48 Peak Catalog with peak photos and data.';
-      const sitewideAdvisoryBanner = await buildSitewideAdvisoryBanner(isFrench);
-
       const peaks = await loadPeaks();
       const peakEntries = Array.isArray(peaks)
         ? peaks.map((peak, index) => [peak?.slug || `peak-${index + 1}`, peak])
@@ -3348,9 +3354,6 @@ export default {
         loadPartial('footer', RAW_FOOTER_URL)
       ]);
       html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'catalog');
-      if (sitewideAdvisoryBanner) {
-        html = injectBodyStartHtml(html, sitewideAdvisoryBanner);
-      }
       html = injectBuildDate(html, buildDate);
 
       const metaBlock = [
@@ -3478,7 +3481,6 @@ export default {
         loadJsonCache('homepage:splash-alt', RAW_SPLASH_ALT_TEXT_URL),
         loadEntityLinks()
       ]);
-      const sitewideAdvisoryBanner = await buildSitewideAdvisoryBanner(isFrench);
       const homepageCardMedia = extractHomepageCardMedia(homepageTemplateHtml);
       const splashAltLookup = buildSplashAltLookup(splashAltPayload);
       const homepageSplashMedia = extractHomepageSplashMedia(splashManifestPayload, splashAltLookup);
@@ -3843,8 +3845,7 @@ export default {
           ogType: 'website'
         },
         jsonLd,
-        stripTemplateJsonLd: true,
-        prependBodyHtml: sitewideAdvisoryBanner
+        stripTemplateJsonLd: true
       });
     }
 
@@ -4557,7 +4558,6 @@ export default {
         })),
         canonical
       );
-      const sitewideAdvisoryBanner = await buildSitewideAdvisoryBanner(isFrench);
       return serveTemplatePage({
         templatePath: 'nh-4000-footers-info.html',
         pathname,
@@ -4572,8 +4572,7 @@ export default {
           imageAlt: title,
           ogType: 'website'
         },
-        jsonLd: [itemList],
-        prependBodyHtml: sitewideAdvisoryBanner
+        jsonLd: [itemList]
       });
     }
 
@@ -4627,7 +4626,9 @@ export default {
             .join('\n');
           html = html.replace(/<\/head>/i, `${ldBlocks}\n</head>`);
         }
-        if (options?.prependBodyHtml) {
+        if (options?.prependMainHtml) {
+          html = injectMainStartHtml(html, options.prependMainHtml);
+        } else if (options?.prependBodyHtml) {
           html = injectBodyStartHtml(html, options.prependBodyHtml);
         }
         html = injectAnalyticsCore(html);
@@ -4866,7 +4867,7 @@ export default {
 
     if (prerenderDebugMode) {
       const prerenderedResponse = await servePrerenderedPeakHtml(slug, isFrench, {
-        prependBodyHtml: peakAlertHtml,
+        prependMainHtml: peakAlertHtml,
         jsonLdBlocks: alertSchema ? [alertSchema] : []
       });
       if (prerenderedResponse) {
@@ -4879,7 +4880,7 @@ export default {
     if (!tplResp.ok) {
       if (routeKeyword === 'peak') {
         const prerenderedFallback = await servePrerenderedPeakHtml(slug, isFrench, {
-          prependBodyHtml: peakAlertHtml,
+          prependMainHtml: peakAlertHtml,
           jsonLdBlocks: alertSchema ? [alertSchema] : []
         });
         if (prerenderedFallback) {
@@ -4909,7 +4910,7 @@ export default {
     // Remove existing placeholders and duplicate head tags.
     html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'peak');
     if (peakAlertHtml) {
-      html = injectBodyStartHtml(html, peakAlertHtml);
+      html = injectMainStartHtml(html, peakAlertHtml);
     }
     html = injectBuildDate(html, buildDate);
 

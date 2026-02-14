@@ -43,7 +43,7 @@ const EXPECTED_FIELDS = [
 
 const REQUIRED_SECTION_IDS = [
   'routesHeading',
-  'trailNamesHeading',
+  'relatedTrailsHeading',
   'parkingAccessHeading',
   'difficultyMetricsHeading',
   'riskPrepHeading',
@@ -190,4 +190,3 @@ function main() {
 }
 
 main();
-

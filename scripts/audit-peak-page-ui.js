@@ -62,8 +62,8 @@ function runTemplateChecks() {
   if (!hasOverviewExpandHook) {
     failures.push('Template missing overview expand control hook');
   }
-  assertIncludes(html, 'id="trailNamesGrid"', 'Template missing Associated Trails grid', failures);
   assertIncludes(html, 'id="trailsHubSection"', 'Template missing unified trails section container', failures);
+  assertIncludes(html, 'id="relatedTrailsGrid"', 'Template missing Related Trails grid', failures);
   assertIncludes(html, 'id="parkingAccessGrid"', 'Template missing Parking & Access panel/grid', failures);
   assertIncludes(html, 'id="difficultyMetricsGrid"', 'Template missing Difficulty Metrics panel/grid', failures);
   assertIncludes(html, 'id="riskPrepGrid"', 'Template missing Risk & Preparation panel/grid', failures);
@@ -73,11 +73,8 @@ function runTemplateChecks() {
   assertIncludes(html, 'id="panelReaderScale"', 'Template missing panel reader scale control', failures);
   assertIncludes(html, 'id="panelReaderClose"', 'Template missing panel reader close control', failures);
 
-  if (/trailNamesGrid\s*\.\s*hidden\s*=\s*true/i.test(html)) {
-    failures.push('Template still force-hides trailNamesGrid');
-  }
-  if (!/function\s+renderTrailNames\s*\(/i.test(html)) {
-    failures.push('Template missing renderTrailNames() implementation');
+  if (!/function\s+renderRelatedTrails\s*\(/i.test(html)) {
+    failures.push('Template missing renderRelatedTrails() implementation');
   }
   const renderRoutesBody = extractFunctionBody(html, 'renderRoutes');
   if (!renderRoutesBody || !/routes\.forEach\s*\(/i.test(renderRoutesBody)) {
@@ -89,6 +86,20 @@ function runTemplateChecks() {
   if (!/function\s+renderMonthlyWeatherPanel\s*\(/i.test(html)) {
     failures.push('Template missing renderMonthlyWeatherPanel() implementation');
   }
+  if (!/function\s+initInstantTooltips\s*\(/i.test(html)) {
+    failures.push('Template missing initInstantTooltips() implementation.');
+  }
+  if (!/ui-tooltip|id="uiTooltip"/i.test(html)) {
+    failures.push('Template missing ui-tooltip styling/marker.');
+  }
+  if (!/is-desc-accessibility/i.test(html)) {
+    failures.push('Template missing desc/accessibility row exception classes.');
+  }
+  ['peak.generalInfo.typicalTime', 'peak.generalInfo.bestSeasons', 'peak.generalInfo.waterAvailability', 'peak.generalInfo.cellReception'].forEach((key) => {
+    if (!html.includes(key)) {
+      failures.push(`Template missing General Info quick fact key reference: ${key}`);
+    }
+  });
   const directionsBody = extractFunctionBody(html, 'updateDirectionsButton');
   if (!/aria-disabled/i.test(directionsBody)) {
     failures.push('updateDirectionsButton() does not expose disabled state logic.');
@@ -131,7 +142,7 @@ async function runRemoteChecks() {
       }
     });
 
-    ['routesGrid', 'trailNamesGrid', 'parkingAccessGrid', 'difficultyMetricsGrid', 'riskPrepGrid', 'monthlyWeatherPanel', 'monthlyWeatherMonthSelect', 'panelReaderModal', 'panelReaderContent'].forEach((id) => {
+    ['routesGrid', 'relatedTrailsGrid', 'parkingAccessGrid', 'difficultyMetricsGrid', 'riskPrepGrid', 'monthlyWeatherPanel', 'monthlyWeatherMonthSelect', 'panelReaderModal', 'panelReaderContent'].forEach((id) => {
       if (!new RegExp(`id=["']${id}["']`, 'i').test(body)) {
         failures.push(`${url}: missing required panel/grid #${id}`);
       }
