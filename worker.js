@@ -1753,10 +1753,20 @@ export default {
       let output = stripClientNavScripts(html);
       if (navHtml) {
         const markedNav = markNavActive(navHtml, pathname);
-        output = output.replace(/<div id="nav-placeholder"><\/div>/i, markedNav);
+        const navPlaceholderPattern = /<div\b[^>]*id=["']nav-placeholder["'][^>]*>[\s\S]*?<\/div>/i;
+        if (navPlaceholderPattern.test(output)) {
+          output = output.replace(navPlaceholderPattern, markedNav);
+        } else {
+          output = output.replace(/<body([^>]*)>/i, (match, attrs) => `<body${attrs}>\n${markedNav}`);
+        }
       }
       if (footerHtml) {
-        output = output.replace(/<div id="footer-placeholder"><\/div>/i, footerHtml);
+        const footerPlaceholderPattern = /<div\b[^>]*id=["']footer-placeholder["'][^>]*>[\s\S]*?<\/div>/i;
+        if (footerPlaceholderPattern.test(output)) {
+          output = output.replace(footerPlaceholderPattern, footerHtml);
+        } else {
+          output = output.replace(/<\/body>/i, `${footerHtml}\n</body>`);
+        }
       }
       if (routeId) {
         output = output.replace(/<body([^>]*)>/i, (match, attrs) => {
@@ -2807,7 +2817,6 @@ export default {
       const riskEntry = seoContext?.riskEntry || null;
       const weatherSnapshot = seoContext?.weatherSnapshot || null;
       const imageObjects = (Array.isArray(photos) ? photos : [])
-        .slice(0, 10)
         .map((photo) => {
           if (!photo || !photo.url) return null;
           const isFineArt = !!photo.isFineArt;
@@ -4721,7 +4730,12 @@ export default {
       globalSchemaNodes
     );
 
-    if (routeKeyword === 'peak') {
+    const prerenderDebugMode = routeKeyword === 'peak'
+      && ['1', 'true', 'prerender'].includes(
+        String(url.searchParams.get('debug_prerender') || url.searchParams.get('render') || '').toLowerCase()
+      );
+
+    if (prerenderDebugMode) {
       const prerenderedResponse = await servePrerenderedPeakHtml(slug, isFrench, {
         prependBodyHtml: peakAlertHtml,
         jsonLdBlocks: alertSchema ? [alertSchema] : []
@@ -4734,6 +4748,15 @@ export default {
     // Fetch the raw interactive HTML template from GitHub
     const tplResp = await fetch(RAW_TEMPLATE_URL, NO_CACHE_FETCH);
     if (!tplResp.ok) {
+      if (routeKeyword === 'peak') {
+        const prerenderedFallback = await servePrerenderedPeakHtml(slug, isFrench, {
+          prependBodyHtml: peakAlertHtml,
+          jsonLdBlocks: alertSchema ? [alertSchema] : []
+        });
+        if (prerenderedFallback) {
+          return prerenderedFallback;
+        }
+      }
       return new Response('Template unavailable', { status: 500 });
     }
     let html = await tplResp.text();

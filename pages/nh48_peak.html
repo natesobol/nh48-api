@@ -127,6 +127,7 @@
       window.NH48_ROUTE_INFO = routeInfo;
     </script>
     <script type="module" src="/js/i18n.js"></script>
+    <link rel="stylesheet" href="/css/peak-detail.css">
     <!--
       Standalone details view for a single NH48 peak with robust error handling.
       This version adds:
@@ -1359,6 +1360,31 @@
         };
       })();
     </script>
+    <div id="nav-placeholder" class="no-print"></div>
+    <script>
+      async function hydrateShellPartials(){
+        const inject = async (placeholderId, partialUrl) => {
+          const target = document.getElementById(placeholderId);
+          if(!target || target.innerHTML.trim()) return;
+          try{
+            const res = await fetch(partialUrl, { cache: 'no-store' });
+            if(!res.ok) return;
+            target.innerHTML = await res.text();
+          }catch(_err){
+            // Local fallback only; worker injects these in production.
+          }
+        };
+        await Promise.all([
+          inject('nav-placeholder', '/pages/nav.html'),
+          inject('footer-placeholder', '/pages/footer.html')
+        ]);
+      }
+      if(document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', hydrateShellPartials, { once: true });
+      }else{
+        hydrateShellPartials();
+      }
+    </script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const printBtn = document.getElementById('printBtn');
@@ -1393,6 +1419,7 @@
       <header id="peakHero" class="peak-hero no-print" aria-label="Peak banner">
         <div class="peak-hero-content">
           <h1 id="peakHeroTitle" class="peak-hero-title" data-i18n="peak.loading">Loading…</h1>
+          <p id="peakHeroSubtitle" class="peak-hero-subtitle">White Mountains peak guide</p>
           <div class="peak-hero-meta" aria-label="Peak key details">
             <span id="peakHeroProminence">—</span>
             <span id="peakHeroRange">—</span>
@@ -1400,6 +1427,10 @@
         </div>
         <div class="peak-tools" aria-label="Peak tools">
           <div class="button-row">
+            <a id="getDirectionsBtn" class="icon-btn icon-btn-link no-print" href="#" target="_blank" rel="noopener" aria-label="Get directions">
+              <span class="iconify" data-icon="mdi:directions" aria-hidden="true"></span>
+              <span class="sr-only">Get directions</span>
+            </a>
             <button id="printBtn" class="icon-btn no-print" data-i18n="common.print" data-i18n-attr="aria-label" aria-label="Print">
               <span class="iconify" data-icon="mdi:printer" aria-hidden="true"></span>
               <span class="sr-only" data-i18n="common.print">Print</span>
@@ -1485,6 +1516,21 @@
       <section aria-labelledby="trailNamesHeading" class="no-print">
         <h2 id="trailNamesHeading" class="section-title" data-i18n="peak.section.trails">Associated Trails</h2>
         <div class="info-grid" id="trailNamesGrid" hidden></div>
+      </section>
+
+      <section aria-labelledby="parkingAccessHeading" class="no-print" id="parkingAccessPanel" hidden>
+        <h2 id="parkingAccessHeading" class="section-title">Parking &amp; Access</h2>
+        <div class="info-grid" id="parkingAccessGrid"></div>
+      </section>
+
+      <section aria-labelledby="difficultyMetricsHeading" class="no-print" id="difficultyMetricsPanel" hidden>
+        <h2 id="difficultyMetricsHeading" class="section-title">Difficulty Metrics</h2>
+        <div class="info-grid" id="difficultyMetricsGrid"></div>
+      </section>
+
+      <section aria-labelledby="riskPrepHeading" class="no-print" id="riskPrepPanel" hidden>
+        <h2 id="riskPrepHeading" class="section-title">Risk &amp; Preparation</h2>
+        <div class="info-grid" id="riskPrepGrid"></div>
       </section>
 
       <section aria-labelledby="terrainHeading" class="no-print">
@@ -1574,6 +1620,31 @@
         '/data/peak-experiences.en.json',
         `https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/peak-experiences.en.json${CDN_CACHE_BUST}`,
         `https://raw.githubusercontent.com/natesobol/nh48-api/main/data/peak-experiences.en.json${CDN_CACHE_BUST}`
+      ];
+      const PARKING_DATA_URLS = [
+        '/data/parking-data.json',
+        `https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/parking-data.json${CDN_CACHE_BUST}`,
+        `https://raw.githubusercontent.com/natesobol/nh48-api/main/data/parking-data.json${CDN_CACHE_BUST}`
+      ];
+      const PEAK_DIFFICULTY_URLS = [
+        '/data/peak-difficulty.json',
+        `https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/peak-difficulty.json${CDN_CACHE_BUST}`,
+        `https://raw.githubusercontent.com/natesobol/nh48-api/main/data/peak-difficulty.json${CDN_CACHE_BUST}`
+      ];
+      const MONTHLY_WEATHER_URLS = [
+        '/data/monthly-weather.json',
+        `https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/monthly-weather.json${CDN_CACHE_BUST}`,
+        `https://raw.githubusercontent.com/natesobol/nh48-api/main/data/monthly-weather.json${CDN_CACHE_BUST}`
+      ];
+      const RISK_OVERLAY_URLS = [
+        '/data/nh48_enriched_overlay.json',
+        `https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48_enriched_overlay.json${CDN_CACHE_BUST}`,
+        `https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48_enriched_overlay.json${CDN_CACHE_BUST}`
+      ];
+      const CURRENT_CONDITIONS_URLS = [
+        '/data/current-conditions.json',
+        `https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/current-conditions.json${CDN_CACHE_BUST}`,
+        `https://raw.githubusercontent.com/natesobol/nh48-api/main/data/current-conditions.json${CDN_CACHE_BUST}`
       ];
       const MAP_RADIUS_MILES = 2.5;
 
@@ -1724,15 +1795,22 @@
         const promEl = document.getElementById('peakHeroProminence');
         const rangeEl = document.getElementById('peakHeroRange');
         const elevEl = document.getElementById('peakToolsElevation');
+        const subtitleEl = document.getElementById('peakHeroSubtitle');
         if(!promEl || !rangeEl || !elevEl || !peak) return;
         const prominence = formatFeetValue(peak['Prominence (ft)']);
         const range = safeText(peak['Range / Subrange']) || '—';
         const elevationLabel = t('peak.generalInfo.elevation');
         const prominenceLabel = t('peak.generalInfo.prominence');
         const rangeLabel = t('peak.generalInfo.range');
+        const difficulty = translateDifficulty(peak['Difficulty']) || '';
+        const completion = safeText(peak['Typical Completion Time']) || '';
         promEl.textContent = `${prominenceLabel}: ${prominence}`;
         rangeEl.textContent = `${rangeLabel}: ${range}`;
         elevEl.textContent = `${elevationLabel}: ${formatFeetValue(peak['Elevation (ft)'])}`;
+        if(subtitleEl){
+          const pieces = [range, difficulty, completion].filter(Boolean);
+          subtitleEl.textContent = pieces.join(' - ') || 'White Mountains peak guide';
+        }
       }
 
       function parseCoordinates(coordStr){
@@ -2146,6 +2224,36 @@
         return { text: `${name} in the White Mountains`, lang: lang === 'fr' ? 'en' : (lang || 'en') };
       }
 
+      function buildPhotoTitleText(name, photo){
+        const preferred = pickPhotoLocalizedText(photo, [
+          'headline',
+          'title',
+          'caption',
+          'altText',
+          'alt',
+          'description',
+          'extendedDescription',
+        ]);
+        const altInfo = buildPhotoAltText(name, photo);
+        let text = cleanAltValue(preferred && preferred.text ? preferred.text : '');
+        if(!text){
+          text = cleanAltValue(altInfo && altInfo.text ? altInfo.text : '');
+        }
+        if(!text || /^(image|photo|untitled)$/i.test(text)){
+          text = `${name} summit photo`;
+        }
+        if(cleanAltValue(name).toLowerCase() === cleanAltValue(text).toLowerCase()){
+          text = `${name} summit photo`;
+        }
+        if(text.length > 220){
+          text = `${text.slice(0, 217).trim()}...`;
+        }
+        return {
+          text,
+          lang: (preferred && preferred.lang) || (altInfo && altInfo.lang) || (getSeoLang() === 'fr' ? 'fr' : 'en')
+        };
+      }
+
       function buildPhotoExtendedDescription(photo){
         return (
           pickPhotoLocalizedText(photo, [
@@ -2456,6 +2564,34 @@
           } : null,
           ...(p ? buildPeakAdditionalProperties(p) : [])
         ].filter(Boolean);
+        const addAdditionalProperty = (propName, propValue) => {
+          const text = normalizePeakValue(propValue);
+          if(!text) return;
+          additionalProperty.push({ '@type': 'PropertyValue', name: propName, value: text });
+        };
+        const viewModel = peakViewModel && typeof peakViewModel === 'object' ? peakViewModel : null;
+        const viewDifficulty = viewModel && viewModel.difficulty ? viewModel.difficulty : null;
+        const viewRisk = viewModel && viewModel.risk ? viewModel.risk : null;
+        const viewMonthWeather = viewModel && viewModel.monthWeather ? viewModel.monthWeather : null;
+
+        if(Number.isFinite(Number(viewDifficulty && viewDifficulty.technicalDifficulty))){
+          addAdditionalProperty('Technical Difficulty (1-10)', Number(viewDifficulty.technicalDifficulty));
+        }
+        if(Number.isFinite(Number(viewDifficulty && viewDifficulty.physicalEffort))){
+          addAdditionalProperty('Physical Effort (1-10)', Number(viewDifficulty.physicalEffort));
+        }
+        if(Array.isArray(viewRisk && viewRisk.risk_factors) && viewRisk.risk_factors.length){
+          addAdditionalProperty('Risk Factors', viewRisk.risk_factors.join(', '));
+        }
+        if(safeText(viewRisk && viewRisk.prep_notes)){
+          addAdditionalProperty('Preparation Notes', safeText(viewRisk.prep_notes));
+        }
+        if(Number.isFinite(Number(viewMonthWeather && viewMonthWeather.avgWindMph))){
+          addAdditionalProperty('Current Wind Speed (mph)', Number(viewMonthWeather.avgWindMph));
+        }
+        if(Number.isFinite(Number(viewMonthWeather && viewMonthWeather.avgTempF))){
+          addAdditionalProperty('Current Temperature (F)', Number(viewMonthWeather.avgTempF));
+        }
 
         const photoMetaList = Array.isArray(photoList) ? photoList : [];
         const galleryObjects = photoMetaList.map((photo, index) => {
@@ -2500,8 +2636,7 @@
           associatedMedia: galleryObjects.map((image) => ({ '@id': image['@id'] }))
         } : null;
 
-        const schema = {
-          '@context': 'https://schema.org',
+        const mountain = {
           '@type': 'Mountain',
           '@id': `${canonicalUrl}#mountain`,
           name,
@@ -2520,23 +2655,96 @@
           } : undefined,
           containedInPlace: range ? { '@type': 'Place', name: 'White Mountain National Forest' } : undefined,
           containsPlace: (() => {
-            const trailhead = safeText(p['Most Common Trailhead']);
-            const parking = safeText(p['Parking Notes']);
-            if(!trailhead && !parking) return undefined;
-            const place = { '@type': 'Place' };
+            const parkingModel = viewModel && viewModel.parking ? viewModel.parking : null;
+            const trailhead = safeText(parkingModel && parkingModel.trailheadName) || safeText(p['Most Common Trailhead']);
+            const parking = safeText(parkingModel && parkingModel.notes) || safeText(p['Parking Notes']);
+            const parkingLat = Number.isFinite(Number(parkingModel && parkingModel.parkingLat))
+              ? Number(parkingModel.parkingLat)
+              : null;
+            const parkingLng = Number.isFinite(Number(parkingModel && parkingModel.parkingLng))
+              ? Number(parkingModel.parkingLng)
+              : null;
+            const parkingCapacity = Number.isFinite(Number(parkingModel && parkingModel.capacity))
+              ? Number(parkingModel.capacity)
+              : null;
+            const parkingFullBy = safeText(parkingModel && parkingModel.fullBy);
+            if(
+              !trailhead &&
+              !parking &&
+              parkingLat === null &&
+              parkingLng === null &&
+              parkingCapacity === null &&
+              !parkingFullBy
+            ){
+              return undefined;
+            }
+            const place = {
+              '@type': (parkingLat !== null && parkingLng !== null) || parkingCapacity !== null || parkingFullBy
+                ? 'ParkingFacility'
+                : 'Place'
+            };
             if(trailhead) place.name = trailhead;
             if(parking) place.description = parking;
+            if(parkingLat !== null && parkingLng !== null){
+              place.geo = {
+                '@type': 'GeoCoordinates',
+                latitude: parkingLat,
+                longitude: parkingLng
+              };
+            }
+            if(parkingCapacity !== null){
+              place.maximumAttendeeCapacity = parkingCapacity;
+            }
+            if(parkingFullBy){
+              place.additionalProperty = [
+                { '@type': 'PropertyValue', name: 'Full By', value: parkingFullBy }
+              ];
+            }
             return place;
           })(),
           additionalProperty: additionalProperty.length ? additionalProperty : undefined,
           subjectOf: imageGallery ? [imageGallery] : undefined
         };
 
-        Object.keys(schema).forEach(key => {
-          if(schema[key] === undefined){
-            delete schema[key];
+        Object.keys(mountain).forEach(key => {
+          if(mountain[key] === undefined){
+            delete mountain[key];
           }
         });
+
+        const trailNameList = Array.isArray(p && p['Trail Names']) ? p['Trail Names'] : [];
+        const hikingTrail = {
+          '@type': 'HikingTrail',
+          '@id': `${canonicalUrl}#hiking-trail`,
+          name: trailNameList.length ? trailNameList.join(' / ') : `${name} hiking trail`,
+          description: descriptionText,
+          url: canonicalUrl,
+          trailType: trailType || undefined,
+          isPartOf: { '@id': `${canonicalUrl}#mountain` },
+          additionalProperty: [
+            trailType ? { '@type': 'PropertyValue', name: 'Trail Type', value: trailType } : null,
+            normalizePeakValue(p && p['Typical Completion Time']) ? {
+              '@type': 'PropertyValue',
+              name: 'Typical Completion Time',
+              value: normalizePeakValue(p['Typical Completion Time'])
+            } : null,
+            normalizePeakValue(p && p['Dog Friendly']) ? {
+              '@type': 'PropertyValue',
+              name: 'Dog Friendly',
+              value: normalizePeakValue(p['Dog Friendly'])
+            } : null
+          ].filter(Boolean)
+        };
+        Object.keys(hikingTrail).forEach(key => {
+          if(hikingTrail[key] === undefined){
+            delete hikingTrail[key];
+          }
+        });
+
+        const schema = {
+          '@context': 'https://schema.org',
+          '@graph': [mountain, hikingTrail]
+        };
 
         let ld = document.getElementById('peakJsonLd');
         if(!ld){
@@ -2663,6 +2871,133 @@
         return peakExperienceMap;
       }
 
+      async function fetchJsonFromUrls(urls, fallbackValue) {
+        for (const url of urls) {
+          try {
+            const response = await fetch(url, { mode: 'cors' });
+            if (!response.ok) {
+              continue;
+            }
+            const text = await response.text();
+            const payload = JSON.parse(cleanJSON(text));
+            if (payload !== undefined && payload !== null) {
+              return payload;
+            }
+          } catch (err) {
+            console.warn('Failed to fetch JSON from', url, err);
+          }
+        }
+        return fallbackValue;
+      }
+
+      function buildParkingLookup(payload){
+        const lookup = {};
+        if (!Array.isArray(payload)) return lookup;
+        payload.forEach((entry) => {
+          if (!entry || typeof entry !== 'object') return;
+          const slug = safeText(entry.slug).trim().toLowerCase();
+          if (!slug) return;
+          lookup[slug] = entry;
+        });
+        return lookup;
+      }
+
+      function buildRiskOverlayLookup(payload){
+        if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+          return {};
+        }
+        const lookup = {};
+        Object.entries(payload).forEach(([key, value]) => {
+          const slug = safeText((value && value.slug) || key).trim().toLowerCase();
+          if (!slug || !value || typeof value !== 'object') return;
+          lookup[slug] = value;
+        });
+        return lookup;
+      }
+
+      function getCurrentMonthWeather(monthlyWeather){
+        if (!monthlyWeather || typeof monthlyWeather !== 'object') return null;
+        const monthName = new Date().toLocaleString('en-US', { month: 'long', timeZone: 'America/New_York' });
+        return monthlyWeather[monthName] || null;
+      }
+
+      function toSlugSafe(value){
+        return safeText(value).trim().toLowerCase();
+      }
+
+      function extractPeakAdvisories(payload, peak){
+        if (!payload || typeof payload !== 'object') return [];
+        const advisories = Array.isArray(payload.advisories) ? payload.advisories : [];
+        const slug = toSlugSafe(currentSlug || peak?.slug || peak?.Slug || peak?.slug_en);
+        const peakId = String(peak?.id || peak?.peakId || '').trim();
+        return advisories.filter((advisory) => {
+          if (!advisory || typeof advisory !== 'object') return false;
+          const advisorySlug = toSlugSafe(advisory.peakSlug || advisory.slug);
+          if (advisorySlug && slug && advisorySlug === slug) return true;
+          if (Array.isArray(advisory.affectedPeaks)) {
+            const affected = advisory.affectedPeaks.map((value) => toSlugSafe(value));
+            if (slug && affected.includes(slug)) return true;
+            if (peakId && affected.includes(toSlugSafe(peakId))) return true;
+          }
+          if (Array.isArray(advisory.peakIds) && peakId) {
+            return advisory.peakIds.map((value) => String(value)).includes(peakId);
+          }
+          return false;
+        });
+      }
+
+      function buildGoogleMapsDirectionsUrl(peak, parking){
+        if (parking && safeText(parking.sourceUrl)) {
+          return safeText(parking.sourceUrl);
+        }
+        const lat = parking && Number.isFinite(Number(parking.parkingLat)) ? Number(parking.parkingLat) : null;
+        const lng = parking && Number.isFinite(Number(parking.parkingLng)) ? Number(parking.parkingLng) : null;
+        if (lat !== null && lng !== null) {
+          return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+        }
+        const coords = parseCoordinates(peak && peak['Coordinates']);
+        if (coords) {
+          return `https://www.google.com/maps/search/?api=1&query=${coords.lat},${coords.lon}`;
+        }
+        return 'https://maps.google.com/';
+      }
+
+      function buildPeakViewModel(peak, slug){
+        const normalizedSlug = toSlugSafe(slug || peak?.slug || peak?.Slug || peak?.slug_en);
+        const parking = parkingLookupBySlug?.[normalizedSlug] || null;
+        const difficulty = peakDifficultyLookupBySlug?.[normalizedSlug] || null;
+        const risk = riskOverlayLookupBySlug?.[normalizedSlug] || null;
+        const monthWeather = getCurrentMonthWeather(monthlyWeatherLookup);
+        const advisories = extractPeakAdvisories(currentConditionsData, peak);
+        return {
+          slug: normalizedSlug,
+          peak,
+          parking,
+          difficulty,
+          risk,
+          monthWeather,
+          advisories,
+          directionsUrl: buildGoogleMapsDirectionsUrl(peak, parking)
+        };
+      }
+
+      async function fetchPeakEnrichmentData(){
+        const [parkingPayload, difficultyPayload, monthlyPayload, riskPayload, currentConditionsPayload] = await Promise.all([
+          fetchJsonFromUrls(PARKING_DATA_URLS, []),
+          fetchJsonFromUrls(PEAK_DIFFICULTY_URLS, {}),
+          fetchJsonFromUrls(MONTHLY_WEATHER_URLS, {}),
+          fetchJsonFromUrls(RISK_OVERLAY_URLS, {}),
+          fetchJsonFromUrls(CURRENT_CONDITIONS_URLS, {})
+        ]);
+        parkingLookupBySlug = buildParkingLookup(parkingPayload);
+        peakDifficultyLookupBySlug = difficultyPayload && typeof difficultyPayload === 'object' ? difficultyPayload : {};
+        monthlyWeatherLookup = monthlyPayload && typeof monthlyPayload === 'object' ? monthlyPayload : {};
+        riskOverlayLookupBySlug = buildRiskOverlayLookup(riskPayload);
+        currentConditionsData = currentConditionsPayload && typeof currentConditionsPayload === 'object'
+          ? currentConditionsPayload
+          : {};
+      }
+
       function renderTrailTestedNotes(peak, slug){
         const panel = document.getElementById('trailTestedNotesPanel');
         const grid = document.getElementById('trailTestedNotesGrid');
@@ -2673,12 +3008,6 @@
         }
 
         const langCode = getSeoLang();
-        if(langCode !== 'en'){
-          panel.hidden = true;
-          grid.innerHTML = '';
-          reviewed.hidden = true;
-          return;
-        }
 
         const fromPeak = peak && peak.experience && typeof peak.experience === 'object' ? peak.experience : null;
         const fromMap = peakExperienceMap && slug ? peakExperienceMap[slug] : null;
@@ -2693,18 +3022,30 @@
         const summary = safeText(experience.experienceSummary);
         const conditions = safeText(experience.conditionsFromExperience);
         const planningTip = safeText(experience.planningTip);
+        const historyNotes = safeText(experience.historyNotes || experience.history_notes || experience.history);
+        const firstAscent = safeText(experience.firstAscent || experience.first_ascent);
         const lastReviewed = safeText(experience.lastReviewed);
         const cards = [];
 
-        heading.textContent = 'Trail-tested notes';
+        heading.textContent = langCode === 'fr' ? 'Notes de terrain et histoire' : 'Trail-tested notes';
         if(summary){
-          cards.push(`<article class=\"experience-note\"><h3>Experience summary</h3><p>${escapeHtml(summary)}</p></article>`);
+          cards.push(`<article class=\"experience-note\"><h3>${langCode === 'fr' ? 'Retour terrain' : 'Experience summary'}</h3><p>${escapeHtml(summary)}</p></article>`);
         }
         if(conditions){
-          cards.push(`<article class=\"experience-note\"><h3>Conditions from experience</h3><p>${escapeHtml(conditions)}</p></article>`);
+          cards.push(`<article class=\"experience-note\"><h3>${langCode === 'fr' ? 'Conditions observées' : 'Conditions from experience'}</h3><p>${escapeHtml(conditions)}</p></article>`);
         }
         if(planningTip){
-          cards.push(`<article class=\"experience-note\"><h3>Planning tip</h3><p>${escapeHtml(planningTip)}</p></article>`);
+          cards.push(`<article class=\"experience-note\"><h3>${langCode === 'fr' ? 'Conseil de planification' : 'Planning tip'}</h3><p>${escapeHtml(planningTip)}</p></article>`);
+        }
+        if(historyNotes || firstAscent){
+          const lines = [];
+          if(firstAscent){
+            lines.push(`${langCode === 'fr' ? 'Première ascension' : 'First ascent'}: ${firstAscent}`);
+          }
+          if(historyNotes){
+            lines.push(historyNotes);
+          }
+          cards.push(`<article class=\"experience-note\"><h3>${langCode === 'fr' ? 'Histoire du sommet' : 'Peak history'}</h3><p>${escapeHtml(lines.join(' '))}</p></article>`);
         }
 
         if(!cards.length){
@@ -2716,7 +3057,9 @@
 
         grid.innerHTML = cards.join('');
         if(lastReviewed){
-          reviewed.textContent = `Last reviewed: ${lastReviewed}`;
+          reviewed.textContent = langCode === 'fr'
+            ? `Dernière révision : ${lastReviewed}`
+            : `Last reviewed: ${lastReviewed}`;
           reviewed.hidden = false;
         }else{
           reviewed.hidden = true;
@@ -2740,6 +3083,12 @@
       let currentPrimaryMeta = null;
       let currentPrimaryPhoto = null;
       let peakExperienceMap = null;
+      let peakViewModel = null;
+      let parkingLookupBySlug = {};
+      let peakDifficultyLookupBySlug = {};
+      let monthlyWeatherLookup = {};
+      let riskOverlayLookupBySlug = {};
+      let currentConditionsData = {};
       let metadataExpanded = false;
       const metadataMobileQuery = window.matchMedia('(max-width: 720px)');
       let isCarouselPaused = false;
@@ -3311,12 +3660,19 @@
 
       function renderRoutes(routes){
         const routesGrid = document.getElementById('routesGrid');
+        const routesHeading = document.getElementById('routesHeading');
         if(!routesGrid) return;
         routesGrid.innerHTML = '';
         if(!Array.isArray(routes) || routes.length === 0){
           routesGrid.hidden = true;
+          if(routesHeading){
+            routesHeading.textContent = `${translateWithFallback('peak.section.routes', 'Standard Routes')} (0)`;
+          }
           trackEvent('peak_routes_empty', { slug: currentSlug });
           return;
+        }
+        if(routesHeading){
+          routesHeading.textContent = `${translateWithFallback('peak.section.routes', 'Standard Routes')} (${routes.length})`;
         }
         routes.forEach(r => {
           const div = document.createElement('div');
@@ -3439,6 +3795,220 @@
         panel.appendChild(list);
         relatedGrid.appendChild(panel);
         relatedGrid.hidden = false;
+      }
+
+      function renderTrailNames(trailNames = []){
+        const grid = document.getElementById('trailNamesGrid');
+        const heading = document.getElementById('trailNamesHeading');
+        if(!grid) return;
+        grid.innerHTML = '';
+        const names = Array.from(new Set((Array.isArray(trailNames) ? trailNames : [])
+          .map(name => safeText(name).trim())
+          .filter(Boolean)))
+          .sort((a, b) => a.localeCompare(b));
+
+        if(heading){
+          heading.textContent = `${translateWithFallback('peak.section.trails', 'Associated Trails')} (${names.length})`;
+        }
+
+        if(!names.length){
+          grid.hidden = true;
+          trackEvent('peak_trail_names_empty', { slug: currentSlug });
+          return;
+        }
+
+        names.forEach((name) => {
+          const panel = document.createElement('div');
+          panel.className = 'info-panel';
+          panel.innerHTML = `
+            <div class="info-label">${escapeHtml(name)}</div>
+            <div class="info-value">
+              <a href="/trails?trail=${encodeURIComponent(name)}" target="_blank" rel="noopener">
+                ${escapeHtml(translateWithFallback('peak.relatedTrails.link', `${name} route`, { name }))}
+              </a>
+            </div>
+          `;
+          grid.appendChild(panel);
+        });
+        grid.hidden = false;
+        trackEvent('peak_trail_names_rendered', { slug: currentSlug, count: names.length });
+      }
+
+      function buildDetailRows(items){
+        return items
+          .filter(item => item && safeText(item.value).trim())
+          .map(item => makeRow(item.label, safeText(item.value).trim()));
+      }
+
+      function updateDirectionsButton(viewModel){
+        const btn = document.getElementById('getDirectionsBtn');
+        if(!btn) return;
+        const langCode = getSeoLang();
+        const label = langCode === 'fr' ? "Obtenir l'itineraire" : 'Get directions';
+        btn.setAttribute('href', viewModel && viewModel.directionsUrl ? viewModel.directionsUrl : 'https://maps.google.com/');
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('title', label);
+        const sr = btn.querySelector('.sr-only');
+        if(sr){
+          sr.textContent = label;
+        }
+      }
+
+      function renderParkingAndAccess(viewModel){
+        const section = document.getElementById('parkingAccessPanel');
+        const grid = document.getElementById('parkingAccessGrid');
+        const heading = document.getElementById('parkingAccessHeading');
+        if(!section || !grid || !heading) return;
+        const langCode = getSeoLang();
+        heading.textContent = langCode === 'fr' ? 'Stationnement et accès' : 'Parking & Access';
+        grid.innerHTML = '';
+
+        const parking = viewModel && viewModel.parking;
+        const peak = viewModel && viewModel.peak;
+        if(!parking && !peak){
+          section.hidden = true;
+          return;
+        }
+
+        const panel = document.createElement('article');
+        panel.className = 'info-panel detail-panel';
+        const title = document.createElement('div');
+        title.className = 'info-label';
+        title.textContent = safeText(parking && parking.trailheadName)
+          || safeText(peak && peak['Most Common Trailhead'])
+          || (langCode === 'fr' ? 'Informations de stationnement' : 'Parking details');
+        panel.appendChild(title);
+
+        const rowsWrap = document.createElement('div');
+        rowsWrap.className = 'metadata-primary';
+        buildDetailRows([
+          {
+            label: langCode === 'fr' ? 'Stationnement' : 'Trailhead parking',
+            value: (parking && parking.notes) || (peak && peak['Parking Notes'])
+          },
+          {
+            label: langCode === 'fr' ? 'Capacité' : 'Capacity',
+            value: Number.isFinite(Number(parking && parking.capacity))
+              ? `${Number(parking.capacity)} ${safeText(parking.capacityUnits) || 'vehicles'}${parking.capacityIsEstimate ? ' (est.)' : ''}`
+              : ''
+          },
+          {
+            label: langCode === 'fr' ? 'Habituellement complet vers' : 'Typically full by',
+            value: safeText(parking && parking.fullBy)
+          },
+          {
+            label: langCode === 'fr' ? 'Vérifié le' : 'Last verified',
+            value: safeText(parking && parking.lastVerified)
+          }
+        ]).forEach((row) => rowsWrap.appendChild(row));
+        panel.appendChild(rowsWrap);
+
+        const cta = document.createElement('div');
+        cta.className = 'detail-panel-cta';
+        cta.innerHTML = `<a class="primary-link-btn" href="${escapeHtml(viewModel && viewModel.directionsUrl ? viewModel.directionsUrl : 'https://maps.google.com/')}" target="_blank" rel="noopener">${escapeHtml(langCode === 'fr' ? "Obtenir l'itineraire (Google Maps)" : 'Get Directions (Google Maps)')}</a>`;
+        panel.appendChild(cta);
+
+        grid.appendChild(panel);
+        section.hidden = false;
+      }
+
+      function renderDifficultyMetrics(viewModel){
+        const section = document.getElementById('difficultyMetricsPanel');
+        const grid = document.getElementById('difficultyMetricsGrid');
+        const heading = document.getElementById('difficultyMetricsHeading');
+        if(!section || !grid || !heading) return;
+        const langCode = getSeoLang();
+        heading.textContent = langCode === 'fr' ? 'Mesures de difficulté' : 'Difficulty Metrics';
+        grid.innerHTML = '';
+
+        const difficulty = viewModel && viewModel.difficulty;
+        const peak = viewModel && viewModel.peak;
+        const rows = buildDetailRows([
+          {
+            label: langCode === 'fr' ? 'Difficulté technique (1-10)' : 'Technical difficulty (1-10)',
+            value: Number.isFinite(Number(difficulty && difficulty.technicalDifficulty))
+              ? String(difficulty.technicalDifficulty)
+              : ''
+          },
+          {
+            label: langCode === 'fr' ? 'Effort physique (1-10)' : 'Physical effort (1-10)',
+            value: Number.isFinite(Number(difficulty && difficulty.physicalEffort))
+              ? String(difficulty.physicalEffort)
+              : ''
+          },
+          {
+            label: langCode === 'fr' ? 'Niveau de difficulté' : 'Difficulty class',
+            value: translateDifficulty(peak && peak['Difficulty'])
+          },
+          {
+            label: langCode === 'fr' ? 'Temps typique' : 'Typical completion time',
+            value: safeText(peak && peak['Typical Completion Time'])
+          }
+        ]);
+        if(!rows.length){
+          section.hidden = true;
+          return;
+        }
+        const panel = document.createElement('article');
+        panel.className = 'info-panel detail-panel';
+        rows.forEach((row) => panel.appendChild(row));
+        grid.appendChild(panel);
+        section.hidden = false;
+      }
+
+      function renderRiskAndPreparation(viewModel){
+        const section = document.getElementById('riskPrepPanel');
+        const grid = document.getElementById('riskPrepGrid');
+        const heading = document.getElementById('riskPrepHeading');
+        if(!section || !grid || !heading) return;
+        const langCode = getSeoLang();
+        heading.textContent = langCode === 'fr' ? 'Risque et préparation' : 'Risk & Preparation';
+        grid.innerHTML = '';
+
+        const risk = viewModel && viewModel.risk;
+        const weather = viewModel && viewModel.monthWeather;
+        const advisories = viewModel && Array.isArray(viewModel.advisories) ? viewModel.advisories : [];
+        const peak = viewModel && viewModel.peak;
+        const factorList = Array.isArray(risk && risk.risk_factors) ? risk.risk_factors : [];
+        const rows = buildDetailRows([
+          {
+            label: langCode === 'fr' ? 'Facteurs de risque' : 'Risk factors',
+            value: factorList.length ? factorList.join(', ') : ''
+          },
+          {
+            label: langCode === 'fr' ? 'Notes de préparation' : 'Preparation notes',
+            value: safeText(risk && risk.prep_notes)
+          },
+          {
+            label: langCode === 'fr' ? 'Distance de repli' : 'Bailout distance',
+            value: Number.isFinite(Number(risk && risk.bailout_distance_mi))
+              ? `${Number(risk.bailout_distance_mi)} mi`
+              : safeText(peak && peak['Emergency Bailout Options'])
+          },
+          {
+            label: langCode === 'fr' ? 'Exposition météo' : 'Weather exposure',
+            value: translateExposure((peak && peak['Weather Exposure Rating']) || '')
+          },
+          {
+            label: langCode === 'fr' ? 'Mois courant (moyennes)' : 'Current month averages',
+            value: weather
+              ? `${Math.round(Number(weather.avgWindMph || 0))} mph wind, ${Math.round(Number(weather.avgTempF || 0))} F`
+              : ''
+          },
+          {
+            label: langCode === 'fr' ? 'Avis en direct' : 'Live advisory',
+            value: advisories.length ? safeText(advisories[0].description || advisories[0].title) : ''
+          }
+        ]);
+        if(!rows.length){
+          section.hidden = true;
+          return;
+        }
+        const panel = document.createElement('article');
+        panel.className = 'info-panel detail-panel';
+        rows.forEach((row) => panel.appendChild(row));
+        grid.appendChild(panel);
+        section.hidden = false;
       }
 
       function getPeakMapElements(){
@@ -4003,12 +4573,19 @@
 
       function renderTerrain(p){
         const terrainGrid = document.getElementById('terrainGrid');
+        const heading = document.getElementById('terrainHeading');
         if(!terrainGrid) return;
         terrainGrid.innerHTML = '';
+        if(heading){
+          heading.textContent = getSeoLang() === 'fr' ? 'Terrain et caractere du sommet' : 'Terrain & Summit Character';
+        }
         const terrainItems = [
           { label: t('peak.terrain.terrain'), value: p['Terrain Character'] },
           { label: t('peak.terrain.scramble'), value: p['Scramble Sections'] },
-          { label: t('peak.terrain.view'), value: p['View Type'] }
+          { label: t('peak.terrain.view'), value: p['View Type'] },
+          { label: getSeoLang() === 'fr' ? 'Marqueur de sommet' : 'Summit marker', value: p['Summit Marker Type'] },
+          { label: getSeoLang() === 'fr' ? 'Flore / zone' : 'Flora / environment', value: p['Flora/Environment Zones'] },
+          { label: getSeoLang() === 'fr' ? 'Connexions 4 000 pieds' : 'Nearby 4,000-footer connections', value: p['Nearby 4000-footer Connections'] }
         ].filter(x => x.value);
 
         if(terrainItems.length === 0){
@@ -4029,8 +4606,13 @@
 
       function renderConditions(p){
         const conditionsGrid = document.getElementById('conditionsGrid');
+        const heading = document.getElementById('conditionsHeading');
         if(!conditionsGrid) return;
         conditionsGrid.innerHTML = '';
+        if(heading){
+          heading.textContent = getSeoLang() === 'fr' ? 'Conditions et exposition' : 'Conditions & Exposure';
+        }
+        const monthWeather = peakViewModel && peakViewModel.monthWeather;
         const conditionItems = [
           { label: t('peak.conditions.bestSeasons'), value: p['Best Seasons to Hike'] },
           { label: t('peak.conditions.waterAvailability'), value: p['Water Availability'] },
@@ -4038,7 +4620,13 @@
           { label: t('peak.conditions.weatherExposure'), value: translateExposure(p['Weather Exposure Rating']) },
           { label: t('peak.conditions.emergencyBailout'), value: p['Emergency Bailout Options'] },
           { label: t('peak.conditions.dogFriendly'), value: p['Dog Friendly'] },
-          { label: t('peak.conditions.nearbyFeatures'), value: p['Nearby Notable Features'] }
+          { label: t('peak.conditions.nearbyFeatures'), value: p['Nearby Notable Features'] },
+          {
+            label: getSeoLang() === 'fr' ? 'Moyennes mensuelles' : 'Monthly weather averages',
+            value: monthWeather
+              ? `${Math.round(Number(monthWeather.avgWindMph || 0))} mph wind, ${Math.round(Number(monthWeather.avgTempF || 0))} F`
+              : ''
+          }
         ].filter(x => x.value);
 
         if(conditionItems.length === 0){
@@ -4124,7 +4712,8 @@
 
         updateHreflangLinks(slug);
         updateBreadcrumbNav(name, canonicalUrl, p['Range / Subrange']);
-        setBreadcrumbJsonLd(name, canonicalUrl, p['Range / Subrange']);
+        // Worker injects the canonical BreadcrumbList JSON-LD.
+        // Keep visual breadcrumb updates client-side without adding a second graph.
 
         return { canonicalUrl, descriptionText };
       }
@@ -4159,7 +4748,11 @@
 
           const img = document.createElement('img');
           const altInfo = buildPhotoAltText(altBase, meta[i]);
+          const titleInfo = buildPhotoTitleText(altBase, meta[i]);
           img.alt = altInfo ? altInfo.text : '';
+          if(titleInfo && titleInfo.text){
+            img.title = titleInfo.text;
+          }
           if(altInfo && altInfo.lang){
             img.setAttribute('lang', altInfo.lang);
           }
@@ -4453,7 +5046,8 @@
             waitForI18NReady(),
             fetchPeaks(),
             fetchDescriptions(),
-            fetchPeakExperiences()
+            fetchPeakExperiences(),
+            fetchPeakEnrichmentData()
           ]);
           peakExperienceMap = experienceMap || {};
           
@@ -4498,6 +5092,7 @@
           }
           currentPeak = p;
           currentSlug = slug;
+          peakViewModel = buildPeakViewModel(p, slug);
 
           // Photos + per-photo metadata
           let imgs = [];
@@ -4580,6 +5175,7 @@
 
           buildPeakDescription(p);
           updateHeroBannerDetails(p);
+          updateDirectionsButton(peakViewModel);
           // Build general info panel
           buildGeneralInfo(p);
           buildPrintSummary(p, name);
@@ -4588,11 +5184,10 @@
           const trailNames = p['Trail Names'] || [];
           renderRoutes(routes);
           renderRelatedTrails(routes, trailNames);
-          const trailNamesGrid = document.getElementById('trailNamesGrid');
-          if(trailNamesGrid){
-            trailNamesGrid.hidden = true;
-            trailNamesGrid.innerHTML = '';
-          }
+          renderTrailNames(trailNames);
+          renderParkingAndAccess(peakViewModel);
+          renderDifficultyMetrics(peakViewModel);
+          renderRiskAndPreparation(peakViewModel);
           renderTerrain(p);
           renderConditions(p);
           renderTrailTestedNotes(p, slug);
@@ -4649,21 +5244,22 @@
           syncUnitsWithLanguage(lang);
           if (!currentPeak) return;
           const name = currentPeak.peakName || currentPeak['Peak Name'] || currentSlug;
+          peakViewModel = buildPeakViewModel(currentPeak, currentSlug);
           updatePeakTitle(name);
           const { canonicalUrl, descriptionText } = updateHeadMeta(currentPeak, currentSlug, name, currentPrimaryMeta);
           buildPeakDescription(currentPeak);
           updateHeroBannerDetails(currentPeak);
+          updateDirectionsButton(peakViewModel);
           buildGeneralInfo(currentPeak);
           buildPrintSummary(currentPeak, name);
           const routes = currentPeak['Standard Routes'] || [];
           const trailNames = currentPeak['Trail Names'] || [];
           renderRoutes(routes);
           renderRelatedTrails(routes, trailNames);
-          const trailNamesGrid = document.getElementById('trailNamesGrid');
-          if(trailNamesGrid){
-            trailNamesGrid.hidden = true;
-            trailNamesGrid.innerHTML = '';
-          }
+          renderTrailNames(trailNames);
+          renderParkingAndAccess(peakViewModel);
+          renderDifficultyMetrics(peakViewModel);
+          renderRiskAndPreparation(peakViewModel);
           renderTerrain(currentPeak);
           renderConditions(currentPeak);
           renderTrailTestedNotes(currentPeak, currentSlug);
@@ -4685,10 +5281,16 @@
         unitsSelect.addEventListener('change', (e) => {
           setUnits(e.target.value);
           if (!currentPeak) return;
+          peakViewModel = buildPeakViewModel(currentPeak, currentSlug);
           buildGeneralInfo(currentPeak);
           buildPrintSummary(currentPeak);
           const routes = currentPeak['Standard Routes'] || [];
+          const trailNames = currentPeak['Trail Names'] || [];
           renderRoutes(routes);
+          renderTrailNames(trailNames);
+          renderParkingAndAccess(peakViewModel);
+          renderDifficultyMetrics(peakViewModel);
+          renderRiskAndPreparation(peakViewModel);
           updateSocialCardContent(currentPeak, currentPeak.peakName || currentPeak['Peak Name'] || currentSlug, buildCanonicalUrl(currentSlug, getSeoLang()));
           trackEvent('peak_units_change', { units: e.target.value, slug: currentSlug });
         });

@@ -7,6 +7,7 @@ const ROOT = path.join(__dirname, '..');
 const PEAK_DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
 const EXPERIENCE_PATH = path.join(ROOT, 'data', 'peak-experiences.en.json');
 const PEAKS_DIR = path.join(ROOT, 'peaks');
+const PEAK_TEMPLATE_PATH = path.join(ROOT, 'pages', 'nh48_peak.html');
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -133,11 +134,43 @@ function auditPeakPage(slug) {
   return failures;
 }
 
+function auditInteractiveTemplate() {
+  const failures = [];
+  const relPath = path.relative(ROOT, PEAK_TEMPLATE_PATH);
+  if (!fs.existsSync(PEAK_TEMPLATE_PATH)) {
+    failures.push(`Missing interactive template: ${relPath}`);
+    return failures;
+  }
+
+  const html = fs.readFileSync(PEAK_TEMPLATE_PATH, 'utf8');
+  if (!/id=["']nav-placeholder["']/i.test(html)) {
+    failures.push(`${relPath}: Missing #nav-placeholder marker for worker nav injection`);
+  }
+
+  const requiredMarkers = [
+    'routesHeading',
+    'trailNamesHeading',
+    'parkingAccessHeading',
+    'difficultyMetricsHeading',
+    'riskPrepHeading',
+    'trailTestedNotesHeading'
+  ];
+
+  requiredMarkers.forEach((marker) => {
+    if (!new RegExp(`id=["']${marker}["']`, 'i').test(html)) {
+      failures.push(`${relPath}: Missing required section marker #${marker}`);
+    }
+  });
+
+  return failures;
+}
+
 function main() {
   const peakData = readJson(PEAK_DATA_PATH);
   const slugs = Object.keys(peakData || {}).sort();
   const allFailures = [];
 
+  allFailures.push(...auditInteractiveTemplate());
   allFailures.push(...auditExperienceFile(slugs));
 
   slugs.forEach((slug) => {

@@ -1,0 +1,82 @@
+:root {
+  --peak-accent: #22c55e;
+  --peak-stroke: rgba(255, 255, 255, 0.18);
+}
+
+.peak-hero-subtitle {
+  margin: 6px 0 0;
+  font-size: 0.95rem;
+  color: #dbe7f5;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+}
+
+.icon-btn-link {
+  text-decoration: none;
+}
+
+.info-panel.detail-panel {
+  border-color: rgba(34, 197, 94, 0.25);
+  background: linear-gradient(160deg, rgba(16, 26, 38, 0.95), rgba(10, 15, 24, 0.95));
+}
+
+.info-panel.detail-panel .metadata-row {
+  border-bottom-style: dotted;
+}
+
+.info-panel.detail-panel .metadata-label {
+  max-width: 48%;
+}
+
+.info-panel.detail-panel .metadata-value {
+  text-align: right;
+}
+
+.detail-panel-cta {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.primary-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 197, 94, 0.55);
+  color: #d8ffea;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.primary-link-btn:hover {
+  background: rgba(34, 197, 94, 0.2);
+}
+
+#parkingAccessPanel .section-title,
+#difficultyMetricsPanel .section-title,
+#riskPrepPanel .section-title {
+  color: #57e28d;
+}
+
+#trailNamesGrid .info-panel a {
+  color: #d5e6ff;
+  text-decoration-color: rgba(149, 197, 255, 0.6);
+}
+
+#trailNamesGrid .info-panel a:hover {
+  color: #ffffff;
+  text-decoration-color: #ffffff;
+}
+
+@media (max-width: 860px) {
+  .peak-tools .button-row {
+    justify-content: flex-start;
+  }
+
+  .detail-panel-cta {
+    justify-content: flex-start;
+  }
+}
