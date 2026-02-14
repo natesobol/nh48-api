@@ -118,13 +118,17 @@ function extractSourcePhotoBasenames(peak) {
   return names;
 }
 
-function extractImageObjectBasenames(nodes, slug) {
+function extractImageObjectBasenames(nodes, slug, sourceNames = new Set()) {
   const names = new Set();
   nodes.forEach((node) => {
     if (!getTypes(node).includes('ImageObject')) return;
     const contentUrl = node.contentUrl || node.url || '';
     const basename = normalizeUrlToBasename(contentUrl);
     if (!basename) return;
+    if (sourceNames.has(basename)) {
+      names.add(basename);
+      return;
+    }
     if (slug && !basename.toLowerCase().includes(slug.toLowerCase())) return;
     names.add(basename);
   });
@@ -260,7 +264,7 @@ async function main() {
     assertImageObjectRequirements(nodes, slug, failures);
 
     const sourceNames = extractSourcePhotoBasenames(peak);
-    const imageNames = extractImageObjectBasenames(nodes, slug);
+    const imageNames = extractImageObjectBasenames(nodes, slug, sourceNames);
     sourceNames.forEach((name) => {
       if (!imageNames.has(name)) {
         failures.push(`${slug}: missing ImageObject entry for source photo "${name}".`);
