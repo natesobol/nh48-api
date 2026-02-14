@@ -101,6 +101,7 @@ function main() {
     { file: 'pages/wiki/mountain.html', types: [], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
     { file: 'pages/wiki/plant.html', types: [], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
     { file: 'pages/wiki/animal.html', types: [], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'pages/wiki/plant-disease.html', types: [], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
     { file: 'catalog.html', types: ['BreadcrumbList'], visibleBreadcrumb: false, noBreadcrumbMicrodata: true }
   ];
 

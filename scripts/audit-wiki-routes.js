@@ -105,6 +105,7 @@ function pickSamples() {
   const nh52Data = readJson('data/wiki/wiki-nh52wav-mountains.json');
   const plants = readJson('data/wiki/plants.json');
   const animals = readJson('data/wiki/animals.json');
+  const plantDiseases = readJson('data/wiki/plant-disease.json');
 
   const nh48Entries = Object.entries(nh48Data).map(([key, entry]) => ({ ...(entry || {}), slug: entry?.slug || key }));
   const nh52Entries = Object.entries(nh52Data).map(([key, entry]) => ({ ...(entry || {}), slug: entry?.slug || key }));
@@ -112,13 +113,20 @@ function pickSamples() {
   const mountainNoPhotos = nh52Entries.find((entry) => !Array.isArray(entry.photos) || entry.photos.length === 0) || nh52Entries[0];
   const plant = Array.isArray(plants) ? plants.find((entry) => entry && entry.slug) : null;
   const animal = Array.isArray(animals) ? animals.find((entry) => entry && entry.slug) : null;
+  const diseaseEntries = Array.isArray(plantDiseases?.diseases) ? plantDiseases.diseases : [];
+  const plantDisease = diseaseEntries
+    .map((entry) => ({ ...(entry || {}), slug: String(entry?.slug || entry?.id || '').trim().toLowerCase() }))
+    .find((entry) => entry.slug);
+  const plantDiseaseHasMedia = diseaseEntries.some((entry) => hasEntryMedia(entry));
 
   return {
     mountainSets,
     mountainWithPhotos,
     mountainNoPhotos,
     plant,
-    animal
+    animal,
+    plantDisease,
+    plantDiseaseHasMedia
   };
 }
 
@@ -140,6 +148,10 @@ function runTemplateChecks(samples) {
     {
       file: 'pages/wiki/animal.html',
       mustContain: ['id="nav-placeholder"', 'id="footer-placeholder"', 'id="wikiMediaShell"', 'id="wikiFactsGrid"', 'id="wikiBehaviorGrid"', 'id="wikiSourcesList"']
+    },
+    {
+      file: 'pages/wiki/plant-disease.html',
+      mustContain: ['id="nav-placeholder"', 'id="footer-placeholder"', 'id="wikiDiseaseHierarchy"', 'id="wikiDiseaseSearch"', '{{PLANT_DISEASE_GROUPS}}']
     }
   ];
 
@@ -162,6 +174,7 @@ function runTemplateChecks(samples) {
   assert(Boolean(samples.mountainNoPhotos && samples.mountainNoPhotos.slug), 'Could not find wiki mountain sample without photos in data/wiki/wiki-nh52wav-mountains.json.', failures);
   assert(Boolean(samples.plant && samples.plant.slug), 'Could not find wiki plant sample in data/wiki/plants.json.', failures);
   assert(Boolean(samples.animal && samples.animal.slug), 'Could not find wiki animal sample in data/wiki/animals.json.', failures);
+  assert(Boolean(samples.plantDisease && samples.plantDisease.slug), 'Could not find wiki plant disease sample in data/wiki/plant-disease.json.', failures);
 
   return failures;
 }
@@ -182,7 +195,9 @@ function buildRoutes(samples) {
     mountainPhoto: `/wiki/mountains/nh48/${encodeURIComponent(samples.mountainWithPhotos.slug)}`,
     mountainNoPhoto: `/wiki/mountains/nh52wav/${encodeURIComponent(samples.mountainNoPhotos.slug)}`,
     plant: `/wiki/plants/${encodeURIComponent(samples.plant.slug)}`,
-    animal: `/wiki/animals/${encodeURIComponent(samples.animal.slug)}`
+    animal: `/wiki/animals/${encodeURIComponent(samples.animal.slug)}`,
+    plantDisease: '/wiki/plant-diseases',
+    plantDiseaseAnchor: `/wiki/plant-diseases#disease-${encodeURIComponent(samples.plantDisease.slug)}`
   };
 }
 
@@ -193,7 +208,7 @@ async function runUrlChecks(samples) {
   const landingUrl = new URL(routes.landing, BASE_URL).toString();
   const landingPage = await fetchPage(landingUrl);
   assert(landingPage.status === 200, `${landingUrl}: expected HTTP 200, found ${landingPage.status}`, failures);
-  [routes.mountainPhoto, routes.mountainNoPhoto, routes.plant, routes.animal].forEach((route) => {
+  [routes.mountainPhoto, routes.mountainNoPhoto, routes.plant, routes.animal, routes.plantDiseaseAnchor].forEach((route) => {
     if (!landingPage.body.includes(`href="${route}"`)) {
       failures.push(`${landingUrl}: missing crawlable wiki link ${route}`);
     }
@@ -210,7 +225,8 @@ async function runUrlChecks(samples) {
     { route: routes.mountainPhoto, requiredType: 'Mountain', expectsImages: true },
     { route: routes.mountainNoPhoto, requiredType: 'Mountain', expectsImages: false },
     { route: routes.plant, requiredType: 'Species', expectsImages: hasEntryMedia(samples.plant) },
-    { route: routes.animal, requiredType: 'Species', expectsImages: hasEntryMedia(samples.animal) }
+    { route: routes.animal, requiredType: 'Species', expectsImages: hasEntryMedia(samples.animal) },
+    { route: routes.plantDisease, requiredType: 'CollectionPage', expectsImages: Boolean(samples.plantDiseaseHasMedia) }
   ];
 
   for (const check of routeChecks) {
@@ -233,6 +249,10 @@ async function runUrlChecks(samples) {
       assert(imageCount > 0, `${fullUrl}: expected wiki ImageObject metadata for photo-backed entry`, failures);
     } else {
       assert(imageCount === 0, `${fullUrl}: expected no wiki ImageObject metadata for no-photo entry`, failures);
+    }
+
+    if (check.route === routes.plantDisease) {
+      assert(page.body.includes(`id="disease-${samples.plantDisease.slug}"`), `${fullUrl}: expected visible disease anchor for ${samples.plantDisease.slug}`, failures);
     }
   }
 

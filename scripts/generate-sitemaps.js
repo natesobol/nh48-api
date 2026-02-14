@@ -14,6 +14,7 @@ const WIKI_NH48_PATH = path.join(ROOT, 'data', 'wiki', 'wiki-nh48-mountains.json
 const WIKI_NH52WAV_PATH = path.join(ROOT, 'data', 'wiki', 'wiki-nh52wav-mountains.json');
 const WIKI_PLANTS_PATH = path.join(ROOT, 'data', 'wiki', 'plants.json');
 const WIKI_ANIMALS_PATH = path.join(ROOT, 'data', 'wiki', 'animals.json');
+const WIKI_PLANT_DISEASES_PATH = path.join(ROOT, 'data', 'wiki', 'plant-disease.json');
 const SITEMAP_INDEX_OUTPUT = path.join(ROOT, 'sitemap.xml');
 const PAGE_SITEMAP_OUTPUT = path.join(ROOT, 'page-sitemap.xml');
 const IMAGE_SITEMAP_OUTPUT = path.join(ROOT, 'image-sitemap.xml');
@@ -71,6 +72,7 @@ const STATIC_PAGE_ENTRIES = [
   { loc: 'https://nh48.info/about', file: 'pages/about.html' },
   { loc: 'https://nh48.info/fr/about', file: 'pages/about.html' },
   { loc: 'https://nh48.info/wiki', file: 'pages/wiki/index.html' },
+  { loc: 'https://nh48.info/wiki/plant-diseases', file: 'pages/wiki/plant-disease.html' },
 ];
 const STATIC_IMAGE_ENTRIES = [
   {
@@ -462,6 +464,7 @@ const wikiNh48Data = readJsonFile(WIKI_NH48_PATH, 'wiki nh48');
 const wikiNh52wavData = readJsonFile(WIKI_NH52WAV_PATH, 'wiki nh52wav');
 const wikiPlantData = readJsonFile(WIKI_PLANTS_PATH, 'wiki plants');
 const wikiAnimalData = readJsonFile(WIKI_ANIMALS_PATH, 'wiki animals');
+const wikiPlantDiseaseData = readJsonFile(WIKI_PLANT_DISEASES_PATH, 'wiki plant diseases');
 
 // Normalize strings for web output and repair common mojibake.
 const normalizeTextForWeb = (input) => {
@@ -753,6 +756,20 @@ const collectWikiSpeciesRouteEntries = (kind, payload) => {
     .filter(Boolean);
 };
 
+const collectWikiPlantDiseaseRouteEntries = (payload) => {
+  const diseaseEntries = Array.isArray(payload?.diseases) ? payload.diseases : [];
+  const lastmod = getGitLastmod('data/wiki/plant-disease.json');
+  return diseaseEntries
+    .map((entry) => {
+      if (!entry || typeof entry !== 'object') return null;
+      const slug = normalizeWikiSlug(entry.slug || entry.id || entry.name);
+      if (!slug) return null;
+      const name = normalizeTextForWeb(entry.name || entry.scientific_name || slug);
+      return { slug, name, lastmod, entry };
+    })
+    .filter(Boolean);
+};
+
 const normalizeWikiMedia = (entry, fallbackName) => {
   const photos = [];
   const pushPhoto = (photo) => {
@@ -789,6 +806,7 @@ const longTrailSlugs = collectLongTrailSlugs();
 const wikiMountainRoutes = collectWikiMountainRouteEntries();
 const wikiPlantRoutes = collectWikiSpeciesRouteEntries('plants', wikiPlantData);
 const wikiAnimalRoutes = collectWikiSpeciesRouteEntries('animals', wikiAnimalData);
+const wikiPlantDiseaseRoutes = collectWikiPlantDiseaseRouteEntries(wikiPlantDiseaseData);
 
 const buildPlantImageEntries = () => {
   const entries = [];
@@ -952,6 +970,23 @@ const buildImageSitemap = () => {
     });
     allImages.push(...images);
   });
+
+  if (wikiPlantDiseaseRoutes.length) {
+    const diseaseImages = [];
+    wikiPlantDiseaseRoutes.forEach((route) => {
+      diseaseImages.push(...normalizeWikiMedia(route.entry, route.name));
+    });
+    const uniqueDiseaseImages = dedupeImages(diseaseImages);
+    if (uniqueDiseaseImages.length) {
+      const diseaseLastmod = getGitLastmod('data/wiki/plant-disease.json') || getGitLastmod('pages/wiki/plant-disease.html');
+      urlEntries.push({
+        loc: 'https://nh48.info/wiki/plant-diseases',
+        images: uniqueDiseaseImages,
+        lastmod: diseaseLastmod
+      });
+      allImages.push(...uniqueDiseaseImages);
+    }
+  }
 
   if (allImages.length) {
     const photosLastmod = getGitLastmod('photos/index.html');

@@ -88,7 +88,7 @@ body.wiki-page-shell {
 .wiki-stats {
   margin: 18px 0 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 10px;
 }
 
@@ -120,6 +120,12 @@ body.wiki-page-shell {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.wiki-updated {
+  margin: 12px 0 0;
+  color: var(--wiki-muted);
+  font-size: 0.92rem;
 }
 
 .wiki-search {
@@ -403,11 +409,108 @@ body.wiki-page-shell {
   color: var(--wiki-accent);
 }
 
-@media (max-width: 1120px) {
-  .wiki-stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.wiki-jump-panel {
+  margin-top: 16px;
+}
 
+.wiki-jump-chip {
+  text-decoration: none;
+}
+
+.wiki-disease-hierarchy {
+  margin-top: 14px;
+  display: grid;
+  gap: 14px;
+}
+
+.wiki-disease-status-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.wiki-disease-status-block {
+  border: 1px solid rgba(94, 120, 160, 0.45);
+  border-radius: 12px;
+  background: rgba(8, 13, 27, 0.74);
+  padding: 10px;
+}
+
+.wiki-disease-status-title {
+  margin: 0 0 10px;
+  color: #d9e7ff;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wiki-disease-status-title span {
+  color: var(--wiki-muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.wiki-disease-cards {
+  display: grid;
+  gap: 10px;
+}
+
+.wiki-disease-card {
+  border: 1px solid rgba(102, 130, 174, 0.45);
+  border-radius: 11px;
+  background: linear-gradient(180deg, rgba(10, 17, 35, 0.95), rgba(8, 12, 24, 0.98));
+  padding: 10px;
+}
+
+.wiki-disease-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.wiki-disease-title-wrap {
+  min-width: 0;
+}
+
+.wiki-disease-card-title {
+  margin: 0;
+  color: var(--wiki-text);
+  font-size: 1.03rem;
+}
+
+.wiki-disease-scientific {
+  margin: 3px 0 0;
+  color: var(--wiki-muted);
+  font-size: 0.88rem;
+  font-style: italic;
+}
+
+.wiki-disease-thumb {
+  display: block;
+  width: 100%;
+  max-height: 210px;
+  object-fit: cover;
+  border-radius: 9px;
+  border: 1px solid rgba(99, 126, 170, 0.4);
+  margin: 4px 0 8px;
+}
+
+.wiki-bullet-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
+
+.wiki-value-muted {
+  color: var(--wiki-muted);
+}
+
+@media (max-width: 1120px) {
   .wiki-detail-layout {
     grid-template-columns: 1fr;
   }
@@ -425,5 +528,9 @@ body.wiki-page-shell {
   .wiki-row {
     grid-template-columns: 1fr;
     gap: 4px;
+  }
+
+  .wiki-disease-card-header {
+    flex-direction: column;
   }
 }
