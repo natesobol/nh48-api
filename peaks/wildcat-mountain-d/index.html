@@ -139,6 +139,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 9,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 8,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "AboveTreelineExposure, SevereWeather, Navigation, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Wildcat Ridge Trail - via Glen Ellis Falls. (4.7 mi • 2150 ft gain • Out & back • Very difficult); Lost Pond Trail → Wildcat Ridge Trail → Peaks A & D (8.4 mi • 3450 ft gain • Out & back • Very difficult); Polecat Ski Trail - summer hike via ski slopes to D. (8.0 mi • 2100 ft gain • Out & back • Moderate)"
         },
@@ -245,9 +279,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Glen Ellis Falls parking area on NH 16",
-        "description": "Parking at Glen Ellis Falls is limited and closed in winter; alternative parking at Pinkham Notch adds mileage"
+        "description": "Parking at Glen Ellis Falls is limited and closed in winter; alternative parking at Pinkham Notch adds mileage",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.25889,
+          "longitude": -71.2
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/wildcat-mountain-d/#nh48-peak-dataset"
@@ -257,7 +296,7 @@
       },
       "sameAs": [
         "https://en.wikipedia.org/wiki/Wildcat_Mountain_(New_Hampshire)",
-        "https://www.wikidata.org/wiki/Q8001021",
+        "https://www.wikidata.org/entity/Q8001021",
         "https://www.openstreetmap.org/node/5550578026"
       ],
       "subjectOf": [
@@ -265,6 +304,21 @@
           "@id": "https://nh48.info/peak/wildcat-mountain-d/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/wildcat-mountain-d/#webpage"
       }
@@ -325,6 +379,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -379,6 +434,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -436,7 +492,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -2335,7 +2393,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Wildcat Mountain - D Peak. in Carter-Moriah Range. Wildcat Mountain “D” Peak is a 4,050-foot summit on Wildcat Mountain, located in Coös County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and early fall - Wildcat Ridge is steep and slippery when wet or icy; ski trails are used in winter. High - steep ledges and exposed sections.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object],[object Object] Yes – Glen Ellis River near the trailhead; no water on the ridge Parking at Glen Ellis Falls is limited and closed in winter; alternative parking at Pinkham Notch adds mileage</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Wildcat Ridge Trail - via Glen Ellis Falls. - 4.7 - 2150 - Very difficult - Out &amp; back Yes – Glen Ellis River near the trailhead; no water on the ridge Parking at Glen Ellis Falls is limited and closed in winter; alternative parking at Pinkham Notch adds mileage</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

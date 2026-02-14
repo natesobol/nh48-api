@@ -149,6 +149,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 6,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 7,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Signal Ridge Trail - out & back. (10.0 mi • 3,250 ft gain • Out & back • Difficult); Desolation Trail - steep ascent, via Carrigain Notch loop. (13.5 mi • ~3,300 ft gain • Loop - Carrigain Notch Trail + Desolation + Signal Ridge. • Very difficult)"
         },
@@ -252,9 +286,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Signal Ridge Trailhead - Sawyer River Road.",
-        "description": "Small lot off Sawyer River Road - road is gated in winter ~2 miles from trailhead."
+        "description": "Small lot off Sawyer River Road - road is gated in winter ~2 miles from trailhead.",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.09639,
+          "longitude": -71.43222
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/fr/peak/mount-carrigain/#nh48-peak-dataset"
@@ -265,7 +304,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Carrigain",
         "https://www.openstreetmap.org/node/357729772",
-        "https://www.wikidata.org/wiki/Q6920061",
+        "https://www.wikidata.org/entity/Q6920061",
         "https://www.peakbagger.com/peak.aspx?pid=6939"
       ],
       "subjectOf": [
@@ -273,6 +312,21 @@
           "@id": "https://nh48.info/fr/peak/mount-carrigain/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/fr/peak/mount-carrigain/#webpage"
       }
@@ -330,6 +384,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -384,6 +439,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -441,7 +497,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {

@@ -142,6 +142,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 9,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 10,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "AboveTreelineExposure, SevereWeather, LongBailout, LimitedWater, Navigation, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone. After summiting A, one could descend to Carter Notch Hut for shelter; otherwise turn around back to Pinkham Notch - no short bailout on ridge."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Wildcat Ridge Trail - via Glen Ellis Falls, up over Wildcat Ridge. (8.5 mi • 3,150 ft gain • Loop - requires car spot or road walk. • Very difficult); Polecat Ski Trail - alternate summer route via ski area to D then ridge to A. (8.0 mi • 2,100 ft gain • Out & back • Moderate)"
         },
@@ -245,9 +279,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Glen Ellis Falls parking - Pinkham Notch, NH 16.",
-        "description": "Hiker parking at Glen Ellis Falls pull-off - just south of Pinkham Notch Visitor Center.; ski area parking used if ascending via ski trails"
+        "description": "Hiker parking at Glen Ellis Falls pull-off - just south of Pinkham Notch Visitor Center.; ski area parking used if ascending via ski trails",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.24444,
+          "longitude": -71.2225
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/wildcat-mountain-a/#nh48-peak-dataset"
@@ -257,7 +296,7 @@
       },
       "sameAs": [
         "https://en.wikipedia.org/wiki/Wildcat_Mountain_(New_Hampshire)",
-        "https://www.wikidata.org/wiki/Q8001021",
+        "https://www.wikidata.org/entity/Q8001021",
         "https://www.openstreetmap.org/node/357730295"
       ],
       "subjectOf": [
@@ -265,6 +304,21 @@
           "@id": "https://nh48.info/peak/wildcat-mountain-a/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/wildcat-mountain-a/#webpage"
       }
@@ -322,6 +376,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -376,6 +431,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -433,7 +489,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -2616,7 +2674,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Wildcat Mountain - A Peak. in Carter-Moriah Range. Wildcat Mountain “A” Peak is a 4,422-foot summit on the east side of Pinkham Notch in Coös County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer, fall - avoid spring ice on steep ledges; winter ascents common with crampons via ski trails. High - ridge is exposed in places; weather can make ledges dangerous.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Yes - Glen Ellis River at start; small streams near base of ridge; none along ridge itself. Hiker parking at Glen Ellis Falls pull-off - just south of Pinkham Notch Visitor Center.; ski area parking used if ascending via ski trails</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Wildcat Ridge Trail - via Glen Ellis Falls, up over Wildcat Ridge. - 8.5 - 3,150 - Very difficult - Loop - requires car spot or road walk. Yes - Glen Ellis River at start; small streams near base of ridge; none along ridge itself. Hiker parking at Glen Ellis Falls pull-off - just south of Pinkham Notch Visitor Center.; ski area parking used if ascending via ski trails</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

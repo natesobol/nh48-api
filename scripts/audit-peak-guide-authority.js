@@ -74,6 +74,9 @@ function auditExperienceFile(slugs) {
         failures.push(`Missing "${field}" for slug "${slug}" in ${path.relative(ROOT, EXPERIENCE_PATH)}`);
       }
     });
+    if (/\[object Object\]/i.test(String(entry.planningTip || ''))) {
+      failures.push(`Invalid planningTip serialization for slug "${slug}" in ${path.relative(ROOT, EXPERIENCE_PATH)}`);
+    }
   });
 
   return failures;

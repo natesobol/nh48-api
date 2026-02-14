@@ -155,6 +155,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 10,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 10,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "AboveTreelineExposure, SevereWeather, LimitedWater, Navigation, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Tuckerman Ravine & Lion Head Trail Loop (8.4 mi • 4,300 ft gain • Semi-loop - out via Tuckerman, back via Lion Head. • Extremely difficult); Ammonoosuc Ravine & Jewell Trail Loop - west side. (9.6 mi • 3,800 ft gain • Loop • Extremely difficult)"
         },
@@ -258,9 +292,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "AMC Pinkham Notch - 44.2583, -71.2537.",
-        "description": "Large paved lot at Pinkham Notch Visitor Center; fills early on busy days"
+        "description": "Large paved lot at Pinkham Notch Visitor Center; fills early on busy days",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.2705,
+          "longitude": -71.30325
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/fr/peak/mount-washington/#nh48-peak-dataset"
@@ -272,7 +311,7 @@
         "https://en.wikipedia.org/wiki/Mount_Washington",
         "https://fr.wikipedia.org/wiki/Mont_Washington_%28New_Hampshire%29",
         "https://www.openstreetmap.org/node/2432687944",
-        "https://www.wikidata.org/wiki/Q572801",
+        "https://www.wikidata.org/entity/Q572801",
         "https://www.peakbagger.com/peak.aspx?pid=6960"
       ],
       "subjectOf": [
@@ -280,6 +319,21 @@
           "@id": "https://nh48.info/fr/peak/mount-washington/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/fr/peak/mount-washington/#webpage"
       }
@@ -337,6 +391,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -391,6 +446,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -448,7 +504,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {

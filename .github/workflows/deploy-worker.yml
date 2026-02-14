@@ -6,13 +6,35 @@ on:
     paths:
       - 'worker.js'
       - 'wrangler.toml'
+      - 'data/entity-links.json'
+      - 'data/person.json'
+      - 'data/organization.json'
+      - 'data/website.json'
+      - 'data/peak-sameas.json'
+      - 'data/peak-sameas.overrides.json'
+      - 'data/parking-data.json'
+      - 'data/monthly-weather.json'
+      - 'data/peak-difficulty.json'
+      - 'data/peak-difficulty-overrides.json'
+      - 'data/current-conditions.json'
+      - 'data/nh48_enriched_overlay.json'
       - 'scripts/audit-site-schema.js'
       - 'scripts/audit-homepage-worker-seo.js'
       - 'scripts/audit-worker-breadcrumbs.js'
       - 'scripts/audit-peak-guide-authority.js'
+      - 'scripts/audit-sameas.js'
+      - 'scripts/audit-entity-links.js'
+      - 'scripts/build-peak-sameas.py'
+      - 'scripts/build-peak-difficulty.js'
+      - 'scripts/build-peak-experience-scaffold.js'
+      - 'scripts/prerender-peaks.js'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/deploy-worker.yml'
+      - 'Documentation/README.md'
+      - 'Documentation/TESTING_GUIDE.md'
+      - 'Documentation/CHANGES_SUMMARY.md'
+      - 'Documentation/SEO_SYSTEM_RUNBOOK.md'
   workflow_dispatch:  # Allow manual trigger
 
 permissions:
@@ -56,6 +78,14 @@ jobs:
       - name: Run peak guide authority audit (pre-deploy gate)
         id: peak_authority_audit
         run: node scripts/audit-peak-guide-authority.js
+
+      - name: Run sameAs authority audit (pre-deploy gate)
+        id: sameas_audit
+        run: node scripts/audit-sameas.js
+
+      - name: Run entity links audit (pre-deploy gate)
+        id: entity_links_audit
+        run: node scripts/audit-entity-links.js
 
       - name: Install Wrangler
         if: steps.deploy_mode.outputs.should_deploy == 'true'
@@ -112,6 +142,8 @@ jobs:
           echo "- **Deploy requested:** \`${{ steps.deploy_mode.outputs.should_deploy }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Schema audit:** \`${{ steps.schema_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak authority audit:** \`${{ steps.peak_authority_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **sameAs audit:** \`${{ steps.sameas_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Entity links audit:** \`${{ steps.entity_links_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           if [[ "${{ steps.deploy_mode.outputs.should_deploy }}" == "true" ]]; then
             echo "- **Deploy step outcome:** \`${{ steps.deploy_worker.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           else
@@ -122,6 +154,8 @@ jobs:
           echo "### Scripts executed" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-site-schema.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-guide-authority.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-sameas.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-entity-links.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-homepage-worker-seo.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-worker-breadcrumbs.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"

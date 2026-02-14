@@ -145,6 +145,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 7,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 7,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "SevereWeather, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "19 Mile Brook Trail > Carter Dome Trail - via Carter Notch. (10.2 mi • 3,500 ft gain • Out & back - or loop via Imp Trail. • Difficult); Loop via Carter-Moriah - over Mount Hight and Carter Dome. (10.0 mi • 3,800 ft gain • Loop • Difficult)"
         },
@@ -248,9 +282,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Nineteen-Mile Brook Trailhead - NH 16, Pinkham Notch.",
-        "description": "Medium parking area off NH 16; can fill on weekends"
+        "description": "Medium parking area off NH 16; can fill on weekends",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.25667,
+          "longitude": -71.175
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/carter-dome/#nh48-peak-dataset"
@@ -261,7 +300,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Carter_Dome",
         "https://www.openstreetmap.org/node/357729779",
-        "https://www.wikidata.org/wiki/Q4216195",
+        "https://www.wikidata.org/entity/Q4216195",
         "https://www.peakbagger.com/peak.aspx?pid=6980"
       ],
       "subjectOf": [
@@ -269,6 +308,21 @@
           "@id": "https://nh48.info/peak/carter-dome/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/carter-dome/#webpage"
       }
@@ -326,6 +380,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -380,6 +435,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -437,7 +493,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -2919,7 +2977,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Carter Dome in Carter-Moriah Range. Carter Dome, or simply “The Dome,” is a mountain in Coös County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - popular winter hike as well with snowshoes. Medium - summit in trees but ridge and Mt. Hight exposed to wind.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Yes - 19 Mile Brook alongside trail for first 1.9 miles; pond at Carter Notch near hut. Medium parking area off NH 16; can fill on weekends</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>19 Mile Brook Trail &gt; Carter Dome Trail - via Carter Notch. - 10.2 - 3,500 - Difficult - Out &amp; back - or loop via Imp Trail. Yes - 19 Mile Brook alongside trail for first 1.9 miles; pond at Carter Notch near hut. Medium parking area off NH 16; can fill on weekends</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

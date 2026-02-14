@@ -143,6 +143,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 6,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 6,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "ScrambleSteep, UnbridgedRiverCrossings, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "North Twin Trail - to summit and back. (8.6 mi • 2,950 ft gain • Out & back • Moderate/Difficult); Twinway from Galehead Hut - via South Twin. (4.6 - one-way from hut. mi • 1,150 - from hut. ft gain • Thru-hike segment • Moderate)"
         },
@@ -246,9 +280,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "End of Haystack Road - North Twin Trailhead.",
-        "description": "Small dirt lot at trailhead; closed in winter - road closure adds ~2 mi from end of Little River Rd."
+        "description": "Small dirt lot at trailhead; closed in winter - road closure adds ~2 mi from end of Little River Rd.",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.16667,
+          "longitude": -71.5625
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/fr/peak/north-twin-mountain/#nh48-peak-dataset"
@@ -259,7 +298,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/North_Twin_Mountain_%28New_Hampshire%29",
         "https://www.openstreetmap.org/node/357730481",
-        "https://www.wikidata.org/wiki/Q7057046",
+        "https://www.wikidata.org/entity/Q7057046",
         "https://www.peakbagger.com/peak.aspx?pid=6919"
       ],
       "subjectOf": [
@@ -267,6 +306,21 @@
           "@id": "https://nh48.info/fr/peak/north-twin-mountain/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/fr/peak/north-twin-mountain/#webpage"
       }
@@ -324,6 +378,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -378,6 +433,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -435,7 +491,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {

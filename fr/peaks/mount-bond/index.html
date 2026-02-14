@@ -149,6 +149,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 10,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 10,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "AboveTreelineExposure, SevereWeather, LimitedWater, Navigation, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Lincoln Woods → Wilderness Trail → Bondcliff Trail → West Bond Spur - Bonds Traverse. (22.6 mi • 4800 ft gain • Point‑to‑point traverse • Extremely difficult); Zealand Trail → Twinway → Bondcliff Trail - via Zealand Hut & Guyot. (19.8 mi • 3950 ft gain • Traverse • Very difficult)"
         },
@@ -252,9 +286,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Lincoln Woods Visitor Center or Zealand Trailhead - depending on traverse direction.",
-        "description": "Large fee lot at Lincoln Woods; medium lot at Zealand trailhead - road closed in winter."
+        "description": "Large fee lot at Lincoln Woods; medium lot at Zealand trailhead - road closed in winter.",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.15306,
+          "longitude": -71.53
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/fr/peak/mount-bond/#nh48-peak-dataset"
@@ -265,7 +304,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Bond",
         "https://www.openstreetmap.org/node/357729724",
-        "https://www.wikidata.org/wiki/Q6919778",
+        "https://www.wikidata.org/entity/Q6919778",
         "https://www.peakbagger.com/peak.aspx?pid=6924"
       ],
       "subjectOf": [
@@ -273,6 +312,21 @@
           "@id": "https://nh48.info/fr/peak/mount-bond/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/fr/peak/mount-bond/#webpage"
       }
@@ -330,6 +384,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -384,6 +439,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -441,7 +497,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {

@@ -161,6 +161,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 9,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 9,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "AboveTreelineExposure, SevereWeather, Navigation, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Valley Way & Osgood Trail - via Madison Hut. (8.3 mi • 4,100 ft gain • Out & back - same route. • Very difficult); Airline Trail - direct ridge ascent. (8.4 mi • 4,100 ft gain • Out & back • Very difficult)"
         },
@@ -264,9 +298,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Appalachia trailhead - US 2, Randolph.",
-        "description": "Roadside parking, can be crowded on weekends"
+        "description": "Roadside parking, can be crowded on weekends",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.32833,
+          "longitude": -71.27667
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/fr/peak/mount-madison/#nh48-peak-dataset"
@@ -277,7 +316,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Madison",
         "https://www.openstreetmap.org/node/357730333",
-        "https://www.wikidata.org/wiki/Q6921955",
+        "https://www.wikidata.org/entity/Q6921955",
         "https://www.peakbagger.com/peak.aspx?pid=6951"
       ],
       "subjectOf": [
@@ -285,6 +324,21 @@
           "@id": "https://nh48.info/fr/peak/mount-madison/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/fr/peak/mount-madison/#webpage"
       }
@@ -342,6 +396,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -396,6 +451,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -453,7 +509,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {

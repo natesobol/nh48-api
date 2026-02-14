@@ -149,6 +149,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 6,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 7,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "LongBailout, Navigation, ScrambleSteep, UnbridgedRiverCrossings, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Download offline maps and do not rely on cell service; leave a plan with someone. Descend back via Garfield Trail - fastest exit.; Garfield Ridge Trail leads to AMC Galehead Hut - ~1.3 miles away. for shelter if needed"
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Garfield Trail - via Garfield Ridge Trail. (10.0 mi • 3,000 ft gain • Out & back • Moderate/Difficult); Skookumchuck Trail & Garfield Ridge Trail - alternate approach. (12.0 mi • 4,250 ft gain • Out & back or point-to-point to Franconia Notch • Difficult)"
         },
@@ -252,9 +286,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Garfield Trailhead - Gale River Loop Road.",
-        "description": "Trailhead has a small parking area; Gale River Loop Rd is closed in winter - adds road walk."
+        "description": "Trailhead has a small parking area; Gale River Loop Rd is closed in winter - adds road walk.",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.18833,
+          "longitude": -71.61167
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/fr/peak/mount-garfield/#nh48-peak-dataset"
@@ -265,7 +304,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Garfield_%28New_Hampshire%29",
         "https://www.openstreetmap.org/node/357730032",
-        "https://www.wikidata.org/wiki/Q6920864",
+        "https://www.wikidata.org/entity/Q6920864",
         "https://www.peakbagger.com/peak.aspx?pid=6907"
       ],
       "subjectOf": [
@@ -273,6 +312,21 @@
           "@id": "https://nh48.info/fr/peak/mount-garfield/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/fr/peak/mount-garfield/#webpage"
       }
@@ -330,6 +384,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -384,6 +439,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -441,7 +497,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {

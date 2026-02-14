@@ -142,6 +142,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 4,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 5,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "LimitedWater, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Bunnell Notch Trail → Kilkenny Ridge Trail (9.6 mi • 2950 ft gain • Out & back • Moderate); Unknown Pond Trail → Kilkenny Ridge Trail → Bunnell Notch Trail - loop via The Horn and The Bulge. (11.4 mi • 3100 ft gain • Loop • Moderate)"
         },
@@ -240,9 +274,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "York Pond Road - Bunnell Notch trailhead.",
-        "description": "Small parking area at Berlin Fish Hatchery; gate controls access"
+        "description": "Small parking area at Berlin Fish Hatchery; gate controls access",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.506,
+          "longitude": -71.41433
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/mount-cabot/#nh48-peak-dataset"
@@ -253,7 +292,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Cabot",
         "https://www.openstreetmap.org/node/357718717",
-        "https://www.wikidata.org/wiki/Q6919942",
+        "https://www.wikidata.org/entity/Q6919942",
         "https://www.peakbagger.com/peak.aspx?pid=6877"
       ],
       "subjectOf": [
@@ -261,6 +300,21 @@
           "@id": "https://nh48.info/peak/mount-cabot/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/mount-cabot/#webpage"
       }
@@ -318,6 +372,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -372,6 +427,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -429,7 +485,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -2611,7 +2669,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Mount Cabot in Pilot Range. Mount Cabot is a 4,170-foot mountain located in Coös County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - winter ascents possible with snowshoes. Low</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Limited – streams along Bunnell Notch Trail but no potable water at Cabot Cabin Small parking area at Berlin Fish Hatchery; gate controls access</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Bunnell Notch Trail → Kilkenny Ridge Trail - 9.6 - 2950 - Moderate - Out &amp; back Limited – streams along Bunnell Notch Trail but no potable water at Cabot Cabin Small parking area at Berlin Fish Hatchery; gate controls access</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

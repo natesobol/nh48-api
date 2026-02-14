@@ -149,6 +149,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 4,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 4,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "UnbridgedRiverCrossings, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Gale River Trail → Garfield Ridge Trail → Frost Trail (10.2 mi • 2657 ft gain • Out & back • Moderate)"
         },
@@ -249,9 +283,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Gale River Trailhead - end of Gale River Loop Road.",
-        "description": "Medium lot on Gale River Loop Road; road gated in winter adding a road walk"
+        "description": "Medium lot on Gale River Loop Road; road gated in winter adding a road walk",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.18528,
+          "longitude": -71.57361
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/fr/peak/galehead-mountain/#nh48-peak-dataset"
@@ -262,7 +301,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Galehead_Mountain",
         "https://www.openstreetmap.org/node/357731142",
-        "https://www.wikidata.org/wiki/Q4153212",
+        "https://www.wikidata.org/entity/Q4153212",
         "https://www.peakbagger.com/peak.aspx?pid=6921"
       ],
       "subjectOf": [
@@ -270,6 +309,21 @@
           "@id": "https://nh48.info/fr/peak/galehead-mountain/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/fr/peak/galehead-mountain/#webpage"
       }
@@ -324,6 +378,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -378,6 +433,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -435,7 +491,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {

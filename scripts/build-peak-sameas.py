@@ -125,7 +125,7 @@ def build_links(name, hit):
             links.insert(0, 'https://en.wikipedia.org/wiki/' + urllib.parse.quote(en.replace(' ', '_')))
         if fr:
             links.insert(1, 'https://fr.wikipedia.org/wiki/' + urllib.parse.quote(fr.replace(' ', '_')))
-        links.append(f'https://www.wikidata.org/wiki/{wd}')
+        links.append(f'https://www.wikidata.org/entity/{wd}')
         pid = claim(entity, 'P3109')
         if pid:
             links.append(f'https://www.peakbagger.com/peak.aspx?pid={pid}')

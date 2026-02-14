@@ -148,6 +148,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 4,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 4,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Mt. Tecumseh Trail - Waterville Valley ski area side. (5.0 mi • 2,300 ft gain • Out & back • Moderate); Mt. Tecumseh Trail - Tripoli Road side. (7.5 mi • 2,250 ft gain • Out & back • Moderate)"
         },
@@ -251,9 +285,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Waterville Valley Ski Area parking lot #1 - Mt. Tecumseh Trail.",
-        "description": "Plenty of parking at ski area year-round - park near trailhead sign at lot #1.. Tripoli Road side accessible in summer only - unpaved road, fee area."
+        "description": "Plenty of parking at ski area year-round - park near trailhead sign at lot #1.. Tripoli Road side accessible in summer only - unpaved road, fee area.",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 43.96667,
+          "longitude": -71.55667
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/mount-tecumseh/#nh48-peak-dataset"
@@ -264,7 +303,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Tecumseh",
         "https://www.openstreetmap.org/node/357730887",
-        "https://www.wikidata.org/wiki/Q6924064",
+        "https://www.wikidata.org/entity/Q6924064",
         "https://www.peakbagger.com/peak.aspx?pid=6994"
       ],
       "subjectOf": [
@@ -272,6 +311,21 @@
           "@id": "https://nh48.info/peak/mount-tecumseh/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/mount-tecumseh/#webpage"
       }
@@ -329,6 +383,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -383,6 +438,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -440,7 +496,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -3255,7 +3313,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Mount Tecumseh in Osceola Range - Waterville Valley.. Mount Tecumseh is a 4,003-foot mountain in Grafton County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Year-round - short hike; winter very popular – often well-packed trail; ski trails can offer alternate descent in summer. Low - summit just at treeline; little risk except typical weather; can be windy on ski trails.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Yes - Tecumseh Brook runs alongside lower trail for first mile or so on Waterville side; small streams on Tripoli side as well. Plenty of parking at ski area year-round - park near trailhead sign at lot #1.. Tripoli Road side accessible in summer only - unpaved road, fee area.</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Mt. Tecumseh Trail - Waterville Valley ski area side. - 5.0 - 2,300 - Moderate - Out &amp; back Yes - Tecumseh Brook runs alongside lower trail for first mile or so on Waterville side; small streams on Tripoli side as well. Plenty of parking at ski area year-round - park near trailhead sign at lot #1.. Tripoli Road side accessible in summer only - unpaved road, fee area.</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

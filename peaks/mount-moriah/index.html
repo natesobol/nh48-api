@@ -139,6 +139,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 6,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 6,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "ScrambleSteep, UnbridgedRiverCrossings, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Stony Brook Trail > Carter-Moriah Trail (10.0 mi • 3,150 ft gain • Out & back • Difficult); Carter-Moriah Trail - from Gorham end. (9.0 mi • 3,100 ft gain • Out & back • Difficult)"
         },
@@ -242,9 +276,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Stony Brook Trailhead - off NH 16 south of Gorham. or end of Bangor Street in Gorham - Carter-Moriah trail start.",
-        "description": "Stony Brook has small dirt lot; Gorham end is neighborhood roadside - limited parking, don’t block driveways."
+        "description": "Stony Brook has small dirt lot; Gorham end is neighborhood roadside - limited parking, don’t block driveways.",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.3325,
+          "longitude": -71.1375
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/mount-moriah/#nh48-peak-dataset"
@@ -255,7 +294,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Moriah_%28New_Hampshire%29",
         "https://www.openstreetmap.org/node/357730423",
-        "https://www.wikidata.org/wiki/Q6922268",
+        "https://www.wikidata.org/entity/Q6922268",
         "https://www.peakbagger.com/peak.aspx?pid=6974"
       ],
       "subjectOf": [
@@ -263,6 +302,21 @@
           "@id": "https://nh48.info/peak/mount-moriah/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/mount-moriah/#webpage"
       }
@@ -320,6 +374,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -374,6 +429,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -431,7 +487,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -2305,7 +2363,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Mount Moriah in Carter-Moriah Range. Mount Moriah is a 4,049-foot mountain in Coös County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Late spring through fall - to avoid high water at crossings; winter via Carter-Moriah from Gorham is popular. Medium - some exposure on ledges, but can retreat to trees quickly.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Yes - Stony Brook crossings in first half of Stony Brook Trail; Carter-Moriah route is mostly dry ridge after initial climb. Stony Brook has small dirt lot; Gorham end is neighborhood roadside - limited parking, don’t block driveways.</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Stony Brook Trail &gt; Carter-Moriah Trail - 10.0 - 3,150 - Difficult - Out &amp; back Yes - Stony Brook crossings in first half of Stony Brook Trail; Carter-Moriah route is mostly dry ridge after initial climb. Stony Brook has small dirt lot; Gorham end is neighborhood roadside - limited parking, don’t block driveways.</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

@@ -167,6 +167,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 9,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 9,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "AboveTreelineExposure, SevereWeather, Navigation, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Franconia Ridge Loop - Falling Waters & Old Bridle Path. (8.9 mi • 3,900 ft gain • Loop - ridge traverse. • Very difficult); Old Bridle Path - out-and-back. (8.0 mi • 3,600 ft gain • Out & back • Difficult)"
         },
@@ -270,9 +304,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Lafayette Place - Franconia Notch, I-93 parking area.",
-        "description": "Large lot at Lafayette Place but fills early; overflow parking along I-93 northbound"
+        "description": "Large lot at Lafayette Place but fills early; overflow parking along I-93 northbound",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.16028,
+          "longitude": -71.64417
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/fr/peak/mount-lafayette/#nh48-peak-dataset"
@@ -283,7 +322,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Lafayette",
         "https://www.openstreetmap.org/node/357730240",
-        "https://www.wikidata.org/wiki/Q8520336",
+        "https://www.wikidata.org/entity/Q8520336",
         "https://www.peakbagger.com/peak.aspx?pid=6909"
       ],
       "subjectOf": [
@@ -291,6 +330,21 @@
           "@id": "https://nh48.info/fr/peak/mount-lafayette/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/fr/peak/mount-lafayette/#webpage"
       }
@@ -348,6 +402,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -402,6 +457,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -459,7 +515,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {

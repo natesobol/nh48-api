@@ -148,6 +148,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 8,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 6,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "AboveTreelineExposure, SevereWeather, Navigation, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Ammonoosuc Ravine Trail & Crawford Path (7.0 mi • 2,900 ft gain • Out & back - or loop via Jewel Trail. • Difficult); Mount Monroe Loop - from Lakes of the Clouds. (0.7 - spur from AT. mi • ~350 ft gain • Out & back spur • Moderate)"
         },
@@ -251,9 +285,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Ammonoosuc Ravine trailhead - Base Station Road.",
-        "description": "Parking at Marshfield Station/Cog Base parking area - fee may apply."
+        "description": "Parking at Marshfield Station/Cog Base parking area - fee may apply.",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.25537,
+          "longitude": -71.32154
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/mount-monroe/#nh48-peak-dataset"
@@ -264,7 +303,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Monroe",
         "https://www.openstreetmap.org/node/357730406",
-        "https://www.wikidata.org/wiki/Q6922237",
+        "https://www.wikidata.org/entity/Q6922237",
         "https://www.peakbagger.com/peak.aspx?pid=6963"
       ],
       "subjectOf": [
@@ -272,6 +311,21 @@
           "@id": "https://nh48.info/peak/mount-monroe/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/mount-monroe/#webpage"
       }
@@ -329,6 +383,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -383,6 +438,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -440,7 +496,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -3231,7 +3289,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Mount Monroe in Presidential Range - Southern.. Mount Monroe is a 5,384-foot mountain in the Presidential Range of the White Mountains.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - often combined with Mt. Washington. High - very exposed to wind, rapid weather shifts.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Yes - Lakes of the Clouds Hut at base of summit has water in season. Parking at Marshfield Station/Cog Base parking area - fee may apply.</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Ammonoosuc Ravine Trail &amp; Crawford Path - 7.0 - 2,900 - Difficult - Out &amp; back - or loop via Jewel Trail. Yes - Lakes of the Clouds Hut at base of summit has water in season. Parking at Marshfield Station/Cog Base parking area - fee may apply.</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

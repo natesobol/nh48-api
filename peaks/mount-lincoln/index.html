@@ -151,6 +151,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 9,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 9,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "AboveTreelineExposure, SevereWeather, Navigation, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Franconia Ridge Loop - via Falling Waters Trail. (8.9 mi • 3,900 ft gain • Loop - includes Mount Lafayette. • Very difficult); Falling Waters Trail - direct up-and-back to ridge. (7.8 mi • 3,400 ft gain • Out & back - to ridge and back down. • Difficult)"
         },
@@ -254,9 +288,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Lafayette Place - same as Mount Lafayette, Franconia Notch.",
-        "description": "Shared parking with Lafayette loop; plan for early arrival or use shuttle/overflow lots"
+        "description": "Shared parking with Lafayette loop; plan for early arrival or use shuttle/overflow lots",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.14833,
+          "longitude": -71.64444
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/mount-lincoln/#nh48-peak-dataset"
@@ -267,7 +306,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Lincoln_%28New_Hampshire%29",
         "https://www.openstreetmap.org/node/357730273",
-        "https://www.wikidata.org/wiki/Q6921845",
+        "https://www.wikidata.org/entity/Q6921845",
         "https://www.peakbagger.com/peak.aspx?pid=6911"
       ],
       "subjectOf": [
@@ -275,6 +314,21 @@
           "@id": "https://nh48.info/peak/mount-lincoln/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/mount-lincoln/#webpage"
       }
@@ -332,6 +386,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -386,6 +441,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -443,7 +499,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -3557,7 +3615,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Mount Lincoln in Franconia Range. Mount Lincoln is a 5,089-foot (1,551 m) mountain in the Franconia Range of the White Mountains.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - clear weather for ridge views. High - ridge highly exposed to wind, lightning in storms.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Yes - waterfalls on Falling Waters Trail in lower section. Shared parking with Lafayette loop; plan for early arrival or use shuttle/overflow lots</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Franconia Ridge Loop - via Falling Waters Trail. - 8.9 - 3,900 - Very difficult - Loop - includes Mount Lafayette. Yes - waterfalls on Falling Waters Trail in lower section. Shared parking with Lafayette loop; plan for early arrival or use shuttle/overflow lots</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

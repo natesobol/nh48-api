@@ -140,6 +140,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 7,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 10,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "LongBailout, LimitedWater, Navigation, ScrambleSteep, UnbridgedRiverCrossings, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone. None quick – retreat back down Rocky Branch - long but straightforward. or down Davis Path north to AMC Lakes of Clouds hut - far. if absolutely needed; isolation truly isolated"
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Rocky Branch Trail > Isolation Trail > Davis Path - standard. (14.6 mi • 3,400 ft gain • Out & back • Very difficult); Glen Boulder Trail > Davis Path - scenic but longer, car spot. (12.0 mi • 5,050 ft gain • Traverse - car spot needed. • Very difficult)"
         },
@@ -243,9 +277,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Rocky Branch Trailhead - Glen Ellis Falls area, NH 16. for standard route; or Glen Boulder Trailhead - HWY 16. for alternate",
-        "description": "Rocky Branch lot is roadside parking on Rt 16 south of Pinkham - small, sign present.; Glen Boulder shares large parking with Glen Ellis Falls - crowded on nice days."
+        "description": "Rocky Branch lot is roadside parking on Rt 16 south of Pinkham - small, sign present.; Glen Boulder shares large parking with Glen Ellis Falls - crowded on nice days.",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.21479,
+          "longitude": -71.30924
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/fr/peak/mount-isolation/#nh48-peak-dataset"
@@ -256,7 +295,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Isolation",
         "https://www.openstreetmap.org/node/357730186",
-        "https://www.wikidata.org/wiki/Q6921446",
+        "https://www.wikidata.org/entity/Q6921446",
         "https://www.peakbagger.com/peak.aspx?pid=6971"
       ],
       "subjectOf": [
@@ -264,6 +303,21 @@
           "@id": "https://nh48.info/fr/peak/mount-isolation/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/fr/peak/mount-isolation/#webpage"
       }
@@ -321,6 +375,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -375,6 +430,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -432,7 +488,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {

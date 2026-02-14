@@ -145,6 +145,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 7,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 10,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "LongBailout, Navigation, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Download offline maps and do not rely on cell service; leave a plan with someone. None easy – must return via same long route; nearest help is Franconia Falls area which is still 8+ miles from road"
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Lincoln Woods > Wilderness Trail > Owl’s Head Path - Slide. (18.4 mi • 2,900 ft gain • Out & back • Very difficult); Lincoln Woods > Black Pond Bushwhack > Lincoln Brook Trail - winter variation. (~16.0 mi • 2,900 ft gain • Out & back • Very difficult)"
         },
@@ -248,9 +282,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Lincoln Woods - Kancamagus Highway, Lincoln.",
-        "description": "Large lot at Lincoln Woods - fee area.; can fill with tourists and multiple hikes"
+        "description": "Large lot at Lincoln Woods - fee area.; can fill with tourists and multiple hikes",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.14,
+          "longitude": -71.61167
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/owls-head/#nh48-peak-dataset"
@@ -261,13 +300,28 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Owl%27s_Head_%28Carroll%2C_New_Hampshire%29",
         "https://www.openstreetmap.org/node/357725208",
-        "https://www.wikidata.org/wiki/Q7114831"
+        "https://www.wikidata.org/entity/Q7114831"
       ],
       "subjectOf": [
         {
           "@id": "https://nh48.info/peak/owls-head/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/owls-head/#webpage"
       }
@@ -325,6 +379,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -379,6 +434,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -436,7 +492,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -2917,7 +2975,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Owl&#39;s Head in Franconia Range - Pemigewasset Wilderness.. Owl’s Head is a 4,025-foot mountain deep in the Pemigewasset Wilderness of the White Mountains, in Grafton County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - long days needed; in spring water crossings high; winter feasible with bushwhacks on frozen terrain. Medium - mainly concern on slide – very hot in sun, slippery when wet.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Yes - Franconia Brook, Lincoln Brook along much of approach; plentiful water until climb up slide. Large lot at Lincoln Woods - fee area.; can fill with tourists and multiple hikes</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Lincoln Woods &gt; Wilderness Trail &gt; Owl’s Head Path - Slide. - 18.4 - 2,900 - Very difficult - Out &amp; back Yes - Franconia Brook, Lincoln Brook along much of approach; plentiful water until climb up slide. Large lot at Lincoln Woods - fee area.; can fill with tourists and multiple hikes</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

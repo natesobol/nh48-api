@@ -22,6 +22,12 @@ let entityLinksCache = null;
 let breadcrumbTaxonomyCache = null;
 let rangeLookupCache = null;
 let peakExperiencesCache = null;
+let parkingLookupCache = null;
+let monthlyWeatherCache = null;
+let peakDifficultyCache = null;
+let riskOverlayCache = null;
+let currentConditionsCache = null;
+let nwsWeatherCache = new Map();
 
 export default {
   async fetch(request, env, ctx) {
@@ -56,6 +62,11 @@ export default {
     const RAW_BREADCRUMB_TAXONOMY_URL = `${RAW_BASE}/data/breadcrumb-taxonomy.json`;
     const RAW_WMNF_RANGES_URL = `${RAW_BASE}/data/wmnf-ranges.json`;
     const RAW_PEAK_EXPERIENCES_EN_URL = `${RAW_BASE}/data/peak-experiences.en.json`;
+    const RAW_PARKING_DATA_URL = `${RAW_BASE}/data/parking-data.json`;
+    const RAW_MONTHLY_WEATHER_URL = `${RAW_BASE}/data/monthly-weather.json`;
+    const RAW_PEAK_DIFFICULTY_URL = `${RAW_BASE}/data/peak-difficulty.json`;
+    const RAW_RISK_OVERLAY_URL = `${RAW_BASE}/data/nh48_enriched_overlay.json`;
+    const RAW_CURRENT_CONDITIONS_URL = `${RAW_BASE}/data/current-conditions.json`;
     const EN_TRANS_URL = `${RAW_BASE}/i18n/en.json`;
     const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
     const SITE_NAME = url.hostname;
@@ -86,6 +97,7 @@ export default {
     const CATALOG_IMAGE_LICENSE_URL = 'https://creativecommons.org/licenses/by-nc-nd/4.0/';
     const HOME_SOCIAL_IMAGE = 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__001.jpg';
     const INSTAGRAM_URL = 'https://www.instagram.com/nate_dumps_pics/';
+    const NH48_APP_URL = 'https://www.nh48.app/';
 
     const buildMeta = await fetchBuildMeta(RAW_BUILD_META_URL);
     const buildDate = buildMeta?.buildDate || '';
@@ -1175,6 +1187,288 @@ export default {
       return peakExperiencesCache;
     }
 
+    function normalizeSlug(value) {
+      return String(value || '')
+        .trim()
+        .toLowerCase();
+    }
+
+    function toNumber(value) {
+      if (value === null || value === undefined || value === '') return null;
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    function buildLookupBySlug(payload) {
+      const lookup = {};
+      if (!payload) return lookup;
+      if (Array.isArray(payload)) {
+        payload.forEach((entry) => {
+          if (!entry || typeof entry !== 'object') return;
+          const slug = normalizeSlug(entry.slug || entry.peakSlug || entry.peak_id || entry.id);
+          if (!slug) return;
+          if (!lookup[slug]) {
+            lookup[slug] = entry;
+          }
+        });
+        return lookup;
+      }
+      if (typeof payload === 'object') {
+        Object.entries(payload).forEach(([key, value]) => {
+          if (!value || typeof value !== 'object') return;
+          const slug = normalizeSlug(value.slug || key);
+          if (!slug) return;
+          if (!lookup[slug]) {
+            lookup[slug] = value;
+          }
+        });
+      }
+      return lookup;
+    }
+
+    function getEasternMonthName(now = new Date()) {
+      return now.toLocaleString('en-US', { month: 'long', timeZone: 'America/New_York' });
+    }
+
+    async function loadParkingLookup() {
+      if (parkingLookupCache) return parkingLookupCache;
+      const payload = await loadJsonCache('parking-data', RAW_PARKING_DATA_URL);
+      parkingLookupCache = buildLookupBySlug(payload);
+      return parkingLookupCache;
+    }
+
+    async function loadMonthlyWeather() {
+      if (monthlyWeatherCache) return monthlyWeatherCache;
+      const payload = await loadJsonCache('monthly-weather', RAW_MONTHLY_WEATHER_URL);
+      monthlyWeatherCache = payload && typeof payload === 'object' ? payload : {};
+      return monthlyWeatherCache;
+    }
+
+    async function loadPeakDifficultyLookup() {
+      if (peakDifficultyCache) return peakDifficultyCache;
+      const payload = await loadJsonCache('peak-difficulty', RAW_PEAK_DIFFICULTY_URL);
+      peakDifficultyCache = payload && typeof payload === 'object' ? payload : {};
+      return peakDifficultyCache;
+    }
+
+    async function loadRiskOverlayLookup() {
+      if (riskOverlayCache) return riskOverlayCache;
+      const payload = await loadJsonCache('risk-overlay', RAW_RISK_OVERLAY_URL);
+      riskOverlayCache = buildLookupBySlug(payload);
+      return riskOverlayCache;
+    }
+
+    async function loadCurrentConditions() {
+      if (currentConditionsCache) return currentConditionsCache;
+      const payload = await loadJsonCache('current-conditions', RAW_CURRENT_CONDITIONS_URL);
+      currentConditionsCache = payload && typeof payload === 'object'
+        ? payload
+        : { generatedAt: '', expiresAt: '', advisories: [] };
+      return currentConditionsCache;
+    }
+
+    function parseWindMph(value) {
+      if (!value) return null;
+      if (typeof value === 'number' && Number.isFinite(value)) return value;
+      const text = String(value);
+      const matches = text.match(/(\d+(?:\.\d+)?)/g);
+      if (!matches || !matches.length) return null;
+      const values = matches.map((entry) => Number(entry)).filter((entry) => Number.isFinite(entry));
+      if (!values.length) return null;
+      return Math.max(...values);
+    }
+
+    function isIsoDateActive(expiresAt) {
+      if (!expiresAt || typeof expiresAt !== 'string') return true;
+      const ts = Date.parse(expiresAt);
+      if (!Number.isFinite(ts)) return true;
+      return ts > Date.now();
+    }
+
+    function advisoryAppliesToPeak(advisory, peakSlug, peakId) {
+      if (!advisory || typeof advisory !== 'object') return false;
+      const slugList = Array.isArray(advisory.affectedSlugs) ? advisory.affectedSlugs.map(normalizeSlug) : [];
+      const idList = Array.isArray(advisory.affectedPeaks) ? advisory.affectedPeaks.map((v) => String(v)) : [];
+      if (!slugList.length && !idList.length) return true;
+      if (slugList.includes(normalizeSlug(peakSlug))) return true;
+      if (peakId !== null && peakId !== undefined && idList.includes(String(peakId))) return true;
+      return false;
+    }
+
+    function normalizeCurrentConditionsAdvisories(payload, peakSlug = '', peakId = null) {
+      const advisories = Array.isArray(payload?.advisories) ? payload.advisories : [];
+      return advisories
+        .filter((advisory) => advisoryAppliesToPeak(advisory, peakSlug, peakId))
+        .filter((advisory) => isIsoDateActive(advisory.expires || advisory.expiresAt || payload?.expiresAt))
+        .map((advisory) => ({
+          level: String(advisory.level || advisory.severity || 'moderate').toLowerCase(),
+          title: String(advisory.type || advisory.title || 'Trail advisory').trim(),
+          description: String(advisory.description || advisory.message || '').trim(),
+          expiresAt: advisory.expires || advisory.expiresAt || payload?.expiresAt || ''
+        }));
+    }
+
+    async function fetchNwsSnapshot(lat, lon) {
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+      const key = `${lat.toFixed(3)},${lon.toFixed(3)}`;
+      const cached = nwsWeatherCache.get(key);
+      const now = Date.now();
+      if (cached && now - cached.ts < 20 * 60 * 1000) {
+        return cached.value;
+      }
+      try {
+        const headers = {
+          'User-Agent': 'NH48-SSR/1.0 (https://nh48.info/contact)',
+          Accept: 'application/geo+json'
+        };
+        const pointsResp = await fetch(`https://api.weather.gov/points/${lat},${lon}`, { headers });
+        if (!pointsResp.ok) {
+          nwsWeatherCache.set(key, { ts: now, value: null });
+          return null;
+        }
+        const pointsPayload = await pointsResp.json();
+        const forecastUrl = pointsPayload?.properties?.forecast;
+        if (!forecastUrl) {
+          nwsWeatherCache.set(key, { ts: now, value: null });
+          return null;
+        }
+        const forecastResp = await fetch(forecastUrl, { headers });
+        if (!forecastResp.ok) {
+          nwsWeatherCache.set(key, { ts: now, value: null });
+          return null;
+        }
+        const forecastPayload = await forecastResp.json();
+        const period = Array.isArray(forecastPayload?.properties?.periods)
+          ? forecastPayload.properties.periods[0]
+          : null;
+        if (!period) {
+          nwsWeatherCache.set(key, { ts: now, value: null });
+          return null;
+        }
+        const rawTemp = Number(period.temperature);
+        const tempUnit = String(period.temperatureUnit || 'F').toUpperCase();
+        const temperatureF = Number.isFinite(rawTemp)
+          ? (tempUnit === 'C' ? (rawTemp * 9) / 5 + 32 : rawTemp)
+          : null;
+        const snapshot = {
+          source: 'nws',
+          fetchedAt: new Date().toISOString(),
+          summary: String(period.shortForecast || period.detailedForecast || '').trim(),
+          windMph: parseWindMph(period.windSpeed),
+          temperatureF
+        };
+        nwsWeatherCache.set(key, { ts: now, value: snapshot });
+        return snapshot;
+      } catch (_) {
+        nwsWeatherCache.set(key, { ts: now, value: null });
+        return null;
+      }
+    }
+
+    async function buildWeatherSnapshot(coords) {
+      const lat = toNumber(coords?.lat);
+      const lon = toNumber(coords?.lon);
+      const nws = await fetchNwsSnapshot(lat, lon);
+      if (nws) return nws;
+
+      const monthly = await loadMonthlyWeather();
+      const monthName = getEasternMonthName();
+      const monthEntry = monthly?.[monthName];
+      if (!monthEntry || typeof monthEntry !== 'object') return null;
+      const avgWindMph = toNumber(monthEntry.avgWindMph);
+      const avgTempF = toNumber(monthEntry.avgTempF);
+      const gustMph = toNumber(monthEntry.avgWindGustMph);
+      return {
+        source: 'monthly-climatology',
+        fetchedAt: new Date().toISOString(),
+        summary: `${monthName} averages at higher summits`,
+        windMph: avgWindMph,
+        temperatureF: avgTempF,
+        windGustMph: gustMph
+      };
+    }
+
+    function computeRiskSeverity({ riskEntry, weatherSnapshot, currentAdvisories }) {
+      let score = 0;
+      const factors = Array.isArray(riskEntry?.risk_factors) ? riskEntry.risk_factors : [];
+      if (factors.includes('SevereWeather')) score += 2;
+      if (factors.includes('AboveTreelineExposure')) score += 2;
+      if (factors.includes('LongBailout')) score += 1;
+      if (factors.includes('NavigationComplexity')) score += 1;
+      if (factors.includes('LimitedWater')) score += 1;
+
+      const windMph = toNumber(weatherSnapshot?.windMph);
+      const tempF = toNumber(weatherSnapshot?.temperatureF);
+      if (windMph !== null && windMph >= 45) score += 2;
+      else if (windMph !== null && windMph >= 30) score += 1;
+      if (tempF !== null && tempF <= 10) score += 2;
+      else if (tempF !== null && tempF <= 20) score += 1;
+
+      const advisoryCount = Array.isArray(currentAdvisories) ? currentAdvisories.length : 0;
+      if (advisoryCount >= 2) score += 2;
+      else if (advisoryCount === 1) score += 1;
+
+      if (score >= 6) return 'high';
+      if (score >= 3) return 'moderate';
+      return 'low';
+    }
+
+    function buildAlertBannerHtml(model, isFrench = false) {
+      if (!model) return '';
+      const level = model.level === 'high' ? 'high' : model.level === 'moderate' ? 'moderate' : 'info';
+      const border = level === 'high' ? '#dc2626' : level === 'moderate' ? '#d97706' : '#2563eb';
+      const bg = level === 'high' ? 'rgba(127,29,29,0.18)' : level === 'moderate' ? 'rgba(146,64,14,0.18)' : 'rgba(30,58,138,0.18)';
+      const title = esc(model.title || (isFrench ? 'Alerte sentier' : 'Trail advisory'));
+      const message = esc(model.message || '');
+      const ctaLabel = esc(model.ctaLabel || (isFrench ? 'Voir le bulletin météo' : 'View weather briefing'));
+      const ctaHref = esc(model.ctaHref || 'https://www.mountwashington.org/experience-the-weather/higher-summit-forecast.aspx');
+      const expiresLine = model.expiresAt
+        ? `<p style="margin:6px 0 0 0;opacity:.82;font-size:.87rem;">${esc(isFrench ? 'Expiration:' : 'Expires:')} ${esc(model.expiresAt)}</p>`
+        : '';
+      return `
+<section data-nh48-alert-banner="true" style="margin:16px auto 0 auto;max-width:1100px;padding:14px 16px;border:1px solid ${border};background:${bg};border-radius:12px;color:#e5e7eb;">
+  <p style="margin:0;font-weight:700;letter-spacing:.01em;">${title}</p>
+  <p style="margin:6px 0 0 0;line-height:1.45;">${message}</p>
+  ${expiresLine}
+  <p style="margin:10px 0 0 0;">
+    <a href="${ctaHref}" target="_blank" rel="noopener" style="color:#86efac;text-decoration:underline;">${ctaLabel}</a>
+  </p>
+</section>`;
+    }
+
+    function injectBodyStartHtml(html, snippet) {
+      if (!snippet || typeof snippet !== 'string') return html;
+      if (/<body[^>]*>/i.test(html)) {
+        return html.replace(/<body([^>]*)>/i, (match, attrs) => `<body${attrs}>\n${snippet}`);
+      }
+      return `${snippet}\n${html}`;
+    }
+
+    async function buildSitewideAdvisoryBanner(isFrench = false) {
+      const currentConditions = await loadCurrentConditions();
+      const advisories = normalizeCurrentConditionsAdvisories(currentConditions);
+      const washingtonSnapshot = await buildWeatherSnapshot({ lat: 44.2705, lon: -71.3033 });
+      const windMph = toNumber(washingtonSnapshot?.windMph);
+      const showWeatherPrompt = Number.isFinite(windMph) && windMph >= 35;
+      if (!advisories.length && !showWeatherPrompt) {
+        return '';
+      }
+      const advisory = advisories[0] || null;
+      const title = advisory?.title || (isFrench ? 'Bulletin conditions White Mountains' : 'White Mountains conditions bulletin');
+      const message = advisory?.description
+        || (isFrench
+          ? `Vent estime sur les sommets: ${Math.round(windMph)} mph. Verifiez la meteo avant votre itineraire.`
+          : `Estimated summit wind: ${Math.round(windMph)} mph. Check weather before committing to exposed routes.`);
+      return buildAlertBannerHtml({
+        level: advisories.length ? 'moderate' : 'info',
+        title,
+        message,
+        expiresAt: advisory?.expiresAt || currentConditions?.expiresAt || '',
+        ctaHref: 'https://www.mountwashington.org/experience-the-weather/higher-summit-forecast.aspx',
+        ctaLabel: isFrench ? 'Voir le bulletin sommital' : 'Open higher summits forecast'
+      }, isFrench);
+    }
+
     function collectJsonLdIds(block, ids) {
       if (!block || typeof block !== 'object') return;
       if (Array.isArray(block['@graph'])) {
@@ -1225,7 +1519,8 @@ export default {
         sameAs: [
           INSTAGRAM_URL,
           'https://www.facebook.com/natedumpspics',
-          'https://www.etsy.com/shop/NH48pics'
+          'https://www.etsy.com/shop/NH48pics',
+          NH48_APP_URL
         ]
       };
       const fallbackPerson = {
@@ -1237,7 +1532,8 @@ export default {
         sameAs: [
           INSTAGRAM_URL,
           'https://www.facebook.com/natedumpspics',
-          'https://www.etsy.com/shop/NH48pics'
+          'https://www.etsy.com/shop/NH48pics',
+          NH48_APP_URL
         ],
         worksFor: { '@id': `${SITE}/#organization` }
       };
@@ -1247,7 +1543,7 @@ export default {
         '@id': `${SITE}/#website`,
         name: 'NH48pics',
         url: `${SITE}/`,
-        sameAs: [INSTAGRAM_URL],
+        sameAs: [INSTAGRAM_URL, NH48_APP_URL],
         publisher: { '@id': `${SITE}/#organization` }
       };
 
@@ -1278,6 +1574,7 @@ export default {
     function buildCreativeSameAs() {
       return [
         SITE_URL,
+        NH48_APP_URL,
         INSTAGRAM_URL,
         'https://www.facebook.com/natedumpspics',
         'https://www.etsy.com/shop/NH48pics'
@@ -2502,8 +2799,13 @@ export default {
       canonicalUrl,
       imageUrl,
       summaryText,
-      photos = []
+      photos = [],
+      seoContext = {}
     ) {
+      const parkingEntry = seoContext?.parkingEntry || null;
+      const difficultyEntry = seoContext?.difficultyEntry || null;
+      const riskEntry = seoContext?.riskEntry || null;
+      const weatherSnapshot = seoContext?.weatherSnapshot || null;
       const imageObjects = (Array.isArray(photos) ? photos : [])
         .slice(0, 10)
         .map((photo) => {
@@ -2632,27 +2934,64 @@ export default {
           addPropertyValue(name, value);
         }
       }
+      if (Number.isFinite(Number(difficultyEntry?.technicalDifficulty))) {
+        addPropertyValue('Technical Difficulty (1-10)', Number(difficultyEntry.technicalDifficulty));
+      }
+      if (Number.isFinite(Number(difficultyEntry?.physicalEffort))) {
+        addPropertyValue('Physical Effort (1-10)', Number(difficultyEntry.physicalEffort));
+      }
+      if (Array.isArray(riskEntry?.risk_factors) && riskEntry.risk_factors.length) {
+        addPropertyValue('Risk Factors', riskEntry.risk_factors.join(', '));
+      }
+      if (typeof riskEntry?.prep_notes === 'string' && riskEntry.prep_notes.trim()) {
+        addPropertyValue('Preparation Notes', riskEntry.prep_notes.trim());
+      }
+      if (Number.isFinite(Number(weatherSnapshot?.windMph))) {
+        addPropertyValue('Current Wind Speed (mph)', Number(weatherSnapshot.windMph));
+      }
+      if (Number.isFinite(Number(weatherSnapshot?.temperatureF))) {
+        addPropertyValue('Current Temperature (F)', Number(weatherSnapshot.temperatureF));
+      }
       mountain.publisher = { '@id': `${SITE}/#organization` };
       if (coords.lat && coords.lon) {
         mountain.geo = { '@type': 'GeoCoordinates', latitude: coords.lat, longitude: coords.lon };
       }
-      if (peakData && typeof peakData === 'object') {
-        const trailheadValue = typeof peakData['Most Common Trailhead'] === 'string'
-          ? peakData['Most Common Trailhead'].trim()
-          : '';
-        const parkingValue = typeof peakData['Parking Notes'] === 'string'
-          ? peakData['Parking Notes'].trim()
-          : '';
-        if (trailheadValue || parkingValue) {
-          const placeDetails = { '@type': 'Place' };
-          if (trailheadValue) {
-            placeDetails.name = trailheadValue;
-          }
-          if (parkingValue) {
-            placeDetails.description = parkingValue;
-          }
-          mountain.containsPlace = placeDetails;
-        }
+      const trailheadValue = typeof parkingEntry?.trailheadName === 'string'
+        ? parkingEntry.trailheadName.trim()
+        : (typeof peakData?.['Most Common Trailhead'] === 'string' ? peakData['Most Common Trailhead'].trim() : '');
+      const parkingValue = typeof parkingEntry?.notes === 'string'
+        ? parkingEntry.notes.trim()
+        : (typeof peakData?.['Parking Notes'] === 'string' ? peakData['Parking Notes'].trim() : '');
+      const parkingLat = toNumber(parkingEntry?.parkingLat);
+      const parkingLng = toNumber(parkingEntry?.parkingLng);
+      const parkingCapacity = toNumber(parkingEntry?.capacity);
+      const parkingFullBy = typeof parkingEntry?.fullBy === 'string' ? parkingEntry.fullBy.trim() : '';
+      if (trailheadValue || parkingValue || parkingLat !== null || parkingLng !== null) {
+        mountain.containsPlace = {
+          '@type': 'ParkingFacility',
+          name: trailheadValue || `${peakName} trailhead parking`,
+          description: parkingValue || undefined,
+          geo: parkingLat !== null && parkingLng !== null
+            ? {
+              '@type': 'GeoCoordinates',
+              latitude: parkingLat,
+              longitude: parkingLng
+            }
+            : undefined,
+          maximumAttendeeCapacity: parkingCapacity !== null ? parkingCapacity : undefined,
+          additionalProperty: parkingFullBy
+            ? [{ '@type': 'PropertyValue', name: 'Full By', value: parkingFullBy }]
+            : undefined
+        };
+      }
+      if (weatherSnapshot && (weatherSnapshot.summary || weatherSnapshot.windMph || weatherSnapshot.temperatureF)) {
+        mountain.weather = {
+          '@type': 'WeatherObservation',
+          dateObserved: weatherSnapshot.fetchedAt || new Date().toISOString(),
+          description: weatherSnapshot.summary || undefined,
+          windSpeed: Number.isFinite(Number(weatherSnapshot.windMph)) ? Number(weatherSnapshot.windMph) : undefined,
+          temperature: Number.isFinite(Number(weatherSnapshot.temperatureF)) ? Number(weatherSnapshot.temperatureF) : undefined
+        };
       }
       if (!mountain.additionalProperty.length) {
         delete mountain.additionalProperty;
@@ -2688,6 +3027,7 @@ export default {
       const altText = isFrench
         ? 'Apercu du catalogue NH48 avec photos et donnees des sommets.'
         : 'Preview of the NH48 Peak Catalog with peak photos and data.';
+      const sitewideAdvisoryBanner = await buildSitewideAdvisoryBanner(isFrench);
 
       const peaks = await loadPeaks();
       const peakEntries = Array.isArray(peaks)
@@ -2870,6 +3210,9 @@ export default {
         loadPartial('footer', RAW_FOOTER_URL)
       ]);
       html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'catalog');
+      if (sitewideAdvisoryBanner) {
+        html = injectBodyStartHtml(html, sitewideAdvisoryBanner);
+      }
       html = injectBuildDate(html, buildDate);
 
       const metaBlock = [
@@ -2922,7 +3265,8 @@ export default {
       includeBreadcrumb = true,
       stripTemplateJsonLd = false,
       stripTemplateBreadcrumbJsonLd = true,
-      bodyDataAttrs = null
+      bodyDataAttrs = null,
+      prependBodyHtml = ''
     }) {
       const templateUrl = `${RAW_BASE}/${templatePath}`;
       const rawHtml = await loadTextCache(`tpl:${templatePath}`, templateUrl);
@@ -2947,6 +3291,9 @@ export default {
       html = stripBreadcrumbMicrodata(html);
       html = stripHeadMeta(html);
       html = injectNavFooter(html, navHtml, footerHtml, pathname, routeId, bodyDataAttrs);
+      if (prependBodyHtml) {
+        html = injectBodyStartHtml(html, prependBodyHtml);
+      }
       html = injectBuildDate(html, buildDate);
       const globalSchemaNodes = await loadGlobalSchemaNodes();
       const pageJsonLd = Array.isArray(jsonLd) ? [...jsonLd] : [];
@@ -2993,6 +3340,7 @@ export default {
         loadJsonCache('homepage:splash-alt', RAW_SPLASH_ALT_TEXT_URL),
         loadEntityLinks()
       ]);
+      const sitewideAdvisoryBanner = await buildSitewideAdvisoryBanner(isFrench);
       const homepageCardMedia = extractHomepageCardMedia(homepageTemplateHtml);
       const splashAltLookup = buildSplashAltLookup(splashAltPayload);
       const homepageSplashMedia = extractHomepageSplashMedia(splashManifestPayload, splashAltLookup);
@@ -3357,7 +3705,8 @@ export default {
           ogType: 'website'
         },
         jsonLd,
-        stripTemplateJsonLd: true
+        stripTemplateJsonLd: true,
+        prependBodyHtml: sitewideAdvisoryBanner
       });
     }
 
@@ -4070,6 +4419,7 @@ export default {
         })),
         canonical
       );
+      const sitewideAdvisoryBanner = await buildSitewideAdvisoryBanner(isFrench);
       return serveTemplatePage({
         templatePath: 'nh-4000-footers-info.html',
         pathname,
@@ -4084,7 +4434,8 @@ export default {
           imageAlt: title,
           ogType: 'website'
         },
-        jsonLd: [itemList]
+        jsonLd: [itemList],
+        prependBodyHtml: sitewideAdvisoryBanner
       });
     }
 
@@ -4115,7 +4466,7 @@ export default {
       }
     }
 
-    async function servePrerenderedPeakHtml(peakSlug, french = false) {
+    async function servePrerenderedPeakHtml(peakSlug, french = false, options = {}) {
       if (!peakSlug) return null;
       const normalizedSlug = String(peakSlug).trim().toLowerCase();
       if (!normalizedSlug) return null;
@@ -4132,6 +4483,15 @@ export default {
           return null;
         }
         let html = await response.text();
+        if (Array.isArray(options?.jsonLdBlocks) && options.jsonLdBlocks.length) {
+          const ldBlocks = options.jsonLdBlocks
+            .map((block) => `<script type="application/ld+json">${JSON.stringify(block).replace(/</g, '\\u003c')}</script>`)
+            .join('\n');
+          html = html.replace(/<\/head>/i, `${ldBlocks}\n</head>`);
+        }
+        if (options?.prependBodyHtml) {
+          html = injectBodyStartHtml(html, options.prependBodyHtml);
+        }
         html = injectAnalyticsCore(html);
         return new Response(html, {
           status: 200,
@@ -4166,13 +4526,6 @@ export default {
 
     console.log(`[Worker] Processing peak route: ${pathname}, slug: ${slug}, lang: ${lang}, type: ${routeKeyword}`);
 
-    if (routeKeyword === 'peak') {
-      const prerenderedResponse = await servePrerenderedPeakHtml(slug, isFrench);
-      if (prerenderedResponse) {
-        return prerenderedResponse;
-      }
-    }
-
     // Find the peak by slug in the loaded dataset
     function findPeak(peaks, slugValue) {
       let peak = null;
@@ -4185,14 +4538,18 @@ export default {
     }
 
     // Load necessary data
-    const [peaks, descMap, trans, sameAsLookup, legacySameAsLookup, entityLinks, peakExperiences] = await Promise.all([
+    const [peaks, descMap, trans, sameAsLookup, legacySameAsLookup, entityLinks, peakExperiences, parkingLookup, difficultyLookup, riskLookup, currentConditions] = await Promise.all([
       loadPeaks(),
       loadDescriptions(),
       loadTranslation(lang),
       loadJsonCache('sameAs', RAW_SAME_AS_URL),
       loadJsonCache('sameAs:legacy', RAW_LEGACY_SAME_AS_URL),
       loadEntityLinks(),
-      loadPeakExperiencesEn()
+      loadPeakExperiencesEn(),
+      loadParkingLookup(),
+      loadPeakDifficultyLookup(),
+      loadRiskOverlayLookup(),
+      loadCurrentConditions()
     ]);
 
     if (!peaks) {
@@ -4252,6 +4609,52 @@ export default {
       descMap[normalizedName] ||
       '';
     const summaryVal = summaryFromFile || (peak.summary || peak.description || '').toString().trim();
+    const peakSlugNormalized = normalizeSlug(slug);
+    const peakId = toNumber(peak?.id) ?? toNumber(peak?.peakId) ?? null;
+    const parkingEntry = parkingLookup?.[peakSlugNormalized] || null;
+    const difficultyEntry = difficultyLookup?.[peakSlugNormalized] || null;
+    const riskEntry = riskLookup?.[peakSlugNormalized] || null;
+    const weatherSnapshot = await buildWeatherSnapshot(coords);
+    const currentAdvisories = normalizeCurrentConditionsAdvisories(currentConditions, peakSlugNormalized, peakId);
+    const riskSeverity = computeRiskSeverity({
+      riskEntry,
+      weatherSnapshot,
+      currentAdvisories
+    });
+    const hasLiveAdvisory = currentAdvisories.length > 0;
+    const shouldShowRiskBanner = hasLiveAdvisory || riskSeverity !== 'low';
+    const riskBannerTitle = isFrench ? 'Alerte conditions montagne' : 'Mountain conditions advisory';
+    const riskBannerMessage = (() => {
+      if (hasLiveAdvisory) {
+        const first = currentAdvisories[0];
+        return first?.description
+          || (isFrench
+            ? `Consultez les conditions actuelles avant d'entreprendre ${peakName}.`
+            : `Review current conditions before committing to ${peakName}.`);
+      }
+      if (weatherSnapshot?.source === 'nws') {
+        const windText = Number.isFinite(Number(weatherSnapshot?.windMph))
+          ? `${Math.round(Number(weatherSnapshot.windMph))} mph`
+          : (isFrench ? 'vent variable' : 'variable wind');
+        return isFrench
+          ? `${peakName}: risque ${riskSeverity}. Vent estime a ${windText}. Verifiez le bulletin sommital avant le depart.`
+          : `${peakName}: ${riskSeverity} exposure today. Estimated wind ${windText}. Check summit forecast before departure.`;
+      }
+      return isFrench
+        ? `${peakName}: niveau de risque ${riskSeverity} base sur l'exposition, l'evacuation et les facteurs d'itineraire.`
+        : `${peakName}: ${riskSeverity} risk profile from exposure, bailout distance, and route factors.`;
+    })();
+    const peakAlertModel = shouldShowRiskBanner
+      ? {
+        level: riskSeverity === 'high' ? 'high' : hasLiveAdvisory ? 'moderate' : 'info',
+        title: hasLiveAdvisory ? currentAdvisories[0]?.title || riskBannerTitle : riskBannerTitle,
+        message: riskBannerMessage,
+        expiresAt: currentAdvisories[0]?.expiresAt || currentConditions?.expiresAt || '',
+        ctaHref: 'https://www.mountwashington.org/experience-the-weather/higher-summit-forecast.aspx',
+        ctaLabel: isFrench ? 'Consulter le bulletin sommital' : 'Check higher summits forecast'
+      }
+      : null;
+    const peakAlertHtml = buildAlertBannerHtml(peakAlertModel, isFrench);
 
     // Build canonical and alternate URLs
     const canonical = isFrench ? `${SITE}/fr/peak/${encodeURIComponent(slug)}` : `${SITE}/peak/${encodeURIComponent(slug)}`;
@@ -4281,8 +4684,26 @@ export default {
       heroUrl,
       summaryVal,
       photos,
-      peak
+      {
+        parkingEntry,
+        difficultyEntry,
+        riskEntry,
+        weatherSnapshot
+      }
     );
+    const alertSchema = peakAlertModel
+      ? {
+        '@context': 'https://schema.org',
+        '@type': 'SpecialAnnouncement',
+        '@id': `${canonical}#advisory`,
+        name: peakAlertModel.title,
+        text: peakAlertModel.message,
+        category: 'https://schema.org/PublicSafety',
+        datePosted: new Date().toISOString(),
+        expires: peakAlertModel.expiresAt || undefined,
+        url: canonical
+      }
+      : null;
     const breadcrumbSchema = buildCanonicalBreadcrumbSchema({
       routeId: 'peak-detail',
       canonicalUrl: canonical,
@@ -4294,11 +4715,21 @@ export default {
       }
     });
     const globalSchemaNodes = await loadGlobalSchemaNodes();
-    const peakPageNodes = [mountain, hikingTrail, breadcrumbSchema, creativeWork, ...imageObjects].filter(Boolean);
+    const peakPageNodes = [mountain, hikingTrail, breadcrumbSchema, creativeWork, alertSchema, ...imageObjects].filter(Boolean);
     const jsonLdBlocks = mergeJsonLdBlocks(
       peakPageNodes,
       globalSchemaNodes
     );
+
+    if (routeKeyword === 'peak') {
+      const prerenderedResponse = await servePrerenderedPeakHtml(slug, isFrench, {
+        prependBodyHtml: peakAlertHtml,
+        jsonLdBlocks: alertSchema ? [alertSchema] : []
+      });
+      if (prerenderedResponse) {
+        return prerenderedResponse;
+      }
+    }
 
     // Fetch the raw interactive HTML template from GitHub
     const tplResp = await fetch(RAW_TEMPLATE_URL, NO_CACHE_FETCH);
@@ -4325,6 +4756,9 @@ export default {
 
     // Remove existing placeholders and duplicate head tags.
     html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'peak');
+    if (peakAlertHtml) {
+      html = injectBodyStartHtml(html, peakAlertHtml);
+    }
     html = injectBuildDate(html, buildDate);
 
     // Insert our meta tags, canonical links and structured data just

@@ -145,6 +145,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 6,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 7,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "LimitedWater, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Greeley Ponds Trail → Mount Osceola Trail - via East Peak. (7.6 mi • 3100 ft gain • Out & back • Difficult); Mount Osceola Trail - Tripoli Road. → East Peak (8.4 mi • 3050 ft gain • Out & back • Difficult)"
         },
@@ -248,9 +282,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Kancamagus Highway - Greeley Ponds trailhead. or Tripoli Road",
-        "description": "Kancamagus trailhead has a small lot; Tripoli Road lot has a fee and toilets"
+        "description": "Kancamagus trailhead has a small lot; Tripoli Road lot has a fee and toilets",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.00611,
+          "longitude": -71.52028
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/mount-osceola-east/#nh48-peak-dataset"
@@ -260,7 +299,7 @@
       },
       "sameAs": [
         "https://en.wikipedia.org/wiki/East_Peak_Mount_Osceola",
-        "https://www.wikidata.org/wiki/Q5329122",
+        "https://www.wikidata.org/entity/Q5329122",
         "https://www.openstreetmap.org/node/357729942"
       ],
       "subjectOf": [
@@ -268,6 +307,21 @@
           "@id": "https://nh48.info/peak/mount-osceola-east/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/mount-osceola-east/#webpage"
       }
@@ -325,6 +379,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -379,6 +434,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -436,7 +492,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -2937,7 +2995,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Mount Osceola - East Peak. in Sandwich Range. Mount Osceola, East Peak (often simply called East Osceola) is a 4,156-foot mountain in the White Mountains of New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - Greeley Ponds trail is wet in spring; winter ascents possible with traction. Medium - protected in trees but rocky ridge can be slick when wet.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Limited – small brooks near trailheads; no water on the ridge Kancamagus trailhead has a small lot; Tripoli Road lot has a fee and toilets</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Greeley Ponds Trail → Mount Osceola Trail - via East Peak. - 7.6 - 3100 - Difficult - Out &amp; back Limited – small brooks near trailheads; no water on the ridge Kancamagus trailhead has a small lot; Tripoli Road lot has a fee and toilets</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

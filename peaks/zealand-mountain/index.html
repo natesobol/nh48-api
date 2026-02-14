@@ -148,6 +148,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 7,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 7,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "SevereWeather, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Zealand Trail > Twinway - via Zealand Hut & Zeacliff. (11.0 mi • 2,300 ft gain • Out & back - or traverse over Bonds. • Difficult)"
         },
@@ -248,9 +282,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Zealand Trail parking - end of Zealand Road.",
-        "description": "Medium-sized lot at end of Zealand Rd - paved.; road closed in snow season ~3.5 extra miles from 302"
+        "description": "Medium-sized lot at end of Zealand Rd - paved.; road closed in snow season ~3.5 extra miles from 302",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.17967,
+          "longitude": -71.52133
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/zealand-mountain/#nh48-peak-dataset"
@@ -260,7 +299,7 @@
       },
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Zealand",
-        "https://www.wikidata.org/wiki/Q6924722",
+        "https://www.wikidata.org/entity/Q6924722",
         "https://www.openstreetmap.org/node/4898022477"
       ],
       "subjectOf": [
@@ -268,6 +307,21 @@
           "@id": "https://nh48.info/peak/zealand-mountain/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/zealand-mountain/#webpage"
       }
@@ -322,6 +376,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -376,6 +431,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -433,7 +489,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -3217,7 +3275,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Zealand Mountain in Twin Range. Zealand Mountain (sometimes called Mount Zealand) is a 4,260-foot mountain located in Grafton County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - Zealand Road open; also popular ski/snowshoe in winter with extra road distance. Low - mostly sheltered; caution on Zeacliff in high winds.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object] Yes - streams and ponds along Zealand Trail; Zealand Falls by hut. Medium-sized lot at end of Zealand Rd - paved.; road closed in snow season ~3.5 extra miles from 302</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Zealand Trail &gt; Twinway - via Zealand Hut &amp; Zeacliff. - 11.0 - 2,300 - Difficult - Out &amp; back - or traverse over Bonds. Yes - streams and ponds along Zealand Trail; Zealand Falls by hut. Medium-sized lot at end of Zealand Rd - paved.; road closed in snow season ~3.5 extra miles from 302</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

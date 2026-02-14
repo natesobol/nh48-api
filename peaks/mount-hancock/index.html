@@ -145,6 +145,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 6,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 6,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Hancock Loop Trail - via Hancock Notch & Cedar Brook. (9.8 mi • 2,650 ft gain • Loop - climbing South then North Hancock or vice versa. • Moderate/Difficult)"
         },
@@ -245,9 +279,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Hancock Overlook - Kancamagus Highway.",
-        "description": "Large paved parking off NH 112 - share with hairpin turn scenic area.; can fill on nice days"
+        "description": "Large paved parking off NH 112 - share with hairpin turn scenic area.; can fill on nice days",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.08368,
+          "longitude": -71.49369
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/mount-hancock/#nh48-peak-dataset"
@@ -257,7 +296,7 @@
       },
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Hancock_(New_Hampshire)",
-        "https://www.wikidata.org/wiki/Q6921046",
+        "https://www.wikidata.org/entity/Q6921046",
         "https://www.openstreetmap.org/node/357730099"
       ],
       "subjectOf": [
@@ -265,6 +304,21 @@
           "@id": "https://nh48.info/peak/mount-hancock/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/mount-hancock/#webpage"
       }
@@ -319,6 +373,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -373,6 +428,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -430,7 +486,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -2886,7 +2944,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Mount Hancock - North Peak. in Pemigewasset Wilderness - Hancock Range.. Mount Hancock is a 4,420-foot mountain in Grafton County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - stream crossings easier in low water; popular winter snowshoe loop. Low - route largely in forest; summits protected by trees.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object] Yes - streams along Hancock Notch and Cedar Brook Trails in first half of loop. Large paved parking off NH 112 - share with hairpin turn scenic area.; can fill on nice days</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Hancock Loop Trail - via Hancock Notch &amp; Cedar Brook. - 9.8 - 2,650 - Moderate/Difficult - Loop - climbing South then North Hancock or vice versa. Yes - streams along Hancock Notch and Cedar Brook Trails in first half of loop. Large paved parking off NH 112 - share with hairpin turn scenic area.; can fill on nice days</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

@@ -139,6 +139,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 4,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 5,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "LimitedWater, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Starr King Trail - via Mt Starr King. (7.2 mi • 2,700 ft gain • Out & back • Moderate)"
         },
@@ -239,9 +273,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Starr King Trail parking - off Starr King Road in Jefferson.",
-        "description": "Small parking area on unpaved Starr King Rd by trailhead sign; if full, park along road without blocking driveways"
+        "description": "Small parking area on unpaved Starr King Rd by trailhead sign; if full, park along road without blocking driveways",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.42833,
+          "longitude": -71.36972
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/mount-waumbek/#nh48-peak-dataset"
@@ -252,7 +291,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Waumbek",
         "https://www.openstreetmap.org/node/357728727",
-        "https://www.wikidata.org/wiki/Q6924524",
+        "https://www.wikidata.org/entity/Q6924524",
         "https://www.peakbagger.com/peak.aspx?pid=6882"
       ],
       "subjectOf": [
@@ -260,6 +299,21 @@
           "@id": "https://nh48.info/peak/mount-waumbek/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/mount-waumbek/#webpage"
       }
@@ -314,6 +368,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -368,6 +423,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -425,7 +481,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -2252,7 +2310,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Mount Waumbek in Pliny Range. Mount Waumbek is a 4,006-foot mountain in Coös County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Year-round - popular winter 4k; summer for clear Presidential views from outlook; avoid spring mud. Low - trail sheltered; only concern is typical winter cold at viewpoint.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object] Limited - no major water sources on trail; an old spring near Starr King summit sometimes flows lightly, but plan to carry water. Small parking area on unpaved Starr King Rd by trailhead sign; if full, park along road without blocking driveways</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Starr King Trail - via Mt Starr King. - 7.2 - 2,700 - Moderate - Out &amp; back Limited - no major water sources on trail; an old spring near Starr King summit sometimes flows lightly, but plan to carry water. Small parking area on unpaved Starr King Rd by trailhead sign; if full, park along road without blocking driveways</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

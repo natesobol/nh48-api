@@ -15,6 +15,10 @@ const PERSON_PATH = path.join(ROOT, "data", "person.json");
 const CREATIVEWORKS_PATH = path.join(ROOT, "data", "creativeWorks.json");
 const WMNF_RANGES_PATH = path.join(ROOT, "data", "wmnf-ranges.json");
 const PEAK_EXPERIENCES_EN_PATH = path.join(ROOT, "data", "peak-experiences.en.json");
+const PARKING_DATA_PATH = path.join(ROOT, "data", "parking-data.json");
+const MONTHLY_WEATHER_PATH = path.join(ROOT, "data", "monthly-weather.json");
+const PEAK_DIFFICULTY_PATH = path.join(ROOT, "data", "peak-difficulty.json");
+const RISK_OVERLAY_PATH = path.join(ROOT, "data", "nh48_enriched_overlay.json");
 const OUTPUT_DIR = path.join(ROOT, "peaks");
 const CANONICAL_BASE = "https://nh48.info/peak";
 const HOME_URL = "https://nh48.info/";
@@ -237,6 +241,20 @@ const resolveRangeContext = (rangeValue, rangeLookup, fallbackRange = "White Mou
     rangeUrl: derivedSlug ? `https://nh48.info/range/${encodeURIComponent(derivedSlug)}/` : "",
   };
 };
+
+const buildIndexBySlug = (payload) => {
+  if (Array.isArray(payload)) {
+    return Object.fromEntries(
+      payload
+        .map((entry) => [cleanText(entry?.slug), entry])
+        .filter(([slug]) => Boolean(slug))
+    );
+  }
+  return payload && typeof payload === "object" ? payload : {};
+};
+
+const getEasternMonthName = () =>
+  new Date().toLocaleString("en-US", { month: "long", timeZone: "America/New_York" });
 
 const formatTemplate = (template, values) =>
   template.replace(/\{(\w+)\}/g, (match, key) =>
@@ -860,8 +878,12 @@ const buildExperienceSection = (experience, labels) => {
   const summary = cleanText(experience.experienceSummary);
   const conditions = cleanText(experience.conditionsFromExperience);
   const tip = cleanText(experience.planningTip);
+  const firstAscent = cleanText(experience.firstAscent);
+  const historyNotes = cleanText(experience.historyNotes);
+  const historySourceUrl = cleanText(experience.historySourceUrl);
+  const historySourceLabel = cleanText(experience.historySourceLabel);
   const lastReviewed = cleanText(experience.lastReviewed);
-  if (!summary && !conditions && !tip) return "";
+  if (!summary && !conditions && !tip && !historyNotes) return "";
 
   const items = [
     summary
@@ -872,6 +894,11 @@ const buildExperienceSection = (experience, labels) => {
       : "",
     tip
       ? `<article class="experience-item"><h3>${escapeHtml(labels.planningTip || "Planning tip")}</h3><p>${escapeHtml(tip)}</p></article>`
+      : "",
+    historyNotes
+      ? `<article class="experience-item"><h3>${escapeHtml(labels.historyNotes || "History notes")}</h3><p>${escapeHtml(
+        [firstAscent ? `First ascent: ${firstAscent}.` : "", historyNotes].filter(Boolean).join(" ")
+      )}</p>${historySourceUrl ? `<p><a href="${escapeHtml(historySourceUrl)}" target="_blank" rel="noopener">${escapeHtml(historySourceLabel || "Source")}</a></p>` : ""}</article>`
       : "",
   ]
     .filter(Boolean)
@@ -1254,7 +1281,8 @@ const buildJsonLd = (
   organizationData,
   websiteData,
   personData,
-  creativeEntry
+  creativeEntry,
+  seoContext = {}
 ) => {
   const peakName = cleanText(localizedName || peak.peakName || peak["Peak Name"] || peak.slug);
   const elevationFt = numberFrom(peak["Elevation (ft)"]);
@@ -1268,6 +1296,15 @@ const buildJsonLd = (
     : peak.sameAs
       ? [peak.sameAs]
       : [];
+  const peakSlug = cleanText(peak.slug || peak.slug_en || peak.Slug || "");
+  const parkingEntry = seoContext?.parkingLookup?.[peakSlug] || null;
+  const difficultyEntry = seoContext?.difficultyLookup?.[peakSlug] || null;
+  const riskEntry = seoContext?.riskLookup?.[peakSlug] || null;
+  const monthName = seoContext?.monthName || getEasternMonthName();
+  const monthlyWeather = seoContext?.monthlyWeather?.[monthName] || null;
+  const experience = seoContext?.experience && typeof seoContext.experience === "object"
+    ? seoContext.experience
+    : null;
   const additionalProperty = [
     prominenceFt != null
       ? {
@@ -1296,6 +1333,52 @@ const buildJsonLd = (
         "@type": "PropertyValue",
         name: "Trail Type",
         value: trailType,
+      }
+      : null,
+    Number.isFinite(Number(difficultyEntry?.technicalDifficulty))
+      ? {
+        "@type": "PropertyValue",
+        name: "Technical Difficulty",
+        value: Number(difficultyEntry.technicalDifficulty),
+        unitText: "1-10",
+      }
+      : null,
+    Number.isFinite(Number(difficultyEntry?.physicalEffort))
+      ? {
+        "@type": "PropertyValue",
+        name: "Physical Effort",
+        value: Number(difficultyEntry.physicalEffort),
+        unitText: "1-10",
+      }
+      : null,
+    monthlyWeather && Number.isFinite(Number(monthlyWeather?.avgWindMph))
+      ? {
+        "@type": "PropertyValue",
+        name: `${monthName} Average Wind (mph)`,
+        value: Number(monthlyWeather.avgWindMph),
+        unitText: "MPH",
+      }
+      : null,
+    monthlyWeather && Number.isFinite(Number(monthlyWeather?.avgTempF))
+      ? {
+        "@type": "PropertyValue",
+        name: `${monthName} Average Temperature (F)`,
+        value: Number(monthlyWeather.avgTempF),
+        unitText: "F",
+      }
+      : null,
+    Array.isArray(riskEntry?.risk_factors) && riskEntry.risk_factors.length
+      ? {
+        "@type": "PropertyValue",
+        name: "Risk Factors",
+        value: riskEntry.risk_factors.join(", "),
+      }
+      : null,
+    cleanText(riskEntry?.prep_notes)
+      ? {
+        "@type": "PropertyValue",
+        name: "Preparation Notes",
+        value: cleanText(riskEntry.prep_notes),
       }
       : null,
     ...buildPeakAdditionalProperties(peak),
@@ -1422,7 +1505,10 @@ const buildJsonLd = (
     url: HOME_URL,
     description: "Fine-art photography and trail resources for the NH 48 4,000-footers.",
     sameAs: [
-      "https://www.instagram.com/nate_dumps_pics/"
+      "https://www.nh48pics.com/",
+      "https://www.nh48.app/",
+      "https://www.instagram.com/nate_dumps_pics/",
+      "https://www.etsy.com/shop/NH48pics"
     ],
     publisher: { "@id": publisherNode["@id"] },
     copyrightHolder: { "@id": publisherNode["@id"] },
@@ -1453,6 +1539,82 @@ const buildJsonLd = (
     personNode,
     webPageNode
   });
+
+  const parkingPlaceNode = (() => {
+    const trailhead = cleanText(parkingEntry?.trailheadName || peak["Most Common Trailhead"] || "");
+    const parkingNotes = cleanText(parkingEntry?.notes || peak["Parking Notes"] || "");
+    const parkingLat = numberFrom(parkingEntry?.parkingLat);
+    const parkingLng = numberFrom(parkingEntry?.parkingLng);
+    const capacity = numberFrom(parkingEntry?.capacity);
+    const fullBy = cleanText(parkingEntry?.fullBy || "");
+    if (!trailhead && !parkingNotes && parkingLat == null && parkingLng == null) return undefined;
+    const place = {
+      "@type": "ParkingFacility",
+      name: trailhead || `${peakName} trailhead parking`,
+      description: parkingNotes || undefined,
+      geo: parkingLat != null && parkingLng != null
+        ? {
+          "@type": "GeoCoordinates",
+          latitude: parkingLat,
+          longitude: parkingLng
+        }
+        : undefined,
+      maximumAttendeeCapacity: capacity != null ? capacity : undefined,
+      additionalProperty: fullBy
+        ? [{
+          "@type": "PropertyValue",
+          name: "Full By",
+          value: fullBy
+        }]
+        : undefined
+    };
+    Object.keys(place).forEach((key) => place[key] === undefined && delete place[key]);
+    return place;
+  })();
+
+  const weatherObservationNode = (() => {
+    if (!monthlyWeather) return undefined;
+    const avgWind = numberFrom(monthlyWeather.avgWindMph);
+    const avgTemp = numberFrom(monthlyWeather.avgTempF);
+    const avgGust = numberFrom(monthlyWeather.avgWindGustMph);
+    if (avgWind == null && avgTemp == null && avgGust == null) return undefined;
+    const node = {
+      "@type": "WeatherObservation",
+      dateObserved: new Date().toISOString().slice(0, 10),
+      description: `${monthName} summit averages for White Mountains conditions`,
+      windSpeed: avgWind != null ? `${avgWind} mph` : undefined,
+      temperature: avgTemp != null ? `${avgTemp} F` : undefined,
+      additionalProperty: avgGust != null
+        ? [{
+          "@type": "PropertyValue",
+          name: `${monthName} Average Wind Gust (mph)`,
+          value: avgGust,
+          unitText: "MPH"
+        }]
+        : undefined
+    };
+    Object.keys(node).forEach((key) => node[key] === undefined && delete node[key]);
+    return node;
+  })();
+
+  const historyCreativeWorkNode = (() => {
+    const firstAscent = cleanText(experience?.firstAscent || "");
+    const historyNotes = cleanText(experience?.historyNotes || "");
+    const historySourceUrl = cleanText(experience?.historySourceUrl || "");
+    const historySourceLabel = cleanText(experience?.historySourceLabel || "");
+    if (!historySourceUrl || (!firstAscent && !historyNotes)) return undefined;
+    return {
+      "@type": "CreativeWork",
+      "@id": `${canonicalUrl}#history`,
+      name: `${peakName} history notes`,
+      description: [firstAscent ? `First ascent: ${firstAscent}.` : "", historyNotes]
+        .filter(Boolean)
+        .join(" "),
+      url: historySourceUrl,
+      isBasedOn: historySourceUrl,
+      publisher: historySourceLabel || undefined
+    };
+  })();
 
   const mountainNode = {
     "@type": ["Mountain", "TouristAttraction"],
@@ -1490,21 +1652,18 @@ const buildJsonLd = (
     landManager: { "@id": geographyRefs.usfs["@id"] },
     additionalProperty: additionalProperty.length ? additionalProperty : undefined,
     hasPart: routeRefs.length ? routeRefs : undefined,
-    containsPlace: (() => {
-      const trailhead = cleanText(peak["Most Common Trailhead"] || "");
-      const parking = cleanText(peak["Parking Notes"] || "");
-      if (!trailhead && !parking) return undefined;
-      const place = { "@type": "Place" };
-      if (trailhead) place.name = trailhead;
-      if (parking) place.description = parking;
-      return place;
-    })(),
+    containsPlace: parkingPlaceNode,
     isPartOf: { "@id": dataCatalogNode["@id"] },
     publisher: { "@id": publisherNode["@id"] },
     sameAs: sameAsLinks.length ? sameAsLinks : undefined,
-    subjectOf: imageGallery ? [{ '@id': imageGallery['@id'] }] : undefined,
+    subjectOf: [imageGallery ? { '@id': imageGallery['@id'] } : null, historyCreativeWorkNode ? { "@id": historyCreativeWorkNode["@id"] } : null].filter(Boolean),
+    weather: weatherObservationNode,
     mainEntityOfPage: { "@id": webPageNode["@id"] },
   };
+
+  if (!mountainNode.subjectOf || !mountainNode.subjectOf.length) {
+    mountainNode.subjectOf = undefined;
+  }
 
   Object.keys(mountainNode).forEach((key) => mountainNode[key] === undefined && delete mountainNode[key]);
 
@@ -1528,6 +1687,7 @@ const buildJsonLd = (
     personNode,
     webSiteNode,
     creativeWorkNode,
+    historyCreativeWorkNode,
     whiteMountainForestNode,
     geoNode,
     imageGallery,
@@ -1669,7 +1829,14 @@ const main = () => {
     const creativeWorks = readJsonFile(CREATIVEWORKS_PATH, "creative works");
     const wmnfRanges = readJsonFile(WMNF_RANGES_PATH, "wmnf ranges");
     const peakExperiencesEn = readJsonFile(PEAK_EXPERIENCES_EN_PATH, "peak experiences en");
+    const parkingPayload = readJsonFile(PARKING_DATA_PATH, "parking data");
+    const monthlyWeather = readJsonFile(MONTHLY_WEATHER_PATH, "monthly weather data");
+    const peakDifficulty = readJsonFile(PEAK_DIFFICULTY_PATH, "peak difficulty data");
+    const riskOverlayPayload = readJsonFile(RISK_OVERLAY_PATH, "risk overlay data");
     const rangeLookup = buildRangeLookup(wmnfRanges);
+    const parkingLookup = buildIndexBySlug(parkingPayload);
+    const riskLookup = buildIndexBySlug(riskOverlayPayload);
+    const monthName = getEasternMonthName();
 
     const geographyEntries = Array.isArray(geographyData)
       ? geographyData
@@ -1880,7 +2047,15 @@ const main = () => {
               organizationData,
               websiteData,
               personData,
-              creativeWorks?.[`peak/${slug}`] || creativeWorks?.[slug]
+              creativeWorks?.[`peak/${slug}`] || creativeWorks?.[slug],
+              {
+                parkingLookup,
+                monthlyWeather,
+                difficultyLookup: peakDifficulty,
+                riskLookup,
+                monthName,
+                experience
+              }
             )
           ),
           BREADCRUMB_LD: escapeScriptJson(

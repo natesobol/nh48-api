@@ -148,6 +148,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 4,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 4,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "ScrambleSteep"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Carry the 10 essentials and prepare for rough footing and rapid weather changes."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Kinsman Ridge Trail - via Lonesome Lake and Hi-Cannon. (5.9 mi • 2,300 ft gain • Loop - semi-loop using Hi-Cannon up, Kinsman Ridge down. • Moderate); Kinsman Ridge Trail - direct from tram parking. (4.4 mi • 2,250 ft gain • Out & back • Moderate/Difficult)"
         },
@@ -251,9 +285,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Lafayette Place Campground or Cannon Mountain Tram parking - Franconia Notch.",
-        "description": "Large parking areas at tram and Lafayette Place; very accessible - may need parking fee at tram lot during tourist season."
+        "description": "Large parking areas at tram and Lafayette Place; very accessible - may need parking fee at tram lot during tourist season.",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.15417,
+          "longitude": -71.69917
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/cannon-mountain/#nh48-peak-dataset"
@@ -264,7 +303,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Cannon_Mountain_%28New_Hampshire%29",
         "https://www.openstreetmap.org/node/357731219",
-        "https://www.wikidata.org/wiki/Q5032778",
+        "https://www.wikidata.org/entity/Q5032778",
         "https://www.peakbagger.com/peak.aspx?pid=6895"
       ],
       "subjectOf": [
@@ -272,6 +311,21 @@
           "@id": "https://nh48.info/peak/cannon-mountain/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/cannon-mountain/#webpage"
       }
@@ -329,6 +383,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -383,6 +438,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -440,7 +496,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -3250,7 +3308,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Cannon Mountain in Kinsman Range. Cannon Mountain is a 4,100-foot (1,249 m) mountain located in Grafton County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - black flies in spring; winter ascent common via ski slopes or Kinsman Ridge trail. Medium - summit open but a building and tower provide refuge; trail mostly wooded.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Yes - Lonesome Lake on route; otherwise no flowing water on steep sections. Large parking areas at tram and Lafayette Place; very accessible - may need parking fee at tram lot during tourist season.</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Kinsman Ridge Trail - via Lonesome Lake and Hi-Cannon. - 5.9 - 2,300 - Moderate - Loop - semi-loop using Hi-Cannon up, Kinsman Ridge down. Yes - Lonesome Lake on route; otherwise no flowing water on steep sections. Large parking areas at tram and Lafayette Place; very accessible - may need parking fee at tram lot during tourist season.</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

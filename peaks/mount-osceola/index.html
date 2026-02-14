@@ -139,6 +139,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 4,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 5,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "LimitedWater, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Mount Osceola Trail - Tripoli Road. (6.4 mi • 2100 ft gain • Out & back • Moderate); Greeley Ponds Trail → Mount Osceola Trail - via East Osceola. (7.6 mi • 3100 ft gain • Out & back or traverse • Difficult)"
         },
@@ -242,9 +276,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Tripoli Road parking lot",
-        "description": "Small lot with fee and toilets; fills quickly – overflow parking along Tripoli Road"
+        "description": "Small lot with fee and toilets; fills quickly – overflow parking along Tripoli Road",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.00161,
+          "longitude": -71.53561
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/mount-osceola/#nh48-peak-dataset"
@@ -255,7 +294,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Osceola",
         "https://www.openstreetmap.org/node/357730514",
-        "https://www.wikidata.org/wiki/Q6922609",
+        "https://www.wikidata.org/entity/Q6922609",
         "https://www.peakbagger.com/peak.aspx?pid=6992"
       ],
       "subjectOf": [
@@ -263,6 +302,21 @@
           "@id": "https://nh48.info/peak/mount-osceola/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/mount-osceola/#webpage"
       }
@@ -320,6 +374,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -374,6 +429,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -431,7 +487,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -2304,7 +2362,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Mount Osceola in Sandwich Range. Mount Osceola is a 4,340-foot (1,320 m) peak within the White Mountains of New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - Tripoli Road is closed in winter; Greeley Ponds approach is used in winter. Medium - summit exposed but a quick retreat to treeline is possible.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Limited – small brooks near the trailhead; no reliable water on the ridge Small lot with fee and toilets; fills quickly – overflow parking along Tripoli Road</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Mount Osceola Trail - Tripoli Road. - 6.4 - 2100 - Moderate - Out &amp; back Limited – small brooks near the trailhead; no reliable water on the ridge Small lot with fee and toilets; fills quickly – overflow parking along Tripoli Road</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

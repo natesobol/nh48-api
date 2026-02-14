@@ -142,6 +142,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 6,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 8,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "North Twin Trail via North Twin - out & back. (11.2 mi • 3,700 ft gain • Out & back - over North Twin. • Difficult); Gale River Trail to Twinway - via Galehead Hut. (13.0 mi • 3,300 ft gain • Out & back - or car spot loop via North Twin Trail. • Difficult)"
         },
@@ -245,9 +279,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "North Twin Trailhead - Haystack Road, summer only.",
-        "description": "Trailhead on Haystack Rd - closed in winter.; alternative winter start at end of Little River Road adds mileage"
+        "description": "Trailhead on Haystack Rd - closed in winter.; alternative winter start at end of Little River Road adds mileage",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.16,
+          "longitude": -71.55417
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/south-twin-mountain/#nh48-peak-dataset"
@@ -258,7 +297,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/South_Twin_Mountain_%28New_Hampshire%29",
         "https://www.openstreetmap.org/node/357730793",
-        "https://www.wikidata.org/wiki/Q7568685",
+        "https://www.wikidata.org/entity/Q7568685",
         "https://www.peakbagger.com/peak.aspx?pid=6920"
       ],
       "subjectOf": [
@@ -266,6 +305,21 @@
           "@id": "https://nh48.info/peak/south-twin-mountain/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/south-twin-mountain/#webpage"
       }
@@ -323,6 +377,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -377,6 +432,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -434,7 +490,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -2622,7 +2680,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on South Twin Mountain in Twin Range. South Twin Mountain is a 4,902-foot mountain located in Grafton County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer, early fall - Zealand Road access for some approaches in season. Medium - summit exposed but not a long above-treeline stretch.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Yes - river crossings on North Twin Trail; Galehead Hut nearby has water. Trailhead on Haystack Rd - closed in winter.; alternative winter start at end of Little River Road adds mileage</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>North Twin Trail via North Twin - out &amp; back. - 11.2 - 3,700 - Difficult - Out &amp; back - over North Twin. Yes - river crossings on North Twin Trail; Galehead Hut nearby has water. Trailhead on Haystack Rd - closed in winter.; alternative winter start at end of Little River Road adds mileage</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

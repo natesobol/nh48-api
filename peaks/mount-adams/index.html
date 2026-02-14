@@ -160,6 +160,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 10,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 10,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "AboveTreelineExposure, SevereWeather, LimitedWater, Navigation, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Airline & Valley Way Loop - via Durand Ridge. (9.0 mi • 4,500 ft gain • Semi-loop • Extremely difficult); Lowe’s Path - direct ascent. (9.6 mi • 4,400 ft gain • Out & back • Extremely difficult)"
         },
@@ -263,9 +297,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Appalachia - US 2, Randolph, NH.",
-        "description": "Roadside parking at Appalachia trailhead; can overflow on busy days"
+        "description": "Roadside parking at Appalachia trailhead; can overflow on busy days",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.32056,
+          "longitude": -71.29139
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/mount-adams/#nh48-peak-dataset"
@@ -276,7 +315,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Adams_%28New_Hampshire%29",
         "https://www.openstreetmap.org/node/357729530",
-        "https://www.wikidata.org/wiki/Q1840432",
+        "https://www.wikidata.org/entity/Q1840432",
         "https://www.peakbagger.com/peak.aspx?pid=6954"
       ],
       "subjectOf": [
@@ -284,6 +323,21 @@
           "@id": "https://nh48.info/peak/mount-adams/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/mount-adams/#webpage"
       }
@@ -341,6 +395,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -395,6 +450,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -452,7 +508,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -4480,7 +4538,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Mount Adams in Presidential Range - Northern Presidentials.. Mount Adams is a 5,774-foot mountain in the Presidential Range of the White Mountains.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and early fall; winter only for experienced hikers High - subject to strong winds and rapid weather changes.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Limited - stream near base; Madison Spring Hut water when open. Roadside parking at Appalachia trailhead; can overflow on busy days</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Airline &amp; Valley Way Loop - via Durand Ridge. - 9.0 - 4,500 - Extremely difficult - Semi-loop Limited - stream near base; Madison Spring Hut water when open. Roadside parking at Appalachia trailhead; can overflow on busy days</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

@@ -33,6 +33,9 @@ for (const slug of peakSlugs) {
   }
 
   const seen = new Set();
+  let hasEnglishWikipedia = false;
+  let hasWikidataEntity = false;
+  let hasOpenStreetMap = false;
   for (const link of links) {
     if (typeof link !== 'string') {
       issues.push(`${slug}: non-string URL value`);
@@ -48,6 +51,25 @@ for (const slug of peakSlugs) {
       issues.push(`${slug}: duplicate URL ${link}`);
     }
     seen.add(link);
+
+    if (/^https:\/\/en\.wikipedia\.org\/wiki\//i.test(link)) {
+      hasEnglishWikipedia = true;
+    }
+    if (/^https:\/\/www\.wikidata\.org\/entity\/Q\d+/i.test(link)) {
+      hasWikidataEntity = true;
+    }
+    if (/^https:\/\/www\.openstreetmap\.org\/(node|way|relation)\//i.test(link)) {
+      hasOpenStreetMap = true;
+    }
+  }
+
+  // Strong reference policy:
+  // 1) Preferred: dedicated English Wikipedia URL.
+  // 2) Fallback: Wikidata entity + OSM canonical object URL.
+  if (!hasEnglishWikipedia && !(hasWikidataEntity && hasOpenStreetMap)) {
+    issues.push(
+      `${slug}: missing strong authority links (need en.wikipedia.org/wiki/* OR wikidata entity + openstreetmap object)`
+    );
   }
 }
 

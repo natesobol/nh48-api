@@ -146,6 +146,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 8,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 8,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "AboveTreelineExposure, SevereWeather, LongBailout, LimitedWater, Navigation, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Check a summit forecast and carry windproof/warm layers; turn back if visibility or lightning risk increases. Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone. Descend same way if on Blueberry Ledge - fastest.; from Rollins Trail mid-way one could drop via Tom Wiggin - steep, unofficial. or Dicey’s Mill - lo"
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Blueberry Ledge Trail - south via Blueberry Ledges. (8.4 mi • 2,900 ft gain • Out & back - or loop with Tom Wiggin or Dicey’s Mill. • Moderate/Difficult); Loop with Mt Passaconaway - Blueberry Ledge > Rollins > Dicey’s Mill. (11.9 mi • 3,800 ft gain • Loop • Difficult)"
         },
@@ -249,9 +283,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Ferncroft - Wonalancet. – same as Passaconaway",
-        "description": "Large grassy Ferncroft lot; be respectful - private land around.. No facilities except kiosk"
+        "description": "Large grassy Ferncroft lot; be respectful - private land around.. No facilities except kiosk",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 43.935,
+          "longitude": -71.42167
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/fr/peak/mount-whiteface/#nh48-peak-dataset"
@@ -262,7 +301,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/Mount_Whiteface",
         "https://www.openstreetmap.org/node/3283228471",
-        "https://www.wikidata.org/wiki/Q6924572",
+        "https://www.wikidata.org/entity/Q6924572",
         "https://www.peakbagger.com/peak.aspx?pid=7002"
       ],
       "subjectOf": [
@@ -270,6 +309,21 @@
           "@id": "https://nh48.info/fr/peak/mount-whiteface/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/fr/peak/mount-whiteface/#webpage"
       }
@@ -327,6 +381,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -381,6 +436,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -438,7 +494,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {

@@ -139,6 +139,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 7,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 10,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "LimitedWater, ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Plan water conservatively and do not assume reliable sources late in the hike. Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "19 Mile Brook > Carter Dome Trail > Carter-Moriah - via Zeta Pass. (12.7 mi • 3,750 ft gain • Loop - together with Middle Carter. • Very difficult); Imp Trail loop - North Imp -> North Carter Trail -> Carter-Moriah -> South Imp. (11.0 mi • 3,300 ft gain • Loop • Difficult)"
         },
@@ -242,9 +276,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "19-Mile Brook Trailhead - NH 16. for approach via Carter Dome Trail",
-        "description": "Same parking as Carter Dome/Middle Carter - 19-Mile Brook, moderate size."
+        "description": "Same parking as Carter Dome/Middle Carter - 19-Mile Brook, moderate size.",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.30167,
+          "longitude": -71.17528
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/south-carter-mountain/#nh48-peak-dataset"
@@ -255,7 +294,7 @@
       "sameAs": [
         "https://en.wikipedia.org/wiki/South_Carter_Mountain",
         "https://www.openstreetmap.org/node/357730765",
-        "https://www.wikidata.org/wiki/Q7566729",
+        "https://www.wikidata.org/entity/Q7566729",
         "https://www.peakbagger.com/peak.aspx?pid=6978"
       ],
       "subjectOf": [
@@ -263,6 +302,21 @@
           "@id": "https://nh48.info/peak/south-carter-mountain/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/south-carter-mountain/#webpage"
       }
@@ -320,6 +374,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -374,6 +429,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -431,7 +487,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -2305,7 +2363,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on South Carter Mountain in Carter-Moriah Range. South Carter Mountain is a 4,430-foot mountain located in Coös County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - pleasant ridge hike; also common on winter traverses. Low - ridge mostly in trees provides shelter from wind.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Limited - 19 Mile Brook at start; none on ridge except possible seasonal seeps near Zeta Pass. Same parking as Carter Dome/Middle Carter - 19-Mile Brook, moderate size.</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>19 Mile Brook &gt; Carter Dome Trail &gt; Carter-Moriah - via Zeta Pass. - 12.7 - 3,750 - Very difficult - Loop - together with Middle Carter. Limited - 19 Mile Brook at start; none on ridge except possible seasonal seeps near Zeta Pass. Same parking as Carter Dome/Middle Carter - 19-Mile Brook, moderate size.</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>

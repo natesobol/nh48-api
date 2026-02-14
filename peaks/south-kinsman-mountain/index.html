@@ -148,6 +148,40 @@
         },
         {
           "@type": "PropertyValue",
+          "name": "Technical Difficulty",
+          "value": 6,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Physical Effort",
+          "value": 7,
+          "unitText": "1-10"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Wind (mph)",
+          "value": 43.8,
+          "unitText": "MPH"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "February Average Temperature (F)",
+          "value": 8,
+          "unitText": "F"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Risk Factors",
+          "value": "ScrambleSteep, NoCellService"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Preparation Notes",
+          "value": "Download offline maps and do not rely on cell service; leave a plan with someone."
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Standard Routes",
           "value": "Mount Kinsman Trail > Kinsman Ridge Trail - via North Kinsman. (10.0 mi • 3,950 ft gain • Out & back - hits North & South peaks. • Difficult); Fishin’ Jimmy Trail - from Lonesome Lake. to Kinsman Ridge (12.0 mi • 3,550 ft gain • Out & back - or loop via Mt Kinsman Trail with car spot. • Difficult)"
         },
@@ -251,9 +285,14 @@
         }
       ],
       "containsPlace": {
-        "@type": "Place",
+        "@type": "ParkingFacility",
         "name": "Mount Kinsman Trail - off NH 116, Easton. or Lafayette Place - for Lonesome Lake/Fishin’ Jimmy approach.",
-        "description": "Mount Kinsman Trail has a small roadside lot in Easton; Lafayette Place is large but shared with Franconia hikers"
+        "description": "Mount Kinsman Trail has a small roadside lot in Easton; Lafayette Place is large but shared with Franconia hikers",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 44.123,
+          "longitude": -71.73667
+        }
       },
       "isPartOf": {
         "@id": "https://nh48.info/peak/south-kinsman-mountain/#nh48-peak-dataset"
@@ -263,13 +302,28 @@
       },
       "sameAs": [
         "https://www.openstreetmap.org/node/357730786",
-        "https://www.wikidata.org/wiki/Q34909503"
+        "https://www.wikidata.org/entity/Q34909503"
       ],
       "subjectOf": [
         {
           "@id": "https://nh48.info/peak/south-kinsman-mountain/#image-gallery"
         }
       ],
+      "weather": {
+        "@type": "WeatherObservation",
+        "dateObserved": "2026-02-14",
+        "description": "February summit averages for White Mountains conditions",
+        "windSpeed": "43.8 mph",
+        "temperature": "8 F",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "February Average Wind Gust (mph)",
+            "value": 60,
+            "unitText": "MPH"
+          }
+        ]
+      },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/south-kinsman-mountain/#webpage"
       }
@@ -327,6 +381,7 @@
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
@@ -381,6 +436,7 @@
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
         "https://www.etsy.com/shop/NH48pics",
+        "https://www.nh48.app/",
         "https://github.com/natesobol",
         "https://github.com/natesobol/nh48-api",
         "https://www.nh48pics.com/"
@@ -438,7 +494,9 @@
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
         "https://www.nh48pics.com/",
+        "https://www.nh48.app/",
         "https://www.instagram.com/nate_dumps_pics/",
+        "https://www.etsy.com/shop/NH48pics",
         "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
@@ -3244,7 +3302,7 @@
         <div class="experience-grid">
           <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on South Kinsman Mountain in Kinsman Range - Western White Mountains.. South Kinsman Mountain is a 4,358-foot mountain in Grafton County, New Hampshire.</p></article>
 <article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - Lonesome Lake route wet in spring; winter doable with spikes. Medium - summit exposed; ridge somewhat sheltered in trees.</p></article>
-<article class="experience-item"><h3>Planning tip</h3><p>[object Object],[object Object] Yes - streams near Kinsman Trail base; Lonesome Lake and brook on Fishin’ Jimmy Trail. Mount Kinsman Trail has a small roadside lot in Easton; Lafayette Place is large but shared with Franconia hikers</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>Mount Kinsman Trail &gt; Kinsman Ridge Trail - via North Kinsman. - 10.0 - 3,950 - Difficult - Out &amp; back - hits North &amp; South peaks. Yes - streams near Kinsman Trail base; Lonesome Lake and brook on Fishin’ Jimmy Trail. Mount Kinsman Trail has a small roadside lot in Easton; Lafayette Place is large but shared with Franconia hikers</p></article>
         </div>
         <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
       </section>
