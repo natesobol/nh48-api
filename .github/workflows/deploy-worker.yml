@@ -50,6 +50,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: deploy-worker-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -62,6 +66,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
       - name: Detect worker file changes
         id: changes

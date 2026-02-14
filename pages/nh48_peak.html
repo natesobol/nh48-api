@@ -1388,6 +1388,9 @@
         justify-content:center;
         padding:16px;
       }
+      .panel-reader-modal[hidden]{
+        display:none !important;
+      }
       .panel-reader-dialog{
         width:min(100%, 1200px);
         height:100%;
@@ -1880,7 +1883,7 @@
       </div>
     </div>
 
-    <div id="panelReaderModal" class="panel-reader-modal no-print" hidden>
+    <div id="panelReaderModal" class="panel-reader-modal no-print" hidden aria-hidden="true">
       <div class="panel-reader-dialog" role="dialog" aria-modal="true" aria-labelledby="panelReaderTitle">
         <div class="panel-reader-header">
           <h2 id="panelReaderTitle">Panel reader</h2>
@@ -2021,6 +2024,10 @@
           const parsed = new URL(url, window.location.origin);
           if(parsed.hostname === PHOTO_BASE.hostname){
             const normalizedPath = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
+            // Avoid double-transform URLs like /cdn-cgi/image/.../cdn-cgi/image/... that 404.
+            if(normalizedPath.startsWith('/cdn-cgi/image/')){
+              return parsed.toString();
+            }
             return `${IMAGE_TRANSFORM_PREFIX}${normalizedPath}`;
           }
         } catch (error) {
@@ -4421,6 +4428,7 @@
         const modal = document.getElementById('panelReaderModal');
         if(!modal) return;
         modal.hidden = true;
+        modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
         const content = document.getElementById('panelReaderContent');
         if(content){
@@ -4451,6 +4459,7 @@
         const selectedScale = scaleSelect ? scaleSelect.value : '6';
         setPanelReaderScale(selectedScale);
         modal.hidden = false;
+        modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
         const closeBtn = document.getElementById('panelReaderClose');
         if(closeBtn){
@@ -4491,6 +4500,8 @@
         const title = document.getElementById('panelReaderTitle');
         const scaleLabel = document.getElementById('panelReaderScaleLabel');
         if(!modal) return;
+        modal.hidden = true;
+        modal.setAttribute('aria-hidden', 'true');
 
         if(title){
           title.textContent = translateWithFallback('peak.reader.title', 'Panel reader');

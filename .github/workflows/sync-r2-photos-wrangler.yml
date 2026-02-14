@@ -1,13 +1,20 @@
 name: Sync R2 photos with Wrangler
 
-# This workflow runs whenever files in the photos directory change on the default branch
 on:
   push:
+    branches:
+      - main
     paths:
       - 'photos/**'
+      - '.github/workflows/sync-r2-photos-wrangler.yml'
+  workflow_dispatch: {}
 
 permissions:
   contents: write
+
+concurrency:
+  group: sync-r2-photos-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   upload-to-r2:
@@ -17,10 +24,6 @@ jobs:
       # Checkout your repository so the workflow has access to the photos directory
       - name: Checkout code
         uses: actions/checkout@v4
-
-      # Install Wrangler globally
-      - name: Install Wrangler
-        run: npm install -g wrangler
 
       - name: Install AWS CLI
         run: |
@@ -68,7 +71,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install manifest generator dependencies
         run: |

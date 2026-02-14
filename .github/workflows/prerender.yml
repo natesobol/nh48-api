@@ -3,7 +3,25 @@ name: Pre-render NH48 pages
 on:
   push:
     branches: [main]
+    paths:
+      - 'data/**'
+      - 'pages/**'
+      - 'scripts/prerender-peaks.js'
+      - 'scripts/prerender-long-trails.js'
+      - 'scripts/generate-sitemaps.js'
+      - '.github/workflows/prerender.yml'
+      - '!peaks/**'
+      - '!fr/peaks/**'
+      - '!long-trails/**'
+      - '!sitemap.xml'
+      - '!page-sitemap.xml'
+      - '!image-sitemap.xml'
+      - '!build-meta.json'
   pull_request:
+
+concurrency:
+  group: prerender-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -66,6 +84,7 @@ jobs:
             long-trails/**
             build-meta.json
             sitemap.xml
+            page-sitemap.xml
             image-sitemap.xml
 
   auto-commit-pr:
@@ -89,6 +108,7 @@ jobs:
             long-trails/**
             build-meta.json
             sitemap.xml
+            page-sitemap.xml
             image-sitemap.xml
 
       - name: Verify no uncommitted changes

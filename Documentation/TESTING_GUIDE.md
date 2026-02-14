@@ -81,3 +81,40 @@ Retry policy:
 - Peak breadcrumb depth: 4 items (`Home > White Mountains > Range > Peak`)
 - One breadcrumb list per audited route
 - Peak pages include narrative module and authority links
+
+## CI Workflow Ownership Map
+- `deploy-worker.yml`: Worker deploy + all SEO/peak audit gates + production parity retry.
+- `prerender.yml`: Canonical prerender/sitemap generator and committer for generated files.
+- `pages.yml`: Packages/deploys Pages artifact; only fallback-renders when generated outputs are missing.
+- `sync-r2-data.yml`: Syncs canonical `data/nh48.json` to R2 data bucket.
+- `sync-r2-map-data.yml`: Syncs Howker map data files to R2 map bucket.
+- `sync-r2-photos-wrangler.yml`: Canonical photo sync + metadata manifest + prerender refresh.
+- `sync-r2-photos.yml`: Manual emergency fallback only (deprecated).
+- `autogen-longtrail-geometries.yml`: Generates and commits long-trail geometry derivatives.
+
+## Expected Run Matrix
+1. `worker.js` or worker SEO script changes on `main`:
+   - Runs: `deploy-worker.yml`
+   - Expected: deploy may run; production parity audits always run.
+2. `photos/**` changes on `main`:
+   - Runs: `sync-r2-photos-wrangler.yml`
+   - Expected: photo upload, manifest rebuild, prerender commit.
+3. `data/nh48.json` changes on `main`:
+   - Runs: `sync-r2-data.yml`, `prerender.yml`, `pages.yml` (push).
+4. Generated-only file commits (`peaks/**`, `fr/peaks/**`, `long-trails/**`, sitemap files):
+   - Runs: `pages.yml` deploy path.
+   - Does not rerun: `prerender.yml` push path (protected via path exclusions in `push.paths`).
+5. Docs-only changes:
+   - Usually runs none except workflows whose path filters include docs (notably `deploy-worker.yml` if SEO docs touched).
+
+## Troubleshooting Skipped Checks
+1. `deploy-worker.yml` shows deploy skipped:
+   - Expected when no `worker.js`/`wrangler.toml` changes and not manual dispatch.
+   - Audits can still run and fail/pass independently.
+2. `pages.yml` did not rerender pages:
+   - Expected if required generated outputs already exist.
+   - Fallback render runs only when artifacts are missing.
+3. `prerender.yml` not triggered after generated-file commit:
+   - Expected by design (`paths-ignore` avoids self-loop).
+4. One photo sync workflow appears skipped:
+   - `sync-r2-photos.yml` is manual fallback only; automatic photo runs are owned by `sync-r2-photos-wrangler.yml`.

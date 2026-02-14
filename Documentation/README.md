@@ -36,3 +36,13 @@ Primary references:
 - Canonical peak route: `/peak/{slug}`
 - Redirected legacy route: `/peaks/{slug}` -> `/peak/{slug}`
 - Peak authority policy: Wikipedia preferred; Wikidata + OSM required fallback
+
+## CI/CD Workflow Map
+- `deploy-worker.yml`: worker deploy and production SEO parity gate.
+- `prerender.yml`: canonical prerender/sitemap generation and commit.
+- `pages.yml`: Pages artifact packaging/deploy; fallback generation only when prerender outputs are missing.
+- `sync-r2-photos-wrangler.yml`: canonical photo sync + manifest + prerender refresh.
+- `sync-r2-photos.yml`: manual-only deprecated fallback.
+- `sync-r2-data.yml`: R2 sync for `data/nh48.json`.
+- `sync-r2-map-data.yml`: R2 sync for map datasets.
+- `autogen-longtrail-geometries.yml`: long-trail geometry generation and commit automation.

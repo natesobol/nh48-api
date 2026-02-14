@@ -14,6 +14,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: autogen-longtrail-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' }}
+
 jobs:
   generate:
     runs-on: ubuntu-latest
@@ -26,32 +30,20 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
-
-      - name: Sync with main
-        run: git pull --rebase origin main
+          node-version: 20
 
       - name: Generate long trail geometries
         run: node scripts/autogen-longtrail-geometries.mjs
 
       - name: Commit generated geometries
         run: |
-          if git status --porcelain | grep -q "^ M data/long-trails/generated\|^?? data/long-trails/generated\|^ M data/long-trails-full.json\|^ M data/long-trails-index.json\|^ M data/long-trails-manifest.json\|^?? data/long-trails-full.json\|^?? data/long-trails-index.json\|^?? data/long-trails-manifest.json\|^ M trails/\|^?? trails/"; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add data/long-trails/generated
-            git add data/long-trails-full.json data/long-trails-index.json data/long-trails-manifest.json trails
-            git commit -m "chore: update long trail geometries"
-            for attempt in 1 2 3; do
-              if git push; then
-                break
-              fi
-              if [ "$attempt" -eq 3 ]; then
-                echo "Push failed after ${attempt} attempts."
-                exit 1
-              fi
-              git pull --rebase origin main
-            done
-          else
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/long-trails/generated data/long-trails-full.json data/long-trails-index.json data/long-trails-manifest.json trails || true
+          if git diff --cached --quiet; then
             echo "No geometry updates to commit."
+            exit 0
           fi
+          git commit -m "chore: update long trail geometries"
+          git push

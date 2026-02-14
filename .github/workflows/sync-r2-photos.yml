@@ -1,12 +1,7 @@
-name: Sync R2 photos
+name: Sync R2 photos (deprecated fallback)
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "photos/**"
-      - ".github/workflows/sync-r2-photos.yml"
+  # Deprecated: keep manual-only as an emergency fallback.
   workflow_dispatch: {}
 
 jobs:
