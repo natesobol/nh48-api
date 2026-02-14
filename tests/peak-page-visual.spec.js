@@ -33,7 +33,8 @@ for (const route of ROUTES) {
       await expect(page.locator('#getDirectionsBtn')).toBeVisible({ timeout: 60000 });
 
       await expect(page.locator('#routesGrid')).toBeVisible({ timeout: 60000 });
-      await expect(page.locator('#trailNamesGrid')).toBeVisible({ timeout: 60000 });
+      await expect(page.locator('#trailsHubSection')).toBeVisible({ timeout: 60000 });
+      await expect(page.locator('#relatedTrailsGrid')).toBeVisible({ timeout: 60000 });
       await expect(page.locator('#parkingAccessGrid')).toBeVisible({ timeout: 60000 });
       await expect(page.locator('#riskPrepGrid')).toBeVisible({ timeout: 60000 });
 
@@ -55,4 +56,3 @@ for (const route of ROUTES) {
     });
   }
 }
-

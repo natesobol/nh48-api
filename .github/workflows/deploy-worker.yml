@@ -61,7 +61,13 @@ on:
       - 'Documentation/CHANGES_SUMMARY.md'
       - 'Documentation/SEO_SYSTEM_RUNBOOK.md'
       - 'Documentation/PEAK_PAGE_VISUAL_CHECKLIST.md'
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      run_visual_snapshots:
+        description: 'Run Playwright peak visual snapshots'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -146,20 +152,20 @@ jobs:
         run: node scripts/audit-entity-links.js
 
       - name: Install npm dependencies for peak visual tests
-        if: steps.changes.outputs.peak_visual == 'true' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' && inputs.run_visual_snapshots
         run: npm ci
 
       - name: Install Playwright Chromium
-        if: steps.changes.outputs.peak_visual == 'true' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' && inputs.run_visual_snapshots
         run: npx playwright install --with-deps chromium
 
       - name: Run peak visual snapshots
         id: peak_visual_test
-        if: steps.changes.outputs.peak_visual == 'true' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' && inputs.run_visual_snapshots
         run: npm run test:peak-visual
 
       - name: Upload peak visual artifacts on failure
-        if: failure() && (steps.changes.outputs.peak_visual == 'true' || github.event_name == 'workflow_dispatch')
+        if: failure() && github.event_name == 'workflow_dispatch' && inputs.run_visual_snapshots
         uses: actions/upload-artifact@v4
         with:
           name: peak-visual-artifacts
