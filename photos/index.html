@@ -117,7 +117,9 @@
       </nav>
 
       <section class="catalog-controls-panel photos-hero-panel" aria-labelledby="photosPageTitle">
-        <div class="photos-hero-backdrop" aria-hidden="true"></div>
+        <div class="photos-hero-backdrop" aria-hidden="true">
+          <svg id="photosHeroTopo" class="photos-hero-topo" aria-hidden="true"></svg>
+        </div>
         <div class="catalog-hero photos-hero-copy">
           <p class="kicker">NH48 Photo Hub</p>
           <h1 id="photosPageTitle">Explore Every NH48 Photo</h1>
@@ -157,21 +159,38 @@
               <option value="elevation-asc">Elevation Up</option>
             </select>
           </div>
-          <div class="filter-group range-filter-group">
-            <label class="filter-label" for="rangeFilters">Filter Ranges</label>
-            <select id="rangeFilters" class="range-filter-select" aria-label="Filter by range" multiple></select>
-            <p class="range-filter-help">Hold Ctrl (Windows) or Command (Mac) to select multiple ranges.</p>
+          <div class="filter-group photos-mode-group">
+            <p class="filter-label">Browse Mode</p>
+            <div id="rangeModeTabs" class="range-mode-tabs" role="tablist" aria-label="Range controls mode">
+              <button type="button" id="rangeTabJump" class="range-mode-tab is-active" role="tab" aria-selected="true" aria-controls="jumpPanel" data-range-tab="jump">Jump</button>
+              <button type="button" id="rangeTabFilter" class="range-mode-tab" role="tab" aria-selected="false" aria-controls="filterPanel" data-range-tab="filter">Filter</button>
+            </div>
           </div>
         </div>
 
-        <div class="photos-jump-index" aria-label="Jump navigation">
+        <div id="jumpPanel" class="range-mode-panel is-active photos-jump-index" role="tabpanel" aria-labelledby="rangeTabJump" aria-label="Jump navigation">
           <div class="jump-row">
-            <p class="jump-label">Jump to range</p>
-            <div id="rangeJumpLinks" class="jump-links" role="list"></div>
+            <p class="jump-label">Jump to primary range</p>
+            <div id="parentJumpLinks" class="jump-links jump-links--parents" role="list"></div>
+          </div>
+          <div class="jump-row">
+            <p class="jump-label">Subranges</p>
+            <div id="subrangeJumpGrid" class="subrange-jump-grid" role="list"></div>
           </div>
           <div class="jump-row">
             <p class="jump-label">Peaks in active range</p>
             <div id="peakJumpLinks" class="jump-links jump-links--peak" role="list"></div>
+          </div>
+        </div>
+
+        <div id="filterPanel" class="range-mode-panel photos-filter-panel" role="tabpanel" aria-labelledby="rangeTabFilter" aria-label="Range filters" hidden>
+          <div class="jump-row">
+            <p class="jump-label">Filter primary ranges</p>
+            <div id="parentFilterChips" class="filter-chip-grid" role="list"></div>
+          </div>
+          <div class="jump-row">
+            <p class="jump-label">Filter subranges</p>
+            <div id="subrangeFilterChips" class="filter-chip-grid filter-chip-grid--subrange" role="list"></div>
           </div>
         </div>
       </section>
