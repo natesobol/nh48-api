@@ -7,7 +7,7 @@ const ROUTES = [
   { path: '/fr/', labels: ['Accueil', 'API NH48'] },
   { path: '/peak/mount-washington', labels: ['Home', 'White Mountains', 'Presidential Range', 'Mount Washington'] },
   { path: '/peak/mount-lafayette', labels: ['Home', 'White Mountains', 'Franconia Range', 'Mount Lafayette'] },
-  { path: '/fr/peak/mount-washington', labels: ['Accueil', 'Montagnes Blanches', 'Presidential Range', 'Mount Washington'] },
+  { path: '/fr/peak/mount-washington', labels: ['Accueil', 'Montagnes Blanches', 'Presidential Range', 'Mont Washington'] },
   { path: '/trails', labels: ['Home', 'NH48 API', 'Trails', 'WMNF Trails Map'] },
   { path: '/fr/trails', labels: ['Accueil', 'API NH48', 'Sentiers', 'Carte WMNF'] },
   { path: '/long-trails', labels: ['Home', 'NH48 API', 'Trails', 'Long-Distance Trails Map'] },
@@ -89,7 +89,14 @@ function validateBreadcrumb(route, breadcrumbNode) {
     failures.push(`Expected ${route.labels.length} breadcrumb items, found ${items.length}`);
   }
 
-  const names = items.map((item) => normalizeText(item?.name));
+  const names = items.map((item) => {
+    const direct = normalizeText(item?.name);
+    if (direct) return direct;
+    if (item?.item && typeof item.item === 'object') {
+      return normalizeText(item.item.name);
+    }
+    return '';
+  });
   route.labels.forEach((label, index) => {
     const actual = names[index] || '';
     if (actual !== label) {
