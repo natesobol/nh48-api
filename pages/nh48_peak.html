@@ -1018,30 +1018,40 @@
         display:block;
       }
       .metadata-row{
-        display:flex;
-        justify-content:space-between;
+        display:grid;
+        grid-template-columns:minmax(128px, 220px) minmax(0, 1fr);
         align-items:flex-start;
-        gap:12px;
-        padding:6px 0;
+        gap:18px;
+        padding:9px 0;
         border-bottom:1px dotted var(--stroke);
       }
-      .metadata-row:last-child{
+      .metadata-row:last-child,
+      .metadata-primary > .metadata-row:last-child,
+      .metadata-extra > .metadata-row:last-child{
         border-bottom:none;
+      }
+      .metadata-primary .metadata-row:last-of-type,
+      .metadata-extra .metadata-row:last-of-type,
+      .detail-panel .metadata-row:last-of-type,
+      .metadata-row.is-last{
+        border-bottom:none !important;
       }
       .metadata-label{
         font-weight:600;
         color:var(--muted);
-        font-size:0.8rem;
+        font-size:0.79rem;
         text-transform:uppercase;
-        letter-spacing:0.3px;
-        max-width:45%;
+        letter-spacing:0.38px;
+        max-width:none;
       }
       .metadata-value{
         color:var(--ink);
         font-size:0.9rem;
-        text-align:right;
+        text-align:left;
         flex:1 1 auto;
         word-break:break-word;
+        line-height:1.55;
+        padding-left:8px;
       }
       .description-body{
         font-size:1rem;
@@ -1049,10 +1059,54 @@
         color:var(--ink);
         margin-top:4px;
       }
+      .collapsible-content{
+        position:relative;
+        overflow:hidden;
+      }
+      .collapsible-content.is-collapsed{
+        max-height:120px;
+      }
+      .collapsible-content-fade{
+        position:absolute;
+        inset:auto 0 0 0;
+        height:44px;
+        background:linear-gradient(to bottom, rgba(10,10,10,0), rgba(10,10,10,0.94));
+        pointer-events:none;
+        opacity:0;
+        transition:opacity 0.2s ease;
+      }
+      .collapsible-content.is-collapsed .collapsible-content-fade{
+        opacity:1;
+      }
+      .panel-expand-btn{
+        margin-top:8px;
+        margin-left:auto;
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        padding:6px 10px;
+        border-radius:999px;
+        border:1px solid rgba(34,197,94,0.55);
+        background:rgba(34,197,94,0.12);
+        color:#d8ffea;
+        font-size:0.78rem;
+        font-weight:700;
+        letter-spacing:0.3px;
+        cursor:pointer;
+      }
+      .panel-expand-btn:hover{
+        background:rgba(34,197,94,0.2);
+      }
 
       h1#peakTitle{
         margin:12px 0 6px 0;
         font-size:1.75rem;
+      }
+      .section-title-wrap{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
       }
       .section-title{
         margin:20px 0 12px 0;
@@ -1062,8 +1116,37 @@
         text-transform:uppercase;
         letter-spacing:0.5px;
       }
+      .section-subtitle{
+        margin:4px 0 10px;
+        color:var(--muted);
+        font-size:0.92rem;
+        letter-spacing:0.35px;
+        text-transform:uppercase;
+      }
+      .panel-zoom-btn{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        width:34px;
+        height:34px;
+        border-radius:8px;
+        border:1px solid rgba(34,197,94,0.6);
+        background:rgba(34,197,94,0.12);
+        color:var(--accent);
+        cursor:pointer;
+        transition:transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+      .panel-zoom-btn:hover{
+        transform:scale(1.04);
+        border-color:rgba(74,222,128,0.95);
+        box-shadow:0 0 14px rgba(34,197,94,0.35);
+      }
+      .panel-zoom-btn .iconify{
+        font-size:1.05rem;
+      }
       @media(max-width:640px){
         .section-title{ margin:16px 0 10px 0; font-size:0.95rem; }
+        .section-subtitle{ margin:2px 0 8px; font-size:0.84rem; }
       }
       .info-grid{
         display:grid;
@@ -1131,6 +1214,31 @@
         color:#d8e2ef;
         line-height:1.5;
       }
+      .experience-note-text{
+        position:relative;
+        overflow:hidden;
+      }
+      .experience-note-text.is-collapsed{
+        max-height:132px;
+      }
+      .experience-note-expand{
+        margin-top:8px;
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        border:1px solid rgba(34,197,94,0.5);
+        background:rgba(34,197,94,0.1);
+        color:#dbffe9;
+        border-radius:999px;
+        padding:4px 10px;
+        font-size:0.74rem;
+        font-weight:700;
+        letter-spacing:0.28px;
+        cursor:pointer;
+      }
+      .experience-note-expand:hover{
+        background:rgba(34,197,94,0.18);
+      }
       .experience-last-reviewed{
         margin:10px 2px 0;
         color:var(--muted);
@@ -1154,6 +1262,12 @@
         background:linear-gradient(135deg, rgba(34,197,94,0.08), rgba(10,10,10,0.35));
         text-decoration:none;
         color:var(--ink);
+        transition:transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+      .trail-branding:hover{
+        transform:scale(1.01);
+        border-color:rgba(74,222,128,0.9);
+        box-shadow:0 0 20px rgba(34,197,94,0.25);
       }
       .trail-branding img{
         width:52px;
@@ -1175,16 +1289,173 @@
         font-size:0.9rem;
       }
       .trail-list a{
-        color:var(--ink);
-        text-decoration:underline;
-        text-decoration-color:var(--stroke);
+        color:#dff8e9;
+        text-decoration:none;
+        border-bottom:1px solid rgba(34,197,94,0.45);
         text-underline-offset:3px;
         text-decoration-thickness:1px;
-        transition:color 0.2s ease, text-decoration-color 0.2s ease;
+        transition:color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
       }
       .trail-list a:hover{
+        color:#f0fff6;
+        border-color:rgba(74,222,128,0.95);
+        box-shadow:0 0 12px rgba(34,197,94,0.32);
+        transform:scale(1.02);
+      }
+      .trail-list a:focus-visible{
+        outline:2px solid rgba(74,222,128,0.9);
+        outline-offset:2px;
+      }
+      #trailNamesGrid a{
+        color:#dff8e9;
+        text-decoration:none;
+        border-bottom:1px solid rgba(34,197,94,0.45);
+        transition:color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      }
+      #trailNamesGrid a:hover,
+      #trailNamesGrid a:focus-visible{
+        color:#f0fff6;
+        border-color:rgba(74,222,128,0.95);
+        box-shadow:0 0 12px rgba(34,197,94,0.32);
+        transform:scale(1.02);
+      }
+      .monthly-weather-card{
+        padding:14px;
+      }
+      .monthly-weather-header{
+        align-items:center;
+      }
+      #monthlyWeatherMonthSelect{
+        min-height:34px;
+        border-radius:8px;
+        border:1px solid rgba(255,255,255,0.25);
+        background:#0f1622;
+        color:var(--ink);
+        padding:4px 8px;
+        font-weight:600;
+      }
+      .monthly-weather-metrics{
+        margin-top:10px;
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));
+        gap:10px;
+      }
+      .monthly-weather-disclaimer{
+        margin:10px 0 0;
+        color:var(--muted);
+        font-size:0.76rem;
+        line-height:1.45;
+      }
+      .weather-metric{
+        border:1px solid rgba(34,197,94,0.24);
+        border-radius:10px;
+        background:linear-gradient(165deg, rgba(34,197,94,0.08), rgba(10,15,24,0.92));
+        padding:10px;
+      }
+      .weather-metric-label{
+        color:var(--muted);
+        text-transform:uppercase;
+        letter-spacing:0.4px;
+        font-size:0.75rem;
+      }
+      .weather-metric-value{
+        margin-top:4px;
+        font-size:1.03rem;
+        font-weight:700;
+        color:#ecfff5;
+      }
+      .weather-metric-bar{
+        margin-top:8px;
+        height:6px;
+        border-radius:999px;
+        background:rgba(255,255,255,0.12);
+        overflow:hidden;
+      }
+      .weather-metric-bar > span{
+        display:block;
+        height:100%;
+        border-radius:999px;
+        background:linear-gradient(90deg, rgba(34,197,94,0.8), rgba(16,185,129,0.95));
+      }
+      .panel-reader-modal{
+        position:fixed;
+        inset:0;
+        z-index:1200;
+        background:rgba(0,0,0,0.84);
+        backdrop-filter:blur(3px);
+        display:flex;
+        align-items:stretch;
+        justify-content:center;
+        padding:16px;
+      }
+      .panel-reader-dialog{
+        width:min(100%, 1200px);
+        height:100%;
+        border-radius:14px;
+        border:1px solid rgba(255,255,255,0.2);
+        background:#05080d;
+        display:flex;
+        flex-direction:column;
+        overflow:hidden;
+      }
+      .panel-reader-header{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        padding:10px 14px;
+        border-bottom:1px solid rgba(255,255,255,0.16);
+      }
+      .panel-reader-header h2{
+        margin:0;
+        font-size:0.94rem;
         color:var(--accent);
-        text-decoration-color:var(--accent);
+        text-transform:uppercase;
+        letter-spacing:0.45px;
+      }
+      .panel-reader-controls{
+        display:flex;
+        align-items:center;
+        gap:10px;
+      }
+      #panelReaderScale{
+        min-height:34px;
+        border-radius:8px;
+        border:1px solid rgba(255,255,255,0.24);
+        background:#101827;
+        color:#fff;
+        padding:4px 8px;
+      }
+      .panel-reader-content{
+        --reader-scale-factor: 6;
+        flex:1 1 auto;
+        overflow:auto;
+        padding:14px;
+      }
+      .panel-reader-content > *{
+        transform:scale(var(--reader-scale-factor));
+        transform-origin:top left;
+        width:calc(100% / var(--reader-scale-factor));
+      }
+      .icon-btn[aria-disabled="true"],
+      .icon-btn.is-disabled,
+      .primary-link-btn.is-disabled{
+        opacity:0.45;
+        cursor:not-allowed;
+        pointer-events:none;
+        filter:grayscale(0.3);
+      }
+      @media(max-width:720px){
+        .metadata-row{
+          grid-template-columns:minmax(96px, 132px) minmax(0, 1fr);
+          gap:10px;
+        }
+        .metadata-value{
+          padding-left:4px;
+        }
+        .panel-reader-modal{
+          padding:8px;
+        }
       }
       .peak-map-panel{
         border:1px solid var(--stroke);
@@ -1487,7 +1758,7 @@
       </div>
 
       <!-- OTHER SECTIONS ------------------------------------------------------>
-      <section aria-labelledby="routesHeading">
+      <section aria-labelledby="routesHeading" id="routesPanel">
         <h2 id="routesHeading" class="section-title no-print" data-i18n="peak.section.routes">Hiking Routes</h2>
         <div class="peak-map-panel" id="peakMapPanel" hidden>
           <span id="peak-trail-map" class="sr-only">Peak trail map</span>
@@ -1508,13 +1779,10 @@
         <div class="info-grid no-print" id="routesGrid" hidden></div>
       </section>
 
-      <section aria-labelledby="relatedTrailsHeading" class="no-print">
+      <section aria-labelledby="relatedTrailsHeading" class="no-print" id="trailsHubSection">
         <h2 id="relatedTrailsHeading" class="section-title" data-i18n="peak.relatedTrails.title">Related Trails &amp; Routes</h2>
         <div class="info-grid" id="relatedTrailsGrid" hidden></div>
-      </section>
-
-      <section aria-labelledby="trailNamesHeading" class="no-print">
-        <h2 id="trailNamesHeading" class="section-title" data-i18n="peak.section.trails">Associated Trails</h2>
+        <h3 id="trailNamesHeading" class="section-subtitle" data-i18n="peak.section.trails">Associated Trails</h3>
         <div class="info-grid" id="trailNamesGrid" hidden></div>
       </section>
 
@@ -1533,14 +1801,29 @@
         <div class="info-grid" id="riskPrepGrid"></div>
       </section>
 
-      <section aria-labelledby="terrainHeading" class="no-print">
+      <section aria-labelledby="terrainHeading" class="no-print" id="terrainPanel">
         <h2 id="terrainHeading" class="section-title" data-i18n="peak.section.terrain">Trail &amp; Terrain</h2>
         <div class="info-grid" id="terrainGrid" hidden></div>
       </section>
 
-      <section aria-labelledby="conditionsHeading" class="no-print">
+      <section aria-labelledby="conditionsHeading" class="no-print" id="conditionsPanel">
         <h2 id="conditionsHeading" class="section-title" data-i18n="peak.section.conditions">Conditions &amp; Access</h2>
         <div class="info-grid" id="conditionsGrid" hidden></div>
+      </section>
+
+      <section aria-labelledby="monthlyWeatherHeading" class="no-print" id="monthlyWeatherPanel" hidden>
+        <h2 id="monthlyWeatherHeading" class="section-title">Monthly Weather Averages</h2>
+        <div class="info-grid">
+          <article class="info-panel detail-panel monthly-weather-card">
+            <div class="metadata-header monthly-weather-header">
+              <div class="metadata-title" id="monthlyWeatherTitle">Monthly Weather Averages</div>
+              <label for="monthlyWeatherMonthSelect" class="sr-only" id="monthlyWeatherMonthLabel">Select month</label>
+              <select id="monthlyWeatherMonthSelect" aria-labelledby="monthlyWeatherMonthLabel"></select>
+            </div>
+            <div class="monthly-weather-metrics" id="monthlyWeatherMetrics"></div>
+            <p class="monthly-weather-disclaimer" id="monthlyWeatherDisclaimer"></p>
+          </article>
+        </div>
       </section>
 
       <section aria-labelledby="trailTestedNotesHeading" class="no-print experience-notes" id="trailTestedNotesPanel" hidden>
@@ -1594,6 +1877,26 @@
             <div class="social-share-group international-networks"></div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div id="panelReaderModal" class="panel-reader-modal no-print" hidden>
+      <div class="panel-reader-dialog" role="dialog" aria-modal="true" aria-labelledby="panelReaderTitle">
+        <div class="panel-reader-header">
+          <h2 id="panelReaderTitle">Panel reader</h2>
+          <div class="panel-reader-controls">
+            <label for="panelReaderScale" id="panelReaderScaleLabel">Scale</label>
+            <select id="panelReaderScale" aria-labelledby="panelReaderScaleLabel">
+              <option value="5">500%</option>
+              <option value="6" selected>600%</option>
+              <option value="8">800%</option>
+            </select>
+            <button id="panelReaderClose" class="icon-btn" type="button" aria-label="Close panel reader">
+              <span class="iconify" data-icon="mdi:close" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+        <div id="panelReaderContent" class="panel-reader-content"></div>
       </div>
     </div>
 
@@ -2573,6 +2876,28 @@
         const viewDifficulty = viewModel && viewModel.difficulty ? viewModel.difficulty : null;
         const viewRisk = viewModel && viewModel.risk ? viewModel.risk : null;
         const viewMonthWeather = viewModel && viewModel.monthWeather ? viewModel.monthWeather : null;
+        const narrativeParts = [];
+        const pushNarrativePart = (titleText, textValue, idSuffix) => {
+          const text = safeText(textValue).trim();
+          if(!text) return;
+          narrativeParts.push({
+            '@type': 'WebPageElement',
+            '@id': `${canonicalUrl}#${idSuffix}`,
+            name: titleText,
+            text
+          });
+        };
+        pushNarrativePart('Mountain Overview', descriptionText, 'overview');
+        const experienceEntry = (p && p.experience && typeof p.experience === 'object') ? p.experience : null;
+        if(experienceEntry){
+          pushNarrativePart(`${name} Summary`, neutralizeNarrativeText(experienceEntry.experienceSummary), 'trail-tested-summary');
+          pushNarrativePart(`Conditions on ${name}`, neutralizeNarrativeText(experienceEntry.conditionsFromExperience), 'trail-tested-conditions');
+          pushNarrativePart('Planning Trip', neutralizeNarrativeText(experienceEntry.planningTip), 'trail-tested-planning');
+          const historyText = [safeText(experienceEntry.firstAscent || experienceEntry.first_ascent), neutralizeNarrativeText(experienceEntry.historyNotes || experienceEntry.history_notes || experienceEntry.history)]
+            .filter(Boolean)
+            .join(' ');
+          pushNarrativePart(`${name} History`, historyText, 'trail-tested-history');
+        }
 
         if(Number.isFinite(Number(viewDifficulty && viewDifficulty.technicalDifficulty))){
           addAdditionalProperty('Technical Difficulty (1-10)', Number(viewDifficulty.technicalDifficulty));
@@ -2654,6 +2979,7 @@
             unitText: 'FT'
           } : undefined,
           containedInPlace: range ? { '@type': 'Place', name: 'White Mountain National Forest' } : undefined,
+          hasPart: narrativeParts.length ? narrativeParts : undefined,
           containsPlace: (() => {
             const parkingModel = viewModel && viewModel.parking ? viewModel.parking : null;
             const trailhead = safeText(parkingModel && parkingModel.trailheadName) || safeText(p['Most Common Trailhead']);
@@ -2921,6 +3247,97 @@
         return monthlyWeather[monthName] || null;
       }
 
+      function getMonthlyWeatherByMonth(monthName){
+        if (!monthlyWeatherLookup || typeof monthlyWeatherLookup !== 'object') return null;
+        if (!monthName) return null;
+        return monthlyWeatherLookup[monthName] || null;
+      }
+
+      function toFiniteCoord(value){
+        const num = Number(value);
+        return Number.isFinite(num) ? num : null;
+      }
+
+      function haversineMiles(aLat, aLon, bLat, bLon){
+        const toRad = (deg) => deg * Math.PI / 180;
+        const r = 3958.8;
+        const dLat = toRad(bLat - aLat);
+        const dLon = toRad(bLon - aLon);
+        const s1 = Math.sin(dLat / 2);
+        const s2 = Math.sin(dLon / 2);
+        const h = s1 * s1 + Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * s2 * s2;
+        return 2 * r * Math.asin(Math.min(1, Math.sqrt(h)));
+      }
+
+      function parseMapQueryCoords(urlValue){
+        try{
+          const parsed = new URL(String(urlValue));
+          const queryValue =
+            parsed.searchParams.get('query')
+            || parsed.searchParams.get('destination')
+            || parsed.searchParams.get('q')
+            || parsed.searchParams.get('ll')
+            || parsed.searchParams.get('center')
+            || '';
+          const match = queryValue.match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/);
+          let lat = match ? Number(match[1]) : NaN;
+          let lon = match ? Number(match[2]) : NaN;
+          if(!Number.isFinite(lat) || !Number.isFinite(lon)){
+            const pathMatch = parsed.pathname.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+            if(pathMatch){
+              lat = Number(pathMatch[1]);
+              lon = Number(pathMatch[2]);
+            }
+          }
+          if(!Number.isFinite(lat) || !Number.isFinite(lon)){
+            return null;
+          }
+          return { lat, lon };
+        }catch(_err){
+          return null;
+        }
+      }
+
+      function isCoordNearSummit(coord, summitCoord, thresholdMiles = 0.15){
+        if(!coord || !summitCoord) return false;
+        const distance = haversineMiles(coord.lat, coord.lon, summitCoord.lat, summitCoord.lon);
+        return Number.isFinite(distance) && distance <= thresholdMiles;
+      }
+
+      function getValidatedParkingCoords(peak, parking){
+        const lat = toFiniteCoord(parking && parking.parkingLat);
+        const lng = toFiniteCoord(parking && parking.parkingLng);
+        if(lat === null || lng === null) return null;
+        const summit = parseCoordinates(peak && peak['Coordinates']);
+        if(summit && isCoordNearSummit({ lat, lon: lng }, summit)){
+          return null;
+        }
+        return { lat, lon: lng };
+      }
+
+      function getValidatedParkingSourceUrl(peak, parking){
+        const sourceUrl = safeText(parking && parking.sourceUrl).trim();
+        if(!sourceUrl) return '';
+        const summit = parseCoordinates(peak && peak['Coordinates']);
+        if(!summit) return sourceUrl;
+        const queryCoords = parseMapQueryCoords(sourceUrl);
+        if(queryCoords && isCoordNearSummit(queryCoords, summit)){
+          return '';
+        }
+        return sourceUrl;
+      }
+
+      function buildTrailheadQuery(peak, parking){
+        const trailhead = safeText(parking && parking.trailheadName) || safeText(peak && peak['Most Common Trailhead']);
+        const notes = safeText(parking && parking.notes);
+        const base = [trailhead, notes && notes.split(/[.;]/)[0], 'New Hampshire', 'White Mountains']
+          .map((value) => safeText(value).trim())
+          .filter(Boolean)
+          .join(' ');
+        if(!base) return '';
+        return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(base)}`;
+      }
+
       function toSlugSafe(value){
         return safeText(value).trim().toLowerCase();
       }
@@ -2947,19 +3364,22 @@
       }
 
       function buildGoogleMapsDirectionsUrl(peak, parking){
-        if (parking && safeText(parking.sourceUrl)) {
-          return safeText(parking.sourceUrl);
+        const validSourceUrl = getValidatedParkingSourceUrl(peak, parking);
+        if(validSourceUrl){
+          return validSourceUrl;
         }
-        const lat = parking && Number.isFinite(Number(parking.parkingLat)) ? Number(parking.parkingLat) : null;
-        const lng = parking && Number.isFinite(Number(parking.parkingLng)) ? Number(parking.parkingLng) : null;
-        if (lat !== null && lng !== null) {
-          return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+
+        const validParkingCoords = getValidatedParkingCoords(peak, parking);
+        if(validParkingCoords){
+          return `https://www.google.com/maps/search/?api=1&query=${validParkingCoords.lat},${validParkingCoords.lon}`;
         }
-        const coords = parseCoordinates(peak && peak['Coordinates']);
-        if (coords) {
-          return `https://www.google.com/maps/search/?api=1&query=${coords.lat},${coords.lon}`;
+
+        const trailheadQuery = buildTrailheadQuery(peak, parking);
+        if(trailheadQuery){
+          return trailheadQuery;
         }
-        return 'https://maps.google.com/';
+
+        return null;
       }
 
       function buildPeakViewModel(peak, slug){
@@ -2969,6 +3389,7 @@
         const risk = riskOverlayLookupBySlug?.[normalizedSlug] || null;
         const monthWeather = getCurrentMonthWeather(monthlyWeatherLookup);
         const advisories = extractPeakAdvisories(currentConditionsData, peak);
+        const directionsUrl = buildGoogleMapsDirectionsUrl(peak, parking);
         return {
           slug: normalizedSlug,
           peak,
@@ -2977,7 +3398,8 @@
           risk,
           monthWeather,
           advisories,
-          directionsUrl: buildGoogleMapsDirectionsUrl(peak, parking)
+          directionsUrl,
+          hasDirections: !!directionsUrl
         };
       }
 
@@ -2996,6 +3418,28 @@
         currentConditionsData = currentConditionsPayload && typeof currentConditionsPayload === 'object'
           ? currentConditionsPayload
           : {};
+      }
+
+      function neutralizeNarrativeText(value){
+        let text = safeText(value).trim();
+        if(!text) return '';
+        const replacements = [
+          [/\bI hiked\b/gi, 'This route was hiked'],
+          [/\bI found\b/gi, 'Field notes indicate'],
+          [/\bI recommend\b/gi, 'Recommended approach:'],
+          [/\bI usually\b/gi, 'This route usually'],
+          [/\bI carry\b/gi, 'Carry'],
+          [/\bI avoid\b/gi, 'Avoid'],
+          [/\bmy\b/gi, 'the'],
+          [/\bme\b/gi, 'the hiker'],
+          [/\bwe\b/gi, 'hikers'],
+          [/\bour\b/gi, 'the'],
+          [/\bI\b/gi, 'this route']
+        ];
+        replacements.forEach(([pattern, replacement]) => {
+          text = text.replace(pattern, replacement);
+        });
+        return text.replace(/\s{2,}/g, ' ').trim();
       }
 
       function renderTrailTestedNotes(peak, slug){
@@ -3019,33 +3463,46 @@
           return;
         }
 
-        const summary = safeText(experience.experienceSummary);
-        const conditions = safeText(experience.conditionsFromExperience);
-        const planningTip = safeText(experience.planningTip);
-        const historyNotes = safeText(experience.historyNotes || experience.history_notes || experience.history);
+        const peakName = safeText(peak && (peak.peakName || peak['Peak Name'] || peak.name || peak.Name)) || slug;
+        const summary = neutralizeNarrativeText(experience.experienceSummary);
+        const conditions = neutralizeNarrativeText(experience.conditionsFromExperience);
+        const planningTip = neutralizeNarrativeText(experience.planningTip);
+        const historyNotes = neutralizeNarrativeText(experience.historyNotes || experience.history_notes || experience.history);
         const firstAscent = safeText(experience.firstAscent || experience.first_ascent);
         const lastReviewed = safeText(experience.lastReviewed);
         const cards = [];
 
         heading.textContent = langCode === 'fr' ? 'Notes de terrain et histoire' : 'Trail-tested notes';
         if(summary){
-          cards.push(`<article class=\"experience-note\"><h3>${langCode === 'fr' ? 'Retour terrain' : 'Experience summary'}</h3><p>${escapeHtml(summary)}</p></article>`);
+          cards.push({
+            title: langCode === 'fr' ? `Resume de ${peakName}` : `${peakName} Summary`,
+            text: summary
+          });
         }
         if(conditions){
-          cards.push(`<article class=\"experience-note\"><h3>${langCode === 'fr' ? 'Conditions observées' : 'Conditions from experience'}</h3><p>${escapeHtml(conditions)}</p></article>`);
+          cards.push({
+            title: langCode === 'fr' ? `Conditions sur ${peakName}` : `Conditions on ${peakName}`,
+            text: conditions
+          });
         }
         if(planningTip){
-          cards.push(`<article class=\"experience-note\"><h3>${langCode === 'fr' ? 'Conseil de planification' : 'Planning tip'}</h3><p>${escapeHtml(planningTip)}</p></article>`);
+          cards.push({
+            title: 'Planning Trip',
+            text: planningTip
+          });
         }
         if(historyNotes || firstAscent){
           const lines = [];
           if(firstAscent){
-            lines.push(`${langCode === 'fr' ? 'Première ascension' : 'First ascent'}: ${firstAscent}`);
+            lines.push(`${langCode === 'fr' ? 'Premiere ascension' : 'First ascent'}: ${firstAscent}`);
           }
           if(historyNotes){
             lines.push(historyNotes);
           }
-          cards.push(`<article class=\"experience-note\"><h3>${langCode === 'fr' ? 'Histoire du sommet' : 'Peak history'}</h3><p>${escapeHtml(lines.join(' '))}</p></article>`);
+          cards.push({
+            title: langCode === 'fr' ? `Histoire de ${peakName}` : `${peakName} History`,
+            text: lines.join(' ')
+          });
         }
 
         if(!cards.length){
@@ -3055,10 +3512,54 @@
           return;
         }
 
-        grid.innerHTML = cards.join('');
+        grid.innerHTML = '';
+        cards.forEach((card, index) => {
+          const article = document.createElement('article');
+          article.className = 'experience-note';
+
+          const titleEl = document.createElement('h3');
+          titleEl.textContent = card.title;
+          article.appendChild(titleEl);
+
+          const textWrap = document.createElement('div');
+          textWrap.className = 'experience-note-text is-collapsed';
+          textWrap.id = `trail-note-content-${index}`;
+
+          const paragraph = document.createElement('p');
+          paragraph.textContent = card.text;
+          textWrap.appendChild(paragraph);
+
+          const fade = document.createElement('div');
+          fade.className = 'collapsible-content-fade';
+          textWrap.appendChild(fade);
+          article.appendChild(textWrap);
+
+          if(card.text.length > 220){
+            const expandBtn = document.createElement('button');
+            expandBtn.type = 'button';
+            expandBtn.className = 'experience-note-expand';
+            expandBtn.setAttribute('aria-expanded', 'false');
+            expandBtn.textContent = translateWithFallback('peak.expand.show', 'Expand');
+            expandBtn.addEventListener('click', () => {
+              const isCollapsed = textWrap.classList.contains('is-collapsed');
+              textWrap.classList.toggle('is-collapsed', !isCollapsed);
+              expandBtn.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
+              expandBtn.textContent = translateWithFallback(
+                isCollapsed ? 'peak.expand.hide' : 'peak.expand.show',
+                isCollapsed ? 'Collapse' : 'Expand'
+              );
+            });
+            article.appendChild(expandBtn);
+          }else{
+            textWrap.classList.remove('is-collapsed');
+          }
+
+          grid.appendChild(article);
+        });
+
         if(lastReviewed){
           reviewed.textContent = langCode === 'fr'
-            ? `Dernière révision : ${lastReviewed}`
+            ? `Derniere revision : ${lastReviewed}`
             : `Last reviewed: ${lastReviewed}`;
           reviewed.hidden = false;
         }else{
@@ -3066,6 +3567,7 @@
           reviewed.textContent = '';
         }
         panel.hidden = false;
+        ensureSectionZoomControl('trailTestedNotesPanel', 'trailTestedNotesHeading');
       }
 
       /* CAROUSEL + TIMER STATE ----------------------------------------------- */
@@ -3089,10 +3591,16 @@
       let monthlyWeatherLookup = {};
       let riskOverlayLookupBySlug = {};
       let currentConditionsData = {};
+      let selectedWeatherMonth = new Date().toLocaleString('en-US', { month: 'long', timeZone: 'America/New_York' });
+      let panelReaderTrigger = null;
       let metadataExpanded = false;
       const metadataMobileQuery = window.matchMedia('(max-width: 720px)');
       let isCarouselPaused = false;
       const LANGUAGE_READY_TIMEOUT = 2000;
+      const MONTH_NAMES = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
       let peakMap = null;
       let peakMapTrailsLayer = null;
       let peakMapMarker = null;
@@ -3334,6 +3842,14 @@
         title.textContent = t('peak.metadata.title');
 
         header.appendChild(title);
+        const zoomBtn = document.createElement('button');
+        zoomBtn.type = 'button';
+        zoomBtn.className = 'panel-zoom-btn';
+        zoomBtn.setAttribute('aria-label', translateWithFallback('peak.reader.openPanel', 'Open panel reader'));
+        zoomBtn.title = translateWithFallback('peak.reader.openPanel', 'Open panel reader');
+        zoomBtn.innerHTML = '<span class="iconify" data-icon="mdi:magnify-plus-outline" aria-hidden="true"></span>';
+        zoomBtn.addEventListener('click', () => openPanelReader(panel, title.textContent, zoomBtn));
+        header.appendChild(zoomBtn);
         panel.appendChild(header);
 
         const meta = (photoMetaData && photoMetaData[i]) || null;
@@ -3582,12 +4098,53 @@
         title.textContent = translateWithFallback('peak.description.title', 'Mountain Overview');
         header.appendChild(title);
 
+        const zoomBtn = document.createElement('button');
+        zoomBtn.type = 'button';
+        zoomBtn.className = 'panel-zoom-btn';
+        zoomBtn.setAttribute('aria-label', translateWithFallback('peak.reader.openPanel', 'Open panel reader'));
+        zoomBtn.title = translateWithFallback('peak.reader.openPanel', 'Open panel reader');
+        zoomBtn.innerHTML = '<span class="iconify" data-icon="mdi:magnify-plus-outline" aria-hidden="true"></span>';
+        zoomBtn.addEventListener('click', () => {
+          openPanelReader(panel, title.textContent);
+        });
+        header.appendChild(zoomBtn);
+
+        const contentWrap = document.createElement('div');
+        contentWrap.id = 'overviewPanelContent';
+        contentWrap.className = 'collapsible-content is-collapsed';
+
         const body = document.createElement('div');
         body.className = 'description-body';
         body.textContent = description;
+        contentWrap.appendChild(body);
+
+        const fade = document.createElement('div');
+        fade.className = 'collapsible-content-fade';
+        contentWrap.appendChild(fade);
+
+        const expandBtn = document.createElement('button');
+        expandBtn.type = 'button';
+        expandBtn.id = 'overviewExpandBtn';
+        expandBtn.className = 'panel-expand-btn';
+        expandBtn.setAttribute('aria-expanded', 'false');
+        expandBtn.textContent = translateWithFallback('peak.expand.show', 'Expand');
+        expandBtn.addEventListener('click', () => {
+          const isCollapsed = contentWrap.classList.contains('is-collapsed');
+          contentWrap.classList.toggle('is-collapsed', !isCollapsed);
+          expandBtn.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
+          expandBtn.textContent = translateWithFallback(
+            isCollapsed ? 'peak.expand.hide' : 'peak.expand.show',
+            isCollapsed ? 'Collapse' : 'Expand'
+          );
+          trackEvent('peak_overview_toggle', {
+            slug: currentSlug,
+            expanded: isCollapsed
+          });
+        });
 
         panel.appendChild(header);
-        panel.appendChild(body);
+        panel.appendChild(contentWrap);
+        panel.appendChild(expandBtn);
         panel.hidden = false;
       }
 
@@ -3604,6 +4161,14 @@
         title.textContent = t('peak.generalInfo.title');
 
         header.appendChild(title);
+        const zoomBtn = document.createElement('button');
+        zoomBtn.type = 'button';
+        zoomBtn.className = 'panel-zoom-btn';
+        zoomBtn.setAttribute('aria-label', translateWithFallback('peak.reader.openPanel', 'Open panel reader'));
+        zoomBtn.title = translateWithFallback('peak.reader.openPanel', 'Open panel reader');
+        zoomBtn.innerHTML = '<span class="iconify" data-icon="mdi:magnify-plus-outline" aria-hidden="true"></span>';
+        zoomBtn.addEventListener('click', () => openPanelReader(panel, title.textContent, zoomBtn));
+        header.appendChild(zoomBtn);
         panel.appendChild(header);
 
         const body = document.createElement('div');
@@ -3662,6 +4227,7 @@
         const routesGrid = document.getElementById('routesGrid');
         const routesHeading = document.getElementById('routesHeading');
         if(!routesGrid) return;
+        ensureSectionZoomControl('routesPanel', 'routesHeading');
         routesGrid.innerHTML = '';
         if(!Array.isArray(routes) || routes.length === 0){
           routesGrid.hidden = true;
@@ -3690,6 +4256,7 @@
           routesGrid.appendChild(div);
         });
         routesGrid.hidden = false;
+        ensureSectionZoomControl('routesPanel', 'routesHeading');
         trackEvent('peak_routes_rendered', { slug: currentSlug, count: routes.length });
       }
 
@@ -3795,6 +4362,7 @@
         panel.appendChild(list);
         relatedGrid.appendChild(panel);
         relatedGrid.hidden = false;
+        ensureSectionZoomControl('trailsHubSection', 'relatedTrailsHeading');
       }
 
       function renderTrailNames(trailNames = []){
@@ -3809,6 +4377,7 @@
 
         if(heading){
           heading.textContent = `${translateWithFallback('peak.section.trails', 'Associated Trails')} (${names.length})`;
+          heading.hidden = names.length === 0;
         }
 
         if(!names.length){
@@ -3831,6 +4400,7 @@
           grid.appendChild(panel);
         });
         grid.hidden = false;
+        ensureSectionZoomControl('trailsHubSection', 'relatedTrailsHeading');
         trackEvent('peak_trail_names_rendered', { slug: currentSlug, count: names.length });
       }
 
@@ -3840,18 +4410,176 @@
           .map(item => makeRow(item.label, safeText(item.value).trim()));
       }
 
+      function setPanelReaderScale(scale){
+        const content = document.getElementById('panelReaderContent');
+        if(!content) return;
+        const normalized = ['5', '6', '8'].includes(String(scale)) ? String(scale) : '6';
+        content.style.setProperty('--reader-scale-factor', normalized);
+      }
+
+      function closePanelReader(){
+        const modal = document.getElementById('panelReaderModal');
+        if(!modal) return;
+        modal.hidden = true;
+        document.body.style.overflow = '';
+        const content = document.getElementById('panelReaderContent');
+        if(content){
+          content.innerHTML = '';
+        }
+        if(panelReaderTrigger && typeof panelReaderTrigger.focus === 'function'){
+          panelReaderTrigger.focus();
+        }
+        panelReaderTrigger = null;
+      }
+
+      function openPanelReader(sourceElement, titleText, trigger = null){
+        const modal = document.getElementById('panelReaderModal');
+        const title = document.getElementById('panelReaderTitle');
+        const content = document.getElementById('panelReaderContent');
+        const scaleSelect = document.getElementById('panelReaderScale');
+        if(!modal || !title || !content || !sourceElement){
+          return;
+        }
+
+        panelReaderTrigger = trigger || document.activeElement;
+        title.textContent = titleText || translateWithFallback('peak.reader.title', 'Panel reader');
+        content.innerHTML = '';
+        const clone = sourceElement.cloneNode(true);
+        clone.querySelectorAll('.panel-zoom-btn, .panel-expand-btn, .experience-note-expand, .meta-toggle, #panelReaderModal').forEach((node) => node.remove());
+        content.appendChild(clone);
+
+        const selectedScale = scaleSelect ? scaleSelect.value : '6';
+        setPanelReaderScale(selectedScale);
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        const closeBtn = document.getElementById('panelReaderClose');
+        if(closeBtn){
+          closeBtn.focus();
+        }
+      }
+
+      function ensureSectionZoomControl(sectionId, headingId){
+        const section = document.getElementById(sectionId);
+        const heading = document.getElementById(headingId);
+        if(!section || !heading) return;
+
+        let wrapper = heading.parentElement;
+        if(!wrapper || !wrapper.classList.contains('section-title-wrap')){
+          wrapper = document.createElement('div');
+          wrapper.className = 'section-title-wrap';
+          heading.parentNode.insertBefore(wrapper, heading);
+          wrapper.appendChild(heading);
+        }
+
+        let btn = wrapper.querySelector('.panel-zoom-btn');
+        if(!btn){
+          btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'panel-zoom-btn';
+          btn.setAttribute('aria-label', translateWithFallback('peak.reader.openPanel', 'Open panel reader'));
+          btn.title = translateWithFallback('peak.reader.openPanel', 'Open panel reader');
+          btn.innerHTML = '<span class="iconify" data-icon="mdi:magnify-plus-outline" aria-hidden="true"></span>';
+          btn.addEventListener('click', () => openPanelReader(section, heading.textContent, btn));
+          wrapper.appendChild(btn);
+        }
+      }
+
+      function initPanelReader(){
+        const modal = document.getElementById('panelReaderModal');
+        const closeBtn = document.getElementById('panelReaderClose');
+        const scaleSelect = document.getElementById('panelReaderScale');
+        const title = document.getElementById('panelReaderTitle');
+        const scaleLabel = document.getElementById('panelReaderScaleLabel');
+        if(!modal) return;
+
+        if(title){
+          title.textContent = translateWithFallback('peak.reader.title', 'Panel reader');
+        }
+        if(scaleLabel){
+          scaleLabel.textContent = translateWithFallback('peak.reader.scale', 'Scale');
+        }
+        if(closeBtn){
+          closeBtn.setAttribute('aria-label', translateWithFallback('peak.reader.close', 'Close panel reader'));
+          closeBtn.setAttribute('title', translateWithFallback('peak.reader.close', 'Close panel reader'));
+        }
+        if(closeBtn){
+          closeBtn.addEventListener('click', closePanelReader);
+        }
+        if(scaleSelect){
+          scaleSelect.value = '6';
+          setPanelReaderScale('6');
+          scaleSelect.addEventListener('change', () => {
+            setPanelReaderScale(scaleSelect.value);
+          });
+        }
+        modal.addEventListener('click', (event) => {
+          if(event.target === modal){
+            closePanelReader();
+          }
+        });
+        document.addEventListener('keydown', (event) => {
+          if(modal.hidden){
+            return;
+          }
+          if(event.key === 'Escape'){
+            closePanelReader();
+            return;
+          }
+          if(event.key === 'Tab'){
+            const focusable = Array.from(
+              modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+            ).filter((el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true');
+            if(!focusable.length) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if(event.shiftKey && document.activeElement === first){
+              event.preventDefault();
+              last.focus();
+            }else if(!event.shiftKey && document.activeElement === last){
+              event.preventDefault();
+              first.focus();
+            }
+          }
+        });
+      }
+
       function updateDirectionsButton(viewModel){
         const btn = document.getElementById('getDirectionsBtn');
         if(!btn) return;
         const langCode = getSeoLang();
-        const label = langCode === 'fr' ? "Obtenir l'itineraire" : 'Get directions';
-        btn.setAttribute('href', viewModel && viewModel.directionsUrl ? viewModel.directionsUrl : 'https://maps.google.com/');
+        const label = translateWithFallback('peak.directions.label', langCode === 'fr' ? "Obtenir l'itineraire" : 'Get directions');
+        const unavailable = translateWithFallback(
+          'peak.directions.unavailable',
+          langCode === 'fr' ? 'Emplacement de stationnement indisponible' : 'Parking location unavailable'
+        );
+        const hasDirections = !!(viewModel && viewModel.directionsUrl);
+        if(hasDirections){
+          btn.setAttribute('href', viewModel.directionsUrl);
+          btn.setAttribute('target', '_blank');
+          btn.setAttribute('rel', 'noopener');
+          btn.classList.remove('is-disabled');
+          btn.setAttribute('aria-disabled', 'false');
+          btn.removeAttribute('tabindex');
+          btn.setAttribute('title', label);
+        }else{
+          btn.setAttribute('href', '#');
+          btn.removeAttribute('target');
+          btn.removeAttribute('rel');
+          btn.classList.add('is-disabled');
+          btn.setAttribute('aria-disabled', 'true');
+          btn.setAttribute('tabindex', '-1');
+          btn.setAttribute('title', unavailable);
+        }
         btn.setAttribute('aria-label', label);
-        btn.setAttribute('title', label);
         const sr = btn.querySelector('.sr-only');
         if(sr){
-          sr.textContent = label;
+          sr.textContent = hasDirections ? label : unavailable;
         }
+        btn.onclick = (event) => {
+          if(btn.getAttribute('aria-disabled') === 'true'){
+            event.preventDefault();
+          }
+        };
       }
 
       function renderParkingAndAccess(viewModel){
@@ -3905,11 +4633,16 @@
 
         const cta = document.createElement('div');
         cta.className = 'detail-panel-cta';
-        cta.innerHTML = `<a class="primary-link-btn" href="${escapeHtml(viewModel && viewModel.directionsUrl ? viewModel.directionsUrl : 'https://maps.google.com/')}" target="_blank" rel="noopener">${escapeHtml(langCode === 'fr' ? "Obtenir l'itineraire (Google Maps)" : 'Get Directions (Google Maps)')}</a>`;
+        if(viewModel && viewModel.directionsUrl){
+          cta.innerHTML = `<a class="primary-link-btn" href="${escapeHtml(viewModel.directionsUrl)}" target="_blank" rel="noopener">${escapeHtml(langCode === 'fr' ? "Obtenir l'itineraire (Google Maps)" : 'Get Directions (Google Maps)')}</a>`;
+        }else{
+          cta.innerHTML = `<span class="primary-link-btn is-disabled" aria-disabled="true">${escapeHtml(translateWithFallback('peak.directions.unavailable', langCode === 'fr' ? 'Emplacement de stationnement indisponible' : 'Parking location unavailable'))}</span>`;
+        }
         panel.appendChild(cta);
 
         grid.appendChild(panel);
         section.hidden = false;
+        ensureSectionZoomControl('parkingAccessPanel', 'parkingAccessHeading');
       }
 
       function renderDifficultyMetrics(viewModel){
@@ -3954,6 +4687,7 @@
         rows.forEach((row) => panel.appendChild(row));
         grid.appendChild(panel);
         section.hidden = false;
+        ensureSectionZoomControl('difficultyMetricsPanel', 'difficultyMetricsHeading');
       }
 
       function renderRiskAndPreparation(viewModel){
@@ -3966,7 +4700,6 @@
         grid.innerHTML = '';
 
         const risk = viewModel && viewModel.risk;
-        const weather = viewModel && viewModel.monthWeather;
         const advisories = viewModel && Array.isArray(viewModel.advisories) ? viewModel.advisories : [];
         const peak = viewModel && viewModel.peak;
         const factorList = Array.isArray(risk && risk.risk_factors) ? risk.risk_factors : [];
@@ -3990,12 +4723,6 @@
             value: translateExposure((peak && peak['Weather Exposure Rating']) || '')
           },
           {
-            label: langCode === 'fr' ? 'Mois courant (moyennes)' : 'Current month averages',
-            value: weather
-              ? `${Math.round(Number(weather.avgWindMph || 0))} mph wind, ${Math.round(Number(weather.avgTempF || 0))} F`
-              : ''
-          },
-          {
             label: langCode === 'fr' ? 'Avis en direct' : 'Live advisory',
             value: advisories.length ? safeText(advisories[0].description || advisories[0].title) : ''
           }
@@ -4009,6 +4736,7 @@
         rows.forEach((row) => panel.appendChild(row));
         grid.appendChild(panel);
         section.hidden = false;
+        ensureSectionZoomControl('riskPrepPanel', 'riskPrepHeading');
       }
 
       function getPeakMapElements(){
@@ -4601,6 +5329,7 @@
           terrainGrid.appendChild(div);
         });
         terrainGrid.hidden = false;
+        ensureSectionZoomControl('terrainPanel', 'terrainHeading');
         trackEvent('peak_terrain_rendered', { slug: currentSlug, count: terrainItems.length });
       }
 
@@ -4612,7 +5341,6 @@
         if(heading){
           heading.textContent = getSeoLang() === 'fr' ? 'Conditions et exposition' : 'Conditions & Exposure';
         }
-        const monthWeather = peakViewModel && peakViewModel.monthWeather;
         const conditionItems = [
           { label: t('peak.conditions.bestSeasons'), value: p['Best Seasons to Hike'] },
           { label: t('peak.conditions.waterAvailability'), value: p['Water Availability'] },
@@ -4620,13 +5348,7 @@
           { label: t('peak.conditions.weatherExposure'), value: translateExposure(p['Weather Exposure Rating']) },
           { label: t('peak.conditions.emergencyBailout'), value: p['Emergency Bailout Options'] },
           { label: t('peak.conditions.dogFriendly'), value: p['Dog Friendly'] },
-          { label: t('peak.conditions.nearbyFeatures'), value: p['Nearby Notable Features'] },
-          {
-            label: getSeoLang() === 'fr' ? 'Moyennes mensuelles' : 'Monthly weather averages',
-            value: monthWeather
-              ? `${Math.round(Number(monthWeather.avgWindMph || 0))} mph wind, ${Math.round(Number(monthWeather.avgTempF || 0))} F`
-              : ''
-          }
+          { label: t('peak.conditions.nearbyFeatures'), value: p['Nearby Notable Features'] }
         ].filter(x => x.value);
 
         if(conditionItems.length === 0){
@@ -4642,7 +5364,108 @@
           conditionsGrid.appendChild(div);
         });
         conditionsGrid.hidden = false;
+        ensureSectionZoomControl('conditionsPanel', 'conditionsHeading');
         trackEvent('peak_conditions_rendered', { slug: currentSlug, count: conditionItems.length });
+      }
+
+      function renderMonthlyWeatherPanel(){
+        const section = document.getElementById('monthlyWeatherPanel');
+        const heading = document.getElementById('monthlyWeatherHeading');
+        const title = document.getElementById('monthlyWeatherTitle');
+        const monthLabel = document.getElementById('monthlyWeatherMonthLabel');
+        const select = document.getElementById('monthlyWeatherMonthSelect');
+        const metrics = document.getElementById('monthlyWeatherMetrics');
+        const disclaimer = document.getElementById('monthlyWeatherDisclaimer');
+        if(!section || !heading || !title || !select || !metrics || !monthLabel || !disclaimer){
+          return;
+        }
+
+        const langCode = getSeoLang();
+        heading.textContent = translateWithFallback('peak.weather.heading', langCode === 'fr' ? 'Moyennes meteo mensuelles' : 'Monthly Weather Averages');
+        title.textContent = heading.textContent;
+        monthLabel.textContent = translateWithFallback('peak.weather.monthLabel', langCode === 'fr' ? 'Selectionner un mois' : 'Select month');
+        disclaimer.textContent = translateWithFallback(
+          'peak.weather.disclaimer',
+          langCode === 'fr'
+            ? 'Donnees climatologiques mensuelles. Les conditions reelles varient rapidement en altitude.'
+            : 'Monthly climatology values. Real conditions change rapidly at elevation.'
+        );
+
+        const availableMonths = MONTH_NAMES.filter((month) => getMonthlyWeatherByMonth(month));
+        if(!availableMonths.length){
+          section.hidden = true;
+          metrics.innerHTML = '';
+          return;
+        }
+
+        if(!availableMonths.includes(selectedWeatherMonth)){
+          selectedWeatherMonth = availableMonths[0];
+        }
+
+        select.innerHTML = '';
+        availableMonths.forEach((month) => {
+          const option = document.createElement('option');
+          option.value = month;
+          option.textContent = new Date(Date.UTC(2024, MONTH_NAMES.indexOf(month), 1)).toLocaleString(
+            langCode === 'fr' ? 'fr-FR' : 'en-US',
+            { month: 'long', timeZone: 'UTC' }
+          );
+          option.selected = month === selectedWeatherMonth;
+          select.appendChild(option);
+        });
+
+        const monthWeather = getMonthlyWeatherByMonth(selectedWeatherMonth) || {};
+        const windMph = Number(monthWeather.avgWindMph || 0);
+        const gustMph = Number(monthWeather.avgWindGustMph || 0);
+        const tempF = Number(monthWeather.avgTempF || 0);
+        const windDisplay = currentUnits === UNITS.METERS ? `${Math.round(windMph * 1.60934)} km/h` : `${Math.round(windMph)} mph`;
+        const gustDisplay = currentUnits === UNITS.METERS ? `${Math.round(gustMph * 1.60934)} km/h` : `${Math.round(gustMph)} mph`;
+        const tempDisplay = currentUnits === UNITS.METERS ? `${Math.round((tempF - 32) * 5 / 9)} C` : `${Math.round(tempF)} F`;
+
+        const metricList = [
+          {
+            label: translateWithFallback('peak.weather.avgWind', langCode === 'fr' ? 'Vent moyen' : 'Average wind'),
+            value: windDisplay,
+            progress: Math.max(6, Math.min(100, (Math.max(windMph, 0) / 70) * 100))
+          },
+          {
+            label: translateWithFallback('peak.weather.avgGust', langCode === 'fr' ? 'Rafale moyenne' : 'Average gust'),
+            value: gustDisplay,
+            progress: Math.max(6, Math.min(100, (Math.max(gustMph, 0) / 100) * 100))
+          },
+          {
+            label: translateWithFallback('peak.weather.avgTemp', langCode === 'fr' ? 'Temperature moyenne' : 'Average temperature'),
+            value: tempDisplay,
+            progress: Math.max(6, Math.min(100, ((tempF + 20) / 90) * 100))
+          }
+        ];
+
+        metrics.innerHTML = metricList.map((metric) => `
+          <article class="weather-metric">
+            <div class="weather-metric-label">${escapeHtml(metric.label)}</div>
+            <div class="weather-metric-value">${escapeHtml(metric.value)}</div>
+            <div class="weather-metric-bar"><span style="width:${metric.progress}%;"></span></div>
+          </article>
+        `).join('');
+
+        section.hidden = false;
+        ensureSectionZoomControl('monthlyWeatherPanel', 'monthlyWeatherHeading');
+      }
+
+      function initMonthlyWeatherControls(){
+        const select = document.getElementById('monthlyWeatherMonthSelect');
+        if(!select || select.dataset.bound === 'true'){
+          return;
+        }
+        select.dataset.bound = 'true';
+        select.addEventListener('change', () => {
+          selectedWeatherMonth = select.value;
+          renderMonthlyWeatherPanel();
+          trackEvent('peak_monthly_weather_change', {
+            slug: currentSlug,
+            month: selectedWeatherMonth
+          });
+        });
       }
 
       function updateHeadMeta(p, slug, name, primaryMeta){
@@ -5015,6 +5838,8 @@
 
       /* INIT ----------------------------------------------------------------- */
       async function init(){
+        initPanelReader();
+        initMonthlyWeatherControls();
         const slug = getResolvedSlug();
         console.log('[Peak Init] Starting initialization for slug:', slug);
         
@@ -5190,6 +6015,7 @@
           renderRiskAndPreparation(peakViewModel);
           renderTerrain(p);
           renderConditions(p);
+          renderMonthlyWeatherPanel();
           renderTrailTestedNotes(p, slug);
           renderPeakMap(p, name, canonicalUrl);
           initPeakSocialCardHandlers(p, name, canonicalUrl, slug);
@@ -5262,6 +6088,7 @@
           renderRiskAndPreparation(peakViewModel);
           renderTerrain(currentPeak);
           renderConditions(currentPeak);
+          renderMonthlyWeatherPanel();
           renderTrailTestedNotes(currentPeak, currentSlug);
           renderPeakMap(currentPeak, name, canonicalUrl);
           updateSocialCardContent(currentPeak, name, canonicalUrl);
@@ -5287,10 +6114,13 @@
           const routes = currentPeak['Standard Routes'] || [];
           const trailNames = currentPeak['Trail Names'] || [];
           renderRoutes(routes);
+          renderRelatedTrails(routes, trailNames);
           renderTrailNames(trailNames);
           renderParkingAndAccess(peakViewModel);
           renderDifficultyMetrics(peakViewModel);
           renderRiskAndPreparation(peakViewModel);
+          renderConditions(currentPeak);
+          renderMonthlyWeatherPanel();
           updateSocialCardContent(currentPeak, currentPeak.peakName || currentPeak['Peak Name'] || currentSlug, buildCanonicalUrl(currentSlug, getSeoLang()));
           trackEvent('peak_units_change', { units: e.target.value, slug: currentSlug });
         });

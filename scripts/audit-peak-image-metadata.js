@@ -20,6 +20,21 @@ function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
+async function loadSourceNh48() {
+  if (!BASE_URL) {
+    return readJson(NH48_PATH);
+  }
+
+  const dataUrl = new URL('/data/nh48.json', BASE_URL).toString();
+  const response = await fetch(dataUrl, {
+    headers: { 'User-Agent': 'NH48-Peak-Image-Metadata-Audit/1.0' }
+  });
+  if (!response.ok) {
+    throw new Error(`Unable to load canonical source dataset ${dataUrl} (${response.status})`);
+  }
+  return response.json();
+}
+
 function extractFunctionBody(content, functionName) {
   const signature = `function ${functionName}`;
   const start = content.indexOf(signature);
@@ -212,11 +227,14 @@ async function loadRenderedPage(slug) {
 
 async function main() {
   const failures = [];
-  const nh48 = readJson(NH48_PATH);
+  const nh48 = await loadSourceNh48();
   const template = fs.readFileSync(PEAK_TEMPLATE_PATH, 'utf8');
   assertTemplateTitleFallbacks(template, failures);
+  const targetSlugs = BASE_URL
+    ? Object.keys(nh48 || {}).sort()
+    : SAMPLE_SLUGS;
 
-  for (const slug of SAMPLE_SLUGS) {
+  for (const slug of targetSlugs) {
     const peak = nh48?.[slug];
     if (!peak) {
       failures.push(`Missing peak entry in data/nh48.json for slug "${slug}".`);
@@ -257,9 +275,9 @@ async function main() {
   }
 
   if (BASE_URL) {
-    console.log(`Peak image metadata audit passed for ${SAMPLE_SLUGS.length} route(s): ${BASE_URL}`);
+    console.log(`Peak image metadata audit passed for ${targetSlugs.length} route(s): ${BASE_URL}`);
   } else {
-    console.log(`Peak image metadata audit passed for ${SAMPLE_SLUGS.length} sampled prerendered peaks.`);
+    console.log(`Peak image metadata audit passed for ${targetSlugs.length} sampled prerendered peaks.`);
   }
 }
 

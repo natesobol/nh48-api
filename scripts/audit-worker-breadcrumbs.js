@@ -7,7 +7,7 @@ const ROUTES = [
   { path: '/fr/', labels: ['Accueil', 'API NH48'] },
   { path: '/peak/mount-washington', labels: ['Home', 'White Mountains', 'Presidential Range', 'Mount Washington'] },
   { path: '/peak/mount-lafayette', labels: ['Home', 'White Mountains', 'Franconia Range', 'Mount Lafayette'] },
-  { path: '/fr/peak/mount-washington', labels: ['Accueil', 'Montagnes Blanches', 'Presidential Range', 'Mont Washington'] },
+  { path: '/fr/peak/mount-washington', labels: ['Accueil', 'Montagnes Blanches', 'Presidential Range', 'Mount Washington'] },
   { path: '/trails', labels: ['Home', 'NH48 API', 'Trails', 'WMNF Trails Map'] },
   { path: '/fr/trails', labels: ['Accueil', 'API NH48', 'Sentiers', 'Carte WMNF'] },
   { path: '/long-trails', labels: ['Home', 'NH48 API', 'Trails', 'Long-Distance Trails Map'] },

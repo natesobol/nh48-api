@@ -8,7 +8,7 @@ const PEAK_TEMPLATE_PATH = path.join(ROOT, 'pages', 'nh48_peak.html');
 const WORKER_PATH = path.join(ROOT, 'worker.js');
 const BASE_URL = process.env.PEAK_SCHEMA_PARITY_AUDIT_URL || getArgValue('--url') || '';
 
-const ROUTES = [
+const SAMPLE_ROUTES = [
   '/peak/mount-washington',
   '/peak/mount-isolation',
   '/fr/peak/mount-washington'
@@ -25,6 +25,7 @@ const REQUIRED_ENRICHMENT_PROPERTIES = [
   'Current Wind Speed (mph)',
   'Current Temperature (F)'
 ];
+const REQUIRED_NARRATIVE_SEGMENTS = ['Mountain Overview'];
 
 function getArgValue(flag) {
   const idx = process.argv.indexOf(flag);
@@ -138,6 +139,12 @@ function assertSourceParity(templateContent, workerContent, failures) {
   if (!/ParkingFacility|containsPlace/.test(workerBody)) {
     failures.push('Worker schema builder is missing parking/access place enrichment logic.');
   }
+  if (!/hasPart/.test(templateBody)) {
+    failures.push('Template schema builder is missing narrative hasPart structured data.');
+  }
+  if (!/hasPart/.test(workerBody)) {
+    failures.push('Worker schema builder is missing narrative hasPart structured data.');
+  }
 }
 
 async function fetchHtml(url) {
@@ -148,8 +155,27 @@ async function fetchHtml(url) {
   return { status: response.status, body };
 }
 
+async function loadRuntimeRoutes(baseUrl) {
+  const dataUrl = new URL('/data/nh48.json', baseUrl).toString();
+  const response = await fetch(dataUrl, {
+    headers: { 'User-Agent': 'NH48-Peak-Schema-Parity-Audit/1.0' }
+  });
+  if (!response.ok) {
+    throw new Error(`Unable to load canonical source dataset ${dataUrl} (${response.status})`);
+  }
+  const nh48 = await response.json();
+  const slugs = Object.keys(nh48 || {}).sort();
+  const routes = slugs.map((slug) => `/peak/${encodeURIComponent(slug)}`);
+  if (slugs.includes('mount-washington')) {
+    routes.push('/fr/peak/mount-washington');
+  }
+  return routes;
+}
+
 async function assertRuntimeParity(baseUrl, failures) {
-  for (const route of ROUTES) {
+  const routes = await loadRuntimeRoutes(baseUrl);
+
+  for (const route of routes) {
     const url = new URL(route, baseUrl).toString();
     const { status, body } = await fetchHtml(url);
     if (status !== 200) {
@@ -165,6 +191,11 @@ async function assertRuntimeParity(baseUrl, failures) {
 
     const nodes = [];
     docs.forEach((doc) => collectNodes(doc, nodes));
+    const breadcrumbNodes = nodes.filter((node) => getTypes(node).includes('BreadcrumbList'));
+    if (breadcrumbNodes.length !== 1) {
+      failures.push(`${url}: expected exactly 1 BreadcrumbList, found ${breadcrumbNodes.length}.`);
+    }
+
     const typeSet = new Set();
     nodes.forEach((node) => getTypes(node).forEach((type) => typeSet.add(type)));
     REQUIRED_TYPES.forEach((requiredType) => {
@@ -189,17 +220,31 @@ async function assertRuntimeParity(baseUrl, failures) {
     if (!mountain.containsPlace) {
       failures.push(`${url}: Mountain node missing containsPlace parking/access enrichment.`);
     }
+    const narrative = Array.isArray(mountain.hasPart) ? mountain.hasPart : [];
+    REQUIRED_NARRATIVE_SEGMENTS.forEach((segment) => {
+      const hasSegment = narrative.some((entry) => {
+        const entryName = entry && typeof entry.name === 'string' ? entry.name : '';
+        const entryText = entry && typeof entry.text === 'string' ? entry.text.trim() : '';
+        return entryName.includes(segment) && entryText.length > 0;
+      });
+      if (!hasSegment) {
+        failures.push(`${url}: Mountain.hasPart is missing narrative segment "${segment}".`);
+      }
+    });
   }
+
+  return routes.length;
 }
 
 async function main() {
   const failures = [];
   const templateContent = fs.readFileSync(PEAK_TEMPLATE_PATH, 'utf8');
   const workerContent = fs.readFileSync(WORKER_PATH, 'utf8');
+  let runtimeRouteCount = SAMPLE_ROUTES.length;
 
   assertSourceParity(templateContent, workerContent, failures);
   if (BASE_URL) {
-    await assertRuntimeParity(BASE_URL, failures);
+    runtimeRouteCount = await assertRuntimeParity(BASE_URL, failures);
   }
 
   if (failures.length) {
@@ -209,7 +254,7 @@ async function main() {
   }
 
   if (BASE_URL) {
-    console.log(`Peak schema parity audit passed for ${ROUTES.length} route(s): ${BASE_URL}`);
+    console.log(`Peak schema parity audit passed for ${runtimeRouteCount} route(s): ${BASE_URL}`);
   } else {
     console.log('Peak schema parity audit passed for worker/template source checks.');
   }

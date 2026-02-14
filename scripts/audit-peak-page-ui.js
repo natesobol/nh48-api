@@ -55,10 +55,23 @@ function runTemplateChecks() {
   const html = fs.readFileSync(TEMPLATE_PATH, 'utf8');
   assertIncludes(html, 'id="nav-placeholder"', 'Template missing #nav-placeholder for worker nav injection', failures);
   assertIncludes(html, 'id="getDirectionsBtn"', 'Template missing hero Get Directions button', failures);
+  const hasOverviewExpandHook =
+    html.includes('id="overviewExpandBtn"') ||
+    html.includes("expandBtn.id = 'overviewExpandBtn'") ||
+    html.includes('expandBtn.id = "overviewExpandBtn"');
+  if (!hasOverviewExpandHook) {
+    failures.push('Template missing overview expand control hook');
+  }
   assertIncludes(html, 'id="trailNamesGrid"', 'Template missing Associated Trails grid', failures);
+  assertIncludes(html, 'id="trailsHubSection"', 'Template missing unified trails section container', failures);
   assertIncludes(html, 'id="parkingAccessGrid"', 'Template missing Parking & Access panel/grid', failures);
   assertIncludes(html, 'id="difficultyMetricsGrid"', 'Template missing Difficulty Metrics panel/grid', failures);
   assertIncludes(html, 'id="riskPrepGrid"', 'Template missing Risk & Preparation panel/grid', failures);
+  assertIncludes(html, 'id="monthlyWeatherPanel"', 'Template missing Monthly Weather panel section', failures);
+  assertIncludes(html, 'id="monthlyWeatherMonthSelect"', 'Template missing monthly weather month selector', failures);
+  assertIncludes(html, 'id="panelReaderModal"', 'Template missing panel reader modal', failures);
+  assertIncludes(html, 'id="panelReaderScale"', 'Template missing panel reader scale control', failures);
+  assertIncludes(html, 'id="panelReaderClose"', 'Template missing panel reader close control', failures);
 
   if (/trailNamesGrid\s*\.\s*hidden\s*=\s*true/i.test(html)) {
     failures.push('Template still force-hides trailNamesGrid');
@@ -72,6 +85,16 @@ function runTemplateChecks() {
   }
   if (/\.\s*slice\s*\(/i.test(renderRoutesBody)) {
     failures.push('renderRoutes() appears to slice/truncate routes');
+  }
+  if (!/function\s+renderMonthlyWeatherPanel\s*\(/i.test(html)) {
+    failures.push('Template missing renderMonthlyWeatherPanel() implementation');
+  }
+  const directionsBody = extractFunctionBody(html, 'updateDirectionsButton');
+  if (!/aria-disabled/i.test(directionsBody)) {
+    failures.push('updateDirectionsButton() does not expose disabled state logic.');
+  }
+  if (!/Parking location unavailable|stationnement indisponible/i.test(html)) {
+    failures.push('Template missing disabled-directions messaging.');
   }
 
   return failures;
@@ -108,7 +131,7 @@ async function runRemoteChecks() {
       }
     });
 
-    ['routesGrid', 'trailNamesGrid', 'parkingAccessGrid', 'difficultyMetricsGrid', 'riskPrepGrid'].forEach((id) => {
+    ['routesGrid', 'trailNamesGrid', 'parkingAccessGrid', 'difficultyMetricsGrid', 'riskPrepGrid', 'monthlyWeatherPanel', 'monthlyWeatherMonthSelect', 'panelReaderModal', 'panelReaderContent'].forEach((id) => {
       if (!new RegExp(`id=["']${id}["']`, 'i').test(body)) {
         failures.push(`${url}: missing required panel/grid #${id}`);
       }

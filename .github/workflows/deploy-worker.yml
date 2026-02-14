@@ -21,6 +21,7 @@ on:
       - 'scripts/audit-site-schema.js'
       - 'scripts/audit-homepage-worker-seo.js'
       - 'scripts/audit-worker-breadcrumbs.js'
+      - 'scripts/audit-live-peak-seo-parity.js'
       - 'scripts/audit-peak-guide-authority.js'
       - 'scripts/audit-peak-page-ui.js'
       - 'scripts/audit-peak-data-coverage.js'
@@ -158,39 +159,12 @@ jobs:
         id: production_audits
         run: |
           set -euo pipefail
-          BASE_URL="https://nh48.info"
-          MAX_ATTEMPTS=6
-          DELAY_SECONDS=20
-          ATTEMPT=1
-
-          while true; do
-            echo "Audit attempt ${ATTEMPT}/${MAX_ATTEMPTS} against ${BASE_URL}"
-
-            set +e
-            node scripts/audit-homepage-worker-seo.js --url "${BASE_URL}"
-            HOMEPAGE_STATUS=$?
-            node scripts/audit-worker-breadcrumbs.js --url "${BASE_URL}"
-            BREADCRUMB_STATUS=$?
-            node scripts/audit-peak-page-ui.js --url "${BASE_URL}"
-            PEAK_UI_STATUS=$?
-            node scripts/audit-peak-schema-parity.js --url "${BASE_URL}"
-            PEAK_SCHEMA_STATUS=$?
-            set -e
-
-            if [[ "${HOMEPAGE_STATUS}" -eq 0 && "${BREADCRUMB_STATUS}" -eq 0 && "${PEAK_UI_STATUS}" -eq 0 && "${PEAK_SCHEMA_STATUS}" -eq 0 ]]; then
-              echo "Production SEO audits passed."
-              break
-            fi
-
-            if [[ "${ATTEMPT}" -ge "${MAX_ATTEMPTS}" ]]; then
-              echo "Production SEO audits failed after ${MAX_ATTEMPTS} attempts."
-              exit 1
-            fi
-
-            ATTEMPT=$((ATTEMPT + 1))
-            echo "Audit failed (homepage=${HOMEPAGE_STATUS}, breadcrumbs=${BREADCRUMB_STATUS}, peak_ui=${PEAK_UI_STATUS}, peak_schema=${PEAK_SCHEMA_STATUS}). Retrying in ${DELAY_SECONDS}s..."
-            sleep "${DELAY_SECONDS}"
-          done
+          LOG_FILE="${RUNNER_TEMP}/production-audits.log"
+          node scripts/audit-live-peak-seo-parity.js \
+            --url "https://nh48.info" \
+            --retries 6 \
+            --delay-seconds 20 \
+            --log-file "${LOG_FILE}"
 
       - name: Deployment Summary
         if: always()
@@ -227,5 +201,17 @@ jobs:
           echo "- \`node scripts/audit-worker-breadcrumbs.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-page-ui.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-schema-parity.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-peak-image-metadata.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-live-peak-seo-parity.js --url https://nh48.info --retries 6 --delay-seconds 20\`" >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f "${RUNNER_TEMP}/production-audits.log" ]]; then
+            FAIL_LINES="$(grep -E '^- (https://nh48.info/|[a-z0-9-]+:)' "${RUNNER_TEMP}/production-audits.log" | head -n 40 || true)"
+            if [[ -n "${FAIL_LINES}" ]]; then
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "### Production Audit Failures (Last Attempt)" >> "$GITHUB_STEP_SUMMARY"
+              echo '```text' >> "$GITHUB_STEP_SUMMARY"
+              echo "${FAIL_LINES}" >> "$GITHUB_STEP_SUMMARY"
+              echo '```' >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Time (UTC):** $(date -u)" >> "$GITHUB_STEP_SUMMARY"

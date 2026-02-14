@@ -977,30 +977,130 @@ export default {
       return map;
     }
 
-    // Load nh48.json from R2 or GitHub raw
+    function toPeakArray(peaks) {
+      if (Array.isArray(peaks)) return peaks;
+      if (peaks && typeof peaks === 'object') return Object.values(peaks);
+      return [];
+    }
+
+    function normalizePeakKey(value) {
+      return String(value || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9-]+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    }
+
+    function getPeakSlugValue(peak, index) {
+      const candidate =
+        peak?.slug ||
+        peak?.slug_en ||
+        peak?.Slug ||
+        peak?.peakName ||
+        peak?.['Peak Name'] ||
+        `peak-${index + 1}`;
+      return normalizePeakKey(candidate);
+    }
+
+    function getPhotoToken(photo) {
+      const raw =
+        (typeof photo === 'string' ? photo : '') ||
+        photo?.filename ||
+        photo?.url ||
+        photo?.originalUrl ||
+        '';
+      if (!raw) return '';
+      const path = String(raw).split('?')[0].split('#')[0];
+      const token = path.split('/').pop() || '';
+      return token.trim().toLowerCase();
+    }
+
+    function buildPeakPhotoMap(peaks) {
+      const map = new Map();
+      const entries = toPeakArray(peaks);
+      entries.forEach((peak, index) => {
+        const slug = getPeakSlugValue(peak, index);
+        if (!slug) return;
+        const photos = Array.isArray(peak?.photos) ? peak.photos : [];
+        const tokens = photos
+          .map((photo) => getPhotoToken(photo))
+          .filter(Boolean)
+          .sort();
+        map.set(slug, tokens);
+      });
+      return map;
+    }
+
+    function comparePeakPhotoParity(primary, canonical) {
+      const primaryMap = buildPeakPhotoMap(primary);
+      const canonicalMap = buildPeakPhotoMap(canonical);
+      const allSlugs = new Set([...primaryMap.keys(), ...canonicalMap.keys()]);
+      const mismatches = [];
+      for (const slug of allSlugs) {
+        const primaryTokens = primaryMap.get(slug) || [];
+        const canonicalTokens = canonicalMap.get(slug) || [];
+        if (primaryTokens.length !== canonicalTokens.length || primaryTokens.join('|') !== canonicalTokens.join('|')) {
+          mismatches.push({
+            slug,
+            primaryCount: primaryTokens.length,
+            canonicalCount: canonicalTokens.length
+          });
+        }
+      }
+      return {
+        isMatch: mismatches.length === 0,
+        mismatchCount: mismatches.length,
+        mismatches
+      };
+    }
+
+    // Load nh48.json from R2 and verify parity against GitHub raw.
     async function loadPeaks() {
-      let peaks;
+      const fetchRawPeaks = async () => {
+        try {
+          const res = await fetch(`${RAW_BASE}/data/nh48.json`, NO_CACHE_FETCH);
+          if (!res.ok) return null;
+          return await res.json();
+        } catch (_) {
+          return null;
+        }
+      };
+
+      let r2Peaks = null;
       try {
         if (env.NH48_DATA) {
           const obj = await env.NH48_DATA.get('nh48.json');
           if (obj) {
-            peaks = JSON.parse(await obj.text());
+            r2Peaks = JSON.parse(await obj.text());
           }
         }
       } catch (_) { }
-      if (!peaks) {
-        // Fallback to GitHub raw URL (not SITE, since there's no origin)
-        try {
-          const res = await fetch(`${RAW_BASE}/data/nh48.json`, NO_CACHE_FETCH);
-          if (!res.ok) {
-            return null;
-          }
-          peaks = await res.json();
-        } catch (_) {
-          return null;
+
+      const rawPeaks = await fetchRawPeaks();
+
+      if (r2Peaks && rawPeaks) {
+        const parity = comparePeakPhotoParity(r2Peaks, rawPeaks);
+        if (!parity.isMatch) {
+          console.warn('[loadPeaks] R2 nh48.json photo parity mismatch; falling back to GitHub raw source.', {
+            mismatchCount: parity.mismatchCount,
+            sample: parity.mismatches.slice(0, 8)
+          });
+          return rawPeaks;
         }
+        return r2Peaks;
       }
-      return peaks;
+
+      if (r2Peaks && !rawPeaks) {
+        console.warn('[loadPeaks] GitHub raw nh48.json unavailable; using R2 source without parity verification.');
+        return r2Peaks;
+      }
+
+      if (rawPeaks) {
+        return rawPeaks;
+      }
+
+      return null;
     }
 
     async function loadPartial(name, url) {
@@ -2816,6 +2916,34 @@ export default {
       const difficultyEntry = seoContext?.difficultyEntry || null;
       const riskEntry = seoContext?.riskEntry || null;
       const weatherSnapshot = seoContext?.weatherSnapshot || null;
+      const normalizeNarrative = (value) => String(value || '').replace(/\s+/g, ' ').trim();
+      const narrativeParts = [];
+      const pushNarrativePart = (name, text, suffix) => {
+        const normalizedText = normalizeNarrative(text);
+        if (!normalizedText) return;
+        narrativeParts.push({
+          '@type': 'WebPageElement',
+          '@id': `${canonicalUrl}#${suffix}`,
+          name,
+          text: normalizedText
+        });
+      };
+      pushNarrativePart('Mountain Overview', summaryText, 'overview');
+      const experience = peakData && typeof peakData === 'object' && peakData.experience && typeof peakData.experience === 'object'
+        ? peakData.experience
+        : null;
+      if (experience) {
+        pushNarrativePart(`${peakName} Summary`, experience.experienceSummary, 'trail-tested-summary');
+        pushNarrativePart(`Conditions on ${peakName}`, experience.conditionsFromExperience, 'trail-tested-conditions');
+        pushNarrativePart('Planning Trip', experience.planningTip, 'trail-tested-planning');
+        const historyBits = [
+          normalizeNarrative(experience.firstAscent || experience.first_ascent),
+          normalizeNarrative(experience.historyNotes || experience.history_notes || experience.history)
+        ].filter(Boolean);
+        if (historyBits.length) {
+          pushNarrativePart(`${peakName} History`, historyBits.join(' '), 'trail-tested-history');
+        }
+      }
       const imageObjects = (Array.isArray(photos) ? photos : [])
         .map((photo) => {
           if (!photo || !photo.url) return null;
@@ -2896,6 +3024,7 @@ export default {
         description: summaryText,
         image: imageObjects.length ? imageObjects : imageUrl,
         url: canonicalUrl,
+        hasPart: narrativeParts.length ? narrativeParts : undefined,
         additionalProperty: []
       };
       const addPropertyValue = (name, value) => {
