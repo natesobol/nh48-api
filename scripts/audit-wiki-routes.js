@@ -110,7 +110,7 @@ function pickSamples() {
   const nh48Entries = Object.entries(nh48Data).map(([key, entry]) => ({ ...(entry || {}), slug: entry?.slug || key }));
   const nh52Entries = Object.entries(nh52Data).map(([key, entry]) => ({ ...(entry || {}), slug: entry?.slug || key }));
   const mountainWithPhotos = nh48Entries.find((entry) => Array.isArray(entry.photos) && entry.photos.length) || nh48Entries[0];
-  const mountainNoPhotos = nh52Entries.find((entry) => !Array.isArray(entry.photos) || entry.photos.length === 0) || nh52Entries[0];
+  const mountainNoPhotos = nh52Entries.find((entry) => !hasEntryMedia(entry)) || nh52Entries[0];
   const plant = Array.isArray(plants) ? plants.find((entry) => entry && entry.slug) : null;
   const animal = Array.isArray(animals) ? animals.find((entry) => entry && entry.slug) : null;
   const diseaseEntries = Array.isArray(plantDiseases?.diseases) ? plantDiseases.diseases : [];
@@ -152,6 +152,10 @@ function runTemplateChecks(samples) {
     {
       file: 'pages/wiki/plant-disease.html',
       mustContain: ['id="nav-placeholder"', 'id="footer-placeholder"', 'id="wikiDiseaseHierarchy"', 'id="wikiDiseaseSearch"', '{{PLANT_DISEASE_GROUPS}}']
+    },
+    {
+      file: 'pages/wiki/diseases/index.html',
+      mustContain: ['id="nav-placeholder"', 'id="footer-placeholder"', '{{FOREST_HEALTH_FLOWCHART_BASE64}}']
     }
   ];
 
@@ -192,6 +196,7 @@ async function fetchPage(url) {
 function buildRoutes(samples) {
   return {
     landing: '/wiki',
+    forestHealth: '/wiki/diseases',
     mountainPhoto: `/wiki/mountains/nh48/${encodeURIComponent(samples.mountainWithPhotos.slug)}`,
     mountainNoPhoto: `/wiki/mountains/nh52wav/${encodeURIComponent(samples.mountainNoPhotos.slug)}`,
     plant: `/wiki/plants/${encodeURIComponent(samples.plant.slug)}`,
@@ -208,7 +213,7 @@ async function runUrlChecks(samples) {
   const landingUrl = new URL(routes.landing, BASE_URL).toString();
   const landingPage = await fetchPage(landingUrl);
   assert(landingPage.status === 200, `${landingUrl}: expected HTTP 200, found ${landingPage.status}`, failures);
-  [routes.mountainPhoto, routes.mountainNoPhoto, routes.plant, routes.animal, routes.plantDiseaseAnchor].forEach((route) => {
+  [routes.forestHealth, routes.mountainPhoto, routes.mountainNoPhoto, routes.plant, routes.animal, routes.plantDiseaseAnchor].forEach((route) => {
     if (!landingPage.body.includes(`href="${route}"`)) {
       failures.push(`${landingUrl}: missing crawlable wiki link ${route}`);
     }
@@ -220,6 +225,20 @@ async function runUrlChecks(samples) {
   assert(landingTypes.has('CollectionPage'), `${landingUrl}: missing CollectionPage JSON-LD`, failures);
   assert(landingTypes.has('ItemList'), `${landingUrl}: missing ItemList JSON-LD`, failures);
   assert(countType(landingDocs, 'BreadcrumbList') === 1, `${landingUrl}: expected exactly one BreadcrumbList`, failures);
+
+  const forestHealthUrl = new URL(routes.forestHealth, BASE_URL).toString();
+  const forestHealthPage = await fetchPage(forestHealthUrl);
+  assert(forestHealthPage.status === 200, `${forestHealthUrl}: expected HTTP 200, found ${forestHealthPage.status}`, failures);
+  if (forestHealthPage.status === 200) {
+    assert(/aria-label=["']Breadcrumb["']/i.test(forestHealthPage.body), `${forestHealthUrl}: visible breadcrumb nav not found`, failures);
+    assert(forestHealthPage.body.includes('href="/wiki/plant-diseases"'), `${forestHealthUrl}: missing crawlable link to /wiki/plant-diseases`, failures);
+    const docs = extractJsonLdDocs(forestHealthPage.body);
+    const types = new Set();
+    docs.forEach((doc) => collectTypes(doc, types));
+    assert(types.has('CollectionPage') || types.has('WebPage'), `${forestHealthUrl}: missing CollectionPage/WebPage JSON-LD`, failures);
+    assert(types.has('ItemList'), `${forestHealthUrl}: missing ItemList JSON-LD`, failures);
+    assert(countType(docs, 'BreadcrumbList') === 1, `${forestHealthUrl}: expected exactly one BreadcrumbList`, failures);
+  }
 
   const routeChecks = [
     { route: routes.mountainPhoto, requiredType: 'Mountain', expectsImages: true },
@@ -253,6 +272,7 @@ async function runUrlChecks(samples) {
 
     if (check.route === routes.plantDisease) {
       assert(page.body.includes(`id="disease-${samples.plantDisease.slug}"`), `${fullUrl}: expected visible disease anchor for ${samples.plantDisease.slug}`, failures);
+      assert(page.body.includes('href="/wiki/diseases"'), `${fullUrl}: expected crawlable link to /wiki/diseases`, failures);
     }
   }
 

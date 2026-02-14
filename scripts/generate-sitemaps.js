@@ -72,6 +72,7 @@ const STATIC_PAGE_ENTRIES = [
   { loc: 'https://nh48.info/about', file: 'pages/about.html' },
   { loc: 'https://nh48.info/fr/about', file: 'pages/about.html' },
   { loc: 'https://nh48.info/wiki', file: 'pages/wiki/index.html' },
+  { loc: 'https://nh48.info/wiki/diseases', file: 'pages/wiki/diseases/index.html' },
   { loc: 'https://nh48.info/wiki/plant-diseases', file: 'pages/wiki/plant-disease.html' },
 ];
 const STATIC_IMAGE_ENTRIES = [

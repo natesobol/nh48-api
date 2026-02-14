@@ -18,6 +18,7 @@
     "build:peak-sameas": "python scripts/build-peak-sameas.py",
     "build:peak-difficulty": "node scripts/build-peak-difficulty.js",
     "build:peak-experience-scaffold": "node scripts/build-peak-experience-scaffold.js",
+    "build:forest-health-flowchart": "node scripts/build-forest-health-flowchart-base64.js",
     "build:prerender-peaks": "node scripts/prerender-peaks.js",
     "test:peak-visual": "playwright test tests/peak-page-visual.spec.js --config playwright.peak-visual.config.js",
     "test:analytics": "playwright test analytics-smoke.spec.js",

@@ -33,6 +33,7 @@ let wikiMountainDataCache = new Map();
 let wikiPlantsCache = null;
 let wikiAnimalsCache = null;
 let wikiPlantDiseasesCache = null;
+let wikiForestHealthFlowchartBase64Cache = null;
 
 export default {
   async fetch(request, env, ctx) {
@@ -76,6 +77,8 @@ export default {
     const RAW_WIKI_PLANTS_URL = `${RAW_BASE}/data/wiki/plants.json`;
     const RAW_WIKI_ANIMALS_URL = `${RAW_BASE}/data/wiki/animals.json`;
     const RAW_WIKI_PLANT_DISEASES_URL = `${RAW_BASE}/data/wiki/plant-disease.json`;
+    const RAW_WIKI_FOREST_HEALTH_TEMPLATE_URL = `${RAW_BASE}/pages/wiki/diseases/index.html`;
+    const RAW_WIKI_FOREST_HEALTH_FLOWCHART_BASE64_URL = `${RAW_BASE}/data/wiki/forest-health-flowchart.base64.txt`;
     const EN_TRANS_URL = `${RAW_BASE}/i18n/en.json`;
     const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
     const SITE_NAME = url.hostname;
@@ -1213,6 +1216,14 @@ export default {
         diseases: entries
       };
       return wikiPlantDiseasesCache;
+    }
+
+    async function loadWikiForestHealthFlowchartBase64() {
+      if (wikiForestHealthFlowchartBase64Cache) return wikiForestHealthFlowchartBase64Cache;
+      const payload = await loadTextCache('wiki-forest-health-flowchart-b64', RAW_WIKI_FOREST_HEALTH_FLOWCHART_BASE64_URL);
+      const normalized = String(payload || '').replace(/\s+/g, '');
+      wikiForestHealthFlowchartBase64Cache = normalized;
+      return wikiForestHealthFlowchartBase64Cache;
     }
 
     function resolveWikiSpeciesEntry(entries, slug) {
@@ -2890,6 +2901,7 @@ export default {
       const plantsLabel = taxonomyLabels.plants?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Plantes' : 'Plants');
       const animalsLabel = taxonomyLabels.animals?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Animaux' : 'Animals');
       const plantDiseasesLabel = taxonomyLabels.plantDiseases?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Maladies des plantes' : 'Plant Diseases');
+      const forestHealthLabel = taxonomyLabels.forestHealth?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Sante forestiere' : 'Forest Health');
       const homeUrl = isFrench ? `${SITE}/fr/` : `${SITE}/`;
       const catalogUrl = isFrench ? `${SITE}/fr/catalog` : `${SITE}/catalog`;
       const datasetUrl = isFrench ? `${SITE}/fr/dataset` : `${SITE}/dataset`;
@@ -3023,6 +3035,11 @@ export default {
           push(homeLabel, homeUrl);
           push(wikiLabel, wikiUrl);
           push(plantDiseasesLabel, `${wikiUrl}#wikiPanelPlantDiseases`);
+          break;
+        case 'wiki-forest-health':
+          push(homeLabel, homeUrl);
+          push(wikiLabel, wikiUrl);
+          push(forestHealthLabel, `${SITE}/wiki/diseases`);
           break;
         case 'plant-map':
           withApiPrefix();
@@ -4834,6 +4851,75 @@ export default {
           ogType: 'article'
         },
         jsonLd: [collectionPageNode, diseaseItemList, ...imageObjects]
+      });
+    }
+
+    if (pathNoLocale === '/wiki/diseases' || pathNoLocale === '/wiki/diseases/') {
+      const canonical = `${SITE}/wiki/diseases`;
+      const title = 'Forest Health - White Mountain Wiki';
+      const description = normalizeTextForWeb(
+        'Overview of major forest pests and diseases in the White Mountains, including harvest interaction pathways, threat comparisons, and seasonal timing.'
+      );
+      const flowchartBase64 = await loadWikiForestHealthFlowchartBase64();
+      const fallbackTransparentPngBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAoMBgYQm0S4AAAAASUVORK5CYII=';
+      const topThreats = [
+        'Beech Leaf Disease',
+        'Beech Bark Disease',
+        'Regeneration Interference',
+        'Eastern Spruce Budworm',
+        'Balsam Woolly Adelgid',
+        'White Pine Needle Damage',
+        'Caliciopsis Canker',
+        'White Pine Weevil',
+        'Hemlock Woolly Adelgid',
+        'Emerald Ash Borer'
+      ];
+
+      const threatListNode = {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        '@id': `${canonical}#top-threats`,
+        name: 'White Mountain Forest Health Top Threats',
+        itemListOrder: 'https://schema.org/ItemListOrderAscending',
+        numberOfItems: topThreats.length,
+        itemListElement: topThreats.map((name, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name
+        }))
+      };
+
+      const pageNode = {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        '@id': `${canonical}#webpage`,
+        url: canonical,
+        name: title,
+        description,
+        inLanguage: 'en',
+        isPartOf: { '@id': `${SITE}/#website` },
+        hasPart: [{ '@id': threatListNode['@id'] }]
+      };
+
+      return serveTemplatePage({
+        templatePath: RAW_WIKI_FOREST_HEALTH_TEMPLATE_URL.replace(`${RAW_BASE}/`, ''),
+        pathname,
+        routeId: 'wiki-forest-health',
+        stripTemplateJsonLd: true,
+        templateReplacements: {
+          '{{FOREST_HEALTH_FLOWCHART_BASE64}}': flowchartBase64 || fallbackTransparentPngBase64
+        },
+        meta: {
+          title,
+          description,
+          canonical,
+          alternateEn: canonical,
+          alternateFr: `${SITE}/fr/wiki/diseases`,
+          image: HOME_SOCIAL_IMAGE,
+          imageAlt: title,
+          ogType: 'article'
+        },
+        jsonLd: [pageNode, threatListNode]
       });
     }
 
