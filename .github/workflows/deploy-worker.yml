@@ -18,9 +18,15 @@ on:
       - 'data/peak-difficulty-overrides.json'
       - 'data/current-conditions.json'
       - 'data/nh48_enriched_overlay.json'
+      - 'data/wiki/mountain-sets.json'
+      - 'data/wiki/wiki-nh48-mountains.json'
+      - 'data/wiki/wiki-nh52wav-mountains.json'
+      - 'data/wiki/plants.json'
+      - 'data/wiki/animals.json'
       - 'scripts/audit-site-schema.js'
       - 'scripts/audit-homepage-worker-seo.js'
       - 'scripts/audit-worker-breadcrumbs.js'
+      - 'scripts/audit-wiki-routes.js'
       - 'scripts/audit-live-peak-seo-parity.js'
       - 'scripts/audit-peak-guide-authority.js'
       - 'scripts/audit-peak-page-ui.js'
@@ -33,8 +39,18 @@ on:
       - 'scripts/build-peak-difficulty.js'
       - 'scripts/build-peak-experience-scaffold.js'
       - 'scripts/prerender-peaks.js'
+      - 'scripts/generate-sitemaps.js'
       - 'pages/nh48_peak.html'
+      - 'pages/nav.html'
+      - 'pages/wiki/index.html'
+      - 'pages/wiki/mountain.html'
+      - 'pages/wiki/plant.html'
+      - 'pages/wiki/animal.html'
       - 'css/peak-detail.css'
+      - 'css/wiki.css'
+      - 'js/wiki-landing.js'
+      - 'js/wiki-mountain.js'
+      - 'js/wiki-species.js'
       - 'tests/peak-page-visual.spec.js'
       - 'playwright.peak-visual.config.js'
       - 'package.json'
@@ -117,6 +133,10 @@ jobs:
         id: peak_image_metadata_audit
         run: node scripts/audit-peak-image-metadata.js
 
+      - name: Run wiki routes audit (pre-deploy gate)
+        id: wiki_routes_audit
+        run: node scripts/audit-wiki-routes.js
+
       - name: Run sameAs authority audit (pre-deploy gate)
         id: sameas_audit
         run: node scripts/audit-sameas.js
@@ -183,6 +203,7 @@ jobs:
           echo "- **Peak UI audit:** \`${{ steps.peak_ui_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak data coverage audit:** \`${{ steps.peak_data_coverage_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak image metadata audit:** \`${{ steps.peak_image_metadata_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Wiki routes audit:** \`${{ steps.wiki_routes_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **sameAs audit:** \`${{ steps.sameas_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Entity links audit:** \`${{ steps.entity_links_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak visual snapshots:** \`${{ steps.peak_visual_test.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
@@ -199,11 +220,13 @@ jobs:
           echo "- \`node scripts/audit-peak-page-ui.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-data-coverage.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-image-metadata.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-wiki-routes.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-sameas.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-entity-links.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`npm run test:peak-visual\` (conditional)" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-homepage-worker-seo.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-worker-breadcrumbs.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-wiki-routes.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-page-ui.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-schema-parity.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-image-metadata.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"

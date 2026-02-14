@@ -2091,6 +2091,20 @@
             <small class="last-modified"></small>
           </div>
         </a>
+
+        <a href="/wiki" class="dataset-card" data-card-id="white-mountains-visual-wiki">
+          <div class="card-image">
+            <img class="dataset-card-image" src="https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85/mount-adams/mount-adams__001.jpg" alt="Mount Adams summit ridge under clear alpine skies in the White Mountains" loading="lazy">
+          </div>
+          <div class="card-body">
+            <h3>White Mountains Visual Wiki</h3>
+            <p>Browse connected mountain, plant, and animal entries in a visual field-guide format built for hikers and researchers.</p>
+            <div class="card-action">
+              <span class="card-link-text">Open Visual Wiki</span>
+            </div>
+            <small class="last-modified"></small>
+          </div>
+        </a>
       </section>
     </div>
     <p class="seo-intro-visible">NH48 is an open hub for New Hampshire 4,000-footers and White Mountains peaks, with a searchable peak catalog, trail data, and crawlable photo metadata for hikers, researchers, and search/AI systems.</p>
@@ -2420,6 +2434,58 @@
     };
 
     const formatCountLabel = (count, singular, plural) => `${count} ${count === 1 ? singular : plural}`;
+    const normalizeWikiPath = (value) => {
+      if (typeof value !== 'string') {
+        return null;
+      }
+      const trimmed = value.trim().replace(/^\.?\//, '');
+      return trimmed ? `/${trimmed}` : null;
+    };
+
+    const listEntryObjects = (payload) => {
+      if (Array.isArray(payload)) {
+        return payload.filter((entry) => entry && typeof entry === 'object' && !Array.isArray(entry));
+      }
+      if (payload && typeof payload === 'object') {
+        return Object.values(payload).filter((entry) => entry && typeof entry === 'object' && !Array.isArray(entry));
+      }
+      return [];
+    };
+
+    const collectPhotoUrls = (entry, collector) => {
+      if (!entry || typeof entry !== 'object' || !(collector instanceof Set)) {
+        return;
+      }
+
+      const pushUrl = (candidate) => {
+        if (typeof candidate === 'string' && candidate.trim().length > 0) {
+          collector.add(candidate.trim());
+        }
+      };
+
+      if (Array.isArray(entry.photos)) {
+        entry.photos.forEach((photo) => {
+          if (typeof photo === 'string') {
+            pushUrl(photo);
+            return;
+          }
+          if (photo && typeof photo === 'object') {
+            pushUrl(photo.url);
+            pushUrl(photo.contentUrl);
+            pushUrl(photo.src);
+            pushUrl(photo.image);
+          }
+        });
+      }
+
+      if (Array.isArray(entry.imgs)) {
+        entry.imgs.forEach((img) => pushUrl(img));
+      }
+
+      pushUrl(entry.img);
+      pushUrl(entry.image);
+      pushUrl(entry.photo);
+    };
 
     const fetchPlantCatalogCounts = async () => {
       const response = await fetch('/data/howker-plants');
@@ -2458,13 +2524,52 @@
       };
     };
 
+    const fetchWikiCatalogCounts = async () => {
+      const mountainSetsResponse = await fetch('/data/wiki/mountain-sets.json');
+      if (!mountainSetsResponse.ok) {
+        throw new Error(`Wiki mountain sets fetch failed: ${mountainSetsResponse.status}`);
+      }
+
+      const mountainSets = await mountainSetsResponse.json();
+      const mountainDataPaths = Object.values(mountainSets || {})
+        .map((setConfig) => normalizeWikiPath(setConfig?.dataFile))
+        .filter((pathValue, index, list) => Boolean(pathValue) && list.indexOf(pathValue) === index);
+      const wikiDataPaths = [...mountainDataPaths, '/data/wiki/plants.json', '/data/wiki/animals.json'];
+
+      const payloads = await Promise.all(wikiDataPaths.map(async (pathValue) => {
+        const response = await fetch(pathValue, { headers: { Accept: 'application/json' } });
+        if (!response.ok) {
+          throw new Error(`Wiki data fetch failed (${pathValue}): ${response.status}`);
+        }
+        return response.json();
+      }));
+
+      const uniquePhotoUrls = new Set();
+      let entryCount = 0;
+
+      payloads.forEach((payload) => {
+        const entries = listEntryObjects(payload);
+        entryCount += entries.length;
+        entries.forEach((entry) => collectPhotoUrls(entry, uniquePhotoUrls));
+      });
+
+      return {
+        countBannerTop: formatCountLabel(entryCount, 'Entry', 'Entries'),
+        countBannerBottom: formatCountLabel(uniquePhotoUrls.size, 'Photo', 'Photos')
+      };
+    };
+
     const populateDatasetCards = async () => {
       try {
-        const [metaResponse, sitemapMap, plantCatalogCounts] = await Promise.all([
+        const [metaResponse, sitemapMap, plantCatalogCounts, wikiCatalogCounts] = await Promise.all([
           fetch('/data/dataset-cards-meta.json'),
           fetchSitemapLastModified(),
           fetchPlantCatalogCounts().catch((error) => {
             console.error('Failed to load plant catalog count banner', error);
+            return null;
+          }),
+          fetchWikiCatalogCounts().catch((error) => {
+            console.error('Failed to load wiki count banner', error);
             return null;
           })
         ]);
@@ -2496,9 +2601,13 @@
 
           const countBannerTop = id === 'plant-catalog' && plantCatalogCounts
             ? plantCatalogCounts.countBannerTop
+            : id === 'white-mountains-visual-wiki' && wikiCatalogCounts
+              ? wikiCatalogCounts.countBannerTop
             : meta.countBannerTop;
           const countBannerBottom = id === 'plant-catalog' && plantCatalogCounts
             ? plantCatalogCounts.countBannerBottom
+            : id === 'white-mountains-visual-wiki' && wikiCatalogCounts
+              ? wikiCatalogCounts.countBannerBottom
             : meta.countBannerBottom;
 
           if (countBannerTop && countBannerBottom) {

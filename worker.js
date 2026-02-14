@@ -28,6 +28,10 @@ let peakDifficultyCache = null;
 let riskOverlayCache = null;
 let currentConditionsCache = null;
 let nwsWeatherCache = new Map();
+let wikiMountainSetsCache = null;
+let wikiMountainDataCache = new Map();
+let wikiPlantsCache = null;
+let wikiAnimalsCache = null;
 
 export default {
   async fetch(request, env, ctx) {
@@ -67,6 +71,9 @@ export default {
     const RAW_PEAK_DIFFICULTY_URL = `${RAW_BASE}/data/peak-difficulty.json`;
     const RAW_RISK_OVERLAY_URL = `${RAW_BASE}/data/nh48_enriched_overlay.json`;
     const RAW_CURRENT_CONDITIONS_URL = `${RAW_BASE}/data/current-conditions.json`;
+    const RAW_WIKI_MOUNTAIN_SETS_URL = `${RAW_BASE}/data/wiki/mountain-sets.json`;
+    const RAW_WIKI_PLANTS_URL = `${RAW_BASE}/data/wiki/plants.json`;
+    const RAW_WIKI_ANIMALS_URL = `${RAW_BASE}/data/wiki/animals.json`;
     const EN_TRANS_URL = `${RAW_BASE}/i18n/en.json`;
     const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
     const SITE_NAME = url.hostname;
@@ -698,6 +705,11 @@ export default {
       return Response.redirect(`${SITE}/${localePrefix}peak/${encodeURIComponent(peakSlug)}${url.search || ''}`, 301);
     }
 
+    if (pathname === '/fr/wiki' || pathname === '/fr/wiki/' || pathname.startsWith('/fr/wiki/')) {
+      const enPath = pathname.replace(/^\/fr/, '') || '/wiki';
+      return Response.redirect(`${SITE}${enPath}${url.search || ''}`, 301);
+    }
+
     if (pathname === '/photos' || pathname === '/photos/') {
       const githubUrl = `${RAW_BASE}/photos/index.html`;
       try {
@@ -743,6 +755,8 @@ export default {
       pathname === '/fr/long-trails' || pathname === '/fr/long-trails/' ||
       pathname === '/dataset' || pathname === '/dataset/' ||
       pathname.startsWith('/dataset/') || pathname.startsWith('/fr/dataset/') ||
+      pathname === '/wiki' || pathname === '/wiki/' ||
+      pathname.startsWith('/wiki/') || pathname.startsWith('/fr/wiki/') ||
       pathname === '/plant-catalog' || pathname === '/plant-catalog/' ||
       pathname === '/projects/plant-map' || pathname === '/projects/plant-map/' ||
       pathname === '/projects/hrt-info' || pathname === '/projects/hrt-info/' ||
@@ -1124,6 +1138,163 @@ export default {
         return null;
       }
       return await res.json();
+    }
+
+    function applyTemplateReplacements(html, replacements) {
+      if (!replacements || typeof replacements !== 'object') return html;
+      let output = html;
+      for (const [token, rawValue] of Object.entries(replacements)) {
+        const value = rawValue === null || rawValue === undefined ? '' : String(rawValue);
+        output = output.replaceAll(token, value);
+      }
+      return output;
+    }
+
+    async function loadWikiMountainSets() {
+      if (wikiMountainSetsCache) return wikiMountainSetsCache;
+      const payload = await loadJsonCache('wiki-mountain-sets', RAW_WIKI_MOUNTAIN_SETS_URL);
+      wikiMountainSetsCache = payload && typeof payload === 'object' ? payload : {};
+      return wikiMountainSetsCache;
+    }
+
+    function resolveWikiSetSlug(setSlug) {
+      return String(setSlug || '').trim().toLowerCase();
+    }
+
+    function resolveWikiMountainEntry(dataset, entrySlug) {
+      const slug = normalizeSlug(entrySlug);
+      if (!dataset || typeof dataset !== 'object' || !slug) return null;
+      if (dataset[slug] && typeof dataset[slug] === 'object') return dataset[slug];
+      return Object.values(dataset).find((entry) => normalizeSlug(entry?.slug || entry?.peakSlug || '') === slug) || null;
+    }
+
+    async function loadWikiMountainSetData(setSlug, setMeta = null) {
+      const normalizedSetSlug = resolveWikiSetSlug(setSlug);
+      if (!normalizedSetSlug) return null;
+      if (wikiMountainDataCache.has(normalizedSetSlug)) {
+        return wikiMountainDataCache.get(normalizedSetSlug);
+      }
+      const sets = setMeta ? { [normalizedSetSlug]: setMeta } : await loadWikiMountainSets();
+      const selectedSet = (sets && typeof sets === 'object') ? sets[normalizedSetSlug] : null;
+      if (!selectedSet || !selectedSet.dataFile) {
+        wikiMountainDataCache.set(normalizedSetSlug, null);
+        return null;
+      }
+      const dataFilePath = String(selectedSet.dataFile).replace(/^\/+/, '');
+      const dataUrl = `${RAW_BASE}/${dataFilePath}`;
+      const payload = await loadJsonCache(`wiki-mountains:${normalizedSetSlug}`, dataUrl);
+      const normalized = payload && typeof payload === 'object' ? payload : null;
+      wikiMountainDataCache.set(normalizedSetSlug, normalized);
+      return normalized;
+    }
+
+    async function loadWikiPlants() {
+      if (wikiPlantsCache) return wikiPlantsCache;
+      const payload = await loadJsonCache('wiki-plants', RAW_WIKI_PLANTS_URL);
+      wikiPlantsCache = Array.isArray(payload) ? payload : [];
+      return wikiPlantsCache;
+    }
+
+    async function loadWikiAnimals() {
+      if (wikiAnimalsCache) return wikiAnimalsCache;
+      const payload = await loadJsonCache('wiki-animals', RAW_WIKI_ANIMALS_URL);
+      wikiAnimalsCache = Array.isArray(payload) ? payload : [];
+      return wikiAnimalsCache;
+    }
+
+    function resolveWikiSpeciesEntry(entries, slug) {
+      const normalizedSlug = normalizeSlug(slug);
+      if (!normalizedSlug || !Array.isArray(entries)) return null;
+      return entries.find((entry) => normalizeSlug(entry?.slug || entry?.id) === normalizedSlug) || null;
+    }
+
+    function normalizeWikiMedia(entry, fallbackName = '') {
+      const media = [];
+      const push = (photo) => {
+        if (!photo) return;
+        if (typeof photo === 'string') {
+          const url = normalizeTextForWeb(photo);
+          if (!url) return;
+          media.push({
+            url,
+            contentUrl: url,
+            alt: fallbackName ? `${fallbackName} photo` : 'Wiki photo',
+            title: fallbackName || 'Wiki photo',
+            caption: fallbackName || 'Wiki photo',
+            creditText: RIGHTS_DEFAULTS.creditText,
+            license: RIGHTS_DEFAULTS.licenseUrl
+          });
+          return;
+        }
+        const url = normalizeTextForWeb(photo.url || photo.contentUrl || photo.src || '');
+        if (!url) return;
+        media.push({
+          url,
+          contentUrl: normalizeTextForWeb(photo.contentUrl || url),
+          alt: normalizeTextForWeb(photo.alt || photo.altText || photo.description || photo.caption || `${fallbackName} photo`),
+          title: normalizeTextForWeb(photo.title || photo.headline || photo.caption || photo.alt || fallbackName || 'Wiki photo'),
+          caption: normalizeTextForWeb(photo.caption || photo.description || photo.extendedDescription || photo.alt || fallbackName || 'Wiki photo'),
+          creditText: normalizeTextForWeb(photo.creditText || photo.credit || photo.author || RIGHTS_DEFAULTS.creditText),
+          license: normalizeTextForWeb(photo.license || RIGHTS_DEFAULTS.licenseUrl)
+        });
+      };
+
+      if (Array.isArray(entry?.photos)) entry.photos.forEach(push);
+      if (!media.length && Array.isArray(entry?.imgs)) entry.imgs.forEach(push);
+      if (!media.length && entry?.img) push(entry.img);
+
+      const seen = new Set();
+      return media.filter((item) => {
+        const key = item.contentUrl || item.url;
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    function buildWikiImageObjects({ media = [], canonicalUrl, entityName, inLanguage = 'en' }) {
+      return media.map((photo, index) => ({
+        '@context': 'https://schema.org',
+        '@type': 'ImageObject',
+        '@id': `${canonicalUrl}#wiki-image-${index + 1}`,
+        url: photo.url,
+        contentUrl: photo.contentUrl || photo.url,
+        name: normalizeTextForWeb(photo.title || photo.alt || `${entityName} photo ${index + 1}`),
+        caption: normalizeTextForWeb(photo.caption || photo.alt || `${entityName} photo ${index + 1}`),
+        description: normalizeTextForWeb(photo.caption || photo.alt || `${entityName} photo ${index + 1}`),
+        inLanguage,
+        license: photo.license || RIGHTS_DEFAULTS.licenseUrl,
+        acquireLicensePage: RIGHTS_DEFAULTS.acquireLicensePageUrl,
+        creditText: photo.creditText || RIGHTS_DEFAULTS.creditText,
+        copyrightNotice: RIGHTS_DEFAULTS.copyrightNotice,
+        creator: {
+          '@type': 'Person',
+          name: RIGHTS_DEFAULTS.creatorName,
+          url: `${SITE}/about`
+        }
+      }));
+    }
+
+    function renderWikiLinks(items, buildUrl, subtitleBuilder = null) {
+      if (!Array.isArray(items) || !items.length) {
+        return '<li class="wiki-link-item" hidden><a class="wiki-link" href="/wiki">No entries</a></li>';
+      }
+      return items.map((item) => {
+        const name = normalizeTextForWeb(item.name || item.peakName || item.commonName || item.slug || 'Entry');
+        const slug = normalizeSlug(item.slug || item.id || item.peakSlug || '');
+        if (!slug) return '';
+        const url = buildUrl(slug);
+        const subtitle = subtitleBuilder ? normalizeTextForWeb(subtitleBuilder(item) || '') : '';
+        const searchText = normalizeTextForWeb(`${name} ${subtitle}`);
+        return [
+          `<li class="wiki-link-item" data-search="${esc(searchText)}">`,
+          `<a class="wiki-link" href="${url}">`,
+          `${esc(name)}`,
+          subtitle ? `<small>${esc(subtitle)}</small>` : '',
+          '</a>',
+          '</li>'
+        ].join('');
+      }).join('\n');
     }
 
     function normalizeUrlArray(values) {
@@ -2701,12 +2872,17 @@ export default {
       const homeLabel = taxonomyLabels.home?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Accueil' : 'Home');
       const apiLabel = taxonomyLabels.api?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'API NH48' : 'NH48 API');
       const whiteMountainsLabel = taxonomyLabels.whiteMountains?.[isFrench ? 'fr' : 'en'] || 'White Mountains';
+      const wikiLabel = taxonomyLabels.wiki?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Wiki White Mountains' : 'White Mountain Wiki');
+      const mountainsLabel = taxonomyLabels.mountains?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Montagnes' : 'Mountains');
+      const plantsLabel = taxonomyLabels.plants?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Plantes' : 'Plants');
+      const animalsLabel = taxonomyLabels.animals?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Animaux' : 'Animals');
       const homeUrl = isFrench ? `${SITE}/fr/` : `${SITE}/`;
       const catalogUrl = isFrench ? `${SITE}/fr/catalog` : `${SITE}/catalog`;
       const datasetUrl = isFrench ? `${SITE}/fr/dataset` : `${SITE}/dataset`;
       const trailsUrl = isFrench ? `${SITE}/fr/trails` : `${SITE}/trails`;
       const longTrailsUrl = isFrench ? `${SITE}/fr/long-trails` : `${SITE}/long-trails`;
       const plantCatalogUrl = isFrench ? `${SITE}/fr/plant-catalog` : `${SITE}/plant-catalog`;
+      const wikiUrl = `${SITE}/wiki`;
       const whiteMountainsHubUrl = isFrench
         ? `${SITE}${taxonomy.paths?.whiteMountainsHubFr || '/fr/nh-4000-footers-info'}`
         : `${SITE}${taxonomy.paths?.whiteMountainsHubEn || '/nh-4000-footers-info'}`;
@@ -2802,6 +2978,32 @@ export default {
           push(isFrench ? 'Catalogue de donnees' : 'Data Catalog', datasetUrl);
           push(isFrench ? 'Catalogue des plantes alpines' : 'Alpine Plant Catalog', plantCatalogUrl);
           push(context.plantName || (isFrench ? 'Plante' : 'Plant'));
+          break;
+        case 'wiki-home':
+          push(homeLabel, homeUrl);
+          push(wikiLabel, wikiUrl);
+          break;
+        case 'wiki-mountain-detail': {
+          push(homeLabel, homeUrl);
+          push(wikiLabel, wikiUrl);
+          push(mountainsLabel, `${wikiUrl}#wikiPanelNh48`);
+          if (context.setName) {
+            push(context.setName, wikiUrl);
+          }
+          push(context.entryName || context.peakName || (isFrench ? 'Montagne' : 'Mountain'));
+          break;
+        }
+        case 'wiki-plant-detail':
+          push(homeLabel, homeUrl);
+          push(wikiLabel, wikiUrl);
+          push(plantsLabel, `${wikiUrl}#wikiPanelPlants`);
+          push(context.entryName || context.plantName || (isFrench ? 'Plante' : 'Plant'));
+          break;
+        case 'wiki-animal-detail':
+          push(homeLabel, homeUrl);
+          push(wikiLabel, wikiUrl);
+          push(animalsLabel, `${wikiUrl}#wikiPanelAnimals`);
+          push(context.entryName || context.animalName || (isFrench ? 'Animal' : 'Animal'));
           break;
         case 'plant-map':
           withApiPrefix();
@@ -3407,7 +3609,8 @@ export default {
       stripTemplateJsonLd = false,
       stripTemplateBreadcrumbJsonLd = true,
       bodyDataAttrs = null,
-      prependBodyHtml = ''
+      prependBodyHtml = '',
+      templateReplacements = null
     }) {
       const templateUrl = `${RAW_BASE}/${templatePath}`;
       const rawHtml = await loadTextCache(`tpl:${templatePath}`, templateUrl);
@@ -3424,6 +3627,7 @@ export default {
       ]);
       // Fix relative paths in template (../css/ -> /css/, etc.)
       let html = fixRelativePaths(rawHtml);
+      html = applyTemplateReplacements(html, templateReplacements);
       if (stripTemplateJsonLd) {
         html = stripJsonLdScripts(html);
       } else if (stripTemplateBreadcrumbJsonLd) {
@@ -4194,6 +4398,483 @@ export default {
           ogType: 'website'
         },
         jsonLd: [trailCreativeWork]
+      });
+    }
+
+    if (pathNoLocale === '/wiki' || pathNoLocale === '/wiki/') {
+      const [setRegistry, plants, animals] = await Promise.all([
+        loadWikiMountainSets(),
+        loadWikiPlants(),
+        loadWikiAnimals()
+      ]);
+      const [nh48Data, nh52Data] = await Promise.all([
+        loadWikiMountainSetData('nh48', setRegistry?.nh48),
+        loadWikiMountainSetData('nh52wav', setRegistry?.nh52wav)
+      ]);
+
+      const normalizeMountainEntries = (payload) => {
+        if (!payload || typeof payload !== 'object') return [];
+        return Object.entries(payload)
+          .map(([key, entry]) => ({ ...(entry || {}), slug: normalizeSlug(entry?.slug || key) }))
+          .filter((entry) => entry.slug);
+      };
+
+      const sortByName = (items, resolveName) => items.sort((a, b) => {
+        const nameA = normalizeTextForWeb(resolveName(a)).toLowerCase();
+        const nameB = normalizeTextForWeb(resolveName(b)).toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
+
+      const nh48Entries = sortByName(
+        normalizeMountainEntries(nh48Data),
+        (entry) => entry.peakName || entry['Peak Name'] || entry.slug
+      );
+      const nh52Entries = sortByName(
+        normalizeMountainEntries(nh52Data),
+        (entry) => entry.peakName || entry['Peak Name'] || entry.slug
+      );
+      const plantEntries = sortByName(
+        Array.isArray(plants) ? plants.filter((entry) => normalizeSlug(entry?.slug || entry?.id)) : [],
+        (entry) => entry.commonName || entry.scientificName || entry.slug || entry.id
+      );
+      const animalEntries = sortByName(
+        Array.isArray(animals) ? animals.filter((entry) => normalizeSlug(entry?.slug || entry?.id)) : [],
+        (entry) => entry.commonName || entry.scientificName || entry.slug || entry.id
+      );
+
+      const nh48LinksHtml = renderWikiLinks(
+        nh48Entries,
+        (slug) => `/wiki/mountains/nh48/${encodeURIComponent(slug)}`,
+        (entry) => entry['Range / Subrange'] || entry.Difficulty || ''
+      );
+      const nh52LinksHtml = renderWikiLinks(
+        nh52Entries,
+        (slug) => `/wiki/mountains/nh52wav/${encodeURIComponent(slug)}`,
+        (entry) => entry['Range / Subrange'] || entry.Difficulty || ''
+      );
+      const plantLinksHtml = renderWikiLinks(
+        plantEntries,
+        (slug) => `/wiki/plants/${encodeURIComponent(slug)}`,
+        (entry) => `${entry.scientificName || ''}${entry.type ? ` - ${entry.type}` : ''}`
+      );
+      const animalLinksHtml = renderWikiLinks(
+        animalEntries,
+        (slug) => `/wiki/animals/${encodeURIComponent(slug)}`,
+        (entry) => `${entry.scientificName || ''}${entry.type ? ` - ${entry.type}` : ''}`
+      );
+
+      const countMedia = (entries) => entries.reduce(
+        (sum, entry) => sum + normalizeWikiMedia(entry, entry.peakName || entry.commonName || '').length,
+        0
+      );
+      const photoCount = countMedia(nh48Entries) + countMedia(nh52Entries) + countMedia(plantEntries) + countMedia(animalEntries);
+
+      const canonical = `${SITE}/wiki`;
+      const title = 'White Mountain Visual Wiki';
+      const description = 'Visual field wiki for White Mountains datasets: NH48 peaks, NH52WAV mountains, plants, and animals.';
+
+      const itemListFromEntries = (id, name, entries, buildUrl, resolveName) => ({
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        '@id': `${canonical}#${id}`,
+        name,
+        itemListOrder: 'https://schema.org/ItemListOrderAscending',
+        numberOfItems: entries.length,
+        itemListElement: entries.map((entry, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: normalizeTextForWeb(resolveName(entry)),
+          item: `${SITE}${buildUrl(normalizeSlug(entry.slug || entry.id || ''))}`
+        }))
+      });
+
+      const listNh48 = itemListFromEntries(
+        'wiki-list-nh48',
+        'NH48 4,000-Footers',
+        nh48Entries,
+        (slug) => `/wiki/mountains/nh48/${encodeURIComponent(slug)}`,
+        (entry) => entry.peakName || entry['Peak Name'] || entry.slug
+      );
+      const listNh52 = itemListFromEntries(
+        'wiki-list-nh52wav',
+        'NH52 With a View',
+        nh52Entries,
+        (slug) => `/wiki/mountains/nh52wav/${encodeURIComponent(slug)}`,
+        (entry) => entry.peakName || entry['Peak Name'] || entry.slug
+      );
+      const listPlants = itemListFromEntries(
+        'wiki-list-plants',
+        'White Mountain Plants',
+        plantEntries,
+        (slug) => `/wiki/plants/${encodeURIComponent(slug)}`,
+        (entry) => entry.commonName || entry.scientificName || entry.slug
+      );
+      const listAnimals = itemListFromEntries(
+        'wiki-list-animals',
+        'White Mountain Animals',
+        animalEntries,
+        (slug) => `/wiki/animals/${encodeURIComponent(slug)}`,
+        (entry) => entry.commonName || entry.scientificName || entry.slug
+      );
+
+      const collectionPage = {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        '@id': `${canonical}#webpage`,
+        url: canonical,
+        name: title,
+        description,
+        inLanguage: 'en',
+        isPartOf: { '@id': `${SITE}/#website` },
+        hasPart: [
+          { '@id': listNh48['@id'] },
+          { '@id': listNh52['@id'] },
+          { '@id': listPlants['@id'] },
+          { '@id': listAnimals['@id'] }
+        ]
+      };
+
+      return serveTemplatePage({
+        templatePath: 'pages/wiki/index.html',
+        pathname,
+        routeId: 'wiki-home',
+        stripTemplateJsonLd: true,
+        bodyDataAttrs: {
+          wikiPhotoCount: String(photoCount)
+        },
+        templateReplacements: {
+          '{{WIKI_LINKS_NH48}}': nh48LinksHtml,
+          '{{WIKI_LINKS_NH52WAV}}': nh52LinksHtml,
+          '{{WIKI_LINKS_PLANTS}}': plantLinksHtml,
+          '{{WIKI_LINKS_ANIMALS}}': animalLinksHtml
+        },
+        meta: {
+          title,
+          description,
+          canonical,
+          alternateEn: canonical,
+          alternateFr: `${SITE}/fr/wiki`,
+          image: HOME_SOCIAL_IMAGE,
+          imageAlt: title,
+          ogType: 'website'
+        },
+        jsonLd: [collectionPage, listNh48, listNh52, listPlants, listAnimals]
+      });
+    }
+
+    const wikiMountainMatch = pathNoLocale.match(/^\/wiki\/mountains\/([^/]+)\/([^/]+)\/?$/i);
+    if (wikiMountainMatch) {
+      const setSlug = resolveWikiSetSlug(wikiMountainMatch[1]);
+      const entrySlug = normalizeSlug(wikiMountainMatch[2]);
+      const setRegistry = await loadWikiMountainSets();
+      const setMeta = setRegistry?.[setSlug];
+      if (!setMeta || !setMeta.dataFile) {
+        return new Response('<!doctype html><title>404 Not Found</title><h1>Mountain set not found</h1>', {
+          status: 404,
+          headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        });
+      }
+
+      const dataset = await loadWikiMountainSetData(setSlug, setMeta);
+      const entry = resolveWikiMountainEntry(dataset, entrySlug);
+      if (!entry) {
+        return new Response('<!doctype html><title>404 Not Found</title><h1>Mountain wiki entry not found</h1>', {
+          status: 404,
+          headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        });
+      }
+
+      const canonical = `${SITE}/wiki/mountains/${encodeURIComponent(setSlug)}/${encodeURIComponent(entrySlug)}`;
+      const entryName = normalizeTextForWeb(entry.peakName || entry['Peak Name'] || humanizeSlug(entrySlug));
+      const setName = normalizeTextForWeb(setMeta.name || setMeta.shortName || humanizeSlug(setSlug));
+      const description = normalizeTextForWeb(
+        entry.description
+        || entry['View Type']
+        || `Visual wiki entry for ${entryName} in the ${setName} mountain collection.`
+      );
+
+      const media = normalizeWikiMedia(entry, entryName);
+      const imageObjects = buildWikiImageObjects({
+        media,
+        canonicalUrl: canonical,
+        entityName: entryName,
+        inLanguage: 'en'
+      });
+
+      const additionalProperty = [
+        ['Elevation (ft)', entry['Elevation (ft)']],
+        ['Prominence (ft)', entry['Prominence (ft)']],
+        ['Range / Subrange', entry['Range / Subrange']],
+        ['Difficulty', entry.Difficulty],
+        ['Trail Type', entry['Trail Type']],
+        ['Typical Completion Time', entry['Typical Completion Time']],
+        ['Best Seasons to Hike', entry['Best Seasons to Hike']],
+        ['Weather Exposure Rating', entry['Weather Exposure Rating']],
+        ['Water Availability', entry['Water Availability']],
+        ['Cell Reception Quality', entry['Cell Reception Quality']],
+        ['Most Common Trailhead', entry['Most Common Trailhead']],
+        ['Parking Notes', entry['Parking Notes']],
+        ['Dog Friendly', entry['Dog Friendly']]
+      ]
+        .filter(([, value]) => value !== null && value !== undefined && String(value).trim())
+        .map(([name, value]) => ({
+          '@type': 'PropertyValue',
+          name,
+          value: normalizeTextForWeb(value)
+        }));
+
+      const mountainNode = {
+        '@context': 'https://schema.org',
+        '@type': 'Mountain',
+        '@id': `${canonical}#mountain`,
+        name: entryName,
+        description,
+        url: canonical,
+        image: imageObjects.length ? imageObjects.map((img) => ({ '@id': img['@id'] })) : undefined,
+        sameAs: Array.isArray(entry.sameAs) ? entry.sameAs : undefined,
+        containedInPlace: entry['Range / Subrange']
+          ? {
+            '@type': 'Place',
+            name: normalizeTextForWeb(entry['Range / Subrange'])
+          }
+          : undefined,
+        additionalProperty: additionalProperty.length ? additionalProperty : undefined
+      };
+      if (!mountainNode.image) delete mountainNode.image;
+      if (!mountainNode.sameAs) delete mountainNode.sameAs;
+      if (!mountainNode.containedInPlace) delete mountainNode.containedInPlace;
+      if (!mountainNode.additionalProperty) delete mountainNode.additionalProperty;
+
+      const routeList = Array.isArray(entry['Standard Routes']) ? entry['Standard Routes'] : [];
+      const hikingTrailNode = routeList.length
+        ? {
+          '@context': 'https://schema.org',
+          '@type': 'HikingTrail',
+          '@id': `${canonical}#hikingtrail`,
+          name: `${entryName} standard routes`,
+          description: `Standard route set for ${entryName}.`,
+          url: canonical,
+          trail: routeList.map((route, index) => ({
+            '@type': 'Route',
+            name: normalizeTextForWeb(route['Route Name'] || route.name || `Route ${index + 1}`),
+            distance: route['Distance (mi)'] ? `${normalizeTextForWeb(route['Distance (mi)'])} mi` : undefined,
+            additionalProperty: [
+              route['Elevation Gain (ft)'] ? { '@type': 'PropertyValue', name: 'Elevation Gain (ft)', value: normalizeTextForWeb(route['Elevation Gain (ft)']) } : null,
+              route.Difficulty ? { '@type': 'PropertyValue', name: 'Difficulty', value: normalizeTextForWeb(route.Difficulty) } : null,
+              route['Trail Type'] ? { '@type': 'PropertyValue', name: 'Trail Type', value: normalizeTextForWeb(route['Trail Type']) } : null
+            ].filter(Boolean)
+          }))
+        }
+        : null;
+
+      const webPageNode = {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        '@id': `${canonical}#webpage`,
+        url: canonical,
+        name: `${entryName} - ${setName}`,
+        description,
+        inLanguage: 'en',
+        isPartOf: { '@id': `${SITE}/#website` },
+        about: { '@id': mountainNode['@id'] },
+        primaryImageOfPage: imageObjects[0] ? { '@id': imageObjects[0]['@id'] } : undefined
+      };
+      if (!webPageNode.primaryImageOfPage) delete webPageNode.primaryImageOfPage;
+
+      const jsonLd = [webPageNode, mountainNode, ...imageObjects];
+      if (hikingTrailNode) jsonLd.push(hikingTrailNode);
+
+      return serveTemplatePage({
+        templatePath: 'pages/wiki/mountain.html',
+        pathname,
+        routeId: 'wiki-mountain-detail',
+        stripTemplateJsonLd: true,
+        bodyDataAttrs: {
+          wikiSetSlug: setSlug,
+          wikiEntrySlug: entrySlug
+        },
+        breadcrumbContext: {
+          setName,
+          setSlug,
+          entryName
+        },
+        meta: {
+          title: `${entryName} - ${setName} | White Mountain Wiki`,
+          description,
+          canonical,
+          alternateEn: canonical,
+          alternateFr: `${SITE}/fr/wiki/mountains/${encodeURIComponent(setSlug)}/${encodeURIComponent(entrySlug)}`,
+          image: imageObjects[0]?.url || HOME_SOCIAL_IMAGE,
+          imageAlt: entryName,
+          ogType: 'article'
+        },
+        jsonLd
+      });
+    }
+
+    const wikiPlantMatch = pathNoLocale.match(/^\/wiki\/plants\/([^/]+)\/?$/i);
+    if (wikiPlantMatch) {
+      const entrySlug = normalizeSlug(wikiPlantMatch[1]);
+      const plants = await loadWikiPlants();
+      const entry = resolveWikiSpeciesEntry(plants, entrySlug);
+      if (!entry) {
+        return new Response('<!doctype html><title>404 Not Found</title><h1>Plant wiki entry not found</h1>', {
+          status: 404,
+          headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        });
+      }
+
+      const canonical = `${SITE}/wiki/plants/${encodeURIComponent(entrySlug)}`;
+      const entryName = normalizeTextForWeb(entry.commonName || entry.scientificName || humanizeSlug(entrySlug));
+      const description = normalizeTextForWeb(entry.description || `Visual wiki entry for ${entryName}.`);
+      const media = normalizeWikiMedia(entry, entryName);
+      const imageObjects = buildWikiImageObjects({
+        media,
+        canonicalUrl: canonical,
+        entityName: entryName,
+        inLanguage: 'en'
+      });
+
+      const speciesNode = {
+        '@context': 'https://schema.org',
+        '@type': 'Species',
+        '@id': `${canonical}#species`,
+        name: entryName,
+        description,
+        url: canonical,
+        taxonRank: normalizeTextForWeb(entry.type || 'Plant'),
+        scientificName: normalizeTextForWeb(entry.scientificName || ''),
+        image: imageObjects.length ? imageObjects.map((img) => ({ '@id': img['@id'] })) : undefined,
+        additionalProperty: [
+          entry.habitat ? { '@type': 'PropertyValue', name: 'Habitat', value: normalizeTextForWeb(entry.habitat) } : null,
+          entry.bloomPeriod ? { '@type': 'PropertyValue', name: 'Bloom Period', value: normalizeTextForWeb(entry.bloomPeriod) } : null,
+          entry.ecology ? { '@type': 'PropertyValue', name: 'Ecology', value: normalizeTextForWeb(entry.ecology) } : null,
+          entry.conservationStatus ? { '@type': 'PropertyValue', name: 'Conservation Status', value: normalizeTextForWeb(entry.conservationStatus) } : null
+        ].filter(Boolean)
+      };
+      if (!speciesNode.image) delete speciesNode.image;
+      if (!speciesNode.scientificName) delete speciesNode.scientificName;
+      if (!speciesNode.additionalProperty.length) delete speciesNode.additionalProperty;
+
+      const webPageNode = {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        '@id': `${canonical}#webpage`,
+        url: canonical,
+        name: `${entryName} - White Mountain Plant Wiki`,
+        description,
+        inLanguage: 'en',
+        isPartOf: { '@id': `${SITE}/#website` },
+        about: { '@id': speciesNode['@id'] }
+      };
+
+      return serveTemplatePage({
+        templatePath: 'pages/wiki/plant.html',
+        pathname,
+        routeId: 'wiki-plant-detail',
+        stripTemplateJsonLd: true,
+        bodyDataAttrs: {
+          wikiEntrySlug: entrySlug,
+          wikiKind: 'plant'
+        },
+        breadcrumbContext: {
+          entryName,
+          plantName: entryName
+        },
+        meta: {
+          title: `${entryName} | White Mountain Plant Wiki`,
+          description,
+          canonical,
+          alternateEn: canonical,
+          alternateFr: `${SITE}/fr/wiki/plants/${encodeURIComponent(entrySlug)}`,
+          image: imageObjects[0]?.url || HOME_SOCIAL_IMAGE,
+          imageAlt: entryName,
+          ogType: 'article'
+        },
+        jsonLd: [webPageNode, speciesNode, ...imageObjects]
+      });
+    }
+
+    const wikiAnimalMatch = pathNoLocale.match(/^\/wiki\/animals\/([^/]+)\/?$/i);
+    if (wikiAnimalMatch) {
+      const entrySlug = normalizeSlug(wikiAnimalMatch[1]);
+      const animals = await loadWikiAnimals();
+      const entry = resolveWikiSpeciesEntry(animals, entrySlug);
+      if (!entry) {
+        return new Response('<!doctype html><title>404 Not Found</title><h1>Animal wiki entry not found</h1>', {
+          status: 404,
+          headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        });
+      }
+
+      const canonical = `${SITE}/wiki/animals/${encodeURIComponent(entrySlug)}`;
+      const entryName = normalizeTextForWeb(entry.commonName || entry.scientificName || humanizeSlug(entrySlug));
+      const description = normalizeTextForWeb(entry.description || `Visual wiki entry for ${entryName}.`);
+      const media = normalizeWikiMedia(entry, entryName);
+      const imageObjects = buildWikiImageObjects({
+        media,
+        canonicalUrl: canonical,
+        entityName: entryName,
+        inLanguage: 'en'
+      });
+
+      const speciesNode = {
+        '@context': 'https://schema.org',
+        '@type': 'Species',
+        '@id': `${canonical}#species`,
+        name: entryName,
+        description,
+        url: canonical,
+        taxonRank: normalizeTextForWeb(entry.type || 'Animal'),
+        scientificName: normalizeTextForWeb(entry.scientificName || ''),
+        image: imageObjects.length ? imageObjects.map((img) => ({ '@id': img['@id'] })) : undefined,
+        additionalProperty: [
+          entry.habitat ? { '@type': 'PropertyValue', name: 'Habitat', value: normalizeTextForWeb(entry.habitat) } : null,
+          entry.diet ? { '@type': 'PropertyValue', name: 'Diet', value: normalizeTextForWeb(entry.diet) } : null,
+          entry.activityPattern ? { '@type': 'PropertyValue', name: 'Activity Pattern', value: normalizeTextForWeb(entry.activityPattern) } : null,
+          entry.conservationStatus ? { '@type': 'PropertyValue', name: 'Conservation Status', value: normalizeTextForWeb(entry.conservationStatus) } : null
+        ].filter(Boolean)
+      };
+      if (!speciesNode.image) delete speciesNode.image;
+      if (!speciesNode.scientificName) delete speciesNode.scientificName;
+      if (!speciesNode.additionalProperty.length) delete speciesNode.additionalProperty;
+
+      const webPageNode = {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        '@id': `${canonical}#webpage`,
+        url: canonical,
+        name: `${entryName} - White Mountain Animal Wiki`,
+        description,
+        inLanguage: 'en',
+        isPartOf: { '@id': `${SITE}/#website` },
+        about: { '@id': speciesNode['@id'] }
+      };
+
+      return serveTemplatePage({
+        templatePath: 'pages/wiki/animal.html',
+        pathname,
+        routeId: 'wiki-animal-detail',
+        stripTemplateJsonLd: true,
+        bodyDataAttrs: {
+          wikiEntrySlug: entrySlug,
+          wikiKind: 'animal'
+        },
+        breadcrumbContext: {
+          entryName,
+          animalName: entryName
+        },
+        meta: {
+          title: `${entryName} | White Mountain Animal Wiki`,
+          description,
+          canonical,
+          alternateEn: canonical,
+          alternateFr: `${SITE}/fr/wiki/animals/${encodeURIComponent(entrySlug)}`,
+          image: imageObjects[0]?.url || HOME_SOCIAL_IMAGE,
+          imageAlt: entryName,
+          ogType: 'article'
+        },
+        jsonLd: [webPageNode, speciesNode, ...imageObjects]
       });
     }
 

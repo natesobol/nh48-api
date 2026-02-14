@@ -9,6 +9,11 @@ const DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
 const RANGES_DATA_PATH = path.join(ROOT, 'data', 'wmnf-ranges.json');
 const PLANTS_PATH = path.join(ROOT, 'data', 'howker-plants');
 const LONG_TRAILS_INDEX_PATH = path.join(ROOT, 'data', 'long-trails-index.json');
+const WIKI_MOUNTAIN_SETS_PATH = path.join(ROOT, 'data', 'wiki', 'mountain-sets.json');
+const WIKI_NH48_PATH = path.join(ROOT, 'data', 'wiki', 'wiki-nh48-mountains.json');
+const WIKI_NH52WAV_PATH = path.join(ROOT, 'data', 'wiki', 'wiki-nh52wav-mountains.json');
+const WIKI_PLANTS_PATH = path.join(ROOT, 'data', 'wiki', 'plants.json');
+const WIKI_ANIMALS_PATH = path.join(ROOT, 'data', 'wiki', 'animals.json');
 const SITEMAP_INDEX_OUTPUT = path.join(ROOT, 'sitemap.xml');
 const PAGE_SITEMAP_OUTPUT = path.join(ROOT, 'page-sitemap.xml');
 const IMAGE_SITEMAP_OUTPUT = path.join(ROOT, 'image-sitemap.xml');
@@ -65,6 +70,7 @@ const STATIC_PAGE_ENTRIES = [
   { loc: 'https://nh48.info/nh-4000-footers-info', file: 'nh-4000-footers-info.html' },
   { loc: 'https://nh48.info/about', file: 'pages/about.html' },
   { loc: 'https://nh48.info/fr/about', file: 'pages/about.html' },
+  { loc: 'https://nh48.info/wiki', file: 'pages/wiki/index.html' },
 ];
 const STATIC_IMAGE_ENTRIES = [
   {
@@ -451,6 +457,11 @@ const data = readJsonFile(DATA_PATH, 'data');
 const rangesData = readJsonFile(RANGES_DATA_PATH, 'range data');
 const plantData = readJsonFile(PLANTS_PATH, 'plant data');
 const longTrailsIndexData = readJsonFile(LONG_TRAILS_INDEX_PATH, 'long trails index');
+const wikiMountainSets = readJsonFile(WIKI_MOUNTAIN_SETS_PATH, 'wiki mountain sets');
+const wikiNh48Data = readJsonFile(WIKI_NH48_PATH, 'wiki nh48');
+const wikiNh52wavData = readJsonFile(WIKI_NH52WAV_PATH, 'wiki nh52wav');
+const wikiPlantData = readJsonFile(WIKI_PLANTS_PATH, 'wiki plants');
+const wikiAnimalData = readJsonFile(WIKI_ANIMALS_PATH, 'wiki animals');
 
 // Normalize strings for web output and repair common mojibake.
 const normalizeTextForWeb = (input) => {
@@ -688,9 +699,96 @@ const dedupeImages = (images) => {
   return Array.from(bestByUrl.values());
 };
 
+const normalizeWikiSlug = (value) => String(value || '').trim().toLowerCase();
+
+const wikiSetDataBySlug = {
+  nh48: wikiNh48Data,
+  nh52wav: wikiNh52wavData,
+};
+
+const getWikiSetLastmod = (setSlug, fallback = '') => {
+  const fromRegistry = wikiMountainSets?.[setSlug]?.dataFile;
+  if (fromRegistry) {
+    const resolved = getGitLastmod(fromRegistry.replace(/^\/+/, ''));
+    if (resolved) return resolved;
+  }
+  if (fallback) return getGitLastmod(fallback) || '';
+  return '';
+};
+
+const collectWikiMountainRouteEntries = () => {
+  const entries = [];
+  Object.keys(wikiSetDataBySlug).forEach((setSlug) => {
+    const payload = wikiSetDataBySlug[setSlug];
+    if (!payload || typeof payload !== 'object') return;
+    const setLastmod = getWikiSetLastmod(setSlug, setSlug === 'nh48' ? 'data/wiki/wiki-nh48-mountains.json' : 'data/wiki/wiki-nh52wav-mountains.json');
+    Object.entries(payload).forEach(([key, entry]) => {
+      if (!entry || typeof entry !== 'object') return;
+      const slug = normalizeWikiSlug(entry.slug || key);
+      if (!slug) return;
+      const name = normalizeTextForWeb(entry.peakName || entry['Peak Name'] || slug);
+      entries.push({
+        setSlug,
+        slug,
+        name,
+        lastmod: setLastmod,
+        entry,
+      });
+    });
+  });
+  return entries;
+};
+
+const collectWikiSpeciesRouteEntries = (kind, payload) => {
+  if (!Array.isArray(payload)) return [];
+  const lastmod = getGitLastmod(`data/wiki/${kind}.json`);
+  return payload
+    .map((entry) => {
+      if (!entry || typeof entry !== 'object') return null;
+      const slug = normalizeWikiSlug(entry.slug || entry.id);
+      if (!slug) return null;
+      const name = normalizeTextForWeb(entry.commonName || entry.scientificName || slug);
+      return { slug, name, lastmod, entry };
+    })
+    .filter(Boolean);
+};
+
+const normalizeWikiMedia = (entry, fallbackName) => {
+  const photos = [];
+  const pushPhoto = (photo) => {
+    if (!photo) return;
+    if (typeof photo === 'string') {
+      const url = normalizePhotoUrl(photo);
+      if (!url) return;
+      photos.push({
+        url,
+        caption: `${fallbackName} photo`,
+        title: `${fallbackName} photo`,
+      });
+      return;
+    }
+    const url = normalizePhotoUrl(photo.url || photo.contentUrl || photo.src || '');
+    if (!url) return;
+    photos.push({
+      url,
+      caption: buildPhotoCaptionUnique(fallbackName, photo),
+      title: buildPhotoTitleUnique(fallbackName, photo),
+    });
+  };
+
+  if (Array.isArray(entry?.photos)) entry.photos.forEach(pushPhoto);
+  if (!photos.length && Array.isArray(entry?.imgs)) entry.imgs.forEach(pushPhoto);
+  if (!photos.length && entry?.img) pushPhoto(entry.img);
+
+  return dedupeImages(photos);
+};
+
 const slugs = Object.keys(data).sort();
 const rangeSlugs = Object.keys(rangesData).sort();
 const longTrailSlugs = collectLongTrailSlugs();
+const wikiMountainRoutes = collectWikiMountainRouteEntries();
+const wikiPlantRoutes = collectWikiSpeciesRouteEntries('plants', wikiPlantData);
+const wikiAnimalRoutes = collectWikiSpeciesRouteEntries('animals', wikiAnimalData);
 
 const buildPlantImageEntries = () => {
   const entries = [];
@@ -740,6 +838,28 @@ const buildPageSitemap = () => {
       lastmod: getGitLastmod(path.join('fr', 'peaks', slug, 'index.html')),
     });
   });
+
+  wikiMountainRoutes.forEach((route) => {
+    urls.push({
+      loc: `https://nh48.info/wiki/mountains/${encodeURIComponent(route.setSlug)}/${encodeURIComponent(route.slug)}`,
+      lastmod: route.lastmod,
+    });
+  });
+
+  wikiPlantRoutes.forEach((route) => {
+    urls.push({
+      loc: `https://nh48.info/wiki/plants/${encodeURIComponent(route.slug)}`,
+      lastmod: route.lastmod,
+    });
+  });
+
+  wikiAnimalRoutes.forEach((route) => {
+    urls.push({
+      loc: `https://nh48.info/wiki/animals/${encodeURIComponent(route.slug)}`,
+      lastmod: route.lastmod,
+    });
+  });
+
   const rangeLastmod = getGitLastmod('range/index.html');
   rangeSlugs.forEach((slug) => {
     urls.push({
@@ -797,6 +917,39 @@ const buildImageSitemap = () => {
     if (!images.length) return;
     const lastmod = getGitLastmod(path.join('peaks', slug, 'index.html'));
     urlEntries.push({ loc: `${PEAK_BASE}/${slug}`, images, lastmod });
+    allImages.push(...images);
+  });
+
+  wikiMountainRoutes.forEach((route) => {
+    const images = normalizeWikiMedia(route.entry, route.name);
+    if (!images.length) return;
+    urlEntries.push({
+      loc: `https://nh48.info/wiki/mountains/${encodeURIComponent(route.setSlug)}/${encodeURIComponent(route.slug)}`,
+      images,
+      lastmod: route.lastmod
+    });
+    allImages.push(...images);
+  });
+
+  wikiPlantRoutes.forEach((route) => {
+    const images = normalizeWikiMedia(route.entry, route.name);
+    if (!images.length) return;
+    urlEntries.push({
+      loc: `https://nh48.info/wiki/plants/${encodeURIComponent(route.slug)}`,
+      images,
+      lastmod: route.lastmod
+    });
+    allImages.push(...images);
+  });
+
+  wikiAnimalRoutes.forEach((route) => {
+    const images = normalizeWikiMedia(route.entry, route.name);
+    if (!images.length) return;
+    urlEntries.push({
+      loc: `https://nh48.info/wiki/animals/${encodeURIComponent(route.slug)}`,
+      images,
+      lastmod: route.lastmod
+    });
     allImages.push(...images);
   });
 

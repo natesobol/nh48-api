@@ -97,6 +97,10 @@ function main() {
     { file: 'dataset/long-trails/index.html', types: ['Dataset', 'WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
     { file: 'long-trails/index.html', types: ['Dataset', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
     { file: 'trails/index.html', types: ['Dataset', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'pages/wiki/index.html', types: [], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'pages/wiki/mountain.html', types: [], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'pages/wiki/plant.html', types: [], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'pages/wiki/animal.html', types: [], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
     { file: 'catalog.html', types: ['BreadcrumbList'], visibleBreadcrumb: false, noBreadcrumbMicrodata: true }
   ];
 

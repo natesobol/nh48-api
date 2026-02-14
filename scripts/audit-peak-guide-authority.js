@@ -149,7 +149,7 @@ function auditInteractiveTemplate() {
 
   const requiredMarkers = [
     'routesHeading',
-    'trailNamesHeading',
+    'relatedTrailsHeading',
     'parkingAccessHeading',
     'difficultyMetricsHeading',
     'riskPrepHeading',

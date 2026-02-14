@@ -13,6 +13,7 @@
     "audit:peak-data-coverage": "node scripts/audit-peak-data-coverage.js",
     "audit:peak-image-metadata": "node scripts/audit-peak-image-metadata.js",
     "audit:peak-schema-parity": "node scripts/audit-peak-schema-parity.js",
+    "audit:wiki-routes": "node scripts/audit-wiki-routes.js",
     "audit:live-peak-parity": "node scripts/audit-live-peak-seo-parity.js --url https://nh48.info --retries 6 --delay-seconds 20",
     "build:peak-sameas": "python scripts/build-peak-sameas.py",
     "build:peak-difficulty": "node scripts/build-peak-difficulty.js",

@@ -69,6 +69,7 @@ async function main() {
   const auditCommands = [
     ['node', ['scripts/audit-homepage-worker-seo.js', '--url', baseUrl]],
     ['node', ['scripts/audit-worker-breadcrumbs.js', '--url', baseUrl]],
+    ['node', ['scripts/audit-wiki-routes.js', '--url', baseUrl]],
     ['node', ['scripts/audit-peak-page-ui.js', '--url', baseUrl]],
     ['node', ['scripts/audit-peak-schema-parity.js', '--url', baseUrl]],
     ['node', ['scripts/audit-peak-image-metadata.js', '--url', baseUrl]]
@@ -121,4 +122,3 @@ main().catch((error) => {
   console.error(`Live peak SEO parity audit crashed: ${error.message}`);
   process.exit(1);
 });
-

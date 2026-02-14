@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="/favicons/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/x-icon" href="/favicons/favicon.ico" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>White Mountain Visual Wiki</title>
+  <link rel="stylesheet" href="/css/wiki.css" />
+  <script src="/js/unified-footer.js" defer></script>
+</head>
+<body class="wiki-page-shell">
+  <div id="nav-placeholder"></div>
+  <main class="wiki-wrap">
+    <nav class="wiki-breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">/</span>
+      <span>White Mountain Wiki</span>
+    </nav>
+
+    <header class="wiki-hero">
+      <span class="wiki-kicker">Visual Field Guide</span>
+      <h1>White Mountain Visual Wiki</h1>
+      <p>
+        A linked, media-ready field encyclopedia for New Hampshire mountains, plants, and animals.
+        Browse by collection, open detail entries, and expand this knowledge base as new photos and datasets are added.
+      </p>
+      <div class="wiki-stats">
+        <div class="wiki-stat">
+          <span class="wiki-stat-value" id="wikiStatMountains">0</span>
+          <span class="wiki-stat-label">Mountain Entries</span>
+        </div>
+        <div class="wiki-stat">
+          <span class="wiki-stat-value" id="wikiStatPlants">0</span>
+          <span class="wiki-stat-label">Plant Entries</span>
+        </div>
+        <div class="wiki-stat">
+          <span class="wiki-stat-value" id="wikiStatAnimals">0</span>
+          <span class="wiki-stat-label">Animal Entries</span>
+        </div>
+        <div class="wiki-stat">
+          <span class="wiki-stat-value" id="wikiStatPhotos">0</span>
+          <span class="wiki-stat-label">Attached Photos</span>
+        </div>
+      </div>
+      <div class="wiki-controls">
+        <input
+          id="wikiSearch"
+          class="wiki-search"
+          type="search"
+          placeholder="Filter all wiki links..."
+          aria-label="Filter wiki links"
+        />
+      </div>
+    </header>
+
+    <section class="wiki-grid" id="wikiGrid">
+      <article class="wiki-panel" id="wikiPanelNh48">
+        <header class="wiki-panel-header">
+          <h2 class="wiki-panel-title">NH48 4,000-Footers</h2>
+          <span class="wiki-panel-count" id="wikiCountNh48">0 entries</span>
+        </header>
+        <p class="wiki-panel-intro">The official NH48 mountain collection with rich route and summit metadata.</p>
+        <ul class="wiki-link-list" id="wikiListNh48">
+          {{WIKI_LINKS_NH48}}
+        </ul>
+        <p class="wiki-empty">No entries match your current filter.</p>
+      </article>
+
+      <article class="wiki-panel" id="wikiPanelNh52wav">
+        <header class="wiki-panel-header">
+          <h2 class="wiki-panel-title">NH52 With a View</h2>
+          <span class="wiki-panel-count" id="wikiCountNh52wav">0 entries</span>
+        </header>
+        <p class="wiki-panel-intro">The NH52WAV mountain collection using the same shared mountain detail template.</p>
+        <ul class="wiki-link-list" id="wikiListNh52wav">
+          {{WIKI_LINKS_NH52WAV}}
+        </ul>
+        <p class="wiki-empty">No entries match your current filter.</p>
+      </article>
+
+      <article class="wiki-panel" id="wikiPanelPlants">
+        <header class="wiki-panel-header">
+          <h2 class="wiki-panel-title">Plants</h2>
+          <span class="wiki-panel-count" id="wikiCountPlants">0 entries</span>
+        </header>
+        <p class="wiki-panel-intro">White Mountain flora with habitat, seasonality, ecology, and source references.</p>
+        <ul class="wiki-link-list" id="wikiListPlants">
+          {{WIKI_LINKS_PLANTS}}
+        </ul>
+        <p class="wiki-empty">No entries match your current filter.</p>
+      </article>
+
+      <article class="wiki-panel" id="wikiPanelAnimals">
+        <header class="wiki-panel-header">
+          <h2 class="wiki-panel-title">Animals</h2>
+          <span class="wiki-panel-count" id="wikiCountAnimals">0 entries</span>
+        </header>
+        <p class="wiki-panel-intro">White Mountain fauna with ecology and behavior summaries plus source links.</p>
+        <ul class="wiki-link-list" id="wikiListAnimals">
+          {{WIKI_LINKS_ANIMALS}}
+        </ul>
+        <p class="wiki-empty">No entries match your current filter.</p>
+      </article>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/js/wiki-landing.js" defer></script>
+</body>
+</html>

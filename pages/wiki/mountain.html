@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="/favicons/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/x-icon" href="/favicons/favicon.ico" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>Mountain Wiki Entry</title>
+  <link rel="stylesheet" href="/css/wiki.css" />
+  <script src="/js/unified-footer.js" defer></script>
+</head>
+<body class="wiki-page-shell" data-wiki-kind="mountain">
+  <div id="nav-placeholder"></div>
+  <main class="wiki-wrap">
+    <nav class="wiki-breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">/</span>
+      <a href="/wiki">White Mountain Wiki</a>
+      <span class="sep">/</span>
+      <a href="#" id="wikiSetBreadcrumbLink">Mountains</a>
+      <span class="sep">/</span>
+      <span id="wikiEntryBreadcrumbLabel">Mountain</span>
+    </nav>
+
+    <header class="wiki-hero">
+      <span class="wiki-kicker">Mountain Wiki Entry</span>
+      <h1 id="wikiMountainTitle">Mountain</h1>
+      <p id="wikiMountainSubtitle">Loading mountain details...</p>
+      <div class="wiki-chip-row">
+        <span class="wiki-chip" id="wikiSetChip">Set</span>
+        <span class="wiki-chip" id="wikiDifficultyChip">Difficulty: N/A</span>
+        <span class="wiki-chip" id="wikiTimeChip">Typical Time: N/A</span>
+      </div>
+    </header>
+
+    <section class="wiki-detail-layout">
+      <div class="wiki-main-column">
+        <article class="wiki-media-shell is-empty" id="wikiMediaShell">
+          <div class="wiki-carousel-frame">
+            <div class="wiki-carousel-track" id="wikiCarouselTrack"></div>
+            <button class="wiki-carousel-btn prev" id="wikiPrevBtn" type="button" aria-label="Previous image">&#8249;</button>
+            <button class="wiki-carousel-btn next" id="wikiNextBtn" type="button" aria-label="Next image">&#8250;</button>
+          </div>
+          <p class="wiki-carousel-caption" id="wikiCarouselCaption"></p>
+          <ul class="wiki-thumb-list" id="wikiThumbList"></ul>
+        </article>
+
+        <article class="wiki-panel">
+          <header class="wiki-panel-header">
+            <h2 class="wiki-panel-title">Overview</h2>
+          </header>
+          <div class="wiki-panel-body">
+            <p id="wikiOverviewText" class="wiki-value">No overview available.</p>
+          </div>
+        </article>
+
+        <article class="wiki-panel">
+          <header class="wiki-panel-header">
+            <h2 class="wiki-panel-title">Hiking Routes</h2>
+            <span class="wiki-panel-count" id="wikiRouteCount">0 routes</span>
+          </header>
+          <div class="wiki-panel-body">
+            <div class="wiki-data-grid" id="wikiRoutesGrid"></div>
+          </div>
+        </article>
+
+        <article class="wiki-panel">
+          <header class="wiki-panel-header">
+            <h2 class="wiki-panel-title">Sources and References</h2>
+          </header>
+          <div class="wiki-panel-body">
+            <ul class="wiki-reference-list" id="wikiSourcesList"></ul>
+          </div>
+        </article>
+      </div>
+
+      <aside class="wiki-side-column">
+        <article class="wiki-panel">
+          <header class="wiki-panel-header">
+            <h2 class="wiki-panel-title">Stats</h2>
+          </header>
+          <div class="wiki-panel-body">
+            <div class="wiki-data-grid" id="wikiStatsGrid"></div>
+          </div>
+        </article>
+
+        <article class="wiki-panel">
+          <header class="wiki-panel-header">
+            <h2 class="wiki-panel-title">Terrain and Conditions</h2>
+          </header>
+          <div class="wiki-panel-body">
+            <div class="wiki-data-grid" id="wikiConditionsGrid"></div>
+          </div>
+        </article>
+
+        <article class="wiki-panel">
+          <header class="wiki-panel-header">
+            <h2 class="wiki-panel-title">Access and Logistics</h2>
+          </header>
+          <div class="wiki-panel-body">
+            <div class="wiki-data-grid" id="wikiAccessGrid"></div>
+          </div>
+        </article>
+
+        <article class="wiki-panel">
+          <header class="wiki-panel-header">
+            <h2 class="wiki-panel-title">Nearby Connections</h2>
+          </header>
+          <div class="wiki-panel-body">
+            <div class="wiki-data-grid" id="wikiConnectionsGrid"></div>
+          </div>
+        </article>
+      </aside>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/js/wiki-mountain.js" defer></script>
+</body>
+</html>
