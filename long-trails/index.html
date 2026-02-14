@@ -18,165 +18,133 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="index, follow, max-image-preview:large">
   <title>Long-Distance Trails & Sections Map (Appalachian Trail, NH Sections, PCT, CDT) | NH48 API</title>
   <meta name="description" content="Explore long-distance trail campaigns with interactive maps and segment details, including Appalachian Trail New Hampshire sections, on NH48.">
-  <meta name="keywords" content="long-distance trails, Appalachian Trail, Pacific Crest Trail, Continental Divide Trail, trail sections, hiking map, NH48">
   <link rel="canonical" href="https://nh48.info/long-trails">
-  <meta property="og:title" content="Long-Distance Trails & Sections Map (Appalachian Trail, NH Sections, PCT, CDT) | NH48 API">
-  <meta property="og:description" content="Explore long-distance trail campaigns with interactive maps and segment details, including Appalachian Trail New Hampshire sections, on NH48.">
-  <meta property="og:url" content="https://nh48.info/long-trails">
+  <meta name="keywords" content="long distance trails, White Mountains long trails, NH long‑distance hiking, Appalachian Trail alternatives">
+  <link rel="alternate" hreflang="en" href="https://nh48.info/long-trails">
+  <link rel="alternate" hreflang="fr" href="https://nh48.info/fr/long-trails">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="NH48pics">
-  <meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/west-bond/west-bond__001.jpg">
-  <meta property="og:image:alt" content="West Bond summit rocks overlooking Zealand Valley and Bondcliff">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:site" content="@nate_dumps_pics">
-  <meta name="twitter:creator" content="@nate_dumps_pics">
-  <meta name="twitter:title" content="Long-Distance Trails & Sections Map (Appalachian Trail, NH Sections, PCT, CDT) | NH48 API">
-  <meta name="twitter:description" content="Explore long-distance trail campaigns with interactive maps and segment details, including Appalachian Trail New Hampshire sections, on NH48.">
-  <meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/west-bond/west-bond__001.jpg">
-  <meta name="twitter:image:alt" content="West Bond summit rocks overlooking Zealand Valley and Bondcliff">
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Dataset",
-      "name": "Long-Distance Trails Dataset (Appalachian Trail, PCT, CDT)",
-      "description": "Open dataset of long-distance hiking routes including the Appalachian Trail, Pacific Crest Trail, Continental Divide Trail, and regional thru-hikes with segment metadata for mapping and analysis.",
-      "identifier": "https://nh48.info/dataset/long-trails",
-      "url": "https://nh48.info/long-trails",
-      "sameAs": [
-        "https://nh48.info/dataset/long-trails",
-        "https://github.com/natesobol/nh48-api/tree/main/data/long-trails"
-      ],
-      "license": "https://creativecommons.org/licenses/by/4.0/",
-      "isAccessibleForFree": true,
-      "creator": { "@type": "Person", "name": "Nathan Sobol", "url": "https://nh48.info" },
-      "keywords": [
-        "long-distance trails",
-        "Appalachian Trail dataset",
-        "Pacific Crest Trail dataset",
-        "Continental Divide Trail dataset",
-        "thru-hiking data",
-        "geospatial dataset"
-      ],
-      "distribution": [
-        {
-          "@type": "DataDownload",
-          "name": "Long trails – full collection",
-          "contentUrl": "https://nh48.info/data/long-trails-full.json",
-          "encodingFormat": "application/json"
-        },
-        {
-          "@type": "DataDownload",
-          "name": "Long trails index",
-          "contentUrl": "https://nh48.info/data/long-trails-index.json",
-          "encodingFormat": "application/json"
-        },
-        {
-          "@type": "DataDownload",
-          "name": "Long trails manifest",
-          "contentUrl": "https://nh48.info/data/long-trails-manifest.json",
-          "encodingFormat": "application/json"
-        },
-        {
-          "@type": "DataDownload",
-          "name": "Appalachian Trail (full route)",
-          "contentUrl": "https://nh48.info/data/long-trails/appalachian_trail.json",
-          "encodingFormat": "application/json"
-        },
-        {
-          "@type": "DataDownload",
-          "name": "Pacific Crest Trail",
-          "contentUrl": "https://nh48.info/data/long-trails/pacific_crest_trail.json",
-          "encodingFormat": "application/json"
-        },
-        {
-          "@type": "DataDownload",
-          "name": "Continental Divide Trail",
-          "contentUrl": "https://nh48.info/data/long-trails/continential_divide_trail.json",
-          "encodingFormat": "application/json"
-        },
-        {
-          "@type": "DataDownload",
-          "name": "Arizona Trail",
-          "contentUrl": "https://nh48.info/data/long-trails/arizona_trail.json",
-          "encodingFormat": "application/json"
-        }
-      ],
-      "hasPart": [
-        {
-          "@type": "Dataset",
-          "name": "Appalachian Trail",
-          "description": "Complete Appalachian Trail geometry and segment metadata.",
-          "license": "https://creativecommons.org/licenses/by/4.0/",
-          "creator": { "@type": "Person", "name": "Nathan Sobol", "url": "https://nh48.info" }
-        },
-        {
-          "@type": "Dataset",
-          "name": "Pacific Crest Trail",
-          "description": "Pacific Crest Trail alignment with ordered segments.",
-          "license": "https://creativecommons.org/licenses/by/4.0/",
-          "creator": { "@type": "Person", "name": "Nathan Sobol", "url": "https://nh48.info" }
-        },
-        {
-          "@type": "Dataset",
-          "name": "Continental Divide Trail",
-          "description": "Rockies-spanning Continental Divide Trail route data.",
-          "license": "https://creativecommons.org/licenses/by/4.0/",
-          "creator": { "@type": "Person", "name": "Nathan Sobol", "url": "https://nh48.info" }
-        },
-        {
-          "@type": "Dataset",
-          "name": "Arizona Trail",
-          "description": "Arizona Trail thru-hike geometry and metadata.",
-          "license": "https://creativecommons.org/licenses/by/4.0/",
-          "creator": { "@type": "Person", "name": "Nathan Sobol", "url": "https://nh48.info" }
-        }
-      ]
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://nh48.info/" },
-        { "@type": "ListItem", "position": 2, "name": "Long Trails" }
-      ]
-    }
-  </script>
-  <script id="page-webpage-schema" type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Long-Distance Trails and Sections Map (Appalachian Trail, NH Sections, PCT, CDT)",
-      "description": "Explore long-distance trail campaigns with interactive maps and segment details, including Appalachian Trail New Hampshire sections.",
-      "url": "https://nh48.info/long-trails",
-      "inLanguage": "en",
-      "isPartOf": {
-        "@type": "WebSite",
-        "name": "NH48 API",
-        "url": "https://nh48.info/"
-      }
-    }
-  </script>
-  <script id="page-image-schema" type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "ImageObject",
-      "name": "West Bond summit hero image",
-      "description": "West Bond summit rocks overlooking Zealand Valley and Bondcliff.",
-      "url": "https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/west-bond/west-bond__001.jpg",
-      "contentUrl": "https://photos.nh48.info/west-bond/west-bond__001.jpg"
-    }
-  </script>
+  <meta property="og:title" content="Long Distance Trails – White Mountains NH">
+  <meta property="og:description" content="Explore long distance trails in the White Mountains, including their sections, mileage, and difficulty.">
+  <meta property="og:url" content="https://nh48.info/long-trails">
+  <meta property="og:image" content="https://nh48.info/assets/long-trails-thumbnail.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Long Distance Trails – White Mountains NH">
+  <meta name="twitter:description" content="Explore long distance trails in the White Mountains.">
+  <meta name="twitter:image" content="https://nh48.info/assets/long-trails-thumbnail.jpg">
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     crossorigin=""
   />
   <link rel="stylesheet" href="../css/long_trails_app.css" />
+  <script>
+  (() => {
+    if (window.NH48_BUILD_DATE) return;
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/build-meta.json', false);
+      xhr.send(null);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const meta = JSON.parse(xhr.responseText);
+        if (meta && meta.buildDate) {
+          window.NH48_BUILD_DATE = meta.buildDate;
+        }
+      }
+    } catch (err) {
+      // No-op: build date is optional in static builds.
+    }
+  })();
+</script>
+<script src="/js/unified-footer.js" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://nh48.info/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Long Trails",
+          "item": "https://nh48.info/long-trails"
+        }
+      ]
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "NH48 – White Mountains Hiking Guide",
+      "url": "https://nh48.info/",
+      "publisher": {
+        "@type": "Organization",
+        "name": "NH48 Project",
+        "url": "https://nh48.info/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://nh48.info/assets/logo.png",
+          "width": 512,
+          "height": 512
+        }
+      }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "NH48 Long-Distance Trails Dataset",
+      "description": "Open dataset of long-distance trails and segments, including Appalachian Trail sections and major thru-hike routes.",
+      "identifier": "long-trails",
+      "url": "https://nh48.info/dataset/long-trails",
+      "sameAs": [
+        "https://github.com/natesobol/nh48-api/tree/main/data/long-trails"
+      ],
+      "keywords": [
+        "long distance trails",
+        "Appalachian Trail",
+        "Pacific Crest Trail",
+        "Continental Divide Trail",
+        "NH48",
+        "open data"
+      ],
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "creator": {
+        "@type": "Organization",
+        "name": "NH48 Project",
+        "url": "https://nh48.info/"
+      },
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "name": "Long Trails (Full)",
+          "contentUrl": "https://nh48.info/data/long-trails-full.json"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "name": "Long Trails Index",
+          "contentUrl": "https://nh48.info/data/long-trails-index.json"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "name": "Long Trails Manifest",
+          "contentUrl": "https://nh48.info/data/long-trails-manifest.json"
+        }
+      ]
+    }
+  </script>
   <style>
     * {
       box-sizing: border-box;
@@ -190,8 +158,9 @@
       --text-primary: #ffffff;
       --text-secondary: #d9dde5;
       --accent: #4a9eff;
+      --accent-blue: #4a9eff;
       --page-padding: clamp(16px, 4vw, 48px);
-      --desktop-viewport-buffer: clamp(180px, 18vh, 260px);
+      --content-width: 1200px;
     }
 
     html, body {
@@ -205,127 +174,232 @@
 
     body {
       min-height: 100vh;
-      display: grid;
-      grid-template-rows: auto 1fr;
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-pattern {
+      background-color: #0f172a;
+      background-image:
+        radial-gradient(circle, rgba(34, 197, 94, 0.15) 1px, transparent 1px),
+        radial-gradient(circle, rgba(15, 23, 42, 0.3) 1px, transparent 1px);
+      background-size: 4px 4px, 8px 8px;
+      background-position: 0 0, 1px 1px;
+    }
+    .hero-pattern-dark {
+      background-color: #020617;
+      background-image:
+        radial-gradient(circle, rgba(34, 197, 94, 0.1) 1px, transparent 1px),
+        radial-gradient(circle, rgba(2, 6, 23, 0.25) 1px, transparent 1px);
+      background-size: 3px 3px, 6px 6px;
+      background-position: 0 0, 1px 1px;
+    }
+    .hero-pattern-strip {
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: inset 0 0 0 1px rgba(2, 6, 23, 0.15);
+    }
+    .hero-pattern h1,
+    .hero-pattern h2,
+    .hero-pattern p {
+      color: #f1f5f9;
+    }
+    .hero-pattern a {
+      color: #22c55e;
+      text-decoration: underline;
+    }
+    .hero-pattern a:hover,
+    .hero-pattern a:focus-visible {
+      color: #4ade80;
+    }
+
+    .page-shell {
+      width: min(100%, var(--content-width));
+      margin: 0 auto;
+      padding: 0 var(--page-padding);
     }
 
     .page-header {
-      margin: 1.5rem auto 0;
-      padding: 0 var(--page-padding);
-      width: 100%;
-      max-width: 1280px;
-    }
-
-    .page-header h1 {
-      margin: 0 0 0.35rem;
-      font-size: 2rem;
-    }
-
-    .page-header p {
-      margin: 0.2rem 0;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
-    .beta-banner {
-      margin: 0.75rem 0 1rem;
-      padding: 0.6rem 0.9rem;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      background: rgba(74, 158, 255, 0.15);
-      color: var(--text-primary);
-      border: 1px solid rgba(74, 158, 255, 0.45);
-    }
-
-    .beta-banner span {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.4rem;
-      height: 1.4rem;
-      border-radius: 999px;
-      background: rgba(74, 158, 255, 0.35);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-    }
-
-    .title-row {
+      margin: 1.25rem auto 0.35rem;
       display: flex;
       align-items: center;
       gap: 14px;
       flex-wrap: wrap;
-      margin-top: 0.3rem;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: clamp(1.65rem, 2vw, 2rem);
+      line-height: 1.1;
+    }
+
+    .page-header p {
+      margin: 0.2rem 0 0;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .header-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .logo-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), transparent 45%), #16181f;
+      padding: 0;
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      margin: 0;
     }
 
     .page-logo {
-      width: 68px;
-      height: 68px;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: var(--bg-secondary);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-      object-fit: cover;
-      flex: 0 0 auto;
+      display: inline-flex;
     }
 
-    .title-text {
+    .page-breadcrumbs {
+      margin: 0 auto 10px;
+      color: var(--text-secondary);
+    }
+
+    .page-breadcrumbs ol {
       display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
+      gap: 8px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.95rem;
     }
 
-    #app {
-      width: 100%;
-      max-width: none;
-      margin: 0 auto;
-      padding: 0 var(--page-padding) var(--page-padding);
-      display: grid;
-      grid-template-columns: minmax(320px, 440px) minmax(0, 1.35fr);
-      gap: clamp(18px, 3vw, 28px);
-      min-height: 0;
-      align-items: stretch;
-      height: 100%;
-    }
-
-    .sidebar {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 16px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      min-height: 0;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      height: 100%;
-    }
-
-    .map-panel {
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      overflow: hidden;
-      background: var(--bg-secondary);
+    .page-breadcrumbs li {
       display: flex;
-      flex-direction: column;
-      height: 100%;
-      min-height: 0;
+      align-items: center;
+      gap: 6px;
     }
 
-    #map {
-      height: 100%;
-      width: 100%;
-      min-height: 320px;
-      flex: 1 1 auto;
+    .page-breadcrumbs li + li::before {
+      content: "/";
+      color: var(--text-secondary);
+      opacity: 0.7;
+    }
+
+    .page-breadcrumbs a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .page-breadcrumbs a:hover,
+    .page-breadcrumbs a:focus-visible {
+      text-decoration: underline;
+    }
+
+  #app {
+    width: 100%;
+    margin: 0;
+    padding: 1rem;
+    display: flex;
+    gap: clamp(16px, 2.5vw, 24px);
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+
+
+    @media (min-width: 901px) {
+      body {
+        overflow: auto;
+        margin: 0;
+        padding: 0;
+      }
+
+      .page-shell {
+        display: none;
+      }
+
+      #app {
+        position: relative;
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        padding: 1rem;
+        margin: 0;
+        display: flex;
+        min-height: 100vh;
+        width: 100vw;
+      }
+
+
+      .sidebar {
+        width: 20%;
+        min-width: 280px;
+        max-width: 400px;
+        height: 100vh;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 0;
+        border-left: none;
+        border-top: none;
+        border-bottom: none;
+        padding: 20px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        z-index: 1000;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .map-panel {
+        flex: 1;
+        height: 100vh;
+        border: none;
+        border-radius: 0;
+        overflow: hidden;
+        background: var(--bg-secondary);
+        position: relative;
+      }
+
+      #map {
+        height: 100%;
+        width: 100%;
+        min-height: 100vh;
+      }
+
+      #nav-placeholder {
+        position: fixed;
+        top: 0;
+        left: 20%;
+        right: 0;
+        z-index: 1001;
+        background: rgba(26, 29, 35, 0.95);
+        border-bottom: 1px solid var(--border-color);
+        min-width: 280px;
+      }
     }
 
     .section-details {
-      padding: 10px;
-      border-radius: 4px;
+      padding: 12px;
+      border-radius: 10px;
       border: 1px solid var(--border-color);
       background: var(--bg-tertiary);
       margin-bottom: 16px;
@@ -347,49 +421,6 @@
       margin: 4px 2px 10px;
     }
 
-    @media (min-width: 901px) {
-      body {
-        min-height: 100vh;
-        overflow: hidden;
-      }
-
-      .page-header {
-        margin: 0;
-        max-width: none;
-        padding: 12px clamp(18px, 4vw, 32px) 8px;
-      }
-
-      #app {
-        grid-template-columns: clamp(300px, 24vw, 360px) minmax(0, 1fr);
-        height: 100%;
-        min-height: 0;
-        padding: 0;
-        gap: 0;
-      }
-
-      .sidebar {
-        border-radius: 0;
-        height: 100%;
-        min-height: 0;
-        border: 0;
-        border-right: 1px solid var(--border-color);
-        padding: 18px;
-      }
-
-      .map-panel {
-        border: 0;
-        border-radius: 0;
-        background: var(--bg-primary);
-        height: 100%;
-        min-height: 0;
-      }
-
-      #map {
-        min-height: 0;
-        height: 100%;
-      }
-    }
-
     .accordion {
       display: flex;
       flex-direction: column;
@@ -398,74 +429,57 @@
 
     .trail-details {
       border: 1px solid var(--border-color);
-      border-radius: 4px;
+      border-radius: 10px;
       background: var(--bg-tertiary);
       overflow: hidden;
+      border-left: 4px solid var(--trail-color, var(--border-color));
     }
 
     .trail-summary {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 8px 12px;
+      padding: 12px 14px;
       cursor: pointer;
       font-weight: 600;
       flex-wrap: wrap;
-      min-height: 48px;
     }
 
     .trail-summary::marker {
       content: '';
     }
 
-    .color-bar {
-      --trail-color: #4a9eff;
+    .color-dot {
       position: relative;
-      width: 38px;
-      height: 14px;
-      border-radius: 999px;
+      width: 32px;
+      height: 18px;
+      border-radius: 12px;
       display: inline-block;
-      flex: 0 0 auto;
-      align-self: center;
-      background: linear-gradient(140deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 55%), var(--trail-color);
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      flex: 0 0 32px;
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.38),
-        inset 0 -1px 6px rgba(0, 0, 0, 0.25),
-        0 6px 14px rgba(0, 0, 0, 0.35);
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+        0 4px 12px rgba(0, 0, 0, 0.35);
+      background-image:
+        linear-gradient(130deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 48%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.3));
+      border: 1px solid rgba(255, 255, 255, 0.25);
       overflow: hidden;
     }
 
-    .color-bar::before,
-    .color-bar::after {
+    .color-dot::after {
       content: '';
       position: absolute;
-      top: 50%;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--trail-color);
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-      transform: translateY(-50%);
-    }
-
-    .color-bar::before {
-      left: -9px;
-    }
-
-    .color-bar::after {
-      right: -9px;
+      inset: 0;
+      background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.5), transparent 45%);
+      opacity: 0.65;
+      mix-blend-mode: screen;
+      border-radius: inherit;
     }
 
     .trail-name {
       flex: 1 1 auto;
       min-width: 0;
-      line-height: 1.2;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
     }
 
     .trail-count {
@@ -478,33 +492,7 @@
     .trail-meta {
       font-size: 0.85rem;
       color: var(--text-secondary);
-      margin: 0 12px 10px;
-    }
-
-    .telemetry-note {
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #e5e7eb;
-      background: rgba(148, 163, 184, 0.2);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      border-radius: 6px;
-      padding: 2px 6px;
-      white-space: nowrap;
-    }
-
-    .telemetry-note {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #e5e7eb;
-      background: rgba(148, 163, 184, 0.2);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      border-radius: 999px;
-      padding: 2px 8px;
-      white-space: nowrap;
+      margin: 0 14px 12px;
     }
 
     .section-list {
@@ -515,8 +503,8 @@
     }
 
     .section-item {
-      padding: 8px 10px;
-      border-radius: 4px;
+      padding: 10px 12px;
+      border-radius: 8px;
       border: 1px solid transparent;
       background: #20242b;
       cursor: pointer;
@@ -635,7 +623,7 @@
       color: #fff;
       border-radius: 6px;
       padding: 4px 6px;
-      border: 1px solid #fff;
+      border: 1px solid rgba(148, 163, 184, 0.5);
       white-space: nowrap;
     }
 
@@ -651,90 +639,96 @@
       border: 0;
     }
 
-    .breadcrumbs {
-      margin: 0.35rem 0 0.75rem;
-      padding: 0;
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-    }
+    @media (max-width: 1100px) and (min-width: 901px) {
+      .sidebar {
+        width: 25%;
+        min-width: 280px;
+      }
 
-    .breadcrumbs ol {
-      list-style: none;
-      display: flex;
-      gap: 0.35rem;
-      padding: 0;
-      margin: 0;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .breadcrumbs a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    .breadcrumbs a:hover,
-    .breadcrumbs a:focus-visible {
-      text-decoration: underline;
-    }
-
-    .breadcrumbs li::after {
-      content: '/';
-      margin-left: 0.35rem;
-      color: var(--text-secondary);
-    }
-
-    .breadcrumbs li:last-child::after {
-      content: '';
-    }
-
-    @media (max-width: 1100px){
-      #app {
-        grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+      #nav-placeholder {
+        left: 25%;
       }
     }
 
     @media (max-width: 900px) {
       body {
-        height: auto;
-        min-height: 100vh;
+        overflow: auto;
+      }
+
+      .page-shell {
         display: block;
       }
 
       #app {
-        grid-template-columns: 1fr;
-        grid-auto-rows: auto;
-        padding: 0 var(--page-padding) clamp(80px, 12vh, 120px);
-        gap: 16px;
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(280px, 400px) minmax(0, 1fr);
+        gap: clamp(16px, 2.5vw, 24px);
+        padding: 0 var(--page-padding) 2rem;
+        margin: 1.5rem auto 2rem;
+        align-items: stretch;
         height: auto;
-      }
-
-      .map-panel {
-        order: 1;
-        min-height: unset;
-        height: auto;
-      }
-
-      #map {
-        height: clamp(260px, 50vh, 420px);
-        min-height: 260px;
+        width: 100%;
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
       }
 
       .sidebar {
-        order: 2;
-        max-height: none;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-height: 220px;
+        position: relative;
+        width: auto;
+        height: auto;
+        left: auto;
+        top: auto;
+        box-shadow: none;
+        z-index: auto;
+        flex-shrink: 0;
+      }
+
+      .map-panel {
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--bg-secondary);
+        min-height: 420px;
+        height: 60vh;
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        width: auto;
+        flex: 1;
+      }
+
+      #map {
+        height: 100%;
+        width: 100%;
+        min-height: 360px;
+      }
+
+      #nav-placeholder {
+        position: static;
+        background: transparent;
+        backdrop-filter: none;
+        border: none;
+        min-width: auto;
       }
     }
 
     @media (max-width: 700px){
       .page-header {
         margin-top: 1rem;
-      }
-
-      .page-logo {
-        width: 56px;
-        height: 56px;
-        border-radius: 14px;
       }
 
       .map-panel {
@@ -745,12 +739,6 @@
     @media (max-width: 520px){
       :root {
         --page-padding: 14px;
-      }
-
-      .page-logo {
-        width: 50px;
-        height: 50px;
-        border-radius: 12px;
       }
 
       .page-header h1 {
@@ -775,7 +763,6 @@
       }
     }
   </style>
-  <script type="module" src="/js/i18n.js"></script>
 </head>
 <body data-route="long-trails" data-page="long-trails">
   <div id="nav-placeholder"></div>
@@ -796,40 +783,20 @@
                 .map(value => value.trim())
                 .filter(Boolean);
 
-            if (routes.includes(activeRoute)) {
-              link.classList.add('active');
-              link.setAttribute('aria-current', 'page');
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+            if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+              window.NH48_I18N.refreshLangPicker();
             }
-          });
-          if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
-            window.NH48_I18N.refreshLangPicker();
-          }
-        })
-        .catch(err => console.error('Failed to load navigation:', err));
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
       }
 
       });
     </script>
-  <header class="page-header">
-    <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <ol>
-        <li><a href="/">Home</a></li>
-        <li aria-current="page">Long Trails</li>
-      </ol>
-    </nav>
-    <div class="beta-banner" role="status" aria-live="polite">
-      <span>β</span>
-      <strong>Beta:</strong> These pages are in active development.
-    </div>
-    <div class="title-row">
-      <img class="page-logo" src="/Long_Trails_Logo.png" alt="Long Trails logo">
-      <div class="title-text">
-        <h1>Long-Distance Trails</h1>
-        <p>Explore multi-day trail campaigns with interactive maps, filters, and section details.</p>
-        <p>Click a section to view details, then click “View section” for the full section page.</p>
-      </div>
-    </div>
-  </header>
 
   <main id="app">
     <aside class="sidebar" aria-live="polite">
@@ -837,858 +804,36 @@
       <div class="trail-directory-title">Trail segments</div>
       <div id="trailList" class="accordion"></div>
     </aside>
-    <section class="map-panel" aria-label="Long-distance trails map" aria-describedby="long-trails-map-description">
-      <div id="map" role="img" aria-label="Interactive map of long-distance trails and sections"></div>
-      <p id="long-trails-map-description" class="sr-only">High-contrast map background with bold teal route lines, large circular section markers, and text labels so trails stay legible across zoom levels. Popups summarize the segment name, mileage, and nearby waypoints. Keyboard users can tab into the map controls to pan or zoom.</p>
+    <section class="map-panel">
+      <div id="map"></div>
     </section>
   </main>
 
+  <div class="page-shell">
+    <header class="page-header hero-pattern hero-pattern-strip">
+      <div class="page-logo">
+        <div class="logo-wrap">
+          <img src="/Long_Trails_Logo.png" alt="Long Trails interactive map logo" title="Long Trails dataset" loading="lazy" decoding="async">
+        </div>
+      </div>
+      <div class="header-text">
+        <h1 id="longTrailsHeading">Long-Distance Trails</h1>
+        <p id="longTrailsSubheading">Explore multi-day trail campaigns with interactive maps, filters, and section details.</p>
+        <p id="longTrailsHint">Click a section to view details, then click "View section" for the full section page.</p>
+      </div>
+    </header>
+
+    <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li id="breadcrumbLongTrailsItem" aria-current="page">Long Trails</li>
+        <li id="breadcrumbTrailItem" hidden><span id="breadcrumbTrailText" aria-current="page"></span></li>
+      </ol>
+    </nav>
+  </div>
+
   <section id="seo-trails" class="sr-only" aria-label="Long-distance trail sections index">
     <h2>Trail Sections Index</h2>
-    <article>
-      <h3>Allegheny Trail (ALT)</h3>
-      <ul>
-      <li>Section 1: Mason-Dixon to Blackwater Falls</li>
-      <li>Section 2: Blackwater Falls to Cass</li>
-      <li>Section 3: Cass to Lake Sherwood</li>
-      <li>Section 4: Lake Sherwood to Peters Mountain</li>
-      </ul>
-    </article>
-    <article>
-      <h3>American Discovery Trail (American Discovery Trail)</h3>
-      <ul>
-      <li>Delaware</li>
-      <li>Maryland & Washington, D.C.</li>
-      <li>West Virginia</li>
-      <li>Ohio & Kentucky</li>
-      <li>Western Ohio (Northern Route)</li>
-      <li>Indiana (Northern Route)</li>
-      <li>Illinois (Northern Route)</li>
-      <li>Iowa (Northern Route)</li>
-      <li>Nebraska (Northern Route)</li>
-      <li>Northeastern Colorado (Northern Route)</li>
-      <li>Indiana (Southern Route)</li>
-      <li>Illinois (Southern Route)</li>
-      <li>Missouri (Southern Route)</li>
-      <li>Kansas (Southern Route)</li>
-      <li>Southeastern Colorado (Southern Route)</li>
-      <li>Western Colorado</li>
-      <li>Utah</li>
-      <li>Nevada</li>
-      <li>California</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Appalachian Trail (AT)</h3>
-      <ul>
-      <li>Springer Mountain → Neels Gap</li>
-      <li>Neels Gap → Blood Mountain</li>
-      <li>Blood Mountain → Bly Gap (GA–NC Border)</li>
-      <li>Bly Gap → Nantahala Outdoor Center</li>
-      <li>Nantahala Outdoor Center → Fontana Dam</li>
-      <li>Fontana Dam → Newfound Gap</li>
-      <li>Newfound Gap → Davenport Gap</li>
-      <li>Davenport Gap → Hot Springs</li>
-      <li>Hot Springs → Erwin</li>
-      <li>Erwin → US-19E (Roan Highlands)</li>
-      <li>US-19E → Watauga Lake</li>
-      <li>Watauga Lake → Damascus</li>
-      <li>Damascus → Fox Creek (VA-603)</li>
-      <li>Fox Creek → Atkins (I-81/US-11)</li>
-      <li>Atkins → Bland (VA-52/I-77)</li>
-      <li>Bland → Pearisburg</li>
-      <li>Pearisburg → Catawba (VA-311)</li>
-      <li>Catawba → Daleville</li>
-      <li>Daleville → Buena Vista (US-60)</li>
-      <li>Buena Vista → Waynesboro (Rockfish Gap)</li>
-      <li>Rockfish Gap → Swift Run Gap</li>
-      <li>Swift Run Gap → Front Royal</li>
-      <li>Front Royal → Harpers Ferry</li>
-      <li>Harpers Ferry → Mason–Dixon Line</li>
-      <li>Mason–Dixon Line → Duncannon</li>
-      <li>Duncannon → Port Clinton</li>
-      <li>Port Clinton → Delaware Water Gap</li>
-      <li>Delaware Water Gap → NJ–NY State Line</li>
-      <li>NJ–NY State Line → Bear Mountain Bridge</li>
-      <li>Bear Mountain → Connecticut Line</li>
-      <li>Connecticut (NY Line → MA Line)</li>
-      <li>Massachusetts South (CT Line → Dalton)</li>
-      <li>Massachusetts North (Dalton → VT Line)</li>
-      <li>Vermont South (MA Line → US-4/Rutland)</li>
-      <li>Vermont North (Rutland → NH Line)</li>
-      <li>Hanover → Franconia Notch</li>
-      <li>Franconia Notch → Crawford Notch</li>
-      <li>Crawford Notch → Gorham</li>
-      <li>Gorham → Maine State Line</li>
-      <li>Maine South (NH Line → ME-27 Stratton)</li>
-      <li>Maine Central (Stratton → Monson)</li>
-      <li>Maine North (Monson → Katahdin)</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Appalachian Trail (AT)</h3>
-      <ul>
-      <li>Springer Mountain → Neels Gap</li>
-      <li>Neels Gap → Blood Mountain</li>
-      <li>Blood Mountain → Bly Gap (GA–NC Border)</li>
-      <li>Bly Gap → Nantahala Outdoor Center</li>
-      <li>Nantahala Outdoor Center → Fontana Dam</li>
-      <li>Fontana Dam → Newfound Gap</li>
-      <li>Newfound Gap → Davenport Gap</li>
-      <li>Davenport Gap → Hot Springs</li>
-      <li>Hot Springs → Erwin</li>
-      <li>Erwin → US-19E (Roan Highlands)</li>
-      <li>US-19E → Watauga Lake</li>
-      <li>Watauga Lake → Damascus</li>
-      <li>Damascus → Fox Creek (VA-603)</li>
-      <li>Fox Creek → Atkins (I-81/US-11)</li>
-      <li>Atkins → Bland (VA-52/I-77)</li>
-      <li>Bland → Pearisburg</li>
-      <li>Pearisburg → Catawba (VA-311)</li>
-      <li>Catawba → Daleville</li>
-      <li>Daleville → Buena Vista (US-60)</li>
-      <li>Buena Vista → Waynesboro (Rockfish Gap)</li>
-      <li>Rockfish Gap → Swift Run Gap</li>
-      <li>Swift Run Gap → Front Royal</li>
-      <li>Front Royal → Harpers Ferry</li>
-      <li>Harpers Ferry → Mason–Dixon Line</li>
-      <li>Mason–Dixon Line → Duncannon</li>
-      <li>Duncannon → Port Clinton</li>
-      <li>Port Clinton → Delaware Water Gap</li>
-      <li>Delaware Water Gap → NJ–NY State Line</li>
-      <li>NJ–NY State Line → Bear Mountain Bridge</li>
-      <li>Bear Mountain → Connecticut Line</li>
-      <li>Connecticut (NY Line → MA Line)</li>
-      <li>Massachusetts South (CT Line → Dalton)</li>
-      <li>Massachusetts North (Dalton → VT Line)</li>
-      <li>Vermont South (MA Line → US-4/Rutland)</li>
-      <li>Vermont North (Rutland → NH Line)</li>
-      <li>Hanover → Franconia Notch</li>
-      <li>Franconia Notch → Crawford Notch</li>
-      <li>Crawford Notch → Gorham</li>
-      <li>Gorham → Maine State Line</li>
-      <li>Maine South (NH Line → ME-27 Stratton)</li>
-      <li>Maine Central (Stratton → Monson)</li>
-      <li>Maine North (Monson → Katahdin)</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Arizona Trail (AZT)</h3>
-      <ul>
-      <li>Mexico Border → Parker Canyon Lake</li>
-      <li>Parker Canyon Lake → Canelo Pass</li>
-      <li>Canelo Pass → Highway 82 (Patagonia)</li>
-      <li>Highway 82 (Patagonia) → Apache Springs Trailhead</li>
-      <li>Apache Springs Trailhead → Oak Tree Canyon</li>
-      <li>Oak Tree Canyon → Lakes Road (Las Colinas)</li>
-      <li>Lakes Road → Gabe Zimmerman Trailhead</li>
-      <li>Gabe Zimmerman TH → Rincon Valley</li>
-      <li>Rincon Valley → Redington Road</li>
-      <li>Redington Road → Gordon Hirabayashi (Prison Camp)</li>
-      <li>Gordon Hirabayashi → Marshall Gulch</li>
-      <li>Marshall Gulch → Red Ridge (Oracle SP)</li>
-      <li>Red Ridge → Oracle (Tiger Mine Road)</li>
-      <li>Oracle (Tiger Mine) → Freeman Road</li>
-      <li>Freeman Road → Gila River</li>
-      <li>Gila River → Tonto NF Boundary</li>
-      <li>Tonto NF Boundary → Alamo Canyon</li>
-      <li>Picketpost (Alamo Canyon) → Rogers Trough</li>
-      <li>Rogers Trough → Roosevelt Lake (AZ-188)</li>
-      <li>Roosevelt Lake → Pine Mountain (AZ-87)</li>
-      <li>AZ-87 (Sunflower) → Pigeon Spring (Mazatzal)</li>
-      <li>Pigeon Spring → Mount Peeley Trailhead</li>
-      <li>Mount Peeley → Red Hills (Mazatzal Divide)</li>
-      <li>Red Hills → East Verde River</li>
-      <li>East Verde River → Pine Trailhead</li>
-      <li>Pine Trailhead → Mogollon Rim (Highline)</li>
-      <li>Mogollon Rim → Blue Ridge Ranger Station</li>
-      <li>Blue Ridge → Happy Jack</li>
-      <li>Happy Jack → Mormon Lake</li>
-      <li>Mormon Lake → Marshall Lake</li>
-      <li>Marshall Lake → I-40 (Walnut Canyon)</li>
-      <li>I-40 (Flagstaff) → Schultz Pass (Elden)</li>
-      <li>Schultz Pass → Moquitch (Boundary)</li>
-      <li>FR 418 (N. Peaks) → Moqui Stage Station</li>
-      <li>Moqui Stage Station → Grandview Tower</li>
-      <li>Grandview Tower → South Kaibab Trailhead</li>
-      <li>South Kaibab → North Kaibab (Inner Gorge)</li>
-      <li>North Kaibab TH → Park Boundary</li>
-      <li>Park Boundary → Telephone Hill (Kaibab S)</li>
-      <li>Telephone Hill → Orderville (Kaibab C)</li>
-      <li>Orderville → Winter Road (Kaibab N)</li>
-      <li>Winter Road → Stateline Campground</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Baja Divide (Baja Divide)</h3>
-      <ul>
-      <li>San Diego to Tecate</li>
-      <li>Tecate to Ojos Negros</li>
-      <li>Ojos Negros to Santo Tomás</li>
-      <li>Santo Tomás to Colonet</li>
-      <li>Colonet to Vicente Guerrero</li>
-      <li>Vicente Guerrero to Nueva Odisea</li>
-      <li>Nueva Odisea to Cataviña</li>
-      <li>Cataviña to Santa Rosalillita</li>
-      <li>Santa Rosalillita to Bahía de los Ángeles</li>
-      <li>Bahía de los Ángeles to Vizcaíno</li>
-      <li>Vizcaíno to San Ignacio</li>
-      <li>San Ignacio to El Dátil</li>
-      <li>El Dátil to Mulegé</li>
-      <li>Mulegé to El Rosarito</li>
-      <li>El Rosarito to Ciudad Constitución</li>
-      <li>Ciudad Constitución to La Paz</li>
-      <li>La Paz to La Ribera</li>
-      <li>La Ribera to San José del Cabo</li>
-      <li>San José del Cabo to Todos Santos</li>
-      <li>Todos Santos to La Paz</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Benton MacKaye Trail (BMT)</h3>
-      <ul>
-      <li>Springer Mountain to Big Stamp Gap</li>
-      <li>Big Stamp Gap to 2nd Cross Trails</li>
-      <li>2nd Cross Trails to Three Forks</li>
-      <li>Three Forks to No Name Gap</li>
-      <li>No Name Gap to Bryson Gap</li>
-      <li>Bryson Gap to Toccoa River</li>
-      <li>Toccoa River to GA Hwy 60 (Little Skeenah)</li>
-      <li>GA 60 (Little Skeenah) to Wallalah-Licklog Saddle</li>
-      <li>Wallalah-Licklog Saddle to Licklog-Rhodes Saddle</li>
-      <li>Licklog-Rhodes Saddle to Skeenah Gap</li>
-      <li>Skeenah Gap to Payne Gap</li>
-      <li>Payne Gap to Wilscot Gap (GA Hwy 60)</li>
-      <li>Wilscot Gap (GA 60) to Ledford Gap</li>
-      <li>Ledford Gap to Brawley Mountain</li>
-      <li>Brawley Mountain to Dial Road</li>
-      <li>Dial Road to Shallowford Bridge</li>
-      <li>Shallowford Bridge to Fall Branch (Stanley Creek Road)</li>
-      <li>Fall Branch to Stanley Gap Trail Junction</li>
-      <li>Stanley Gap Trail to Rich Mountain (old trail)</li>
-      <li>Stanley Gap Trail to Weaver/Laurel Creek Road</li>
-      <li>Weaver/Laurel Creek Road to GA Hwy 515</li>
-      <li>GA 515 to Sisson’s Shelter spur</li>
-      <li>Sisson’s Shelter to Boardtown Road</li>
-      <li>Boardtown Road to Bushy Head Gap</li>
-      <li>Bushy Head Gap to Hudson Gap</li>
-      <li>Hudson Gap to McKenney Gap</li>
-      <li>McKenney Gap to Hatley Gap</li>
-      <li>Hatley Gap to Fowler Mountain</li>
-      <li>Fowler Mountain to Holloway Gap</li>
-      <li>Holloway Gap to Double Hogpen Gap</li>
-      <li>Double Hogpen Gap to Flat Top Mountain</li>
-      <li>Flat Top Mountain to Dyer Gap</li>
-      <li>Dyer Gap to Pinhoti Trail Intersection (South Fork)</li>
-      <li>Pinhoti Intersection to Pate Gap</li>
-      <li>Pate Gap to Watson Gap</li>
-      <li>Watson Gap to Jacks River Trail (Dally Gap)</li>
-      <li>Jacks River Trail to Hemp Top Trail</li>
-      <li>Hemp Top Trail to Hemp Top (Peak)</li>
-      <li>Hemp Top to Double Spring Gap</li>
-      <li>Double Spring Gap to Big Frog Mountain</li>
-      <li>Big Frog Mountain to Fork Ridge Trail Jct</li>
-      <li>Fork Ridge Trail to Rough Creek Trail Jct</li>
-      <li>Rough Creek Trail to USFS Road 221</li>
-      <li>USFS 221 to US Hwy 64 (Ocoee River)</li>
-      <li>US 64 (Ocoee) to Dry Pond Lead High Point</li>
-      <li>Dry Pond Lead to Kimsey Highway (FS 68)</li>
-      <li>Kimsey Highway to McFarland Road (FS 23)</li>
-      <li>McFarland Road to White Oak Flats (FS 103)</li>
-      <li>White Oak Flats (Lost Creek) to FS 173 (Trestle)</li>
-      <li>Trestle (FS 173) to Childers Creek (John Muir Trail)</li>
-      <li>Childers Creek (JMT) to Big Bend</li>
-      <li>Big Bend to Towee Creek</li>
-      <li>Towee Creek to Wildcat Creek</li>
-      <li>Wildcat Creek to FS 22B (Coker Creek)</li>
-      <li>FS 22B (Coker Creek) to TN Hwy 68 (Unicoi Mountain Trail)</li>
-      <li>TN 68 to Buck Bald Road</li>
-      <li>Buck Bald Road to Unicoi Gap (TN/NC state line)</li>
-      <li>Unicoi Gap to Tate Gap</li>
-      <li>Tate Gap to Sixmile Gap</li>
-      <li>Sixmile Gap to Sandy Gap</li>
-      <li>Sandy Gap to Round Top (TN/NC state line)</li>
-      <li>Round Top to Sled Runner Gap</li>
-      <li>Sled Runner Gap to Brookshire Creek crossing</li>
-      <li>Brookshire Creek to Sugar Mountain Road</li>
-      <li>Sugar Mountain Road to Tellico River Road (FS 210)</li>
-      <li>Tellico River Road (Green Cove) to Mangan Branch</li>
-      <li>Mangan Branch to FS 61B (Sycamore Creek Trail)</li>
-      <li>FS 61B (Sycamore Creek TH) to Mud Gap</li>
-      <li>Mud Gap (Cherohala) to Beech Gap (Nantahala NF)</li>
-      <li>Beech Gap to Haoe Lead (Southwest) Intersection</li>
-      <li>Haoe Lead (SW) to Hangover Lead Trail Jct</li>
-      <li>Haoe Lead (Northeast) to Big Fat Gap</li>
-      <li>Big Fat Gap to Yellowhammer Gap</li>
-      <li>Yellowhammer Gap to Tapoco Lodge (US 129)</li>
-      <li>Tapoco Lodge (US 129) to Old Field Gap Road</li>
-      <li>Old Field Gap Road to FS 251C (Fontana East)</li>
-      <li>FS 251C to Fontana Lodge</li>
-      <li>Fontana Lodge to AT Intersection (Fontana Hilton)</li>
-      <li>AT Intersection to Fontana Dam (Northern Terminus)</li>
-      <li>Fontana Dam to Eagle Creek Trail (Lakeshore Trail)</li>
-      <li>Eagle Creek Trail to Campsite 86 (Hazel Creek)</li>
-      <li>Campsite 86 to Campsite 77 (Hazel–Forney)</li>
-      <li>Campsite 77 to Campsite 98 (Lakeshore–Forney)</li>
-      <li>Campsite 98 to Campsite 74 (Lakeshore Trail)</li>
-      <li>Campsite 74 to Noland Creek Trail Junction</li>
-      <li>Noland Creek Trail to Noland Divide Trail Junction</li>
-      <li>Noland Divide Trail to Deep Creek Trail (Mingus Creek/MST)</li>
-      <li>Deep Creek Trail / MST to Campsite 52</li>
-      <li>Campsite 52 (Deep Creek) to Smokemont Campground</li>
-      <li>Smokemont Campground to Campsite 47 (Enloe Creek)</li>
-      <li>Campsite 47 (Enloe) to Straight Fork Road</li>
-      <li>Straight Fork Road to Laurel Gap Shelter</li>
-      <li>Laurel Gap Shelter to Big Creek (Northern Terminus)</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Bruce Trail</h3>
-      <ul>
-
-      </ul>
-    </article>
-    <article>
-      <h3>Buckeye Trail (BT)</h3>
-      <ul>
-      <li>Burton Section</li>
-      <li>Bedford Section</li>
-      <li>Akron Section</li>
-      <li>Mogadore Section</li>
-      <li>Massillon Section</li>
-      <li>Bowerston Section</li>
-      <li>Belle Valley Section</li>
-      <li>Stockport Section</li>
-      <li>Road Fork Section</li>
-      <li>Whipple Section</li>
-      <li>New Straitsville Section</li>
-      <li>Old Man's Cave Section</li>
-      <li>Shawnee Section</li>
-      <li>West Union Section</li>
-      <li>Williamsburg Section</li>
-      <li>Loveland Section</li>
-      <li>Wilmington Section</li>
-      <li>Dayton Section</li>
-      <li>Troy Section</li>
-      <li>St. Marys Section</li>
-      <li>Delphos Section</li>
-      <li>Defiance Section</li>
-      <li>Pemberville Section</li>
-      <li>Norwalk Section</li>
-      <li>Medina Section</li>
-      <li>Cleveland Section</li>
-      </ul>
-    </article>
-    <article>
-      <h3>California Trail (CT)</h3>
-      <ul>
-      <li>Missouri / Kansas</li>
-      <li>Nebraska</li>
-      <li>Wyoming</li>
-      <li>Idaho / Utah</li>
-      <li>Nevada</li>
-      <li>California</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Camino Real de Tierra Adentro (Camino Real de Tierra Adentro)</h3>
-      <ul>
-
-      </ul>
-    </article>
-    <article>
-      <h3>Continental Divide Trail (CDT)</h3>
-      <ul>
-      <li>Crazy Cook Monument → Cumbres Pass (NM–CO Border)</li>
-      <li>Cumbres Pass → Wyoming State Line</li>
-      <li>Wyoming State Line → Idaho State Line (Yellowstone)</li>
-      <li>Idaho State Line (Yellowstone) → Chief Joseph Pass (MT–ID Border)</li>
-      <li>Chief Joseph Pass → Waterton Lake (Northern Terminus)</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Desert Trail (Desert Trail)</h3>
-      <ul>
-      <li>California</li>
-      <li>Nevada</li>
-      <li>Oregon</li>
-      <li>Idaho & Washington</li>
-      </ul>
-    </article>
-    <article>
-      <h3>East Coast Trail</h3>
-      <ul>
-      <li>Long Shore Path</li>
-      <li>Piccos Ridge Path</li>
-      <li>White Horse Path</li>
-      <li>Biscan Cove Path</li>
-      <li>Stiles Cove Path</li>
-      <li>Father Troy's Trail</li>
-      <li>Silver Mine Head Path</li>
-      <li>Cobblers Path</li>
-      <li>Sugarloaf Path</li>
-      <li>Deadmans Bay Path</li>
-      <li>Cape Spear Path</li>
-      <li>Motion Path</li>
-      <li>Spout Path</li>
-      <li>Mickeleens Path</li>
-      <li>Beaches Path</li>
-      <li>Tinkers Point Path</li>
-      <li>La Manche Village Path</li>
-      <li>Flamber Head Path</li>
-      <li>Brigus Head Path</li>
-      <li>Cape Broyle Head Path</li>
-      <li>Caplin Bay Path</li>
-      <li>Sounding Hills Path</li>
-      <li>Spurwink Island Path</li>
-      <li>Bear Cove Path</li>
-      <li>Island Meadow Path</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Arizona Trail (AZT)</h3>
-      <ul>
-      <li>Mexico Border → Parker Canyon Lake</li>
-      <li>Parker Canyon Lake → Canelo Pass</li>
-      <li>Canelo Pass → Highway 82 (Patagonia)</li>
-      <li>Highway 82 (Patagonia) → Apache Springs Trailhead</li>
-      <li>Apache Springs Trailhead → Oak Tree Canyon</li>
-      <li>Oak Tree Canyon → Lakes Road (Las Colinas)</li>
-      <li>Lakes Road → Gabe Zimmerman Trailhead</li>
-      <li>Gabe Zimmerman TH → Rincon Valley</li>
-      <li>Rincon Valley → Redington Road</li>
-      <li>Redington Road → Gordon Hirabayashi (Prison Camp)</li>
-      <li>Gordon Hirabayashi → Marshall Gulch</li>
-      <li>Marshall Gulch → Red Ridge (Oracle SP)</li>
-      <li>Red Ridge → Oracle (Tiger Mine Road)</li>
-      <li>Oracle (Tiger Mine) → Freeman Road</li>
-      <li>Freeman Road → Gila River</li>
-      <li>Gila River → Tonto NF Boundary</li>
-      <li>Tonto NF Boundary → Alamo Canyon</li>
-      <li>Picketpost (Alamo Canyon) → Rogers Trough</li>
-      <li>Rogers Trough → Roosevelt Lake (AZ-188)</li>
-      <li>Roosevelt Lake → Pine Mountain (AZ-87)</li>
-      <li>AZ-87 (Sunflower) → Pigeon Spring (Mazatzal)</li>
-      <li>Pigeon Spring → Mount Peeley Trailhead</li>
-      <li>Mount Peeley → Red Hills (Mazatzal Divide)</li>
-      <li>Red Hills → East Verde River</li>
-      <li>East Verde River → Pine Trailhead</li>
-      <li>Pine Trailhead → Mogollon Rim (Highline)</li>
-      <li>Mogollon Rim → Blue Ridge Ranger Station</li>
-      <li>Blue Ridge → Happy Jack</li>
-      <li>Happy Jack → Mormon Lake</li>
-      <li>Mormon Lake → Marshall Lake</li>
-      <li>Marshall Lake → I-40 (Walnut Canyon)</li>
-      <li>I-40 (Flagstaff) → Schultz Pass (Elden)</li>
-      <li>Schultz Pass → Moquitch (Boundary)</li>
-      <li>FR 418 (N. Peaks) → Moqui Stage Station</li>
-      <li>Moqui Stage Station → Grandview Tower</li>
-      <li>Grandview Tower → South Kaibab Trailhead</li>
-      <li>South Kaibab → North Kaibab (Inner Gorge)</li>
-      <li>North Kaibab TH → Park Boundary</li>
-      <li>Park Boundary → Telephone Hill (Kaibab S)</li>
-      <li>Telephone Hill → Orderville (Kaibab C)</li>
-      <li>Orderville → Winter Road (Kaibab N)</li>
-      <li>Winter Road → Stateline Campground</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Grand Enchantment Trail (GET)</h3>
-      <ul>
-      <li>Superstition Wilderness</li>
-      <li>Reavis Canyon</li>
-      <li>White Canyon Wilderness</li>
-      <li>Tortilla Mountains</li>
-      <li>Antelope Peak</li>
-      <li>Brandenburg Mountain</li>
-      <li>Aravaipa Canyon Wilderness</li>
-      <li>Santa Teresa Wilderness</li>
-      <li>Underwood Canyon</li>
-      <li>Pinaleno Mountains</li>
-      <li>Gila Valley South</li>
-      <li>Gila Valley North</li>
-      <li>Old Safford-Morenci Trail</li>
-      <li>Eagle Creek - Painted Bluffs</li>
-      <li>Coronado Trail</li>
-      <li>Blue River</li>
-      <li>Maple Peak</li>
-      <li>Sunflower Mesa</li>
-      <li>Whitewater Mesa</li>
-      <li>Mogollon Mountains</li>
-      <li>West Fork Gila River</li>
-      <li>Middle and East Fork Gila River</li>
-      <li>South Diamond Creek</li>
-      <li>Black Range Crest</li>
-      <li>Lookout Mountain</li>
-      <li>Dolan Peak</li>
-      <li>Monticello Box</li>
-      <li>Apache Kid Wilderness</li>
-      <li>Withington Wilderness</li>
-      <li>Milligan Gulch</li>
-      <li>Magdalena Mountains</li>
-      <li>San Lorenzo Canyon</li>
-      <li>Sevilleta Trace</li>
-      <li>Manzano Mountains South</li>
-      <li>Manzano Mountain Wilderness</li>
-      <li>Manzanita Mountains South</li>
-      <li>Manzanita Mountains North</li>
-      <li>Sandia Mountain Wilderness</li>
-      <li>Sandia Crest</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Great Divide Trail (Canada) (Great Divide Trail)</h3>
-      <ul>
-      <li>Section A: Waterton Lakes (International Boundary) to Coleman</li>
-      <li>Section B: Coleman to Kananaskis (Elk Pass)</li>
-      <li>Section C: Kananaskis to Field</li>
-      <li>Section D: Field to Saskatchewan River Crossing</li>
-      <li>Section E: Saskatchewan Crossing to Jasper</li>
-      <li>Section F: Jasper to Mount Robson</li>
-      <li>Section G: Mount Robson to Kakwa Lake</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Great Western Loop (Great Western Loop)</h3>
-      <ul>
-      <li>Mojave and Sonoran Desert Connector</li>
-      <li>Pacific Crest Trail Section</li>
-      <li>Pacific Northwest Trail Section</li>
-      <li>Continental Divide Trail Section</li>
-      <li>Grand Enchantment Trail Section</li>
-      <li>Arizona Trail Section</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Hayduke Trail (Hayduke)</h3>
-      <ul>
-      <li>Arches NP (Salt Valley) to Hurrah Pass</li>
-      <li>Hurrah Pass to Big Spring TH (Canyonlands)</li>
-      <li>Big Spring TH to Hite, UT</li>
-      <li>Hite to Poison Springs Canyon</li>
-      <li>Poison Springs Canyon to Burr Trail (Capitol Reef)</li>
-      <li>Burr Trail to Hole-in-the-Rock Road</li>
-      <li>Hole-in-the-Rock Road to Round Valley Draw</li>
-      <li>Round Valley Draw to Willis Creek</li>
-      <li>Willis Creek to AZ Trail Stateline TH</li>
-      <li>Stateline Trailhead to Nankoweap Trailhead (GCNP)</li>
-      <li>Nankoweap Trailhead to Horseshoe Mesa (Grand Canyon)</li>
-      <li>Horseshoe Mesa to North Rim (Grand Canyon)</li>
-      <li>North Rim (GCNP) to Hack Canyon, AZ</li>
-      <li>Hack Canyon to Weeping Wall (Zion NP)</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Appalachian Trail (AT)</h3>
-      <ul>
-      <li>Springer Mountain → Neels Gap</li>
-      <li>Neels Gap → Blood Mountain</li>
-      <li>Blood Mountain → Bly Gap (GA–NC Border)</li>
-      <li>Bly Gap → Nantahala Outdoor Center</li>
-      <li>Nantahala Outdoor Center → Fontana Dam</li>
-      <li>Fontana Dam → Newfound Gap</li>
-      <li>Newfound Gap → Davenport Gap</li>
-      <li>Davenport Gap → Hot Springs</li>
-      <li>Hot Springs → Erwin</li>
-      <li>Erwin → US-19E (Roan Highlands)</li>
-      <li>US-19E → Watauga Lake</li>
-      <li>Watauga Lake → Damascus</li>
-      <li>Damascus → Fox Creek (VA-603)</li>
-      <li>Fox Creek → Atkins (I-81/US-11)</li>
-      <li>Atkins → Bland (VA-52/I-77)</li>
-      <li>Bland → Pearisburg</li>
-      <li>Pearisburg → Catawba (VA-311)</li>
-      <li>Catawba → Daleville</li>
-      <li>Daleville → Buena Vista (US-60)</li>
-      <li>Buena Vista → Waynesboro (Rockfish Gap)</li>
-      <li>Rockfish Gap → Swift Run Gap</li>
-      <li>Swift Run Gap → Front Royal</li>
-      <li>Front Royal → Harpers Ferry</li>
-      <li>Harpers Ferry → Mason–Dixon Line</li>
-      <li>Mason–Dixon Line → Duncannon</li>
-      <li>Duncannon → Port Clinton</li>
-      <li>Port Clinton → Delaware Water Gap</li>
-      <li>Delaware Water Gap → NJ–NY State Line</li>
-      <li>NJ–NY State Line → Bear Mountain Bridge</li>
-      <li>Bear Mountain → Connecticut Line</li>
-      <li>Connecticut (NY Line → MA Line)</li>
-      <li>Massachusetts South (CT Line → Dalton)</li>
-      <li>Massachusetts North (Dalton → VT Line)</li>
-      <li>Vermont South (MA Line → US-4/Rutland)</li>
-      <li>Vermont North (Rutland → NH Line)</li>
-      <li>Hanover → Franconia Notch</li>
-      <li>Franconia Notch → Crawford Notch</li>
-      <li>Crawford Notch → Gorham</li>
-      <li>Gorham → Maine State Line</li>
-      <li>Maine South (NH Line → ME-27 Stratton)</li>
-      <li>Maine Central (Stratton → Monson)</li>
-      <li>Maine North (Monson → Katahdin)</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Long Trail</h3>
-      <ul>
-      <li>MA Border to VT-9 (Bennington)</li>
-      <li>VT-9 to VT-11/30 (Manchester)</li>
-      <li>VT-11/30 to US-4 (Killington)</li>
-      <li>US-4 to VT-17 (Appalachian Gap)</li>
-      <li>VT-17 to VT-108 (Smugglers’ Notch)</li>
-      <li>VT-108 to Canadian Border (Journey’s End)</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Mormon Pioneer Trail (Mormon Pioneer Trail)</h3>
-      <ul>
-
-      </ul>
-    </article>
-    <article>
-      <h3>Nez Perce (Nee-Me-Poo) National Historic Trail (Nez Perce Trail)</h3>
-      <ul>
-      <li>Imnaha River to Snake Crossing</li>
-      <li>White Bird Canyon (Idaho)</li>
-      <li>Lolo Trail (Bitterroot Mountains)</li>
-      <li>Gibbons Pass to Big Hole (Montana)</li>
-      <li>Overland Trail (Idaho & Yellowstone Route)</li>
-      <li>Yellowstone Segment</li>
-      <li>Missouri River Breaks to Bear Paw</li>
-      </ul>
-    </article>
-    <article>
-      <h3>North Country National Scenic Trail (NCT)</h3>
-      <ul>
-      <li>Lake Sakakawea SP → Fort Abercrombie (ND–MN Line)</li>
-      <li>Fort Abercrombie → Minnesota–Wisconsin Line</li>
-      <li>Minnesota Line → Michigan (Upper Peninsula) Line</li>
-      <li>Michigan (Upper Peninsula) Line → Mackinac Bridge</li>
-      <li>Mackinac Bridge → Ohio Line (Lower Michigan)</li>
-      <li>Michigan Line → Little Miami (Cincinnati Area)</li>
-      <li>Little Miami → Pennsylvania Line</li>
-      <li>Ohio Line → New York Line (PA Segment)</li>
-      <li>Pennsylvania Line → Adirondack Park</li>
-      <li>Adirondack Park → Lake Champlain (NY–VT Line)</li>
-      <li>Lake Champlain → Appalachian Trail (VT)</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Oregon Trail (OT)</h3>
-      <ul>
-      <li>Missouri / Kansas</li>
-      <li>Nebraska</li>
-      <li>Wyoming</li>
-      <li>Idaho (Snake River Plain)</li>
-      <li>Oregon</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Ozark Highlands Trail (OHT)</h3>
-      <ul>
-      <li>Lake Fort Smith to White Rock Mountain</li>
-      <li>White Rock Mountain to Cherry Bend</li>
-      <li>Cherry Bend to Lick Branch</li>
-      <li>Lick Branch to Ozone Campground</li>
-      <li>Ozone Campground to Big Piney (Fort Douglas)</li>
-      <li>Big Piney (Fort Douglas) to Fairview Campground</li>
-      <li>Fairview Campground to Richland Creek</li>
-      <li>Richland Creek to Woolum (Buffalo River)</li>
-      <li>Buffalo River: Woolum to AR-14 (Dillard’s Ferry)</li>
-      <li>Sylamore Section: Spring Creek to Matney Knob</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Pacific Crest Trail (PCT)</h3>
-      <ul>
-      <li>Campo → Warner Springs</li>
-      <li>Warner Springs → Interstate 10 (San Gorgonio Pass)</li>
-      <li>Interstate 10 → Interstate 15 (Cajon Pass)</li>
-      <li>Cajon Pass → Agua Dulce</li>
-      <li>Agua Dulce → Tehachapi Pass</li>
-      <li>Tehachapi Pass → Walker Pass</li>
-      <li>Walker Pass → Crabtree Meadow</li>
-      <li>Crabtree Meadow → Tuolumne Meadows</li>
-      <li>Tuolumne Meadows → Sonora Pass</li>
-      <li>Sonora Pass → Echo Lake</li>
-      <li>Echo Lake → Donner Summit</li>
-      <li>Donner Summit → Sierra City</li>
-      <li>Sierra City → Belden</li>
-      <li>Belden → Burney Falls</li>
-      <li>Burney Falls → Interstate 5 (Castella)</li>
-      <li>Interstate 5 → Etna Summit</li>
-      <li>Etna Summit → Seiad Valley</li>
-      <li>Seiad Valley → California–Oregon Border</li>
-      <li>California–Oregon Border → Interstate 5 (Ashland)</li>
-      <li>Interstate 5 (Ashland) → Highway 140 (Fish Lake)</li>
-      <li>Highway 140 → Highway 138 (Cascade Crest)</li>
-      <li>Highway 138 → Highway 58 (Willamette Pass)</li>
-      <li>Willamette Pass → McKenzie Pass</li>
-      <li>McKenzie Pass → Barlow Pass</li>
-      <li>Barlow Pass → Cascade Locks</li>
-      <li>Cascade Locks → White Pass</li>
-      <li>White Pass → Snoqualmie Pass</li>
-      <li>Snoqualmie Pass → Stevens Pass</li>
-      <li>Stevens Pass → Rainy Pass</li>
-      <li>Rainy Pass → Manning Park</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Pacific Northwest Trail</h3>
-      <ul>
-      <li>Rocky Mountains</li>
-      <li>Purcell Mountains</li>
-      <li>Selkirk Mountains</li>
-      <li>Kettle Range</li>
-      <li>Okanogan Highlands</li>
-      <li>Pasayten Wilderness</li>
-      <li>North Cascades</li>
-      <li>Puget Sound</li>
-      <li>Olympic Mountains</li>
-      <li>Wilderness Coast</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Pinhoti Trail (Pinhoti)</h3>
-      <ul>
-      <li>Flagg Mountain to FS 600-1 (Weogufka Creek)</li>
-      <li>FS 600-1 (CR 56) to FS 603A (Trammel Trailhead)</li>
-      <li>Trammel Trailhead to Bulls Gap (US 231)</li>
-      <li>Bulls Gap (US 231) to Porters Gap (AL 77)</li>
-      <li>Porters Gap (AL 77) to Adams Gap (Skyway Motorway)</li>
-      <li>Adams Gap to Cheaha State Park (Blue Mountain)</li>
-      <li>Cheaha State Park to County Road 24 (Shoal Creek RS)</li>
-      <li>Shoal Creek Ranger Station (CR 24) to US 78 (Heflin Spur)</li>
-      <li>US 78 (Heflin Spur) to Pine Glen Campground (FS 500)</li>
-      <li>Pine Glen Campground to US 278 (Piedmont)</li>
-      <li>US 278 (Piedmont) to AL/GA State Line</li>
-      <li>Georgia State Line to Jackson Chapel Road (Esom Hill)</li>
-      <li>Jackson Chapel Road to Cave Spring (US 411)</li>
-      <li>Cave Spring (US 411) to Coosa River (Lock & Dam Park)</li>
-      <li>Coosa River (Lock & Dam) to GA 20 (Rome Bypass)</li>
-      <li>GA 20 (West Rome) to Simms Mountain Trail (Huffaker Rd)</li>
-      <li>Huffaker Road (Simms Trail) to GA 100 (High Point Trailhead)</li>
-      <li>GA 100 (High Point) to Mack White Gap (US 27)</li>
-      <li>Mack White Gap (US 27) to Narrows Trailhead (W. Armuchee Rd)</li>
-      <li>Narrows (W. Armuchee) to E. Armuchee Road (Snake Creek Gap)</li>
-      <li>East Armuchee Road to Pocket Rd (Pilcher’s Pond)</li>
-      <li>Pocket Rd (Pilcher’s Pond) to Snake Creek Gap (GA 136)</li>
-      <li>Snake Creek Gap to Dug Gap (Dalton)</li>
-      <li>Dug Gap (Dalton) to Conasauga River (Tibbs Bridge)</li>
-      <li>Conasauga River (Tibbs Bridge) to Ramhurst (US 411)</li>
-      <li>Ramhurst (US 411) to Cohutta Overlook</li>
-      <li>Cohutta Overlook (GA 52) to Holly Creek Gap (FS 90)</li>
-      <li>Holly Creek Gap (FS 90) to Buddy Cove Gap (FS 64)</li>
-      <li>Buddy Cove Gap (FS 64) to Benton MacKaye Trail (Dyer Gap)</li>
-      <li>(Alternate) Simms Mountain Trail North Route</li>
-      <li>(Connector) Flagg Mountain CCC Road to Weogufka Trailhead</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Sky Islands Traverse (Sky Islands Traverse)</h3>
-      <ul>
-      <li>Dragoon Mountains</li>
-      <li>Huachuca Mountains</li>
-      <li>Santa Rita Mountains</li>
-      <li>Rincon Mountains</li>
-      <li>Santa Catalina Mountains</li>
-      <li>Galiuro Mountains</li>
-      <li>Santa Teresa Mountains</li>
-      <li>Pinaleno Mountains (Mt. Graham)</li>
-      <li>Dos Cabezas Mountains</li>
-      <li>Chiricahua Mountains</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Superior Hiking Trail (SHT)</h3>
-      <ul>
-      <li>MN/WI Border to Duluth</li>
-      <li>Duluth to Two Harbors</li>
-      <li>Two Harbors to Silver Bay</li>
-      <li>Silver Bay to Caribou Falls</li>
-      <li>Caribou Falls to Lutsen</li>
-      <li>Lutsen to Grand Marais</li>
-      <li>Grand Marais to 270 Degree Overlook</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Colorado Trail (CT)</h3>
-      <ul>
-      <li>Segment 1: Waterton Canyon to South Platte River</li>
-      <li>Segment 2: South Platte River to Little Scraggy Trailhead</li>
-      <li>Segment 3: Little Scraggy TH to FS-560 (Wellington Lake Rd)</li>
-      <li>Segment 4: FS-560 to Long Gulch</li>
-      <li>Segment 5: Long Gulch to Kenosha Pass</li>
-      <li>Segment 6: Kenosha Pass to Gold Hill Trailhead</li>
-      <li>Segment 7: Gold Hill TH to Copper Mountain</li>
-      <li>Segment 8: Copper Mountain to Tennessee Pass</li>
-      <li>Segment 9: Tennessee Pass to Timberline Lake Trailhead</li>
-      <li>Segment 10: Timberline Lake TH to Mount Massive TH</li>
-      <li>Segment 11: Mount Massive TH to Clear Creek Road</li>
-      <li>Segment 12: Clear Creek Road to Silver Creek TH</li>
-      <li>Segment 13: Silver Creek TH to Chalk Creek TH</li>
-      <li>Segment 14: Chalk Creek TH to US-50 (Monarch Pass)</li>
-      <li>Segment 15: US-50 (Monarch) to Marshall Pass</li>
-      <li>Segment 16: Marshall Pass to Saguache Park Road (Eddiesville)</li>
-      <li>Segment 17: Saguache Park Road to Colorado Hwy 114</li>
-      <li>Segment 18: Colorado Hwy 114 to Saguache Park Road</li>
-      <li>Segment 19: Saguache Park Road to Eddiesville (San Luis Pass)</li>
-      <li>Segment 20: San Luis Pass to Spring Creek Pass</li>
-      <li>Segment 21: Spring Creek Pass to Carson Saddle</li>
-      <li>Segment 22: Carson Saddle to Stony Pass</li>
-      <li>Segment 23: Stony Pass to Molas Pass</li>
-      <li>Segment 24: Molas Pass to Bolam Pass Road</li>
-      <li>Segment 25: Bolam Pass Road to Hotel Draw Road</li>
-      <li>Segment 26: Hotel Draw Road to Kennebec Trailhead</li>
-      <li>Segment 27: Kennebec TH to Junction Creek (Straight Creek)</li>
-      <li>Segment 28: Straight Creek to Durango</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Trans Canada Trail (TCT)</h3>
-      <ul>
-      <li>Newfoundland and Labrador</li>
-      <li>Nova Scotia</li>
-      <li>Prince Edward Island</li>
-      <li>New Brunswick</li>
-      <li>Québec</li>
-      <li>Ontario</li>
-      <li>Manitoba</li>
-      <li>Saskatchewan</li>
-      <li>Alberta</li>
-      <li>British Columbia</li>
-      </ul>
-    </article>
-    <article>
-      <h3>Transamerica Trail</h3>
-      <ul>
-
-      </ul>
-    </article>
-    <article>
-      <h3>Tuscarora Trail (TT)</h3>
-      <ul>
-      <li>Section 1: Sterretts Gap</li>
-      <li>Section 2: Flat Rock</li>
-      <li>Section 3: Blue Mountain</li>
-      <li>Section 4: Amberson Ridge</li>
-      <li>Section 5: Knob Mountain</li>
-      <li>Section 6: Cowans Gap</li>
-      <li>Section 7: Tuscarora Summit</li>
-      <li>Section 8: The Lockings</li>
-      <li>Section 9: Licking Creek</li>
-      <li>Section 10: C&O Canal</li>
-      <li>Section 11: Potomac</li>
-      <li>Section 12: Sleepy Creek</li>
-      <li>Section 13: Shockeys Knob</li>
-      <li>Section 14: Gainesboro</li>
-      <li>Section 15: Devils Backbone</li>
-      <li>Section 16: Capon Springs</li>
-      <li>Section 17: County Line</li>
-      <li>Section 18: Sugar Knob</li>
-      <li>Section 19: Fetzer Gap</li>
-      <li>Section 20: Massanutten West</li>
-      <li>Section 21: Massanutten East</li>
-      <li>Section 22: Mathews Arm</li>
-      </ul>
-    </article>
   </section>
   <script id="ld-long-trails" type="application/ld+json">{}</script>
 
@@ -1713,26 +858,105 @@
     let trailData = [];
     let globalBounds = null;
     let activeLayers = L.layerGroup();
-    const MAP_BOUNDS = L.latLngBounds(
-      [14.0, -170.0],
-      [72.0, -50.0]
-    );
     const DEFAULT_BOUNDS = {
       minLat: 24.5,
       minLon: -124.8,
       maxLat: 49.5,
       maxLon: -66.9
     };
+    const DEFAULT_TRAILS_HEADING = 'Long-Distance Trails';
+    const DEFAULT_TRAILS_SUBHEADING = 'Explore multi-day trail campaigns with interactive maps, filters, and section details.';
+    const DEFAULT_TRAILS_HINT = 'Click a section to view details, then click "View section" for the full section page.';
+    let focusTrailSlug = '';
+    let focusTrailName = '';
+
+    function normalizeTrailSlug(value){
+      return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/^\/+|\/+$/g, '');
+    }
+
+    function humanizeTrailSlug(value){
+      const slug = normalizeTrailSlug(value);
+      if(!slug){
+        return '';
+      }
+      return slug
+        .replace(/[_-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    function resolveFocusTrailConfig(){
+      const body = document.body || {};
+      const bodySlug = normalizeTrailSlug(body.dataset && body.dataset.focusTrail);
+      const bodyName = (body.dataset && body.dataset.focusTrailName ? String(body.dataset.focusTrailName).trim() : '');
+      if(bodySlug){
+        return { slug: bodySlug, name: bodyName };
+      }
+      const match = window.location.pathname.match(/^\/(?:fr\/)?trails\/([^/]+)\/?$/i);
+      if(!match){
+        return null;
+      }
+      return {
+        slug: normalizeTrailSlug(decodeURIComponent(match[1] || '')),
+        name: ''
+      };
+    }
+
+    function updateBreadcrumbForTrail(trail){
+      const longTrailsItem = document.getElementById('breadcrumbLongTrailsItem');
+      const trailItem = document.getElementById('breadcrumbTrailItem');
+      const trailText = document.getElementById('breadcrumbTrailText');
+      if(!longTrailsItem || !trailItem || !trailText){
+        return;
+      }
+      const longTrailsRoot = window.location.pathname.startsWith('/fr/') ? '/fr/long-trails/' : '/long-trails/';
+      if(trail){
+        longTrailsItem.removeAttribute('aria-current');
+        longTrailsItem.innerHTML = `<a href="${longTrailsRoot}">Long Trails</a>`;
+        trailText.textContent = trail.name || focusTrailName || humanizeTrailSlug(focusTrailSlug) || 'Trail';
+        trailItem.hidden = false;
+      }else{
+        longTrailsItem.setAttribute('aria-current', 'page');
+        longTrailsItem.textContent = 'Long Trails';
+        trailText.textContent = '';
+        trailItem.hidden = true;
+      }
+    }
+
+    function updateHeaderForTrail(trail){
+      const heading = document.getElementById('longTrailsHeading');
+      const subheading = document.getElementById('longTrailsSubheading');
+      const hint = document.getElementById('longTrailsHint');
+      const listTitle = document.querySelector('.trail-directory-title');
+      if(!heading || !subheading || !hint){
+        return;
+      }
+      if(trail){
+        const trailLabel = trail.name || focusTrailName || humanizeTrailSlug(focusTrailSlug) || DEFAULT_TRAILS_HEADING;
+        heading.textContent = trailLabel;
+        subheading.textContent = `Explore ${trailLabel} with interactive map and section details.`;
+        hint.textContent = DEFAULT_TRAILS_HINT;
+        if(listTitle){
+          listTitle.textContent = `${trailLabel} segments`;
+        }
+      }else{
+        heading.textContent = DEFAULT_TRAILS_HEADING;
+        subheading.textContent = DEFAULT_TRAILS_SUBHEADING;
+        hint.textContent = DEFAULT_TRAILS_HINT;
+        if(listTitle){
+          listTitle.textContent = 'Trail segments';
+        }
+      }
+    }
 
     function createMap(){
-      map = L.map('map', {
-        zoomControl: true,
-        maxBounds: MAP_BOUNDS,
-        maxBoundsViscosity: 1.0
-      });
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd'
+      map = L.map('map', { zoomControl: true });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
       activeLayers.addTo(map);
       map.on('zoomend', () => {
@@ -1846,17 +1070,6 @@
     function hasGeneratedGeometry(section){
       const geometry = section && section.generated && section.generated.geometry;
       return Boolean(geometry && Array.isArray(geometry.coordinates) && geometry.coordinates.length > 1);
-    }
-
-    function trailHasTelemetry(trail){
-      return (trail.sections || []).some(section => hasGeneratedGeometry(section));
-    }
-
-    function trailDisplayColor(trail){
-      if(trailHasTelemetry(trail)){
-        return trail.color || '#4a9eff';
-      }
-      return '#9ca3af';
     }
 
     function getSectionGeometry(section){
@@ -2003,8 +1216,11 @@
       if(!container){
         return;
       }
+      const indexHeading = focusTrailSlug
+        ? `${focusTrailName || humanizeTrailSlug(focusTrailSlug) || 'Trail'} Sections Index`
+        : 'Trail Sections Index';
       if(!trails || trails.length === 0){
-        container.innerHTML = '<h2>Trail Sections Index</h2><p>No trails available.</p>';
+        container.innerHTML = `<h2>${indexHeading}</h2><p>No trails available.</p>`;
         return;
       }
       const trailHtml = trails.map(trail => {
@@ -2022,9 +1238,6 @@
         }
         if(lengthParts.length === 0){
           lengthParts.push('Length data pending');
-        }
-        if(trail.slug === 'appalachian-trail'){
-          lengthParts.push('Appalachian Trail (sometimes misspelled “Appalachain”)');
         }
         const sectionsHtml = (trail.sections || []).map(section => {
           const description = buildSeoSectionDescription(trail, section);
@@ -2047,7 +1260,7 @@
           </article>
         `;
       }).join('');
-      container.innerHTML = `<h2>Trail Sections Index</h2>${trailHtml}`;
+      container.innerHTML = `<h2>${indexHeading}</h2>${trailHtml}`;
     }
 
     function buildStructuredData(trails){
@@ -2086,7 +1299,7 @@
           trail.name,
           trail.shortName,
           formatJurisdictions(trail.jurisdictions),
-          trail.slug === 'appalachian-trail' ? 'Appalachain Trail' : null
+          trail.slug === 'appalachian-trail' ? 'Appalachian Trail' : null
         ].filter(Boolean).join(', ');
         return {
           "@type": "ListItem",
@@ -2168,7 +1381,7 @@
       const sourceTrails = trails && trails.length ? trails : trailData;
       // Always plot all start/endpoints for all trails
       (sourceTrails || []).forEach(trail => {
-        const color = trailDisplayColor(trail);
+        const color = trail.color || '#4a9eff';
         const endpoints = trail.endpoints || (trail.stats && trail.stats.endpoints);
         if(endpoints && endpoints.start && endpoints.end){
           const start = normalizePoint(endpoints.start);
@@ -2176,7 +1389,7 @@
           if(start && start.lat != null && start.lon != null){
             const marker = L.circleMarker([start.lat, start.lon], {
               radius: 8,
-              color: '#ffffff',
+              color,
               fillColor: color,
               fillOpacity: 1,
               weight: 2
@@ -2186,7 +1399,7 @@
           if(end && end.lat != null && end.lon != null){
             const marker = L.circleMarker([end.lat, end.lon], {
               radius: 8,
-              color: '#ffffff',
+              color,
               fillColor: color,
               fillOpacity: 1,
               weight: 2
@@ -2197,7 +1410,7 @@
       });
       // Plot filtered trails' sections as before
       (sourceTrails || []).forEach(trail => {
-        const color = trailDisplayColor(trail);
+        const color = trail.color || '#4a9eff';
         (trail.sections || []).forEach(section => {
           const geometry = getSectionGeometry(section);
           if(geometry){
@@ -2221,19 +1434,17 @@
           if(start && start.lat != null && start.lon != null){
             L.circleMarker([start.lat, start.lon], {
               radius: 5,
-              color: '#ffffff',
+              color,
               fillColor: color,
-              fillOpacity: 0.8,
-              weight: 2
+              fillOpacity: 0.8
             }).bindTooltip(`Start: ${start.name || ''}`.trim()).addTo(activeLayers);
           }
           if(end && end.lat != null && end.lon != null){
             L.circleMarker([end.lat, end.lon], {
               radius: 5,
-              color: '#ffffff',
+              color,
               fillColor: color,
-              fillOpacity: 0.8,
-              weight: 2
+              fillOpacity: 0.8
             }).bindTooltip(`End: ${end.name || ''}`.trim()).addTo(activeLayers);
           }
         });
@@ -2253,6 +1464,11 @@
         renderSectionDetails(null);
         fitBounds(globalBounds);
       }
+    }
+
+    function applyFocusTrailPresentation(trail){
+      updateBreadcrumbForTrail(trail);
+      updateHeaderForTrail(trail);
     }
 
     function buildSectionLink(trail, section){
@@ -2278,18 +1494,15 @@
       trails.forEach(trail => {
         const details = document.createElement('details');
         details.className = 'trail-details';
-        const displayColor = trailDisplayColor(trail);
-        const hasTelemetry = trailHasTelemetry(trail);
-        details.style.setProperty('--trail-color', displayColor);
+        details.style.setProperty('--trail-color', trail.color || '#4a9eff');
         details.open = false;
         details.dataset.trailSlug = trail.slug;
 
         const summary = document.createElement('summary');
         summary.className = 'trail-summary';
         summary.innerHTML = `
-          <span class="color-bar" style="--trail-color:${displayColor}"></span>
+          <span class="color-dot" style="background-color:${trail.color}"></span>
           <span class="trail-name">${trail.name}</span>
-          ${hasTelemetry ? '' : '<span class="telemetry-note">Telemetry Incomplete</span>'}
           <span class="trail-count">${trail.sections.length} sections</span>
         `;
         summary.addEventListener('click', () => {
@@ -2394,9 +1607,24 @@
           const response = await fetch(url);
           if(!response.ok) continue;
           const data = await response.json();
+          const trails = Array.isArray(data.trails) ? data.trails : [];
+          const totalSections = trails.reduce((sum, trail) => {
+            if(!Array.isArray(trail.sections)) return sum;
+            return sum + trail.sections.length;
+          }, 0);
+          if(!trails.length || totalSections === 0){
+            console.warn('Loaded trail data missing sections, trying fallback source:', url);
+            trackEvent('long_trails_sections_empty', {
+              source: url,
+              trailCount: trails.length,
+              sectionCount: totalSections
+            });
+            continue;
+          }
           trackEvent('long_trails_data_loaded', {
             source: url,
-            trailCount: Array.isArray(data.trails) ? data.trails.length : 0
+            trailCount: trails.length,
+            sectionCount: totalSections
           });
           return data;
         }catch(error){
@@ -2413,6 +1641,47 @@
       '/data/long-trails/generated'
     ];
 
+    const SECTIONS_FALLBACK_BASE_URLS = [
+      '../data/long-trails',
+      '/data/long-trails'
+    ];
+
+    const getTrailFallbackFiles = (trail) => {
+      const slug = trail.slug || '';
+      if(!slug) return [];
+      const candidates = [slug.replace(/-/g, '_'), slug];
+      return Array.from(new Set(candidates)).map((name) => `${name}.json`);
+    };
+
+    async function loadTrailFallbackSections(trail){
+      const files = getTrailFallbackFiles(trail);
+      for(const baseUrl of SECTIONS_FALLBACK_BASE_URLS){
+        for(const fileName of files){
+          const url = `${baseUrl}/${fileName}`;
+          try{
+            const response = await fetch(url);
+            if(!response.ok) continue;
+            const data = await response.json();
+            if(Array.isArray(data.sections) && data.sections.length){
+              trackEvent('long_trails_sections_fallback_loaded', {
+                trail: trail.slug,
+                source: url,
+                sectionCount: data.sections.length
+              });
+              return data.sections;
+            }
+          }catch(error){
+            console.warn('Unable to load fallback sections:', error);
+            trackEvent('long_trails_sections_fallback_error', {
+              trail: trail.slug,
+              source: url
+            });
+          }
+        }
+      }
+      return null;
+    }
+
     async function loadGeneratedTrail(trail){
       for(const baseUrl of GENERATED_BASE_URLS){
         const url = `${baseUrl}/${trail.slug}.sections.generated.json`;
@@ -2428,6 +1697,26 @@
         }
       }
       return null;
+    }
+
+    async function hydrateTrailSections(trails){
+      const trailsWithMissingSections = trails.filter((trail) => !Array.isArray(trail.sections) || !trail.sections.length);
+      const updates = trailsWithMissingSections.map(async (trail) => {
+        const fallbackSections = await loadTrailFallbackSections(trail);
+        if(fallbackSections){
+          trail.sections = fallbackSections;
+        }
+      });
+      await Promise.all(updates);
+      const totalSections = trails.reduce((sum, trail) => {
+        if(!Array.isArray(trail.sections)) return sum;
+        return sum + trail.sections.length;
+      }, 0);
+      return {
+        trailCount: trails.length,
+        missingSectionTrails: trailsWithMissingSections.length,
+        sectionCount: totalSections
+      };
     }
 
     async function mergeGeneratedTrails(trails){
@@ -2451,11 +1740,35 @@
 
     async function init(){
       createMap();
+      const focusConfig = resolveFocusTrailConfig();
+      focusTrailSlug = focusConfig && focusConfig.slug ? focusConfig.slug : '';
+      focusTrailName = focusConfig && focusConfig.name ? focusConfig.name : '';
+      window.addEventListener('resize', () => {
+        if(map){
+          map.invalidateSize();
+        }
+      });
       const data = await loadTrails();
-      trailData = data.trails || [];
-      globalBounds = data.bounds || null;
+      const allTrails = Array.isArray(data.trails) ? data.trails : [];
+      const matchedFocusTrail = focusTrailSlug
+        ? allTrails.find((trail) => normalizeTrailSlug(trail.slug) === focusTrailSlug)
+        : null;
+      if (matchedFocusTrail) {
+        if (focusTrailName && !matchedFocusTrail.name) {
+          matchedFocusTrail.name = focusTrailName;
+        }
+        trailData = [matchedFocusTrail];
+        globalBounds = matchedFocusTrail.bounds || data.bounds || null;
+      } else {
+        trailData = allTrails;
+        globalBounds = data.bounds || null;
+      }
+
+      const sectionStats = await hydrateTrailSections(trailData);
+      trackEvent('long_trails_sections_checked', sectionStats);
 
       await mergeGeneratedTrails(trailData);
+      applyFocusTrailPresentation(matchedFocusTrail || null);
 
       renderAllTrails();
       buildSeoTrailIndex(trailData);

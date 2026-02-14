@@ -8,6 +8,7 @@ const ROOT = path.resolve(__dirname, '..');
 const DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
 const RANGES_DATA_PATH = path.join(ROOT, 'data', 'wmnf-ranges.json');
 const PLANTS_PATH = path.join(ROOT, 'data', 'howker-plants');
+const LONG_TRAILS_INDEX_PATH = path.join(ROOT, 'data', 'long-trails-index.json');
 const SITEMAP_INDEX_OUTPUT = path.join(ROOT, 'sitemap.xml');
 const PAGE_SITEMAP_OUTPUT = path.join(ROOT, 'page-sitemap.xml');
 const IMAGE_SITEMAP_OUTPUT = path.join(ROOT, 'image-sitemap.xml');
@@ -449,22 +450,23 @@ const readJsonFile = (filePath, label) => {
 const data = readJsonFile(DATA_PATH, 'data');
 const rangesData = readJsonFile(RANGES_DATA_PATH, 'range data');
 const plantData = readJsonFile(PLANTS_PATH, 'plant data');
+const longTrailsIndexData = readJsonFile(LONG_TRAILS_INDEX_PATH, 'long trails index');
 
-// Normalize strings for web output. Fixes common mojibake (â€” → —, etc.)
-// and replaces em/en dashes with a simple hyphen for XML.
+// Normalize strings for web output and repair common mojibake.
 const normalizeTextForWeb = (input) => {
   if (!input) return '';
   let s = String(input);
-  // Fix UTF-8 / Windows-1252 mixups
+  try {
+    if (/[\u00C3\u00C2\u00E2]/.test(s)) {
+      s = Buffer.from(s, 'latin1').toString('utf8');
+    }
+  } catch (error) {
+    // Keep original text if repair fails.
+  }
   s = s
-    .replace(/â€”/g, '—')
-    .replace(/â€“/g, '–')
-    .replace(/â€˜|â€™/g, "'")
-    .replace(/â€œ|â€�/g, '"')
-    .replace(/Â/g, '');
-  // Normalize dashes
-  s = s.replace(/[—–]/g, ' - ');
-  // Collapse whitespace
+    .replace(/\u2018|\u2019/g, "'")
+    .replace(/\u201C|\u201D/g, '"')
+    .replace(/\u2013|\u2014/g, ' - ');
   return s.replace(/\s+/g, ' ').trim();
 };
 
@@ -503,6 +505,38 @@ function isSlugLike(value) {
   return /^[a-z0-9]+([_-][a-z0-9]+)+$/i.test(s);
 }
 
+function normalizeTrailSlug(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/^\/+|\/+$/g, '');
+}
+
+function resolveTrailSectionCount(trail) {
+  if (!trail || typeof trail !== 'object') return 0;
+  const direct = Number(trail.sectionCount || trail.section_count || trail.sectionsCount);
+  if (Number.isFinite(direct) && direct > 0) return direct;
+  const statsCount = Number(trail.stats?.sectionCount || trail.stats?.sectionsCount);
+  if (Number.isFinite(statsCount) && statsCount > 0) return statsCount;
+  if (Array.isArray(trail.sections)) return trail.sections.length;
+  return 0;
+}
+
+function collectLongTrailSlugs() {
+  const source = Array.isArray(longTrailsIndexData?.trails) ? longTrailsIndexData.trails : [];
+  const seen = new Set();
+  const slugs = [];
+  source.forEach((trail) => {
+    const slug = normalizeTrailSlug(trail?.slug || trail?.id);
+    if (!slug || seen.has(slug)) return;
+    if (!/^[a-z0-9][a-z0-9_-]*[a-z0-9]$/.test(slug)) return;
+    if (resolveTrailSectionCount(trail) <= 0) return;
+    seen.add(slug);
+    slugs.push(slug);
+  });
+  return slugs;
+}
+
 function formatCameraBits(photo) {
   const bits = [];
   const cam = pickFirstNonEmpty(photo.cameraModel, photo.camera);
@@ -517,7 +551,7 @@ function formatCameraBits(photo) {
   if (fstop) bits.push(`f/${String(fstop).replace(/^f\//, '')}`);
   if (ss) bits.push(ss);
   if (iso) bits.push(`ISO ${iso}`);
-  return bits.length ? bits.join(' • ') : '';
+  return bits.length ? bits.join(' " ') : '';
 }
 
 function formatDescriptorBits(photo) {
@@ -656,6 +690,7 @@ const dedupeImages = (images) => {
 
 const slugs = Object.keys(data).sort();
 const rangeSlugs = Object.keys(rangesData).sort();
+const longTrailSlugs = collectLongTrailSlugs();
 
 const buildPlantImageEntries = () => {
   const entries = [];
@@ -684,6 +719,17 @@ const buildPageSitemap = () => {
       priority: entry.priority,
     }),
   );
+  const longTrailLastmod = getGitLastmod('data/long-trails-index.json') || getGitLastmod('long-trails/index.html');
+  longTrailSlugs.forEach((slug) => {
+    urls.push({
+      loc: `https://nh48.info/trails/${slug}`,
+      lastmod: longTrailLastmod
+    });
+    urls.push({
+      loc: `https://nh48.info/fr/trails/${slug}`,
+      lastmod: longTrailLastmod
+    });
+  });
   slugs.forEach((slug) => {
     urls.push({
       loc: `${PEAK_BASE}/${slug}`,

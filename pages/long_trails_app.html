@@ -817,16 +817,17 @@
         </div>
       </div>
       <div class="header-text">
-        <h1>Long-Distance Trails</h1>
-        <p>Explore multi-day trail campaigns with interactive maps, filters, and section details.</p>
-        <p>Click a section to view details, then click "View section" for the full section page.</p>
+        <h1 id="longTrailsHeading">Long-Distance Trails</h1>
+        <p id="longTrailsSubheading">Explore multi-day trail campaigns with interactive maps, filters, and section details.</p>
+        <p id="longTrailsHint">Click a section to view details, then click "View section" for the full section page.</p>
       </div>
     </header>
 
     <nav class="page-breadcrumbs" aria-label="Breadcrumb">
       <ol>
         <li><a href="/">Home</a></li>
-        <li>Long Trails</li>
+        <li id="breadcrumbLongTrailsItem" aria-current="page">Long Trails</li>
+        <li id="breadcrumbTrailItem" hidden><span id="breadcrumbTrailText" aria-current="page"></span></li>
       </ol>
     </nav>
   </div>
@@ -863,6 +864,94 @@
       maxLat: 49.5,
       maxLon: -66.9
     };
+    const DEFAULT_TRAILS_HEADING = 'Long-Distance Trails';
+    const DEFAULT_TRAILS_SUBHEADING = 'Explore multi-day trail campaigns with interactive maps, filters, and section details.';
+    const DEFAULT_TRAILS_HINT = 'Click a section to view details, then click "View section" for the full section page.';
+    let focusTrailSlug = '';
+    let focusTrailName = '';
+
+    function normalizeTrailSlug(value){
+      return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/^\/+|\/+$/g, '');
+    }
+
+    function humanizeTrailSlug(value){
+      const slug = normalizeTrailSlug(value);
+      if(!slug){
+        return '';
+      }
+      return slug
+        .replace(/[_-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    function resolveFocusTrailConfig(){
+      const body = document.body || {};
+      const bodySlug = normalizeTrailSlug(body.dataset && body.dataset.focusTrail);
+      const bodyName = (body.dataset && body.dataset.focusTrailName ? String(body.dataset.focusTrailName).trim() : '');
+      if(bodySlug){
+        return { slug: bodySlug, name: bodyName };
+      }
+      const match = window.location.pathname.match(/^\/(?:fr\/)?trails\/([^/]+)\/?$/i);
+      if(!match){
+        return null;
+      }
+      return {
+        slug: normalizeTrailSlug(decodeURIComponent(match[1] || '')),
+        name: ''
+      };
+    }
+
+    function updateBreadcrumbForTrail(trail){
+      const longTrailsItem = document.getElementById('breadcrumbLongTrailsItem');
+      const trailItem = document.getElementById('breadcrumbTrailItem');
+      const trailText = document.getElementById('breadcrumbTrailText');
+      if(!longTrailsItem || !trailItem || !trailText){
+        return;
+      }
+      const longTrailsRoot = window.location.pathname.startsWith('/fr/') ? '/fr/long-trails/' : '/long-trails/';
+      if(trail){
+        longTrailsItem.removeAttribute('aria-current');
+        longTrailsItem.innerHTML = `<a href="${longTrailsRoot}">Long Trails</a>`;
+        trailText.textContent = trail.name || focusTrailName || humanizeTrailSlug(focusTrailSlug) || 'Trail';
+        trailItem.hidden = false;
+      }else{
+        longTrailsItem.setAttribute('aria-current', 'page');
+        longTrailsItem.textContent = 'Long Trails';
+        trailText.textContent = '';
+        trailItem.hidden = true;
+      }
+    }
+
+    function updateHeaderForTrail(trail){
+      const heading = document.getElementById('longTrailsHeading');
+      const subheading = document.getElementById('longTrailsSubheading');
+      const hint = document.getElementById('longTrailsHint');
+      const listTitle = document.querySelector('.trail-directory-title');
+      if(!heading || !subheading || !hint){
+        return;
+      }
+      if(trail){
+        const trailLabel = trail.name || focusTrailName || humanizeTrailSlug(focusTrailSlug) || DEFAULT_TRAILS_HEADING;
+        heading.textContent = trailLabel;
+        subheading.textContent = `Explore ${trailLabel} with interactive map and section details.`;
+        hint.textContent = DEFAULT_TRAILS_HINT;
+        if(listTitle){
+          listTitle.textContent = `${trailLabel} segments`;
+        }
+      }else{
+        heading.textContent = DEFAULT_TRAILS_HEADING;
+        subheading.textContent = DEFAULT_TRAILS_SUBHEADING;
+        hint.textContent = DEFAULT_TRAILS_HINT;
+        if(listTitle){
+          listTitle.textContent = 'Trail segments';
+        }
+      }
+    }
 
     function createMap(){
       map = L.map('map', { zoomControl: true });
@@ -1127,8 +1216,11 @@
       if(!container){
         return;
       }
+      const indexHeading = focusTrailSlug
+        ? `${focusTrailName || humanizeTrailSlug(focusTrailSlug) || 'Trail'} Sections Index`
+        : 'Trail Sections Index';
       if(!trails || trails.length === 0){
-        container.innerHTML = '<h2>Trail Sections Index</h2><p>No trails available.</p>';
+        container.innerHTML = `<h2>${indexHeading}</h2><p>No trails available.</p>`;
         return;
       }
       const trailHtml = trails.map(trail => {
@@ -1146,9 +1238,6 @@
         }
         if(lengthParts.length === 0){
           lengthParts.push('Length data pending');
-        }
-        if(trail.slug === 'appalachian-trail'){
-          lengthParts.push('Appalachian Trail (sometimes misspelled “Appalachain”)');
         }
         const sectionsHtml = (trail.sections || []).map(section => {
           const description = buildSeoSectionDescription(trail, section);
@@ -1171,7 +1260,7 @@
           </article>
         `;
       }).join('');
-      container.innerHTML = `<h2>Trail Sections Index</h2>${trailHtml}`;
+      container.innerHTML = `<h2>${indexHeading}</h2>${trailHtml}`;
     }
 
     function buildStructuredData(trails){
@@ -1210,7 +1299,7 @@
           trail.name,
           trail.shortName,
           formatJurisdictions(trail.jurisdictions),
-          trail.slug === 'appalachian-trail' ? 'Appalachain Trail' : null
+          trail.slug === 'appalachian-trail' ? 'Appalachian Trail' : null
         ].filter(Boolean).join(', ');
         return {
           "@type": "ListItem",
@@ -1375,6 +1464,11 @@
         renderSectionDetails(null);
         fitBounds(globalBounds);
       }
+    }
+
+    function applyFocusTrailPresentation(trail){
+      updateBreadcrumbForTrail(trail);
+      updateHeaderForTrail(trail);
     }
 
     function buildSectionLink(trail, section){
@@ -1556,9 +1650,6 @@
       const slug = trail.slug || '';
       if(!slug) return [];
       const candidates = [slug.replace(/-/g, '_'), slug];
-      if(slug === 'appalachian-trail'){
-        candidates.push('appalachain_trail');
-      }
       return Array.from(new Set(candidates)).map((name) => `${name}.json`);
     };
 
@@ -1649,19 +1740,35 @@
 
     async function init(){
       createMap();
+      const focusConfig = resolveFocusTrailConfig();
+      focusTrailSlug = focusConfig && focusConfig.slug ? focusConfig.slug : '';
+      focusTrailName = focusConfig && focusConfig.name ? focusConfig.name : '';
       window.addEventListener('resize', () => {
         if(map){
           map.invalidateSize();
         }
       });
       const data = await loadTrails();
-      trailData = data.trails || [];
-      globalBounds = data.bounds || null;
+      const allTrails = Array.isArray(data.trails) ? data.trails : [];
+      const matchedFocusTrail = focusTrailSlug
+        ? allTrails.find((trail) => normalizeTrailSlug(trail.slug) === focusTrailSlug)
+        : null;
+      if (matchedFocusTrail) {
+        if (focusTrailName && !matchedFocusTrail.name) {
+          matchedFocusTrail.name = focusTrailName;
+        }
+        trailData = [matchedFocusTrail];
+        globalBounds = matchedFocusTrail.bounds || data.bounds || null;
+      } else {
+        trailData = allTrails;
+        globalBounds = data.bounds || null;
+      }
 
       const sectionStats = await hydrateTrailSections(trailData);
       trackEvent('long_trails_sections_checked', sectionStats);
 
       await mergeGeneratedTrails(trailData);
+      applyFocusTrailPresentation(matchedFocusTrail || null);
 
       renderAllTrails();
       buildSeoTrailIndex(trailData);

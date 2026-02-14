@@ -51,21 +51,10 @@ function hasSeoGallery(html) {
   return /class=["'][^"']*seo-gallery[^"']*["']/i.test(html);
 }
 
-function sectionPages() {
-  const trailsRoot = path.join(ROOT, 'trails');
-  const pages = [];
-  if (!fs.existsSync(trailsRoot)) return pages;
-
-  const trailSlugs = fs.readdirSync(trailsRoot, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
-  trailSlugs.forEach((trailSlug) => {
-    const sectionsDir = path.join(trailsRoot, trailSlug, 'sections');
-    if (!fs.existsSync(sectionsDir)) return;
-    const sectionSlugs = fs.readdirSync(sectionsDir, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
-    sectionSlugs.forEach((sectionSlug) => {
-      pages.push(path.join('trails', trailSlug, 'sections', sectionSlug, 'index.html'));
-    });
-  });
-  return pages;
+function hasBreadcrumbMicrodata(html) {
+  return /itemtype=["']https?:\/\/schema\.org\/BreadcrumbList["']/i.test(html)
+    || /itemprop=["']itemListElement["']/i.test(html)
+    || /itemprop=["']position["']/i.test(html);
 }
 
 function auditFile(filePath, requirements) {
@@ -89,23 +78,26 @@ function auditFile(filePath, requirements) {
   if (requirements.noSeoGallery && hasSeoGallery(html)) {
     problems.push('homepage seo-gallery block should be removed');
   }
+  if (requirements.noBreadcrumbMicrodata && hasBreadcrumbMicrodata(html)) {
+    problems.push('breadcrumb microdata should be removed from templates');
+  }
   return problems;
 }
 
 function main() {
   const checks = [
-    { file: 'index.html', types: ['BreadcrumbList'], visibleBreadcrumb: true, noSeoGallery: true },
-    { file: 'pages/index.html', types: [], visibleBreadcrumb: true, noSeoGallery: true },
-    { file: 'nh-4000-footers-guide.html', types: ['WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true },
-    { file: 'nh-4000-footers-info.html', types: ['BreadcrumbList', 'FAQPage'], visibleBreadcrumb: true },
-    { file: 'nh48-planner.html', types: ['WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true },
-    { file: 'range/index.html', types: ['WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true },
-    { file: 'photos/index.html', types: ['Collection', 'BreadcrumbList'], visibleBreadcrumb: true },
-    { file: 'dataset/index.html', types: ['DataCatalog', 'WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true },
-    { file: 'dataset/long-trails/index.html', types: ['Dataset', 'WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true },
-    { file: 'long-trails/index.html', types: ['Dataset', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true },
-    { file: 'trails/index.html', types: ['Dataset', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true },
-    { file: 'catalog.html', types: ['BreadcrumbList'], visibleBreadcrumb: false }
+    { file: 'index.html', types: [], visibleBreadcrumb: true, noSeoGallery: true, noBreadcrumbMicrodata: true },
+    { file: 'pages/index.html', types: [], visibleBreadcrumb: true, noSeoGallery: true, noBreadcrumbMicrodata: true },
+    { file: 'nh-4000-footers-guide.html', types: ['WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'nh-4000-footers-info.html', types: ['BreadcrumbList', 'FAQPage'], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'nh48-planner.html', types: ['WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'range/index.html', types: ['WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'photos/index.html', types: ['Collection', 'BreadcrumbList'], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'dataset/index.html', types: ['DataCatalog', 'WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'dataset/long-trails/index.html', types: ['Dataset', 'WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'long-trails/index.html', types: ['Dataset', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'trails/index.html', types: ['Dataset', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true, noBreadcrumbMicrodata: true },
+    { file: 'catalog.html', types: ['BreadcrumbList'], visibleBreadcrumb: false, noBreadcrumbMicrodata: true }
   ];
 
   const allFailures = [];
@@ -116,23 +108,14 @@ function main() {
     }
   });
 
-  sectionPages().forEach((filePath) => {
-    const problems = auditFile(filePath, {
-      types: ['WebPage', 'BreadcrumbList'],
-      visibleBreadcrumb: true
-    });
-    if (problems.length) {
-      allFailures.push({ file: filePath, problems });
-    }
-  });
-
   const i18nDir = path.join(ROOT, 'i18n');
   if (fs.existsSync(i18nDir)) {
     fs.readdirSync(i18nDir).filter((name) => name.endsWith('.html')).forEach((name) => {
       const filePath = path.join('i18n', name);
       const problems = auditFile(filePath, {
         types: ['BreadcrumbList'],
-        visibleBreadcrumb: false
+        visibleBreadcrumb: false,
+        noBreadcrumbMicrodata: true
       });
       if (problems.length) {
         allFailures.push({ file: filePath, problems });

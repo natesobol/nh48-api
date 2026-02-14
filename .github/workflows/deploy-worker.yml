@@ -6,7 +6,16 @@ on:
     paths:
       - 'worker.js'
       - 'wrangler.toml'
+      - 'scripts/audit-site-schema.js'
+      - 'scripts/audit-homepage-worker-seo.js'
+      - 'scripts/audit-worker-breadcrumbs.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-worker.yml'
   workflow_dispatch:  # Allow manual trigger
+
+permissions:
+  contents: read
 
 jobs:
   deploy:
@@ -21,19 +30,92 @@ jobs:
         with:
           node-version: 20
 
+      - name: Detect worker file changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            worker:
+              - 'worker.js'
+              - 'wrangler.toml'
+
+      - name: Decide deployment mode
+        id: deploy_mode
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ steps.changes.outputs.worker }}" == "true" ]]; then
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run schema audit (pre-deploy gate)
+        id: schema_audit
+        run: node scripts/audit-site-schema.js
+
       - name: Install Wrangler
+        if: steps.deploy_mode.outputs.should_deploy == 'true'
         run: npm install -g wrangler
 
       - name: Deploy to Cloudflare Workers
+        id: deploy_worker
+        if: steps.deploy_mode.outputs.should_deploy == 'true'
         run: wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-      - name: Deployment Summary
+      - name: Run production SEO audits with retry
+        id: production_audits
         run: |
-          echo "## Worker Deployed Successfully! :rocket:" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Worker:** nh48-ssr" >> $GITHUB_STEP_SUMMARY
-          echo "- **Route:** nh48.info/*" >> $GITHUB_STEP_SUMMARY
-          echo "- **Time:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+          set -euo pipefail
+          BASE_URL="https://nh48.info"
+          MAX_ATTEMPTS=6
+          DELAY_SECONDS=20
+          ATTEMPT=1
+
+          while true; do
+            echo "Audit attempt ${ATTEMPT}/${MAX_ATTEMPTS} against ${BASE_URL}"
+
+            set +e
+            node scripts/audit-homepage-worker-seo.js --url "${BASE_URL}"
+            HOMEPAGE_STATUS=$?
+            node scripts/audit-worker-breadcrumbs.js --url "${BASE_URL}"
+            BREADCRUMB_STATUS=$?
+            set -e
+
+            if [[ "${HOMEPAGE_STATUS}" -eq 0 && "${BREADCRUMB_STATUS}" -eq 0 ]]; then
+              echo "Production SEO audits passed."
+              break
+            fi
+
+            if [[ "${ATTEMPT}" -ge "${MAX_ATTEMPTS}" ]]; then
+              echo "Production SEO audits failed after ${MAX_ATTEMPTS} attempts."
+              exit 1
+            fi
+
+            ATTEMPT=$((ATTEMPT + 1))
+            echo "Audit failed (homepage=${HOMEPAGE_STATUS}, breadcrumbs=${BREADCRUMB_STATUS}). Retrying in ${DELAY_SECONDS}s..."
+            sleep "${DELAY_SECONDS}"
+          done
+
+      - name: Deployment Summary
+        if: always()
+        run: |
+          echo "## Worker Deploy + SEO Audit Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Target URL:** https://nh48.info" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Deploy requested:** \`${{ steps.deploy_mode.outputs.should_deploy }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Schema audit:** \`${{ steps.schema_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          if [[ "${{ steps.deploy_mode.outputs.should_deploy }}" == "true" ]]; then
+            echo "- **Deploy step outcome:** \`${{ steps.deploy_worker.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- **Deploy step outcome:** \`skipped\`" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "- **Production SEO audits:** \`${{ steps.production_audits.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Scripts executed" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-site-schema.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-homepage-worker-seo.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-worker-breadcrumbs.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Time (UTC):** $(date -u)" >> "$GITHUB_STEP_SUMMARY"
