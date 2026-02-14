@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="/favicons/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/x-icon" href="/favicons/favicon.ico" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>White Mountain Plant Disease Wiki</title>
+  <link rel="stylesheet" href="/css/wiki.css" />
+  <script src="/js/unified-footer.js" defer></script>
+</head>
+<body class="wiki-page-shell" data-wiki-kind="plant-disease">
+  <div id="nav-placeholder"></div>
+  <main class="wiki-wrap">
+    <nav class="wiki-breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">/</span>
+      <a href="/wiki">White Mountain Wiki</a>
+      <span class="sep">/</span>
+      <span>Plant Diseases</span>
+    </nav>
+
+    <header class="wiki-hero">
+      <span class="wiki-kicker">Forest Health Knowledge Base</span>
+      <h1>White Mountain Plant Disease Wiki</h1>
+      <p>
+        A structured visual reference for plant diseases, pests, and stand-condition threats across New Hampshire and
+        the White Mountains. Entries are grouped by causal-agent type and then by invasive status.
+      </p>
+      <div class="wiki-stats">
+        <div class="wiki-stat">
+          <span class="wiki-stat-value">{{PLANT_DISEASE_TOTAL_ENTRIES}}</span>
+          <span class="wiki-stat-label">Disease Entries</span>
+        </div>
+        <div class="wiki-stat">
+          <span class="wiki-stat-value">{{PLANT_DISEASE_AGENT_COUNT}}</span>
+          <span class="wiki-stat-label">Agent Categories</span>
+        </div>
+        <div class="wiki-stat">
+          <span class="wiki-stat-value">{{PLANT_DISEASE_INVASIVE_COUNT}}</span>
+          <span class="wiki-stat-label">Invasive Entries</span>
+        </div>
+        <div class="wiki-stat">
+          <span class="wiki-stat-value">{{PLANT_DISEASE_PHOTO_COUNT}}</span>
+          <span class="wiki-stat-label">Attached Photos</span>
+        </div>
+      </div>
+      <div class="wiki-controls">
+        <input
+          id="wikiDiseaseSearch"
+          class="wiki-search"
+          type="search"
+          placeholder="Filter diseases by name, host, agent, or status..."
+          aria-label="Filter plant disease entries"
+        />
+      </div>
+      <p class="wiki-updated">Last updated: <strong>{{PLANT_DISEASE_LAST_UPDATED}}</strong></p>
+    </header>
+
+    <section class="wiki-panel wiki-jump-panel">
+      <header class="wiki-panel-header">
+        <h2 class="wiki-panel-title">Jump by Agent Type</h2>
+      </header>
+      <div class="wiki-panel-body">
+        <div class="wiki-chip-row" id="wikiDiseaseJumpLinks">
+          {{PLANT_DISEASE_JUMP_LINKS}}
+        </div>
+      </div>
+    </section>
+
+    <section class="wiki-disease-hierarchy" id="wikiDiseaseHierarchy">
+      {{PLANT_DISEASE_GROUPS}}
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/js/wiki-plant-disease.js" defer></script>
+</body>
+</html>
+

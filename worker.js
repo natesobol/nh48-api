@@ -32,6 +32,7 @@ let wikiMountainSetsCache = null;
 let wikiMountainDataCache = new Map();
 let wikiPlantsCache = null;
 let wikiAnimalsCache = null;
+let wikiPlantDiseasesCache = null;
 
 export default {
   async fetch(request, env, ctx) {
@@ -74,6 +75,7 @@ export default {
     const RAW_WIKI_MOUNTAIN_SETS_URL = `${RAW_BASE}/data/wiki/mountain-sets.json`;
     const RAW_WIKI_PLANTS_URL = `${RAW_BASE}/data/wiki/plants.json`;
     const RAW_WIKI_ANIMALS_URL = `${RAW_BASE}/data/wiki/animals.json`;
+    const RAW_WIKI_PLANT_DISEASES_URL = `${RAW_BASE}/data/wiki/plant-disease.json`;
     const EN_TRANS_URL = `${RAW_BASE}/i18n/en.json`;
     const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
     const SITE_NAME = url.hostname;
@@ -1200,6 +1202,17 @@ export default {
       const payload = await loadJsonCache('wiki-animals', RAW_WIKI_ANIMALS_URL);
       wikiAnimalsCache = Array.isArray(payload) ? payload : [];
       return wikiAnimalsCache;
+    }
+
+    async function loadWikiPlantDiseases() {
+      if (wikiPlantDiseasesCache) return wikiPlantDiseasesCache;
+      const payload = await loadJsonCache('wiki-plant-diseases', RAW_WIKI_PLANT_DISEASES_URL);
+      const entries = Array.isArray(payload?.diseases) ? payload.diseases : [];
+      wikiPlantDiseasesCache = {
+        metadata: payload?.metadata && typeof payload.metadata === 'object' ? payload.metadata : {},
+        diseases: entries
+      };
+      return wikiPlantDiseasesCache;
     }
 
     function resolveWikiSpeciesEntry(entries, slug) {
@@ -2876,6 +2889,7 @@ export default {
       const mountainsLabel = taxonomyLabels.mountains?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Montagnes' : 'Mountains');
       const plantsLabel = taxonomyLabels.plants?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Plantes' : 'Plants');
       const animalsLabel = taxonomyLabels.animals?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Animaux' : 'Animals');
+      const plantDiseasesLabel = taxonomyLabels.plantDiseases?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Maladies des plantes' : 'Plant Diseases');
       const homeUrl = isFrench ? `${SITE}/fr/` : `${SITE}/`;
       const catalogUrl = isFrench ? `${SITE}/fr/catalog` : `${SITE}/catalog`;
       const datasetUrl = isFrench ? `${SITE}/fr/dataset` : `${SITE}/dataset`;
@@ -3004,6 +3018,11 @@ export default {
           push(wikiLabel, wikiUrl);
           push(animalsLabel, `${wikiUrl}#wikiPanelAnimals`);
           push(context.entryName || context.animalName || (isFrench ? 'Animal' : 'Animal'));
+          break;
+        case 'wiki-plant-disease':
+          push(homeLabel, homeUrl);
+          push(wikiLabel, wikiUrl);
+          push(plantDiseasesLabel, `${wikiUrl}#wikiPanelPlantDiseases`);
           break;
         case 'plant-map':
           withApiPrefix();
@@ -4402,10 +4421,11 @@ export default {
     }
 
     if (pathNoLocale === '/wiki' || pathNoLocale === '/wiki/') {
-      const [setRegistry, plants, animals] = await Promise.all([
+      const [setRegistry, plants, animals, plantDiseasesPayload] = await Promise.all([
         loadWikiMountainSets(),
         loadWikiPlants(),
-        loadWikiAnimals()
+        loadWikiAnimals(),
+        loadWikiPlantDiseases()
       ]);
       const [nh48Data, nh52Data] = await Promise.all([
         loadWikiMountainSetData('nh48', setRegistry?.nh48),
@@ -4441,6 +4461,14 @@ export default {
         Array.isArray(animals) ? animals.filter((entry) => normalizeSlug(entry?.slug || entry?.id)) : [],
         (entry) => entry.commonName || entry.scientificName || entry.slug || entry.id
       );
+      const diseaseEntries = sortByName(
+        Array.isArray(plantDiseasesPayload?.diseases)
+          ? plantDiseasesPayload.diseases
+            .map((entry) => ({ ...(entry || {}), slug: normalizeSlug(entry?.slug || entry?.id || entry?.name) }))
+            .filter((entry) => entry.slug)
+          : [],
+        (entry) => entry.name || entry.scientific_name || entry.slug
+      );
 
       const nh48LinksHtml = renderWikiLinks(
         nh48Entries,
@@ -4462,16 +4490,21 @@ export default {
         (slug) => `/wiki/animals/${encodeURIComponent(slug)}`,
         (entry) => `${entry.scientificName || ''}${entry.type ? ` - ${entry.type}` : ''}`
       );
+      const diseaseLinksHtml = renderWikiLinks(
+        diseaseEntries,
+        (slug) => `/wiki/plant-diseases#disease-${encodeURIComponent(slug)}`,
+        (entry) => `${entry.scientific_name || ''}${entry.agent_type ? ` - ${entry.agent_type}` : ''}`
+      );
 
       const countMedia = (entries) => entries.reduce(
         (sum, entry) => sum + normalizeWikiMedia(entry, entry.peakName || entry.commonName || '').length,
         0
       );
-      const photoCount = countMedia(nh48Entries) + countMedia(nh52Entries) + countMedia(plantEntries) + countMedia(animalEntries);
+      const photoCount = countMedia(nh48Entries) + countMedia(nh52Entries) + countMedia(plantEntries) + countMedia(animalEntries) + countMedia(diseaseEntries);
 
       const canonical = `${SITE}/wiki`;
       const title = 'White Mountain Visual Wiki';
-      const description = 'Visual field wiki for White Mountains datasets: NH48 peaks, NH52WAV mountains, plants, and animals.';
+      const description = 'Visual field wiki for White Mountains datasets: NH48 peaks, NH52WAV mountains, plants, plant diseases, and animals.';
 
       const itemListFromEntries = (id, name, entries, buildUrl, resolveName) => ({
         '@context': 'https://schema.org',
@@ -4516,6 +4549,13 @@ export default {
         (slug) => `/wiki/animals/${encodeURIComponent(slug)}`,
         (entry) => entry.commonName || entry.scientificName || entry.slug
       );
+      const listPlantDiseases = itemListFromEntries(
+        'wiki-list-plant-diseases',
+        'White Mountain Plant Diseases',
+        diseaseEntries,
+        (slug) => `/wiki/plant-diseases#disease-${encodeURIComponent(slug)}`,
+        (entry) => entry.name || entry.scientific_name || entry.slug
+      );
 
       const collectionPage = {
         '@context': 'https://schema.org',
@@ -4530,7 +4570,8 @@ export default {
           { '@id': listNh48['@id'] },
           { '@id': listNh52['@id'] },
           { '@id': listPlants['@id'] },
-          { '@id': listAnimals['@id'] }
+          { '@id': listAnimals['@id'] },
+          { '@id': listPlantDiseases['@id'] }
         ]
       };
 
@@ -4539,14 +4580,16 @@ export default {
         pathname,
         routeId: 'wiki-home',
         stripTemplateJsonLd: true,
-        bodyDataAttrs: {
-          wikiPhotoCount: String(photoCount)
-        },
         templateReplacements: {
           '{{WIKI_LINKS_NH48}}': nh48LinksHtml,
           '{{WIKI_LINKS_NH52WAV}}': nh52LinksHtml,
           '{{WIKI_LINKS_PLANTS}}': plantLinksHtml,
-          '{{WIKI_LINKS_ANIMALS}}': animalLinksHtml
+          '{{WIKI_LINKS_ANIMALS}}': animalLinksHtml,
+          '{{WIKI_LINKS_PLANT_DISEASES}}': diseaseLinksHtml
+        },
+        bodyDataAttrs: {
+          wikiPhotoCount: String(photoCount),
+          wikiDiseaseCount: String(diseaseEntries.length)
         },
         meta: {
           title,
@@ -4558,7 +4601,239 @@ export default {
           imageAlt: title,
           ogType: 'website'
         },
-        jsonLd: [collectionPage, listNh48, listNh52, listPlants, listAnimals]
+        jsonLd: [collectionPage, listNh48, listNh52, listPlants, listAnimals, listPlantDiseases]
+      });
+    }
+
+    if (pathNoLocale === '/wiki/plant-diseases' || pathNoLocale === '/wiki/plant-diseases/') {
+      const payload = await loadWikiPlantDiseases();
+      const diseaseEntries = Array.isArray(payload?.diseases)
+        ? payload.diseases
+          .map((entry) => ({ ...(entry || {}), slug: normalizeSlug(entry?.slug || entry?.id || entry?.name) }))
+          .filter((entry) => entry.slug)
+        : [];
+
+      if (!diseaseEntries.length) {
+        return new Response('<!doctype html><title>404 Not Found</title><h1>Plant disease wiki entries not found</h1>', {
+          status: 404,
+          headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        });
+      }
+
+      const canonical = `${SITE}/wiki/plant-diseases`;
+      const title = 'White Mountain Plant Disease Wiki';
+      const description = normalizeTextForWeb(
+        payload?.metadata?.description
+        || 'Extended wiki index of forest diseases, pests, and stand-condition threats affecting New Hampshire and the White Mountains.'
+      );
+      const lastUpdated = normalizeTextForWeb(payload?.metadata?.generated_on || payload?.metadata?.last_updated || '');
+
+      const toList = (value) => {
+        if (Array.isArray(value)) {
+          return value.map((item) => normalizeTextForWeb(item)).filter(Boolean);
+        }
+        const normalized = normalizeTextForWeb(value || '');
+        return normalized ? [normalized] : [];
+      };
+
+      const statusLabel = (entry) => {
+        const invasiveStatus = normalizeTextForWeb(entry?.invasive_status || '');
+        if (entry?.invasive === true) return 'Invasive / Introduced';
+        if (entry?.invasive === false) return 'Native / Non-invasive';
+        if (/invasive|introduced|novel/i.test(invasiveStatus)) return 'Invasive / Introduced';
+        if (/native|non-invasive|endemic/i.test(invasiveStatus)) return 'Native / Non-invasive';
+        return invasiveStatus || 'Status Unspecified';
+      };
+
+      const grouped = new Map();
+      diseaseEntries.forEach((entry) => {
+        const agent = normalizeTextForWeb(entry.agent_type || entry.agentType || 'Other Agents');
+        const status = statusLabel(entry);
+        if (!grouped.has(agent)) grouped.set(agent, new Map());
+        const byStatus = grouped.get(agent);
+        if (!byStatus.has(status)) byStatus.set(status, []);
+        byStatus.get(status).push(entry);
+      });
+
+      const sortedAgentEntries = Array.from(grouped.entries())
+        .map(([agent, statusMap]) => {
+          const sortedStatusEntries = Array.from(statusMap.entries())
+            .map(([status, entries]) => ({
+              status,
+              entries: entries.sort((a, b) => {
+                const nameA = normalizeTextForWeb(a.name || a.scientific_name || a.slug).toLowerCase();
+                const nameB = normalizeTextForWeb(b.name || b.scientific_name || b.slug).toLowerCase();
+                return nameA.localeCompare(nameB);
+              })
+            }))
+            .sort((a, b) => a.status.localeCompare(b.status));
+          return { agent, slug: normalizeSlug(agent), statusGroups: sortedStatusEntries };
+        })
+        .sort((a, b) => a.agent.localeCompare(b.agent));
+
+      const renderListValue = (value) => {
+        const list = toList(value);
+        if (!list.length) return '<span class="wiki-value-muted">Not specified</span>';
+        if (list.length === 1) return esc(list[0]);
+        return `<ul class="wiki-bullet-list">${list.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>`;
+      };
+
+      const renderDiseaseCard = (entry) => {
+        const diseaseName = normalizeTextForWeb(entry.name || humanizeSlug(entry.slug));
+        const scientificName = normalizeTextForWeb(entry.scientific_name || '');
+        const cardMedia = normalizeWikiMedia(entry, diseaseName);
+        const thumb = cardMedia[0] || null;
+        const categoryText = [diseaseName, scientificName, entry.agent_type, statusLabel(entry), ...(toList(entry.hosts))].join(' ');
+
+        return [
+          `<article class="wiki-disease-card" id="disease-${esc(entry.slug)}" data-search="${esc(categoryText)}">`,
+          '<header class="wiki-disease-card-header">',
+          '<div class="wiki-disease-title-wrap">',
+          `<h4 class="wiki-disease-card-title">${esc(diseaseName)}</h4>`,
+          scientificName ? `<p class="wiki-disease-scientific">${esc(scientificName)}</p>` : '',
+          '</div>',
+          '<div class="wiki-chip-row">',
+          `<span class="wiki-chip">${esc(normalizeTextForWeb(entry.agent_type || 'Agent unspecified'))}</span>`,
+          `<span class="wiki-chip">${esc(statusLabel(entry))}</span>`,
+          '</div>',
+          '</header>',
+          thumb ? `<img class="wiki-disease-thumb" src="${esc(thumb.url)}" alt="${esc(thumb.alt || diseaseName)}" loading="lazy" decoding="async">` : '',
+          '<div class="wiki-data-grid">',
+          `<div class="wiki-row"><div class="wiki-label">Hosts</div><div class="wiki-value">${renderListValue(entry.hosts)}</div></div>`,
+          `<div class="wiki-row"><div class="wiki-label">Symptoms</div><div class="wiki-value">${renderListValue(entry.symptoms)}</div></div>`,
+          `<div class="wiki-row"><div class="wiki-label">Typical Impact</div><div class="wiki-value">${renderListValue(entry.typical_impact)}</div></div>`,
+          `<div class="wiki-row"><div class="wiki-label">Distribution</div><div class="wiki-value">${renderListValue(entry.distribution)}</div></div>`,
+          `<div class="wiki-row"><div class="wiki-label">Management</div><div class="wiki-value">${renderListValue(entry.management)}</div></div>`,
+          `<div class="wiki-row"><div class="wiki-label">Ecological Impacts</div><div class="wiki-value">${renderListValue(entry.ecological_impacts)}</div></div>`,
+          `<div class="wiki-row"><div class="wiki-label">Data Sources</div><div class="wiki-value">${renderListValue(entry.data_sources)}</div></div>`,
+          '</div>',
+          '</article>'
+        ].join('');
+      };
+
+      const groupsHtml = sortedAgentEntries.map((agentGroup) => {
+        const totalInAgent = agentGroup.statusGroups.reduce((sum, group) => sum + group.entries.length, 0);
+        const statusBlocks = agentGroup.statusGroups.map((statusGroup) => [
+          '<section class="wiki-disease-status-block">',
+          `<h3 class="wiki-disease-status-title">${esc(statusGroup.status)} <span>${statusGroup.entries.length}</span></h3>`,
+          '<div class="wiki-disease-cards">',
+          statusGroup.entries.map((entry) => renderDiseaseCard(entry)).join('\n'),
+          '</div>',
+          '</section>'
+        ].join('')).join('\n');
+
+        return [
+          `<article class="wiki-panel wiki-disease-group-panel" id="agent-${esc(agentGroup.slug)}">`,
+          '<header class="wiki-panel-header">',
+          `<h2 class="wiki-panel-title">${esc(agentGroup.agent)}</h2>`,
+          `<span class="wiki-panel-count">${totalInAgent} entries</span>`,
+          '</header>',
+          '<div class="wiki-panel-body">',
+          '<div class="wiki-disease-status-grid">',
+          statusBlocks,
+          '</div>',
+          '</div>',
+          '</article>'
+        ].join('\n');
+      }).join('\n');
+
+      const jumpLinks = sortedAgentEntries
+        .map((group) => `<a class="wiki-chip wiki-jump-chip" href="#agent-${esc(group.slug)}">${esc(group.agent)}</a>`)
+        .join('\n');
+
+      const diseaseCount = diseaseEntries.length;
+      const invasiveCount = diseaseEntries.filter((entry) => entry.invasive === true).length;
+      const mediaCount = diseaseEntries.reduce((sum, entry) => sum + normalizeWikiMedia(entry, entry.name || entry.slug).length, 0);
+
+      const diseaseItemList = {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        '@id': `${canonical}#wiki-list-plant-diseases`,
+        name: 'White Mountain Plant Disease Directory',
+        itemListOrder: 'https://schema.org/ItemListOrderAscending',
+        numberOfItems: diseaseEntries.length,
+        itemListElement: diseaseEntries
+          .slice()
+          .sort((a, b) => normalizeTextForWeb(a.name || a.slug).localeCompare(normalizeTextForWeb(b.name || b.slug)))
+          .map((entry, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: normalizeTextForWeb(entry.name || entry.scientific_name || entry.slug),
+            item: `${canonical}#disease-${entry.slug}`
+          }))
+      };
+
+      const imageObjects = [];
+      diseaseEntries.forEach((entry) => {
+        const entryName = normalizeTextForWeb(entry.name || entry.scientific_name || entry.slug);
+        const media = normalizeWikiMedia(entry, entryName);
+        media.forEach((photo) => {
+          imageObjects.push({
+            '@context': 'https://schema.org',
+            '@type': 'ImageObject',
+            '@id': `${canonical}#wiki-image-${imageObjects.length + 1}`,
+            url: photo.url,
+            contentUrl: photo.contentUrl || photo.url,
+            name: normalizeTextForWeb(photo.title || `${entryName} photo`),
+            caption: normalizeTextForWeb(photo.caption || `${entryName} photo`),
+            description: normalizeTextForWeb(photo.caption || `${entryName} photo`),
+            inLanguage: 'en',
+            license: photo.license || RIGHTS_DEFAULTS.licenseUrl,
+            acquireLicensePage: RIGHTS_DEFAULTS.acquireLicensePageUrl,
+            creditText: photo.creditText || RIGHTS_DEFAULTS.creditText,
+            copyrightNotice: RIGHTS_DEFAULTS.copyrightNotice,
+            creator: {
+              '@type': 'Person',
+              name: RIGHTS_DEFAULTS.creatorName,
+              url: `${SITE}/about`
+            }
+          });
+        });
+      });
+
+      const collectionPageNode = {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        '@id': `${canonical}#webpage`,
+        url: canonical,
+        name: title,
+        description,
+        inLanguage: 'en',
+        isPartOf: { '@id': `${SITE}/#website` },
+        hasPart: [{ '@id': diseaseItemList['@id'] }]
+      };
+
+      return serveTemplatePage({
+        templatePath: 'pages/wiki/plant-disease.html',
+        pathname,
+        routeId: 'wiki-plant-disease',
+        stripTemplateJsonLd: true,
+        bodyDataAttrs: {
+          wikiDiseaseEntries: String(diseaseCount),
+          wikiDiseaseAgents: String(sortedAgentEntries.length),
+          wikiDiseaseInvasive: String(invasiveCount),
+          wikiDiseasePhotos: String(mediaCount)
+        },
+        templateReplacements: {
+          '{{PLANT_DISEASE_TOTAL_ENTRIES}}': esc(String(diseaseCount)),
+          '{{PLANT_DISEASE_AGENT_COUNT}}': esc(String(sortedAgentEntries.length)),
+          '{{PLANT_DISEASE_INVASIVE_COUNT}}': esc(String(invasiveCount)),
+          '{{PLANT_DISEASE_PHOTO_COUNT}}': esc(String(mediaCount)),
+          '{{PLANT_DISEASE_LAST_UPDATED}}': esc(lastUpdated || 'N/A'),
+          '{{PLANT_DISEASE_JUMP_LINKS}}': jumpLinks || '<span class="wiki-value-muted">No categories available.</span>',
+          '{{PLANT_DISEASE_GROUPS}}': groupsHtml
+        },
+        meta: {
+          title,
+          description,
+          canonical,
+          alternateEn: canonical,
+          alternateFr: `${SITE}/fr/wiki/plant-diseases`,
+          image: HOME_SOCIAL_IMAGE,
+          imageAlt: title,
+          ogType: 'article'
+        },
+        jsonLd: [collectionPageNode, diseaseItemList, ...imageObjects]
       });
     }
 

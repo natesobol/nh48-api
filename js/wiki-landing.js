@@ -23,15 +23,18 @@
     const nh52wav = states.nh52wav ? states.nh52wav.items.filter((item) => !item.hidden).length : 0;
     const plants = states.plants ? states.plants.items.filter((item) => !item.hidden).length : 0;
     const animals = states.animals ? states.animals.items.filter((item) => !item.hidden).length : 0;
+    const plantDiseases = states.plantDiseases ? states.plantDiseases.items.filter((item) => !item.hidden).length : 0;
     const mountains = nh48 + nh52wav;
 
     const statMountains = q('wikiStatMountains');
     const statPlants = q('wikiStatPlants');
     const statAnimals = q('wikiStatAnimals');
+    const statPlantDiseases = q('wikiStatPlantDiseases');
     const statPhotos = q('wikiStatPhotos');
     if (statMountains) statMountains.textContent = String(mountains);
     if (statPlants) statPlants.textContent = String(plants);
     if (statAnimals) statAnimals.textContent = String(animals);
+    if (statPlantDiseases) statPlantDiseases.textContent = String(plantDiseases);
     if (statPhotos) {
       const source = document.body.getAttribute('data-wiki-photo-count') || '0';
       statPhotos.textContent = String(toInt(source));
@@ -62,6 +65,7 @@
       nh48: collectPanelState('wikiPanelNh48', 'wikiListNh48', 'wikiCountNh48'),
       nh52wav: collectPanelState('wikiPanelNh52wav', 'wikiListNh52wav', 'wikiCountNh52wav'),
       plants: collectPanelState('wikiPanelPlants', 'wikiListPlants', 'wikiCountPlants'),
+      plantDiseases: collectPanelState('wikiPanelPlantDiseases', 'wikiListPlantDiseases', 'wikiCountPlantDiseases'),
       animals: collectPanelState('wikiPanelAnimals', 'wikiListAnimals', 'wikiCountAnimals')
     };
 
