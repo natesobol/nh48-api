@@ -1359,41 +1359,14 @@
         };
       })();
     </script>
-    <div id="nav-placeholder" class="no-print"></div>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const navPlaceholder = document.getElementById('nav-placeholder');
-        const activeRoute = document.body.dataset.route || document.body.dataset.page;
         const printBtn = document.getElementById('printBtn');
 
         if(printBtn){
           printBtn.addEventListener('click', () => {
             window.print();
           });
-        }
-
-        if (navPlaceholder) {
-          fetch('/pages/nav.html')
-            .then(response => response.text())
-            .then(html => {
-              navPlaceholder.innerHTML = html;
-              const links = navPlaceholder.querySelectorAll('.site-nav-links a');
-              links.forEach(link => {
-                const routes = (link.dataset.routes || link.dataset.route || '')
-                  .split(',')
-                  .map(value => value.trim())
-                  .filter(Boolean);
-
-                if (routes.includes(activeRoute)) {
-                  link.classList.add('active');
-                  link.setAttribute('aria-current', 'page');
-                }
-              });
-              if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
-                window.NH48_I18N.refreshLangPicker();
-              }
-            })
-            .catch(err => console.error('Failed to load navigation:', err));
         }
       });
     </script>
