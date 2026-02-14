@@ -31,6 +31,9 @@ export default {
     const HOWKER_ORIGIN = 'https://nh48.info';
     const RAW_TEMPLATE_URL = `${RAW_BASE}/pages/nh48_peak.html`;
     const RAW_CATALOG_URL = `${RAW_BASE}/catalog/index.html`;
+    const RAW_HOMEPAGE_TEMPLATE_URL = `${RAW_BASE}/pages/index.html`;
+    const RAW_SPLASH_MANIFEST_URL = `${RAW_BASE}/photos/backgrounds/manifest.json`;
+    const RAW_SPLASH_ALT_TEXT_URL = `${RAW_BASE}/photos/backgrounds/alt-text.json`;
     const RAW_NAV_URL = `${RAW_BASE}/pages/nav.html`;
     const RAW_FOOTER_URL = `${RAW_BASE}/pages/footer.html`;
     const RAW_BUILD_META_URL = `${RAW_BASE}/build-meta.json`;
@@ -1664,6 +1667,216 @@ export default {
       }
     }
 
+    function normalizeMediaText(value) {
+      if (typeof value !== 'string') return '';
+      return value.trim();
+    }
+
+    function decodeHtmlEntities(text) {
+      return String(text || '')
+        .replace(/&amp;/gi, '&')
+        .replace(/&quot;/gi, '"')
+        .replace(/&#39;/gi, "'")
+        .replace(/&lt;/gi, '<')
+        .replace(/&gt;/gi, '>')
+        .replace(/&nbsp;/gi, ' ');
+    }
+
+    function extractHtmlAttribute(tag, name) {
+      if (!tag || !name) return '';
+      const pattern = new RegExp(`${name}\\s*=\\s*(\"([^\"]*)\"|'([^']*)')`, 'i');
+      const match = tag.match(pattern);
+      if (!match) return '';
+      return normalizeMediaText(match[2] || match[3] || '');
+    }
+
+    function stripCloudflareImageTransform(rawUrl) {
+      if (!rawUrl) return '';
+      try {
+        const parsed = new URL(rawUrl);
+        const marker = '/cdn-cgi/image/';
+        const markerIndex = parsed.pathname.indexOf(marker);
+        if (markerIndex === -1) {
+          return parsed.toString();
+        }
+        const tail = parsed.pathname.slice(markerIndex + marker.length);
+        const slashIndex = tail.indexOf('/');
+        if (slashIndex === -1) {
+          return parsed.toString();
+        }
+        const originPath = tail.slice(slashIndex + 1);
+        return `${parsed.origin}/${originPath}`;
+      } catch (_) {
+        return rawUrl;
+      }
+    }
+
+    function buildCloudflareImageVariantUrl(rawUrl, { width = 1200, format = 'jpg' } = {}) {
+      const contentUrl = stripCloudflareImageTransform(rawUrl);
+      if (!contentUrl) return '';
+      try {
+        const parsed = new URL(contentUrl);
+        const widthVal = toPositiveInteger(width, 1200);
+        const fmt = normalizeMediaText(format) || 'jpg';
+        return `${parsed.origin}/cdn-cgi/image/format=${fmt},quality=85,width=${widthVal}${parsed.pathname}`;
+      } catch (_) {
+        return contentUrl;
+      }
+    }
+
+    function humanizeMediaName(value) {
+      if (!value) return 'NH48 image';
+      let input = String(value).trim();
+      try {
+        const parsed = new URL(input);
+        input = parsed.pathname.split('/').pop() || parsed.pathname || input;
+      } catch (_) {
+        const parts = input.split('/');
+        input = parts[parts.length - 1] || input;
+      }
+      const withoutExt = input.replace(/\.[^.]+$/, '');
+      const normalized = withoutExt.replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
+      if (!normalized) return 'NH48 image';
+      return normalized.replace(/\b\w/g, (ch) => ch.toUpperCase());
+    }
+
+    function extractHomepageCardMedia(templateHtml) {
+      if (typeof templateHtml !== 'string' || !templateHtml.trim()) {
+        return [];
+      }
+
+      const media = [];
+      const imageTagPattern = /<img\b[^>]*class\s*=\s*["'][^"']*\bdataset-card-image\b[^"']*["'][^>]*>/gi;
+      const imageTags = templateHtml.match(imageTagPattern) || [];
+
+      imageTags.forEach((tag) => {
+        const rawSrc = decodeHtmlEntities(extractHtmlAttribute(tag, 'src'));
+        if (!rawSrc) return;
+        const rawAlt = decodeHtmlEntities(extractHtmlAttribute(tag, 'alt'));
+        const contentUrl = stripCloudflareImageTransform(rawSrc);
+        const fallbackText = `Homepage card image: ${humanizeMediaName(contentUrl)}`;
+        const text = normalizeMediaText(rawAlt) || fallbackText;
+        media.push({
+          contentUrl,
+          url: buildCloudflareImageVariantUrl(contentUrl, { width: 1200, format: 'jpg' }),
+          name: text,
+          description: text,
+          caption: text
+        });
+      });
+
+      return media;
+    }
+
+    function buildSplashAltLookup(altPayload) {
+      const lookup = new Map();
+      const entries = Array.isArray(altPayload?.images) ? altPayload.images : [];
+
+      entries.forEach((entry) => {
+        if (!entry || typeof entry !== 'object') return;
+        const file = normalizeMediaText(entry.file).toLowerCase();
+        if (!file) return;
+        const normalized = {
+          title: normalizeMediaText(entry.title),
+          alt: normalizeMediaText(entry.alt),
+          description: normalizeMediaText(entry.description)
+        };
+        lookup.set(file, normalized);
+        const basename = file.split('/').pop();
+        if (basename && !lookup.has(basename)) {
+          lookup.set(basename, normalized);
+        }
+      });
+
+      return lookup;
+    }
+
+    function extractHomepageSplashMedia(manifestPayload, splashAltLookup) {
+      const entries = Array.isArray(manifestPayload) ? manifestPayload : [];
+      const media = [];
+
+      entries.forEach((entry) => {
+        const relativePath = normalizeMediaText(entry).replace(/^\/+/, '');
+        if (!relativePath || !/\.(png|jpe?g|webp)$/i.test(relativePath)) {
+          return;
+        }
+
+        const lowerPath = relativePath.toLowerCase();
+        const basename = lowerPath.split('/').pop();
+        const altMeta = splashAltLookup.get(lowerPath) || splashAltLookup.get(basename) || null;
+        const fallbackText = `Splash image: ${humanizeMediaName(relativePath)}`;
+        const caption = altMeta?.alt || altMeta?.description || fallbackText;
+        const name = altMeta?.title || caption;
+        const description = altMeta?.description || caption;
+        const contentUrl = `https://photos.nh48.info/${relativePath}`;
+
+        media.push({
+          contentUrl,
+          url: buildCloudflareImageVariantUrl(contentUrl, { width: 1200, format: 'jpg' }),
+          name,
+          description,
+          caption
+        });
+      });
+
+      return media;
+    }
+
+    function normalizeMediaUrlKey(value) {
+      if (!value) return '';
+      try {
+        return new URL(value).toString().toLowerCase();
+      } catch (_) {
+        return String(value).trim().toLowerCase();
+      }
+    }
+
+    function isGenericMediaText(value) {
+      return /^Homepage card image:|^Splash image:/i.test(normalizeMediaText(value));
+    }
+
+    function mergeHomepageMediaSources(...sources) {
+      const map = new Map();
+      const allItems = sources.flat().filter(Boolean);
+
+      allItems.forEach((item) => {
+        const contentUrl = stripCloudflareImageTransform(item.contentUrl || item.url || '');
+        if (!contentUrl) return;
+
+        const key = normalizeMediaUrlKey(contentUrl);
+        const candidate = {
+          contentUrl,
+          url: buildCloudflareImageVariantUrl(contentUrl, { width: 1200, format: 'jpg' }),
+          name: normalizeMediaText(item.name),
+          description: normalizeMediaText(item.description),
+          caption: normalizeMediaText(item.caption)
+        };
+
+        const fallbackText = humanizeMediaName(contentUrl);
+        if (!candidate.name) candidate.name = fallbackText;
+        if (!candidate.description) candidate.description = candidate.caption || candidate.name;
+        if (!candidate.caption) candidate.caption = candidate.description || candidate.name;
+
+        if (!map.has(key)) {
+          map.set(key, candidate);
+          return;
+        }
+
+        const current = map.get(key);
+        if (isGenericMediaText(current.name) && !isGenericMediaText(candidate.name)) {
+          current.name = candidate.name;
+        }
+        if (isGenericMediaText(current.description) && !isGenericMediaText(candidate.description)) {
+          current.description = candidate.description;
+        }
+        if (isGenericMediaText(current.caption) && !isGenericMediaText(candidate.caption)) {
+          current.caption = candidate.caption;
+        }
+      });
+
+      return Array.from(map.values());
+    }
+
     function getPrimaryPhoto(photos) {
       const list = Array.isArray(photos) ? photos : [];
       const normalized = list.map((photo) => (typeof photo === 'string' ? { url: photo } : photo)).filter((photo) => photo && photo.url);
@@ -2263,105 +2476,157 @@ export default {
       const description = isFrench
         ? 'NH48 API fournit des données ouvertes et structurées pour les 48 sommets de 4 000 pieds du New Hampshire. Explorez le catalogue, les sentiers et les photos.'
         : 'Complete the NH48 challenge: 48 peaks, ~350 miles, ~170,000 feet of elevation gain. Browse difficulty tiers, day trip groupings, and peak progression guides for New Hampshire\'s four-thousand-footers.';
-      const creativeWorks = await loadCreativeWorks();
-      const homepageFeaturedImages = [
+      const [creativeWorks, homepageTemplateHtml, splashManifestPayload, splashAltPayload] = await Promise.all([
+        loadCreativeWorks(),
+        loadTextCache('homepage:template', RAW_HOMEPAGE_TEMPLATE_URL),
+        loadJsonCache('homepage:splash-manifest', RAW_SPLASH_MANIFEST_URL),
+        loadJsonCache('homepage:splash-alt', RAW_SPLASH_ALT_TEXT_URL)
+      ]);
+      const homepageCardMedia = extractHomepageCardMedia(homepageTemplateHtml);
+      const splashAltLookup = buildSplashAltLookup(splashAltPayload);
+      const homepageSplashMedia = extractHomepageSplashMedia(splashManifestPayload, splashAltLookup);
+      const homepageMedia = mergeHomepageMediaSources(homepageCardMedia, homepageSplashMedia);
+      const homepageImageObjects = homepageMedia.map((media, index) => ({
+        '@context': 'https://schema.org',
+        '@type': 'ImageObject',
+        '@id': `${canonical}#homepage-image-${index + 1}`,
+        url: media.url,
+        contentUrl: media.contentUrl,
+        name: media.name,
+        description: media.description,
+        caption: media.caption,
+        inLanguage: isFrench ? 'fr' : 'en',
+        license: CATALOG_IMAGE_LICENSE_URL,
+        acquireLicensePage: RIGHTS_DEFAULTS.acquireLicensePageUrl,
+        creditText: RIGHTS_DEFAULTS.creditText,
+        copyrightNotice: RIGHTS_DEFAULTS.copyrightNotice,
+        creator: {
+          '@type': 'Person',
+          name: RIGHTS_DEFAULTS.creatorName,
+          url: `${SITE}/about`
+        }
+      }));
+      const homepageImageRefs = homepageImageObjects.map((image) => ({ '@id': image['@id'] }));
+      const homepagePrimaryImage = homepageImageObjects[0]?.url || HOME_SOCIAL_IMAGE;
+
+      const homepageDatasetDefinitions = [
         {
-          slug: 'bondcliff',
-          file: 'bondcliff__001.jpg',
-          name: 'Bondcliff ridgeline looking into the Pemigewasset Wilderness',
-          caption: 'Bondcliff ridgeline overlooking the Pemigewasset Wilderness and layered White Mountains.'
+          id: `${SITE}/#dataset-nh48-peaks`,
+          name: isFrench ? 'Jeu de donnees NH48 Peaks' : 'NH48 Peaks Dataset',
+          description: isFrench
+            ? 'Donnees structurees pour les 48 sommets de 4 000 pieds du New Hampshire.'
+            : 'Structured data for the 48 four-thousand-foot peaks in New Hampshire.',
+          url: `${SITE}/catalog`,
+          keywords: ['NH48', 'White Mountains', '4000 footers', 'peak metadata', 'photo metadata'],
+          distribution: [
+            { '@type': 'DataDownload', contentUrl: `${SITE}/data/nh48.json`, encodingFormat: 'application/json' },
+            { '@type': 'DataDownload', contentUrl: 'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/nh48.json', encodingFormat: 'application/json' },
+            { '@type': 'DataDownload', contentUrl: 'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/nh48.json', encodingFormat: 'application/json' }
+          ],
+          spatialCoverage: { '@type': 'Place', name: 'White Mountain National Forest' }
         },
         {
-          slug: 'bondcliff',
-          file: 'bondcliff__002.jpg',
-          name: 'Bondcliff summit drop-off and alpine ridgeline',
-          caption: 'Dramatic Bondcliff summit terrain along the Pemigewasset Loop.'
+          id: `${SITE}/#dataset-white-mountain-trails`,
+          name: isFrench ? 'Jeu de donnees des sentiers WMNF' : 'White Mountain Trails Dataset',
+          description: isFrench
+            ? 'Geometries et metadonnees des sentiers de la White Mountain National Forest.'
+            : 'Trail geometries and metadata for the White Mountain National Forest.',
+          url: `${SITE}/trails`,
+          keywords: ['WMNF trails', 'hiking trails', 'trail metadata', 'geospatial data'],
+          distribution: [
+            { '@type': 'DataDownload', contentUrl: `${SITE}/data/wmnf-trails/wmnf-main.json`, encodingFormat: 'application/json' },
+            { '@type': 'DataDownload', contentUrl: `${SITE}/data/trails_with_osm.json`, encodingFormat: 'application/json' }
+          ],
+          spatialCoverage: { '@type': 'Place', name: 'White Mountain National Forest' }
         },
         {
-          slug: 'galehead-mountain',
-          file: 'galehead-mountain__001.jpg',
-          name: 'Twin Range view from Galehead Mountain',
-          caption: 'Twin Range view from the wooded spur on Galehead Mountain.'
+          id: `${SITE}/#dataset-long-trails`,
+          name: isFrench ? 'Jeu de donnees des longs sentiers' : 'Long Trails Dataset',
+          description: isFrench
+            ? 'Routes de longue distance avec segments et metadonnees.'
+            : 'Long-distance hiking routes with segmented trail metadata.',
+          url: `${SITE}/long-trails`,
+          keywords: ['long trails', 'thru-hike routes', 'route metadata', 'distance trails'],
+          distribution: [
+            { '@type': 'DataDownload', contentUrl: `${SITE}/data/long-trails-index.json`, encodingFormat: 'application/json' },
+            { '@type': 'DataDownload', contentUrl: `${SITE}/data/long-trails-full.json`, encodingFormat: 'application/json' }
+          ],
+          spatialCoverage: { '@type': 'Place', name: 'North America' }
         },
         {
-          slug: 'galehead-mountain',
-          file: 'galehead-mountain__002.jpg',
-          name: 'Galehead Hut and valley from Galehead outlook',
-          caption: 'Galehead Hut and valley seen from the Galehead Mountain outlook.'
-        },
-        {
-          slug: 'middle-carter-mountain',
-          file: 'middle-carter-mountain__001.jpg',
-          name: 'Middle Carter crest toward Carter Dome',
-          caption: 'Forest crest route along Middle Carter Mountain toward Carter Dome.'
-        },
-        {
-          slug: 'mount-adams',
-          file: 'mount-adams__002.jpg',
-          name: 'Mount Adams alpine cone in the Presidential Range',
-          caption: 'Rocky alpine cone of Mount Adams above treeline in the Presidential Range.'
-        },
-        {
-          slug: 'mount-adams',
-          file: 'mount-adams__005.jpg',
-          name: 'Mount Adams summit boulders and Mount Madison backdrop',
-          caption: 'Summit boulders on Mount Adams with Mount Madison in the background.'
-        },
-        {
-          slug: 'mount-carrigain',
-          file: 'mount-carrigain__001.jpg',
-          name: 'Signal Ridge leading toward Mount Carrigain',
-          caption: 'Signal Ridge approach to Mount Carrigain and the summit fire tower.'
-        },
-        {
-          slug: 'mount-garfield',
-          file: 'mount-garfield__001.jpg',
-          name: 'Open ledges on Mount Garfield',
-          caption: 'Open ledges on Mount Garfield facing Franconia Ridge.'
-        },
-        {
-          slug: 'mount-lafayette',
-          file: 'mount-lafayette__002.jpg',
-          name: 'Franconia Ridge climb toward Mount Lafayette',
-          caption: 'Franconia Ridge trail climbing toward the Mount Lafayette summit cone.'
-        },
-        {
-          slug: 'mount-liberty',
-          file: 'mount-liberty__001.jpg',
-          name: 'Mount Liberty summit view toward Mount Flume',
-          caption: 'Summit view from Mount Liberty toward Mount Flume on Franconia Ridge.'
-        },
-        {
-          slug: 'mount-washington',
-          file: 'mount-washington__001.jpg',
-          name: 'Mount Washington observatory and summit buildings',
-          caption: 'Summit buildings and weather observatory atop Mount Washington.'
+          id: `${SITE}/#dataset-howker-plants`,
+          name: isFrench ? 'Jeu de donnees des plantes Howker' : 'Howker Ridge Plant Catalog Dataset',
+          description: isFrench
+            ? 'Observations de plantes alpines et subalpines sur Howker Ridge.'
+            : 'Alpine and subalpine plant observations from the Howker Ridge Trail.',
+          url: `${SITE}/plant-catalog`,
+          keywords: ['Howker Ridge plants', 'alpine flora', 'botanical dataset', 'plant catalog'],
+          distribution: [
+            { '@type': 'DataDownload', contentUrl: `${SITE}/data/howker-plants`, encodingFormat: 'application/json' }
+          ],
+          spatialCoverage: { '@type': 'Place', name: 'White Mountain National Forest' }
         }
       ];
-      const homepageFeaturedImageSchema = homepageFeaturedImages.map((image, index) => {
-        const contentUrl = `https://photos.nh48.info/${image.slug}/${image.file}`;
-        const url = `https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/${image.slug}/${image.file}`;
-        return {
-          '@context': 'https://schema.org',
-          '@type': 'ImageObject',
-          '@id': `${canonical}#featured-image-${index + 1}`,
-          url,
-          contentUrl,
-          name: image.name,
-          description: image.caption,
-          caption: image.caption,
-          inLanguage: isFrench ? 'fr' : 'en',
-          license: CATALOG_IMAGE_LICENSE_URL,
-          acquireLicensePage: RIGHTS_DEFAULTS.acquireLicensePageUrl,
-          creditText: RIGHTS_DEFAULTS.creditText,
-          copyrightNotice: RIGHTS_DEFAULTS.copyrightNotice,
-          creator: {
-            '@type': 'Person',
-            name: RIGHTS_DEFAULTS.creatorName,
-            url: `${SITE}/about`
-          }
-        };
-      });
+      const homepageDatasetNodes = homepageDatasetDefinitions.map((dataset) => ({
+        '@context': 'https://schema.org',
+        '@type': 'Dataset',
+        '@id': dataset.id,
+        name: dataset.name,
+        description: dataset.description,
+        url: dataset.url,
+        license: 'https://creativecommons.org/licenses/by/4.0/',
+        creator: { '@id': `${SITE}/#organization` },
+        publisher: { '@id': `${SITE}/#organization` },
+        isAccessibleForFree: true,
+        keywords: dataset.keywords,
+        distribution: dataset.distribution,
+        spatialCoverage: dataset.spatialCoverage
+      }));
+      const homepageDataCatalogNode = {
+        '@context': 'https://schema.org',
+        '@type': 'DataCatalog',
+        '@id': `${SITE}/#dataset-catalog`,
+        name: isFrench ? 'Catalogue de donnees NH48' : 'NH48 Data Catalog',
+        description: isFrench
+          ? 'Catalogue des donnees publiques NH48 pour les sommets, sentiers et plantes.'
+          : 'Catalog of public NH48 datasets for peaks, trails, and alpine plants.',
+        url: isFrench ? `${SITE}/fr/dataset` : `${SITE}/dataset`,
+        creator: { '@id': `${SITE}/#organization` },
+        dataset: homepageDatasetDefinitions.map((dataset) => ({ '@id': dataset.id }))
+      };
+      const homepageWebPageNode = {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        '@id': `${canonical}#homepage`,
+        url: canonical,
+        name: isFrench
+          ? 'NH48 API: donnees ouvertes pour les sommets de 4 000 pieds'
+          : 'NH48 API: Open data for New Hampshire\'s 4,000-foot peaks',
+        description,
+        inLanguage: isFrench ? 'fr' : 'en',
+        isPartOf: { '@id': `${SITE}/#website` },
+        hasPart: homepageDatasetDefinitions.map((dataset) => ({ '@id': dataset.id })),
+        primaryImageOfPage: homepageImageObjects.length ? { '@id': homepageImageObjects[0]['@id'] } : undefined
+      };
+      if (!homepageWebPageNode.primaryImageOfPage) {
+        delete homepageWebPageNode.primaryImageOfPage;
+      }
+      const homepageNavigationNode = {
+        '@context': 'https://schema.org',
+        '@type': 'SiteNavigationElement',
+        '@id': `${SITE}/#main-nav`,
+        name: isFrench
+          ? ['Accueil', 'Catalogue NH48', 'Sentiers White Mountain', 'Longs sentiers', 'Catalogue plantes Howker', 'Infos Howker Ridge']
+          : ['Home', 'NH48 Catalog', 'White Mountain Trails', 'Long Trails', 'Howker Plant Catalog', 'Howker Ridge Info'],
+        url: [
+          isFrench ? `${SITE}/fr/` : `${SITE}/`,
+          `${SITE}/catalog`,
+          `${SITE}/trails`,
+          `${SITE}/long-trails`,
+          `${SITE}/plant-catalog`,
+          `${SITE}/projects/hrt-info`
+        ]
+      };
       const homepageCreativeWork = buildCreativeWorkNode({
         entry: creativeWorks.index,
         fallbackType: 'CreativeWorkSeries',
@@ -2369,8 +2634,10 @@ export default {
         url: canonical,
         name: 'NH48pics Fine Art Collection',
         description: 'A curated series of fine-art photographs capturing the beauty of New Hampshire\'s 4,000-footers and alpine flora.',
-        thumbnailUrl: DEFAULT_IMAGE,
-        datePublished: '2024-01-01'
+        thumbnailUrl: homepagePrimaryImage,
+        associatedMedia: homepageImageRefs,
+        datePublished: '2024-01-01',
+        imageObjects: homepageImageObjects
       });
       const jsonLd = [
         {
@@ -2444,6 +2711,10 @@ export default {
           },
           inLanguage: ['en', 'fr']
         },
+        homepageWebPageNode,
+        homepageDataCatalogNode,
+        ...homepageDatasetNodes,
+        homepageNavigationNode,
         homepageCreativeWork,
         {
           '@context': 'https://schema.org',
@@ -2451,7 +2722,8 @@ export default {
           '@id': `${canonical}#breadcrumbs`,
           name: isFrench ? 'Fil d’ariane NH48' : 'NH48 API breadcrumb trail',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: isFrench ? 'Accueil' : 'Home', item: canonical }
+            { '@type': 'ListItem', position: 1, name: isFrench ? 'Accueil' : 'Home', item: isFrench ? `${SITE}/fr/` : `${SITE}/` },
+            { '@type': 'ListItem', position: 2, name: isFrench ? 'API NH48' : 'NH48 API', item: canonical }
           ]
         },
         {
@@ -2574,9 +2846,9 @@ export default {
             }
           ]
         }
-      ].concat(homepageFeaturedImageSchema);
+      ].concat(homepageImageObjects);
       return serveTemplatePage({
-        templatePath: isFrench ? 'i18n/fr.html' : 'pages/index.html',
+        templatePath: 'pages/index.html',
         pathname,
         routeId: 'home',
         meta: {
@@ -2585,7 +2857,7 @@ export default {
           canonical,
           alternateEn: `${SITE}/`,
           alternateFr: `${SITE}/fr/`,
-          image: HOME_SOCIAL_IMAGE,
+          image: homepagePrimaryImage,
           imageAlt: isFrench
             ? 'Bâtiments et observatoire météorologique au sommet du mont Washington'
             : 'Buildings and weather observatory atop Mount Washington in the White Mountains',

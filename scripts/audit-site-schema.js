@@ -47,6 +47,10 @@ function hasVisibleBreadcrumb(html) {
   return /aria-label=["']Breadcrumb["']/i.test(html) || /class=["'][^"']*breadcrumbs[^"']*["']/i.test(html);
 }
 
+function hasSeoGallery(html) {
+  return /class=["'][^"']*seo-gallery[^"']*["']/i.test(html);
+}
+
 function sectionPages() {
   const trailsRoot = path.join(ROOT, 'trails');
   const pages = [];
@@ -82,11 +86,16 @@ function auditFile(filePath, requirements) {
   if (requirements.visibleBreadcrumb && !hasVisibleBreadcrumb(html)) {
     problems.push('missing visible breadcrumb nav');
   }
+  if (requirements.noSeoGallery && hasSeoGallery(html)) {
+    problems.push('homepage seo-gallery block should be removed');
+  }
   return problems;
 }
 
 function main() {
   const checks = [
+    { file: 'index.html', types: ['BreadcrumbList'], visibleBreadcrumb: true, noSeoGallery: true },
+    { file: 'pages/index.html', types: [], visibleBreadcrumb: true, noSeoGallery: true },
     { file: 'nh-4000-footers-guide.html', types: ['WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true },
     { file: 'nh-4000-footers-info.html', types: ['BreadcrumbList', 'FAQPage'], visibleBreadcrumb: true },
     { file: 'nh48-planner.html', types: ['WebPage', 'BreadcrumbList', 'ImageObject'], visibleBreadcrumb: true },
