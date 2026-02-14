@@ -18,6 +18,10 @@
 let globalSchemaCache = null;
 let creativeWorksCache = null;
 let collectionsCache = null;
+let entityLinksCache = null;
+let breadcrumbTaxonomyCache = null;
+let rangeLookupCache = null;
+let peakExperiencesCache = null;
 
 export default {
   async fetch(request, env, ctx) {
@@ -41,12 +45,17 @@ export default {
     const RAW_FOOTER_URL = `${RAW_BASE}/pages/footer.html`;
     const RAW_BUILD_META_URL = `${RAW_BASE}/build-meta.json`;
     const RAW_MOUNTAIN_DESCRIPTIONS_URL = `${RAW_BASE}/data/nh48/mountain-descriptions.txt`;
-    const RAW_SAME_AS_URL = `${RAW_BASE}/data/sameAs.json`;
+    const RAW_SAME_AS_URL = `${RAW_BASE}/data/peak-sameas.json`;
+    const RAW_LEGACY_SAME_AS_URL = `${RAW_BASE}/data/sameAs.json`;
     const RAW_ORGANIZATION_URL = `${RAW_BASE}/data/organization.json`;
     const RAW_PERSON_URL = `${RAW_BASE}/data/person.json`;
     const RAW_WEBSITE_URL = `${RAW_BASE}/data/website.json`;
     const RAW_CREATIVEWORKS_URL = `${RAW_BASE}/data/creativeWorks.json`;
     const RAW_COLLECTIONS_URL = `${RAW_BASE}/data/collections.json`;
+    const RAW_ENTITY_LINKS_URL = `${RAW_BASE}/data/entity-links.json`;
+    const RAW_BREADCRUMB_TAXONOMY_URL = `${RAW_BASE}/data/breadcrumb-taxonomy.json`;
+    const RAW_WMNF_RANGES_URL = `${RAW_BASE}/data/wmnf-ranges.json`;
+    const RAW_PEAK_EXPERIENCES_EN_URL = `${RAW_BASE}/data/peak-experiences.en.json`;
     const EN_TRANS_URL = `${RAW_BASE}/i18n/en.json`;
     const FR_TRANS_URL = `${RAW_BASE}/i18n/fr.json`;
     const SITE_NAME = url.hostname;
@@ -670,6 +679,13 @@ export default {
       return Response.redirect(`${SITE}${targetPath}${url.search || ''}`, 301);
     }
 
+    const legacyPeakRoute = pathname.match(/^\/(fr\/)?peaks\/([^/?#]+)\/?$/i);
+    if (legacyPeakRoute) {
+      const localePrefix = legacyPeakRoute[1] ? 'fr/' : '';
+      const peakSlug = legacyPeakRoute[2];
+      return Response.redirect(`${SITE}/${localePrefix}peak/${encodeURIComponent(peakSlug)}${url.search || ''}`, 301);
+    }
+
     if (pathname === '/photos' || pathname === '/photos/') {
       const githubUrl = `${RAW_BASE}/photos/index.html`;
       try {
@@ -795,13 +811,11 @@ export default {
     // SSR ROUTE HANDLING - Dynamic pages with SEO metadata
     // ============================================================
 
-    // Determine if the route is French and extract the slug.  We
-    // support multiple patterns:
+    // Determine if the route is French and extract the slug. We support:
     //   /peak/{slug}, /fr/peak/{slug}
     //   /guest/{slug}, /fr/guest/{slug} (legacy)
-    //   /peaks/{slug}, /fr/peaks/{slug} (alternative)
-    // Find slug position - look for peak-related keywords
-    const peakKeywords = ['peak', 'peaks', 'guest'];
+    // /peaks/* is redirected to /peak/* before this block.
+    const peakKeywords = ['peak', 'guest'];
     let slugIdx = -1;
     let routeType = null;
 
@@ -826,6 +840,12 @@ export default {
       cf: { cacheTtl: 0, cacheEverything: false },
       headers: { 'User-Agent': 'NH48-SSR' }
     };
+
+    // Warm caches used by worker-side breadcrumb and schema generation.
+    await Promise.all([
+      loadBreadcrumbTaxonomy(),
+      loadEntityLinks()
+    ]);
 
     // ============================================================
     // HELPER FUNCTIONS
@@ -994,22 +1014,165 @@ export default {
       return await res.json();
     }
 
-    function ensureInstagramSameAs(node) {
+    function normalizeUrlArray(values) {
+      const out = [];
+      const seen = new Set();
+      const push = (value) => {
+        if (typeof value !== 'string') return;
+        const normalized = value.trim();
+        if (!normalized || seen.has(normalized)) return;
+        seen.add(normalized);
+        out.push(normalized);
+      };
+      if (Array.isArray(values)) values.forEach(push);
+      else push(values);
+      return out;
+    }
+
+    function mergeUrlArrays(...sources) {
+      const out = [];
+      const seen = new Set();
+      sources.forEach((source) => {
+        normalizeUrlArray(source).forEach((url) => {
+          if (seen.has(url)) return;
+          seen.add(url);
+          out.push(url);
+        });
+      });
+      return out;
+    }
+
+    function normalizeEntityCollection(values) {
+      if (!Array.isArray(values)) return [];
+      return values.filter((value) => {
+        if (typeof value === 'string') return value.trim().length > 0;
+        return value && typeof value === 'object';
+      });
+    }
+
+    function filterAuthorityUrl(url) {
+      if (typeof url !== 'string') return '';
+      const trimmed = url.trim();
+      if (!/^https?:\/\//i.test(trimmed)) return '';
+      if (/\/search\b|[?&](q|query|search)=/i.test(trimmed)) return '';
+      return trimmed;
+    }
+
+    function mergePeakSameAsSources(...sources) {
+      const merged = [];
+      const seen = new Set();
+      sources.forEach((source) => {
+        const list = Array.isArray(source) ? source : [source];
+        list.forEach((entry) => {
+          const normalized = filterAuthorityUrl(entry);
+          if (!normalized || seen.has(normalized)) return;
+          seen.add(normalized);
+          merged.push(normalized);
+        });
+      });
+      return merged;
+    }
+
+    function withEntityLinks(node, profile = null) {
       if (!node || typeof node !== 'object') return node;
-      const type = node['@type'];
-      const types = Array.isArray(type) ? type : [type];
-      if (!types.includes('Organization') && !types.includes('Person') && !types.includes('WebSite')) {
-        return node;
+      const sameAs = mergeUrlArrays(node.sameAs, profile?.sameAs, [INSTAGRAM_URL]);
+      const next = { ...node };
+      if (sameAs.length) {
+        next.sameAs = sameAs;
       }
-      const sameAs = Array.isArray(node.sameAs)
-        ? [...node.sameAs]
-        : node.sameAs
-          ? [node.sameAs]
-          : [];
-      if (!sameAs.includes(INSTAGRAM_URL)) {
-        sameAs.unshift(INSTAGRAM_URL);
+
+      const about = normalizeEntityCollection(profile?.about);
+      if (about.length) {
+        next.about = about;
       }
-      return { ...node, sameAs };
+
+      const mentions = normalizeEntityCollection(profile?.mentions);
+      if (mentions.length) {
+        next.mentions = mentions;
+      }
+
+      const knowsAbout = normalizeEntityCollection(profile?.knowsAbout);
+      if (knowsAbout.length) {
+        next.knowsAbout = knowsAbout;
+      }
+      return next;
+    }
+
+    async function loadEntityLinks() {
+      if (entityLinksCache) return entityLinksCache;
+      const data = await loadJsonCache('entity-links', RAW_ENTITY_LINKS_URL);
+      entityLinksCache = data && typeof data === 'object' ? data : {};
+      return entityLinksCache;
+    }
+
+    async function loadBreadcrumbTaxonomy() {
+      if (breadcrumbTaxonomyCache) return breadcrumbTaxonomyCache;
+      const data = await loadJsonCache('breadcrumb-taxonomy', RAW_BREADCRUMB_TAXONOMY_URL);
+      breadcrumbTaxonomyCache = data && typeof data === 'object' ? data : {};
+      return breadcrumbTaxonomyCache;
+    }
+
+    function normalizeRangeName(value) {
+      if (!value) return '';
+      return String(value)
+        .toLowerCase()
+        .replace(/[\u2013\u2014]/g, '-')
+        .replace(/[^\w\s-]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function extractPrimaryRangeName(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '';
+      const primary = raw.split(/[|/;,]/)[0] || raw;
+      const beforeDash = primary.split(/\s*-\s*/)[0] || primary;
+      return beforeDash.replace(/\.+$/, '').trim();
+    }
+
+    function slugifyRange(value) {
+      return String(value || '')
+        .toLowerCase()
+        .replace(/[\u2013\u2014]/g, '-')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    async function loadRangeLookup() {
+      if (rangeLookupCache) return rangeLookupCache;
+      const payload = await loadJsonCache('wmnf-ranges', RAW_WMNF_RANGES_URL);
+      const map = new Map();
+      const values = payload && typeof payload === 'object'
+        ? (Array.isArray(payload) ? payload : Object.values(payload))
+        : [];
+      values.forEach((entry) => {
+        if (!entry || typeof entry !== 'object') return;
+        const rangeName = String(entry.rangeName || entry.name || '').trim();
+        const rangeSlug = String(entry.slug || '').trim() || slugifyRange(rangeName);
+        if (!rangeName || !rangeSlug) return;
+        map.set(normalizeRangeName(rangeName), { rangeName, rangeSlug });
+      });
+      rangeLookupCache = map;
+      return rangeLookupCache;
+    }
+
+    async function resolveRangeContext(rangeValue) {
+      const primaryRange = extractPrimaryRangeName(rangeValue);
+      if (!primaryRange) return { rangeName: '', rangeSlug: '' };
+      const lookup = await loadRangeLookup();
+      const exact = lookup.get(normalizeRangeName(primaryRange));
+      if (exact) return { rangeName: exact.rangeName, rangeSlug: exact.rangeSlug };
+      return {
+        rangeName: primaryRange,
+        rangeSlug: slugifyRange(primaryRange)
+      };
+    }
+
+    async function loadPeakExperiencesEn() {
+      if (peakExperiencesCache) return peakExperiencesCache;
+      const payload = await loadJsonCache('peak-experiences-en', RAW_PEAK_EXPERIENCES_EN_URL);
+      peakExperiencesCache = payload && typeof payload === 'object' ? payload : {};
+      return peakExperiencesCache;
     }
 
     function collectJsonLdIds(block, ids) {
@@ -1040,10 +1203,11 @@ export default {
     async function loadGlobalSchemaNodes() {
       if (globalSchemaCache) return globalSchemaCache;
 
-      const [orgData, personData, websiteData] = await Promise.all([
+      const [orgData, personData, websiteData, entityLinks] = await Promise.all([
         loadJsonCache('schema:org', RAW_ORGANIZATION_URL),
         loadJsonCache('schema:person', RAW_PERSON_URL),
-        loadJsonCache('schema:website', RAW_WEBSITE_URL)
+        loadJsonCache('schema:website', RAW_WEBSITE_URL),
+        loadEntityLinks()
       ]);
 
       const fallbackOrganization = {
@@ -1088,9 +1252,9 @@ export default {
       };
 
       const nodes = [
-        ensureInstagramSameAs(orgData || fallbackOrganization),
-        ensureInstagramSameAs(personData || fallbackPerson),
-        ensureInstagramSameAs(websiteData || fallbackWebsite)
+        withEntityLinks(orgData || fallbackOrganization, entityLinks?.organization),
+        withEntityLinks(personData || fallbackPerson, entityLinks?.person),
+        withEntityLinks(websiteData || fallbackWebsite, entityLinks?.website)
       ].filter(Boolean);
 
       globalSchemaCache = nodes;
@@ -2113,14 +2277,24 @@ export default {
     function buildCanonicalBreadcrumbSchema({ routeId, canonicalUrl, context = {} }) {
       if (!routeId || !canonicalUrl) return null;
 
-      const homeLabel = isFrench ? 'Accueil' : 'Home';
-      const apiLabel = isFrench ? 'API NH48' : 'NH48 API';
+      const taxonomy = breadcrumbTaxonomyCache || {};
+      const taxonomyLabels = taxonomy.labels || {};
+      const strategies = taxonomy.strategies || {};
+      const defaultStrategy = typeof taxonomy.defaultStrategy === 'string' ? taxonomy.defaultStrategy : 'technical';
+      const routeStrategy = typeof strategies[routeId] === 'string' ? strategies[routeId] : defaultStrategy;
+
+      const homeLabel = taxonomyLabels.home?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'Accueil' : 'Home');
+      const apiLabel = taxonomyLabels.api?.[isFrench ? 'fr' : 'en'] || (isFrench ? 'API NH48' : 'NH48 API');
+      const whiteMountainsLabel = taxonomyLabels.whiteMountains?.[isFrench ? 'fr' : 'en'] || 'White Mountains';
       const homeUrl = isFrench ? `${SITE}/fr/` : `${SITE}/`;
       const catalogUrl = isFrench ? `${SITE}/fr/catalog` : `${SITE}/catalog`;
       const datasetUrl = isFrench ? `${SITE}/fr/dataset` : `${SITE}/dataset`;
       const trailsUrl = isFrench ? `${SITE}/fr/trails` : `${SITE}/trails`;
       const longTrailsUrl = isFrench ? `${SITE}/fr/long-trails` : `${SITE}/long-trails`;
       const plantCatalogUrl = isFrench ? `${SITE}/fr/plant-catalog` : `${SITE}/plant-catalog`;
+      const whiteMountainsHubUrl = isFrench
+        ? `${SITE}${taxonomy.paths?.whiteMountainsHubFr || '/fr/nh-4000-footers-info'}`
+        : `${SITE}${taxonomy.paths?.whiteMountainsHubEn || '/nh-4000-footers-info'}`;
       const items = [];
       const push = (name, item) => {
         if (!name) return;
@@ -2133,6 +2307,23 @@ export default {
         push(homeLabel, homeUrl);
         push(apiLabel, homeUrl);
       };
+
+      if (routeStrategy === 'geographic' && routeId === 'peak-detail') {
+        const rangeName = context.rangeName || extractPrimaryRangeName(context.rangeValue || '');
+        const rangeSlug = context.rangeSlug || slugifyRange(rangeName);
+        const rangeUrl = context.rangeUrl || (rangeSlug ? `${SITE}/range/${encodeURIComponent(rangeSlug)}/` : '');
+        push(homeLabel, homeUrl);
+        push(whiteMountainsLabel, whiteMountainsHubUrl);
+        if (rangeName) {
+          push(rangeName, rangeUrl || undefined);
+        }
+        push(context.peakName || (isFrench ? 'Sommet' : 'Peak'));
+        return buildBreadcrumbSchema({
+          canonicalUrl,
+          name: `${context.peakName || (isFrench ? 'Sommet' : 'Peak')} breadcrumb trail`,
+          items
+        });
+      }
 
       switch (routeId) {
         case 'home':
@@ -2489,11 +2680,11 @@ export default {
     async function serveCatalog() {
       const canonicalUrl = isFrench ? `${SITE}/fr/catalog` : `${SITE}/catalog`;
       const title = isFrench
-        ? 'Catalogue NH48 - Donnees et photos des sommets du New Hampshire'
-        : 'NH48 Peak Catalog - Data & photos for New Hampshire\'s 4000-footers';
+        ? 'Catalogue des sommets NH48 - Guides, photos et donnees'
+        : 'NH48 Peak Catalog - Guide-first list of New Hampshire\'s 4,000-footers';
       const description = isFrench
-        ? 'Parcourez le catalogue NH48 avec altitude, prominence, chaine, difficulte et vignettes photo pour les 48 sommets de 4 000 pieds du New Hampshire.'
-        : 'Browse the NH48 Peak Catalog with elevation, prominence, range, difficulty and photo thumbnails for all 48 four-thousand-foot peaks in New Hampshire.';
+        ? 'Parcourez les 48 sommets NH48 avec contexte de randonnee, niveau de difficulte, photos et acces secondaire aux donnees API.'
+        : 'Browse all 48 NH4K peaks with hiking context, difficulty, range groupings, and mountain photos, with developer API access available as a secondary option.';
       const altText = isFrench
         ? 'Apercu du catalogue NH48 avec photos et donnees des sommets.'
         : 'Preview of the NH48 Peak Catalog with peak photos and data.';
@@ -2502,7 +2693,12 @@ export default {
       const peakEntries = Array.isArray(peaks)
         ? peaks.map((peak, index) => [peak?.slug || `peak-${index + 1}`, peak])
         : Object.entries(peaks || {});
-      const sameAsLookup = await loadJsonCache('sameAs', RAW_SAME_AS_URL) || {};
+      const [sameAsLookup, legacySameAsLookup, entityLinks] = await Promise.all([
+        loadJsonCache('sameAs', RAW_SAME_AS_URL),
+        loadJsonCache('sameAs:legacy', RAW_LEGACY_SAME_AS_URL),
+        loadEntityLinks()
+      ]);
+      const peakAuthorityLinks = Array.isArray(entityLinks?.peakAuthorityLinks) ? entityLinks.peakAuthorityLinks : [];
 
       const imageObjects = [];
       const itemListElement = [];
@@ -2515,7 +2711,11 @@ export default {
           ? `${SITE}/fr/peak/${encodeURIComponent(peakSlug)}`
           : `${SITE}/peak/${encodeURIComponent(peakSlug)}`;
         const peakId = `${peakUrl}#mountain`;
-        const peakSameAs = Array.isArray(sameAsLookup?.[slug]) ? sameAsLookup[slug] : [];
+        const peakSameAs = mergePeakSameAsSources(
+          sameAsLookup?.[slug],
+          legacySameAsLookup?.[slug],
+          peakAuthorityLinks
+        );
         const primaryPhoto = getPrimaryPhoto(peak.photos);
 
         let imageId = '';
@@ -2781,16 +2981,17 @@ export default {
     if (isHomepage) {
       const canonical = isFrench ? `${SITE}/fr/` : `${SITE}/`;
       const title = isFrench
-        ? 'NH48 API - Donnees ouvertes pour les sommets de 4 000 pieds du New Hampshire'
-        : 'NH48 API - Open data for New Hampshire\'s 4,000-foot peaks';
+        ? 'NH48: Guides, photos et donnees des sommets de 4 000 pieds du New Hampshire'
+        : 'NH48: New Hampshire 4,000-Footers Guides, Photos, Routes, and Open Data';
       const description = isFrench
-        ? 'NH48 API fournit des donnees ouvertes et structurees pour les 48 sommets de 4 000 pieds du New Hampshire. Explorez le catalogue, les sentiers et les photos.'
-        : 'Complete the NH48 challenge: 48 peaks, ~350 miles, ~170,000 feet of elevation gain. Browse difficulty tiers, day trip groupings, and peak progression guides for New Hampshire\'s four-thousand-footers.';
-      const [creativeWorks, homepageTemplateHtml, splashManifestPayload, splashAltPayload] = await Promise.all([
+        ? 'Explorez les guides des 48 sommets NH, les photos, les routes et les donnees ouvertes pour planifier vos sorties dans les White Mountains.'
+        : 'Explore the full NH48 destination hub: 48 peak guides, route planning context, mountain photography, and open datasets for New Hampshire\'s four-thousand-footers.';
+      const [creativeWorks, homepageTemplateHtml, splashManifestPayload, splashAltPayload, entityLinks] = await Promise.all([
         loadCreativeWorks(),
         loadTextCache('homepage:template', RAW_HOMEPAGE_TEMPLATE_URL),
         loadJsonCache('homepage:splash-manifest', RAW_SPLASH_MANIFEST_URL),
-        loadJsonCache('homepage:splash-alt', RAW_SPLASH_ALT_TEXT_URL)
+        loadJsonCache('homepage:splash-alt', RAW_SPLASH_ALT_TEXT_URL),
+        loadEntityLinks()
       ]);
       const homepageCardMedia = extractHomepageCardMedia(homepageTemplateHtml);
       const splashAltLookup = buildSplashAltLookup(splashAltPayload);
@@ -2896,10 +3097,10 @@ export default {
         '@context': 'https://schema.org',
         '@type': 'DataCatalog',
         '@id': `${SITE}/#dataset-catalog`,
-        name: isFrench ? 'Catalogue de donnees NH48' : 'NH48 Data Catalog',
+        name: isFrench ? 'Catalogue NH48 guides + donnees' : 'NH48 Guides and Data Catalog',
         description: isFrench
-          ? 'Catalogue des donnees publiques NH48 pour les sommets, sentiers et plantes.'
-          : 'Catalog of public NH48 datasets for peaks, trails, and alpine plants.',
+          ? 'Catalogue des guides NH48 et des donnees publiques sur les sommets, sentiers et plantes alpines.'
+          : 'Catalog of NH48 hiking guides plus public datasets for peaks, trails, and alpine plants.',
         url: isFrench ? `${SITE}/fr/dataset` : `${SITE}/dataset`,
         creator: { '@id': `${SITE}/#organization` },
         dataset: homepageDatasetDefinitions.map((dataset) => ({ '@id': dataset.id }))
@@ -2910,8 +3111,8 @@ export default {
         '@id': `${canonical}#homepage`,
         url: canonical,
         name: isFrench
-          ? 'NH48 API: donnees ouvertes pour les sommets de 4 000 pieds'
-          : 'NH48 API: Open data for New Hampshire\'s 4,000-foot peaks',
+          ? 'NH48: guides et donnees des sommets de 4 000 pieds'
+          : 'NH48: New Hampshire 4,000-Footers guide and data hub',
         description,
         inLanguage: isFrench ? 'fr' : 'en',
         isPartOf: { '@id': `${SITE}/#website` },
@@ -2949,78 +3150,70 @@ export default {
         datePublished: '2024-01-01',
         imageObjects: homepageImageObjects
       });
-      const jsonLd = [
-        {
-          '@context': 'https://schema.org',
-          '@type': 'Organization',
-          '@id': `${SITE}/#organization`,
-          name: 'NH48pics',
-          legalName: 'NH48pics.com',
-          url: `${SITE}/`,
-          logo: {
-            '@type': 'ImageObject',
-            url: `${SITE}/nh48API_logo.png`,
-            width: 512,
-            height: 512
-          },
-          description: 'Professional mountain photography covering the New Hampshire 4,000-footers and beyond.',
-          sameAs: [
-            INSTAGRAM_URL,
-            'https://www.facebook.com/natedumpspics',
-            'https://www.etsy.com/shop/NH48pics'
-          ],
+      const homepageOrganizationNode = withEntityLinks({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        '@id': `${SITE}/#organization`,
+        name: 'NH48pics',
+        legalName: 'NH48pics.com',
+        url: `${SITE}/`,
+        logo: {
+          '@type': 'ImageObject',
+          url: `${SITE}/nh48API_logo.png`,
+          width: 512,
+          height: 512
+        },
+        description: 'Professional mountain photography covering the New Hampshire 4,000-footers and beyond.',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'White Mountains',
+          addressRegion: 'NH',
+          addressCountry: 'US'
+        },
+        founder: { '@id': `${SITE}/#person-nathan-sobol` }
+      }, entityLinks?.organization);
+      const homepagePersonNode = withEntityLinks({
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        '@id': `${SITE}/#person-nathan-sobol`,
+        name: 'Nathan Sobol',
+        alternateName: 'Nathan Sobol Photography',
+        url: `${SITE}/about/`,
+        image: `${SITE}/nathan-sobol.jpg`,
+        description: 'Nathan Sobol is a landscape photographer and hiker who has documented every 4,000-footer in New Hampshire. As the founder of NH48pics, he combines his passion for the White Mountains with professional photography, offering high-quality prints and trail resources.',
+        jobTitle: ['Landscape Photographer', 'Founder of NH48pics'],
+        worksFor: { '@id': `${SITE}/#organization` },
+        homeLocation: {
+          '@type': 'Place',
+          name: 'White Mountains',
           address: {
             '@type': 'PostalAddress',
-            addressLocality: 'White Mountains',
             addressRegion: 'NH',
             addressCountry: 'US'
-          },
-          founder: { '@id': `${SITE}/#person-nathan-sobol` }
+          }
         },
-        {
-          '@context': 'https://schema.org',
-          '@type': 'Person',
-          '@id': `${SITE}/#person-nathan-sobol`,
-          name: 'Nathan Sobol',
-          alternateName: 'Nathan Sobol Photography',
-          url: `${SITE}/about/`,
-          image: `${SITE}/nathan-sobol.jpg`,
-          description: 'Nathan Sobol is a landscape photographer and hiker who has documented every 4,000-footer in New Hampshire. As the founder of NH48pics, he combines his passion for the White Mountains with professional photography, offering high-quality prints and trail resources.',
-          jobTitle: ['Landscape Photographer', 'Founder of NH48pics'],
-          worksFor: { '@id': `${SITE}/#organization` },
-          homeLocation: {
-            '@type': 'Place',
-            name: 'White Mountains',
-            address: {
-              '@type': 'PostalAddress',
-              addressRegion: 'NH',
-              addressCountry: 'US'
-            }
-          },
-          knowsLanguage: ['en'],
-          sameAs: [
-            INSTAGRAM_URL,
-            'https://www.facebook.com/natedumpspics',
-            'https://www.etsy.com/shop/NH48pics'
-          ]
+        knowsLanguage: ['en']
+      }, entityLinks?.person);
+      const homepageWebsiteNode = withEntityLinks({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        '@id': `${SITE}/#website`,
+        name: 'NH48pics',
+        url: `${SITE}/`,
+        description: 'Fine-art photography and trail resources for the NH 48 4,000-footers.',
+        publisher: { '@id': `${SITE}/#organization` },
+        copyrightHolder: { '@id': `${SITE}/#organization` },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: `${SITE}/catalog?q={search_term_string}`,
+          'query-input': 'required name=search_term_string'
         },
-        {
-          '@context': 'https://schema.org',
-          '@type': 'WebSite',
-          '@id': `${SITE}/#website`,
-          name: 'NH48pics',
-          url: `${SITE}/`,
-          description: 'Fine-art photography and trail resources for the NH 48 4,000-footers.',
-          sameAs: [INSTAGRAM_URL],
-          publisher: { '@id': `${SITE}/#organization` },
-          copyrightHolder: { '@id': `${SITE}/#organization` },
-          potentialAction: {
-            '@type': 'SearchAction',
-            target: `${SITE}/catalog?q={search_term_string}`,
-            'query-input': 'required name=search_term_string'
-          },
-          inLanguage: ['en', 'fr']
-        },
+        inLanguage: ['en', 'fr']
+      }, entityLinks?.website);
+      const jsonLd = [
+        homepageOrganizationNode,
+        homepagePersonNode,
+        homepageWebsiteNode,
         homepageWebPageNode,
         homepageDataCatalogNode,
         ...homepageDatasetNodes,
@@ -3776,13 +3969,14 @@ export default {
     }
 
     if (pathNoLocale === '/about' || pathNoLocale === '/about/') {
-      const canonical = `${SITE}/about`;
+      const canonical = isFrench ? `${SITE}/fr/about` : `${SITE}/about`;
       const aboutTitle = isFrench ? 'A propos de Nathan Sobol - NH48pics' : 'About Nathan Sobol - NH48pics';
       const aboutDescription = isFrench
         ? 'Nathan Sobol est un photographe de paysage et randonneur qui a documente chacun des 4 000 pieds du New Hampshire. Fondateur de NH48pics.'
         : 'Nathan Sobol is a landscape photographer and hiker who has documented every 4,000-footer in New Hampshire. Founder of NH48pics.';
+      const entityLinks = await loadEntityLinks();
       const jsonLd = [
-        {
+        withEntityLinks({
           '@context': 'https://schema.org',
           '@type': 'Person',
           '@id': `${SITE}/#person-nathan-sobol`,
@@ -3802,14 +3996,9 @@ export default {
               addressCountry: 'US'
             }
           },
-          knowsLanguage: ['en'],
-          sameAs: [
-            INSTAGRAM_URL,
-            'https://www.facebook.com/natedumpspics',
-            'https://www.etsy.com/shop/NH48pics'
-          ]
-        },
-        {
+          knowsLanguage: ['en']
+        }, entityLinks?.person),
+        withEntityLinks({
           '@context': 'https://schema.org',
           '@type': 'Organization',
           '@id': `${SITE}/#organization`,
@@ -3823,11 +4012,6 @@ export default {
             height: 512
           },
           description: 'Professional mountain photography covering the New Hampshire 4,000-footers and beyond.',
-          sameAs: [
-            INSTAGRAM_URL,
-            'https://www.facebook.com/natedumpspics',
-            'https://www.etsy.com/shop/NH48pics'
-          ],
           address: {
             '@type': 'PostalAddress',
             addressLocality: 'White Mountains',
@@ -3835,15 +4019,14 @@ export default {
             addressCountry: 'US'
           },
           founder: { '@id': `${SITE}/#person-nathan-sobol` }
-        },
-        {
+        }, entityLinks?.organization),
+        withEntityLinks({
           '@context': 'https://schema.org',
           '@type': 'WebSite',
           '@id': `${SITE}/#website`,
           name: 'NH48pics',
           url: `${SITE}/`,
           description: 'Fine-art photography and trail resources for the NH 48 4,000-footers.',
-          sameAs: [INSTAGRAM_URL],
           publisher: { '@id': `${SITE}/#organization` },
           copyrightHolder: { '@id': `${SITE}/#organization` },
           potentialAction: {
@@ -3852,7 +4035,7 @@ export default {
             'query-input': 'required name=search_term_string'
           },
           inLanguage: ['en', 'fr']
-        }
+        }, entityLinks?.website)
       ];
       return serveTemplatePage({
         templatePath: 'pages/about.html',
@@ -3932,10 +4115,43 @@ export default {
       }
     }
 
+    async function servePrerenderedPeakHtml(peakSlug, french = false) {
+      if (!peakSlug) return null;
+      const normalizedSlug = String(peakSlug).trim().toLowerCase();
+      if (!normalizedSlug) return null;
+      const prerenderPath = french
+        ? `/fr/peaks/${encodeURIComponent(normalizedSlug)}/index.html`
+        : `/peaks/${encodeURIComponent(normalizedSlug)}/index.html`;
+      const prerenderUrl = `${RAW_BASE}${prerenderPath}`;
+      try {
+        const response = await fetch(prerenderUrl, {
+          headers: { 'User-Agent': 'NH48-SSR/1.0' },
+          cf: { cacheTtl: 0, cacheEverything: false }
+        });
+        if (!response.ok) {
+          return null;
+        }
+        let html = await response.text();
+        html = injectAnalyticsCore(html);
+        return new Response(html, {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store',
+            'X-Robots-Tag': 'index, follow',
+            'X-Peak-Source': 'prerendered'
+          }
+        });
+      } catch (err) {
+        console.error(`[PeakPrerender] Error loading ${prerenderUrl}: ${err.message}`);
+        return null;
+      }
+    }
+
     // Only handle peak routes.  If the URL does not match, return 404
     // (static files are already handled by the static file serving block above)
-    // Support: /peak/, /peaks/, /guest/, and their French variants
-    const peakRoutes = ['peak', 'peaks', 'guest'];
+    // Support: /peak/ and /guest/ routes. /peaks/* redirects earlier.
+    const peakRoutes = ['peak', 'guest'];
     const routeKeyword = isFrench ? parts[1] : parts[0];
     const isPeakRoute = peakRoutes.includes(routeKeyword);
 
@@ -3950,6 +4166,13 @@ export default {
 
     console.log(`[Worker] Processing peak route: ${pathname}, slug: ${slug}, lang: ${lang}, type: ${routeKeyword}`);
 
+    if (routeKeyword === 'peak') {
+      const prerenderedResponse = await servePrerenderedPeakHtml(slug, isFrench);
+      if (prerenderedResponse) {
+        return prerenderedResponse;
+      }
+    }
+
     // Find the peak by slug in the loaded dataset
     function findPeak(peaks, slugValue) {
       let peak = null;
@@ -3962,10 +4185,14 @@ export default {
     }
 
     // Load necessary data
-    const [peaks, descMap, trans] = await Promise.all([
+    const [peaks, descMap, trans, sameAsLookup, legacySameAsLookup, entityLinks, peakExperiences] = await Promise.all([
       loadPeaks(),
       loadDescriptions(),
-      loadTranslation(lang)
+      loadTranslation(lang),
+      loadJsonCache('sameAs', RAW_SAME_AS_URL),
+      loadJsonCache('sameAs:legacy', RAW_LEGACY_SAME_AS_URL),
+      loadEntityLinks(),
+      loadPeakExperiencesEn()
     ]);
 
     if (!peaks) {
@@ -3983,6 +4210,21 @@ export default {
       // If the slug doesn't exist, return a simple 404 page instead of redirecting.  We
       // avoid client redirects so that crawlers get a proper 404.
       return new Response('<!doctype html><title>404 Not Found</title><h1>Peak not found</h1>', { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+
+    const peakSameAsLinks = mergePeakSameAsSources(
+      sameAsLookup?.[slug],
+      legacySameAsLookup?.[slug],
+      entityLinks?.peakAuthorityLinks
+    );
+    if (peakSameAsLinks.length) {
+      peak.sameAs = peakSameAsLinks;
+    }
+    if (!isFrench) {
+      const narrative = peakExperiences?.[slug];
+      if (narrative && typeof narrative === 'object') {
+        peak.experience = narrative;
+      }
     }
 
     // Extract attributes for meta and structured data
@@ -4022,6 +4264,7 @@ export default {
     const primaryCaption = primaryPhoto
       ? buildPhotoCaptionUnique(peakName, primaryPhoto)
       : peakName;
+    const rangeContext = await resolveRangeContext(rangeVal);
     const {
       mountain = {},
       hikingTrail = {},
@@ -4043,7 +4286,12 @@ export default {
     const breadcrumbSchema = buildCanonicalBreadcrumbSchema({
       routeId: 'peak-detail',
       canonicalUrl: canonical,
-      context: { peakName }
+      context: {
+        peakName,
+        rangeValue: rangeVal,
+        rangeName: rangeContext.rangeName,
+        rangeSlug: rangeContext.rangeSlug
+      }
     });
     const globalSchemaNodes = await loadGlobalSchemaNodes();
     const peakPageNodes = [mountain, hikingTrail, breadcrumbSchema, creativeWork, ...imageObjects].filter(Boolean);

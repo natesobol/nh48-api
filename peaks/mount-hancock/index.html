@@ -67,7 +67,10 @@
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "Mountain",
+      "@type": [
+        "Mountain",
+        "TouristAttraction"
+      ],
       "@id": "https://nh48.info/peak/mount-hancock/#mountain",
       "name": "Mount Hancock - North Peak.",
       "description": "This photograph features Mount Hancock  - North Peak. in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails.",
@@ -267,6 +270,23 @@
       }
     },
     {
+      "@type": "HikingTrail",
+      "@id": "https://nh48.info/peak/mount-hancock/#peak-trail-guide",
+      "name": "Mount Hancock - North Peak. standard route guide",
+      "description": "Standard hiking routes and planning details for Mount Hancock - North Peak..",
+      "about": {
+        "@id": "https://nh48.info/peak/mount-hancock/#mountain"
+      },
+      "isPartOf": {
+        "@id": "https://nh48.info/peak/mount-hancock/#webpage"
+      },
+      "hasPart": [
+        {
+          "@id": "https://nh48.info/peak/mount-hancock/#route-01"
+        }
+      ]
+    },
+    {
       "@type": "WebPage",
       "@id": "https://nh48.info/peak/mount-hancock/#webpage",
       "url": "https://nh48.info/peak/mount-hancock/",
@@ -298,9 +318,11 @@
       },
       "description": "Professional mountain photography covering the New Hampshire 4,000-footers and beyond.",
       "sameAs": [
+        "https://www.nh48pics.com/",
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
-        "https://www.etsy.com/shop/NH48pics"
+        "https://www.etsy.com/shop/NH48pics",
+        "https://github.com/natesobol/nh48-api"
       ],
       "address": {
         "@type": "PostalAddress",
@@ -312,7 +334,34 @@
         "@type": "Person",
         "@id": "https://nh48.info/#person-nathan-sobol",
         "name": "Nathan Sobol"
-      }
+      },
+      "about": [
+        "https://en.wikipedia.org/wiki/Four-thousand_footer",
+        "https://en.wikipedia.org/wiki/White_Mountains_(New_Hampshire)",
+        "https://en.wikipedia.org/wiki/White_Mountain_National_Forest"
+      ],
+      "knowsAbout": [
+        "New Hampshire hiking guides",
+        "White Mountains photography",
+        "Peak and trail structured data"
+      ],
+      "mentions": [
+        {
+          "@type": "WebPage",
+          "name": "Appalachian Mountain Club",
+          "url": "https://www.outdoors.org/"
+        },
+        {
+          "@type": "WebPage",
+          "name": "AMC 4000 Footer Club",
+          "url": "https://www.amc4000footer.org/"
+        },
+        {
+          "@type": "WebPage",
+          "name": "USFS White Mountain National Forest",
+          "url": "https://www.fs.usda.gov/whitemountain"
+        }
+      ]
     },
     {
       "@type": "Person",
@@ -323,7 +372,10 @@
       "sameAs": [
         "https://www.instagram.com/nate_dumps_pics/",
         "https://www.facebook.com/natedumpspics",
-        "https://www.etsy.com/shop/NH48pics"
+        "https://www.etsy.com/shop/NH48pics",
+        "https://github.com/natesobol",
+        "https://github.com/natesobol/nh48-api",
+        "https://www.nh48pics.com/"
       ],
       "worksFor": {
         "@id": "https://nh48.info/#organization"
@@ -345,6 +397,29 @@
       },
       "knowsLanguage": [
         "en"
+      ],
+      "about": [
+        "https://en.wikipedia.org/wiki/White_Mountains_(New_Hampshire)",
+        "https://en.wikipedia.org/wiki/Four-thousand_footer",
+        "https://en.wikipedia.org/wiki/White_Mountain_National_Forest"
+      ],
+      "knowsAbout": [
+        "New Hampshire four-thousand-footers",
+        "White Mountain National Forest trail systems",
+        "Mountain weather and exposure planning",
+        "Landscape photography and image metadata"
+      ],
+      "mentions": [
+        {
+          "@type": "WebPage",
+          "name": "Appalachian Mountain Club 4000 Footer Club",
+          "url": "https://www.amc4000footer.org/"
+        },
+        {
+          "@type": "WebPage",
+          "name": "USFS White Mountain National Forest",
+          "url": "https://www.fs.usda.gov/whitemountain"
+        }
       ]
     },
     {
@@ -354,7 +429,9 @@
       "url": "https://nh48.info/",
       "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
       "sameAs": [
-        "https://www.instagram.com/nate_dumps_pics/"
+        "https://www.nh48pics.com/",
+        "https://www.instagram.com/nate_dumps_pics/",
+        "https://github.com/natesobol/nh48-api"
       ],
       "publisher": {
         "@id": "https://nh48.info/#organization"
@@ -370,7 +447,29 @@
         "@type": "SearchAction",
         "target": "https://nh48.info/search?q={search_term_string}",
         "query-input": "required name=search_term_string"
-      }
+      },
+      "about": [
+        "https://en.wikipedia.org/wiki/Four-thousand_footer",
+        "https://en.wikipedia.org/wiki/White_Mountains_(New_Hampshire)",
+        "https://en.wikipedia.org/wiki/White_Mountain_National_Forest"
+      ],
+      "mentions": [
+        {
+          "@type": "WebPage",
+          "name": "AMC 4000 Footer Club",
+          "url": "https://www.amc4000footer.org/"
+        },
+        {
+          "@type": "WebPage",
+          "name": "USFS White Mountain National Forest",
+          "url": "https://www.fs.usda.gov/whitemountain"
+        }
+      ],
+      "knowsAbout": [
+        "New Hampshire four-thousand-footers",
+        "White Mountain hiking routes",
+        "Image metadata for mountain photography"
+      ]
     },
     {
       "@type": [
@@ -1366,7 +1465,7 @@
   "@type": "BreadcrumbList",
   "@id": "https://nh48.info/peak/mount-hancock/#breadcrumb",
   "name": "Mount Hancock - North Peak. breadcrumb trail",
-  "description": "Navigation path to Mount Hancock - North Peak. within the NH48 peak catalog",
+  "description": "Navigation path to Mount Hancock - North Peak. within the White Mountains peak guides",
   "itemListElement": [
     {
       "@type": "ListItem",
@@ -1382,15 +1481,25 @@
       "@type": "ListItem",
       "position": 2,
       "item": {
-        "@type": "CollectionPage",
-        "@id": "https://nh48.info/catalog",
-        "url": "https://nh48.info/catalog",
-        "name": "Peak Catalog"
+        "@type": "WebPage",
+        "@id": "https://nh48.info/nh-4000-footers-info",
+        "url": "https://nh48.info/nh-4000-footers-info",
+        "name": "White Mountains"
       }
     },
     {
       "@type": "ListItem",
       "position": 3,
+      "item": {
+        "@type": "WebPage",
+        "@id": "https://nh48.info/range/pemi-wilderness-remote-peaks/",
+        "url": "https://nh48.info/range/pemi-wilderness-remote-peaks/",
+        "name": "Pemigewasset Wilderness"
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
       "item": {
         "@type": "WebPage",
         "@id": "https://nh48.info/peak/mount-hancock/",
@@ -1669,6 +1778,47 @@
         border:1px solid var(--stroke);
         border-radius:12px;
         padding:12px;
+      }
+      .experience-panel{
+        margin-top:20px;
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        background:linear-gradient(160deg, rgba(16, 25, 40, 0.92), rgba(11, 19, 28, 0.92));
+        padding:14px 14px 10px;
+      }
+      .experience-panel h2{
+        margin:0 0 10px 0;
+        font-size:1.02rem;
+        letter-spacing:0.4px;
+        text-transform:uppercase;
+        color:var(--accent);
+      }
+      .experience-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+        gap:10px;
+      }
+      .experience-item{
+        background:rgba(255,255,255,0.03);
+        border:1px solid var(--stroke);
+        border-radius:10px;
+        padding:10px;
+      }
+      .experience-item h3{
+        margin:0 0 6px 0;
+        color:var(--accent-strong);
+        font-size:0.9rem;
+        letter-spacing:0.3px;
+        text-transform:uppercase;
+      }
+      .experience-item p{
+        margin:0;
+        color:#d6e0ea;
+        line-height:1.5;
+      }
+      .experience-updated{
+        margin:10px 2px 0;
+        color:var(--muted);
       }
       ul.routes-list{
         list-style:disc;
@@ -2628,22 +2778,11 @@
 
     <div class="wrap">
       <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-        <ol itemscope itemtype="https://schema.org/BreadcrumbList">
-          <meta itemprop="name" content="Mount Hancock - North Peak. breadcrumb trail">
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="https://nh48.info/"><span itemprop="name">Home</span></a>
-            <meta itemprop="position" content="1">
-          </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="https://nh48.info/catalog"><span itemprop="name">Peak Catalog</span></a>
-            <meta itemprop="position" content="2">
-          </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="https://nh48.info/peak/mount-hancock/" aria-current="page">
-              <span itemprop="name">Mount Hancock - North Peak.</span>
-            </a>
-            <meta itemprop="position" content="3">
-          </li>
+        <ol>
+          <li><a href="https://nh48.info/">Home</a></li>
+          <li><a href="https://nh48.info/nh-4000-footers-info">White Mountains</a></li>
+          <li><a href="https://nh48.info/range/pemi-wilderness-remote-peaks/">Pemigewasset Wilderness</a></li>
+          <li><span aria-current="page">Mount Hancock - North Peak.</span></li>
         </ol>
       </nav>
 
@@ -2742,9 +2881,19 @@
         </div>
       </section>
 
+      <section class="experience-panel" aria-labelledby="trailTestedHeading">
+        <h2 id="trailTestedHeading">Trail-tested notes</h2>
+        <div class="experience-grid">
+          <article class="experience-item"><h3>Experience summary</h3><p>I built this guide around field photography sessions on Mount Hancock - North Peak. in Pemigewasset Wilderness - Hancock Range.. Mount Hancock is a 4,420-foot mountain in Grafton County, New Hampshire.</p></article>
+<article class="experience-item"><h3>Conditions from experience</h3><p>Summer and fall - stream crossings easier in low water; popular winter snowshoe loop. Low - route largely in forest; summits protected by trees.</p></article>
+<article class="experience-item"><h3>Planning tip</h3><p>[object Object] Yes - streams along Hancock Notch and Cedar Brook Trails in first half of loop. Large paved parking off NH 112 - share with hairpin turn scenic area.; can fill on nice days</p></article>
+        </div>
+        <p class="experience-updated"><small>Last reviewed: 2026-02-14</small></p>
+      </section>
+
       <div class="redirect-notice">
-        <p>Redirecting to the interactive page for Mount Hancock - North Peak....</p>
-        <p>If you are not redirected, <a href="https://nh48.info/peak/mount-hancock">open the interactive page</a>.</p>
+        <p>Need route overlays, live conditions, and map tools?</p>
+        <p><a href="https://nh48.info/peak/mount-hancock">Open the interactive page</a>.</p>
         <p>NH48 pre-rendered info page.</p>
       </div>
     </div>

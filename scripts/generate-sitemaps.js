@@ -797,7 +797,6 @@ const buildImageSitemap = () => {
     if (!images.length) return;
     const lastmod = getGitLastmod(path.join('peaks', slug, 'index.html'));
     urlEntries.push({ loc: `${PEAK_BASE}/${slug}`, images, lastmod });
-    urlEntries.push({ loc: `${PEAK_BASE}/${slug}/photos`, images, lastmod });
     allImages.push(...images);
   });
 

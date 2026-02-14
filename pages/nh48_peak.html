@@ -1100,6 +1100,41 @@
         word-wrap:break-word;
         white-space:normal;
       }
+      .experience-notes{
+        margin:18px 0 20px;
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        background:linear-gradient(155deg, rgba(17, 27, 40, 0.94), rgba(11, 18, 28, 0.94));
+        padding:12px;
+      }
+      .experience-notes-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));
+        gap:10px;
+      }
+      .experience-note{
+        border:1px solid var(--stroke);
+        border-radius:10px;
+        background:rgba(255,255,255,0.03);
+        padding:10px;
+      }
+      .experience-note h3{
+        margin:0 0 6px;
+        font-size:0.82rem;
+        letter-spacing:0.45px;
+        text-transform:uppercase;
+        color:var(--accent);
+      }
+      .experience-note p{
+        margin:0;
+        color:#d8e2ef;
+        line-height:1.5;
+      }
+      .experience-last-reviewed{
+        margin:10px 2px 0;
+        color:var(--muted);
+        font-size:0.8rem;
+      }
       .trail-list{
         margin:0;
         padding-left:1.1rem;
@@ -1364,19 +1399,18 @@
     </script>
     <div class="wrap">
       <nav class="breadcrumb-nav no-print" aria-label="Breadcrumb" id="breadcrumbNav">
-        <ol itemscope itemtype="https://schema.org/BreadcrumbList">
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="/" id="breadcrumbHomeLink"><span itemprop="name" data-i18n="common.home">Home</span></a>
-            <meta itemprop="position" content="1">
+        <ol>
+          <li>
+            <a href="/" id="breadcrumbHomeLink"><span id="breadcrumbHomeLabel" data-i18n="common.home">Home</span></a>
           </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="/catalog" id="breadcrumbCatalogLink"><span itemprop="name" data-i18n="peak.catalog">Peak Catalog</span></a>
-            <meta itemprop="position" content="2">
+          <li>
+            <a href="/nh-4000-footers-info" id="breadcrumbWhiteMountainsLink"><span id="breadcrumbWhiteMountainsLabel">White Mountains</span></a>
           </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <span itemprop="name" id="breadcrumbCurrent" data-i18n="peak.loading">Loading…</span>
-            <meta id="breadcrumbCurrentUrl" itemprop="item" content="">
-            <meta itemprop="position" content="3">
+          <li>
+            <a href="/range" id="breadcrumbRangeLink"><span id="breadcrumbRangeLabel">Range</span></a>
+          </li>
+          <li>
+            <span id="breadcrumbCurrent" data-i18n="peak.loading">Loading…</span>
           </li>
         </ol>
       </nav>
@@ -1489,6 +1523,12 @@
         <h2 id="conditionsHeading" class="section-title" data-i18n="peak.section.conditions">Conditions &amp; Access</h2>
         <div class="info-grid" id="conditionsGrid" hidden></div>
       </section>
+
+      <section aria-labelledby="trailTestedNotesHeading" class="no-print experience-notes" id="trailTestedNotesPanel" hidden>
+        <h2 id="trailTestedNotesHeading" class="section-title">Trail-tested notes</h2>
+        <div class="experience-notes-grid" id="trailTestedNotesGrid"></div>
+        <p class="experience-last-reviewed" id="trailTestedLastReviewed" hidden></p>
+      </section>
     </div>
     <div id="socialCardModal" class="social-card-modal" hidden>
       <div class="social-card-dialog" role="dialog" aria-modal="true" aria-labelledby="socialCardTitle">
@@ -1557,6 +1597,11 @@
         'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/wmnf-trails/wmnf-normalized.json',
         'https://raw.githubusercontent.com/natesobol/nh48-api/main/data/wmnf-trails/wmnf-normalized.json'
       ];
+      const EXPERIENCE_URLS = [
+        '/data/peak-experiences.en.json',
+        `https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/peak-experiences.en.json${CDN_CACHE_BUST}`,
+        `https://raw.githubusercontent.com/natesobol/nh48-api/main/data/peak-experiences.en.json${CDN_CACHE_BUST}`
+      ];
       const MAP_RADIUS_MILES = 2.5;
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
@@ -1607,7 +1652,6 @@
       const BASE_CANONICAL = 'https://nh48.info/peak';
       const BASE_CANONICAL_FR = 'https://nh48.info/fr/peak';
       const HOME_URL = 'https://nh48.info/';
-      const CATALOG_URL = 'https://nh48.info/catalog';
       const DEFAULT_OG_IMAGE = 'https://nh48.info/nh48API_logo.png';
       const IMAGE_TRANSFORM_OPTIONS = 'format=webp,quality=85';
       const PHOTO_BASE_URL = 'https://photos.nh48.info';
@@ -1914,7 +1958,23 @@
         }
       }
 
-      function updateBreadcrumbNav(name, canonicalUrl){
+      function getPrimaryRangeName(rangeValue){
+        const raw = safeText(rangeValue);
+        if(!raw) return '';
+        const first = raw.split(/[|/;,]/)[0] || raw;
+        const beforeDash = first.split(/\s*-\s*/)[0] || first;
+        return safeText(beforeDash) || safeText(first);
+      }
+
+      function slugifyPath(value){
+        return safeText(value)
+          .toLowerCase()
+          .replace(/[\u2013\u2014]/g, '-')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '');
+      }
+
+      function updateBreadcrumbNav(name, canonicalUrl, rangeValue){
         const current = document.getElementById('breadcrumbCurrent');
         if(current){
           current.textContent = name;
@@ -1922,26 +1982,45 @@
             current.removeAttribute('data-i18n');
           }
         }
-        const currentUrlMeta = document.getElementById('breadcrumbCurrentUrl');
-        if(currentUrlMeta && canonicalUrl){
-          currentUrlMeta.setAttribute('content', canonicalUrl);
-        }
-        const catalogLink = document.getElementById('breadcrumbCatalogLink');
-        if(catalogLink){
-          catalogLink.href = CATALOG_URL;
-        }
         const homeLink = document.getElementById('breadcrumbHomeLink');
+        const homeLabel = document.getElementById('breadcrumbHomeLabel');
+        const whiteMountainsLink = document.getElementById('breadcrumbWhiteMountainsLink');
+        const whiteMountainsLabel = document.getElementById('breadcrumbWhiteMountainsLabel');
+        const rangeLink = document.getElementById('breadcrumbRangeLink');
+        const rangeLabel = document.getElementById('breadcrumbRangeLabel');
+        const langCode = getSeoLang();
+
         if(homeLink){
-          const langCode = getSeoLang();
           homeLink.href = langCode === 'fr' ? `${HOME_URL}fr/` : HOME_URL;
+        }
+        if(homeLabel){
+          homeLabel.textContent = langCode === 'fr' ? 'Accueil' : 'Home';
+        }
+        if(whiteMountainsLink){
+          whiteMountainsLink.href = langCode === 'fr' ? '/fr/nh-4000-footers-info' : '/nh-4000-footers-info';
+        }
+        if(whiteMountainsLabel){
+          whiteMountainsLabel.textContent = langCode === 'fr' ? 'Montagnes Blanches' : 'White Mountains';
+        }
+        const rangeName = getPrimaryRangeName(rangeValue) || (langCode === 'fr' ? 'Montagnes Blanches' : 'White Mountains');
+        const rangeSlug = slugifyPath(rangeName);
+        if(rangeLink){
+          rangeLink.href = rangeSlug ? `/range/${encodeURIComponent(rangeSlug)}/` : (langCode === 'fr' ? '/fr/nh-4000-footers-info' : '/nh-4000-footers-info');
+        }
+        if(rangeLabel){
+          rangeLabel.textContent = rangeName;
         }
       }
 
-      function setBreadcrumbJsonLd(name, canonicalUrl){
+      function setBreadcrumbJsonLd(name, canonicalUrl, rangeValue){
         const langCode = getSeoLang();
         const homeUrl = langCode === 'fr' ? `${HOME_URL}fr/` : HOME_URL;
-        const homeLabel = window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t('common.home') : 'Home';
-        const catalogLabel = window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t('peak.catalog') : 'Peak Catalog';
+        const homeLabel = langCode === 'fr' ? 'Accueil' : 'Home';
+        const whiteMountainsLabel = langCode === 'fr' ? 'Montagnes Blanches' : 'White Mountains';
+        const whiteMountainsUrl = langCode === 'fr' ? `${HOME_URL}fr/nh-4000-footers-info` : `${HOME_URL}nh-4000-footers-info`;
+        const rangeName = getPrimaryRangeName(rangeValue) || whiteMountainsLabel;
+        const rangeSlug = slugifyPath(rangeName);
+        const rangeUrl = rangeSlug ? `${HOME_URL}range/${encodeURIComponent(rangeSlug)}/` : whiteMountainsUrl;
         const breadcrumbSchema = {
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
@@ -1955,12 +2034,18 @@
             {
               '@type': 'ListItem',
               position: 2,
-              name: catalogLabel,
-              item: CATALOG_URL
+              name: whiteMountainsLabel,
+              item: whiteMountainsUrl
             },
             {
               '@type': 'ListItem',
               position: 3,
+              name: rangeName,
+              item: rangeUrl
+            },
+            {
+              '@type': 'ListItem',
+              position: 4,
               name,
               item: canonicalUrl
             }
@@ -2581,6 +2666,92 @@
         return {};
       }
 
+      async function fetchPeakExperiences(){
+        if(peakExperienceMap && typeof peakExperienceMap === 'object'){
+          return peakExperienceMap;
+        }
+        for(const url of EXPERIENCE_URLS){
+          try{
+            const response = await fetch(url, { mode: 'cors' });
+            if(!response.ok){
+              continue;
+            }
+            const text = await response.text();
+            const payload = JSON.parse(cleanJSON(text));
+            if(payload && typeof payload === 'object'){
+              peakExperienceMap = payload;
+              return peakExperienceMap;
+            }
+          }catch(err){
+            console.warn('Failed to load peak experiences from', url, err);
+          }
+        }
+        peakExperienceMap = {};
+        return peakExperienceMap;
+      }
+
+      function renderTrailTestedNotes(peak, slug){
+        const panel = document.getElementById('trailTestedNotesPanel');
+        const grid = document.getElementById('trailTestedNotesGrid');
+        const reviewed = document.getElementById('trailTestedLastReviewed');
+        const heading = document.getElementById('trailTestedNotesHeading');
+        if(!panel || !grid || !reviewed || !heading){
+          return;
+        }
+
+        const langCode = getSeoLang();
+        if(langCode !== 'en'){
+          panel.hidden = true;
+          grid.innerHTML = '';
+          reviewed.hidden = true;
+          return;
+        }
+
+        const fromPeak = peak && peak.experience && typeof peak.experience === 'object' ? peak.experience : null;
+        const fromMap = peakExperienceMap && slug ? peakExperienceMap[slug] : null;
+        const experience = fromPeak || fromMap;
+        if(!experience || typeof experience !== 'object'){
+          panel.hidden = true;
+          grid.innerHTML = '';
+          reviewed.hidden = true;
+          return;
+        }
+
+        const summary = safeText(experience.experienceSummary);
+        const conditions = safeText(experience.conditionsFromExperience);
+        const planningTip = safeText(experience.planningTip);
+        const lastReviewed = safeText(experience.lastReviewed);
+        const cards = [];
+
+        heading.textContent = 'Trail-tested notes';
+        if(summary){
+          cards.push(`<article class=\"experience-note\"><h3>Experience summary</h3><p>${escapeHtml(summary)}</p></article>`);
+        }
+        if(conditions){
+          cards.push(`<article class=\"experience-note\"><h3>Conditions from experience</h3><p>${escapeHtml(conditions)}</p></article>`);
+        }
+        if(planningTip){
+          cards.push(`<article class=\"experience-note\"><h3>Planning tip</h3><p>${escapeHtml(planningTip)}</p></article>`);
+        }
+
+        if(!cards.length){
+          panel.hidden = true;
+          grid.innerHTML = '';
+          reviewed.hidden = true;
+          return;
+        }
+
+        grid.innerHTML = cards.join('');
+        if(lastReviewed){
+          reviewed.textContent = `Last reviewed: ${lastReviewed}`;
+          reviewed.hidden = false;
+        }else{
+          reviewed.hidden = true;
+          reviewed.textContent = '';
+        }
+        panel.hidden = false;
+      }
+
       /* CAROUSEL + TIMER STATE ----------------------------------------------- */
       let carouselImgs = [];
       let carouselIdx = 0;
@@ -2595,6 +2766,7 @@
       let currentMeta = [];
       let currentPrimaryMeta = null;
       let currentPrimaryPhoto = null;
+      let peakExperienceMap = null;
       let metadataExpanded = false;
       const metadataMobileQuery = window.matchMedia('(max-width: 720px)');
       let isCarouselPaused = false;
@@ -3978,8 +4150,8 @@
         );
 
         updateHreflangLinks(slug);
-        updateBreadcrumbNav(name, canonicalUrl);
-        setBreadcrumbJsonLd(name, canonicalUrl);
+        updateBreadcrumbNav(name, canonicalUrl, p['Range / Subrange']);
+        setBreadcrumbJsonLd(name, canonicalUrl, p['Range / Subrange']);
 
         return { canonicalUrl, descriptionText };
       }
@@ -4304,11 +4476,13 @@
 
         try{
           console.log('[Peak Init] Loading translation data and peak data...');
-          const [ , data, descMap ] = await Promise.all([
+          const [ , data, descMap, experienceMap ] = await Promise.all([
             waitForI18NReady(),
             fetchPeaks(),
-            fetchDescriptions()
+            fetchDescriptions(),
+            fetchPeakExperiences()
           ]);
+          peakExperienceMap = experienceMap || {};
           
           console.log('[Peak Init] Data loaded, looking up peak:', slug);
           const p = data && data[slug];
@@ -4346,6 +4520,9 @@
           const name = p.peakName || p['Peak Name'] || p.name || p['Name'] || p.peak || p['Peak'] || p['PeakName'] || slug;
           console.log('[Peak Init] ✓ Found peak:', name);
           updatePeakTitle(name);
+          if(!p.experience && peakExperienceMap && peakExperienceMap[slug]){
+            p.experience = peakExperienceMap[slug];
+          }
           currentPeak = p;
           currentSlug = slug;
 
@@ -4445,6 +4622,7 @@
           }
           renderTerrain(p);
           renderConditions(p);
+          renderTrailTestedNotes(p, slug);
           renderPeakMap(p, name, canonicalUrl);
           initPeakSocialCardHandlers(p, name, canonicalUrl, slug);
 
@@ -4515,6 +4693,7 @@
           }
           renderTerrain(currentPeak);
           renderConditions(currentPeak);
+          renderTrailTestedNotes(currentPeak, currentSlug);
           renderPeakMap(currentPeak, name, canonicalUrl);
           updateSocialCardContent(currentPeak, name, canonicalUrl);
           if (currentPrimaryPhoto) {

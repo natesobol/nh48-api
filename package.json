@@ -6,6 +6,7 @@
     "audit:schema": "node scripts/audit-site-schema.js",
     "audit:homepage-seo": "node scripts/audit-homepage-worker-seo.js",
     "audit:worker-breadcrumbs": "node scripts/audit-worker-breadcrumbs.js",
+    "audit:peak-authority": "node scripts/audit-peak-guide-authority.js",
     "test:analytics": "playwright test analytics-smoke.spec.js",
     "test:analytics:headed": "playwright test analytics-smoke.spec.js --headed --project=chromium",
     "test:analytics:debug": "playwright test analytics-smoke.spec.js --headed --project=chromium --debug"

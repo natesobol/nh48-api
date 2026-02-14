@@ -9,6 +9,7 @@ on:
       - 'scripts/audit-site-schema.js'
       - 'scripts/audit-homepage-worker-seo.js'
       - 'scripts/audit-worker-breadcrumbs.js'
+      - 'scripts/audit-peak-guide-authority.js'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/deploy-worker.yml'
@@ -51,6 +52,10 @@ jobs:
       - name: Run schema audit (pre-deploy gate)
         id: schema_audit
         run: node scripts/audit-site-schema.js
+
+      - name: Run peak guide authority audit (pre-deploy gate)
+        id: peak_authority_audit
+        run: node scripts/audit-peak-guide-authority.js
 
       - name: Install Wrangler
         if: steps.deploy_mode.outputs.should_deploy == 'true'
@@ -106,6 +111,7 @@ jobs:
           echo "- **Target URL:** https://nh48.info" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Deploy requested:** \`${{ steps.deploy_mode.outputs.should_deploy }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Schema audit:** \`${{ steps.schema_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Peak authority audit:** \`${{ steps.peak_authority_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           if [[ "${{ steps.deploy_mode.outputs.should_deploy }}" == "true" ]]; then
             echo "- **Deploy step outcome:** \`${{ steps.deploy_worker.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           else
@@ -115,6 +121,7 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "### Scripts executed" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-site-schema.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-peak-guide-authority.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-homepage-worker-seo.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-worker-breadcrumbs.js --url https://nh48.info\`" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"

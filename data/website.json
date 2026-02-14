@@ -5,8 +5,32 @@
   "name": "NH48pics",
   "url": "https://nh48.info/",
   "description": "Fine-art photography and trail resources for the NH 48 4,000-footers.",
+  "about": [
+    "https://en.wikipedia.org/wiki/Four-thousand_footer",
+    "https://en.wikipedia.org/wiki/White_Mountains_(New_Hampshire)",
+    "https://en.wikipedia.org/wiki/White_Mountain_National_Forest"
+  ],
+  "mentions": [
+    {
+      "@type": "WebPage",
+      "name": "AMC 4000 Footer Club",
+      "url": "https://www.amc4000footer.org/"
+    },
+    {
+      "@type": "WebPage",
+      "name": "USFS White Mountain National Forest",
+      "url": "https://www.fs.usda.gov/whitemountain"
+    }
+  ],
+  "knowsAbout": [
+    "New Hampshire four-thousand-footers",
+    "White Mountain hiking routes",
+    "Image metadata for mountain photography"
+  ],
   "sameAs": [
-    "https://www.instagram.com/nate_dumps_pics/"
+    "https://www.nh48pics.com/",
+    "https://www.instagram.com/nate_dumps_pics/",
+    "https://github.com/natesobol/nh48-api"
   ],
   "inLanguage": [
     "en",

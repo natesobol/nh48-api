@@ -256,6 +256,47 @@
         border-radius:12px;
         padding:12px;
       }
+      .experience-panel{
+        margin-top:20px;
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        background:linear-gradient(160deg, rgba(16, 25, 40, 0.92), rgba(11, 19, 28, 0.92));
+        padding:14px 14px 10px;
+      }
+      .experience-panel h2{
+        margin:0 0 10px 0;
+        font-size:1.02rem;
+        letter-spacing:0.4px;
+        text-transform:uppercase;
+        color:var(--accent);
+      }
+      .experience-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+        gap:10px;
+      }
+      .experience-item{
+        background:rgba(255,255,255,0.03);
+        border:1px solid var(--stroke);
+        border-radius:10px;
+        padding:10px;
+      }
+      .experience-item h3{
+        margin:0 0 6px 0;
+        color:var(--accent-strong);
+        font-size:0.9rem;
+        letter-spacing:0.3px;
+        text-transform:uppercase;
+      }
+      .experience-item p{
+        margin:0;
+        color:#d6e0ea;
+        line-height:1.5;
+      }
+      .experience-updated{
+        margin:10px 2px 0;
+        color:var(--muted);
+      }
       ul.routes-list{
         list-style:disc;
         padding-left:20px;
@@ -327,22 +368,11 @@
     {{NAV_MENU}}
     <div class="wrap">
       <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-        <ol itemscope itemtype="https://schema.org/BreadcrumbList">
-          <meta itemprop="name" content="{{PEAK_NAME}} breadcrumb trail">
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="{{HOME_URL}}"><span itemprop="name">{{BREADCRUMB_HOME}}</span></a>
-            <meta itemprop="position" content="1">
-          </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="{{CATALOG_URL}}"><span itemprop="name">{{BREADCRUMB_CATALOG}}</span></a>
-            <meta itemprop="position" content="2">
-          </li>
-          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="{{CANONICAL_URL}}" aria-current="page">
-              <span itemprop="name">{{PEAK_NAME}}</span>
-            </a>
-            <meta itemprop="position" content="3">
-          </li>
+        <ol>
+          <li><a href="{{HOME_URL}}">{{BREADCRUMB_HOME}}</a></li>
+          <li><a href="{{BREADCRUMB_WHITE_MOUNTAINS_URL}}">{{BREADCRUMB_WHITE_MOUNTAINS}}</a></li>
+          <li><a href="{{BREADCRUMB_RANGE_URL}}">{{BREADCRUMB_RANGE_NAME}}</a></li>
+          <li><span aria-current="page">{{PEAK_NAME}}</span></li>
         </ol>
       </nav>
 
@@ -426,9 +456,11 @@
         </div>
       </section>
 
+      {{EXPERIENCE_SECTION}}
+
       <div class="redirect-notice">
-        <p>Redirecting to the interactive page for {{PEAK_NAME}}...</p>
-        <p>If you are not redirected, <a href="{{APP_URL}}">open the interactive page</a>.</p>
+        <p>Need route overlays, live conditions, and map tools?</p>
+        <p><a href="{{APP_URL}}">Open the interactive page</a>.</p>
         <p>{{LABEL_FOOTER}}</p>
       </div>
     </div>

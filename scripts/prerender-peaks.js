@@ -13,11 +13,15 @@ const ORGANIZATION_PATH = path.join(ROOT, "data", "organization.json");
 const WEBSITE_PATH = path.join(ROOT, "data", "website.json");
 const PERSON_PATH = path.join(ROOT, "data", "person.json");
 const CREATIVEWORKS_PATH = path.join(ROOT, "data", "creativeWorks.json");
+const WMNF_RANGES_PATH = path.join(ROOT, "data", "wmnf-ranges.json");
+const PEAK_EXPERIENCES_EN_PATH = path.join(ROOT, "data", "peak-experiences.en.json");
 const OUTPUT_DIR = path.join(ROOT, "peaks");
 const CANONICAL_BASE = "https://nh48.info/peak";
 const HOME_URL = "https://nh48.info/";
 const APP_BASE_EN = "https://nh48.info/peak";
 const APP_BASE_FR = "https://nh48.info/fr/peak";
+const WHITE_MOUNTAINS_HUB_EN = "https://nh48.info/nh-4000-footers-info";
+const WHITE_MOUNTAINS_HUB_FR = "https://nh48.info/fr/nh-4000-footers-info";
 const DEFAULT_CATALOG_URL = "https://nh48.info/catalog";
 const FALLBACK_IMAGE = "https://nh48.info/nh48-preview.png";
 const PHOTO_BASE_URL = "https://photos.nh48.info";
@@ -73,12 +77,16 @@ const LANGUAGE_CONFIGS = [
       standardRoutes: "Standard Routes",
       relatedTrails: "Related Trails & Routes",
       gallery: "Photo gallery",
+      trailTestedNotes: "Trail-tested notes",
+      experienceSummary: "Experience summary",
+      conditionsFromExperience: "Conditions from experience",
+      planningTip: "Planning tip",
       footer: "NH48 pre-rendered info page.",
       noRoutes: "No standard routes are listed for this peak.",
       noRelated: "No related trails listed yet.",
       routeSuffix: " route",
       breadcrumbHome: "Home",
-      breadcrumbCatalog: "Peak Catalog",
+      breadcrumbWhiteMountains: "White Mountains",
     },
     appUrl: (slug) => `${APP_BASE_EN}/${slug}`,
   },
@@ -86,48 +94,51 @@ const LANGUAGE_CONFIGS = [
     code: "fr",
     hreflang: "fr",
     outputDir: path.join(ROOT, "fr", "peaks"),
-    canonicalBase: "https://nh48.info/fr/peaks",
+    canonicalBase: "https://nh48.info/fr/peak",
     homeUrl: "https://nh48.info/fr/",
     catalogUrl: DEFAULT_CATALOG_URL,
     siteName: "NH48pics",
     ogLocale: "fr_FR",
     ogLocaleAlternate: "en_US",
     titleSuffix: "NH48pics",
-    descriptionTemplate: (name) => `${name} : page d'info avec itinéraires, altitude et photos.`,
-    summaryFallback: (name) => `${name} est l’un des sommets classiques de 4 000 pieds du New Hampshire.`,
+    descriptionTemplate: (name) => `${name} : page info avec itineraires, altitude et photos.`,
+    summaryFallback: (name) => `${name} est un sommet classique de 4,000 pieds du New Hampshire.`,
     defaults: {
       range: "Montagnes Blanches",
       difficulty: "Inconnu",
       trailType: "Inconnu",
       time: "Variable",
       unknown: "Inconnu",
-      coordinates: "Coordonnées bientôt disponibles.",
+      coordinates: "Coordonnees bientot disponibles.",
     },
     labels: {
       elevation: "Altitude",
-      prominence: "Proéminence",
-      range: "Chaîne",
-      difficulty: "Difficulté",
+      prominence: "Proeminence",
+      range: "Chaine",
+      difficulty: "Difficulte",
       trailType: "Type de sentier",
-      time: "Durée typique",
+      time: "Duree typique",
       cta: "Voir la page interactive",
       backToCatalog: "Retour au catalogue des sommets NH48",
-      overview: "Aperçu",
+      overview: "Apercu",
       location: "Emplacement",
-      standardRoutes: "Itinéraires standards",
-      relatedTrails: "Sentiers et itinéraires associés",
+      standardRoutes: "Itineraires standards",
+      relatedTrails: "Sentiers et itineraires associes",
       gallery: "Galerie photo",
-      footer: "Page d'info NH48 pré-rendue.",
-      noRoutes: "Aucun itinéraire standard n’est listé pour ce sommet.",
-      noRelated: "Aucun sentier associé pour le moment.",
-      routeSuffix: " itinéraire",
+      trailTestedNotes: "Notes terrain",
+      experienceSummary: "Resume experience",
+      conditionsFromExperience: "Conditions observees",
+      planningTip: "Conseil planification",
+      footer: "Page NH48 pre-rendue.",
+      noRoutes: "Aucun itineraire standard n'est liste pour ce sommet.",
+      noRelated: "Aucun sentier associe pour le moment.",
+      routeSuffix: " itineraire",
       breadcrumbHome: "Accueil",
-      breadcrumbCatalog: "Catalogue des sommets",
+      breadcrumbWhiteMountains: "Montagnes Blanches",
     },
     appUrl: (slug) => `${APP_BASE_FR}/${slug}`,
   },
 ];
-
 const ACCEPTED_LANG_CODES = LANGUAGE_CONFIGS.map((lang) => lang.code);
 
 const parseSelectedLanguageConfigs = (args) => {
@@ -164,6 +175,67 @@ const cleanText = (value) => {
   if (value === null || value === undefined) return "";
   const text = String(value);
   return text.replace(/:contentReference\[[^\]]*\]\{[^}]*\}/g, "").trim();
+};
+
+const normalizeRangeName = (value) =>
+  cleanText(value)
+    .toLowerCase()
+    .replace(/[\u2013\u2014]/g, "-")
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const getPrimaryRangeName = (value) => {
+  const raw = cleanText(value);
+  if (!raw) return "";
+  const split = raw.split(/[|/;,]/);
+  const first = cleanText(split[0] || raw);
+  if (!first) return "";
+  const dashSplit = first.split(/\s*-\s*/);
+  return cleanText(dashSplit[0] || first);
+};
+
+const slugify = (value) =>
+  cleanText(value)
+    .toLowerCase()
+    .replace(/[\u2013\u2014]/g, "-")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const buildRangeLookup = (rangesPayload) => {
+  const lookup = new Map();
+  const entries = Array.isArray(rangesPayload)
+    ? rangesPayload
+    : rangesPayload && typeof rangesPayload === "object"
+      ? Object.values(rangesPayload)
+      : [];
+
+  entries.forEach((entry) => {
+    if (!entry || typeof entry !== "object") return;
+    const rangeName = cleanText(entry.rangeName || entry.name);
+    const rangeSlug = cleanText(entry.slug) || slugify(rangeName);
+    if (!rangeName || !rangeSlug) return;
+    lookup.set(normalizeRangeName(rangeName), { rangeName, rangeSlug });
+  });
+  return lookup;
+};
+
+const resolveRangeContext = (rangeValue, rangeLookup, fallbackRange = "White Mountains") => {
+  const primaryRange = getPrimaryRangeName(rangeValue) || fallbackRange;
+  const fromLookup = rangeLookup.get(normalizeRangeName(primaryRange));
+  if (fromLookup) {
+    return {
+      rangeName: fromLookup.rangeName,
+      rangeSlug: fromLookup.rangeSlug,
+      rangeUrl: `https://nh48.info/range/${encodeURIComponent(fromLookup.rangeSlug)}/`,
+    };
+  }
+  const derivedSlug = slugify(primaryRange);
+  return {
+    rangeName: primaryRange,
+    rangeSlug: derivedSlug,
+    rangeUrl: derivedSlug ? `https://nh48.info/range/${encodeURIComponent(derivedSlug)}/` : "",
+  };
 };
 
 const formatTemplate = (template, values) =>
@@ -782,13 +854,49 @@ const buildGallery = (photos, peakName, fallbackAlt, langCode) => {
     .join("\n");
 };
 
+const buildExperienceSection = (experience, labels) => {
+  if (!experience || typeof experience !== "object") return "";
+
+  const summary = cleanText(experience.experienceSummary);
+  const conditions = cleanText(experience.conditionsFromExperience);
+  const tip = cleanText(experience.planningTip);
+  const lastReviewed = cleanText(experience.lastReviewed);
+  if (!summary && !conditions && !tip) return "";
+
+  const items = [
+    summary
+      ? `<article class="experience-item"><h3>${escapeHtml(labels.experienceSummary || "Experience summary")}</h3><p>${escapeHtml(summary)}</p></article>`
+      : "",
+    conditions
+      ? `<article class="experience-item"><h3>${escapeHtml(labels.conditionsFromExperience || "Conditions from experience")}</h3><p>${escapeHtml(conditions)}</p></article>`
+      : "",
+    tip
+      ? `<article class="experience-item"><h3>${escapeHtml(labels.planningTip || "Planning tip")}</h3><p>${escapeHtml(tip)}</p></article>`
+      : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const reviewed = lastReviewed
+    ? `<p class="experience-updated"><small>Last reviewed: ${escapeHtml(lastReviewed)}</small></p>`
+    : "";
+
+  return `<section class="experience-panel" aria-labelledby="trailTestedHeading">
+        <h2 id="trailTestedHeading">${escapeHtml(labels.trailTestedNotes || "Trail-tested notes")}</h2>
+        <div class="experience-grid">
+          ${items}
+        </div>
+        ${reviewed}
+      </section>`;
+};
+
 const escapeScriptJson = (value) => String(value).replace(/<\/script/gi, "<\\/script");
 
-const buildBreadcrumbData = (pageName, canonicalUrl, catalogUrl, homeUrl, labels) => ({
+const buildBreadcrumbData = (pageName, canonicalUrl, homeUrl, labels, rangeContext = {}) => ({
   "@type": "BreadcrumbList",
   "@id": `${canonicalUrl}#breadcrumb`,
   name: `${pageName} breadcrumb trail`,
-  description: `Navigation path to ${pageName} within the NH48 peak catalog`,
+  description: `Navigation path to ${pageName} within the White Mountains peak guides`,
   itemListElement: [
     {
       "@type": "ListItem",
@@ -804,15 +912,25 @@ const buildBreadcrumbData = (pageName, canonicalUrl, catalogUrl, homeUrl, labels
       "@type": "ListItem",
       position: 2,
       item: {
-        "@type": "CollectionPage",
-        "@id": catalogUrl || DEFAULT_CATALOG_URL,
-        url: catalogUrl || DEFAULT_CATALOG_URL,
-        name: labels?.breadcrumbCatalog || "NH48 Peak Catalog",
+        "@type": "WebPage",
+        "@id": rangeContext.whiteMountainsUrl || WHITE_MOUNTAINS_HUB_EN,
+        url: rangeContext.whiteMountainsUrl || WHITE_MOUNTAINS_HUB_EN,
+        name: labels?.breadcrumbWhiteMountains || "White Mountains",
       },
     },
     {
       "@type": "ListItem",
       position: 3,
+      item: {
+        "@type": "WebPage",
+        "@id": rangeContext.rangeUrl || `${HOME_URL}`,
+        url: rangeContext.rangeUrl || `${HOME_URL}`,
+        name: rangeContext.rangeName || "White Mountains",
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 4,
       item: {
         "@type": "WebPage",
         "@id": canonicalUrl,
@@ -823,10 +941,10 @@ const buildBreadcrumbData = (pageName, canonicalUrl, catalogUrl, homeUrl, labels
   ],
 });
 
-const buildBreadcrumbJson = (pageName, canonicalUrl, catalogUrl, homeUrl, labels, breadcrumbData) => JSON.stringify(
+const buildBreadcrumbJson = (pageName, canonicalUrl, homeUrl, labels, rangeContext, breadcrumbData) => JSON.stringify(
   {
     "@context": "https://schema.org",
-    ...(breadcrumbData || buildBreadcrumbData(pageName, canonicalUrl, catalogUrl, homeUrl, labels)),
+    ...(breadcrumbData || buildBreadcrumbData(pageName, canonicalUrl, homeUrl, labels, rangeContext)),
   },
   null,
   2
@@ -1337,7 +1455,7 @@ const buildJsonLd = (
   });
 
   const mountainNode = {
-    "@type": "Mountain",
+    "@type": ["Mountain", "TouristAttraction"],
     "@id": `${canonicalUrl}#mountain`,
     name: peakName,
     alternateName:
@@ -1363,7 +1481,6 @@ const buildJsonLd = (
         unitText: "FT",
       }
       : undefined,
-    containedInPlace: { "@id": whiteMountainForestNode["@id"] },
     containedInPlace: [
       geographyRefs.wmnf,
       geographyRefs.newHampshire,
@@ -1391,8 +1508,20 @@ const buildJsonLd = (
 
   Object.keys(mountainNode).forEach((key) => mountainNode[key] === undefined && delete mountainNode[key]);
 
+  const peakTrailGuideNode = {
+    "@type": "HikingTrail",
+    "@id": `${canonicalUrl}#peak-trail-guide`,
+    name: `${peakName} standard route guide`,
+    description: `Standard hiking routes and planning details for ${peakName}.`,
+    about: { "@id": mountainNode["@id"] },
+    isPartOf: { "@id": webPageNode["@id"] },
+    hasPart: routeRefs.length ? routeRefs : undefined,
+  };
+  Object.keys(peakTrailGuideNode).forEach((key) => peakTrailGuideNode[key] === undefined && delete peakTrailGuideNode[key]);
+
   const graph = dedupeJsonLdNodesById([
     mountainNode,
+    peakTrailGuideNode,
     webPageNode,
     dataCatalogNode,
     publisherNode,
@@ -1538,6 +1667,9 @@ const main = () => {
     const websiteData = readJsonFile(WEBSITE_PATH, "website data");
     const personData = readJsonFile(PERSON_PATH, "person data");
     const creativeWorks = readJsonFile(CREATIVEWORKS_PATH, "creative works");
+    const wmnfRanges = readJsonFile(WMNF_RANGES_PATH, "wmnf ranges");
+    const peakExperiencesEn = readJsonFile(PEAK_EXPERIENCES_EN_PATH, "peak experiences en");
+    const rangeLookup = buildRangeLookup(wmnfRanges);
 
     const geographyEntries = Array.isArray(geographyData)
       ? geographyData
@@ -1652,6 +1784,12 @@ const main = () => {
             ? `${canonicalUrl}#peak-trail-map`
             : null;
         const mapSchema = mapId ? buildMapSchema(localizedName, canonicalUrl, coordinates) : null;
+        const rangeContext = resolveRangeContext(rangeValue, rangeLookup, lang.defaults.range);
+        const whiteMountainsUrl = lang.code === "fr" ? WHITE_MOUNTAINS_HUB_FR : WHITE_MOUNTAINS_HUB_EN;
+        const breadcrumbRangeName = rangeContext.rangeName || range || lang.defaults.range;
+        const breadcrumbRangeUrl = rangeContext.rangeUrl || whiteMountainsUrl;
+        const experience = lang.code === "en" ? peakExperiencesEn?.[slug] : null;
+        const experienceSection = lang.code === "en" ? buildExperienceSection(experience, lang.labels) : "";
 
         const values = {
           LANG: lang.hreflang,
@@ -1685,7 +1823,10 @@ const main = () => {
           PEAK_NAME: escapeHtml(localizedName),
           HOME_URL: lang.homeUrl || HOME_URL,
           BREADCRUMB_HOME: escapeHtml(lang.labels.breadcrumbHome || "Home"),
-          BREADCRUMB_CATALOG: escapeHtml(lang.labels.breadcrumbCatalog || "Peak Catalog"),
+          BREADCRUMB_WHITE_MOUNTAINS: escapeHtml(lang.labels.breadcrumbWhiteMountains || "White Mountains"),
+          BREADCRUMB_WHITE_MOUNTAINS_URL: whiteMountainsUrl,
+          BREADCRUMB_RANGE_NAME: escapeHtml(breadcrumbRangeName),
+          BREADCRUMB_RANGE_URL: breadcrumbRangeUrl,
           ELEVATION: escapeHtml(elevationText),
           PROMINENCE: escapeHtml(prominenceText),
           RANGE: escapeHtml(range),
@@ -1723,6 +1864,7 @@ const main = () => {
           LABEL_RELATED_TRAILS: escapeHtml(lang.labels.relatedTrails),
           LABEL_GALLERY: escapeHtml(lang.labels.gallery),
           LABEL_FOOTER: escapeHtml(lang.labels.footer),
+          EXPERIENCE_SECTION: experienceSection,
           JSON_LD: escapeScriptJson(
             buildJsonLd(
               peak,
@@ -1742,7 +1884,11 @@ const main = () => {
             )
           ),
           BREADCRUMB_LD: escapeScriptJson(
-            buildBreadcrumbJson(localizedName, canonicalUrl, lang.catalogUrl, lang.homeUrl, lang.labels)
+            buildBreadcrumbJson(localizedName, canonicalUrl, lang.homeUrl, lang.labels, {
+              rangeName: breadcrumbRangeName,
+              rangeUrl: breadcrumbRangeUrl,
+              whiteMountainsUrl,
+            })
           ),
           WEBPAGE_SCHEMA: escapeScriptJson(
             buildWebPageSchema(

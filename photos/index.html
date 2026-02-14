@@ -16,7 +16,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
     <link rel="manifest" href="/manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Explore every NH48 summit photo in one place. Browse by range, filter by peak, and discover New Hampshire’s 4,000-footers through curated gallery views.">
+    <meta name="description" content="Explore every NH48 summit photo in one place. Browse by range, filter by peak, and discover New Hampshire's 4,000-footers through curated gallery views.">
     <meta name="keywords" content="NH48 photos, New Hampshire 4000 footers photography, White Mountains photo gallery, NH48 API photos, peak photo hub">
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow,max-image-preview:large">
@@ -36,36 +36,12 @@
     <meta name="twitter:title" content="Explore All NH48 Photos">
     <meta name="twitter:description" content="Browse every NH48 summit photo by range and peak. Filter, search, and explore the full NH48 photo archive.">
     <meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__001.jpg">
-    <script type="application/ld+json">
+    <script id="page-gallery-schema" type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Collection",
         "name": "NH48 Summit Photo Collection",
-        "description": "Browse photos of every 4,000-footer summit in New Hampshire.",
-        "url": "https://nh48.info/photos/",
-        "hasPart": [
-          {
-            "@type": "ImageObject",
-            "name": "Mount Washington summit at sunrise",
-            "contentUrl": "https://photos.nh48.info/mount-washington/mount-washington__001.jpg",
-            "thumbnailUrl": "https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=400/mount-washington/mount-washington__001.jpg",
-            "license": "https://creativecommons.org/licenses/by/4.0/"
-          },
-          {
-            "@type": "ImageObject",
-            "name": "Mount Lafayette ridge view",
-            "contentUrl": "https://photos.nh48.info/mount-lafayette/mount-lafayette__002.jpg",
-            "thumbnailUrl": "https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=400/mount-lafayette/mount-lafayette__002.jpg",
-            "license": "https://creativecommons.org/licenses/by/4.0/"
-          },
-          {
-            "@type": "ImageObject",
-            "name": "Franconia Ridge summit panorama",
-            "contentUrl": "https://photos.nh48.info/mount-lincoln/mount-lincoln__001.jpg",
-            "thumbnailUrl": "https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=400/mount-lincoln/mount-lincoln__001.jpg",
-            "license": "https://creativecommons.org/licenses/by/4.0/"
-          }
-        ]
+        "url": "https://nh48.info/photos/"
       }
     </script>
     <script id="page-breadcrumb-schema" type="application/ld+json">
@@ -91,6 +67,9 @@
 
     <title>Explore All NH48 Photos</title>
     <link rel="mask-icon" href="/favicons/favicon.ico" color="#22c55e">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/nh48_catalog.css">
     <link rel="stylesheet" href="/css/photos.css">
     <script type="module" src="/js/i18n.js"></script>
@@ -129,24 +108,42 @@
       });
     </script>
 
-    <main class="wrap">
+    <main class="wrap photos-page">
       <nav class="breadcrumbs" aria-label="Breadcrumb">
         <ol>
           <li><a href="/">Home</a></li>
           <li aria-current="page">NH48 Photos</li>
         </ol>
       </nav>
-      <div class="catalog-controls-panel photos-hero-panel">
-        <div class="catalog-hero">
-          <p class="kicker">NH48 Photo Hub</p>
-          <h1>Explore All NH48 Photos</h1>
-          <p>Browse every NH48 summit photo in one organized hub. Filter by range, search by peak, and dive into the full archive of 4,000-footer photography.</p>
-        </div>
 
+      <section class="catalog-controls-panel photos-hero-panel" aria-labelledby="photosPageTitle">
+        <div class="photos-hero-backdrop" aria-hidden="true"></div>
+        <div class="catalog-hero photos-hero-copy">
+          <p class="kicker">NH48 Photo Hub</p>
+          <h1 id="photosPageTitle">Explore Every NH48 Photo</h1>
+          <p>Cinematic summit galleries across all 48 peaks. Browse by range, jump between peaks, and view the full NH48 photo archive in one continuous page.</p>
+        </div>
+        <div class="photos-stat-grid" aria-label="Photo archive statistics">
+          <article class="photos-stat-chip">
+            <p class="photos-stat-value" id="statsPeaks">0</p>
+            <p class="photos-stat-label">Peaks</p>
+          </article>
+          <article class="photos-stat-chip">
+            <p class="photos-stat-value" id="statsPhotos">0</p>
+            <p class="photos-stat-label">Photos</p>
+          </article>
+          <article class="photos-stat-chip">
+            <p class="photos-stat-value" id="statsRanges">0</p>
+            <p class="photos-stat-label">Ranges</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="catalog-controls-panel photos-utility-rail" aria-label="Photo browsing controls">
         <div class="search-row">
           <div class="search-wrapper">
             <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="text" id="photoSearch" placeholder="Search peaks by name…" aria-label="Search photos by peak name" />
+            <input type="text" id="photoSearch" placeholder="Search peaks by name..." aria-label="Search photos by peak name" />
           </div>
         </div>
 
@@ -154,41 +151,54 @@
           <div class="filter-group">
             <label for="photoSort">Sort By</label>
             <select id="photoSort" aria-label="Sort photos by attribute">
-              <option value="range" selected>Range (A–Z)</option>
-              <option value="name">Peak Name (A–Z)</option>
-              <option value="elevation-desc">Elevation ↓</option>
-              <option value="elevation-asc">Elevation ↑</option>
+              <option value="range" selected>Range (A-Z)</option>
+              <option value="name">Peak Name (A-Z)</option>
+              <option value="elevation-desc">Elevation Down</option>
+              <option value="elevation-asc">Elevation Up</option>
             </select>
           </div>
           <div class="filter-group range-filter-group">
             <label class="filter-label" for="rangeFilters">Filter Ranges</label>
             <select id="rangeFilters" class="range-filter-select" aria-label="Filter by range" multiple></select>
-            <p class="range-filter-help">Hold Ctrl (Windows) or ⌘ (Mac) to select multiple ranges.</p>
+            <p class="range-filter-help">Hold Ctrl (Windows) or Command (Mac) to select multiple ranges.</p>
           </div>
         </div>
-      </div>
 
-      <section class="photos-pagination" aria-label="Photo gallery pagination">
-        <button type="button" class="pagination-button" id="paginationPrev">Previous</button>
-        <span class="pagination-status" id="paginationStatus">Page 1</span>
-        <button type="button" class="pagination-button" id="paginationNext">Next</button>
+        <div class="photos-jump-index" aria-label="Jump navigation">
+          <div class="jump-row">
+            <p class="jump-label">Jump to range</p>
+            <div id="rangeJumpLinks" class="jump-links" role="list"></div>
+          </div>
+          <div class="jump-row">
+            <p class="jump-label">Peaks in active range</p>
+            <div id="peakJumpLinks" class="jump-links jump-links--peak" role="list"></div>
+          </div>
+        </div>
       </section>
 
       <div id="photosLoading" class="loading-indicator" aria-live="polite">
         <span class="loading-spinner" aria-hidden="true"></span>
-        <span class="loading-text">Loading photos…</span>
+        <span class="loading-text">Loading photos...</span>
       </div>
+      <p id="photosViewStatus" class="photos-view-status" aria-live="polite"></p>
       <div id="photos-container" class="photos-container"></div>
       <div id="photosEmpty" class="empty" hidden>No photos match your filters.</div>
 
       <div id="photoLightbox" class="photo-lightbox" aria-hidden="true" hidden>
         <div class="photo-lightbox__backdrop" data-lightbox-close></div>
-        <div class="photo-lightbox__content" role="dialog" aria-modal="true" aria-label="Expanded photo view">
-          <button type="button" class="photo-lightbox__close" aria-label="Close expanded photo view" data-lightbox-close>×</button>
+        <div class="photo-lightbox__content" role="dialog" aria-modal="true" aria-label="Expanded photo view" aria-labelledby="photoLightboxMeta">
+          <button type="button" class="photo-lightbox__close" aria-label="Close expanded photo view" data-lightbox-close>&times;</button>
+          <button type="button" class="photo-lightbox__nav photo-lightbox__nav--prev" id="photoLightboxPrev" aria-label="Previous photo">&#8249;</button>
+          <button type="button" class="photo-lightbox__nav photo-lightbox__nav--next" id="photoLightboxNext" aria-label="Next photo">&#8250;</button>
           <figure class="photo-lightbox__figure">
             <img id="photoLightboxImage" alt="" />
             <figcaption id="photoLightboxCaption"></figcaption>
           </figure>
+          <div class="photo-lightbox__meta">
+            <p id="photoLightboxMeta" class="photo-lightbox__meta-text"></p>
+            <p id="photoLightboxCounter" class="photo-lightbox__counter"></p>
+            <a id="photoLightboxPeakLink" class="photo-lightbox__peak-link" href="/catalog">Open Peak Page</a>
+          </div>
         </div>
       </div>
     </main>

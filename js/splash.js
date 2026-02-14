@@ -2,6 +2,10 @@ const SPLASH_ICON_PATH =
   "https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=1200/";
 const SPLASH_ALT_TEXT_PATH = "/photos/backgrounds/alt-text.json";
 const MAX_SPLASH_ICONS = 40;
+const TABLET_MAX_SPLASH_ICONS = 24;
+const MOBILE_MAX_SPLASH_ICONS = 10;
+const MOBILE_BREAKPOINT_PX = 768;
+const TABLET_BREAKPOINT_PX = 1024;
 const SPLASH_MIN_DURATION_S = 18;
 const SPLASH_MAX_DURATION_S = 32;
 const SPLASH_MIN_SIZE_MULTIPLIER = 1.5;
@@ -16,6 +20,16 @@ const SPLASH_MASK_PADDING_PX = 24;
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const SPLASH_MANIFEST_PATH = "/photos/backgrounds/manifest.json";
+
+const getMaxSplashIconsForViewport = (viewportWidth) => {
+  if (viewportWidth <= MOBILE_BREAKPOINT_PX) {
+    return MOBILE_MAX_SPLASH_ICONS;
+  }
+  if (viewportWidth <= TABLET_BREAKPOINT_PX) {
+    return TABLET_MAX_SPLASH_ICONS;
+  }
+  return MAX_SPLASH_ICONS;
+};
 
 const whenImageReady = (imgEl) =>
   new Promise((resolve) => {
@@ -99,7 +113,10 @@ const initSplash = async () => {
   const viewportW = window.innerWidth;
   const viewportH = window.innerHeight;
   const shuffledIcons = iconList.sort(() => 0.5 - Math.random());
-  const selectedIcons = shuffledIcons.slice(0, MAX_SPLASH_ICONS);
+  const selectedIcons = shuffledIcons.slice(
+    0,
+    getMaxSplashIconsForViewport(viewportW)
+  );
   const maskEl = document.getElementById("splash-mask");
   const mainEl = document.querySelector("main");
   let viewportWidth = viewportW;

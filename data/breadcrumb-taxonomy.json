@@ -1,0 +1,37 @@
+{
+  "defaultStrategy": "technical",
+  "strategies": {
+    "home": "technical",
+    "peak-detail": "geographic",
+    "catalog": "technical",
+    "range-catalog": "technical",
+    "range-detail": "technical",
+    "dataset": "technical",
+    "dataset-detail": "technical",
+    "trails": "technical",
+    "long-trails": "technical",
+    "long-trail-detail": "technical",
+    "plant-catalog": "technical",
+    "plant-detail": "technical",
+    "nh48-info": "technical",
+    "about": "technical"
+  },
+  "labels": {
+    "home": {
+      "en": "Home",
+      "fr": "Accueil"
+    },
+    "api": {
+      "en": "NH48 API",
+      "fr": "API NH48"
+    },
+    "whiteMountains": {
+      "en": "White Mountains",
+      "fr": "Montagnes Blanches"
+    }
+  },
+  "paths": {
+    "whiteMountainsHubEn": "/nh-4000-footers-info",
+    "whiteMountainsHubFr": "/fr/nh-4000-footers-info"
+  }
+}
