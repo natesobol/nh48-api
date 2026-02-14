@@ -25,6 +25,7 @@ on:
       - 'data/wiki/plants.json'
       - 'data/wiki/animals.json'
       - 'data/wiki/plant-disease.json'
+      - 'whitemountains-wiki/**'
       - 'data/wiki/forest-health-flowchart.mmd'
       - 'data/wiki/forest-health-flowchart.base64.txt'
       - 'scripts/audit-site-schema.js'
@@ -32,6 +33,7 @@ on:
       - 'scripts/audit-worker-breadcrumbs.js'
       - 'scripts/audit-wiki-routes.js'
       - 'scripts/audit-live-peak-seo-parity.js'
+      - 'scripts/audit-wiki-media-sync.js'
       - 'scripts/audit-peak-guide-authority.js'
       - 'scripts/audit-peak-page-ui.js'
       - 'scripts/audit-peak-data-coverage.js'
@@ -45,6 +47,7 @@ on:
       - 'scripts/build-forest-health-flowchart-base64.js'
       - 'scripts/prerender-peaks.js'
       - 'scripts/generate-sitemaps.js'
+      - 'scripts/sync-wiki-media.js'
       - 'pages/nh48_peak.html'
       - 'pages/nav.html'
       - 'pages/wiki/index.html'
@@ -64,6 +67,7 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/deploy-worker.yml'
+      - '.github/workflows/sync-r2-wiki-media.yml'
       - 'Documentation/README.md'
       - 'Documentation/TESTING_GUIDE.md'
       - 'Documentation/CHANGES_SUMMARY.md'
@@ -151,6 +155,10 @@ jobs:
         id: wiki_routes_audit
         run: node scripts/audit-wiki-routes.js
 
+      - name: Run wiki media sync audit (pre-deploy gate)
+        id: wiki_media_sync_audit
+        run: node scripts/audit-wiki-media-sync.js
+
       - name: Run sameAs authority audit (pre-deploy gate)
         id: sameas_audit
         run: node scripts/audit-sameas.js
@@ -218,6 +226,7 @@ jobs:
           echo "- **Peak data coverage audit:** \`${{ steps.peak_data_coverage_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak image metadata audit:** \`${{ steps.peak_image_metadata_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Wiki routes audit:** \`${{ steps.wiki_routes_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Wiki media sync audit:** \`${{ steps.wiki_media_sync_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **sameAs audit:** \`${{ steps.sameas_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Entity links audit:** \`${{ steps.entity_links_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak visual snapshots:** \`${{ steps.peak_visual_test.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
@@ -235,6 +244,7 @@ jobs:
           echo "- \`node scripts/audit-peak-data-coverage.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-image-metadata.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-wiki-routes.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-wiki-media-sync.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-sameas.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-entity-links.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`npm run test:peak-visual\` (conditional)" >> "$GITHUB_STEP_SUMMARY"

@@ -8,6 +8,8 @@ Run from repo root:
 ```bash
 node scripts/audit-site-schema.js
 node scripts/audit-peak-guide-authority.js
+node scripts/audit-wiki-routes.js
+node scripts/audit-wiki-media-sync.js
 node scripts/audit-sameas.js
 node scripts/audit-entity-links.js
 ```
@@ -19,6 +21,8 @@ node scripts/build-peak-difficulty.js
 node scripts/build-peak-experience-scaffold.js
 node scripts/prerender-peaks.js
 node scripts/generate-sitemaps.js
+npm run wiki:sync-media
+npm run wiki:sync-media:check
 ```
 
 ### Production URL audits
@@ -90,7 +94,23 @@ Retry policy:
 - `sync-r2-map-data.yml`: Syncs Howker map data files to R2 map bucket.
 - `sync-r2-photos-wrangler.yml`: Canonical photo sync + metadata manifest + prerender refresh.
 - `sync-r2-photos.yml`: Manual emergency fallback only (deprecated).
+- `sync-r2-wiki-media.yml`: Canonical wiki media sync + upload for `whitemountains-wiki/**`.
 - `autogen-longtrail-geometries.yml`: Generates and commits long-trail geometry derivatives.
+
+## Wiki Media Sync Flow
+1. After editing `data/wiki/plants.json`, `data/wiki/animals.json`, or `data/wiki/plant-disease.json`, run:
+   - `npm run wiki:sync-media`
+2. Validate parity before commit:
+   - `npm run wiki:sync-media:check`
+   - `npm run audit:wiki-media-sync`
+3. On push to `main`, `.github/workflows/sync-r2-wiki-media.yml` uploads `whitemountains-wiki/**` to R2.
+
+Required secrets for `sync-r2-wiki-media.yml`:
+- `WIKI_R2_ACCESS_KEY_ID`
+- `WIKI_R2_SECRET_ACCESS_KEY`
+- `WIKI_R2_ACCOUNT_ID`
+- `WIKI_R2_BUCKET_NAME`
+- `WIKI_R2_ENDPOINT` (optional)
 
 ## Expected Run Matrix
 1. `worker.js` or worker SEO script changes on `main`:

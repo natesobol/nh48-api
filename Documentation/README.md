@@ -23,6 +23,9 @@ Primary references:
 | `scripts/audit-homepage-worker-seo.js` | `node scripts/audit-homepage-worker-seo.js --url https://nh48.info` | Worker homepage metadata integrity |
 | `scripts/audit-worker-breadcrumbs.js` | `node scripts/audit-worker-breadcrumbs.js --url https://nh48.info` | Worker breadcrumb depth/labels on core routes |
 | `scripts/audit-peak-guide-authority.js` | `node scripts/audit-peak-guide-authority.js` | Peak narrative and authority schema checks |
+| `scripts/audit-wiki-routes.js` | `node scripts/audit-wiki-routes.js` | Wiki route/template/schema checks |
+| `scripts/sync-wiki-media.js` | `node scripts/sync-wiki-media.js --write` | Synchronizes wiki `photos[]` metadata from `whitemountains-wiki/**` folders |
+| `scripts/audit-wiki-media-sync.js` | `node scripts/audit-wiki-media-sync.js` | Enforces wiki JSON/folder/media URL parity |
 | `scripts/audit-sameas.js` | `node scripts/audit-sameas.js` | Per-peak strong authority links |
 | `scripts/audit-entity-links.js` | `node scripts/audit-entity-links.js` | Sister-site presence in identity `sameAs` |
 | `scripts/build-peak-sameas.py` | `python scripts/build-peak-sameas.py` | Regenerates canonical per-peak authority links |
@@ -43,6 +46,7 @@ Primary references:
 - `pages.yml`: Pages artifact packaging/deploy; fallback generation only when prerender outputs are missing.
 - `sync-r2-photos-wrangler.yml`: canonical photo sync + manifest + prerender refresh.
 - `sync-r2-photos.yml`: manual-only deprecated fallback.
+- `sync-r2-wiki-media.yml`: canonical wiki media sync from `whitemountains-wiki/**` to the wiki R2 bucket.
 - `sync-r2-data.yml`: R2 sync for `data/nh48.json`.
 - `sync-r2-map-data.yml`: R2 sync for map datasets.
 - `autogen-longtrail-geometries.yml`: long-trail geometry generation and commit automation.

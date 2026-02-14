@@ -1,0 +1,73 @@
+﻿name: Sync R2 Wiki Media
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'whitemountains-wiki/**'
+      - 'data/wiki/plants.json'
+      - 'data/wiki/animals.json'
+      - 'data/wiki/plant-disease.json'
+      - 'scripts/sync-wiki-media.js'
+      - 'scripts/audit-wiki-media-sync.js'
+      - '.github/workflows/sync-r2-wiki-media.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-r2-wiki-media-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Validate wiki media parity
+        run: node scripts/sync-wiki-media.js --check
+
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y python3-pip unzip
+          python3 -m pip install --upgrade pip
+          pip install awscli==1.* --upgrade
+
+      - name: Sync wiki media tree to R2 (S3 API)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.WIKI_R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.WIKI_R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          WIKI_R2_ENDPOINT: ${{ secrets.WIKI_R2_ENDPOINT }}
+          WIKI_R2_ACCOUNT_ID: ${{ secrets.WIKI_R2_ACCOUNT_ID }}
+          WIKI_R2_BUCKET_NAME: ${{ secrets.WIKI_R2_BUCKET_NAME }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${WIKI_R2_ENDPOINT}" ]; then
+            ENDPOINT="https://${WIKI_R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+          else
+            ENDPOINT="${WIKI_R2_ENDPOINT}"
+          fi
+
+          echo "Syncing ./whitemountains-wiki to bucket ${WIKI_R2_BUCKET_NAME} at ${ENDPOINT}"
+          aws s3 sync "./whitemountains-wiki" "s3://${WIKI_R2_BUCKET_NAME}" \
+            --endpoint-url "${ENDPOINT}" \
+            --delete \
+            --exclude ".*" \
+            --exclude "*/.*"

@@ -1237,11 +1237,13 @@ export default {
       const push = (photo) => {
         if (!photo) return;
         if (typeof photo === 'string') {
-          const url = normalizeTextForWeb(photo);
-          if (!url) return;
+          const contentUrl = normalizeTextForWeb(photo);
+          if (!contentUrl) return;
+          const displayUrl = buildCloudflareImageVariantUrl(contentUrl, { width: 1200, format: 'jpg' });
           media.push({
-            url,
-            contentUrl: url,
+            url: contentUrl,
+            contentUrl,
+            displayUrl: displayUrl || contentUrl,
             alt: fallbackName ? `${fallbackName} photo` : 'Wiki photo',
             title: fallbackName || 'Wiki photo',
             caption: fallbackName || 'Wiki photo',
@@ -1250,11 +1252,13 @@ export default {
           });
           return;
         }
-        const url = normalizeTextForWeb(photo.url || photo.contentUrl || photo.src || '');
-        if (!url) return;
+        const contentUrl = normalizeTextForWeb(photo.contentUrl || photo.url || photo.src || '');
+        if (!contentUrl) return;
+        const displayUrl = buildCloudflareImageVariantUrl(contentUrl, { width: 1200, format: 'jpg' });
         media.push({
-          url,
-          contentUrl: normalizeTextForWeb(photo.contentUrl || url),
+          url: contentUrl,
+          contentUrl,
+          displayUrl: displayUrl || contentUrl,
           alt: normalizeTextForWeb(photo.alt || photo.altText || photo.description || photo.caption || `${fallbackName} photo`),
           title: normalizeTextForWeb(photo.title || photo.headline || photo.caption || photo.alt || fallbackName || 'Wiki photo'),
           caption: normalizeTextForWeb(photo.caption || photo.description || photo.extendedDescription || photo.alt || fallbackName || 'Wiki photo'),
@@ -2462,6 +2466,11 @@ export default {
       return Math.round(num);
     }
 
+    function isCloudflareImageHost(hostname) {
+      const host = String(hostname || '').toLowerCase();
+      return host === 'photos.nh48.info' || host === 'wikiphotos.nh48.info' || host === 'howker.nh48.info';
+    }
+
     function normalizeCatalogPhotoUrl(url, { width = 1600, format = 'jpg' } = {}) {
       if (!url) return '';
       const widthVal = toPositiveInteger(width, 1600);
@@ -2469,12 +2478,12 @@ export default {
       const options = `format=${fmt},quality=85,width=${widthVal},metadata=keep`;
       try {
         const parsed = new URL(url);
-        if (parsed.hostname !== 'photos.nh48.info') return url;
+        if (!isCloudflareImageHost(parsed.hostname)) return url;
         const path = parsed.pathname.startsWith('/') ? parsed.pathname : `/${parsed.pathname}`;
         if (path.includes('/cdn-cgi/image/')) {
           return url;
         }
-        return `https://photos.nh48.info/cdn-cgi/image/${options}${path}`;
+        return `${parsed.origin}/cdn-cgi/image/${options}${path}`;
       } catch (_) {
         return url;
       }
@@ -2529,6 +2538,9 @@ export default {
       if (!contentUrl) return '';
       try {
         const parsed = new URL(contentUrl);
+        if (!isCloudflareImageHost(parsed.hostname)) {
+          return contentUrl;
+        }
         const widthVal = toPositiveInteger(width, 1200);
         const fmt = normalizeMediaText(format) || 'jpg';
         return `${parsed.origin}/cdn-cgi/image/format=${fmt},quality=85,width=${widthVal}${parsed.pathname}`;
@@ -4714,7 +4726,7 @@ export default {
           `<span class="wiki-chip">${esc(statusLabel(entry))}</span>`,
           '</div>',
           '</header>',
-          thumb ? `<img class="wiki-disease-thumb" src="${esc(thumb.url)}" alt="${esc(thumb.alt || diseaseName)}" loading="lazy" decoding="async">` : '',
+          thumb ? `<img class="wiki-disease-thumb" src="${esc(thumb.displayUrl || thumb.url)}" alt="${esc(thumb.alt || diseaseName)}" loading="lazy" decoding="async">` : '',
           '<div class="wiki-data-grid">',
           `<div class="wiki-row"><div class="wiki-label">Hosts</div><div class="wiki-value">${renderListValue(entry.hosts)}</div></div>`,
           `<div class="wiki-row"><div class="wiki-label">Symptoms</div><div class="wiki-value">${renderListValue(entry.symptoms)}</div></div>`,

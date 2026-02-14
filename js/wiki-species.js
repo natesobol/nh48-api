@@ -73,6 +73,40 @@
     return `${low.toLocaleString()} - ${high.toLocaleString()} ${unitLabel}`;
   }
 
+  function stripCloudflareTransform(rawUrl) {
+    if (!rawUrl) return '';
+    try {
+      const parsed = new URL(rawUrl);
+      const marker = '/cdn-cgi/image/';
+      const markerIndex = parsed.pathname.indexOf(marker);
+      if (markerIndex === -1) return parsed.toString();
+      const tail = parsed.pathname.slice(markerIndex + marker.length);
+      const slashIndex = tail.indexOf('/');
+      if (slashIndex === -1) return parsed.toString();
+      const originPath = tail.slice(slashIndex + 1);
+      return `${parsed.origin}/${originPath}`;
+    } catch (_) {
+      return rawUrl;
+    }
+  }
+
+  function buildWikiVariantUrl(rawUrl, { width = 1400, format = 'webp' } = {}) {
+    const contentUrl = stripCloudflareTransform(rawUrl);
+    if (!contentUrl) return '';
+    try {
+      const parsed = new URL(contentUrl);
+      const host = parsed.hostname.toLowerCase();
+      const variantCapable =
+        host === 'photos.nh48.info' || host === 'wikiphotos.nh48.info' || host === 'howker.nh48.info';
+      if (!variantCapable) return contentUrl;
+      const safeWidth = Number.isFinite(Number(width)) ? Math.max(320, Math.round(Number(width))) : 1400;
+      const safeFormat = String(format || 'webp').trim() || 'webp';
+      return `${parsed.origin}/cdn-cgi/image/format=${safeFormat},quality=85,width=${safeWidth}${parsed.pathname}`;
+    } catch (_) {
+      return contentUrl;
+    }
+  }
+
   function normalizeMedia(entry, fallbackName) {
     const photos = [];
     const pushPhoto = (photo) => {
@@ -80,8 +114,10 @@
       if (typeof photo === 'string') {
         const url = text(photo);
         if (!url) return;
+        const contentUrl = stripCloudflareTransform(url);
         photos.push({
-          url,
+          url: contentUrl,
+          displayUrl: buildWikiVariantUrl(contentUrl, { width: 1600, format: 'webp' }),
           alt: `${fallbackName} photo`,
           title: `${fallbackName} photo`,
           caption: `${fallbackName} photo`,
@@ -89,10 +125,12 @@
         });
         return;
       }
-      const url = text(photo.url || photo.contentUrl || photo.src);
+      const url = text(photo.contentUrl || photo.url || photo.src);
       if (!url) return;
+      const contentUrl = stripCloudflareTransform(url);
       photos.push({
-        url,
+        url: contentUrl,
+        displayUrl: buildWikiVariantUrl(contentUrl, { width: 1600, format: 'webp' }),
         alt: text(photo.alt || photo.altText || photo.description || photo.caption || `${fallbackName} photo`),
         title: text(photo.title || photo.headline || photo.caption || photo.alt || `${fallbackName} photo`),
         caption: text(photo.caption || photo.description || photo.extendedDescription || photo.alt || `${fallbackName} photo`),
@@ -133,7 +171,7 @@
       track.innerHTML = '';
       const image = document.createElement('img');
       image.className = 'wiki-carousel-image';
-      image.src = photo.url;
+      image.src = photo.displayUrl || photo.url;
       image.alt = photo.alt || photo.title || 'Wiki photo';
       image.loading = 'lazy';
       image.decoding = 'async';
@@ -151,7 +189,7 @@
       button.type = 'button';
       button.setAttribute('aria-label', `Open image ${photoIndex + 1}`);
       const image = document.createElement('img');
-      image.src = photo.url;
+      image.src = photo.displayUrl || photo.url;
       image.alt = photo.alt || photo.title || `Image ${photoIndex + 1}`;
       image.loading = 'lazy';
       image.decoding = 'async';
