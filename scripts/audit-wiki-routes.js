@@ -68,6 +68,37 @@ function countType(docs, typeName) {
   return count;
 }
 
+function countWikiImageObjects(docs, canonicalUrl) {
+  let count = 0;
+  function walk(node) {
+    if (!node || typeof node !== 'object') return;
+    const t = node['@type'];
+    const isImage = Array.isArray(t) ? t.includes('ImageObject') : t === 'ImageObject';
+    if (isImage) {
+      const nodeId = typeof node['@id'] === 'string' ? node['@id'] : '';
+      if (nodeId.includes('#wiki-image-') || (canonicalUrl && nodeId.startsWith(`${canonicalUrl}#wiki-image-`))) {
+        count += 1;
+      }
+    }
+    if (Array.isArray(node['@graph'])) node['@graph'].forEach(walk);
+    Object.values(node).forEach((value) => {
+      if (!value || typeof value !== 'object') return;
+      if (Array.isArray(value)) value.forEach(walk);
+      else walk(value);
+    });
+  }
+  docs.forEach(walk);
+  return count;
+}
+
+function hasEntryMedia(entry) {
+  if (!entry || typeof entry !== 'object') return false;
+  if (Array.isArray(entry.photos) && entry.photos.length > 0) return true;
+  if (Array.isArray(entry.imgs) && entry.imgs.some((img) => typeof img === 'string' && img.trim().length > 0)) return true;
+  if (typeof entry.img === 'string' && entry.img.trim().length > 0) return true;
+  return false;
+}
+
 function pickSamples() {
   const mountainSets = readJson('data/wiki/mountain-sets.json');
   const nh48Data = readJson('data/wiki/wiki-nh48-mountains.json');
@@ -178,8 +209,8 @@ async function runUrlChecks(samples) {
   const routeChecks = [
     { route: routes.mountainPhoto, requiredType: 'Mountain', expectsImages: true },
     { route: routes.mountainNoPhoto, requiredType: 'Mountain', expectsImages: false },
-    { route: routes.plant, requiredType: 'Species', expectsImages: Array.isArray(samples.plant.photos) && samples.plant.photos.length > 0 },
-    { route: routes.animal, requiredType: 'Species', expectsImages: Array.isArray(samples.animal.photos) && samples.animal.photos.length > 0 }
+    { route: routes.plant, requiredType: 'Species', expectsImages: hasEntryMedia(samples.plant) },
+    { route: routes.animal, requiredType: 'Species', expectsImages: hasEntryMedia(samples.animal) }
   ];
 
   for (const check of routeChecks) {
@@ -197,11 +228,11 @@ async function runUrlChecks(samples) {
     assert(types.has(check.requiredType), `${fullUrl}: missing ${check.requiredType} JSON-LD`, failures);
     assert(countType(docs, 'BreadcrumbList') === 1, `${fullUrl}: expected exactly one BreadcrumbList`, failures);
 
-    const imageCount = countType(docs, 'ImageObject');
+    const imageCount = countWikiImageObjects(docs, fullUrl);
     if (check.expectsImages) {
-      assert(imageCount > 0, `${fullUrl}: expected ImageObject metadata for photo-backed entry`, failures);
+      assert(imageCount > 0, `${fullUrl}: expected wiki ImageObject metadata for photo-backed entry`, failures);
     } else {
-      assert(imageCount === 0, `${fullUrl}: expected no ImageObject metadata for no-photo entry`, failures);
+      assert(imageCount === 0, `${fullUrl}: expected no wiki ImageObject metadata for no-photo entry`, failures);
     }
   }
 
