@@ -1941,21 +1941,15 @@
     border-radius: 10px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
     padding: 12px 10px 10px;
-    min-width: 200px;
-    z-index: 10;
+    min-width: 260px;
+    max-width: min(92vw, 360px);
+    z-index: 20;
     transform: translate(var(--submenu-shift-x, 0px), var(--submenu-shift-y, 0px));
   }
 
   .site-nav-submenu--wide {
-    min-width: max(280px, 100%);
-  }
-
-  .site-nav-submenu--wide .site-nav-submenu-group > button {
-    padding-right: 48px;
-  }
-
-  .site-nav-submenu .submenu-centered {
-    text-align: center;
+    min-width: max(320px, 100%);
+    max-width: min(92vw, 420px);
   }
 
   .site-nav-submenu--divided {
@@ -1966,16 +1960,7 @@
     position: relative;
   }
 
-  .site-nav-submenu--divided > * + *,
-  .site-nav-submenu--wide .site-nav-submenu-group + .site-nav-submenu-group {
-    border-top: 0;
-    border-radius: 0;
-    margin-top: 0;
-    padding-top: 0;
-  }
-
-  .site-nav-submenu--divided > * + *::before,
-  .site-nav-submenu--wide .site-nav-submenu-group + .site-nav-submenu-group::before {
+  .site-nav-submenu--divided > * + *::before {
     content: "";
     position: absolute;
     top: 0;
@@ -1990,9 +1975,26 @@
     pointer-events: none;
   }
 
-  /* Widen Projects dropdown to ~50% more than the default */
   .projects-submenu {
-    min-width: 300px;
+    min-width: max(340px, 100%);
+    max-width: min(92vw, 440px);
+  }
+
+  .site-nav-submenu-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 0 6px;
+  }
+
+  .site-nav-submenu-heading {
+    margin: 0;
+    padding: 8px 12px 4px;
+    color: #86efac;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
   .site-nav-dropdown.is-open > .site-nav-submenu,
@@ -2017,23 +2019,9 @@
       flex-direction: column;
       gap: 0;
     }
-
-    .site-nav-submenu-group:hover > .site-nav-submenu.site-nav-submenu--nested,
-    .site-nav-submenu-group:focus-within > .site-nav-submenu.site-nav-submenu--nested {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .site-nav-submenu-group:hover > button,
-    .site-nav-submenu-group:focus-within > button {
-      border-radius: 8px 0 0 8px;
-      background: rgba(255, 255, 255, 0.08);
-    }
   }
 
-  .site-nav-dropdown .site-nav-submenu a,
-  .site-nav-dropdown .site-nav-submenu button {
+  .site-nav-dropdown .site-nav-submenu a {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -2046,124 +2034,9 @@
     border-radius: 8px;
   }
 
-  .site-nav-dropdown .site-nav-submenu button {
-    appearance: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #ffffff;
-    text-align: left;
-    font: inherit;
-    font-weight: 700;
-  }
-
-  .site-nav-submenu-group {
-    position: relative;
-    overflow: visible;
-  }
-
-  .site-nav-submenu-group > button {
-    position: relative;
-    padding-right: 36px;
-  }
-
-  .site-nav-submenu-group > button::after {
-    content: "\203A";
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.7;
-  }
-
-  .site-nav-submenu-group > button.submenu-centered {
-    justify-content: flex-start;
-    text-align: left;
-    padding-left: 12px;
-    padding-right: 36px;
-  }
-
-  .site-nav-submenu.site-nav-submenu--nested {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 100%;
-    margin-left: -1px;
-    background: #0f172a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-left: 0;
-    border-radius: 0 10px 10px 0;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-    padding: 10px;
-    min-width: 200px;
-    z-index: 12;
-    transform: translate(var(--submenu-shift-x, 0px), var(--submenu-shift-y, 0px));
-  }
-
-  .site-nav-submenu.site-nav-submenu--nested::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -12px;
-    width: 12px;
-    height: 100%;
-    background: transparent;
-  }
-
-  .site-nav-submenu-group.is-open > .site-nav-submenu.site-nav-submenu--nested,
-  .site-nav-submenu-group[data-open="true"] > .site-nav-submenu.site-nav-submenu--nested {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .site-nav-submenu-group.is-open > button,
-  .site-nav-submenu-group[data-open="true"] > button {
-    border-radius: 8px 0 0 8px;
-    background: rgba(255, 255, 255, 0.08);
-  }
-
   .site-nav-dropdown > .site-nav-submenu.open-up {
     top: auto;
     bottom: calc(100% + 6px);
-  }
-
-  .site-nav-submenu.site-nav-submenu--nested.open-left {
-    left: auto;
-    right: 100%;
-    margin-left: 0;
-    margin-right: -1px;
-    border-right: 0;
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px 0 0 10px;
-  }
-
-  .site-nav-submenu.site-nav-submenu--nested.open-left::before {
-    left: auto;
-    right: -12px;
-  }
-
-  .site-nav-submenu--nested > * + * {
-    position: relative;
-    border-radius: 0;
-    border-top: 0;
-    padding-top: 10px;
-    margin-top: 6px;
-  }
-
-  .site-nav-submenu--nested > * + *::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 10px;
-    right: 10px;
-    height: var(--submenu-divider-thickness);
-    background-image: repeating-linear-gradient(
-      to right,
-      var(--submenu-divider-color) 0 var(--submenu-divider-dot),
-      transparent var(--submenu-divider-dot) calc(var(--submenu-divider-dot) + var(--submenu-divider-gap))
-    );
-    pointer-events: none;
   }
 
   .site-nav-cta {
@@ -2393,8 +2266,7 @@
       transform: translateY(-50%) rotate(180deg);
     }
 
-    .site-nav-dropdown .site-nav-submenu,
-    .site-nav-submenu.site-nav-submenu--nested {
+    .site-nav-dropdown .site-nav-submenu {
       position: static;
       top: auto;
       right: auto;
@@ -2413,49 +2285,6 @@
       display: flex;
       flex-direction: column;
       gap: 0;
-    }
-
-    .site-nav-submenu.site-nav-submenu--nested {
-      border-left: 2px solid rgba(34, 197, 94, 0.35);
-      padding-left: 8px;
-      margin-top: 6px;
-    }
-
-    .site-nav-submenu-group:focus-within > .site-nav-submenu.site-nav-submenu--nested {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .site-nav-submenu-group > button {
-      padding-right: 36px;
-    }
-
-    .site-nav-submenu-group > button::after {
-      content: "\25BE";
-      font-size: 12px;
-    }
-
-    .site-nav-submenu-group.is-open > button::after,
-    .site-nav-submenu-group[data-open="true"] > button::after {
-      transform: translateY(-50%) rotate(180deg);
-    }
-
-    .site-nav-submenu-group.is-open > button,
-    .site-nav-submenu-group:focus-within > button,
-    .site-nav-submenu-group[data-open="true"] > button {
-      border-radius: 8px;
-    }
-
-    .site-nav-submenu.site-nav-submenu--nested::before {
-      display: none;
-    }
-
-    .site-nav-submenu.site-nav-submenu--nested.open-left {
-      border-right: 1px solid rgba(255, 255, 255, 0.12);
-      border-left: 2px solid rgba(34, 197, 94, 0.35);
-      border-radius: 10px;
-      margin-right: 0;
     }
 
     .nh48-lang {
@@ -2549,72 +2378,58 @@
   </a>
   <div class="site-nav-links">
     <div class="site-nav-dropdown">
-      <button type="button" data-route="dataset-home" data-routes="home,dataset-home">NH48</button>
+      <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48</a>
       <div class="site-nav-submenu site-nav-submenu--divided" aria-label="NH48 dataset short links">
-        <div class="site-nav-submenu-group">
-          <button type="button" class="submenu-centered">View Peaks</button>
-          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="NH48 peak views menu">
-            <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
-            <a href="/catalog/ranges" data-route="range-catalog" data-routes="range-catalog,range-detail">Range Catalog</a>
-            <a href="/photos/" data-route="photos">NH48 Photos</a>
-          </div>
-        </div>
-        <div class="site-nav-submenu-group">
-          <button type="button" class="submenu-centered">Info &amp; Tools</button>
-          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="NH48 info and tools menu">
-            <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Guide</a>
-            <a href="/nh48-planner.html" data-route="nh48-planner">Peak Planning Tool</a>
-            <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48 Data &amp; API</a>
-          </div>
-        </div>
-        <div class="site-nav-submenu-group">
-          <button type="button" class="submenu-centered" data-i18n="nav.games">Games</button>
-          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="NH48 games menu">
-            <a href="/peakid-game.html" data-route="peakid-game" data-i18n="nav.peakidGame">PeakID Game</a>
-            <a href="/timed-peakid-game.html" data-route="timed-peakid-game" data-i18n="nav.timedPeakId">Timed PeakID Game</a>
-            <a href="/pages/puzzle-game.html" data-route="puzzle-game" data-i18n="nav.puzzleGame">Jigsaw Puzzle</a>
-          </div>
-        </div>
+        <section class="site-nav-submenu-section" aria-label="NH48 peak views menu">
+          <p class="site-nav-submenu-heading">View Peaks</p>
+          <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
+          <a href="/catalog/ranges" data-route="range-catalog" data-routes="range-catalog,range-detail">Range Catalog</a>
+          <a href="/photos/" data-route="photos">NH48 Photos</a>
+        </section>
+        <section class="site-nav-submenu-section" aria-label="NH48 info and tools menu">
+          <p class="site-nav-submenu-heading">Info &amp; Tools</p>
+          <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Guide</a>
+          <a href="/nh48-planner.html" data-route="nh48-planner">Peak Planning Tool</a>
+          <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48 Data &amp; API</a>
+        </section>
+        <section class="site-nav-submenu-section" aria-label="NH48 games menu">
+          <p class="site-nav-submenu-heading" data-i18n="nav.games">Games</p>
+          <a href="/peakid-game.html" data-route="peakid-game" data-i18n="nav.peakidGame">PeakID Game</a>
+          <a href="/timed-peakid-game.html" data-route="timed-peakid-game" data-i18n="nav.timedPeakId">Timed PeakID Game</a>
+          <a href="/pages/puzzle-game.html" data-route="puzzle-game" data-i18n="nav.puzzleGame">Jigsaw Puzzle</a>
+        </section>
       </div>
     </div>
     <div class="site-nav-dropdown">
-      <button type="button">Trail Maps &amp; Datasets</button>
-      <div class="site-nav-submenu site-nav-submenu--wide" aria-label="Other hiking datasets short links">
-        <div class="site-nav-submenu-group">
-          <button type="button" data-route="trails" data-i18n="nav.trails">White Mountain Trails</button>
-          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="White Mountain Trails short links">
-            <a href="/trails" data-route="trails">Trails Map</a>
-            <a href="/dataset/wmnf-trails">WMNF Dataset</a>
-          </div>
-        </div>
-        <div class="site-nav-submenu-group">
-          <button type="button" data-route="long-trails" data-i18n="nav.longTrails">Long Trails</button>
-          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="Long Trails short links">
-            <a href="/long-trails" data-route="long-trails">Long Trail Map</a>
-            <a href="/dataset/long-trails">Long Trails Dataset</a>
-          </div>
-        </div>
+      <a href="/trails" data-route="trails">Trail Maps &amp; Datasets</a>
+      <div class="site-nav-submenu site-nav-submenu--wide site-nav-submenu--divided" aria-label="Other hiking datasets short links">
+        <section class="site-nav-submenu-section" aria-label="White Mountain Trails short links">
+          <p class="site-nav-submenu-heading" data-i18n="nav.trails">White Mountain Trails</p>
+          <a href="/trails" data-route="trails">Trails Map</a>
+          <a href="/dataset/wmnf-trails">WMNF Dataset</a>
+        </section>
+        <section class="site-nav-submenu-section" aria-label="Long Trails short links">
+          <p class="site-nav-submenu-heading" data-i18n="nav.longTrails">Long Trails</p>
+          <a href="/long-trails" data-route="long-trails">Long Trail Map</a>
+          <a href="/dataset/long-trails">Long Trails Dataset</a>
+        </section>
       </div>
     </div>
     <div class="site-nav-dropdown">
-      <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Howker Ridge Info</a>
+      <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Howker Ridge</a>
       <div class="site-nav-submenu projects-submenu site-nav-submenu--divided" aria-label="Howker Ridge Info short links">
-        <div class="site-nav-submenu-group">
-          <button type="button" data-route="howker-ridge" data-routes="howker-ridge">Howker Trail Info</button>
-          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="Howker trail info links">
-            <a href="/projects/hrt-info" data-route="howker-ridge" data-routes="howker-ridge">Trail Info</a>
-            <a href="/howker-ridge" data-route="howker-ridge" data-routes="howker-ridge">Trail Map &amp; Data</a>
-            <a href="/howker-ridge/poi" data-route="howker-ridge" data-routes="howker-ridge">Trail POI</a>
-          </div>
-        </div>
-        <div class="site-nav-submenu-group">
-          <button type="button" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Howker Plant Catalog</button>
-          <div class="site-nav-submenu site-nav-submenu--nested" aria-label="Howker plant catalog links">
-            <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Plant Catalog</a>
-            <a href="/projects/plant-map" data-route="plant-map" data-routes="plant-map">Plant Log Map</a>
-            <a href="/dataset/howker-plants">Plant Data &amp; API</a>
-          </div>
-        </div>
+        <section class="site-nav-submenu-section" aria-label="Howker trail info links">
+          <p class="site-nav-submenu-heading">Howker Trail Info</p>
+          <a href="/projects/hrt-info" data-route="howker-ridge" data-routes="howker-ridge">Trail Info</a>
+          <a href="/howker-ridge" data-route="howker-ridge" data-routes="howker-ridge">Trail Map &amp; Data</a>
+          <a href="/howker-ridge/poi" data-route="howker-ridge" data-routes="howker-ridge">Trail POI</a>
+        </section>
+        <section class="site-nav-submenu-section" aria-label="Howker plant catalog links">
+          <p class="site-nav-submenu-heading">Howker Plant Catalog</p>
+          <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Plant Catalog</a>
+          <a href="/projects/plant-map" data-route="plant-map" data-routes="plant-map">Plant Log Map</a>
+          <a href="/dataset/howker-plants">Plant Data &amp; API</a>
+        </section>
         <a href="/projects/howker-map-editor" data-route="howker-map-editor" data-routes="howker-map-editor">Edit Trail Map</a>
       </div>
     </div>
@@ -2689,7 +2504,7 @@
 
     const resetSubmenuPosition = (submenu) => {
       if (!submenu) return;
-      submenu.classList.remove('open-left', 'open-up');
+      submenu.classList.remove('open-up');
       submenu.style.removeProperty('--submenu-shift-x');
       submenu.style.removeProperty('--submenu-shift-y');
     };
@@ -2728,40 +2543,6 @@
       applyShift(submenu, shiftX, shiftY);
     };
 
-    const clampNestedMenu = (group) => {
-      if (!isDesktopMode()) return;
-      const submenu = group.querySelector(':scope > .site-nav-submenu--nested');
-      if (!submenu) return;
-
-      resetSubmenuPosition(submenu);
-      let rect = submenu.getBoundingClientRect();
-
-      if (rect.right > window.innerWidth - viewportPadding) {
-        submenu.classList.add('open-left');
-        rect = submenu.getBoundingClientRect();
-      }
-
-      let shiftX = 0;
-      let shiftY = 0;
-      if (rect.left < viewportPadding) shiftX += viewportPadding - rect.left;
-      if (rect.right > window.innerWidth - viewportPadding) shiftX -= rect.right - (window.innerWidth - viewportPadding);
-      if (rect.bottom > window.innerHeight - viewportPadding) shiftY -= rect.bottom - (window.innerHeight - viewportPadding);
-      if (rect.top + shiftY < viewportPadding) shiftY += viewportPadding - (rect.top + shiftY);
-      applyShift(submenu, shiftX, shiftY);
-    };
-
-    const closeNestedGroups = (dropdown, exceptGroup = null) => {
-      const groups = dropdown.querySelectorAll('.site-nav-submenu-group');
-      groups.forEach((group) => {
-        if (exceptGroup && group === exceptGroup) return;
-        const groupTrigger = group.querySelector(':scope > button');
-        const nestedMenu = group.querySelector(':scope > .site-nav-submenu--nested');
-        setOpenState(group, false);
-        setExpanded(groupTrigger, false);
-        resetSubmenuPosition(nestedMenu);
-      });
-    };
-
     const closeDropdown = (dropdown, options = {}) => {
       const { focusTrigger = false } = options;
       if (!dropdown) return;
@@ -2770,7 +2551,6 @@
       setOpenState(dropdown, false);
       setExpanded(trigger, false);
       resetSubmenuPosition(submenu);
-      closeNestedGroups(dropdown);
       if (activeDropdown === dropdown) activeDropdown = null;
       if (focusTrigger && trigger) trigger.focus();
     };
@@ -2797,30 +2577,6 @@
       else openDropdown(dropdown);
     };
 
-    const openNestedGroup = (group) => {
-      const dropdown = group.closest('.site-nav-dropdown');
-      if (!dropdown) return;
-      const groupTrigger = group.querySelector(':scope > button');
-      if (!dropdown.classList.contains('is-open')) openDropdown(dropdown);
-      closeNestedGroups(dropdown, group);
-      setOpenState(group, true);
-      setExpanded(groupTrigger, true);
-      clampNestedMenu(group);
-    };
-
-    const closeNestedGroup = (group) => {
-      const groupTrigger = group.querySelector(':scope > button');
-      const nestedMenu = group.querySelector(':scope > .site-nav-submenu--nested');
-      setOpenState(group, false);
-      setExpanded(groupTrigger, false);
-      resetSubmenuPosition(nestedMenu);
-    };
-
-    const toggleNestedGroup = (group) => {
-      if (group.classList.contains('is-open')) closeNestedGroup(group);
-      else openNestedGroup(group);
-    };
-
     const scheduleCloseDropdown = (dropdown) => {
       clearCloseTimer();
       closeTimer = setTimeout(() => closeDropdown(dropdown), closeDelayMs);
@@ -2829,8 +2585,6 @@
     const refreshOpenMenuPositions = () => {
       if (!activeDropdown || !activeDropdown.classList.contains('is-open')) return;
       clampTopLevelMenu(activeDropdown);
-      const openGroups = activeDropdown.querySelectorAll('.site-nav-submenu-group.is-open');
-      openGroups.forEach((group) => clampNestedMenu(group));
     };
 
     dropdowns.forEach((dropdown) => {
@@ -2842,50 +2596,6 @@
       trigger.setAttribute('aria-haspopup', 'true');
       trigger.setAttribute('aria-controls', ensureSubmenuId(submenu));
       setExpanded(trigger, false);
-
-      const groups = dropdown.querySelectorAll('.site-nav-submenu-group');
-      groups.forEach((group) => {
-        const groupTrigger = group.querySelector(':scope > button');
-        const nestedSubmenu = group.querySelector(':scope > .site-nav-submenu--nested');
-        if (!groupTrigger || !nestedSubmenu) return;
-        setOpenState(group, false);
-        groupTrigger.setAttribute('aria-haspopup', 'true');
-        groupTrigger.setAttribute('aria-controls', ensureSubmenuId(nestedSubmenu));
-        setExpanded(groupTrigger, false);
-
-        groupTrigger.addEventListener('click', (event) => {
-          event.preventDefault();
-          toggleNestedGroup(group);
-        });
-
-        groupTrigger.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            toggleNestedGroup(group);
-          } else if (event.key === 'Escape') {
-            event.preventDefault();
-            closeNestedGroup(group);
-            groupTrigger.focus();
-          }
-        });
-
-        group.addEventListener('mouseenter', () => {
-          if (!isDesktopMode()) return;
-          openNestedGroup(group);
-        });
-
-        group.addEventListener('focusin', () => {
-          if (!isDesktopMode()) return;
-          openNestedGroup(group);
-        });
-
-        group.addEventListener('focusout', (event) => {
-          if (!isDesktopMode()) return;
-          const next = event.relatedTarget;
-          if (next instanceof Node && group.contains(next)) return;
-          closeNestedGroup(group);
-        });
-      });
 
       trigger.addEventListener('click', (event) => {
         const isAnchor = trigger.tagName === 'A';
