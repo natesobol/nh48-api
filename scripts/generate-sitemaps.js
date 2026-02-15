@@ -662,6 +662,39 @@ const normalizePhotoUrl = (url) => {
   return url;
 };
 
+const canonicalizeImageUrl = (rawUrl) => {
+  const normalized = normalizePhotoUrl(rawUrl);
+  if (!normalized) return '';
+  let parsed;
+  try {
+    parsed = new URL(normalized);
+  } catch (error) {
+    return '';
+  }
+  if (!/^https?:$/i.test(parsed.protocol)) return '';
+
+  // Canonical sitemap URLs should be HTTPS and should not include transform/query noise.
+  parsed.protocol = 'https:';
+  parsed.hash = '';
+  parsed.search = '';
+
+  let pathname = parsed.pathname || '/';
+  const marker = '/cdn-cgi/image/';
+  let guard = 0;
+  while (pathname.includes(marker) && guard < 10) {
+    guard += 1;
+    const idx = pathname.indexOf(marker);
+    const suffix = pathname.slice(idx + marker.length);
+    const slashIdx = suffix.indexOf('/');
+    if (slashIdx === -1) break;
+    const transformedTail = suffix.slice(slashIdx + 1);
+    pathname = `${pathname.slice(0, idx)}/${transformedTail}`;
+  }
+  pathname = pathname.replace(/\/{2,}/g, '/');
+  parsed.pathname = pathname;
+  return parsed.toString();
+};
+
 const buildImageEntries = (photos, peakName) => {
   if (!Array.isArray(photos)) return [];
   return photos
@@ -694,10 +727,11 @@ const dedupeImages = (images) => {
   const bestByUrl = new Map();
   images.forEach((image) => {
     if (!image.url) return;
-    const key = image.url;
+    const key = canonicalizeImageUrl(image.url);
+    if (!key) return;
     const existing = bestByUrl.get(key);
     if (!existing || scoreImageDetail(image) > scoreImageDetail(existing)) {
-      bestByUrl.set(key, image);
+      bestByUrl.set(key, { ...image, url: key });
     }
   });
   return Array.from(bestByUrl.values());
@@ -926,50 +960,67 @@ const buildPageSitemap = () => {
 };
 
 const buildImageSitemap = () => {
-  const urlEntries = [];
-  const allImages = [];
+  const candidateMappings = [];
+  const galleryCandidates = new Set();
+  let sequence = 0;
+
+  const addCandidates = (loc, lastmod, images, priority, source) => {
+    if (!loc || !Array.isArray(images) || !images.length) return;
+    images.forEach((image) => {
+      const rawUrl = typeof image === 'string' ? image : image?.url;
+      const url = canonicalizeImageUrl(rawUrl);
+      if (!url) return;
+      candidateMappings.push({
+        loc,
+        lastmod,
+        url,
+        priority,
+        source,
+        order: sequence++,
+      });
+      if (
+        source === 'peak' ||
+        source === 'wiki_mountain' ||
+        source === 'wiki_plant' ||
+        source === 'wiki_animal' ||
+        source === 'wiki_disease' ||
+        source === 'howker_plant'
+      ) {
+        galleryCandidates.add(url);
+      }
+    });
+  };
 
   slugs.forEach((slug) => {
     const peak = data[slug] || {};
     const name = peak.peakName || peak['Peak Name'] || slug;
     const images = dedupeImages(buildImageEntries(peak.photos, name));
     if (!images.length) return;
-    const lastmod = getGitLastmod(path.join('peaks', slug, 'index.html'));
-    urlEntries.push({ loc: `${PEAK_BASE}/${slug}`, images, lastmod });
-    allImages.push(...images);
+    addCandidates(`${PEAK_BASE}/${slug}`, getGitLastmod(path.join('peaks', slug, 'index.html')), images, 10, 'peak');
   });
 
   wikiMountainRoutes.forEach((route) => {
     const images = normalizeWikiMedia(route.entry, route.name);
     if (!images.length) return;
-    urlEntries.push({
-      loc: `https://nh48.info/wiki/mountains/${encodeURIComponent(route.setSlug)}/${encodeURIComponent(route.slug)}`,
+    addCandidates(
+      `https://nh48.info/wiki/mountains/${encodeURIComponent(route.setSlug)}/${encodeURIComponent(route.slug)}`,
+      route.lastmod,
       images,
-      lastmod: route.lastmod
-    });
-    allImages.push(...images);
+      20,
+      'wiki_mountain',
+    );
   });
 
   wikiPlantRoutes.forEach((route) => {
     const images = normalizeWikiMedia(route.entry, route.name);
     if (!images.length) return;
-    urlEntries.push({
-      loc: `https://nh48.info/wiki/plants/${encodeURIComponent(route.slug)}`,
-      images,
-      lastmod: route.lastmod
-    });
-    allImages.push(...images);
+    addCandidates(`https://nh48.info/wiki/plants/${encodeURIComponent(route.slug)}`, route.lastmod, images, 30, 'wiki_plant');
   });
 
   wikiAnimalRoutes.forEach((route) => {
     const images = normalizeWikiMedia(route.entry, route.name);
     if (!images.length) return;
-    urlEntries.push({
-      loc: `https://nh48.info/wiki/animals/${encodeURIComponent(route.slug)}`,
-      images,
-      lastmod: route.lastmod
-    });
-    allImages.push(...images);
+    addCandidates(`https://nh48.info/wiki/animals/${encodeURIComponent(route.slug)}`, route.lastmod, images, 40, 'wiki_animal');
   });
 
   if (wikiPlantDiseaseRoutes.length) {
@@ -979,38 +1030,81 @@ const buildImageSitemap = () => {
     });
     const uniqueDiseaseImages = dedupeImages(diseaseImages);
     if (uniqueDiseaseImages.length) {
-      const diseaseLastmod = getGitLastmod('data/wiki/plant-disease.json') || getGitLastmod('pages/wiki/plant-disease.html');
-      urlEntries.push({
-        loc: 'https://nh48.info/wiki/plant-diseases',
-        images: uniqueDiseaseImages,
-        lastmod: diseaseLastmod
-      });
-      allImages.push(...uniqueDiseaseImages);
+      addCandidates(
+        'https://nh48.info/wiki/plant-diseases',
+        getGitLastmod('data/wiki/plant-disease.json') || getGitLastmod('pages/wiki/plant-disease.html'),
+        uniqueDiseaseImages,
+        50,
+        'wiki_disease',
+      );
     }
   }
 
-  if (allImages.length) {
-    const photosLastmod = getGitLastmod('photos/index.html');
-    urlEntries.unshift({
-      loc: 'https://nh48.info/photos/',
-      images: dedupeImages(allImages),
-      lastmod: photosLastmod,
-    });
-  }
+  buildPlantImageEntries().forEach((entry) => {
+    addCandidates(entry.loc, entry.lastmod, entry.images, 60, 'howker_plant');
+  });
 
-  const plantEntries = buildPlantImageEntries();
-  urlEntries.push(...plantEntries);
   const staticEntries = STATIC_IMAGE_ENTRIES.map((entry) => ({
     ...entry,
     lastmod: entry.file ? getGitLastmod(entry.file) : undefined,
     images: dedupeImages(
       (entry.images || []).map((image) => ({
         ...image,
-        url: normalizePhotoUrl(image.url),
+        url: canonicalizeImageUrl(image.url),
       })),
     ),
   }));
-  urlEntries.push(...staticEntries);
+  staticEntries.forEach((entry) => {
+    addCandidates(entry.loc, entry.lastmod, entry.images, 90, 'static');
+  });
+
+  // One-to-one canonical page mapping: each image URL maps to one best page.
+  const bestByImage = new Map();
+  candidateMappings.forEach((candidate) => {
+    const existing = bestByImage.get(candidate.url);
+    if (!existing) {
+      bestByImage.set(candidate.url, candidate);
+      return;
+    }
+    if (candidate.priority < existing.priority || (candidate.priority === existing.priority && candidate.order < existing.order)) {
+      bestByImage.set(candidate.url, candidate);
+    }
+  });
+
+  const entriesByLoc = new Map();
+  const ensureEntry = (loc, lastmod = '') => {
+    if (!entriesByLoc.has(loc)) {
+      entriesByLoc.set(loc, {
+        loc,
+        lastmod,
+        images: new Set(),
+      });
+    } else if (!entriesByLoc.get(loc).lastmod && lastmod) {
+      entriesByLoc.get(loc).lastmod = lastmod;
+    }
+    return entriesByLoc.get(loc);
+  };
+
+  for (const mapping of bestByImage.values()) {
+    const entry = ensureEntry(mapping.loc, mapping.lastmod);
+    entry.images.add(mapping.url);
+  }
+
+  // /photos should include only gallery-only images that were not assigned elsewhere.
+  const galleryOnly = Array.from(galleryCandidates).filter((url) => !bestByImage.has(url));
+  if (galleryOnly.length) {
+    const photosEntry = ensureEntry('https://nh48.info/photos/', getGitLastmod('photos/index.html'));
+    galleryOnly.forEach((url) => photosEntry.images.add(url));
+  }
+
+  const urlEntries = Array.from(entriesByLoc.values())
+    .map((entry) => ({
+      loc: entry.loc,
+      lastmod: entry.lastmod,
+      images: Array.from(entry.images).sort((a, b) => a.localeCompare(b)),
+    }))
+    .filter((entry) => entry.images.length)
+    .sort((a, b) => a.loc.localeCompare(b.loc));
 
   const xmlParts = [];
   xmlParts.push('<?xml version="1.0" encoding="UTF-8"?>');
@@ -1023,16 +1117,9 @@ const buildImageSitemap = () => {
     if (entry.lastmod) {
       xmlParts.push(`    <lastmod>${escapeXml(entry.lastmod)}</lastmod>`);
     }
-    const usedTitles = new Set();
-    const usedCaptions = new Set();
-    entry.images.forEach((image) => {
-      const title = uniqueify(image.title, { url: image.url }, usedTitles);
-      const caption = uniqueify(image.caption, { url: image.url }, usedCaptions);
+    entry.images.forEach((url) => {
       xmlParts.push('    <image:image>');
-      xmlParts.push(`      <image:loc>${escapeXml(image.url)}</image:loc>`);
-      xmlParts.push(`      <image:caption>${escapeXml(caption)}</image:caption>`);
-      xmlParts.push(`      <image:title>${escapeXml(title)}</image:title>`);
-      xmlParts.push(`      <image:license>${escapeXml(IMAGE_LICENSE_URL)}</image:license>`);
+      xmlParts.push(`      <image:loc>${escapeXml(url)}</image:loc>`);
       xmlParts.push('    </image:image>');
     });
     xmlParts.push('  </url>');
@@ -1041,7 +1128,9 @@ const buildImageSitemap = () => {
   xmlParts.push('</urlset>');
 
   fs.writeFileSync(IMAGE_SITEMAP_OUTPUT, `${xmlParts.join('\n')}\n`);
-  console.log(`Wrote ${urlEntries.length} URL entries to ${IMAGE_SITEMAP_OUTPUT}`);
+  console.log(
+    `Wrote ${urlEntries.length} URL entries and ${bestByImage.size + galleryOnly.length} canonical image mappings to ${IMAGE_SITEMAP_OUTPUT}`,
+  );
 };
 
 const buildSitemapIndex = () => {

@@ -69,6 +69,7 @@ async function main() {
   const auditCommands = [
     ['node', ['scripts/audit-homepage-worker-seo.js', '--url', baseUrl]],
     ['node', ['scripts/audit-worker-breadcrumbs.js', '--url', baseUrl]],
+    ['node', ['scripts/audit-image-sitemap-quality.js', '--url', baseUrl, '--sample', '50']],
     ['node', ['scripts/audit-wiki-routes.js', '--url', baseUrl]],
     ['node', ['scripts/audit-peak-page-ui.js', '--url', baseUrl]],
     ['node', ['scripts/audit-peak-schema-parity.js', '--url', baseUrl]],
