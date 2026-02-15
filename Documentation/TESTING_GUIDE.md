@@ -134,8 +134,8 @@ Required secrets for `sync-r2-wiki-media.yml`:
 
 ## Photos R2 Sync Required Secrets
 Required for `.github/workflows/sync-r2-photos-wrangler.yml`:
-- `R2_ACCESS_KEY_ID`
-- `R2_SECRET_ACCESS_KEY`
+- `R2_ACCESS_KEY_ID` (fallback: `WIKI_R2_ACCESS_KEY_ID`)
+- `R2_SECRET_ACCESS_KEY` (fallback: `WIKI_R2_SECRET_ACCESS_KEY`)
 - `R2_BUCKET_NAME` (or `R2_BUCKET` fallback)
 - `R2_ACCOUNT_ID` (or `CLOUDFLARE_ACCOUNT_ID` fallback)
 
@@ -144,9 +144,21 @@ Optional:
 
 Warning:
 - Do not set `R2_ENDPOINT` to `https://photos.nh48.info` (custom domain). Use blank or `https://<account_id>.r2.cloudflarestorage.com`.
-- `WIKI_R2_*` secrets are only for `.github/workflows/sync-r2-wiki-media.yml`; photo workflows use `R2_*` secrets.
+- Photos workflows use `R2_*` routing secrets (`R2_BUCKET_NAME`/`R2_BUCKET`, `R2_ACCOUNT_ID`/`CLOUDFLARE_ACCOUNT_ID`, `R2_ENDPOINT`) and only fall back to `WIKI_R2_*` for credentials if `R2_*` credentials are missing.
 - Photo workflows fail fast if `R2_BUCKET_NAME`/`R2_BUCKET` resolves to `WIKI_R2_BUCKET_NAME`.
 - If `R2_ENDPOINT` is set, its account segment must match `R2_ACCOUNT_ID`/`CLOUDFLARE_ACCOUNT_ID`; otherwise the workflow falls back to `https://<account_id>.r2.cloudflarestorage.com`.
+
+## Map Data R2 Sync Required Secrets
+Required for `.github/workflows/sync-r2-map-data.yml`:
+- `R2_ACCESS_KEY_ID` (fallback: `WIKI_R2_ACCESS_KEY_ID`)
+- `R2_SECRET_ACCESS_KEY` (fallback: `WIKI_R2_SECRET_ACCESS_KEY`)
+- `R2_ENDPOINT`
+- `R2_BUCKET`
+
+Notes:
+- Map workflow keeps endpoint and bucket routing on `R2_*` secrets only.
+- Workflow fails fast when any required value is empty.
+- `sync-r2-data.yml` remains unchanged and continues to use `R2_DATA_*` with fallback to `R2_*`.
 
 ## Expected Run Matrix
 1. `worker.js` or worker SEO script changes on `main`:

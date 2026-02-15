@@ -34,8 +34,8 @@ jobs:
 
       - name: Sync photos to R2 (S3 API)
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID || secrets.WIKI_R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY || secrets.WIKI_R2_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: auto
           AWS_REGION: auto
           AWS_EC2_METADATA_DISABLED: true
@@ -52,11 +52,11 @@ jobs:
           BUCKET="${R2_BUCKET_NAME:-${R2_BUCKET:-}}"
 
           if [ -z "${AWS_ACCESS_KEY_ID:-}" ]; then
-            echo "Missing required secret: R2_ACCESS_KEY_ID"
+            echo "Missing required secret: R2_ACCESS_KEY_ID or WIKI_R2_ACCESS_KEY_ID"
             exit 1
           fi
           if [ -z "${AWS_SECRET_ACCESS_KEY:-}" ]; then
-            echo "Missing required secret: R2_SECRET_ACCESS_KEY"
+            echo "Missing required secret: R2_SECRET_ACCESS_KEY or WIKI_R2_SECRET_ACCESS_KEY"
             exit 1
           fi
           if [ -z "${ACCOUNT_ID}" ]; then
@@ -138,8 +138,8 @@ jobs:
 
       - name: Re-sync photos with embedded metadata
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID || secrets.WIKI_R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY || secrets.WIKI_R2_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: auto
           AWS_REGION: auto
           AWS_EC2_METADATA_DISABLED: true
@@ -156,11 +156,11 @@ jobs:
           BUCKET="${R2_BUCKET_NAME:-${R2_BUCKET:-}}"
 
           if [ -z "${AWS_ACCESS_KEY_ID:-}" ]; then
-            echo "Missing required secret: R2_ACCESS_KEY_ID"
+            echo "Missing required secret: R2_ACCESS_KEY_ID or WIKI_R2_ACCESS_KEY_ID"
             exit 1
           fi
           if [ -z "${AWS_SECRET_ACCESS_KEY:-}" ]; then
-            echo "Missing required secret: R2_SECRET_ACCESS_KEY"
+            echo "Missing required secret: R2_SECRET_ACCESS_KEY or WIKI_R2_SECRET_ACCESS_KEY"
             exit 1
           fi
           if [ -z "${ACCOUNT_ID}" ]; then
