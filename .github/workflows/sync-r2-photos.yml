@@ -14,12 +14,55 @@ jobs:
       - name: Sync photos to R2
         env:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
+          AWS_DEFAULT_REGION: auto
+          AWS_REGION: auto
+          AWS_EC2_METADATA_DISABLED: true
         run: |
-          aws s3 sync photos "s3://${R2_BUCKET}" \
-            --endpoint-url "${R2_ENDPOINT}" \
+          set -euo pipefail
+
+          ACCOUNT_ID="${R2_ACCOUNT_ID:-${CLOUDFLARE_ACCOUNT_ID:-}}"
+          BUCKET="${R2_BUCKET_NAME:-${R2_BUCKET:-}}"
+
+          if [ -z "${AWS_ACCESS_KEY_ID:-}" ]; then
+            echo "Missing required secret: R2_ACCESS_KEY_ID"
+            exit 1
+          fi
+          if [ -z "${AWS_SECRET_ACCESS_KEY:-}" ]; then
+            echo "Missing required secret: R2_SECRET_ACCESS_KEY"
+            exit 1
+          fi
+          if [ -z "${ACCOUNT_ID}" ]; then
+            echo "Missing account id. Set R2_ACCOUNT_ID or CLOUDFLARE_ACCOUNT_ID."
+            exit 1
+          fi
+          if [ -z "${BUCKET}" ]; then
+            echo "Missing bucket name. Set R2_BUCKET_NAME or R2_BUCKET."
+            exit 1
+          fi
+
+          if [ -n "${R2_ENDPOINT:-}" ] && [[ "${R2_ENDPOINT}" =~ ^https://[a-z0-9-]+\.r2\.cloudflarestorage\.com/?$ ]]; then
+            ENDPOINT="${R2_ENDPOINT}"
+          else
+            if [ -n "${R2_ENDPOINT:-}" ]; then
+              echo "Ignoring invalid R2_ENDPOINT for S3 signing; using account endpoint fallback."
+            fi
+            ENDPOINT="https://${ACCOUNT_ID}.r2.cloudflarestorage.com"
+          fi
+          ENDPOINT="${ENDPOINT%/}"
+
+          aws --version
+          aws s3api list-objects-v2 \
+            --bucket "${BUCKET}" \
+            --max-keys 1 \
+            --endpoint-url "${ENDPOINT}" >/dev/null
+
+          aws s3 sync photos "s3://${BUCKET}" \
+            --endpoint-url "${ENDPOINT}" \
             --delete \
             --cache-control "public, max-age=31536000, immutable"

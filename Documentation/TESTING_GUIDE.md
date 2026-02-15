@@ -132,6 +132,19 @@ Required secrets for `sync-r2-wiki-media.yml`:
 - `WIKI_R2_BUCKET_NAME`
 - `WIKI_R2_ENDPOINT` (optional)
 
+## Photos R2 Sync Required Secrets
+Required for `.github/workflows/sync-r2-photos-wrangler.yml`:
+- `R2_ACCESS_KEY_ID`
+- `R2_SECRET_ACCESS_KEY`
+- `R2_BUCKET_NAME` (or `R2_BUCKET` fallback)
+- `R2_ACCOUNT_ID` (or `CLOUDFLARE_ACCOUNT_ID` fallback)
+
+Optional:
+- `R2_ENDPOINT` (must be an S3 API endpoint on `*.r2.cloudflarestorage.com`)
+
+Warning:
+- Do not set `R2_ENDPOINT` to `https://photos.nh48.info` (custom domain). Use blank or `https://<account_id>.r2.cloudflarestorage.com`.
+
 ## Expected Run Matrix
 1. `worker.js` or worker SEO script changes on `main`:
    - Runs: `deploy-worker.yml`
