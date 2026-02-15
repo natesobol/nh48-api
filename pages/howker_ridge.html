@@ -51,6 +51,9 @@
     }
   })();
 </script>
+<script type="module" src="/js/i18n.js"></script>
+<link rel="stylesheet" href="/css/ui-tooltips.css" />
+<script src="/js/ui-tooltips.js" defer></script>
 <script src="/js/unified-footer.js" defer></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="" />
 <style>
@@ -732,6 +735,13 @@ table a:hover{
     document.addEventListener('DOMContentLoaded', () => {
       const navPlaceholder = document.getElementById('nav-placeholder');
       const activeRoute = document.body.dataset.route || document.body.dataset.page;
+      if (window.NH48Tooltips && typeof window.NH48Tooltips.init === 'function') {
+        const pageName = window.NH48_I18N && window.NH48_I18N.t
+          ? window.NH48_I18N.t('trails.title')
+          : 'Howker Ridge Trail Map and Guide';
+        window.NH48Tooltips.init({ pageName });
+        window.NH48Tooltips.refresh(document.body);
+      }
 
       if (navPlaceholder) {
         fetch('/pages/nav.html')
@@ -752,6 +762,9 @@ table a:hover{
             });
             if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
               window.NH48_I18N.refreshLangPicker();
+            }
+            if (window.NH48Tooltips && typeof window.NH48Tooltips.refresh === 'function') {
+              window.NH48Tooltips.refresh(document.body);
             }
           })
           .catch(err => console.error('Failed to load navigation:', err));
@@ -1157,12 +1170,19 @@ table a:hover{
       });
     }
 
+    function refreshTooltips(root) {
+      if (window.NH48Tooltips && typeof window.NH48Tooltips.refresh === 'function') {
+        window.NH48Tooltips.refresh(root || document.body);
+      }
+    }
+
     function renderPoiTable(data) {
       poiTableBody.innerHTML = '';
       if (!data.length) {
         const row = document.createElement('tr');
         row.innerHTML = '<td colspan="5">No points match your search.</td>';
         poiTableBody.appendChild(row);
+        refreshTooltips(poiTableBody);
         return;
       }
       data.forEach(item => {
@@ -1184,6 +1204,7 @@ table a:hover{
         `;
         poiTableBody.appendChild(row);
       });
+      refreshTooltips(poiTableBody);
     }
 
     function updatePoiTable() {
@@ -1431,6 +1452,7 @@ table a:hover{
         `;
         grid.appendChild(card);
       });
+      refreshTooltips(grid);
     }
 
     fetch('/data/howker-plants')

@@ -28,11 +28,17 @@ on:
       - 'whitemountains-wiki/**'
       - 'data/wiki/forest-health-flowchart.mmd'
       - 'data/wiki/forest-health-flowchart.base64.txt'
+      - 'data/i18n-content/**'
+      - 'i18n/*.json'
       - 'scripts/audit-site-schema.js'
+      - 'scripts/audit-tooltip-integration.js'
       - 'scripts/audit-homepage-worker-seo.js'
       - 'scripts/audit-worker-breadcrumbs.js'
       - 'scripts/audit-wiki-routes.js'
       - 'scripts/audit-live-peak-seo-parity.js'
+      - 'scripts/audit-i18n-completeness.js'
+      - 'scripts/audit-dataset-overlay-coverage.js'
+      - 'scripts/audit-unresolved-i18n-markers.js'
       - 'scripts/audit-wiki-media-sync.js'
       - 'scripts/audit-peak-guide-authority.js'
       - 'scripts/audit-peak-page-ui.js'
@@ -45,20 +51,31 @@ on:
       - 'scripts/build-peak-difficulty.js'
       - 'scripts/build-peak-experience-scaffold.js'
       - 'scripts/build-forest-health-flowchart-base64.js'
+      - 'scripts/build-dataset-overlay-scaffold.js'
+      - 'scripts/sync-i18n-missing-keys.js'
       - 'scripts/prerender-peaks.js'
       - 'scripts/generate-sitemaps.js'
       - 'scripts/sync-wiki-media.js'
       - 'pages/nh48_peak.html'
       - 'pages/nav.html'
       - 'pages/wiki/index.html'
+      - 'pages/hrt_info.html'
+      - 'pages/hrt_info.fr.html'
+      - 'pages/howker_ridge.html'
       - 'pages/wiki/mountain.html'
       - 'pages/wiki/plant.html'
       - 'pages/wiki/animal.html'
       - 'pages/wiki/plant-disease.html'
       - 'pages/wiki/diseases/index.html'
+      - 'photos/index.html'
+      - 'catalog/index.html'
       - 'css/peak-detail.css'
       - 'css/wiki.css'
+      - 'css/ui-tooltips.css'
       - 'js/wiki-landing.js'
+      - 'js/i18n.js'
+      - 'js/photos.js'
+      - 'js/ui-tooltips.js'
       - 'js/wiki-mountain.js'
       - 'js/wiki-species.js'
       - 'js/wiki-plant-disease.js'
@@ -134,6 +151,22 @@ jobs:
       - name: Run schema audit (pre-deploy gate)
         id: schema_audit
         run: node scripts/audit-site-schema.js
+
+      - name: Run tooltip integration audit (pre-deploy gate)
+        id: tooltip_integration_audit
+        run: node scripts/audit-tooltip-integration.js
+
+      - name: Run i18n completeness audit (pre-deploy gate)
+        id: i18n_completeness_audit
+        run: node scripts/audit-i18n-completeness.js
+
+      - name: Run dataset overlay coverage audit (pre-deploy gate)
+        id: dataset_overlay_coverage_audit
+        run: node scripts/audit-dataset-overlay-coverage.js
+
+      - name: Run unresolved i18n marker audit (pre-deploy gate)
+        id: unresolved_i18n_marker_audit
+        run: node scripts/audit-unresolved-i18n-markers.js
 
       - name: Run peak guide authority audit (pre-deploy gate)
         id: peak_authority_audit
@@ -221,6 +254,10 @@ jobs:
           echo "- **Target URL:** https://nh48.info" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Deploy requested:** \`${{ steps.deploy_mode.outputs.should_deploy }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Schema audit:** \`${{ steps.schema_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Tooltip integration audit:** \`${{ steps.tooltip_integration_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **i18n completeness audit:** \`${{ steps.i18n_completeness_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Dataset overlay coverage audit:** \`${{ steps.dataset_overlay_coverage_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Unresolved i18n marker audit:** \`${{ steps.unresolved_i18n_marker_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak authority audit:** \`${{ steps.peak_authority_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak UI audit:** \`${{ steps.peak_ui_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak data coverage audit:** \`${{ steps.peak_data_coverage_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
@@ -239,6 +276,10 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "### Scripts executed" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-site-schema.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-tooltip-integration.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-i18n-completeness.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-dataset-overlay-coverage.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-unresolved-i18n-markers.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-guide-authority.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-page-ui.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-data-coverage.js\`" >> "$GITHUB_STEP_SUMMARY"

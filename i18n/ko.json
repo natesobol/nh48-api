@@ -13,7 +13,19 @@
     },
     "unitsLabel": "단위",
     "unitsFeet": "피트",
-    "unitsMeters": "미터"
+    "unitsMeters": "미터",
+    "print": "??",
+    "share": "??",
+    "tooltips": {
+      "openPage": "{pageName} ??? ??",
+      "jumpSection": "{sectionName} ???? ??",
+      "openExternalPage": "?? ??? ??: {siteName}",
+      "downloadFile": "{fileName} ????",
+      "monthDropdown": "?? ??? ??? ?? ??",
+      "openPeakDetails": "?? ?? ??? ??",
+      "openTrailInfoPage": "??? ?? ??? ??",
+      "openHowkerMapPage": "Howker Ridge ?? ??? ??"
+    }
   },
   "landing": {
     "title": "NH48 API: 뉴햄프셔 4,000피트 봉우리와 장거리 트레일을 위한 오픈 데이터",
@@ -193,8 +205,8 @@
       "conditions": "조건 및 접근"
     },
     "carousel": {
-      "prev": "이전 이미지",
-      "next": "다음 이미지"
+      "prev": "?? ???",
+      "next": "?? ???"
     },
     "metadata": {
       "title": "현재 사진 메타데이터",
@@ -246,7 +258,11 @@
       "range": "산맥",
       "trailType": "트레일 유형",
       "difficulty": "난이도",
-      "exposure": "노출도"
+      "exposure": "노출도",
+      "typicalTime": "Typical Completion Time",
+      "bestSeasons": "Best Seasons to Hike",
+      "waterAvailability": "Water Availability",
+      "cellReception": "Cell Reception Quality"
     },
     "routes": {
       "distance": "거리",
@@ -274,6 +290,28 @@
     "meta": {
       "titleTemplate": "{name} ({elevation} ft) – NH48",
       "descriptionTemplate": "{name} — 고도 {elevation} ft, 돌출도 {prominence} ft, {range}에 위치. 이 4,000피트 봉우리의 루트, 난이도 및 사진."
+    },
+    "directions": {
+      "label": "???",
+      "unavailable": "?? ??? ??? ? ????"
+    },
+    "expand": {
+      "show": "Expand",
+      "hide": "Collapse"
+    },
+    "reader": {
+      "title": "Panel reader",
+      "openPanel": "Open panel reader",
+      "close": "Close panel reader",
+      "scale": "Scale"
+    },
+    "weather": {
+      "heading": "Monthly Weather Averages",
+      "avgWind": "Average wind",
+      "avgGust": "Average gust",
+      "avgTemp": "Average temperature",
+      "monthLabel": "Select month",
+      "disclaimer": "Monthly climatology values. Real conditions change rapidly at elevation."
     }
   },
   "trails": {
@@ -350,6 +388,10 @@
     },
     "map": {
       "attribution": "지도 데이터: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | 지도 스타일: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    },
+    "telemetry": {
+      "label": "{mapped}/{total} trails with GPX telemetry",
+      "loading": "Loading GPX telemetry coverage…"
     }
   },
   "nav.tagline": "뉴햄프셔 4 000피트 산봉우리의 오픈 데이터와 구조화된 메타데이터.",
@@ -621,5 +663,55 @@
     "playAgain": "Play again",
     "returnCatalog": "Return to Catalog",
     "completeAnnounce": "Puzzle complete. Great job!"
-  }
+  },
+  "footer": {
+    "quickBrowseLinks": {
+      "ariaLabel": "NH48 quick browse footer links"
+    },
+    "navLabel": {
+      "ariaLabel": "Footer navigation links"
+    }
+  },
+  "peakid": {
+    "title": "NH48 PeakID Game",
+    "metaDescription": "Play the NH48 PeakID Game and match summit photos to the correct 4,000-footer names across eight rounds.",
+    "heroTitle": "NH48 PeakID Game",
+    "heroBody": "Drag and drop the summit photos onto the correct peak names. Complete eight rounds to cover all 48 four-thousand-footers.",
+    "roundLabel": "Round",
+    "ofLabel": "of",
+    "correctLabel": "Correct",
+    "incorrectLabel": "Incorrect",
+    "instructions": "Drag and drop the photos onto the correct names.",
+    "photoCredit": "Photo credit: {credit}",
+    "submit": "Next round",
+    "nextRound": "Next round",
+    "roundSummary": "Round {round}: {score} of {total} correct.",
+    "finalScore": "Final Score",
+    "finalMessage": "Great job! You matched {score} of {total} peaks.",
+    "restartGame": "Restart Game",
+    "returnCatalog": "Return to Catalog",
+    "socialOrientation": "Card orientation",
+    "socialSettingsHeading": "Card settings",
+    "socialShowScore": "Show score line",
+    "socialShowDate": "Show date line",
+    "socialShowName": "Show your name",
+    "socialUseGradient": "Apply gradient overlay",
+    "socialNameLabel": "Your name",
+    "landscape": "Landscape",
+    "portrait": "Portrait",
+    "generateAnotherImage": "Generate Another Image",
+    "downloadCard": "Download Social Card",
+    "socialTitle": "NH48 PeakID Game",
+    "socialScore": "Peaks Identified: {score} of {total}",
+    "socialPeaksIdentified": "Peaks Identified: {score}",
+    "socialNameLine": "Hiker: {name}",
+    "socialTimestamp": "Generated",
+    "socialLink": "Play the NH48 PeakID Game",
+    "socialShareHeading": "Share your score",
+    "socialShareText": "I identified {score} peaks in the NH48 PeakID Game!"
+  },
+  "common.print.ariaLabel": "??? ??",
+  "common.share.ariaLabel": "??? ??",
+  "peak.carousel.prev.ariaLabel": "?? ??? ???",
+  "peak.carousel.next.ariaLabel": "?? ??? ???"
 }

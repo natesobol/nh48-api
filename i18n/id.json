@@ -13,7 +13,19 @@
     },
     "unitsLabel": "Satuan",
     "unitsFeet": "Kaki",
-    "unitsMeters": "Meter"
+    "unitsMeters": "Meter",
+    "print": "Cetak",
+    "share": "Bagikan",
+    "tooltips": {
+      "openPage": "Buka halaman {pageName}",
+      "jumpSection": "Loncat ke bagian {sectionName}",
+      "openExternalPage": "Buka halaman eksternal: {siteName}",
+      "downloadFile": "Unduh {fileName}",
+      "monthDropdown": "Pilih bulan untuk rata-rata cuaca",
+      "openPeakDetails": "Buka halaman detail puncak",
+      "openTrailInfoPage": "Buka halaman info jalur",
+      "openHowkerMapPage": "Buka halaman peta Howker Ridge"
+    }
   },
   "landing": {
     "title": "NH48 API: Data terbuka untuk puncak 4.000 kaki dan jalur panjang di New Hampshire",
@@ -246,7 +258,11 @@
       "range": "Rangkaian",
       "trailType": "Jenis jalur",
       "difficulty": "Kesulitan",
-      "exposure": "Paparan"
+      "exposure": "Paparan",
+      "typicalTime": "Typical Completion Time",
+      "bestSeasons": "Best Seasons to Hike",
+      "waterAvailability": "Water Availability",
+      "cellReception": "Cell Reception Quality"
     },
     "routes": {
       "distance": "Jarak",
@@ -274,6 +290,28 @@
     "meta": {
       "titleTemplate": "{name} ({elevation} kaki) – NH48",
       "descriptionTemplate": "{name} — setinggi {elevation} kaki, prominensi {prominence} kaki, di {range}. Rute, kesulitan, dan foto untuk puncak 4.000 kaki ini."
+    },
+    "directions": {
+      "label": "Dapatkan rute",
+      "unavailable": "Lokasi parkir tidak tersedia"
+    },
+    "expand": {
+      "show": "Expand",
+      "hide": "Collapse"
+    },
+    "reader": {
+      "title": "Panel reader",
+      "openPanel": "Open panel reader",
+      "close": "Close panel reader",
+      "scale": "Scale"
+    },
+    "weather": {
+      "heading": "Monthly Weather Averages",
+      "avgWind": "Average wind",
+      "avgGust": "Average gust",
+      "avgTemp": "Average temperature",
+      "monthLabel": "Select month",
+      "disclaimer": "Monthly climatology values. Real conditions change rapidly at elevation."
     }
   },
   "trails": {
@@ -350,6 +388,10 @@
     },
     "map": {
       "attribution": "Data peta: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Gaya peta: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    },
+    "telemetry": {
+      "label": "{mapped}/{total} trails with GPX telemetry",
+      "loading": "Loading GPX telemetry coverage…"
     }
   },
   "nav.tagline": "Data terbuka dan metadata terstruktur untuk puncak 4 000 kaki di New Hampshire.",
@@ -621,5 +663,55 @@
     "playAgain": "Play again",
     "returnCatalog": "Return to Catalog",
     "completeAnnounce": "Puzzle complete. Great job!"
-  }
+  },
+  "footer": {
+    "quickBrowseLinks": {
+      "ariaLabel": "NH48 quick browse footer links"
+    },
+    "navLabel": {
+      "ariaLabel": "Footer navigation links"
+    }
+  },
+  "peakid": {
+    "title": "NH48 PeakID Game",
+    "metaDescription": "Play the NH48 PeakID Game and match summit photos to the correct 4,000-footer names across eight rounds.",
+    "heroTitle": "NH48 PeakID Game",
+    "heroBody": "Drag and drop the summit photos onto the correct peak names. Complete eight rounds to cover all 48 four-thousand-footers.",
+    "roundLabel": "Round",
+    "ofLabel": "of",
+    "correctLabel": "Correct",
+    "incorrectLabel": "Incorrect",
+    "instructions": "Drag and drop the photos onto the correct names.",
+    "photoCredit": "Photo credit: {credit}",
+    "submit": "Next round",
+    "nextRound": "Next round",
+    "roundSummary": "Round {round}: {score} of {total} correct.",
+    "finalScore": "Final Score",
+    "finalMessage": "Great job! You matched {score} of {total} peaks.",
+    "restartGame": "Restart Game",
+    "returnCatalog": "Return to Catalog",
+    "socialOrientation": "Card orientation",
+    "socialSettingsHeading": "Card settings",
+    "socialShowScore": "Show score line",
+    "socialShowDate": "Show date line",
+    "socialShowName": "Show your name",
+    "socialUseGradient": "Apply gradient overlay",
+    "socialNameLabel": "Your name",
+    "landscape": "Landscape",
+    "portrait": "Portrait",
+    "generateAnotherImage": "Generate Another Image",
+    "downloadCard": "Download Social Card",
+    "socialTitle": "NH48 PeakID Game",
+    "socialScore": "Peaks Identified: {score} of {total}",
+    "socialPeaksIdentified": "Peaks Identified: {score}",
+    "socialNameLine": "Hiker: {name}",
+    "socialTimestamp": "Generated",
+    "socialLink": "Play the NH48 PeakID Game",
+    "socialShareHeading": "Share your score",
+    "socialShareText": "I identified {score} peaks in the NH48 PeakID Game!"
+  },
+  "common.print.ariaLabel": "Cetak halaman",
+  "common.share.ariaLabel": "Bagikan halaman",
+  "peak.carousel.prev.ariaLabel": "Gambar carousel sebelumnya",
+  "peak.carousel.next.ariaLabel": "Gambar carousel berikutnya"
 }

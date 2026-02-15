@@ -13,7 +13,19 @@
     },
     "unitsLabel": "Jednostki",
     "unitsFeet": "Stopy",
-    "unitsMeters": "Metry"
+    "unitsMeters": "Metry",
+    "print": "Drukuj",
+    "share": "Udost?pnij",
+    "tooltips": {
+      "openPage": "Otw?rz stron? {pageName}",
+      "jumpSection": "Przejd? do sekcji {sectionName}",
+      "openExternalPage": "Otw?rz stron? zewn?trzn?: {siteName}",
+      "downloadFile": "Pobierz {fileName}",
+      "monthDropdown": "Wybierz miesi?c dla ?rednich pogodowych",
+      "openPeakDetails": "Otw?rz stron? szczeg???w szczytu",
+      "openTrailInfoPage": "Otw?rz stron? informacji o szlaku",
+      "openHowkerMapPage": "Otw?rz stron? mapy Howker Ridge"
+    }
   },
   "landing": {
     "title": "NH48 API: Otwarte dane o szczytach 4 000 stóp i długich szlakach w New Hampshire",
@@ -193,8 +205,8 @@
       "conditions": "Warunki i dostęp"
     },
     "carousel": {
-      "prev": "Poprzedni obraz",
-      "next": "Następny obraz"
+      "prev": "Poprzednie zdj?cie",
+      "next": "Nast?pne zdj?cie"
     },
     "metadata": {
       "title": "Metadane bieżącego zdjęcia",
@@ -246,7 +258,11 @@
       "range": "Pasmo",
       "trailType": "Typ szlaku",
       "difficulty": "Trudność",
-      "exposure": "Ekspozycja"
+      "exposure": "Ekspozycja",
+      "typicalTime": "Typical Completion Time",
+      "bestSeasons": "Best Seasons to Hike",
+      "waterAvailability": "Water Availability",
+      "cellReception": "Cell Reception Quality"
     },
     "routes": {
       "distance": "Dystans",
@@ -274,6 +290,28 @@
     "meta": {
       "titleTemplate": "{name} ({elevation} ft) – NH48",
       "descriptionTemplate": "{name} — {elevation} ft wysokości, {prominence} ft wybitności, w paśmie {range}. Trasy, trudność i zdjęcia dla tego 4‑tysięcznika."
+    },
+    "directions": {
+      "label": "Wyznacz tras?",
+      "unavailable": "Lokalizacja parkingu niedost?pna"
+    },
+    "expand": {
+      "show": "Expand",
+      "hide": "Collapse"
+    },
+    "reader": {
+      "title": "Panel reader",
+      "openPanel": "Open panel reader",
+      "close": "Close panel reader",
+      "scale": "Scale"
+    },
+    "weather": {
+      "heading": "Monthly Weather Averages",
+      "avgWind": "Average wind",
+      "avgGust": "Average gust",
+      "avgTemp": "Average temperature",
+      "monthLabel": "Select month",
+      "disclaimer": "Monthly climatology values. Real conditions change rapidly at elevation."
     }
   },
   "trails": {
@@ -350,6 +388,10 @@
     },
     "map": {
       "attribution": "Dane mapy: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Styl mapy: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    },
+    "telemetry": {
+      "label": "{mapped}/{total} trails with GPX telemetry",
+      "loading": "Loading GPX telemetry coverage…"
     }
   },
   "nav.tagline": "Otwarte dane i ustrukturyzowane metadane dla szczytów New Hampshire o wysokości 4 000 stóp.",
@@ -621,5 +663,55 @@
     "playAgain": "Play again",
     "returnCatalog": "Return to Catalog",
     "completeAnnounce": "Puzzle complete. Great job!"
-  }
+  },
+  "footer": {
+    "quickBrowseLinks": {
+      "ariaLabel": "NH48 quick browse footer links"
+    },
+    "navLabel": {
+      "ariaLabel": "Footer navigation links"
+    }
+  },
+  "peakid": {
+    "title": "NH48 PeakID Game",
+    "metaDescription": "Play the NH48 PeakID Game and match summit photos to the correct 4,000-footer names across eight rounds.",
+    "heroTitle": "NH48 PeakID Game",
+    "heroBody": "Drag and drop the summit photos onto the correct peak names. Complete eight rounds to cover all 48 four-thousand-footers.",
+    "roundLabel": "Round",
+    "ofLabel": "of",
+    "correctLabel": "Correct",
+    "incorrectLabel": "Incorrect",
+    "instructions": "Drag and drop the photos onto the correct names.",
+    "photoCredit": "Photo credit: {credit}",
+    "submit": "Next round",
+    "nextRound": "Next round",
+    "roundSummary": "Round {round}: {score} of {total} correct.",
+    "finalScore": "Final Score",
+    "finalMessage": "Great job! You matched {score} of {total} peaks.",
+    "restartGame": "Restart Game",
+    "returnCatalog": "Return to Catalog",
+    "socialOrientation": "Card orientation",
+    "socialSettingsHeading": "Card settings",
+    "socialShowScore": "Show score line",
+    "socialShowDate": "Show date line",
+    "socialShowName": "Show your name",
+    "socialUseGradient": "Apply gradient overlay",
+    "socialNameLabel": "Your name",
+    "landscape": "Landscape",
+    "portrait": "Portrait",
+    "generateAnotherImage": "Generate Another Image",
+    "downloadCard": "Download Social Card",
+    "socialTitle": "NH48 PeakID Game",
+    "socialScore": "Peaks Identified: {score} of {total}",
+    "socialPeaksIdentified": "Peaks Identified: {score}",
+    "socialNameLine": "Hiker: {name}",
+    "socialTimestamp": "Generated",
+    "socialLink": "Play the NH48 PeakID Game",
+    "socialShareHeading": "Share your score",
+    "socialShareText": "I identified {score} peaks in the NH48 PeakID Game!"
+  },
+  "common.print.ariaLabel": "Drukuj stron?",
+  "common.share.ariaLabel": "Udost?pnij stron?",
+  "peak.carousel.prev.ariaLabel": "Poprzedni obraz karuzeli",
+  "peak.carousel.next.ariaLabel": "Nast?pny obraz karuzeli"
 }

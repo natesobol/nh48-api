@@ -128,6 +128,8 @@
     </script>
     <script type="module" src="/js/i18n.js"></script>
     <link rel="stylesheet" href="/css/peak-detail.css">
+    <link rel="stylesheet" href="/css/ui-tooltips.css">
+    <script src="/js/ui-tooltips.js" defer></script>
     <!--
       Standalone details view for a single NH48 peak with robust error handling.
       This version adds:
@@ -1496,29 +1498,6 @@
         transform-origin:top left;
         width:calc(100% / var(--reader-scale-factor));
       }
-      .ui-tooltip{
-        position:fixed;
-        z-index:2500;
-        max-width:min(360px, calc(100vw - 20px));
-        padding:7px 10px;
-        border-radius:8px;
-        border:1px solid rgba(34,197,94,0.55);
-        background:rgba(8, 16, 27, 0.96);
-        color:#edfff5;
-        font-size:0.76rem;
-        line-height:1.35;
-        box-shadow:0 10px 24px rgba(0,0,0,0.38);
-        pointer-events:none;
-        opacity:0;
-        left:0;
-        top:0;
-        transform:translate(-50%, calc(-100% - 6px)) scale(0.98);
-        transition:opacity 60ms ease, transform 60ms ease;
-      }
-      .ui-tooltip.is-visible{
-        opacity:1;
-        transform:translate(-50%, calc(-100% - 8px)) scale(1);
-      }
       .icon-btn[aria-disabled="true"],
       .icon-btn.is-disabled{
         opacity:0.45;
@@ -1533,11 +1512,24 @@
       }
       @media(max-width:720px){
         .metadata-row{
-          grid-template-columns:minmax(96px, 132px) minmax(0, 1fr);
-          gap:10px;
+          grid-template-columns:minmax(88px, 124px) minmax(0, 1fr);
+          gap:8px;
         }
         .metadata-value{
           padding-left:4px;
+          overflow-wrap:anywhere;
+          word-break:break-word;
+        }
+        #generalInfoPanel .metadata-row,
+        #photoMetadataPanel .metadata-row{
+          grid-template-columns:1fr;
+          gap:4px;
+        }
+        #generalInfoPanel .metadata-value.is-right-aligned,
+        #photoMetadataPanel .metadata-value.is-right-aligned{
+          text-align:left;
+          justify-self:stretch;
+          padding-left:0;
         }
         #photoMetadataPanel .metadata-row.is-desc-accessibility{
           grid-template-columns:minmax(88px, 122px) minmax(0, 1fr);
@@ -1884,6 +1876,7 @@
           </article>
         </div>
       </section>
+      <div id="peakAdvisorySlot" class="no-print"></div>
 
       <section aria-labelledby="relatedTrailsHeading" class="no-print" id="trailsHubSection">
         <h2 id="relatedTrailsHeading" class="section-title" data-i18n="peak.relatedTrails.title">Related Trails &amp; Routes</h2>
@@ -2038,6 +2031,7 @@
         `https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/current-conditions.json${CDN_CACHE_BUST}`,
         `https://raw.githubusercontent.com/natesobol/nh48-api/main/data/current-conditions.json${CDN_CACHE_BUST}`
       ];
+      const DATASET_OVERLAY_BASE_PATH = '/data/i18n-content';
       const MAP_RADIUS_MILES = 2.5;
 
       const t = (key, vars) => (window.NH48_I18N && window.NH48_I18N.t ? window.NH48_I18N.t(key, vars) : key);
@@ -3328,6 +3322,60 @@
         return fallbackValue;
       }
 
+      function buildDatasetOverlayUrls(datasetBaseName, langCode) {
+        const safeLang = safeText(langCode).toLowerCase();
+        if (!safeLang || safeLang === 'en') return [];
+        const safeDataset = safeText(datasetBaseName);
+        if (!safeDataset) return [];
+        return [
+          `${DATASET_OVERLAY_BASE_PATH}/${safeLang}/${safeDataset}.overlay.json`,
+          `https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main/data/i18n-content/${safeLang}/${safeDataset}.overlay.json${CDN_CACHE_BUST}`,
+          `https://raw.githubusercontent.com/natesobol/nh48-api/main/data/i18n-content/${safeLang}/${safeDataset}.overlay.json${CDN_CACHE_BUST}`
+        ];
+      }
+
+      function deepMergeOverlay(baseValue, overlayValue) {
+        if (overlayValue === undefined || overlayValue === null) {
+          return baseValue;
+        }
+        if (Array.isArray(baseValue) && Array.isArray(overlayValue)) {
+          const maxLength = Math.max(baseValue.length, overlayValue.length);
+          const merged = [];
+          for (let i = 0; i < maxLength; i += 1) {
+            if (i in overlayValue) {
+              merged[i] = deepMergeOverlay(baseValue[i], overlayValue[i]);
+            } else {
+              merged[i] = baseValue[i];
+            }
+          }
+          return merged;
+        }
+        if (
+          baseValue &&
+          overlayValue &&
+          typeof baseValue === 'object' &&
+          typeof overlayValue === 'object' &&
+          !Array.isArray(baseValue) &&
+          !Array.isArray(overlayValue)
+        ) {
+          const merged = { ...baseValue };
+          Object.keys(overlayValue).forEach((key) => {
+            merged[key] = deepMergeOverlay(baseValue[key], overlayValue[key]);
+          });
+          return merged;
+        }
+        return overlayValue;
+      }
+
+      function getActiveUiLanguage() {
+        const i18nLang = window.NH48_I18N && typeof window.NH48_I18N.getLang === 'function'
+          ? window.NH48_I18N.getLang()
+          : '';
+        const stored = localStorage.getItem('nh48_lang') || '';
+        const routeLang = getSeoLang();
+        return safeText(i18nLang || stored || routeLang || 'en').toLowerCase();
+      }
+
       function buildParkingLookup(payload){
         const lookup = {};
         if (!Array.isArray(payload)) return lookup;
@@ -3703,6 +3751,7 @@
       let monthlyWeatherLookup = {};
       let riskOverlayLookupBySlug = {};
       let currentConditionsData = {};
+      const localeOverlayCache = new Map();
       let selectedWeatherMonth = new Date().toLocaleString('en-US', { month: 'long', timeZone: 'America/New_York' });
       let panelReaderTrigger = null;
       let metadataExpanded = false;
@@ -3847,6 +3896,22 @@
         row.appendChild(lab);
         row.appendChild(val);
         return row;
+      }
+
+      async function fetchDatasetOverlay(datasetBaseName, langCode) {
+        const cacheKey = `${safeText(langCode).toLowerCase()}::${safeText(datasetBaseName)}`;
+        if (localeOverlayCache.has(cacheKey)) {
+          return localeOverlayCache.get(cacheKey);
+        }
+        const overlayUrls = buildDatasetOverlayUrls(datasetBaseName, langCode);
+        if (!overlayUrls.length) {
+          localeOverlayCache.set(cacheKey, {});
+          return {};
+        }
+        const payload = await fetchJsonFromUrls(overlayUrls, {});
+        const normalized = payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : {};
+        localeOverlayCache.set(cacheKey, normalized);
+        return normalized;
       }
 
       function humanLabelFromKey(key){
@@ -4654,201 +4719,6 @@
               first.focus();
             }
           }
-        });
-      }
-
-      const TOOLTIP_SELECTOR = 'a[href], button, select, input:not([type="hidden"]), [role="button"], .dot';
-      let uiTooltipEl = null;
-      let tooltipShowTimer = null;
-      let tooltipHideTimer = null;
-      let tooltipTarget = null;
-
-      function ensureUiTooltipElement(){
-        if(uiTooltipEl && document.body.contains(uiTooltipEl)){
-          return uiTooltipEl;
-        }
-        uiTooltipEl = document.createElement('div');
-        uiTooltipEl.id = 'uiTooltip';
-        uiTooltipEl.className = 'ui-tooltip';
-        uiTooltipEl.setAttribute('role', 'tooltip');
-        uiTooltipEl.setAttribute('aria-hidden', 'true');
-        document.body.appendChild(uiTooltipEl);
-        return uiTooltipEl;
-      }
-
-      function normalizeTooltipText(value){
-        return safeText(value).replace(/\s+/g, ' ').trim();
-      }
-
-      function preserveTitleAttribute(element){
-        if(!element || !element.getAttribute) return;
-        const title = element.getAttribute('title');
-        if(title && !element.hasAttribute('data-native-title')){
-          element.setAttribute('data-native-title', title);
-        }
-        if(title){
-          element.removeAttribute('title');
-        }
-      }
-
-      function resolveTooltipText(element){
-        if(!element || !element.getAttribute) return '';
-        preserveTitleAttribute(element);
-        const candidates = [
-          element.getAttribute('data-tooltip'),
-          element.getAttribute('aria-label'),
-          element.getAttribute('data-native-title'),
-          element.getAttribute('title'),
-          element.textContent
-        ];
-        for(const candidate of candidates){
-          const text = normalizeTooltipText(candidate);
-          if(text){
-            return text.length > 220 ? `${text.slice(0, 217)}...` : text;
-          }
-        }
-        return '';
-      }
-
-      function isTooltipEligible(element){
-        if(!element || !element.matches || !element.matches(TOOLTIP_SELECTOR)) return false;
-        if(element.closest('#uiTooltip')) return false;
-        if(element.hidden) return false;
-        if(element.getAttribute('aria-hidden') === 'true') return false;
-        return true;
-      }
-
-      function positionTooltip(target){
-        if(!uiTooltipEl || !target) return;
-        const rect = target.getBoundingClientRect();
-        const viewportPad = 8;
-        const maxLeft = window.innerWidth - viewportPad;
-        const minLeft = viewportPad;
-        let centerX = rect.left + (rect.width / 2);
-        centerX = Math.max(minLeft, Math.min(maxLeft, centerX));
-        let top = rect.top - 8;
-        if(top < 48){
-          top = rect.bottom + 8 + uiTooltipEl.offsetHeight;
-        }
-        uiTooltipEl.style.left = `${Math.round(centerX)}px`;
-        uiTooltipEl.style.top = `${Math.round(top)}px`;
-      }
-
-      function hideTooltip(){
-        if(!uiTooltipEl) return;
-        uiTooltipEl.classList.remove('is-visible');
-        uiTooltipEl.setAttribute('aria-hidden', 'true');
-      }
-
-      function showTooltip(target){
-        if(!isTooltipEligible(target)) return;
-        const tooltip = ensureUiTooltipElement();
-        const text = resolveTooltipText(target);
-        if(!text){
-          hideTooltip();
-          return;
-        }
-        tooltipTarget = target;
-        tooltip.textContent = text;
-        tooltip.setAttribute('aria-hidden', 'false');
-        positionTooltip(target);
-        tooltip.classList.add('is-visible');
-      }
-
-      function clearTooltipTimers(){
-        if(tooltipShowTimer){
-          clearTimeout(tooltipShowTimer);
-          tooltipShowTimer = null;
-        }
-        if(tooltipHideTimer){
-          clearTimeout(tooltipHideTimer);
-          tooltipHideTimer = null;
-        }
-      }
-
-      function scheduleTooltipShow(target){
-        clearTooltipTimers();
-        tooltipShowTimer = setTimeout(() => {
-          showTooltip(target);
-        }, 50);
-      }
-
-      function scheduleTooltipHide(){
-        clearTooltipTimers();
-        tooltipHideTimer = setTimeout(() => {
-          tooltipTarget = null;
-          hideTooltip();
-        }, 50);
-      }
-
-      function initInstantTooltips(){
-        ensureUiTooltipElement();
-        if(document.body.dataset.tooltipInit === 'true'){
-          return;
-        }
-        document.body.dataset.tooltipInit = 'true';
-
-        document.querySelectorAll(TOOLTIP_SELECTOR).forEach((el) => preserveTitleAttribute(el));
-
-        document.addEventListener('mouseover', (event) => {
-          const target = event.target && event.target.closest ? event.target.closest(TOOLTIP_SELECTOR) : null;
-          if(!target){
-            scheduleTooltipHide();
-            return;
-          }
-          if(target === tooltipTarget){
-            return;
-          }
-          scheduleTooltipShow(target);
-        });
-
-        document.addEventListener('mouseout', (event) => {
-          const leaving = event.target && event.target.closest ? event.target.closest(TOOLTIP_SELECTOR) : null;
-          if(!leaving) return;
-          const entering = event.relatedTarget && event.relatedTarget.closest
-            ? event.relatedTarget.closest(TOOLTIP_SELECTOR)
-            : null;
-          if(leaving === entering) return;
-          scheduleTooltipHide();
-        });
-
-        document.addEventListener('mousemove', (event) => {
-          if(!tooltipTarget || !uiTooltipEl || uiTooltipEl.getAttribute('aria-hidden') === 'true') return;
-          const within = event.target && event.target.closest ? event.target.closest(TOOLTIP_SELECTOR) : null;
-          if(within !== tooltipTarget) return;
-          positionTooltip(tooltipTarget);
-        });
-
-        document.addEventListener('focusin', (event) => {
-          const target = event.target && event.target.matches && event.target.matches(TOOLTIP_SELECTOR)
-            ? event.target
-            : null;
-          if(!target) return;
-          scheduleTooltipShow(target);
-        });
-
-        document.addEventListener('focusout', (event) => {
-          const target = event.target && event.target.matches && event.target.matches(TOOLTIP_SELECTOR)
-            ? event.target
-            : null;
-          if(!target) return;
-          scheduleTooltipHide();
-        });
-
-        window.addEventListener('scroll', () => {
-          if(!tooltipTarget){
-            hideTooltip();
-            return;
-          }
-          positionTooltip(tooltipTarget);
-        }, { passive: true });
-
-        window.addEventListener('resize', () => {
-          if(!tooltipTarget){
-            hideTooltip();
-            return;
-          }
-          positionTooltip(tooltipTarget);
         });
       }
 
@@ -6147,7 +6017,14 @@
       async function init(){
         initPanelReader();
         initMonthlyWeatherControls();
-        initInstantTooltips();
+        if (window.NH48Tooltips && typeof window.NH48Tooltips.init === 'function') {
+          window.NH48Tooltips.init({
+            pageName: 'Peak details',
+            idTextOverrides: {
+              monthlyWeatherMonthSelect: 'common.tooltips.monthDropdown'
+            }
+          });
+        }
         const slug = getResolvedSlug();
         console.log('[Peak Init] Starting initialization for slug:', slug);
         
@@ -6185,7 +6062,7 @@
           peakExperienceMap = experienceMap || {};
           
           console.log('[Peak Init] Data loaded, looking up peak:', slug);
-          const p = data && data[slug];
+          let p = data && data[slug];
 
           if(!p){
             console.error('[Peak Init] Peak not found in data:', slug);
@@ -6217,9 +6094,26 @@
             p.description = p.description || p['Description'];
           }
 
+          const activeLang = getActiveUiLanguage();
+          if (activeLang && activeLang !== 'en') {
+            const peakOverlayBySlug = await fetchDatasetOverlay('nh48', activeLang);
+            if (peakOverlayBySlug && peakOverlayBySlug[slug]) {
+              p = deepMergeOverlay(p, peakOverlayBySlug[slug]);
+            }
+          }
+
           const name = p.peakName || p['Peak Name'] || p.name || p['Name'] || p.peak || p['Peak'] || p['PeakName'] || slug;
           console.log('[Peak Init] ✓ Found peak:', name);
           updatePeakTitle(name);
+          if (window.NH48Tooltips && typeof window.NH48Tooltips.init === 'function') {
+            window.NH48Tooltips.init({
+              pageName: name,
+              idTextOverrides: {
+                monthlyWeatherMonthSelect: 'common.tooltips.monthDropdown'
+              }
+            });
+            window.NH48Tooltips.refresh(document.body);
+          }
           if(!p.experience && peakExperienceMap && peakExperienceMap[slug]){
             p.experience = peakExperienceMap[slug];
           }

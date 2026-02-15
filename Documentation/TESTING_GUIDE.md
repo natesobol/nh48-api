@@ -7,6 +7,9 @@ Run from repo root:
 
 ```bash
 node scripts/audit-site-schema.js
+node scripts/audit-i18n-completeness.js
+node scripts/audit-dataset-overlay-coverage.js
+node scripts/audit-unresolved-i18n-markers.js
 node scripts/audit-peak-guide-authority.js
 node scripts/audit-wiki-routes.js
 node scripts/audit-wiki-media-sync.js
@@ -17,6 +20,8 @@ node scripts/audit-entity-links.js
 ### Local build/regeneration checks
 ```bash
 python scripts/build-peak-sameas.py
+npm run sync:i18n-missing-keys
+npm run build:dataset-overlay-scaffold
 node scripts/build-peak-difficulty.js
 node scripts/build-peak-experience-scaffold.js
 node scripts/prerender-peaks.js
@@ -36,9 +41,12 @@ Workflow: `.github/workflows/deploy-worker.yml`
 
 Pre-deploy gates:
 1. `audit-site-schema`
-2. `audit-peak-guide-authority`
-3. `audit-sameas`
-4. `audit-entity-links`
+2. `audit-i18n-completeness`
+3. `audit-dataset-overlay-coverage`
+4. `audit-unresolved-i18n-markers`
+5. `audit-peak-guide-authority`
+6. `audit-sameas`
+7. `audit-entity-links`
 
 Post-deploy gates with retry:
 1. `audit-homepage-worker-seo` (production URL)
@@ -85,6 +93,18 @@ Retry policy:
 - Peak breadcrumb depth: 4 items (`Home > White Mountains > Range > Peak`)
 - One breadcrumb list per audited route
 - Peak pages include narrative module and authority links
+
+## Localization QA
+1. Locale key completeness:
+   - `node scripts/audit-i18n-completeness.js`
+2. Overlay file coverage:
+   - `node scripts/audit-dataset-overlay-coverage.js`
+3. Unresolved key marker check:
+   - `node scripts/audit-unresolved-i18n-markers.js`
+4. Rebuild locale overlay scaffolds after dataset edits:
+   - `npm run build:dataset-overlay-scaffold`
+5. Backfill missing locale keys after adding new EN keys:
+   - `npm run sync:i18n-missing-keys`
 
 ## CI Workflow Ownership Map
 - `deploy-worker.yml`: Worker deploy + all SEO/peak audit gates + production parity retry.

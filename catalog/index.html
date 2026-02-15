@@ -62,6 +62,8 @@
     <link rel="mask-icon" href="/favicons/favicon.ico" color="#22c55e">
     <link rel="stylesheet" href="../css/nh48_catalog.css">
     <script type="module" src="../js/i18n.js"></script>
+    <link rel="stylesheet" href="/css/ui-tooltips.css">
+    <script src="/js/ui-tooltips.js" defer></script>
     <script src="/js/unified-footer.js" defer></script>
 <noscript>
       <p>
@@ -1049,17 +1051,25 @@
         });
       }
 
+      function refreshTooltips(root){
+        if (window.NH48Tooltips && typeof window.NH48Tooltips.refresh === 'function') {
+          window.NH48Tooltips.refresh(root || document.body);
+        }
+      }
+
       function renderGrid(list){
         const grid = document.getElementById('grid');
         const empty = document.getElementById('emptyMessage');
         grid.innerHTML = '';
         if(!list || list.length === 0){
           empty.hidden = false;
+          refreshTooltips(document.body);
           return;
         }
         empty.hidden = true;
         list.forEach(p => grid.appendChild(createCard(p)));
         deferInitialImageLoads();
+        refreshTooltips(grid);
       }
 
       // Return canonical range info { name, id } for a given peak object.
@@ -1081,6 +1091,7 @@
         grid.innerHTML = '';
         if(!list || list.length === 0){
           empty.hidden = false;
+          refreshTooltips(document.body);
           return;
         }
         empty.hidden = true;
@@ -1184,6 +1195,7 @@
         });
 
         deferInitialImageLoads();
+        refreshTooltips(grid);
       }
 
       function renderList(list){
@@ -1192,11 +1204,13 @@
         grid.innerHTML = '';
         if(!list || list.length === 0){
           empty.hidden = false;
+          refreshTooltips(document.body);
           return;
         }
         empty.hidden = true;
         list.forEach(p => grid.appendChild(createListItem(p)));
         deferInitialImageLoads();
+        refreshTooltips(grid);
       }
 
       // Build suggestions list, stripping common words
@@ -1364,6 +1378,12 @@
       if (window.NH48_I18N && window.NH48_I18N.onLangChange) {
         window.NH48_I18N.onLangChange((lang) => {
           syncUnitsWithLanguage(lang);
+          if (window.NH48Tooltips && typeof window.NH48Tooltips.init === 'function') {
+            window.NH48Tooltips.init({
+              pageName: t('catalog.title') || 'NH48 Peak Catalog'
+            });
+            refreshTooltips(document.body);
+          }
           updateDisplay();
           trackEvent('catalog_language_change', { language: lang });
         });
@@ -1430,6 +1450,12 @@
       applyView(savedView || 'grid', { persist: false });
 
       syncUnitsWithLanguage(window.NH48_I18N ? window.NH48_I18N.getLang() : 'en');
+      if (window.NH48Tooltips && typeof window.NH48Tooltips.init === 'function') {
+        window.NH48Tooltips.init({
+          pageName: t('catalog.title') || 'NH48 Peak Catalog'
+        });
+        refreshTooltips(document.body);
+      }
 
       const savedApiVariables = localStorage.getItem(API_VARIABLES_STORAGE_KEY);
       if(savedApiVariables === 'true'){

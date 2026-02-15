@@ -123,7 +123,25 @@ import { LANGS } from './langConfig.js';
       if (attrList && key) {
         attrList.split(',').map(part => part.trim()).filter(Boolean).forEach(attr => {
           const attrKey = attr === 'aria-label' ? 'ariaLabel' : attr;
-          const translated = t(`${key}.${attrKey}`);
+          const attrTranslation = t(`${key}.${attrKey}`);
+          const baseTranslation = t(key);
+
+          // Never leak unresolved dotted keys into attributes.
+          const looksUnresolved = (value) => {
+            if (typeof value !== 'string') return false;
+            const trimmed = value.trim();
+            if (!trimmed) return false;
+            if (trimmed === `${key}.${attrKey}` || trimmed === key) return true;
+            return /^[a-z0-9_-]+(?:\.[a-z0-9_-]+)+$/i.test(trimmed);
+          };
+
+          let translated = '';
+          if (typeof attrTranslation === 'string' && attrTranslation && !looksUnresolved(attrTranslation)) {
+            translated = attrTranslation;
+          } else if (typeof baseTranslation === 'string' && baseTranslation && baseTranslation !== key) {
+            translated = baseTranslation;
+          }
+
           if (translated) {
             el.setAttribute(attr, translated);
           }

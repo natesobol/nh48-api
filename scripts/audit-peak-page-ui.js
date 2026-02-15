@@ -86,11 +86,17 @@ function runTemplateChecks() {
   if (!/function\s+renderMonthlyWeatherPanel\s*\(/i.test(html)) {
     failures.push('Template missing renderMonthlyWeatherPanel() implementation');
   }
-  if (!/function\s+initInstantTooltips\s*\(/i.test(html)) {
-    failures.push('Template missing initInstantTooltips() implementation.');
+  if (!/js\/ui-tooltips\.js/i.test(html)) {
+    failures.push('Template missing shared tooltip module include (/js/ui-tooltips.js).');
   }
-  if (!/ui-tooltip|id="uiTooltip"/i.test(html)) {
-    failures.push('Template missing ui-tooltip styling/marker.');
+  if (!/css\/ui-tooltips\.css/i.test(html)) {
+    failures.push('Template missing shared tooltip stylesheet include (/css/ui-tooltips.css).');
+  }
+  if (!/NH48Tooltips\s*\.\s*init\s*\(/i.test(html)) {
+    failures.push('Template missing NH48Tooltips.init() integration.');
+  }
+  if (!/monthlyWeatherMonthSelect\s*:\s*['"]common\.tooltips\.monthDropdown['"]/i.test(html)) {
+    failures.push('Template missing monthly weather tooltip override mapping.');
   }
   if (!/is-desc-accessibility/i.test(html)) {
     failures.push('Template missing desc/accessibility row exception classes.');

@@ -13,7 +13,19 @@
     },
     "unitsLabel": "इकाइयाँ",
     "unitsFeet": "फ़ीट",
-    "unitsMeters": "मीटर"
+    "unitsMeters": "मीटर",
+    "print": "??????",
+    "share": "???? ????",
+    "tooltips": {
+      "openPage": "{pageName} ??? ?????",
+      "jumpSection": "{sectionName} ?????? ?? ????",
+      "openExternalPage": "????? ??? ?????: {siteName}",
+      "downloadFile": "{fileName} ??????? ????",
+      "monthDropdown": "???? ??? ?? ??? ????? ?????",
+      "openPeakDetails": "??? ????? ??? ?????",
+      "openTrailInfoPage": "????? ??????? ??? ?????",
+      "openHowkerMapPage": "Howker Ridge ???????? ??? ?????"
+    }
   },
   "landing": {
     "title": "NH48 API: न्यू हैम्पशायर की 4,000‑फुट चोटियों और लंबी ट्रेल्स के लिए ओपन डेटा",
@@ -193,8 +205,8 @@
       "conditions": "स्थितियाँ और पहुँच"
     },
     "carousel": {
-      "prev": "पिछली छवि",
-      "next": "अगली छवि"
+      "prev": "????? ???",
+      "next": "???? ???"
     },
     "metadata": {
       "title": "वर्तमान फ़ोटो मेटाडेटा",
@@ -246,7 +258,11 @@
       "range": "रेंज",
       "trailType": "ट्रेल प्रकार",
       "difficulty": "कठिनाई",
-      "exposure": "एक्सपोज़र"
+      "exposure": "एक्सपोज़र",
+      "typicalTime": "Typical Completion Time",
+      "bestSeasons": "Best Seasons to Hike",
+      "waterAvailability": "Water Availability",
+      "cellReception": "Cell Reception Quality"
     },
     "routes": {
       "distance": "दूरी",
@@ -274,6 +290,28 @@
     "meta": {
       "titleTemplate": "{name} ({elevation} फ़ीट) – NH48",
       "descriptionTemplate": "{name} – {elevation} फ़ीट ऊँचा, {prominence} फ़ीट उभार, {range} में। इस 4,000‑फ़ुटर के लिए रूट्स, कठिनाई और फ़ोटो।"
+    },
+    "directions": {
+      "label": "????-??????? ??????? ????",
+      "unavailable": "???????? ????? ?????? ???? ??"
+    },
+    "expand": {
+      "show": "Expand",
+      "hide": "Collapse"
+    },
+    "reader": {
+      "title": "Panel reader",
+      "openPanel": "Open panel reader",
+      "close": "Close panel reader",
+      "scale": "Scale"
+    },
+    "weather": {
+      "heading": "Monthly Weather Averages",
+      "avgWind": "Average wind",
+      "avgGust": "Average gust",
+      "avgTemp": "Average temperature",
+      "monthLabel": "Select month",
+      "disclaimer": "Monthly climatology values. Real conditions change rapidly at elevation."
     }
   },
   "trails": {
@@ -350,6 +388,10 @@
     },
     "map": {
       "attribution": "मानचित्र डेटा: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | मानचित्र शैली: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    },
+    "telemetry": {
+      "label": "{mapped}/{total} trails with GPX telemetry",
+      "loading": "Loading GPX telemetry coverage…"
     }
   },
   "nav.tagline": "न्यू हैम्पशायर के 4,000 फीट ऊँचे शिखरों के लिए खुला डेटा और संरचित मेटाडेटा।",
@@ -621,5 +663,55 @@
     "playAgain": "Play again",
     "returnCatalog": "Return to Catalog",
     "completeAnnounce": "Puzzle complete. Great job!"
-  }
+  },
+  "footer": {
+    "quickBrowseLinks": {
+      "ariaLabel": "NH48 quick browse footer links"
+    },
+    "navLabel": {
+      "ariaLabel": "Footer navigation links"
+    }
+  },
+  "peakid": {
+    "title": "NH48 PeakID Game",
+    "metaDescription": "Play the NH48 PeakID Game and match summit photos to the correct 4,000-footer names across eight rounds.",
+    "heroTitle": "NH48 PeakID Game",
+    "heroBody": "Drag and drop the summit photos onto the correct peak names. Complete eight rounds to cover all 48 four-thousand-footers.",
+    "roundLabel": "Round",
+    "ofLabel": "of",
+    "correctLabel": "Correct",
+    "incorrectLabel": "Incorrect",
+    "instructions": "Drag and drop the photos onto the correct names.",
+    "photoCredit": "Photo credit: {credit}",
+    "submit": "Next round",
+    "nextRound": "Next round",
+    "roundSummary": "Round {round}: {score} of {total} correct.",
+    "finalScore": "Final Score",
+    "finalMessage": "Great job! You matched {score} of {total} peaks.",
+    "restartGame": "Restart Game",
+    "returnCatalog": "Return to Catalog",
+    "socialOrientation": "Card orientation",
+    "socialSettingsHeading": "Card settings",
+    "socialShowScore": "Show score line",
+    "socialShowDate": "Show date line",
+    "socialShowName": "Show your name",
+    "socialUseGradient": "Apply gradient overlay",
+    "socialNameLabel": "Your name",
+    "landscape": "Landscape",
+    "portrait": "Portrait",
+    "generateAnotherImage": "Generate Another Image",
+    "downloadCard": "Download Social Card",
+    "socialTitle": "NH48 PeakID Game",
+    "socialScore": "Peaks Identified: {score} of {total}",
+    "socialPeaksIdentified": "Peaks Identified: {score}",
+    "socialNameLine": "Hiker: {name}",
+    "socialTimestamp": "Generated",
+    "socialLink": "Play the NH48 PeakID Game",
+    "socialShareHeading": "Share your score",
+    "socialShareText": "I identified {score} peaks in the NH48 PeakID Game!"
+  },
+  "common.print.ariaLabel": "??? ?????? ????",
+  "common.share.ariaLabel": "??? ???? ????",
+  "peak.carousel.prev.ariaLabel": "????? ??????? ???",
+  "peak.carousel.next.ariaLabel": "???? ??????? ???"
 }

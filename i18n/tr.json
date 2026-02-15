@@ -13,7 +13,19 @@
     },
     "unitsLabel": "Birimler",
     "unitsFeet": "Fit",
-    "unitsMeters": "Metre"
+    "unitsMeters": "Metre",
+    "print": "Yazd?r",
+    "share": "Payla?",
+    "tooltips": {
+      "openPage": "{pageName} sayfas?n? a?",
+      "jumpSection": "{sectionName} b?l?m?ne git",
+      "openExternalPage": "Harici sayfay? a?: {siteName}",
+      "downloadFile": "{fileName} dosyas?n? indir",
+      "monthDropdown": "Hava ortalamalar? i?in ay se?in",
+      "openPeakDetails": "Zirve ayr?nt?lar? sayfas?n? a?",
+      "openTrailInfoPage": "Patika bilgisi sayfas?n? a?",
+      "openHowkerMapPage": "Howker Ridge harita sayfas?n? a?"
+    }
   },
   "landing": {
     "title": "NH48 API: New Hampshire'ın 4.000 fitlik zirveleri ve uzun parkurları için açık veri",
@@ -193,8 +205,8 @@
       "conditions": "Koşullar ve Erişim"
     },
     "carousel": {
-      "prev": "Önceki görüntü",
-      "next": "Sonraki görüntü"
+      "prev": "?nceki g?rsel",
+      "next": "Sonraki g?rsel"
     },
     "metadata": {
       "title": "Mevcut Fotoğraf Meta Verileri",
@@ -246,7 +258,11 @@
       "range": "Sıra",
       "trailType": "Parkur türü",
       "difficulty": "Zorluk",
-      "exposure": "Maruziyet"
+      "exposure": "Maruziyet",
+      "typicalTime": "Typical Completion Time",
+      "bestSeasons": "Best Seasons to Hike",
+      "waterAvailability": "Water Availability",
+      "cellReception": "Cell Reception Quality"
     },
     "routes": {
       "distance": "Mesafe",
@@ -274,6 +290,28 @@
     "meta": {
       "titleTemplate": "{name} ({elevation} ft) – NH48",
       "descriptionTemplate": "{name} – {elevation} ft yüksekliğinde, {prominence} ft çıkıntıya sahip, {range} içinde. Bu 4.000 fitlik zirve için rotalar, zorluk ve fotoğraflar."
+    },
+    "directions": {
+      "label": "Yol tarifi al",
+      "unavailable": "Otopark konumu kullan?lam?yor"
+    },
+    "expand": {
+      "show": "Expand",
+      "hide": "Collapse"
+    },
+    "reader": {
+      "title": "Panel reader",
+      "openPanel": "Open panel reader",
+      "close": "Close panel reader",
+      "scale": "Scale"
+    },
+    "weather": {
+      "heading": "Monthly Weather Averages",
+      "avgWind": "Average wind",
+      "avgGust": "Average gust",
+      "avgTemp": "Average temperature",
+      "monthLabel": "Select month",
+      "disclaimer": "Monthly climatology values. Real conditions change rapidly at elevation."
     }
   },
   "trails": {
@@ -350,6 +388,10 @@
     },
     "map": {
       "attribution": "Harita verisi: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Harita stili: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    },
+    "telemetry": {
+      "label": "{mapped}/{total} trails with GPX telemetry",
+      "loading": "Loading GPX telemetry coverage…"
     }
   },
   "nav.tagline": "New Hampshire'ın 4 000 fit zirveleri için açık veriler ve yapılandırılmış meta veriler.",
@@ -621,5 +663,55 @@
     "playAgain": "Play again",
     "returnCatalog": "Return to Catalog",
     "completeAnnounce": "Puzzle complete. Great job!"
-  }
+  },
+  "footer": {
+    "quickBrowseLinks": {
+      "ariaLabel": "NH48 quick browse footer links"
+    },
+    "navLabel": {
+      "ariaLabel": "Footer navigation links"
+    }
+  },
+  "peakid": {
+    "title": "NH48 PeakID Game",
+    "metaDescription": "Play the NH48 PeakID Game and match summit photos to the correct 4,000-footer names across eight rounds.",
+    "heroTitle": "NH48 PeakID Game",
+    "heroBody": "Drag and drop the summit photos onto the correct peak names. Complete eight rounds to cover all 48 four-thousand-footers.",
+    "roundLabel": "Round",
+    "ofLabel": "of",
+    "correctLabel": "Correct",
+    "incorrectLabel": "Incorrect",
+    "instructions": "Drag and drop the photos onto the correct names.",
+    "photoCredit": "Photo credit: {credit}",
+    "submit": "Next round",
+    "nextRound": "Next round",
+    "roundSummary": "Round {round}: {score} of {total} correct.",
+    "finalScore": "Final Score",
+    "finalMessage": "Great job! You matched {score} of {total} peaks.",
+    "restartGame": "Restart Game",
+    "returnCatalog": "Return to Catalog",
+    "socialOrientation": "Card orientation",
+    "socialSettingsHeading": "Card settings",
+    "socialShowScore": "Show score line",
+    "socialShowDate": "Show date line",
+    "socialShowName": "Show your name",
+    "socialUseGradient": "Apply gradient overlay",
+    "socialNameLabel": "Your name",
+    "landscape": "Landscape",
+    "portrait": "Portrait",
+    "generateAnotherImage": "Generate Another Image",
+    "downloadCard": "Download Social Card",
+    "socialTitle": "NH48 PeakID Game",
+    "socialScore": "Peaks Identified: {score} of {total}",
+    "socialPeaksIdentified": "Peaks Identified: {score}",
+    "socialNameLine": "Hiker: {name}",
+    "socialTimestamp": "Generated",
+    "socialLink": "Play the NH48 PeakID Game",
+    "socialShareHeading": "Share your score",
+    "socialShareText": "I identified {score} peaks in the NH48 PeakID Game!"
+  },
+  "common.print.ariaLabel": "Sayfay? yazd?r",
+  "common.share.ariaLabel": "Sayfay? payla?",
+  "peak.carousel.prev.ariaLabel": "?nceki d?ng? g?rseli",
+  "peak.carousel.next.ariaLabel": "Sonraki d?ng? g?rseli"
 }

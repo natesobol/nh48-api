@@ -72,7 +72,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/nh48_catalog.css">
     <link rel="stylesheet" href="/css/photos.css">
+    <link rel="stylesheet" href="/css/ui-tooltips.css">
     <script type="module" src="/js/i18n.js"></script>
+    <script src="/js/ui-tooltips.js" defer></script>
     <script src="/js/unified-footer.js" defer></script>
   </head>
   <body data-route="photos" data-page="photos">
@@ -81,6 +83,10 @@
       document.addEventListener('DOMContentLoaded', () => {
         const navPlaceholder = document.getElementById('nav-placeholder');
         const activeRoute = document.body.dataset.route || document.body.dataset.page;
+        if (window.NH48Tooltips && typeof window.NH48Tooltips.init === 'function') {
+          window.NH48Tooltips.init({ pageName: 'NH48 Photos' });
+          window.NH48Tooltips.refresh(document.body);
+        }
 
         if (navPlaceholder) {
           fetch('/pages/nav.html')
@@ -101,6 +107,9 @@
               });
               if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
                 window.NH48_I18N.refreshLangPicker();
+              }
+              if (window.NH48Tooltips && typeof window.NH48Tooltips.refresh === 'function') {
+                window.NH48Tooltips.refresh(document.body);
               }
             })
             .catch(err => console.error('Failed to load navigation:', err));

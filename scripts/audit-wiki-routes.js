@@ -135,7 +135,18 @@ function runTemplateChecks(samples) {
   const templateChecks = [
     {
       file: 'pages/wiki/index.html',
-      mustContain: ['id="nav-placeholder"', 'id="footer-placeholder"', 'id="wikiSearch"', 'id="wikiListNh48"', 'id="wikiListNh52wav"', 'id="wikiListPlants"', 'id="wikiListAnimals"']
+      mustContain: [
+        'id="nav-placeholder"',
+        'id="footer-placeholder"',
+        'id="wikiSearch"',
+        'id="wikiListNh48"',
+        'id="wikiListNh52wav"',
+        'id="wikiListPlants"',
+        'id="wikiListAnimals"',
+        'class="wiki-updates-dropdown"',
+        'Latest White Mountain Wiki Updates',
+        'href="/wiki/plant-diseases"'
+      ]
     },
     {
       file: 'pages/wiki/mountain.html',
@@ -213,6 +224,10 @@ async function runUrlChecks(samples) {
   const landingUrl = new URL(routes.landing, BASE_URL).toString();
   const landingPage = await fetchPage(landingUrl);
   assert(landingPage.status === 200, `${landingUrl}: expected HTTP 200, found ${landingPage.status}`, failures);
+  assert(landingPage.body.includes('class="wiki-updates-dropdown"'), `${landingUrl}: updates dropdown not found`, failures);
+  assert(landingPage.body.includes('Latest White Mountain Wiki Updates'), `${landingUrl}: updates dropdown title not found`, failures);
+  assert(landingPage.body.includes('href="/wiki/plant-diseases"'), `${landingUrl}: updates dropdown action link to /wiki/plant-diseases not found`, failures);
+  assert(landingPage.body.includes('Initial compilation of wiki dataset giving a central location to associate my general white mountain photos with a knowledge base'), `${landingUrl}: expected initial wiki update text not found`, failures);
   [routes.forestHealth, routes.mountainPhoto, routes.mountainNoPhoto, routes.plant, routes.animal, routes.plantDiseaseAnchor].forEach((route) => {
     if (!landingPage.body.includes(`href="${route}"`)) {
       failures.push(`${landingUrl}: missing crawlable wiki link ${route}`);

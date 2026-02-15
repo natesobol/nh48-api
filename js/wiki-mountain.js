@@ -1,6 +1,7 @@
 (function () {
   const RAW_BASE = 'https://raw.githubusercontent.com/natesobol/nh48-api/main';
   const CDN_BASE = 'https://cdn.jsdelivr.net/gh/natesobol/nh48-api@main';
+  const OVERLAY_BASE = 'data/i18n-content';
 
   function q(id) {
     return document.getElementById(id);
@@ -47,6 +48,58 @@
       `${CDN_BASE}/${cleaned}`,
       `${RAW_BASE}/${cleaned}`
     ]);
+  }
+
+  function getCurrentLang() {
+    const i18nLang = window.NH48_I18N && typeof window.NH48_I18N.getLang === 'function'
+      ? window.NH48_I18N.getLang()
+      : '';
+    const stored = localStorage.getItem('nh48_lang') || '';
+    return text(i18nLang || stored || 'en').toLowerCase();
+  }
+
+  function deepMerge(baseValue, overlayValue) {
+    if (overlayValue === undefined || overlayValue === null) return baseValue;
+    if (Array.isArray(baseValue) && Array.isArray(overlayValue)) {
+      const max = Math.max(baseValue.length, overlayValue.length);
+      const merged = [];
+      for (let i = 0; i < max; i += 1) {
+        if (i in overlayValue) {
+          merged[i] = deepMerge(baseValue[i], overlayValue[i]);
+        } else {
+          merged[i] = baseValue[i];
+        }
+      }
+      return merged;
+    }
+    if (
+      baseValue &&
+      overlayValue &&
+      typeof baseValue === 'object' &&
+      typeof overlayValue === 'object' &&
+      !Array.isArray(baseValue) &&
+      !Array.isArray(overlayValue)
+    ) {
+      const merged = { ...baseValue };
+      Object.keys(overlayValue).forEach((key) => {
+        merged[key] = deepMerge(baseValue[key], overlayValue[key]);
+      });
+      return merged;
+    }
+    return overlayValue;
+  }
+
+  function loadOverlay(datasetBaseName, langCode) {
+    const safeLang = text(langCode).toLowerCase();
+    if (!safeLang || safeLang === 'en') {
+      return Promise.resolve({});
+    }
+    return loadWikiJson(`${OVERLAY_BASE}/${safeLang}/${datasetBaseName}.overlay.json`).then((payload) => {
+      if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+        return {};
+      }
+      return payload;
+    });
   }
 
   function resolveEntry(mapData, slug) {
@@ -360,10 +413,17 @@
     }
 
     const setData = await loadWikiJson(setMeta.dataFile);
-    const entry = resolveEntry(setData, entrySlug);
+    let entry = resolveEntry(setData, entrySlug);
     if (!entry) {
       renderNotFound(`Entry "${entrySlug}" not found in ${setSlug}.`);
       return;
+    }
+
+    const lang = getCurrentLang();
+    const overlayKey = setSlug === 'nh52wav' ? 'nh52wav' : 'nh48';
+    const overlayPayload = await loadOverlay(overlayKey, lang);
+    if (overlayPayload && overlayPayload[entrySlug]) {
+      entry = deepMerge(entry, overlayPayload[entrySlug]);
     }
 
     renderMountain(entry, setMeta, setSlug);

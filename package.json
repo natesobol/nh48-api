@@ -26,7 +26,13 @@
     "test:peak-visual": "playwright test tests/peak-page-visual.spec.js --config playwright.peak-visual.config.js",
     "test:analytics": "playwright test analytics-smoke.spec.js",
     "test:analytics:headed": "playwright test analytics-smoke.spec.js --headed --project=chromium",
-    "test:analytics:debug": "playwright test analytics-smoke.spec.js --headed --project=chromium --debug"
+    "test:analytics:debug": "playwright test analytics-smoke.spec.js --headed --project=chromium --debug",
+    "audit:i18n-completeness": "node scripts/audit-i18n-completeness.js",
+    "sync:i18n-missing-keys": "node scripts/sync-i18n-missing-keys.js --write",
+    "build:dataset-overlay-scaffold": "node scripts/build-dataset-overlay-scaffold.js --write",
+    "audit:dataset-overlay-coverage": "node scripts/audit-dataset-overlay-coverage.js",
+    "audit:i18n-markers": "node scripts/audit-unresolved-i18n-markers.js",
+    "audit:tooltip-integration": "node scripts/audit-tooltip-integration.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.0",

@@ -12,7 +12,7 @@ const TOPO_LEVELS=[-1.02,-0.82,-0.62,-0.42,-0.22,-0.02,0.18,0.38,0.58,0.78,0.98]
 const state={
   peaks:[],taxonomy:null,filterParentOptions:[],filterSubrangeOptions:[],activeParentFilters:new Set(),activeSubrangeFilters:new Set(),subrangeToParent:new Map(),
   search:'',sort:'range',rangeMode:'jump',renderedParentGroups:[],activeParentSlug:'',hasAppliedInitialHash:false,revealObserver:null,rangeObserver:null,
-  topoPhase:0,topoTimer:null,topoResizeTimer:null,lightbox:{peakSlug:'',index:0,open:false}
+  topoPhase:0,topoTimer:null,topoResizeTimer:null,revealMode:'',lightbox:{peakSlug:'',index:0,open:false}
 };
 
 const elements={
@@ -36,6 +36,18 @@ const trackAnalytics=(name,params={})=>{
   if(!analytics?.logEvent)return;
   if(analytics.analytics){analytics.logEvent(analytics.analytics,name,{page:location.pathname,...params});return;}
   analytics.logEvent(name,params);
+};
+
+const initTooltips=()=>{
+  if(window.NH48Tooltips?.init){
+    window.NH48Tooltips.init({pageName:'NH48 Photos'});
+  }
+};
+
+const refreshTooltips=(root)=>{
+  if(window.NH48Tooltips?.refresh){
+    window.NH48Tooltips.refresh(root||document.body);
+  }
 };
 
 const slugify=(value)=>String(value||'').toLowerCase().trim().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
@@ -68,7 +80,13 @@ const normalizePhotoUrl=(rawUrl)=>{
 const transformPhotoUrl=(rawUrl,prefix)=>{
   const normalized=normalizePhotoUrl(rawUrl);
   if(!normalized)return '';
-  try{const parsed=new URL(normalized);if(parsed.origin===PHOTO_BASE_URL)return `${prefix}${parsed.pathname}`;}catch(error){return normalized;}
+  try{
+    const parsed=new URL(normalized);
+    if(parsed.origin===PHOTO_BASE_URL){
+      if(parsed.pathname.startsWith('/cdn-cgi/image/'))return normalized;
+      return `${prefix}${parsed.pathname}`;
+    }
+  }catch(error){return normalized;}
   return normalized;
 };
 
@@ -729,11 +747,13 @@ const render=()=>{
   const filteredPeaks=filterPeaks();
   const parentGroups=groupPeaks(filteredPeaks,state.sort);
   state.renderedParentGroups=parentGroups;
+  console.debug(`[photos] render parent groups: ${parentGroups.length}, filtered peaks: ${filteredPeaks.length}`);
 
   updateStats(parentGroups);
   renderParentJumpLinks();
   renderFilterChips();
   renderGallery(parentGroups);
+  refreshTooltips(elements.container||document.body);
 
   if(!state.hasAppliedInitialHash){state.hasAppliedInitialHash=true;applyHashSelection();}
 };
@@ -748,21 +768,42 @@ const setRangeMode=(mode)=>{
   if(elements.filterPanel){const active=nextMode==='filter';elements.filterPanel.hidden=!active;elements.filterPanel.classList.toggle('is-active',active);}
 };
 
+const setRevealMode=(mode)=>{
+  const nextMode=mode==='observer'?'observer':'fallback';
+  if(state.revealMode===nextMode)return;
+  state.revealMode=nextMode;
+  document.body.classList.toggle('photos-reveal-enabled',nextMode==='observer');
+  console.info(`[photos] reveal mode: ${nextMode}`);
+};
+
 const connectRevealObserver=()=>{
   if(state.revealObserver){state.revealObserver.disconnect();state.revealObserver=null;}
 
   const revealTargets=document.querySelectorAll('.reveal-target');
-  if(prefersReducedMotion||!revealTargets.length){revealTargets.forEach((node)=>node.classList.add('is-visible'));return;}
+  if(!revealTargets.length){setRevealMode('fallback');return;}
+  if(prefersReducedMotion||typeof IntersectionObserver==='undefined'){
+    setRevealMode('fallback');
+    revealTargets.forEach((node)=>node.classList.add('is-visible'));
+    return;
+  }
 
-  state.revealObserver=new IntersectionObserver((entries,observer)=>{
-    entries.forEach((entry)=>{
-      if(!entry.isIntersecting)return;
-      entry.target.classList.add('is-visible');
-      observer.unobserve(entry.target);
-    });
-  },{threshold:0.18});
+  try{
+    setRevealMode('observer');
+    revealTargets.forEach((node)=>node.classList.remove('is-visible'));
+    state.revealObserver=new IntersectionObserver((entries,observer)=>{
+      entries.forEach((entry)=>{
+        if(!entry.isIntersecting)return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    },{threshold:0.18});
 
-  revealTargets.forEach((node)=>state.revealObserver.observe(node));
+    revealTargets.forEach((node)=>state.revealObserver.observe(node));
+  }catch(error){
+    console.warn('[photos] reveal observer failed, using visible fallback',error);
+    setRevealMode('fallback');
+    revealTargets.forEach((node)=>node.classList.add('is-visible'));
+  }
 };
 
 const connectRangeObserver=()=>{
@@ -1001,11 +1042,8 @@ const drawHeroContours=()=>{
 const initHeroContours=()=>{
   if(!elements.heroTopo)return;
   drawHeroContours();
-
-  if(!prefersReducedMotion){
-    if(state.topoTimer)clearInterval(state.topoTimer);
-    state.topoTimer=window.setInterval(()=>{state.topoPhase+=0.22;drawHeroContours();},2200);
-  }
+  if(state.topoTimer){clearInterval(state.topoTimer);state.topoTimer=null;}
+  console.info('[photos] topography animation disabled (static contours enabled)');
 
   window.addEventListener('resize',()=>{
     if(state.topoResizeTimer)clearTimeout(state.topoResizeTimer);
@@ -1015,11 +1053,14 @@ const initHeroContours=()=>{
 
 const init=async()=>{
   if(elements.loading)elements.loading.hidden=false;
+  initTooltips();
+  refreshTooltips(document.body);
 
   try{
     const [peakData,taxonomyData]=await Promise.all([fetchPeaks(),fetchTaxonomy()]);
     state.taxonomy=buildTaxonomy(taxonomyData||{});
     state.peaks=buildPeakList(peakData,state.taxonomy);
+    console.info(`[photos] loaded ${state.peaks.length} peaks with photos`);
 
     const options=buildFilterOptions(state.peaks);
     state.filterParentOptions=options.parentOptions;

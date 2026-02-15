@@ -756,12 +756,17 @@ body[data-route="photos"] {
 }
 
 .reveal-target {
+  opacity: 1;
+  transform: none;
+}
+
+.photos-reveal-enabled .reveal-target {
   opacity: 0;
   transform: translateY(12px);
   transition: opacity 0.45s ease, transform 0.45s ease;
 }
 
-.reveal-target.is-visible {
+.photos-reveal-enabled .reveal-target.is-visible {
   opacity: 1;
   transform: translateY(0);
 }
@@ -1060,7 +1065,8 @@ body[data-route="photos"] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal-target {
+  .reveal-target,
+  .photos-reveal-enabled .reveal-target {
     opacity: 1;
     transform: none;
     transition: none;

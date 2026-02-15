@@ -52,6 +52,8 @@
   })();
 </script>
 <script type="module" src="/js/i18n.js"></script>
+<link rel="stylesheet" href="/css/ui-tooltips.css" />
+<script src="/js/ui-tooltips.js" defer></script>
 <script src="/js/unified-footer.js" defer></script>
 <style>
 :root{
@@ -697,6 +699,13 @@ blockquote{
     document.addEventListener('DOMContentLoaded', () => {
       const navPlaceholder = document.getElementById('nav-placeholder');
       const activeRoute = document.body.dataset.route || document.body.dataset.page;
+      if (window.NH48Tooltips && typeof window.NH48Tooltips.init === 'function') {
+        const pageName = window.NH48_I18N && window.NH48_I18N.t
+          ? window.NH48_I18N.t('trails.title')
+          : 'Howker Ridge Trail Info';
+        window.NH48Tooltips.init({ pageName });
+        window.NH48Tooltips.refresh(document.body);
+      }
 
       if (navPlaceholder) {
         fetch('/pages/nav.html')
@@ -717,6 +726,9 @@ blockquote{
             });
             if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
               window.NH48_I18N.refreshLangPicker();
+            }
+            if (window.NH48Tooltips && typeof window.NH48Tooltips.refresh === 'function') {
+              window.NH48Tooltips.refresh(document.body);
             }
           })
           .catch(err => console.error('Failed to load navigation:', err));

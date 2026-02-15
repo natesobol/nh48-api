@@ -13,7 +13,19 @@
     },
     "unitsLabel": "Đơn vị",
     "unitsFeet": "Feet",
-    "unitsMeters": "Mét"
+    "unitsMeters": "Mét",
+    "print": "In",
+    "share": "Chia s?",
+    "tooltips": {
+      "openPage": "M? trang {pageName}",
+      "jumpSection": "Chuy?n ??n m?c {sectionName}",
+      "openExternalPage": "M? trang b?n ngo?i: {siteName}",
+      "downloadFile": "T?i xu?ng {fileName}",
+      "monthDropdown": "Ch?n th?ng ?? xem trung b?nh th?i ti?t",
+      "openPeakDetails": "M? trang chi ti?t ??nh n?i",
+      "openTrailInfoPage": "M? trang th?ng tin ???ng m?n",
+      "openHowkerMapPage": "M? trang b?n ?? Howker Ridge"
+    }
   },
   "landing": {
     "title": "NH48 API: Dữ liệu mở cho các đỉnh 4.000 feet và các tuyến đường dài ở New Hampshire",
@@ -193,8 +205,8 @@
       "conditions": "Điều kiện & tiếp cận"
     },
     "carousel": {
-      "prev": "Ảnh trước",
-      "next": "Ảnh tiếp"
+      "prev": "?nh tr??c",
+      "next": "?nh ti?p theo"
     },
     "metadata": {
       "title": "Metadata ảnh hiện tại",
@@ -246,7 +258,11 @@
       "range": "Dãy núi",
       "trailType": "Loại đường mòn",
       "difficulty": "Độ khó",
-      "exposure": "Mức độ lộ thiên"
+      "exposure": "Mức độ lộ thiên",
+      "typicalTime": "Typical Completion Time",
+      "bestSeasons": "Best Seasons to Hike",
+      "waterAvailability": "Water Availability",
+      "cellReception": "Cell Reception Quality"
     },
     "routes": {
       "distance": "Khoảng cách",
@@ -274,6 +290,28 @@
     "meta": {
       "titleTemplate": "{name} ({elevation} ft) – NH48",
       "descriptionTemplate": "{name} — cao {elevation} ft, độ nổi bật {prominence} ft, thuộc {range}. Tuyến, độ khó và ảnh cho đỉnh 4.000 ft này."
+    },
+    "directions": {
+      "label": "Nh?n ch? ???ng",
+      "unavailable": "Kh?ng c? v? tr? b?i ?? xe"
+    },
+    "expand": {
+      "show": "Expand",
+      "hide": "Collapse"
+    },
+    "reader": {
+      "title": "Panel reader",
+      "openPanel": "Open panel reader",
+      "close": "Close panel reader",
+      "scale": "Scale"
+    },
+    "weather": {
+      "heading": "Monthly Weather Averages",
+      "avgWind": "Average wind",
+      "avgGust": "Average gust",
+      "avgTemp": "Average temperature",
+      "monthLabel": "Select month",
+      "disclaimer": "Monthly climatology values. Real conditions change rapidly at elevation."
     }
   },
   "trails": {
@@ -350,6 +388,10 @@
     },
     "map": {
       "attribution": "Dữ liệu bản đồ: &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, SRTM | Kiểu bản đồ: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (CC-BY-SA)"
+    },
+    "telemetry": {
+      "label": "{mapped}/{total} trails with GPX telemetry",
+      "loading": "Loading GPX telemetry coverage…"
     }
   },
   "nav.tagline": "Dữ liệu mở và siêu dữ liệu có cấu trúc cho các đỉnh 4 000 foot của New Hampshire.",
@@ -621,5 +663,55 @@
     "playAgain": "Play again",
     "returnCatalog": "Return to Catalog",
     "completeAnnounce": "Puzzle complete. Great job!"
-  }
+  },
+  "footer": {
+    "quickBrowseLinks": {
+      "ariaLabel": "NH48 quick browse footer links"
+    },
+    "navLabel": {
+      "ariaLabel": "Footer navigation links"
+    }
+  },
+  "peakid": {
+    "title": "NH48 PeakID Game",
+    "metaDescription": "Play the NH48 PeakID Game and match summit photos to the correct 4,000-footer names across eight rounds.",
+    "heroTitle": "NH48 PeakID Game",
+    "heroBody": "Drag and drop the summit photos onto the correct peak names. Complete eight rounds to cover all 48 four-thousand-footers.",
+    "roundLabel": "Round",
+    "ofLabel": "of",
+    "correctLabel": "Correct",
+    "incorrectLabel": "Incorrect",
+    "instructions": "Drag and drop the photos onto the correct names.",
+    "photoCredit": "Photo credit: {credit}",
+    "submit": "Next round",
+    "nextRound": "Next round",
+    "roundSummary": "Round {round}: {score} of {total} correct.",
+    "finalScore": "Final Score",
+    "finalMessage": "Great job! You matched {score} of {total} peaks.",
+    "restartGame": "Restart Game",
+    "returnCatalog": "Return to Catalog",
+    "socialOrientation": "Card orientation",
+    "socialSettingsHeading": "Card settings",
+    "socialShowScore": "Show score line",
+    "socialShowDate": "Show date line",
+    "socialShowName": "Show your name",
+    "socialUseGradient": "Apply gradient overlay",
+    "socialNameLabel": "Your name",
+    "landscape": "Landscape",
+    "portrait": "Portrait",
+    "generateAnotherImage": "Generate Another Image",
+    "downloadCard": "Download Social Card",
+    "socialTitle": "NH48 PeakID Game",
+    "socialScore": "Peaks Identified: {score} of {total}",
+    "socialPeaksIdentified": "Peaks Identified: {score}",
+    "socialNameLine": "Hiker: {name}",
+    "socialTimestamp": "Generated",
+    "socialLink": "Play the NH48 PeakID Game",
+    "socialShareHeading": "Share your score",
+    "socialShareText": "I identified {score} peaks in the NH48 PeakID Game!"
+  },
+  "common.print.ariaLabel": "In trang",
+  "common.share.ariaLabel": "Chia s? trang",
+  "peak.carousel.prev.ariaLabel": "?nh b?ng chuy?n tr??c",
+  "peak.carousel.next.ariaLabel": "?nh b?ng chuy?n ti?p theo"
 }

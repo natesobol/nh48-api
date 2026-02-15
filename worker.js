@@ -1314,11 +1314,23 @@ export default {
         const url = buildUrl(slug);
         const subtitle = subtitleBuilder ? normalizeTextForWeb(subtitleBuilder(item) || '') : '';
         const searchText = normalizeTextForWeb(`${name} ${subtitle}`);
+        const media = normalizeWikiMedia(item, name);
+        const primaryMedia = media[0] || null;
+        const iconUrl = primaryMedia
+          ? buildCloudflareImageVariantUrl(primaryMedia.contentUrl || primaryMedia.url, { width: 96, format: 'webp', quality: 60 })
+          : '';
+        const iconHtml = iconUrl
+          ? `<span class="wiki-link-icon-wrap"><img class="wiki-link-icon" src="${esc(iconUrl)}" alt="${esc(primaryMedia.alt || `${name} image`)}" loading="lazy" decoding="async" width="42" height="42"></span>`
+          : '';
+        const linkClass = iconHtml ? 'wiki-link has-icon' : 'wiki-link no-icon';
         return [
           `<li class="wiki-link-item" data-search="${esc(searchText)}">`,
-          `<a class="wiki-link" href="${url}">`,
+          `<a class="${linkClass}" href="${url}">`,
+          iconHtml,
+          '<span class="wiki-link-text">',
           `${esc(name)}`,
-          subtitle ? `<small>${esc(subtitle)}</small>` : '',
+          subtitle ? `<small class="wiki-link-subtitle">${esc(subtitle)}</small>` : '',
+          '</span>',
           '</a>',
           '</li>'
         ].join('');
@@ -1749,6 +1761,31 @@ export default {
         return html.replace(/<main([^>]*)>/i, (match, attrs) => `<main${attrs}>\n${snippet}`);
       }
       return injectBodyStartHtml(html, snippet);
+    }
+
+    function injectPeakAdvisoryHtml(html, snippet) {
+      if (!snippet || typeof snippet !== 'string') return html;
+
+      // Preferred placement: explicit advisory slot in peak template.
+      if (/<div[^>]+id=["']peakAdvisorySlot["'][^>]*>\s*<\/div>/i.test(html)) {
+        return html.replace(
+          /<div([^>]*)id=["']peakAdvisorySlot["']([^>]*)>\s*<\/div>/i,
+          `<div$1id="peakAdvisorySlot"$2>\n${snippet}\n</div>`
+        );
+      }
+
+      // Fallback placement: immediately after monthly weather section.
+      const monthlySectionPattern = /(<section[^>]+id=["']monthlyWeatherPanel["'][^>]*>[\s\S]*?<\/section>)/i;
+      if (monthlySectionPattern.test(html)) {
+        return html.replace(monthlySectionPattern, `$1\n${snippet}`);
+      }
+
+      // Last-resort placement: before footer placeholder, never before nav.
+      if (/<div[^>]+id=["']footer-placeholder["'][^>]*>/i.test(html)) {
+        return html.replace(/<div([^>]*)id=["']footer-placeholder["']([^>]*)>/i, `${snippet}\n<div$1id="footer-placeholder"$2>`);
+      }
+
+      return html;
     }
 
     async function buildSitewideAdvisoryBanner(isFrench = false) {
@@ -2533,7 +2570,7 @@ export default {
       }
     }
 
-    function buildCloudflareImageVariantUrl(rawUrl, { width = 1200, format = 'jpg' } = {}) {
+    function buildCloudflareImageVariantUrl(rawUrl, { width = 1200, format = 'jpg', quality = 85 } = {}) {
       const contentUrl = stripCloudflareImageTransform(rawUrl);
       if (!contentUrl) return '';
       try {
@@ -2542,8 +2579,9 @@ export default {
           return contentUrl;
         }
         const widthVal = toPositiveInteger(width, 1200);
+        const qualityVal = Math.max(1, Math.min(100, toPositiveInteger(quality, 85)));
         const fmt = normalizeMediaText(format) || 'jpg';
-        return `${parsed.origin}/cdn-cgi/image/format=${fmt},quality=85,width=${widthVal}${parsed.pathname}`;
+        return `${parsed.origin}/cdn-cgi/image/format=${fmt},quality=${qualityVal},width=${widthVal}${parsed.pathname}`;
       } catch (_) {
         return contentUrl;
       }
@@ -5681,7 +5719,7 @@ export default {
           html = html.replace(/<\/head>/i, `${ldBlocks}\n</head>`);
         }
         if (options?.prependMainHtml) {
-          html = injectMainStartHtml(html, options.prependMainHtml);
+          html = injectPeakAdvisoryHtml(html, options.prependMainHtml);
         } else if (options?.prependBodyHtml) {
           html = injectBodyStartHtml(html, options.prependBodyHtml);
         }
@@ -5964,7 +6002,7 @@ export default {
     // Remove existing placeholders and duplicate head tags.
     html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'peak');
     if (peakAlertHtml) {
-      html = injectMainStartHtml(html, peakAlertHtml);
+      html = injectPeakAdvisoryHtml(html, peakAlertHtml);
     }
     html = injectBuildDate(html, buildDate);
 
