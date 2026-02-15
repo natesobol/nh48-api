@@ -145,6 +145,7 @@ Optional:
 Warning:
 - Do not set `R2_ENDPOINT` to `https://photos.nh48.info` (custom domain). Use blank or `https://<account_id>.r2.cloudflarestorage.com`.
 - Photos workflows use `R2_*` routing secrets (`R2_BUCKET_NAME`/`R2_BUCKET`, `R2_ACCOUNT_ID`/`CLOUDFLARE_ACCOUNT_ID`, `R2_ENDPOINT`) and only fall back to `WIKI_R2_*` for credentials if `R2_*` credentials are missing.
+- Credential fallback is applied as a matched pair (`*_ACCESS_KEY_ID` + `*_SECRET_ACCESS_KEY`) from one source only; workflows do not mix R2 key-id with wiki secret-key (or vice versa).
 - Photo workflows fail fast if `R2_BUCKET_NAME`/`R2_BUCKET` resolves to `WIKI_R2_BUCKET_NAME`.
 - If `R2_ENDPOINT` is set, its account segment must match `R2_ACCOUNT_ID`/`CLOUDFLARE_ACCOUNT_ID`; otherwise the workflow falls back to `https://<account_id>.r2.cloudflarestorage.com`.
 
