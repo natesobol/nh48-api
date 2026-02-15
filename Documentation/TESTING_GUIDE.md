@@ -144,6 +144,9 @@ Optional:
 
 Warning:
 - Do not set `R2_ENDPOINT` to `https://photos.nh48.info` (custom domain). Use blank or `https://<account_id>.r2.cloudflarestorage.com`.
+- `WIKI_R2_*` secrets are only for `.github/workflows/sync-r2-wiki-media.yml`; photo workflows use `R2_*` secrets.
+- Photo workflows fail fast if `R2_BUCKET_NAME`/`R2_BUCKET` resolves to `WIKI_R2_BUCKET_NAME`.
+- If `R2_ENDPOINT` is set, its account segment must match `R2_ACCOUNT_ID`/`CLOUDFLARE_ACCOUNT_ID`; otherwise the workflow falls back to `https://<account_id>.r2.cloudflarestorage.com`.
 
 ## Expected Run Matrix
 1. `worker.js` or worker SEO script changes on `main`:

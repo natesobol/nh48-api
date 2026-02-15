@@ -16,6 +16,7 @@ jobs:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          WIKI_R2_BUCKET_NAME: ${{ secrets.WIKI_R2_BUCKET_NAME }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -46,8 +47,19 @@ jobs:
             exit 1
           fi
 
-          if [ -n "${R2_ENDPOINT:-}" ] && [[ "${R2_ENDPOINT}" =~ ^https://[a-z0-9-]+\.r2\.cloudflarestorage\.com/?$ ]]; then
-            ENDPOINT="${R2_ENDPOINT}"
+          if [ -n "${WIKI_R2_BUCKET_NAME:-}" ] && [ "${BUCKET}" = "${WIKI_R2_BUCKET_NAME}" ]; then
+            echo "Photo sync resolved to WIKI_R2_BUCKET_NAME. Set R2_BUCKET_NAME/R2_BUCKET to the photos bucket."
+            exit 1
+          fi
+
+          if [ -n "${R2_ENDPOINT:-}" ] && [[ "${R2_ENDPOINT}" =~ ^https://([a-z0-9-]+)\.r2\.cloudflarestorage\.com/?$ ]]; then
+            ENDPOINT_ACCOUNT_ID="${BASH_REMATCH[1]}"
+            if [ "${ENDPOINT_ACCOUNT_ID}" = "${ACCOUNT_ID}" ]; then
+              ENDPOINT="${R2_ENDPOINT}"
+            else
+              echo "Ignoring R2_ENDPOINT account mismatch (${ENDPOINT_ACCOUNT_ID} != ${ACCOUNT_ID}); using account endpoint fallback."
+              ENDPOINT="https://${ACCOUNT_ID}.r2.cloudflarestorage.com"
+            fi
           else
             if [ -n "${R2_ENDPOINT:-}" ]; then
               echo "Ignoring invalid R2_ENDPOINT for S3 signing; using account endpoint fallback."
