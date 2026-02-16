@@ -1035,9 +1035,11 @@ header.plant-hero.sticky .share-card-status.error{
     const fontSize = options.fontSize || 20;
     const hPad = options.hPad || 14;
     const radius = options.radius || 999;
-    const baselineOffset = Math.max(10, Math.round(fontSize * 0.72));
     ctx.save();
     ctx.font = `600 ${fontSize}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    const tagMetrics = ctx.measureText('Ag');
+    const tagAscent = tagMetrics.actualBoundingBoxAscent || Math.round(fontSize * 0.74);
+    const tagDescent = tagMetrics.actualBoundingBoxDescent || Math.round(fontSize * 0.26);
     layout.placements.forEach((pill) => {
       ctx.fillStyle = 'rgba(34,197,94,0.14)';
       ctx.strokeStyle = 'rgba(34,197,94,0.45)';
@@ -1046,7 +1048,8 @@ header.plant-hero.sticky .share-card-status.error{
       ctx.fill();
       ctx.stroke();
       ctx.fillStyle = '#22c55e';
-      ctx.fillText(pill.label, x + pill.x + hPad, y + pill.y + baselineOffset);
+      const baselineY = (y + pill.y) + ((pill.h + tagAscent - tagDescent) / 2);
+      ctx.fillText(pill.label, x + pill.x + hPad, baselineY);
     });
     ctx.restore();
     return {
@@ -1079,7 +1082,6 @@ header.plant-hero.sticky .share-card-status.error{
       throw new Error('Canvas rendering context is unavailable.');
     }
 
-    const bg = '#0a0a0a';
     const cardBg = '#171a22';
     const ink = '#ffffff';
     const muted = '#a5b4c3';
@@ -1092,6 +1094,11 @@ header.plant-hero.sticky .share-card-status.error{
       { label: 'SEASON', value: plant.bloom || '-' }
     ];
     const overviewText = String(plant.teaser || plant.desc || plant.morph || '').trim() || '-';
+    const plantSlug = String((plant && (plant.id || plant.slug)) || '').trim();
+    const detailUrl = plantSlug
+      ? `https://nh48.info/plant/${encodeURIComponent(plantSlug)}`
+      : 'https://nh48.info/plant-catalog';
+    const footerText = `More info & catalog: ${detailUrl}`;
 
     const style = {
       cardX: 18,
@@ -1101,6 +1108,12 @@ header.plant-hero.sticky .share-card-status.error{
       thumbRadius: 20,
       bodyInsetX: 26,
       bodyTopGap: 46,
+      bannerInsetX: 16,
+      bannerInsetY: 14,
+      bannerHeight: 46,
+      bannerRadius: 12,
+      bannerFont: 24,
+      bannerPadX: 16,
       titleFont: 54,
       titleLineHeight: 58,
       titleMaxLines: 2,
@@ -1133,8 +1146,12 @@ header.plant-hero.sticky .share-card-status.error{
       overviewFont: 33,
       overviewLineHeight: 35,
       overviewBottomBuffer: 8,
-      bottomPad: 44,
-      arrowFont: 56,
+      footerGap: 14,
+      footerFont: 18,
+      footerLineHeight: 24,
+      footerMaxLines: 2,
+      footerBottomBuffer: 4,
+      bottomPad: 38,
       minMetaLineHeight: 34,
       minMetaValueFont: 32,
       minSectionGap: 12,
@@ -1222,7 +1239,15 @@ header.plant-hero.sticky .share-card-status.error{
       const overviewLabelTop = y;
       const overviewTextTop = overviewLabelTop + style.overviewLabelFont + style.overviewLabelToTextGap;
       const contentBottom = cardY + cardH - style.bottomPad;
-      const availableOverviewHeight = Math.max(0, contentBottom - overviewTextTop);
+      ctx.font = `600 ${style.footerFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+      const footerMeasure = measureWrappedText(ctx, footerText, bodyW - 6, style.footerMaxLines);
+      const footerHeight = getTextBlockHeight(
+        Math.max(1, footerMeasure.lines.length),
+        style.footerFont,
+        style.footerLineHeight
+      );
+      const reservedForFooter = style.footerGap + footerHeight + style.footerBottomBuffer;
+      const availableOverviewHeight = Math.max(0, contentBottom - overviewTextTop - reservedForFooter);
       ctx.font = `600 ${style.overviewFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
       const fullOverviewMeasure = measureWrappedText(ctx, overviewText, bodyW - 6, Number.POSITIVE_INFINITY);
       let overviewTargetLines = 2;
@@ -1237,6 +1262,8 @@ header.plant-hero.sticky .share-card-status.error{
         style.overviewLineHeight
       );
       const overviewBottom = overviewTextTop + overviewHeight;
+      const footerTop = overviewBottom + style.footerGap;
+      const footerBottom = footerTop + footerHeight;
 
       return {
         cardX,
@@ -1265,8 +1292,11 @@ header.plant-hero.sticky .share-card-status.error{
         overviewLabelTop,
         overviewTextTop,
         overviewMeasure,
+        footerTop,
+        footerMeasure,
         overviewBottom,
-        fits: overviewBottom <= contentBottom
+        footerBottom,
+        fits: footerBottom <= contentBottom
       };
     };
 
@@ -1301,8 +1331,7 @@ header.plant-hero.sticky .share-card-status.error{
       layout = computeLayout();
     }
 
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = cardBg;
     ctx.strokeStyle = border;
@@ -1315,6 +1344,33 @@ header.plant-hero.sticky .share-card-status.error{
     drawRoundedRectPath(ctx, layout.thumbX, layout.thumbY, layout.thumbW, layout.thumbH, style.thumbRadius);
     ctx.clip();
     drawCoverImage(ctx, image, layout.thumbX, layout.thumbY, layout.thumbW, layout.thumbH);
+    const bannerX = layout.thumbX + style.bannerInsetX;
+    const bannerY = layout.thumbY + style.bannerInsetY;
+    const bannerW = layout.thumbW - (style.bannerInsetX * 2);
+    const bannerH = style.bannerHeight;
+    const bannerGradient = ctx.createLinearGradient(bannerX, bannerY, bannerX + bannerW, bannerY + bannerH);
+    bannerGradient.addColorStop(0, 'rgba(4,10,20,0.88)');
+    bannerGradient.addColorStop(0.55, 'rgba(17,30,49,0.78)');
+    bannerGradient.addColorStop(1, 'rgba(34,197,94,0.45)');
+    ctx.fillStyle = bannerGradient;
+    ctx.strokeStyle = 'rgba(190,255,224,0.24)';
+    ctx.lineWidth = 1.5;
+    drawRoundedRectPath(ctx, bannerX, bannerY, bannerW, bannerH, style.bannerRadius);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#ecfff5';
+    ctx.font = `700 ${style.bannerFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    const bannerLine = measureWrappedText(
+      ctx,
+      'Howker Ridge Plant Catalog',
+      bannerW - (style.bannerPadX * 2),
+      1
+    ).lines[0] || 'Howker Ridge Plant Catalog';
+    const bannerMetrics = ctx.measureText(bannerLine || 'Ag');
+    const bannerAscent = bannerMetrics.actualBoundingBoxAscent || Math.round(style.bannerFont * 0.74);
+    const bannerDescent = bannerMetrics.actualBoundingBoxDescent || Math.round(style.bannerFont * 0.26);
+    const bannerBaselineY = bannerY + ((bannerH + bannerAscent - bannerDescent) / 2);
+    ctx.fillText(bannerLine, bannerX + style.bannerPadX, bannerBaselineY);
     ctx.restore();
 
     const drawDivider = (yPos) => {
@@ -1388,8 +1444,15 @@ header.plant-hero.sticky .share-card-status.error{
     );
 
     ctx.fillStyle = accent;
-    ctx.font = `700 ${style.arrowFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
-    ctx.fillText('>', layout.right - 8, layout.cardY + layout.cardH - 12);
+    ctx.font = `600 ${style.footerFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    drawTextLinesFromTop(
+      ctx,
+      layout.footerMeasure.lines,
+      layout.left,
+      layout.footerTop,
+      style.footerFont,
+      style.footerLineHeight
+    );
 
     return canvas;
   }
