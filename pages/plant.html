@@ -920,82 +920,140 @@ header.plant-hero.sticky .share-card-status.error{
     ctx.drawImage(image, sx, sy, sw, sh, x, y, w, h);
   }
 
-  function wrapTextLines(ctx, text, maxWidth, maxLines){
-    const words = String(text || '').trim().split(/\s+/).filter(Boolean);
-    if (words.length === 0) return [];
-    const lines = [];
+  function measureWrappedText(ctx, text, maxWidth, maxLines = Number.POSITIVE_INFINITY){
+    const normalized = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!normalized) {
+      return { lines: [], totalLines: 0, truncated: false };
+    }
+    const words = normalized.split(' ');
+    const allLines = [];
     let current = words[0];
     for (let i = 1; i < words.length; i += 1) {
       const test = `${current} ${words[i]}`;
       if (ctx.measureText(test).width <= maxWidth) {
         current = test;
       } else {
-        lines.push(current);
+        allLines.push(current);
         current = words[i];
-        if (lines.length >= maxLines) break;
       }
     }
-    if (lines.length < maxLines && current) {
-      lines.push(current);
+    if (current) {
+      allLines.push(current);
     }
-    if (lines.length > maxLines) {
-      lines.length = maxLines;
-    }
-    if (lines.length === maxLines && words.join(' ') !== lines.join(' ')) {
-      let last = lines[maxLines - 1].replace(/\s+$/, '');
+
+    const maxAllowedLines = Number.isFinite(maxLines) ? Math.max(1, Math.floor(maxLines)) : Number.POSITIVE_INFINITY;
+    let lines = allLines.slice();
+    let truncated = false;
+    if (Number.isFinite(maxAllowedLines) && lines.length > maxAllowedLines) {
+      truncated = true;
+      lines = lines.slice(0, maxAllowedLines);
+      let last = lines[lines.length - 1].replace(/\s+$/, '');
       while (last.length > 1 && ctx.measureText(`${last}...`).width > maxWidth) {
         last = last.slice(0, -1);
       }
-      lines[maxLines - 1] = `${last}...`;
+      lines[lines.length - 1] = `${last}...`;
     }
-    return lines;
+    return {
+      lines,
+      totalLines: allLines.length,
+      truncated
+    };
   }
 
-  function drawTextLines(ctx, lines, x, y, lineHeight){
+  function wrapTextLines(ctx, text, maxWidth, maxLines){
+    return measureWrappedText(ctx, text, maxWidth, maxLines).lines;
+  }
+
+  function getTextBlockHeight(lineCount, fontSize, lineHeight){
+    const count = Math.max(0, Number(lineCount) || 0);
+    if (!count) return 0;
+    return fontSize + ((count - 1) * lineHeight);
+  }
+
+  function drawTextLinesFromTop(ctx, lines, x, topY, fontSize, lineHeight){
+    if (!Array.isArray(lines) || !lines.length) {
+      return topY;
+    }
+    const firstBaseline = topY + fontSize;
     lines.forEach((line, index) => {
-      ctx.fillText(line, x, y + (index * lineHeight));
+      ctx.fillText(line, x, firstBaseline + (index * lineHeight));
     });
-    return y + (lines.length * lineHeight);
+    return topY + getTextBlockHeight(lines.length, fontSize, lineHeight);
   }
 
-  function drawTagPills(ctx, tags, x, y, maxWidth){
-    const pills = Array.isArray(tags) ? tags.slice(0, 8) : [];
+  function measureTagPills(ctx, tags, maxWidth, options = {}){
+    const pills = Array.isArray(tags)
+      ? tags.map((tag) => String(tag || '').trim().toUpperCase()).filter(Boolean).slice(0, options.maxTags || 8)
+      : [];
+    const fontSize = options.fontSize || 20;
+    const hPad = options.hPad || 14;
+    const vPad = options.vPad || 8;
+    const gap = options.gap || 8;
+    const rowGap = options.rowGap || 8;
+    const maxRows = Math.max(1, options.maxRows || 2);
+    const pillHeight = Math.round(fontSize + (vPad * 1.35));
+    const placements = [];
     if (!pills.length) {
-      return y;
+      return { placements, rowsUsed: 0, totalHeight: 0, pillHeight };
     }
-    const hPad = 16;
-    const vPad = 10;
-    const radius = 999;
-    const gap = 10;
-    const rowGap = 10;
-    let cursorX = x;
-    let cursorY = y;
-    const maxY = y + 120;
-    ctx.font = '600 21px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
-    pills.forEach((tag) => {
-      const label = String(tag || '').trim().toUpperCase();
-      if (!label) return;
+
+    ctx.save();
+    ctx.font = `600 ${fontSize}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    let cursorX = 0;
+    let cursorY = 0;
+    let currentRow = 0;
+    pills.forEach((label) => {
       const textWidth = ctx.measureText(label).width;
-      const pillW = Math.round(textWidth + hPad * 2);
-      const pillH = Math.round(21 + vPad * 1.35);
-      if (cursorX + pillW > x + maxWidth) {
-        cursorX = x;
-        cursorY += pillH + rowGap;
+      const pillWidth = Math.round(textWidth + (hPad * 2));
+      if (cursorX > 0 && cursorX + pillWidth > maxWidth) {
+        currentRow += 1;
+        cursorX = 0;
+        cursorY += pillHeight + rowGap;
       }
-      if (cursorY + pillH > maxY) {
-        return;
-      }
+      if (currentRow >= maxRows) return;
+      placements.push({
+        label,
+        x: cursorX,
+        y: cursorY,
+        w: pillWidth,
+        h: pillHeight
+      });
+      cursorX += pillWidth + gap;
+    });
+    ctx.restore();
+
+    const rowsUsed = placements.length ? (Math.max(...placements.map((item) => Math.round(item.y / Math.max(1, pillHeight + rowGap)))) + 1) : 0;
+    const totalHeight = rowsUsed ? ((rowsUsed * pillHeight) + ((rowsUsed - 1) * rowGap)) : 0;
+    return { placements, rowsUsed, totalHeight, pillHeight };
+  }
+
+  function drawTagPills(ctx, tags, x, y, maxWidth, options = {}){
+    const layout = measureTagPills(ctx, tags, maxWidth, options);
+    if (!layout.placements.length) {
+      return { endY: y, rowsUsed: 0, totalHeight: 0 };
+    }
+    const fontSize = options.fontSize || 20;
+    const hPad = options.hPad || 14;
+    const radius = options.radius || 999;
+    const baselineOffset = Math.max(10, Math.round(fontSize * 0.72));
+    ctx.save();
+    ctx.font = `600 ${fontSize}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    layout.placements.forEach((pill) => {
       ctx.fillStyle = 'rgba(34,197,94,0.14)';
       ctx.strokeStyle = 'rgba(34,197,94,0.45)';
       ctx.lineWidth = 2;
-      drawRoundedRectPath(ctx, cursorX, cursorY, pillW, pillH, radius);
+      drawRoundedRectPath(ctx, x + pill.x, y + pill.y, pill.w, pill.h, radius);
       ctx.fill();
       ctx.stroke();
       ctx.fillStyle = '#22c55e';
-      ctx.fillText(label, cursorX + hPad, cursorY + pillH - 12);
-      cursorX += pillW + gap;
+      ctx.fillText(pill.label, x + pill.x + hPad, y + pill.y + baselineOffset);
     });
-    return cursorY + 48;
+    ctx.restore();
+    return {
+      endY: y + layout.totalHeight,
+      rowsUsed: layout.rowsUsed,
+      totalHeight: layout.totalHeight
+    };
   }
 
   async function loadImageForShareCard(url){
@@ -1027,138 +1085,311 @@ header.plant-hero.sticky .share-card-status.error{
     const muted = '#a5b4c3';
     const accent = '#22c55e';
     const border = 'rgba(255,255,255,0.86)';
+    const metaRowsSource = [
+      { label: 'TYPE', value: plant.type || '-' },
+      { label: 'HABITAT', value: plant.habitat || '-' },
+      { label: 'ELEVATION', value: plant.elevation || '-' },
+      { label: 'SEASON', value: plant.bloom || '-' }
+    ];
+    const overviewText = String(plant.teaser || plant.desc || plant.morph || '').trim() || '-';
+
+    const style = {
+      cardX: 18,
+      cardY: 20,
+      cardRadius: 28,
+      thumbInset: 4,
+      thumbRadius: 20,
+      bodyInsetX: 26,
+      bodyTopGap: 46,
+      titleFont: 54,
+      titleLineHeight: 58,
+      titleMaxLines: 2,
+      titleToLatinGap: 6,
+      latinFont: 37,
+      latinLineHeight: 42,
+      latinMaxLines: 1,
+      latinToDividerGap: 18,
+      dividerInset: 20,
+      dividerToMetaGap: 24,
+      metaLabelFont: 20,
+      metaLabelColWidth: 152,
+      metaValueFont: 36,
+      metaLineHeight: 38,
+      metaRowMinHeight: 50,
+      metaRowBottomPad: 8,
+      metaRowGap: 8,
+      rowDividerGap: 6,
+      sectionGap: 16,
+      tagLabelFont: 20,
+      tagLabelToPillsGap: 10,
+      tagFontSize: 19,
+      tagHPad: 14,
+      tagVPad: 8,
+      tagGap: 8,
+      tagRowGap: 8,
+      tagMaxRows: 2,
+      overviewLabelFont: 20,
+      overviewLabelToTextGap: 14,
+      overviewFont: 33,
+      overviewLineHeight: 35,
+      overviewBottomBuffer: 8,
+      bottomPad: 44,
+      arrowFont: 56,
+      minMetaLineHeight: 34,
+      minMetaValueFont: 32,
+      minSectionGap: 12,
+      minMetaRowGap: 6,
+      minRowDividerGap: 4,
+      minBodyTopGap: 38
+    };
+
+    const computeLayout = () => {
+      const cardX = style.cardX;
+      const cardY = style.cardY;
+      const cardW = canvas.width - (cardX * 2);
+      const cardH = canvas.height - (cardY * 2);
+      const thumbX = cardX + style.thumbInset;
+      const thumbY = cardY + style.thumbInset;
+      const thumbW = cardW - (style.thumbInset * 2);
+      const thumbH = Math.round(thumbW * 3 / 5);
+      const left = cardX + style.bodyInsetX;
+      const right = cardX + cardW - style.bodyInsetX;
+      const bodyW = right - left;
+
+      let y = thumbY + thumbH + style.bodyTopGap;
+
+      ctx.font = `700 ${style.titleFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+      const titleMeasure = measureWrappedText(ctx, plant.common || 'Plant', bodyW, style.titleMaxLines);
+      const titleTop = y;
+      y += getTextBlockHeight(Math.max(1, titleMeasure.lines.length), style.titleFont, style.titleLineHeight);
+      y += style.titleToLatinGap;
+
+      ctx.font = `italic 500 ${style.latinFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+      const latinMeasure = measureWrappedText(ctx, plant.latin || '', bodyW, style.latinMaxLines);
+      const latinTop = y;
+      y += getTextBlockHeight(Math.max(1, latinMeasure.lines.length), style.latinFont, style.latinLineHeight);
+
+      const dividerOneY = y + style.latinToDividerGap;
+      y = dividerOneY + style.dividerToMetaGap;
+
+      const labelX = left;
+      const valueX = left + style.metaLabelColWidth;
+      const valueW = Math.max(220, right - valueX);
+      const metaRows = [];
+      metaRowsSource.forEach((row, index) => {
+        ctx.font = `700 ${style.metaValueFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+        const valueMeasure = measureWrappedText(ctx, row.value, valueW, 2);
+        const valueHeight = getTextBlockHeight(
+          Math.max(1, valueMeasure.lines.length),
+          style.metaValueFont,
+          style.metaLineHeight
+        );
+        const rowHeight = Math.max(style.metaRowMinHeight, valueHeight + style.metaRowBottomPad);
+        const rowTop = y;
+        const rowBottom = rowTop + rowHeight;
+        const isLast = index === (metaRowsSource.length - 1);
+        const separatorY = isLast ? null : rowBottom + style.rowDividerGap;
+        metaRows.push({
+          label: row.label,
+          topY: rowTop,
+          rowBottom,
+          separatorY,
+          valueMeasure
+        });
+        y = isLast ? rowBottom : separatorY + style.metaRowGap;
+      });
+
+      y += style.sectionGap;
+      const tagsLabelTop = y;
+      const tagsPillsTop = tagsLabelTop + style.tagLabelFont + style.tagLabelToPillsGap;
+      const tagsPillsX = left + style.metaLabelColWidth - 12;
+      const tagsPillsWidth = Math.max(220, right - tagsPillsX);
+      const tagLayout = measureTagPills(ctx, plant.tags || [], tagsPillsWidth, {
+        fontSize: style.tagFontSize,
+        hPad: style.tagHPad,
+        vPad: style.tagVPad,
+        gap: style.tagGap,
+        rowGap: style.tagRowGap,
+        maxRows: style.tagMaxRows,
+        maxTags: 8
+      });
+      const tagsBottom = Math.max(tagsLabelTop + style.tagLabelFont, tagsPillsTop + tagLayout.totalHeight);
+
+      y = tagsBottom + style.sectionGap;
+      const dividerTwoY = y;
+      y = dividerTwoY + style.sectionGap;
+
+      const overviewLabelTop = y;
+      const overviewTextTop = overviewLabelTop + style.overviewLabelFont + style.overviewLabelToTextGap;
+      const contentBottom = cardY + cardH - style.bottomPad;
+      const availableOverviewHeight = Math.max(0, contentBottom - overviewTextTop);
+      ctx.font = `600 ${style.overviewFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+      const fullOverviewMeasure = measureWrappedText(ctx, overviewText, bodyW - 6, Number.POSITIVE_INFINITY);
+      let overviewTargetLines = 2;
+      const threeLineHeight = getTextBlockHeight(3, style.overviewFont, style.overviewLineHeight);
+      if (fullOverviewMeasure.totalLines > 2 && availableOverviewHeight >= (threeLineHeight + style.overviewBottomBuffer)) {
+        overviewTargetLines = 3;
+      }
+      const overviewMeasure = measureWrappedText(ctx, overviewText, bodyW - 6, overviewTargetLines);
+      const overviewHeight = getTextBlockHeight(
+        Math.max(1, overviewMeasure.lines.length),
+        style.overviewFont,
+        style.overviewLineHeight
+      );
+      const overviewBottom = overviewTextTop + overviewHeight;
+
+      return {
+        cardX,
+        cardY,
+        cardW,
+        cardH,
+        thumbX,
+        thumbY,
+        thumbW,
+        thumbH,
+        left,
+        right,
+        labelX,
+        valueX,
+        titleTop,
+        titleMeasure,
+        latinTop,
+        latinMeasure,
+        dividerOneY,
+        dividerTwoY,
+        metaRows,
+        tagsLabelTop,
+        tagsPillsTop,
+        tagsPillsX,
+        tagsPillsWidth,
+        overviewLabelTop,
+        overviewTextTop,
+        overviewMeasure,
+        overviewBottom,
+        fits: overviewBottom <= contentBottom
+      };
+    };
+
+    let layout = computeLayout();
+    for (let pass = 0; pass < 24 && !layout.fits; pass += 1) {
+      let adjusted = false;
+      if (style.metaLineHeight > style.minMetaLineHeight) {
+        style.metaLineHeight -= 1;
+        adjusted = true;
+      } else if (style.metaValueFont > style.minMetaValueFont) {
+        style.metaValueFont -= 1;
+        adjusted = true;
+      } else {
+        if (style.rowDividerGap > style.minRowDividerGap) {
+          style.rowDividerGap -= 1;
+          adjusted = true;
+        }
+        if (style.metaRowGap > style.minMetaRowGap) {
+          style.metaRowGap -= 1;
+          adjusted = true;
+        }
+        if (style.sectionGap > style.minSectionGap) {
+          style.sectionGap -= 1;
+          adjusted = true;
+        }
+        if (style.bodyTopGap > style.minBodyTopGap) {
+          style.bodyTopGap -= 1;
+          adjusted = true;
+        }
+      }
+      if (!adjusted) break;
+      layout = computeLayout();
+    }
 
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const cardX = 36;
-    const cardY = 24;
-    const cardW = canvas.width - (cardX * 2);
-    const cardH = canvas.height - (cardY * 2);
-    const cardRadius = 28;
-
     ctx.fillStyle = cardBg;
     ctx.strokeStyle = border;
     ctx.lineWidth = 3;
-    drawRoundedRectPath(ctx, cardX, cardY, cardW, cardH, cardRadius);
+    drawRoundedRectPath(ctx, layout.cardX, layout.cardY, layout.cardW, layout.cardH, style.cardRadius);
     ctx.fill();
     ctx.stroke();
 
-    const thumbX = cardX + 4;
-    const thumbY = cardY + 4;
-    const thumbW = cardW - 8;
-    const thumbH = Math.round(thumbW * 3 / 5);
     ctx.save();
-    drawRoundedRectPath(ctx, thumbX, thumbY, thumbW, thumbH, 20);
+    drawRoundedRectPath(ctx, layout.thumbX, layout.thumbY, layout.thumbW, layout.thumbH, style.thumbRadius);
     ctx.clip();
-    drawCoverImage(ctx, image, thumbX, thumbY, thumbW, thumbH);
+    drawCoverImage(ctx, image, layout.thumbX, layout.thumbY, layout.thumbW, layout.thumbH);
     ctx.restore();
 
-    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([7, 8]);
-    ctx.beginPath();
-    ctx.moveTo(cardX + 24, thumbY + thumbH + 2);
-    ctx.lineTo(cardX + cardW - 24, thumbY + thumbH + 2);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    const left = cardX + 34;
-    const right = cardX + cardW - 34;
-    const bodyW = right - left;
-    let y = thumbY + thumbH + 58;
+    const drawDivider = (yPos) => {
+      ctx.strokeStyle = 'rgba(255,255,255,0.20)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 8]);
+      ctx.beginPath();
+      ctx.moveTo(layout.cardX + style.dividerInset, yPos);
+      ctx.lineTo(layout.cardX + layout.cardW - style.dividerInset, yPos);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    };
 
     ctx.fillStyle = ink;
-    ctx.font = '700 56px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
-    const titleLines = wrapTextLines(ctx, plant.common || 'Plant', bodyW, 2);
-    y = drawTextLines(ctx, titleLines, left, y, 62);
+    ctx.font = `700 ${style.titleFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    drawTextLinesFromTop(ctx, layout.titleMeasure.lines, layout.left, layout.titleTop, style.titleFont, style.titleLineHeight);
 
-    y += 6;
     ctx.fillStyle = muted;
-    ctx.font = 'italic 500 38px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
-    const latinLines = wrapTextLines(ctx, plant.latin || '', bodyW, 1);
-    y = drawTextLines(ctx, latinLines, left, y, 44);
+    ctx.font = `italic 500 ${style.latinFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    drawTextLinesFromTop(ctx, layout.latinMeasure.lines, layout.left, layout.latinTop, style.latinFont, style.latinLineHeight);
 
-    y += 22;
-    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([6, 8]);
-    ctx.beginPath();
-    ctx.moveTo(left, y);
-    ctx.lineTo(right, y);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    y += 34;
+    drawDivider(layout.dividerOneY);
 
-    const metaRows = [
-      { label: 'TYPE', value: plant.type || '-', lines: 1 },
-      { label: 'HABITAT', value: plant.habitat || '-', lines: 2 },
-      { label: 'ELEVATION', value: plant.elevation || '-', lines: 1 },
-      { label: 'SEASON', value: plant.bloom || '-', lines: 2 }
-    ];
-
-    metaRows.forEach((row, idx) => {
-      const labelX = left;
-      const valueX = left + 180;
-      const valueW = right - valueX;
-
+    layout.metaRows.forEach((row) => {
       ctx.fillStyle = accent;
-      ctx.font = '600 20px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
-      ctx.fillText(row.label, labelX, y);
+      ctx.font = `600 ${style.metaLabelFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+      ctx.fillText(row.label, layout.labelX, row.topY + style.metaValueFont);
 
       ctx.fillStyle = ink;
-      ctx.font = '700 38px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
-      const valueLines = wrapTextLines(ctx, row.value, valueW, row.lines);
-      const baselineY = y - 4;
-      drawTextLines(ctx, valueLines, valueX, baselineY, 40);
-      const rowHeight = Math.max(46, valueLines.length * 40 + 10);
-      y += rowHeight;
+      ctx.font = `700 ${style.metaValueFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+      drawTextLinesFromTop(ctx, row.valueMeasure.lines, layout.valueX, row.topY, style.metaValueFont, style.metaLineHeight);
 
-      if (idx < metaRows.length - 1) {
+      if (row.separatorY !== null) {
         ctx.strokeStyle = 'rgba(255,255,255,0.16)';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(left, y - 10);
-        ctx.lineTo(right, y - 10);
+        ctx.moveTo(layout.left, row.separatorY);
+        ctx.lineTo(layout.right, row.separatorY);
         ctx.stroke();
       }
     });
 
-    y += 8;
     ctx.fillStyle = accent;
-    ctx.font = '600 20px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
-    ctx.fillText('TAGS', left, y);
-    y += 14;
-    y = drawTagPills(ctx, plant.tags || [], left + 92, y - 28, right - (left + 92));
+    ctx.font = `600 ${style.tagLabelFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    ctx.fillText('TAGS', layout.left, layout.tagsLabelTop + style.tagLabelFont);
+    drawTagPills(ctx, plant.tags || [], layout.tagsPillsX, layout.tagsPillsTop, layout.tagsPillsWidth, {
+      fontSize: style.tagFontSize,
+      hPad: style.tagHPad,
+      vPad: style.tagVPad,
+      gap: style.tagGap,
+      rowGap: style.tagRowGap,
+      maxRows: style.tagMaxRows,
+      maxTags: 8
+    });
 
-    y += 10;
-    ctx.strokeStyle = 'rgba(255,255,255,0.16)';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([6, 8]);
-    ctx.beginPath();
-    ctx.moveTo(left, y);
-    ctx.lineTo(right, y);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    y += 30;
+    drawDivider(layout.dividerTwoY);
 
     ctx.fillStyle = accent;
-    ctx.font = '600 20px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
-    ctx.fillText('OVERVIEW', left, y);
-    y += 28;
+    ctx.font = `600 ${style.overviewLabelFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    ctx.fillText('OVERVIEW', layout.left, layout.overviewLabelTop + style.overviewLabelFont);
 
-    const overview = String(plant.teaser || plant.desc || plant.morph || '').trim();
-    const overviewBottom = cardY + cardH - 56;
-    const overviewHeight = Math.max(80, overviewBottom - y - 24);
-    const maxOverviewLines = Math.max(2, Math.min(4, Math.floor(overviewHeight / 34)));
     ctx.fillStyle = ink;
-    ctx.font = '600 34px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
-    const overviewLines = wrapTextLines(ctx, overview || '-', bodyW - 28, maxOverviewLines);
-    drawTextLines(ctx, overviewLines, left, y, 36);
+    ctx.font = `600 ${style.overviewFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    drawTextLinesFromTop(
+      ctx,
+      layout.overviewMeasure.lines,
+      layout.left,
+      layout.overviewTextTop,
+      style.overviewFont,
+      style.overviewLineHeight
+    );
 
     ctx.fillStyle = accent;
-    ctx.font = '700 42px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
-    ctx.fillText('>', right - 18, cardY + cardH - 20);
+    ctx.font = `700 ${style.arrowFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    ctx.fillText('>', layout.right - 8, layout.cardY + layout.cardH - 12);
 
     return canvas;
   }
