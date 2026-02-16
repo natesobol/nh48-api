@@ -4,6 +4,7 @@ const SITE_URL='https://nh48.info';
 const PHOTO_BASE_URL='https://photos.nh48.info';
 const PHOTO_LIST_PREFIX=`${PHOTO_BASE_URL}/cdn-cgi/image/format=webp,quality=84,width=960`;
 const PHOTO_LIGHTBOX_PREFIX=`${PHOTO_BASE_URL}/cdn-cgi/image/format=webp,quality=90,width=1800`;
+const PHOTO_PLACEHOLDER_URL='/assets/icons/missing-photo-placeholder-icons/missing-mountain-photo.png';
 const LICENSE_URL='https://creativecommons.org/licenses/by/4.0/';
 const DEFAULT_RANGE_COLOR='#4ade80';
 const CASE_TABLE={1:[[3,0]],2:[[0,1]],3:[[3,1]],4:[[1,2]],5:[[3,2],[0,1]],6:[[0,2]],7:[[3,2]],8:[[2,3]],9:[[0,2]],10:[[0,1],[2,3]],11:[[1,2]],12:[[1,3]],13:[[0,1]],14:[[0,3]]};
@@ -115,7 +116,13 @@ const getSubrangeLabel=(subrangeName,subrangeShortLabel,parentRangeName)=>{
 
 const fetchJsonWithFallback=async(urls,label)=>{
   for(const url of urls){
-    try{const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw new Error(`Failed fetch (${response.status}): ${url}`);return await response.json();}
+    try{
+      const response=await fetch(url,{cache:'no-store'});
+      if(!response.ok)throw new Error(`Failed fetch (${response.status}): ${url}`);
+      const payload=await response.json();
+      console.info(`[photos] loaded ${label} from ${url}`);
+      return payload;
+    }
     catch(error){console.warn(`[photos] ${label} fallback failed`,error);}
   }
   throw new Error(`Unable to fetch ${label}.`);
@@ -132,6 +139,29 @@ const getAliasVariants=(value)=>{
 };
 
 const buildTokenSet=(values)=>{const set=new Set();values.forEach((value)=>tokenizeLabel(value).forEach((token)=>set.add(token)));return set;};
+
+const buildPhotoCandidateUrls=(peak,startIndex,useLightbox=false)=>{
+  const candidates=[];const seen=new Set();
+  const add=(url)=>{const normalized=String(url||'').trim();if(!normalized||seen.has(normalized))return;seen.add(normalized);candidates.push(normalized);};
+  const orderedIndexes=[startIndex,...peak.photos.map((_,idx)=>idx).filter((idx)=>idx!==startIndex)];
+  orderedIndexes.forEach((idx)=>{const candidate=peak.photos[idx];if(!candidate)return;add(useLightbox?candidate.lightboxUrl:candidate.listUrl);add(candidate.originalUrl);});
+  add(PHOTO_PLACEHOLDER_URL);
+  return candidates;
+};
+
+const applyImageFallback=(image,peak,startIndex,useLightbox=false)=>{
+  const candidates=buildPhotoCandidateUrls(peak,startIndex,useLightbox);
+  let cursor=0;
+  image.onerror=()=>{
+    while(cursor<candidates.length){
+      const next=candidates[cursor++];
+      if(image.src===next)continue;
+      image.src=next;
+      return;
+    }
+  };
+  image.onerror();
+};
 
 const buildTaxonomy=(rawTaxonomy)=>{
   const parents=[];const parentBySlug=new Map();const parentAliasMap=new Map();const subrangeAliasMap=new Map();
@@ -684,8 +714,8 @@ const createPeakSection=(peak,parentColor)=>{
     const image=document.createElement('img');
     image.loading='lazy';
     image.decoding='async';
-    image.src=photo.listUrl||photo.originalUrl;
     image.alt=photo.alt;
+    applyImageFallback(image,peak,photoIndex,false);
 
     const caption=document.createElement('figcaption');
     caption.className='photo-figure__caption';
@@ -840,7 +870,7 @@ const renderLightboxFrame=()=>{
   state.lightbox.index=index;
   const activePhoto=peak.photos[index];
 
-  if(elements.lightboxImage){elements.lightboxImage.src=activePhoto.lightboxUrl||activePhoto.originalUrl;elements.lightboxImage.alt=activePhoto.alt;}
+  if(elements.lightboxImage){elements.lightboxImage.alt=activePhoto.alt;applyImageFallback(elements.lightboxImage,peak,index,true);}
   if(elements.lightboxCaption)elements.lightboxCaption.textContent=activePhoto.caption;
   if(elements.lightboxMeta){const subrangeLabel=peak.subrangeName===peak.parentRangeName?peak.parentRangeName:`${peak.parentRangeName} | ${peak.subrangeName}`;elements.lightboxMeta.textContent=`${subrangeLabel} | ${peak.name}`;}
   if(elements.lightboxCounter)elements.lightboxCounter.textContent=`${index+1} of ${peak.photos.length}`;
