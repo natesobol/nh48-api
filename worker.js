@@ -142,6 +142,132 @@ export default {
       });
     }
 
+    if (pathname === '/api/howker/share-image' || pathname === '/api/howker/share-image/') {
+      if (!['GET', 'HEAD'].includes(request.method)) {
+        return new Response('Method Not Allowed', { status: 405 });
+      }
+
+      const srcParam = url.searchParams.get('src');
+      if (!srcParam) {
+        return new Response('Missing src parameter.', { status: 400 });
+      }
+
+      let sourceUrl;
+      try {
+        sourceUrl = new URL(srcParam);
+      } catch (_) {
+        return new Response('Invalid src parameter.', { status: 400 });
+      }
+
+      const allowedHosts = new Set([
+        'plants.nh48.info',
+        'photos.nh48.info',
+        'wikiphotos.nh48.info',
+        'howker.nh48.info'
+      ]);
+      const host = sourceUrl.hostname.toLowerCase();
+      const protocol = sourceUrl.protocol.toLowerCase();
+      if (!['https:', 'http:'].includes(protocol)) {
+        return new Response('Unsupported protocol.', { status: 400 });
+      }
+      if (sourceUrl.username || sourceUrl.password) {
+        return new Response('Credentials are not allowed in src.', { status: 400 });
+      }
+      if (sourceUrl.port && sourceUrl.port !== '443' && sourceUrl.port !== '80') {
+        return new Response('Unsupported port in src.', { status: 400 });
+      }
+
+      const isPrivateOrLocalHost = (hostname) => {
+        if (!hostname) return true;
+        const lower = hostname.toLowerCase();
+        if (lower === 'localhost' || lower.endsWith('.localhost') || lower.endsWith('.local')) {
+          return true;
+        }
+        if (lower.includes(':')) {
+          return true;
+        }
+        const ipv4Match = lower.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+        if (!ipv4Match) return false;
+        const octets = ipv4Match.slice(1).map((part) => Number(part));
+        if (octets.some((octet) => !Number.isInteger(octet) || octet < 0 || octet > 255)) {
+          return true;
+        }
+        if (octets[0] === 10 || octets[0] === 127) return true;
+        if (octets[0] === 169 && octets[1] === 254) return true;
+        if (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) return true;
+        if (octets[0] === 192 && octets[1] === 168) return true;
+        return false;
+      };
+
+      if (isPrivateOrLocalHost(host)) {
+        return new Response('Private or local hosts are not allowed.', { status: 400 });
+      }
+      if (!allowedHosts.has(host)) {
+        return new Response('Host is not allowed.', { status: 400 });
+      }
+
+      const widthParam = Number.parseInt(url.searchParams.get('w') || '', 10);
+      const width = Number.isFinite(widthParam) && widthParam > 0
+        ? Math.max(320, Math.min(4096, widthParam))
+        : 1600;
+      const rawFormat = String(url.searchParams.get('fmt') || 'jpg').toLowerCase();
+      const normalizedFormat = rawFormat === 'jpeg' ? 'jpg' : rawFormat;
+      if (!['jpg', 'webp', 'png'].includes(normalizedFormat)) {
+        return new Response('Unsupported fmt parameter.', { status: 400 });
+      }
+
+      let upstreamUrl = sourceUrl.toString();
+      if (isCloudflareImageHost(host)) {
+        upstreamUrl = buildCloudflareImageVariantUrl(upstreamUrl, {
+          width,
+          format: normalizedFormat,
+          quality: 85
+        });
+      }
+
+      let upstreamResponse;
+      try {
+        upstreamResponse = await fetch(upstreamUrl, {
+          method: request.method,
+          headers: {
+            Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8'
+          },
+          cf: {
+            cacheEverything: true,
+            cacheTtl: 120
+          }
+        });
+      } catch (_) {
+        return new Response('Upstream image request failed.', { status: 502 });
+      }
+
+      if (!upstreamResponse.ok) {
+        return new Response(`Upstream image request failed (${upstreamResponse.status}).`, {
+          status: upstreamResponse.status
+        });
+      }
+
+      const contentType = upstreamResponse.headers.get('content-type') || '';
+      if (!contentType.toLowerCase().startsWith('image/')) {
+        return new Response('Upstream response is not an image.', { status: 400 });
+      }
+
+      const headers = new Headers();
+      headers.set('Content-Type', contentType);
+      headers.set('Cache-Control', 'public, max-age=120');
+      const etag = upstreamResponse.headers.get('etag');
+      if (etag) headers.set('ETag', etag);
+      const lastModified = upstreamResponse.headers.get('last-modified');
+      if (lastModified) headers.set('Last-Modified', lastModified);
+      const contentLength = upstreamResponse.headers.get('content-length');
+      if (contentLength) headers.set('Content-Length', contentLength);
+
+      if (request.method === 'HEAD') {
+        return new Response(null, { status: 200, headers });
+      }
+      return new Response(upstreamResponse.body, { status: 200, headers });
+    }
+
     if (pathname.startsWith('/api/howker/plant-reports')) {
       const corsHeaders = {
         'Access-Control-Allow-Origin': HOWKER_ORIGIN,
@@ -2505,7 +2631,10 @@ export default {
 
     function isCloudflareImageHost(hostname) {
       const host = String(hostname || '').toLowerCase();
-      return host === 'photos.nh48.info' || host === 'wikiphotos.nh48.info' || host === 'howker.nh48.info';
+      return host === 'photos.nh48.info'
+        || host === 'wikiphotos.nh48.info'
+        || host === 'howker.nh48.info'
+        || host === 'plants.nh48.info';
     }
 
     function normalizeCatalogPhotoUrl(url, { width = 1600, format = 'jpg' } = {}) {

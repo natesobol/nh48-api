@@ -39,6 +39,7 @@ Primary references:
 - Canonical peak route: `/peak/{slug}`
 - Redirected legacy route: `/peaks/{slug}` -> `/peak/{slug}`
 - Peak authority policy: Wikipedia preferred; Wikidata + OSM required fallback
+- R2 secret wiring and hookup instructions: `Documentation/TESTING_GUIDE.md` -> `R2 Secret Hookup Playbook`
 
 ## CI/CD Workflow Map
 - `deploy-worker.yml`: worker deploy and production SEO parity gate.

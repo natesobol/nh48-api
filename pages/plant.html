@@ -200,10 +200,59 @@ header.plant-hero blockquote{
   position:relative;
   margin:0;
   z-index:1;
+  max-width:calc(100% - 220px);
 }
 header.plant-hero h1{
   color:inherit;
   text-shadow:0 8px 24px rgba(0,0,0,0.55);
+}
+.hero-actions{
+  position:absolute;
+  top:16px;
+  right:16px;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+}
+.share-card-btn{
+  border:1px solid rgba(255,255,255,0.45);
+  color:#ffffff;
+  background:rgba(12,16,24,0.72);
+  border-radius:999px;
+  font-weight:700;
+  font-size:13px;
+  line-height:1;
+  padding:10px 14px;
+  cursor:pointer;
+  transition:background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.share-card-btn:hover{
+  background:rgba(8,12,18,0.88);
+  border-color:var(--accent);
+  transform:translateY(-1px);
+}
+.share-card-btn:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+.share-card-btn[disabled]{
+  opacity:0.7;
+  cursor:wait;
+  transform:none;
+}
+.share-card-status{
+  margin:0;
+  min-height:1.2em;
+  max-width:280px;
+  text-align:right;
+  font-size:12px;
+  color:#dbe7f3;
+  text-shadow:0 2px 8px rgba(0,0,0,0.4);
+}
+.share-card-status.error{
+  color:#fca5a5;
 }
 header.plant-hero.sticky{
   background-image:none;
@@ -215,6 +264,18 @@ header.plant-hero.sticky::before{
 }
 header.plant-hero.sticky h1{
   text-shadow:none;
+}
+header.plant-hero.sticky .share-card-btn{
+  background:rgba(34,197,94,0.14);
+  border-color:rgba(34,197,94,0.5);
+  color:var(--ink);
+}
+header.plant-hero.sticky .share-card-status{
+  color:var(--muted);
+  text-shadow:none;
+}
+header.plant-hero.sticky .share-card-status.error{
+  color:#dc2626;
 }
 
 .page-breadcrumbs{
@@ -259,13 +320,13 @@ header.plant-hero.sticky h1{
   border:1px solid var(--stroke);
   border-radius:12px;
   overflow:hidden;
-  margin:16px 8px 20px;
+  margin:16px 0 20px;
   position:relative;
   aspect-ratio:4/3;
   min-height:clamp(240px, 60vw, 520px);
-  max-height:min(65vh, 640px);
   box-sizing:border-box;
   box-shadow:0 18px 46px rgba(0,0,0,0.35);
+  width:100%;
 }
 .carousel{
   position:relative;
@@ -533,6 +594,22 @@ header.plant-hero.sticky h1{
   .media{
     margin:12px 0 16px;
     padding:6px;
+    max-height:min(65vh, 640px);
+  }
+  header.plant-hero blockquote{
+    max-width:100%;
+    padding-right:0;
+  }
+  .hero-actions{
+    position:relative;
+    top:auto;
+    right:auto;
+    margin-top:14px;
+    align-items:flex-start;
+  }
+  .share-card-status{
+    text-align:left;
+    max-width:none;
   }
 }
 @media (max-width:320px){
@@ -589,6 +666,10 @@ header.plant-hero.sticky h1{
     <blockquote>
       <h1 id="detail-title">Howker Ridge • Plant</h1>
     </blockquote>
+    <div class="hero-actions">
+      <button id="shareCardBtn" class="share-card-btn" type="button" aria-label="Download plant card">Download Card</button>
+      <p id="shareCardStatus" class="share-card-status" role="status" aria-live="polite" aria-atomic="true"></p>
+    </div>
   </header>
   <nav class="page-breadcrumbs" aria-label="Breadcrumb">
     <ol>
@@ -666,9 +747,14 @@ header.plant-hero.sticky h1{
   let timerInterval = null;
   let carouselIdx = 0;
   let carouselImgs = [];
+  let carouselSourceUrls = [];
   let currentDelay = 8000;
   const BASE_DELAY = 8000;
   let isCarouselPaused = false;
+  let currentPlant = null;
+  let currentPlantSlug = '';
+  const SHARE_CARD_WIDTH = 1080;
+  const SHARE_CARD_HEIGHT = 1350;
 
   // DOM helpers
   const $ = s => document.querySelector(s);
@@ -688,6 +774,8 @@ header.plant-hero.sticky h1{
   const detailTitle = document.getElementById('detail-title');
   const detailBreadcrumb = document.getElementById('detail-breadcrumb');
   const detailHero = document.querySelector('.plant-hero');
+  const shareCardBtn = document.getElementById('shareCardBtn');
+  const shareCardStatus = document.getElementById('shareCardStatus');
 
   // Placeholders for images
   const LQ_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
@@ -724,6 +812,419 @@ header.plant-hero.sticky h1{
     }
   }
 
+  function stripCloudflareImageTransform(rawUrl){
+    if (!rawUrl) return '';
+    try {
+      const parsed = new URL(rawUrl, window.location.origin);
+      const marker = '/cdn-cgi/image/';
+      const markerIndex = parsed.pathname.indexOf(marker);
+      if (markerIndex === -1) {
+        return parsed.toString();
+      }
+      const tail = parsed.pathname.slice(markerIndex + marker.length);
+      const slashIndex = tail.indexOf('/');
+      if (slashIndex === -1) {
+        return parsed.toString();
+      }
+      const originPath = tail.slice(slashIndex + 1);
+      return `${parsed.origin}/${originPath}`;
+    } catch (_) {
+      return rawUrl;
+    }
+  }
+
+  function buildShareImageProxyUrl(rawUrl, { width = 1600, format = 'jpg' } = {}){
+    if (!rawUrl) return '';
+    const src = stripCloudflareImageTransform(rawUrl);
+    const params = new URLSearchParams();
+    params.set('src', src);
+    params.set('w', String(Math.max(320, Math.min(4096, Number(width) || 1600))));
+    params.set('fmt', String(format || 'jpg').toLowerCase());
+    return `/api/howker/share-image?${params.toString()}`;
+  }
+
+  function sanitizeFilenamePart(value){
+    const normalized = String(value || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80);
+    return normalized || 'plant';
+  }
+
+  function formatShareTimestamp(date){
+    const d = date instanceof Date ? date : new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    return [
+      d.getFullYear(),
+      pad(d.getMonth() + 1),
+      pad(d.getDate())
+    ].join('') + '-' + [pad(d.getHours()), pad(d.getMinutes())].join('');
+  }
+
+  function setShareCardBusy(isBusy){
+    if (!shareCardBtn) return;
+    shareCardBtn.disabled = Boolean(isBusy);
+    shareCardBtn.setAttribute('aria-busy', isBusy ? 'true' : 'false');
+    shareCardBtn.textContent = isBusy ? 'Rendering...' : 'Download Card';
+  }
+
+  function setShareCardStatus(message, isError = false){
+    if (!shareCardStatus) return;
+    shareCardStatus.textContent = message || '';
+    shareCardStatus.classList.toggle('error', Boolean(isError));
+  }
+
+  function getSelectedCardImageUrl(){
+    if (!Array.isArray(carouselSourceUrls) || carouselSourceUrls.length === 0) {
+      return '';
+    }
+    const safeIndex = Number.isInteger(carouselIdx) && carouselIdx >= 0
+      ? carouselIdx % carouselSourceUrls.length
+      : 0;
+    const source = carouselSourceUrls[safeIndex] || carouselSourceUrls[0] || '';
+    if (!source || source === PLACEHOLDER || source === LQ_PLACEHOLDER) {
+      return '';
+    }
+    return source;
+  }
+
+  function drawRoundedRectPath(ctx, x, y, w, h, r){
+    const radius = Math.max(0, Math.min(r, w / 2, h / 2));
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.arcTo(x + w, y, x + w, y + h, radius);
+    ctx.arcTo(x + w, y + h, x, y + h, radius);
+    ctx.arcTo(x, y + h, x, y, radius);
+    ctx.arcTo(x, y, x + w, y, radius);
+    ctx.closePath();
+  }
+
+  function drawCoverImage(ctx, image, x, y, w, h){
+    const srcW = image.naturalWidth || image.width;
+    const srcH = image.naturalHeight || image.height;
+    if (!srcW || !srcH) return;
+    const srcAspect = srcW / srcH;
+    const targetAspect = w / h;
+    let sx = 0;
+    let sy = 0;
+    let sw = srcW;
+    let sh = srcH;
+    if (srcAspect > targetAspect) {
+      sw = srcH * targetAspect;
+      sx = Math.round((srcW - sw) / 2);
+    } else if (srcAspect < targetAspect) {
+      sh = srcW / targetAspect;
+      sy = Math.round((srcH - sh) / 2);
+    }
+    ctx.drawImage(image, sx, sy, sw, sh, x, y, w, h);
+  }
+
+  function wrapTextLines(ctx, text, maxWidth, maxLines){
+    const words = String(text || '').trim().split(/\s+/).filter(Boolean);
+    if (words.length === 0) return [];
+    const lines = [];
+    let current = words[0];
+    for (let i = 1; i < words.length; i += 1) {
+      const test = `${current} ${words[i]}`;
+      if (ctx.measureText(test).width <= maxWidth) {
+        current = test;
+      } else {
+        lines.push(current);
+        current = words[i];
+        if (lines.length >= maxLines) break;
+      }
+    }
+    if (lines.length < maxLines && current) {
+      lines.push(current);
+    }
+    if (lines.length > maxLines) {
+      lines.length = maxLines;
+    }
+    if (lines.length === maxLines && words.join(' ') !== lines.join(' ')) {
+      let last = lines[maxLines - 1].replace(/\s+$/, '');
+      while (last.length > 1 && ctx.measureText(`${last}...`).width > maxWidth) {
+        last = last.slice(0, -1);
+      }
+      lines[maxLines - 1] = `${last}...`;
+    }
+    return lines;
+  }
+
+  function drawTextLines(ctx, lines, x, y, lineHeight){
+    lines.forEach((line, index) => {
+      ctx.fillText(line, x, y + (index * lineHeight));
+    });
+    return y + (lines.length * lineHeight);
+  }
+
+  function drawTagPills(ctx, tags, x, y, maxWidth){
+    const pills = Array.isArray(tags) ? tags.slice(0, 8) : [];
+    if (!pills.length) {
+      return y;
+    }
+    const hPad = 16;
+    const vPad = 10;
+    const radius = 999;
+    const gap = 10;
+    const rowGap = 10;
+    let cursorX = x;
+    let cursorY = y;
+    const maxY = y + 120;
+    ctx.font = '600 21px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
+    pills.forEach((tag) => {
+      const label = String(tag || '').trim().toUpperCase();
+      if (!label) return;
+      const textWidth = ctx.measureText(label).width;
+      const pillW = Math.round(textWidth + hPad * 2);
+      const pillH = Math.round(21 + vPad * 1.35);
+      if (cursorX + pillW > x + maxWidth) {
+        cursorX = x;
+        cursorY += pillH + rowGap;
+      }
+      if (cursorY + pillH > maxY) {
+        return;
+      }
+      ctx.fillStyle = 'rgba(34,197,94,0.14)';
+      ctx.strokeStyle = 'rgba(34,197,94,0.45)';
+      ctx.lineWidth = 2;
+      drawRoundedRectPath(ctx, cursorX, cursorY, pillW, pillH, radius);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#22c55e';
+      ctx.fillText(label, cursorX + hPad, cursorY + pillH - 12);
+      cursorX += pillW + gap;
+    });
+    return cursorY + 48;
+  }
+
+  async function loadImageForShareCard(url){
+    if (!url) {
+      throw new Error('Missing image URL for share card export.');
+    }
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.decoding = 'async';
+    return new Promise((resolve, reject) => {
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error('Unable to load selected photo for export.'));
+      image.src = url;
+    });
+  }
+
+  function renderPlantShareCard(plant, image){
+    const canvas = document.createElement('canvas');
+    canvas.width = SHARE_CARD_WIDTH;
+    canvas.height = SHARE_CARD_HEIGHT;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      throw new Error('Canvas rendering context is unavailable.');
+    }
+
+    const bg = '#0a0a0a';
+    const cardBg = '#171a22';
+    const ink = '#ffffff';
+    const muted = '#a5b4c3';
+    const accent = '#22c55e';
+    const border = 'rgba(255,255,255,0.86)';
+
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const cardX = 36;
+    const cardY = 24;
+    const cardW = canvas.width - (cardX * 2);
+    const cardH = canvas.height - (cardY * 2);
+    const cardRadius = 28;
+
+    ctx.fillStyle = cardBg;
+    ctx.strokeStyle = border;
+    ctx.lineWidth = 3;
+    drawRoundedRectPath(ctx, cardX, cardY, cardW, cardH, cardRadius);
+    ctx.fill();
+    ctx.stroke();
+
+    const thumbX = cardX + 4;
+    const thumbY = cardY + 4;
+    const thumbW = cardW - 8;
+    const thumbH = Math.round(thumbW * 3 / 5);
+    ctx.save();
+    drawRoundedRectPath(ctx, thumbX, thumbY, thumbW, thumbH, 20);
+    ctx.clip();
+    drawCoverImage(ctx, image, thumbX, thumbY, thumbW, thumbH);
+    ctx.restore();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([7, 8]);
+    ctx.beginPath();
+    ctx.moveTo(cardX + 24, thumbY + thumbH + 2);
+    ctx.lineTo(cardX + cardW - 24, thumbY + thumbH + 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    const left = cardX + 34;
+    const right = cardX + cardW - 34;
+    const bodyW = right - left;
+    let y = thumbY + thumbH + 58;
+
+    ctx.fillStyle = ink;
+    ctx.font = '700 56px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
+    const titleLines = wrapTextLines(ctx, plant.common || 'Plant', bodyW, 2);
+    y = drawTextLines(ctx, titleLines, left, y, 62);
+
+    y += 6;
+    ctx.fillStyle = muted;
+    ctx.font = 'italic 500 38px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
+    const latinLines = wrapTextLines(ctx, plant.latin || '', bodyW, 1);
+    y = drawTextLines(ctx, latinLines, left, y, 44);
+
+    y += 22;
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 8]);
+    ctx.beginPath();
+    ctx.moveTo(left, y);
+    ctx.lineTo(right, y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    y += 34;
+
+    const metaRows = [
+      { label: 'TYPE', value: plant.type || '-', lines: 1 },
+      { label: 'HABITAT', value: plant.habitat || '-', lines: 2 },
+      { label: 'ELEVATION', value: plant.elevation || '-', lines: 1 },
+      { label: 'SEASON', value: plant.bloom || '-', lines: 2 }
+    ];
+
+    metaRows.forEach((row, idx) => {
+      const labelX = left;
+      const valueX = left + 180;
+      const valueW = right - valueX;
+
+      ctx.fillStyle = accent;
+      ctx.font = '600 20px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
+      ctx.fillText(row.label, labelX, y);
+
+      ctx.fillStyle = ink;
+      ctx.font = '700 38px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
+      const valueLines = wrapTextLines(ctx, row.value, valueW, row.lines);
+      const baselineY = y - 4;
+      drawTextLines(ctx, valueLines, valueX, baselineY, 40);
+      const rowHeight = Math.max(46, valueLines.length * 40 + 10);
+      y += rowHeight;
+
+      if (idx < metaRows.length - 1) {
+        ctx.strokeStyle = 'rgba(255,255,255,0.16)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(left, y - 10);
+        ctx.lineTo(right, y - 10);
+        ctx.stroke();
+      }
+    });
+
+    y += 8;
+    ctx.fillStyle = accent;
+    ctx.font = '600 20px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
+    ctx.fillText('TAGS', left, y);
+    y += 14;
+    y = drawTagPills(ctx, plant.tags || [], left + 92, y - 28, right - (left + 92));
+
+    y += 10;
+    ctx.strokeStyle = 'rgba(255,255,255,0.16)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 8]);
+    ctx.beginPath();
+    ctx.moveTo(left, y);
+    ctx.lineTo(right, y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    y += 30;
+
+    ctx.fillStyle = accent;
+    ctx.font = '600 20px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
+    ctx.fillText('OVERVIEW', left, y);
+    y += 28;
+
+    const overview = String(plant.teaser || plant.desc || plant.morph || '').trim();
+    const overviewBottom = cardY + cardH - 56;
+    const overviewHeight = Math.max(80, overviewBottom - y - 24);
+    const maxOverviewLines = Math.max(2, Math.min(4, Math.floor(overviewHeight / 34)));
+    ctx.fillStyle = ink;
+    ctx.font = '600 34px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
+    const overviewLines = wrapTextLines(ctx, overview || '-', bodyW - 28, maxOverviewLines);
+    drawTextLines(ctx, overviewLines, left, y, 36);
+
+    ctx.fillStyle = accent;
+    ctx.font = '700 42px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
+    ctx.fillText('>', right - 18, cardY + cardH - 20);
+
+    return canvas;
+  }
+
+  function downloadBlob(blob, filename){
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = objectUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(objectUrl);
+  }
+
+  async function handleDownloadCardClick(){
+    if (!currentPlant) {
+      setShareCardStatus('Plant data is not ready yet.', true);
+      return;
+    }
+    const selectedSource = getSelectedCardImageUrl();
+    if (!selectedSource) {
+      setShareCardStatus('No usable image is available for this plant.', true);
+      return;
+    }
+
+    const imageIndex = Number.isInteger(carouselIdx) ? carouselIdx : 0;
+    trackAnalytics('plant_detail_card_download_attempt', {
+      plant_id: currentPlant.id || '',
+      image_index: imageIndex
+    });
+
+    setShareCardBusy(true);
+    setShareCardStatus('Rendering share card...', false);
+    try {
+      const proxyUrl = buildShareImageProxyUrl(selectedSource, { width: 1800, format: 'jpg' });
+      const image = await loadImageForShareCard(proxyUrl);
+      const cardCanvas = renderPlantShareCard(currentPlant, image);
+      const blob = await new Promise((resolve) => cardCanvas.toBlob(resolve, 'image/png'));
+      if (!blob) {
+        throw new Error('Unable to encode PNG output.');
+      }
+      const timestamp = formatShareTimestamp(new Date());
+      const filename = `${sanitizeFilenamePart(currentPlantSlug || currentPlant.id || currentPlant.common)}-threads-card-${timestamp}.png`;
+      downloadBlob(blob, filename);
+      setShareCardStatus(`Downloaded ${filename}`, false);
+      trackAnalytics('plant_detail_card_download_success', {
+        plant_id: currentPlant.id || '',
+        image_index: imageIndex,
+        format: 'png',
+        width: cardCanvas.width,
+        height: cardCanvas.height
+      });
+    } catch (error) {
+      console.error('Plant share-card download failed', error);
+      setShareCardStatus(error?.message || 'Card download failed.', true);
+      trackAnalytics('plant_detail_card_download_error', {
+        plant_id: (currentPlant && currentPlant.id) || '',
+        image_index: imageIndex,
+        reason: error?.message || 'unknown'
+      });
+    } finally {
+      setShareCardBusy(false);
+    }
+  }
+
   /* ---------- Data source: static JSON from GitHub Pages ---------- */
   async function fetchPlants() {
     const res = await fetch(
@@ -742,6 +1243,7 @@ header.plant-hero.sticky h1{
     dotsEl.innerHTML = '';
     carouselImgs = [];
     if (!images || !images.length){ images = [PLACEHOLDER]; }
+    carouselSourceUrls = images.map((src) => String(src || '').trim() || PLACEHOLDER);
     const startingIndex = images.length > 1 ? 1 : 0;
     carouselIdx = startingIndex;
     const timerEl = document.getElementById('carouselTimer');
@@ -915,6 +1417,10 @@ header.plant-hero.sticky h1{
     pauseBtn.addEventListener('click', toggleCarouselPause);
     updatePauseButton(false);
   }
+  if (shareCardBtn){
+    shareCardBtn.addEventListener('click', handleDownloadCardClick);
+    setShareCardBusy(false);
+  }
 
   function startTimer(duration){
     const ring = document.getElementById('timerRing');
@@ -950,6 +1456,8 @@ header.plant-hero.sticky h1{
 
   /* ---------- Populate details ---------- */
   function populatePlant(p){
+    currentPlant = p || null;
+    currentPlantSlug = String((p && p.id) || '').trim();
     const detailName = p.common || 'Plant';
     const titleText = `${detailName} • Howker Ridge Plant Catalog`;
     const headerText = `Howker Ridge • ${detailName}`;
@@ -997,6 +1505,8 @@ header.plant-hero.sticky h1{
 
     const imgs = Array.isArray(p.imgs) && p.imgs.length ? p.imgs : (p.img ? [p.img] : []);
     buildCarousel(imgs, p);
+    setShareCardStatus('');
+    setShareCardBusy(false);
 
     const heroCandidate = [imgs[1], imgs[0]].find(src => typeof src === 'string' && src.trim().length > 0);
     if (detailHero && heroCandidate){
@@ -1040,6 +1550,8 @@ header.plant-hero.sticky h1{
     const plantId = params.get('id') || (pathMatch ? decodeURIComponent(pathMatch[1]) : null);
     if (!plantId){
       // No id provided
+      currentPlant = null;
+      currentPlantSlug = '';
       document.getElementById('d-title').textContent = 'Plant not specified';
       document.title = 'Plant not specified • Howker Ridge Plant Catalog';
       if (detailTitle){
@@ -1048,6 +1560,10 @@ header.plant-hero.sticky h1{
       if (detailBreadcrumb){
         detailBreadcrumb.textContent = 'Plant not specified';
       }
+      if (shareCardBtn) {
+        shareCardBtn.disabled = true;
+      }
+      setShareCardStatus('Card download is unavailable for this page.', true);
       return;
     }
     try{
@@ -1057,6 +1573,8 @@ header.plant-hero.sticky h1{
       if (p){
         populatePlant(p);
       } else {
+        currentPlant = null;
+        currentPlantSlug = '';
         document.getElementById('d-title').textContent = 'Plant not found';
         document.title = 'Plant not found • Howker Ridge Plant Catalog';
         if (detailTitle){
@@ -1065,9 +1583,15 @@ header.plant-hero.sticky h1{
         if (detailBreadcrumb){
           detailBreadcrumb.textContent = 'Plant not found';
         }
+        if (shareCardBtn) {
+          shareCardBtn.disabled = true;
+        }
+        setShareCardStatus('Card download is unavailable for this plant.', true);
       }
     }catch(err){
       console.error(err);
+      currentPlant = null;
+      currentPlantSlug = '';
       document.getElementById('d-title').textContent = 'Error loading plant';
       document.title = 'Error loading plant • Howker Ridge Plant Catalog';
       if (detailTitle){
@@ -1076,6 +1600,10 @@ header.plant-hero.sticky h1{
       if (detailBreadcrumb){
         detailBreadcrumb.textContent = 'Error loading plant';
       }
+      if (shareCardBtn) {
+        shareCardBtn.disabled = true;
+      }
+      setShareCardStatus('Card download is unavailable right now.', true);
     }
   })();
 
