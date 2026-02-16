@@ -991,14 +991,20 @@ header.plant-hero.sticky .share-card-status.error{
     const gap = options.gap || 8;
     const rowGap = options.rowGap || 8;
     const maxRows = Math.max(1, options.maxRows || 2);
-    const pillHeight = Math.round(fontSize + (vPad * 1.35));
+    let glyphAscent = Math.round(fontSize * 0.74);
+    let glyphDescent = Math.round(fontSize * 0.26);
+    let pillHeight = Math.round(fontSize + (vPad * 1.35));
     const placements = [];
     if (!pills.length) {
-      return { placements, rowsUsed: 0, totalHeight: 0, pillHeight };
+      return { placements, rowsUsed: 0, totalHeight: 0, pillHeight, glyphAscent, glyphDescent };
     }
 
     ctx.save();
     ctx.font = `600 ${fontSize}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    const metricSample = ctx.measureText('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+    glyphAscent = metricSample.actualBoundingBoxAscent || glyphAscent;
+    glyphDescent = metricSample.actualBoundingBoxDescent || glyphDescent;
+    pillHeight = Math.ceil((glyphAscent + glyphDescent) + (vPad * 2));
     let cursorX = 0;
     let cursorY = 0;
     let currentRow = 0;
@@ -1015,6 +1021,7 @@ header.plant-hero.sticky .share-card-status.error{
         label,
         x: cursorX,
         y: cursorY,
+        row: currentRow,
         w: pillWidth,
         h: pillHeight
       });
@@ -1022,9 +1029,9 @@ header.plant-hero.sticky .share-card-status.error{
     });
     ctx.restore();
 
-    const rowsUsed = placements.length ? (Math.max(...placements.map((item) => Math.round(item.y / Math.max(1, pillHeight + rowGap)))) + 1) : 0;
+    const rowsUsed = placements.length ? (Math.max(...placements.map((item) => item.row || 0)) + 1) : 0;
     const totalHeight = rowsUsed ? ((rowsUsed * pillHeight) + ((rowsUsed - 1) * rowGap)) : 0;
-    return { placements, rowsUsed, totalHeight, pillHeight };
+    return { placements, rowsUsed, totalHeight, pillHeight, glyphAscent, glyphDescent };
   }
 
   function drawTagPills(ctx, tags, x, y, maxWidth, options = {}){
@@ -1037,9 +1044,8 @@ header.plant-hero.sticky .share-card-status.error{
     const radius = options.radius || 999;
     ctx.save();
     ctx.font = `600 ${fontSize}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
-    const tagMetrics = ctx.measureText('Ag');
-    const tagAscent = tagMetrics.actualBoundingBoxAscent || Math.round(fontSize * 0.74);
-    const tagDescent = tagMetrics.actualBoundingBoxDescent || Math.round(fontSize * 0.26);
+    const defaultAscent = layout.glyphAscent || Math.round(fontSize * 0.74);
+    const defaultDescent = layout.glyphDescent || Math.round(fontSize * 0.26);
     layout.placements.forEach((pill) => {
       ctx.fillStyle = 'rgba(34,197,94,0.14)';
       ctx.strokeStyle = 'rgba(34,197,94,0.45)';
@@ -1048,7 +1054,11 @@ header.plant-hero.sticky .share-card-status.error{
       ctx.fill();
       ctx.stroke();
       ctx.fillStyle = '#22c55e';
-      const baselineY = (y + pill.y) + ((pill.h + tagAscent - tagDescent) / 2);
+      const textMetrics = ctx.measureText(pill.label);
+      const tagAscent = textMetrics.actualBoundingBoxAscent || defaultAscent;
+      const tagDescent = textMetrics.actualBoundingBoxDescent || defaultDescent;
+      const glyphHeight = tagAscent + tagDescent;
+      const baselineY = (y + pill.y) + ((pill.h - glyphHeight) / 2) + tagAscent;
       ctx.fillText(pill.label, x + pill.x + hPad, baselineY);
     });
     ctx.restore();
@@ -1146,12 +1156,12 @@ header.plant-hero.sticky .share-card-status.error{
       overviewFont: 33,
       overviewLineHeight: 35,
       overviewBottomBuffer: 8,
-      footerGap: 14,
-      footerFont: 18,
-      footerLineHeight: 24,
+      footerGap: 10,
+      footerFont: 17,
+      footerLineHeight: 22,
       footerMaxLines: 2,
-      footerBottomBuffer: 4,
-      bottomPad: 38,
+      footerBottomInset: 18,
+      footerBottomBuffer: 2,
       minMetaLineHeight: 34,
       minMetaValueFont: 32,
       minSectionGap: 12,
@@ -1238,16 +1248,19 @@ header.plant-hero.sticky .share-card-status.error{
 
       const overviewLabelTop = y;
       const overviewTextTop = overviewLabelTop + style.overviewLabelFont + style.overviewLabelToTextGap;
-      const contentBottom = cardY + cardH - style.bottomPad;
+      const footerBottomLimit = cardY + cardH - style.footerBottomInset;
       ctx.font = `600 ${style.footerFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
       const footerMeasure = measureWrappedText(ctx, footerText, bodyW - 6, style.footerMaxLines);
+      const footerMetrics = ctx.measureText('Ag');
+      const footerDescender = footerMetrics.actualBoundingBoxDescent || Math.ceil(style.footerFont * 0.28);
       const footerHeight = getTextBlockHeight(
         Math.max(1, footerMeasure.lines.length),
         style.footerFont,
         style.footerLineHeight
-      );
+      ) + footerDescender;
       const reservedForFooter = style.footerGap + footerHeight + style.footerBottomBuffer;
-      const availableOverviewHeight = Math.max(0, contentBottom - overviewTextTop - reservedForFooter);
+      const overviewBottomLimit = footerBottomLimit - reservedForFooter;
+      const availableOverviewHeight = Math.max(0, overviewBottomLimit - overviewTextTop);
       ctx.font = `600 ${style.overviewFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
       const fullOverviewMeasure = measureWrappedText(ctx, overviewText, bodyW - 6, Number.POSITIVE_INFINITY);
       let overviewTargetLines = 2;
@@ -1262,7 +1275,10 @@ header.plant-hero.sticky .share-card-status.error{
         style.overviewLineHeight
       );
       const overviewBottom = overviewTextTop + overviewHeight;
-      const footerTop = overviewBottom + style.footerGap;
+      const footerTop = Math.max(
+        overviewBottom + style.footerGap,
+        footerBottomLimit - footerHeight
+      );
       const footerBottom = footerTop + footerHeight;
 
       return {
@@ -1296,7 +1312,7 @@ header.plant-hero.sticky .share-card-status.error{
         footerMeasure,
         overviewBottom,
         footerBottom,
-        fits: footerBottom <= contentBottom
+        fits: footerBottom <= (footerBottomLimit + 0.5)
       };
     };
 

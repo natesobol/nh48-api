@@ -34,6 +34,7 @@ let wikiPlantsCache = null;
 let wikiAnimalsCache = null;
 let wikiPlantDiseasesCache = null;
 let wikiForestHealthFlowchartBase64Cache = null;
+let ogCardsManifestCache = null;
 
 export default {
   async fetch(request, env, ctx) {
@@ -73,6 +74,7 @@ export default {
     const RAW_PEAK_DIFFICULTY_URL = `${RAW_BASE}/data/peak-difficulty.json`;
     const RAW_RISK_OVERLAY_URL = `${RAW_BASE}/data/nh48_enriched_overlay.json`;
     const RAW_CURRENT_CONDITIONS_URL = `${RAW_BASE}/data/current-conditions.json`;
+    const RAW_OG_CARDS_URL = `${RAW_BASE}/data/og-cards.json`;
     const RAW_WIKI_MOUNTAIN_SETS_URL = `${RAW_BASE}/data/wiki/mountain-sets.json`;
     const RAW_WIKI_PLANTS_URL = `${RAW_BASE}/data/wiki/plants.json`;
     const RAW_WIKI_ANIMALS_URL = `${RAW_BASE}/data/wiki/animals.json`;
@@ -855,7 +857,8 @@ export default {
       '/pages/howker_ridge.html': '/howker-ridge',
       '/nh-4000-footers-guide': '/nh-4000-footers-info',
       '/nh-4000-footers-guide.html': '/nh-4000-footers-info',
-      '/nh-4000-footers-info.html': '/nh-4000-footers-info'
+      '/nh-4000-footers-info.html': '/nh-4000-footers-info',
+      '/nh48-planner': '/nh48-planner.html'
     };
 
     const legacyKey = pathname.startsWith('/fr/') ? pathname.replace(/^\/fr/, '') : pathname;
@@ -970,6 +973,9 @@ export default {
         };
 
         const contentType = contentTypes[ext] || 'application/octet-stream';
+        const cacheControl = pathname.startsWith('/photos/og/')
+          ? 'public, max-age=31536000, immutable'
+          : 'no-store';
         if (ext === 'html') {
           let html = await res.text();
           html = injectAnalyticsCore(html);
@@ -989,7 +995,7 @@ export default {
           status: 200,
           headers: {
             'Content-Type': contentType,
-            'Cache-Control': 'no-store',
+            'Cache-Control': cacheControl,
             'Access-Control-Allow-Origin': '*'
           }
         });
@@ -2395,6 +2401,7 @@ export default {
         `<meta name="twitter:title" content="${esc(meta.title)}" />`,
         `<meta name="twitter:description" content="${esc(meta.description)}" />`,
         `<meta name="twitter:image" content="${meta.image || DEFAULT_IMAGE}" />`,
+        `<meta name="twitter:image:alt" content="${esc(meta.imageAlt || meta.title)}" />`,
         `<link rel="canonical" href="${meta.canonical}" />`
       ];
       if (meta.alternateEn && meta.alternateFr) {
@@ -2985,6 +2992,70 @@ export default {
       const enPath = isFrench ? (pathname.replace(/^\/fr/, '') || '/') : pathname;
       const frPath = isFrench ? pathname : `${pathname === '/' ? '/fr' : `/fr${pathname}`}`;
       return { enPath, frPath };
+    }
+
+    function normalizeOgRoutePath(pathnameValue) {
+      let normalized = String(pathnameValue || '/').trim();
+      if (!normalized.startsWith('/')) {
+        normalized = `/${normalized}`;
+      }
+      normalized = normalized.replace(/\/{2,}/g, '/');
+      if (normalized.length > 1 && normalized.endsWith('/')) {
+        normalized = normalized.slice(0, -1);
+      }
+      return normalized || '/';
+    }
+
+    async function loadOgCardsManifest() {
+      if (ogCardsManifestCache) return ogCardsManifestCache;
+      const payload = await loadJsonCache('og-cards-manifest', RAW_OG_CARDS_URL);
+      if (!payload || typeof payload !== 'object' || typeof payload.cards !== 'object') {
+        ogCardsManifestCache = { cards: {} };
+        return ogCardsManifestCache;
+      }
+      ogCardsManifestCache = payload;
+      return ogCardsManifestCache;
+    }
+
+    function mapOgAliasPath(pathnameValue) {
+      const aliasMap = {
+        '/catalog.html': '/catalog',
+        '/long-trails.html': '/long-trails',
+        '/peakid-game.html': '/peakid-game',
+        '/timed-peakid-game.html': '/timed-peakid-game',
+        '/peakid-timed': '/timed-peakid-game',
+        '/plant-catalog.html': '/plant-catalog',
+        '/nh-4000-footers-info.html': '/nh-4000-footers-info',
+        '/nh48-planner': '/nh48-planner.html',
+        '/virtual_hike.html': '/virtual-hike'
+      };
+      return aliasMap[pathnameValue] || pathnameValue;
+    }
+
+    async function resolveOgCard(pathnameValue) {
+      const manifest = await loadOgCardsManifest();
+      const cards = manifest?.cards;
+      if (!cards || typeof cards !== 'object') return null;
+
+      let key = normalizeOgRoutePath(pathnameValue);
+      key = mapOgAliasPath(key);
+      const candidates = [key];
+      if (key === '/fr') {
+        candidates.push('/');
+      }
+      if (key.startsWith('/fr/')) {
+        candidates.push(key.replace(/^\/fr/, ''));
+      }
+
+      for (const candidate of candidates) {
+        const card = cards[candidate];
+        if (!card || typeof card !== 'object') continue;
+        const image = typeof card.image === 'string' ? card.image.trim() : '';
+        if (!image) continue;
+        const imageAlt = typeof card.imageAlt === 'string' ? card.imageAlt.trim() : '';
+        return { image, imageAlt };
+      }
+      return null;
     }
 
     function normalizeTrailSlug(value) {
@@ -3728,6 +3799,9 @@ export default {
       }
 
       const heroImage = imageObjects[0]?.url || DEFAULT_IMAGE;
+      const ogCard = await resolveOgCard(pathname);
+      const socialImage = ogCard?.image || heroImage;
+      const socialImageAlt = ogCard?.imageAlt || altText;
 
       const datasetSchema = buildCatalogDataset({
         canonicalUrl,
@@ -3818,8 +3892,8 @@ export default {
         `<meta property="og:type" content="website" />`,
         `<meta property="og:title" content="${esc(title)}" />`,
         `<meta property="og:description" content="${esc(description)}" />`,
-        `<meta property="og:image" content="${heroImage}" />`,
-        `<meta property="og:image:alt" content="${esc(altText)}" />`,
+        `<meta property="og:image" content="${socialImage}" />`,
+        `<meta property="og:image:alt" content="${esc(socialImageAlt)}" />`,
         `<meta property="og:url" content="${canonicalUrl}" />`,
         `<meta name="twitter:card" content="summary_large_image" />`,
         `<meta name="twitter:site" content="@nate_dumps_pics" />`,
@@ -3827,7 +3901,8 @@ export default {
         `<meta name="twitter:url" content="${canonicalUrl}" />`,
         `<meta name="twitter:title" content="${esc(title)}" />`,
         `<meta name="twitter:description" content="${esc(description)}" />`,
-        `<meta name="twitter:image" content="${heroImage}" />`,
+        `<meta name="twitter:image" content="${socialImage}" />`,
+        `<meta name="twitter:image:alt" content="${esc(socialImageAlt)}" />`,
         `<link rel="canonical" href="${canonicalUrl}" />`,
         `<link rel="alternate" hreflang="en" href="${SITE}/catalog" />`,
         `<link rel="alternate" hreflang="fr" href="${SITE}/fr/catalog" />`,
@@ -3903,8 +3978,11 @@ export default {
         }
       }
       const mergedJsonLd = mergeJsonLdBlocks(pageJsonLd, globalSchemaNodes);
+      const ogCard = await resolveOgCard(pathname);
       const metaBlock = buildMetaBlock({
         ...meta,
+        image: ogCard?.image || meta?.image,
+        imageAlt: ogCard?.imageAlt || meta?.imageAlt,
         jsonLd: mergedJsonLd
       });
       html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
@@ -6062,6 +6140,9 @@ export default {
     const primaryCaption = primaryPhoto
       ? buildPhotoCaptionUnique(peakName, primaryPhoto)
       : peakName;
+    const ogCard = await resolveOgCard(pathname);
+    const socialImage = ogCard?.image || heroUrl;
+    const socialImageAlt = ogCard?.imageAlt || primaryCaption;
     const rangeContext = await resolveRangeContext(rangeVal);
     const {
       mountain = {},
@@ -6182,8 +6263,8 @@ export default {
       `<meta property="og:type" content="website" />`,
       `<meta property="og:title" content="${title}" />`,
       `<meta property="og:description" content="${description}" />`,
-      `<meta property="og:image" content="${heroUrl}" />`,
-      `<meta property="og:image:alt" content="${esc(primaryCaption)}" />`,
+      `<meta property="og:image" content="${socialImage}" />`,
+      `<meta property="og:image:alt" content="${esc(socialImageAlt)}" />`,
       `<meta property="og:url" content="${canonical}" />`,
       `<meta name="twitter:card" content="summary_large_image" />`,
       `<meta name="twitter:site" content="@nate_dumps_pics" />`,
@@ -6191,7 +6272,8 @@ export default {
       `<meta name="twitter:url" content="${canonical}" />`,
       `<meta name="twitter:title" content="${title}" />`,
       `<meta name="twitter:description" content="${description}" />`,
-      `<meta name="twitter:image" content="${heroUrl}" />`,
+      `<meta name="twitter:image" content="${socialImage}" />`,
+      `<meta name="twitter:image:alt" content="${esc(socialImageAlt)}" />`,
       `<link rel="canonical" href="${canonical}" />`,
       `<link rel="alternate" hreflang="en" href="${canonicalEn}" />`,
       `<link rel="alternate" hreflang="fr" href="${canonicalFr}" />`,

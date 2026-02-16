@@ -16,6 +16,7 @@
     "audit:wiki-routes": "node scripts/audit-wiki-routes.js",
     "audit:wiki-media-sync": "node scripts/audit-wiki-media-sync.js",
     "audit:image-sitemap-quality": "node scripts/audit-image-sitemap-quality.js",
+    "audit:og-cards": "node scripts/audit-og-cards.js",
     "audit:image-sitemap-quality:live": "node scripts/audit-image-sitemap-quality.js --url https://nh48.info --sample 50",
     "audit:live-peak-parity": "node scripts/audit-live-peak-seo-parity.js --url https://nh48.info --retries 6 --delay-seconds 20",
     "build:peak-sameas": "python scripts/build-peak-sameas.py",

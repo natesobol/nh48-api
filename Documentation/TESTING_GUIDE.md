@@ -10,6 +10,7 @@ node scripts/audit-site-schema.js
 node scripts/audit-i18n-completeness.js
 node scripts/audit-dataset-overlay-coverage.js
 node scripts/audit-unresolved-i18n-markers.js
+node scripts/audit-og-cards.js
 node scripts/audit-peak-guide-authority.js
 node scripts/audit-wiki-routes.js
 node scripts/audit-wiki-media-sync.js
@@ -26,6 +27,7 @@ node scripts/build-peak-difficulty.js
 node scripts/build-peak-experience-scaffold.js
 node scripts/prerender-peaks.js
 node scripts/generate-sitemaps.js
+python scripts/generate-og-cards.py
 npm run wiki:sync-media
 npm run wiki:sync-media:check
 ```
@@ -34,6 +36,7 @@ npm run wiki:sync-media:check
 ```bash
 node scripts/audit-homepage-worker-seo.js --url https://nh48.info
 node scripts/audit-worker-breadcrumbs.js --url https://nh48.info
+node scripts/audit-og-cards.js --url https://nh48.info --sample 30
 ```
 
 ## CI Gate Order
@@ -42,15 +45,31 @@ Workflow: `.github/workflows/deploy-worker.yml`
 Pre-deploy gates:
 1. `audit-site-schema`
 2. `audit-i18n-completeness`
-3. `audit-dataset-overlay-coverage`
-4. `audit-unresolved-i18n-markers`
-5. `audit-peak-guide-authority`
-6. `audit-sameas`
-7. `audit-entity-links`
+3. `audit-image-sitemap-quality`
+4. `audit-og-cards`
+5. `audit-dataset-overlay-coverage`
+6. `audit-unresolved-i18n-markers`
+7. `audit-peak-guide-authority`
+8. `audit-sameas`
+9. `audit-entity-links`
 
 Post-deploy gates with retry:
 1. `audit-homepage-worker-seo` (production URL)
 2. `audit-worker-breadcrumbs` (production URL)
+
+## OG Social Preview Validation
+1. Generate cards and manifest:
+   - `python scripts/generate-og-cards.py`
+2. Validate route coverage and image contracts:
+   - `node scripts/audit-og-cards.js`
+3. Validate live worker/meta output (optional):
+   - `node scripts/audit-og-cards.js --url https://nh48.info --sample 30`
+4. Refresh social crawler caches after changes:
+   - Facebook Sharing Debugger: https://developers.facebook.com/tools/debug/
+   - X Card Validator (or equivalent card fetch tooling)
+5. Confirm representative routes show `/photos/og/*?v=<hash>` URLs in both:
+   - `og:image`
+   - `twitter:image`
 
 Retry policy:
 - 6 attempts
@@ -108,7 +127,7 @@ Retry policy:
 
 ## CI Workflow Ownership Map
 - `deploy-worker.yml`: Worker deploy + all SEO/peak audit gates + production parity retry.
-- `prerender.yml`: Canonical prerender/sitemap generator and committer for generated files.
+- `prerender.yml`: Canonical prerender/sitemap/OG generator and committer for generated files.
 - `pages.yml`: Packages/deploys Pages artifact; only fallback-renders when generated outputs are missing.
 - `sync-r2-data.yml`: Syncs canonical `data/nh48.json` to R2 data bucket.
 - `sync-r2-map-data.yml`: Syncs Howker map data files to R2 map bucket.

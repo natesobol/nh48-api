@@ -9,13 +9,21 @@ on:
       - 'scripts/prerender-peaks.js'
       - 'scripts/prerender-long-trails.js'
       - 'scripts/generate-sitemaps.js'
+      - 'scripts/generate-og-cards.py'
+      - 'data/og-card-overrides.json'
+      - 'nh48-planner.html'
+      - 'peakid-game.html'
+      - 'timed-peakid-game.html'
+      - 'pages/puzzle-game.html'
       - '.github/workflows/prerender.yml'
       - '!peaks/**'
       - '!fr/peaks/**'
       - '!long-trails/**'
+      - '!photos/og/**'
       - '!sitemap.xml'
       - '!page-sitemap.xml'
       - '!image-sitemap.xml'
+      - '!data/og-cards.json'
       - '!build-meta.json'
   pull_request:
 
@@ -41,6 +49,16 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pillow
+
       - name: Generate static pages and sitemaps
         run: |
           set -euo pipefail
@@ -56,6 +74,8 @@ jobs:
               exit 1
             fi
           done
+          echo "=== Running scripts/generate-og-cards.py ==="
+          python scripts/generate-og-cards.py
 
       - name: Write build metadata
         run: |
@@ -82,10 +102,16 @@ jobs:
             peaks/**
             fr/peaks/**
             long-trails/**
+            photos/og/**
             build-meta.json
             sitemap.xml
             page-sitemap.xml
             image-sitemap.xml
+            data/og-cards.json
+            nh48-planner.html
+            peakid-game.html
+            timed-peakid-game.html
+            pages/puzzle-game.html
 
   auto-commit-pr:
     runs-on: ubuntu-latest
@@ -106,10 +132,16 @@ jobs:
             peaks/**
             fr/peaks/**
             long-trails/**
+            photos/og/**
             build-meta.json
             sitemap.xml
             page-sitemap.xml
             image-sitemap.xml
+            data/og-cards.json
+            nh48-planner.html
+            peakid-game.html
+            timed-peakid-game.html
+            pages/puzzle-game.html
 
       - name: Verify no uncommitted changes
         if: github.event_name == 'pull_request'

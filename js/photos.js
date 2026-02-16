@@ -13,7 +13,7 @@ const TOPO_LEVELS=[-1.02,-0.82,-0.62,-0.42,-0.22,-0.02,0.18,0.38,0.58,0.78,0.98]
 const state={
   peaks:[],taxonomy:null,filterParentOptions:[],filterSubrangeOptions:[],activeParentFilters:new Set(),activeSubrangeFilters:new Set(),subrangeToParent:new Map(),
   search:'',sort:'range',rangeMode:'jump',renderedParentGroups:[],activeParentSlug:'',hasAppliedInitialHash:false,revealObserver:null,rangeObserver:null,
-  topoPhase:0,topoTimer:null,topoResizeTimer:null,revealMode:'',lightbox:{peakSlug:'',index:0,open:false}
+  revealSafetyTimer:null,topoPhase:0,topoTimer:null,topoResizeTimer:null,revealMode:'',lightbox:{peakSlug:'',index:0,open:false}
 };
 
 const elements={
@@ -807,9 +807,10 @@ const setRevealMode=(mode)=>{
 };
 
 const connectRevealObserver=()=>{
+  if(state.revealSafetyTimer){window.clearTimeout(state.revealSafetyTimer);state.revealSafetyTimer=null;}
   if(state.revealObserver){state.revealObserver.disconnect();state.revealObserver=null;}
 
-  const revealTargets=document.querySelectorAll('.reveal-target');
+  const revealTargets=Array.from(document.querySelectorAll('.reveal-target'));
   if(!revealTargets.length){setRevealMode('fallback');return;}
   if(prefersReducedMotion||typeof IntersectionObserver==='undefined'){
     setRevealMode('fallback');
@@ -820,15 +821,31 @@ const connectRevealObserver=()=>{
   try{
     setRevealMode('observer');
     revealTargets.forEach((node)=>node.classList.remove('is-visible'));
+    let revealCount=0;
+    const markVisible=(node,observer)=>{
+      if(!(node instanceof HTMLElement)||node.classList.contains('is-visible'))return;
+      node.classList.add('is-visible');
+      revealCount+=1;
+      if(observer)observer.unobserve(node);
+    };
+
+    revealTargets.slice(0,3).forEach((node)=>markVisible(node));
     state.revealObserver=new IntersectionObserver((entries,observer)=>{
       entries.forEach((entry)=>{
-        if(!entry.isIntersecting)return;
-        entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target);
+        if(!entry.isIntersecting&&entry.intersectionRatio<=0)return;
+        markVisible(entry.target,observer);
       });
-    },{threshold:0.18});
+    },{threshold:[0,0.01,0.05],rootMargin:'0px 0px -10% 0px'});
 
     revealTargets.forEach((node)=>state.revealObserver.observe(node));
+    state.revealSafetyTimer=window.setTimeout(()=>{
+      if(revealCount>0){state.revealSafetyTimer=null;return;}
+      console.warn('[photos] reveal observer produced no visible entries; forcing fallback mode.');
+      if(state.revealObserver){state.revealObserver.disconnect();state.revealObserver=null;}
+      setRevealMode('fallback');
+      revealTargets.forEach((node)=>node.classList.add('is-visible'));
+      state.revealSafetyTimer=null;
+    },1200);
   }catch(error){
     console.warn('[photos] reveal observer failed, using visible fallback',error);
     setRevealMode('fallback');

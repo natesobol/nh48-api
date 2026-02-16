@@ -60,6 +60,7 @@ const STATIC_PAGE_ENTRIES = [
   { loc: 'https://nh48.info/virtual-hike', file: 'pages/virtual_hike.html' },
   { loc: 'https://nh48.info/submit-edit', file: 'pages/submit_edit.html' },
   { loc: 'https://nh48.info/fr/submit-edit', file: 'pages/submit_edit.html' },
+  { loc: 'https://nh48.info/nh48-planner.html', file: 'nh48-planner.html' },
   { loc: 'https://nh48.info/peakid-game', file: 'peakid-game.html' },
   { loc: 'https://nh48.info/timed-peakid-game', file: 'timed-peakid-game.html' },
   {
@@ -396,6 +397,17 @@ const STATIC_IMAGE_ENTRIES = [
         url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg',
         title: 'Virtual hike overview of Howker Ridge',
         caption: 'Virtual hike preview image for the Howker Ridge 3D experience.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/nh48-planner.html',
+    file: 'nh48-planner.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/owls-head/owls-head__001.jpg',
+        title: "Owl's Head foliage view used in the NH48 planning tool hero",
+        caption: 'Peak planning tool preview image.',
       },
     ],
   },

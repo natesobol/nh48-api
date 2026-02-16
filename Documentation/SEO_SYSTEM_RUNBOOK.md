@@ -1,6 +1,6 @@
 # SEO System Runbook
 
-Last updated: 2026-02-14
+Last updated: 2026-02-16
 
 ## Current Production State
 - Rendering stack: Cloudflare Worker (`worker.js`) + static templates + prerender scripts.
@@ -8,6 +8,8 @@ Last updated: 2026-02-14
 - Worker remains runtime metadata authority for core pages and fallback peak rendering.
 - Prerendered peak HTML is served first when available, with worker fallback for missing prerender output.
 - CI deploy workflow runs SEO gates before deploy and production audits with retry after deploy.
+- OG social cards are generated at build-time by `scripts/generate-og-cards.py` and published in-repo under `photos/og/**`.
+- Worker route metadata now resolves `og:image` and `twitter:image` from `data/og-cards.json` first, then falls back to route defaults.
 
 ## Primary Sister Sites
 These are the four primary sister-site references used across entity `sameAs` surfaces:
@@ -71,6 +73,34 @@ These are the four primary sister-site references used across entity `sameAs` su
 | `data/current-conditions.json` | Worker-readable advisory feed fallback |
 | `data/nh48_enriched_overlay.json` | Risk factors, prep notes, bailout distances, review confidence |
 | `data/breadcrumb-taxonomy.json` | Route taxonomy strategy definitions |
+| `data/og-card-overrides.json` | OG image source fallback and route-level OG card overrides |
+| `data/og-cards.json` | Generated OG manifest mapping route path -> card URL/alt/hash |
+
+## OG Card System
+- Generator script: `python scripts/generate-og-cards.py`
+- Route inventory source: `page-sitemap.xml` + explicit extra `/nh48-planner.html`
+- Route exclusions: `/trails/*/sections/*`
+- Output image contract:
+  - Dimensions: `1200x630`
+  - Format: JPEG
+  - Size target: under `500 KB`
+  - Path: `photos/og/<category>/<slug>.jpg`
+- Manifest contract (`data/og-cards.json`):
+  - `generatedAt`: ISO UTC timestamp
+  - `version`: build/git id
+  - `cards`: object keyed by normalized route path
+  - Per-route fields: `image`, `imageAlt`, `headline`, `sourceImage`, `hash`
+- Cache busting:
+  - `image` URLs include `?v=<hash8>`
+  - Worker serves `/photos/og/*` with `Cache-Control: public, max-age=31536000, immutable`
+  - HTML remains `no-store`
+- FR mapping:
+  - `/fr/*` routes map to the same OG asset as English peers by default unless a route override declares uniqueness.
+- Static pages patched by generator (non-SSR image tags):
+  - `nh48-planner.html`
+  - `peakid-game.html`
+  - `timed-peakid-game.html`
+  - `pages/puzzle-game.html`
 
 ## In-Repo Script Inventory (SEO)
 | Script | Command | Purpose |
@@ -86,15 +116,27 @@ These are the four primary sister-site references used across entity `sameAs` su
 | `scripts/build-peak-experience-scaffold.js` | `node scripts/build-peak-experience-scaffold.js` | Creates/refreshes narrative scaffold fields |
 | `scripts/prerender-peaks.js` | `node scripts/prerender-peaks.js` | Prerenders static peak guide HTML and schema |
 | `scripts/generate-sitemaps.js` | `node scripts/generate-sitemaps.js` | Generates sitemap and canonical page/image entries |
+| `scripts/generate-og-cards.py` | `python scripts/generate-og-cards.py` | Builds OG social cards and writes `data/og-cards.json` |
+| `scripts/audit-og-cards.js` | `node scripts/audit-og-cards.js` | Verifies OG manifest coverage, image contract, and optional live meta tags |
 
 ## CI/CD Gate Behavior
 Workflow: `.github/workflows/deploy-worker.yml`
 
 Pre-deploy gates:
 1. `audit-site-schema`
-2. `audit-peak-guide-authority`
-3. `audit-sameas`
-4. `audit-entity-links`
+2. `audit-image-sitemap-quality`
+3. `audit-og-cards`
+4. `audit-i18n-completeness`
+5. `audit-dataset-overlay-coverage`
+6. `audit-unresolved-i18n-markers`
+7. `audit-peak-guide-authority`
+8. `audit-peak-page-ui`
+9. `audit-peak-data-coverage`
+10. `audit-peak-image-metadata`
+11. `audit-wiki-routes`
+12. `audit-wiki-media-sync`
+13. `audit-sameas`
+14. `audit-entity-links`
 
 Deploy condition:
 - Deploy runs on `workflow_dispatch` or when worker files changed.

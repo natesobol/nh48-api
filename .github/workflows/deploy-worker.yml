@@ -19,6 +19,8 @@ on:
       - 'data/current-conditions.json'
       - 'data/nh48_enriched_overlay.json'
       - 'data/breadcrumb-taxonomy.json'
+      - 'data/og-cards.json'
+      - 'data/og-card-overrides.json'
       - 'data/wiki/mountain-sets.json'
       - 'data/wiki/wiki-nh48-mountains.json'
       - 'data/wiki/wiki-nh52wav-mountains.json'
@@ -32,6 +34,7 @@ on:
       - 'i18n/*.json'
       - 'scripts/audit-site-schema.js'
       - 'scripts/audit-image-sitemap-quality.js'
+      - 'scripts/audit-og-cards.js'
       - 'scripts/audit-tooltip-integration.js'
       - 'scripts/audit-homepage-worker-seo.js'
       - 'scripts/audit-worker-breadcrumbs.js'
@@ -56,6 +59,7 @@ on:
       - 'scripts/sync-i18n-missing-keys.js'
       - 'scripts/prerender-peaks.js'
       - 'scripts/generate-sitemaps.js'
+      - 'scripts/generate-og-cards.py'
       - 'scripts/sync-wiki-media.js'
       - 'pages/nh48_peak.html'
       - 'pages/nav.html'
@@ -156,6 +160,10 @@ jobs:
       - name: Run image sitemap quality audit (pre-deploy gate)
         id: image_sitemap_quality_audit
         run: node scripts/audit-image-sitemap-quality.js
+
+      - name: Run OG cards audit (pre-deploy gate)
+        id: og_cards_audit
+        run: node scripts/audit-og-cards.js
 
       - name: Run tooltip integration audit (pre-deploy gate)
         id: tooltip_integration_audit
@@ -260,6 +268,7 @@ jobs:
           echo "- **Deploy requested:** \`${{ steps.deploy_mode.outputs.should_deploy }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Schema audit:** \`${{ steps.schema_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Image sitemap quality audit:** \`${{ steps.image_sitemap_quality_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **OG cards audit:** \`${{ steps.og_cards_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Tooltip integration audit:** \`${{ steps.tooltip_integration_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **i18n completeness audit:** \`${{ steps.i18n_completeness_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Dataset overlay coverage audit:** \`${{ steps.dataset_overlay_coverage_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
@@ -283,6 +292,7 @@ jobs:
           echo "### Scripts executed" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-site-schema.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-image-sitemap-quality.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-og-cards.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-tooltip-integration.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-i18n-completeness.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-dataset-overlay-coverage.js\`" >> "$GITHUB_STEP_SUMMARY"

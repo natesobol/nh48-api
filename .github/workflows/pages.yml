@@ -27,6 +27,16 @@ jobs:
         with:
           node-version: 20
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pillow
+
       - name: Check generated outputs
         id: generated
         shell: bash
@@ -41,6 +51,8 @@ jobs:
             "page-sitemap.xml"
             "image-sitemap.xml"
             "build-meta.json"
+            "data/og-cards.json"
+            "photos/og"
           )
           for path in "${required[@]}"; do
             if [[ ! -e "$path" ]]; then
@@ -65,6 +77,10 @@ jobs:
       - name: Fallback generate sitemaps
         if: steps.generated.outputs.needs_fallback == 'true'
         run: node scripts/generate-sitemaps.js
+
+      - name: Fallback generate OG cards
+        if: steps.generated.outputs.needs_fallback == 'true'
+        run: python scripts/generate-og-cards.py
 
       - name: Ensure build metadata file
         shell: bash

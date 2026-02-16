@@ -1,8 +1,8 @@
 body[data-route="photos"] {
   font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
   background:
-    radial-gradient(circle at 20% -20%, rgba(34, 197, 94, 0.16), transparent 52%),
-    radial-gradient(circle at 88% 5%, rgba(34, 197, 94, 0.11), transparent 44%),
+    radial-gradient(circle at 18% -18%, rgba(20, 83, 45, 0.14), transparent 54%),
+    radial-gradient(circle at 88% 5%, rgba(21, 94, 55, 0.09), transparent 46%),
     #070b11;
 }
 
@@ -19,13 +19,13 @@ body[data-route="photos"] {
   z-index: -1;
   border-radius: 999px;
   filter: blur(90px);
-  opacity: 0.35;
+  opacity: 0.2;
 }
 
 .photos-page::before {
   width: 300px;
   height: 300px;
-  background: rgba(34, 197, 94, 0.5);
+  background: rgba(21, 92, 51, 0.36);
   top: 16%;
   left: -80px;
 }
@@ -33,7 +33,7 @@ body[data-route="photos"] {
 .photos-page::after {
   width: 340px;
   height: 340px;
-  background: rgba(56, 189, 248, 0.35);
+  background: rgba(17, 70, 44, 0.3);
   top: 52%;
   right: -120px;
 }
@@ -94,11 +94,11 @@ body[data-route="photos"] {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(130deg, rgba(34, 197, 94, 0.21), rgba(34, 197, 94, 0) 46%),
-    linear-gradient(220deg, rgba(56, 189, 248, 0.16), rgba(56, 189, 248, 0) 42%),
-    radial-gradient(circle at 18% 22%, rgba(34, 197, 94, 0.22), rgba(34, 197, 94, 0) 56%),
+    linear-gradient(130deg, rgba(21, 94, 55, 0.2), rgba(21, 94, 55, 0) 48%),
+    linear-gradient(220deg, rgba(16, 66, 41, 0.16), rgba(16, 66, 41, 0) 44%),
+    radial-gradient(circle at 18% 22%, rgba(22, 101, 52, 0.2), rgba(22, 101, 52, 0) 58%),
     #0b1421;
-  opacity: 0.9;
+  opacity: 0.82;
   pointer-events: none;
 }
 
@@ -471,8 +471,6 @@ body[data-route="photos"] {
   padding: 16px;
   background: linear-gradient(180deg, rgba(8, 13, 20, 0.95), rgba(5, 9, 15, 0.95));
   scroll-margin-top: 170px;
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 1100px;
 }
 
 .range-heading {
