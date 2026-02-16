@@ -393,7 +393,7 @@ const STATIC_IMAGE_ENTRIES = [
     file: 'pages/virtual_hike.html',
     images: [
       {
-        url: 'https://nh48.info/assets/virtual-hike-thumbnail.jpg',
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg',
         title: 'Virtual hike overview of Howker Ridge',
         caption: 'Virtual hike preview image for the Howker Ridge 3D experience.',
       },
