@@ -970,6 +970,14 @@ header.plant-hero.sticky .share-card-status.error{
     return fontSize + ((count - 1) * lineHeight);
   }
 
+  function getTextBlockHeightWithDescender(ctx, lineCount, fontSize, lineHeight){
+    const blockHeight = getTextBlockHeight(lineCount, fontSize, lineHeight);
+    if (!blockHeight) return 0;
+    const metrics = ctx.measureText('Ag');
+    const descender = metrics.actualBoundingBoxDescent || Math.ceil(fontSize * 0.28);
+    return blockHeight + descender;
+  }
+
   function drawTextLinesFromTop(ctx, lines, x, topY, fontSize, lineHeight){
     if (!Array.isArray(lines) || !lines.length) {
       return topY;
@@ -1108,7 +1116,8 @@ header.plant-hero.sticky .share-card-status.error{
     const detailUrl = plantSlug
       ? `https://nh48.info/plant/${encodeURIComponent(plantSlug)}`
       : 'https://nh48.info/plant-catalog';
-    const footerText = `More info & catalog: ${detailUrl}`;
+    const compactUrl = detailUrl.replace(/^https?:\/\//i, '');
+    const footerText = `More info & catalog: ${compactUrl}`;
 
     const style = {
       cardX: 18,
@@ -1116,8 +1125,9 @@ header.plant-hero.sticky .share-card-status.error{
       cardRadius: 28,
       thumbInset: 4,
       thumbRadius: 20,
+      thumbHeightRatio: 0.56,
       bodyInsetX: 26,
-      bodyTopGap: 46,
+      bodyTopGap: 34,
       bannerInsetX: 16,
       bannerInsetY: 14,
       bannerHeight: 46,
@@ -1127,13 +1137,13 @@ header.plant-hero.sticky .share-card-status.error{
       titleFont: 54,
       titleLineHeight: 58,
       titleMaxLines: 2,
-      titleToLatinGap: 6,
+      titleToLatinGap: 4,
       latinFont: 37,
       latinLineHeight: 42,
       latinMaxLines: 1,
-      latinToDividerGap: 18,
+      latinToDividerGap: 14,
       dividerInset: 20,
-      dividerToMetaGap: 24,
+      dividerToMetaGap: 20,
       metaLabelFont: 20,
       metaLabelColWidth: 152,
       metaValueFont: 36,
@@ -1142,7 +1152,7 @@ header.plant-hero.sticky .share-card-status.error{
       metaRowBottomPad: 8,
       metaRowGap: 8,
       rowDividerGap: 6,
-      sectionGap: 16,
+      sectionGap: 14,
       tagLabelFont: 20,
       tagLabelToPillsGap: 10,
       tagFontSize: 19,
@@ -1156,18 +1166,21 @@ header.plant-hero.sticky .share-card-status.error{
       overviewFont: 33,
       overviewLineHeight: 35,
       overviewBottomBuffer: 8,
-      footerGap: 10,
-      footerFont: 17,
+      footerGap: 6,
+      footerFont: 16,
       footerLineHeight: 22,
-      footerMaxLines: 2,
-      footerBottomInset: 18,
+      footerMaxLines: 1,
+      footerBottomInset: 14,
       footerBottomBuffer: 2,
       minMetaLineHeight: 34,
       minMetaValueFont: 32,
-      minSectionGap: 12,
+      minSectionGap: 10,
       minMetaRowGap: 6,
       minRowDividerGap: 4,
-      minBodyTopGap: 38
+      minBodyTopGap: 24,
+      minThumbHeightRatio: 0.5,
+      minLatinToDividerGap: 10,
+      minDividerToMetaGap: 14
     };
 
     const computeLayout = () => {
@@ -1178,7 +1191,7 @@ header.plant-hero.sticky .share-card-status.error{
       const thumbX = cardX + style.thumbInset;
       const thumbY = cardY + style.thumbInset;
       const thumbW = cardW - (style.thumbInset * 2);
-      const thumbH = Math.round(thumbW * 3 / 5);
+      const thumbH = Math.round(thumbW * style.thumbHeightRatio);
       const left = cardX + style.bodyInsetX;
       const right = cardX + cardW - style.bodyInsetX;
       const bodyW = right - left;
@@ -1206,7 +1219,8 @@ header.plant-hero.sticky .share-card-status.error{
       metaRowsSource.forEach((row, index) => {
         ctx.font = `700 ${style.metaValueFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
         const valueMeasure = measureWrappedText(ctx, row.value, valueW, 2);
-        const valueHeight = getTextBlockHeight(
+        const valueHeight = getTextBlockHeightWithDescender(
+          ctx,
           Math.max(1, valueMeasure.lines.length),
           style.metaValueFont,
           style.metaLineHeight
@@ -1253,23 +1267,25 @@ header.plant-hero.sticky .share-card-status.error{
       const footerMeasure = measureWrappedText(ctx, footerText, bodyW - 6, style.footerMaxLines);
       const footerMetrics = ctx.measureText('Ag');
       const footerDescender = footerMetrics.actualBoundingBoxDescent || Math.ceil(style.footerFont * 0.28);
-      const footerHeight = getTextBlockHeight(
+      const footerHeight = getTextBlockHeightWithDescender(
+        ctx,
         Math.max(1, footerMeasure.lines.length),
         style.footerFont,
         style.footerLineHeight
-      ) + footerDescender;
+      ) + Math.ceil(footerDescender * 0.15);
       const reservedForFooter = style.footerGap + footerHeight + style.footerBottomBuffer;
       const overviewBottomLimit = footerBottomLimit - reservedForFooter;
       const availableOverviewHeight = Math.max(0, overviewBottomLimit - overviewTextTop);
       ctx.font = `600 ${style.overviewFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
       const fullOverviewMeasure = measureWrappedText(ctx, overviewText, bodyW - 6, Number.POSITIVE_INFINITY);
       let overviewTargetLines = 2;
-      const threeLineHeight = getTextBlockHeight(3, style.overviewFont, style.overviewLineHeight);
+      const threeLineHeight = getTextBlockHeightWithDescender(ctx, 3, style.overviewFont, style.overviewLineHeight);
       if (fullOverviewMeasure.totalLines > 2 && availableOverviewHeight >= (threeLineHeight + style.overviewBottomBuffer)) {
         overviewTargetLines = 3;
       }
       const overviewMeasure = measureWrappedText(ctx, overviewText, bodyW - 6, overviewTargetLines);
-      const overviewHeight = getTextBlockHeight(
+      const overviewHeight = getTextBlockHeightWithDescender(
+        ctx,
         Math.max(1, overviewMeasure.lines.length),
         style.overviewFont,
         style.overviewLineHeight
@@ -1312,14 +1328,26 @@ header.plant-hero.sticky .share-card-status.error{
         footerMeasure,
         overviewBottom,
         footerBottom,
-        fits: footerBottom <= (footerBottomLimit + 0.5)
+        fits: footerBottom <= (footerBottomLimit - 0.5)
       };
     };
 
     let layout = computeLayout();
     for (let pass = 0; pass < 24 && !layout.fits; pass += 1) {
       let adjusted = false;
-      if (style.metaLineHeight > style.minMetaLineHeight) {
+      if (style.bodyTopGap > style.minBodyTopGap) {
+        style.bodyTopGap -= 2;
+        adjusted = true;
+      } else if (style.thumbHeightRatio > style.minThumbHeightRatio) {
+        style.thumbHeightRatio = Math.max(style.minThumbHeightRatio, style.thumbHeightRatio - 0.01);
+        adjusted = true;
+      } else if (style.latinToDividerGap > style.minLatinToDividerGap) {
+        style.latinToDividerGap -= 1;
+        adjusted = true;
+      } else if (style.dividerToMetaGap > style.minDividerToMetaGap) {
+        style.dividerToMetaGap -= 1;
+        adjusted = true;
+      } else if (style.metaLineHeight > style.minMetaLineHeight) {
         style.metaLineHeight -= 1;
         adjusted = true;
       } else if (style.metaValueFont > style.minMetaValueFont) {
@@ -1336,10 +1364,6 @@ header.plant-hero.sticky .share-card-status.error{
         }
         if (style.sectionGap > style.minSectionGap) {
           style.sectionGap -= 1;
-          adjusted = true;
-        }
-        if (style.bodyTopGap > style.minBodyTopGap) {
-          style.bodyTopGap -= 1;
           adjusted = true;
         }
       }
