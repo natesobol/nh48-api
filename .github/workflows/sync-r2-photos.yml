@@ -18,9 +18,7 @@ jobs:
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
           WIKI_R2_BUCKET_NAME: ${{ secrets.WIKI_R2_BUCKET_NAME }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          WIKI_R2_ACCOUNT_ID: ${{ secrets.WIKI_R2_ACCOUNT_ID }}
           WIKI_R2_ACCESS_KEY_ID: ${{ secrets.WIKI_R2_ACCESS_KEY_ID }}
           WIKI_R2_SECRET_ACCESS_KEY: ${{ secrets.WIKI_R2_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: auto
@@ -29,27 +27,21 @@ jobs:
         run: |
           set -euo pipefail
 
-          ACCOUNT_ID="${R2_ACCOUNT_ID:-${CLOUDFLARE_ACCOUNT_ID:-}}"
+          ACCOUNT_ID="${R2_ACCOUNT_ID:-${WIKI_R2_ACCOUNT_ID:-}}"
           BUCKET="${R2_BUCKET_NAME:-${R2_BUCKET:-}}"
 
-          if [ -n "${R2_ACCESS_KEY_ID:-}" ] && [ -n "${R2_SECRET_ACCESS_KEY:-}" ]; then
-            AWS_ACCESS_KEY_ID="${R2_ACCESS_KEY_ID}"
-            AWS_SECRET_ACCESS_KEY="${R2_SECRET_ACCESS_KEY}"
-            KEY_SOURCE="R2_*"
-          elif [ -n "${WIKI_R2_ACCESS_KEY_ID:-}" ] && [ -n "${WIKI_R2_SECRET_ACCESS_KEY:-}" ]; then
-            AWS_ACCESS_KEY_ID="${WIKI_R2_ACCESS_KEY_ID}"
-            AWS_SECRET_ACCESS_KEY="${WIKI_R2_SECRET_ACCESS_KEY}"
-            KEY_SOURCE="WIKI_R2_*"
-          else
-            echo "Missing complete credential pair. Set both R2_ACCESS_KEY_ID/R2_SECRET_ACCESS_KEY or both WIKI_R2_ACCESS_KEY_ID/WIKI_R2_SECRET_ACCESS_KEY."
+          if [ -z "${WIKI_R2_ACCESS_KEY_ID:-}" ] || [ -z "${WIKI_R2_SECRET_ACCESS_KEY:-}" ]; then
+            echo "Missing required wiki auth secrets: WIKI_R2_ACCESS_KEY_ID and WIKI_R2_SECRET_ACCESS_KEY."
             exit 1
           fi
+          AWS_ACCESS_KEY_ID="${WIKI_R2_ACCESS_KEY_ID}"
+          AWS_SECRET_ACCESS_KEY="${WIKI_R2_SECRET_ACCESS_KEY}"
           export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
 
-          echo "Using credential source: ${KEY_SOURCE}"
+          echo "Using credential source: WIKI_R2_* (forced for photos S3 auth)"
 
           if [ -z "${ACCOUNT_ID}" ]; then
-            echo "Missing account id. Set R2_ACCOUNT_ID or CLOUDFLARE_ACCOUNT_ID."
+            echo "Missing account id. Set R2_ACCOUNT_ID (or WIKI_R2_ACCOUNT_ID fallback)."
             exit 1
           fi
           if [ -z "${BUCKET}" ]; then
