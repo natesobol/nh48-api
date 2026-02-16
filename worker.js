@@ -216,45 +216,80 @@ export default {
         return new Response('Unsupported fmt parameter.', { status: 400 });
       }
 
-      let upstreamUrl = sourceUrl.toString();
+      const originalSourceUrl = sourceUrl.toString();
+      const candidateUpstreamUrls = [];
+      const pushCandidate = (value) => {
+        const candidate = String(value || '').trim();
+        if (!candidate) return;
+        if (!candidateUpstreamUrls.includes(candidate)) {
+          candidateUpstreamUrls.push(candidate);
+        }
+      };
+
       if (isCloudflareImageHost(host)) {
-        upstreamUrl = buildCloudflareImageVariantUrl(upstreamUrl, {
+        pushCandidate(buildCloudflareImageVariantUrl(originalSourceUrl, {
           width,
           format: normalizedFormat,
           quality: 85
-        });
+        }));
+        pushCandidate(stripCloudflareImageTransform(originalSourceUrl));
+      }
+      pushCandidate(originalSourceUrl);
+
+      let upstreamResponse = null;
+      let resolvedUpstreamUrl = '';
+      let lastFailureStatus = 502;
+      let sawNonImagePayload = false;
+      for (const candidateUrl of candidateUpstreamUrls) {
+        let candidateResponse;
+        try {
+          candidateResponse = await fetch(candidateUrl, {
+            method: request.method,
+            headers: {
+              Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8'
+            },
+            cf: {
+              cacheEverything: true,
+              cacheTtl: 120
+            }
+          });
+        } catch (_) {
+          lastFailureStatus = 502;
+          continue;
+        }
+
+        if (!candidateResponse.ok) {
+          lastFailureStatus = candidateResponse.status;
+          continue;
+        }
+
+        const candidateContentType = candidateResponse.headers.get('content-type') || '';
+        if (!candidateContentType.toLowerCase().startsWith('image/')) {
+          sawNonImagePayload = true;
+          lastFailureStatus = 400;
+          continue;
+        }
+
+        upstreamResponse = candidateResponse;
+        resolvedUpstreamUrl = candidateUrl;
+        break;
       }
 
-      let upstreamResponse;
-      try {
-        upstreamResponse = await fetch(upstreamUrl, {
-          method: request.method,
-          headers: {
-            Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8'
-          },
-          cf: {
-            cacheEverything: true,
-            cacheTtl: 120
-          }
-        });
-      } catch (_) {
-        return new Response('Upstream image request failed.', { status: 502 });
-      }
-
-      if (!upstreamResponse.ok) {
-        return new Response(`Upstream image request failed (${upstreamResponse.status}).`, {
-          status: upstreamResponse.status
+      if (!upstreamResponse) {
+        if (sawNonImagePayload) {
+          return new Response('Upstream response is not an image.', { status: 400 });
+        }
+        return new Response(`Upstream image request failed (${lastFailureStatus}).`, {
+          status: lastFailureStatus
         });
       }
 
       const contentType = upstreamResponse.headers.get('content-type') || '';
-      if (!contentType.toLowerCase().startsWith('image/')) {
-        return new Response('Upstream response is not an image.', { status: 400 });
-      }
 
       const headers = new Headers();
       headers.set('Content-Type', contentType);
       headers.set('Cache-Control', 'public, max-age=120');
+      headers.set('X-NH48-Upstream-Image', resolvedUpstreamUrl);
       const etag = upstreamResponse.headers.get('etag');
       if (etag) headers.set('ETag', etag);
       const lastModified = upstreamResponse.headers.get('last-modified');
