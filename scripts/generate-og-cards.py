@@ -60,6 +60,7 @@ ROUTE_TEMPLATE_HINTS = {
     "/dataset/long-trails": "dataset/long-trails/index.html",
     "/dataset/howker-plants": "dataset/howker-plants/index.html",
     "/plant-catalog": "pages/plant_catalog.html",
+    "/bird-catalog": "pages/bird_catalog.html",
     "/projects/hrt-info": "pages/hrt_info.html",
     "/projects/plant-map": "pages/projects/plant-map.html",
     "/projects/howker-map-editor": "pages/projects/howker-map-editor.html",
@@ -897,12 +898,16 @@ def classify_route(route: str) -> tuple[str, str, str]:
         return "dataset-home", "dataset", "dataset-home"
     if route == "/plant-catalog":
         return "plant-catalog", "plants", "plant-catalog"
+    if route == "/bird-catalog":
+        return "bird-catalog", "birds", "bird-catalog"
     if route.startswith("/peak/") and len(parts) >= 2:
         return "peak", "peaks", parts[1]
     if route.startswith("/range/") and len(parts) >= 2:
         return "range", "ranges", parts[1]
     if route.startswith("/plant/") and len(parts) >= 2:
         return "plant", "plants", parts[1]
+    if route.startswith("/bird/") and len(parts) >= 2:
+        return "bird", "birds", parts[1]
     if route.startswith("/trails/") and len(parts) >= 2:
         return "trail-detail", "trails", parts[1]
     if route.startswith("/dataset/") and len(parts) >= 2:
@@ -963,6 +968,8 @@ def family_to_fallback_key(family: str) -> str:
         "dataset-detail": "dataset",
         "catalog": "peak",
         "plant-catalog": "howker",
+        "bird": "howker",
+        "bird-catalog": "howker",
         "project": "howker",
         "howker": "howker",
         "game": "game",
@@ -982,6 +989,8 @@ def build_default_headline(family: str, title: str) -> str:
         return f"Discover the {title} in the White Mountains"
     if family in {"plant", "plant-catalog"}:
         return f"Explore the flora along the Howker Ridge Trail: {title}"
+    if family in {"bird", "bird-catalog"}:
+        return f"Explore New Hampshire birds: {title}"
     if family == "photos":
         return "Browse photos of New Hampshire's 4,000-footers"
     if family in {"dataset-home", "dataset-detail"}:

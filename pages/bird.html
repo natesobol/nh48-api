@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" href="/favicons/favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/x-icon" href="/favicons/favicon.ico" />
+<link rel="shortcut icon" href="/favicons/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+<link rel="manifest" href="/manifest.json" />
+<title>NH Bird Catalog - Bird Detail</title>
+<meta name="description" content="NH Bird Catalog detail shell. Bird schema and photo source are being connected." />
+<link rel="canonical" href="https://nh48.info/bird/example" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="NH48pics" />
+<meta property="og:title" content="NH Bird Catalog - Bird Detail" />
+<meta property="og:description" content="Bird detail shell with placeholders while data integration is pending." />
+<meta property="og:url" content="https://nh48.info/bird/example" />
+<meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg" />
+<meta property="og:image:alt" content="White Mountains ridgeline scene" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@nate_dumps_pics" />
+<meta name="twitter:creator" content="@nate_dumps_pics" />
+<meta name="twitter:title" content="NH Bird Catalog - Bird Detail" />
+<meta name="twitter:description" content="Bird detail shell with placeholders while data integration is pending." />
+<meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg" />
+<meta name="twitter:image:alt" content="White Mountains ridgeline scene" />
+<script src="/js/unified-footer.js" defer></script>
+<style>
+:root{
+  --bg:#0a0a0a;
+  --panel:#12121a;
+  --card:#171a22;
+  --ink:#ffffff;
+  --muted:#a5b4c3;
+  --stroke:#ffffff;
+  --accent:#22c55e;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+}
+.wrap{
+  max-width:1120px;
+  margin:24px auto;
+  padding:0 12px 24px;
+}
+.panel{
+  background:var(--panel);
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+.bird-hero{
+  position:relative;
+  border-radius:14px;
+  padding:26px 18px;
+  background-image:url('https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1600/mount-madison/mount-madison__003.jpg');
+  background-size:cover;
+  background-position:center;
+  overflow:hidden;
+}
+.bird-hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,rgba(7,10,18,0.84),rgba(7,10,18,0.36));
+}
+.bird-hero h1{
+  margin:0;
+  position:relative;
+  z-index:1;
+  text-shadow:0 8px 22px rgba(0,0,0,0.45);
+}
+.hero-actions{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+}
+.share-card-btn{
+  border:1px solid rgba(255,255,255,0.5);
+  border-radius:999px;
+  background:rgba(10,14,22,0.76);
+  color:#fff;
+  font-size:13px;
+  font-weight:700;
+  padding:9px 14px;
+  line-height:1;
+}
+.share-card-btn:disabled{
+  opacity:0.7;
+  cursor:not-allowed;
+}
+.share-card-dropdown{
+  min-width:210px;
+  background:#0f172a;
+  border:1px solid rgba(255,255,255,0.16);
+  border-radius:10px;
+  padding:8px;
+  display:grid;
+  gap:6px;
+}
+.share-card-dropdown[hidden]{
+  display:none;
+}
+.share-card-dropdown button{
+  width:100%;
+  border:1px solid rgba(148,163,184,0.38);
+  border-radius:8px;
+  background:#101826;
+  color:#dbe6f5;
+  padding:8px 10px;
+  text-align:left;
+  font-size:12px;
+  cursor:pointer;
+}
+.share-card-status{
+  margin:0;
+  font-size:12px;
+  color:#dbe6f5;
+  max-width:260px;
+  text-align:right;
+}
+.page-breadcrumbs{
+  margin:14px 0 4px;
+}
+.page-breadcrumbs ol{
+  margin:0;
+  padding:0;
+  list-style:none;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  color:var(--muted);
+  font-size:14px;
+}
+.page-breadcrumbs li:not(:last-child)::after{
+  content:"/";
+  margin-left:8px;
+  color:var(--muted);
+}
+.page-breadcrumbs a{
+  color:#dbeafe;
+  text-decoration:none;
+}
+.text-guide{
+  margin:8px 0 16px;
+  color:var(--muted);
+  font-size:14px;
+}
+.detail-nav-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+}
+.back-link{
+  color:var(--accent);
+  text-decoration:none;
+  font-weight:700;
+}
+.bird-sequence{
+  display:flex;
+  gap:8px;
+}
+.bird-sequence a{
+  border:1px solid rgba(255,255,255,0.7);
+  border-radius:999px;
+  padding:8px 12px;
+  color:#fff;
+  text-decoration:none;
+  font-size:13px;
+}
+header.details{
+  margin-bottom:10px;
+}
+header.details h2{
+  margin:0;
+  font-size:44px;
+  line-height:1.05;
+}
+.latin{
+  margin-top:6px;
+  color:#b3c2d7;
+  font-size:24px;
+  font-style:italic;
+}
+.chiprow{
+  margin-top:8px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.chip{
+  border:1px solid #1f8e4f;
+  border-radius:999px;
+  padding:4px 10px;
+  color:#2dd97f;
+  font-size:12px;
+}
+.media{
+  margin-top:8px;
+  border:1px solid rgba(255,255,255,0.78);
+  border-radius:12px;
+  padding:8px;
+  background:#111522;
+}
+.carousel{
+  position:relative;
+  width:100%;
+  aspect-ratio:5/3;
+  overflow:hidden;
+  border-radius:8px;
+  background:#0f172a;
+}
+.slide{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 220ms ease;
+}
+.slide.active{
+  opacity:1;
+  pointer-events:auto;
+}
+.slide img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.media-loading{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  z-index:4;
+  pointer-events:none;
+}
+.media-loading[hidden]{
+  display:none;
+}
+.loading-spinner{
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  border:3px solid rgba(255,255,255,0.28);
+  border-top-color:var(--accent);
+  animation:spin 900ms linear infinite;
+}
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+.dots{
+  margin-top:8px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,0.7);
+  background:transparent;
+  padding:0;
+}
+.dot.active{
+  background:var(--accent);
+  border-color:var(--accent);
+}
+.ctrls{
+  position:relative;
+  margin-top:-50%;
+  display:flex;
+  justify-content:space-between;
+  pointer-events:none;
+  padding:0 8px;
+}
+.ctrls button{
+  pointer-events:auto;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,0.7);
+  background:rgba(9,12,18,0.58);
+  color:#fff;
+  font-size:25px;
+}
+.content{
+  margin-top:16px;
+}
+.section{
+  margin-top:14px;
+}
+.section h3{
+  margin:0 0 8px;
+  font-size:23px;
+}
+.section-panel{
+  border:1px solid rgba(255,255,255,0.75);
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(18,26,40,0.95),rgba(15,20,32,0.95));
+  padding:14px 14px 16px;
+}
+.facts{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.fact{
+  border:1px solid rgba(255,255,255,0.8);
+  border-radius:10px;
+  background:#141a2a;
+  padding:10px;
+}
+.fact h4{
+  margin:0 0 8px;
+  padding-bottom:6px;
+  border-bottom:1px dotted rgba(255,255,255,0.45);
+  color:#3af08f;
+  font-size:14px;
+  letter-spacing:0.05em;
+}
+.fact p{
+  margin:0;
+  font-size:19px;
+  line-height:1.25;
+}
+.related-birds-list{
+  display:grid;
+  gap:8px;
+}
+.related-birds-list a{
+  border:1px solid rgba(255,255,255,0.6);
+  border-radius:10px;
+  text-decoration:none;
+  color:#e2edf9;
+  padding:10px;
+  background:#121a2a;
+}
+.status-note{
+  margin-top:12px;
+  color:var(--muted);
+  font-size:13px;
+}
+@media (max-width:980px){
+  header.details h2{font-size:34px}
+}
+@media (max-width:840px){
+  .facts{grid-template-columns:1fr}
+  .detail-nav-row{flex-direction:column;align-items:flex-start}
+  .bird-sequence{width:100%}
+  .bird-sequence a{flex:1;text-align:center}
+}
+@media (max-width:640px){
+  .wrap{margin:10px auto}
+  .panel{padding:14px}
+  .latin{font-size:20px}
+  .ctrls{margin-top:-55%}
+}
+</style>
+</head>
+<body data-route="bird-detail" data-page="bird-detail">
+  <div id="nav-placeholder"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
+      if (!navPlaceholder) return;
+      fetch('/pages/nav.html')
+        .then((response) => response.text())
+        .then((html) => {
+          navPlaceholder.innerHTML = html;
+          const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+          links.forEach((link) => {
+            const routes = (link.dataset.routes || link.dataset.route || '')
+              .split(',')
+              .map((value) => value.trim())
+              .filter(Boolean);
+            if (routes.includes(activeRoute)) {
+              link.classList.add('active');
+              link.setAttribute('aria-current', 'page');
+            }
+          });
+          if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+            window.NH48_I18N.refreshLangPicker();
+          }
+        })
+        .catch((err) => console.error('Failed to load navigation:', err));
+    });
+  </script>
+
+  <main class="wrap panel" id="bird-detail">
+    <header class="bird-hero">
+      <h1 id="detail-title">NH Bird Catalog - Bird</h1>
+      <div class="hero-actions">
+        <div id="shareCardMenu">
+          <button id="shareCardBtn" class="share-card-btn" type="button" aria-label="Share bird card" aria-haspopup="menu" aria-expanded="false" disabled>Share Card &#9662;</button>
+          <div id="shareCardDropdown" class="share-card-dropdown" role="menu" hidden></div>
+        </div>
+        <p id="shareCardStatus" class="share-card-status" role="status" aria-live="polite" aria-atomic="true"></p>
+      </div>
+    </header>
+
+    <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/bird-catalog">Projects</a></li>
+        <li><a href="/bird-catalog">NH Bird Catalog</a></li>
+        <li><span id="detail-breadcrumb">Bird</span></li>
+      </ol>
+    </nav>
+    <p class="text-guide">Bird detail shell is live. Data schema integration and dedicated bird media pipeline are pending.</p>
+
+    <div class="detail-nav-row">
+      <a href="/bird-catalog" class="back-link" id="backToCatalogLink">&larr; Back to Bird Catalog</a>
+      <div class="bird-sequence" id="birdSequenceNav" hidden>
+        <a href="#" id="prevBirdLink" rel="prev">&larr; Previous bird</a>
+        <a href="#" id="nextBirdLink" rel="next">Next bird &rarr;</a>
+      </div>
+    </div>
+
+    <header class="details">
+      <h2 id="d-title">Bird record pending</h2>
+      <div class="latin" id="d-latin">Data source not connected yet</div>
+      <div class="chiprow" id="d-tags"></div>
+    </header>
+
+    <div class="media">
+      <div class="media-loading" id="carouselLoading" aria-hidden="true" hidden>
+        <span class="loading-spinner" aria-hidden="true"></span>
+      </div>
+      <div id="carousel" class="carousel" aria-roledescription="carousel" aria-label="Bird photos" tabindex="0"></div>
+      <div class="ctrls">
+        <button type="button" id="prevBtn" aria-label="Previous image">&#8249;</button>
+        <button type="button" id="nextBtn" aria-label="Next image">&#8250;</button>
+      </div>
+      <div id="dots" class="dots" aria-hidden="true"></div>
+    </div>
+
+    <div class="content">
+      <section class="section section-panel" id="sec-desc">
+        <h3>Short Description</h3>
+        <p id="d-desc">No bird record is available yet. Connect the bird schema and dataset to unlock full details.</p>
+      </section>
+
+      <div class="facts">
+        <div class="fact"><h4>TYPE</h4><p id="f-type">&mdash;</p></div>
+        <div class="fact"><h4>ELEVATION</h4><p id="f-elev">&mdash;</p></div>
+        <div class="fact"><h4>HABITAT</h4><p id="f-habitat">&mdash;</p></div>
+        <div class="fact"><h4>SEASON</h4><p id="f-season">&mdash;</p></div>
+        <div class="fact"><h4>PLUMAGE</h4><p id="f-plumage">&mdash;</p></div>
+        <div class="fact"><h4>SIMILAR SPECIES</h4><p id="f-similar">&mdash;</p></div>
+        <div class="fact"><h4>BEHAVIOR</h4><p id="f-behavior">&mdash;</p></div>
+        <div class="fact"><h4>STATUS</h4><p id="f-status">&mdash;</p></div>
+      </div>
+
+      <section class="section" id="relatedBirdsSection" hidden>
+        <h3>Related Birds</h3>
+        <div class="related-birds-list" id="relatedBirdsList"></div>
+      </section>
+
+      <section class="section" id="sec-notes" hidden>
+        <h3>Field Notes</h3>
+        <ul id="d-notes"></ul>
+      </section>
+
+      <section class="section" id="sec-credits" hidden>
+        <h3>Photo Credits</h3>
+        <p id="d-credits"></p>
+      </section>
+
+      <p class="status-note" id="detailStatusNote"></p>
+    </div>
+  </main>
+
+  <script src="/js/nh-bird-detail.js"></script>
+</body>
+</html>

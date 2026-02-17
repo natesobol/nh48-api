@@ -44,6 +44,8 @@ const STATIC_PAGE_ENTRIES = [
   { loc: 'https://nh48.info/fr/dataset/howker-plants', file: 'dataset/howker-plants/index.html' },
   { loc: 'https://nh48.info/plant-catalog', file: 'pages/plant_catalog.html' },
   { loc: 'https://nh48.info/fr/plant-catalog', file: 'pages/plant_catalog.html' },
+  { loc: 'https://nh48.info/bird-catalog', file: 'pages/bird_catalog.html' },
+  { loc: 'https://nh48.info/fr/bird-catalog', file: 'pages/bird_catalog.html' },
   { loc: 'https://nh48.info/projects/hrt-info', file: 'pages/hrt_info.html' },
   { loc: 'https://nh48.info/fr/projects/hrt-info', file: 'pages/hrt_info.fr.html' },
   { loc: 'https://nh48.info/projects/plant-map', file: 'pages/projects/plant-map.html' },
@@ -386,6 +388,28 @@ const STATIC_IMAGE_ENTRIES = [
         url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg',
         title: 'Mount Madison ridge view with alpine terrain and distant peaks',
         caption: 'Alpine plant catalog preview image.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/bird-catalog',
+    file: 'pages/bird_catalog.html',
+    images: [
+      {
+        url: 'https://nh48.info/photos/og/birds/bird-catalog.jpg',
+        title: 'NH Bird Catalog beta preview image',
+        caption: 'Bird catalog beta shell preview while bird media integration is pending.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/fr/bird-catalog',
+    file: 'pages/bird_catalog.html',
+    images: [
+      {
+        url: 'https://nh48.info/photos/og/birds/bird-catalog.jpg',
+        title: 'NH Bird Catalog beta preview image',
+        caption: 'Bird catalog beta shell preview while bird media integration is pending.',
       },
     ],
   },

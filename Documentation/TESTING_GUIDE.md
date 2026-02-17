@@ -125,6 +125,35 @@ Retry policy:
 5. Backfill missing locale keys after adding new EN keys:
    - `npm run sync:i18n-missing-keys`
 
+## NH Bird Catalog Shell (UI/Routing Phase)
+Current scope is intentionally UI/routing only:
+- Live routes:
+  - `/bird-catalog`
+  - `/fr/bird-catalog`
+  - `/bird/<slug>`
+  - `/fr/bird/<slug>`
+- Catalog and detail pages render stable placeholders when no dataset is connected.
+- No production bird schema adapter is active yet.
+- No bird photo bucket sync workflow is active yet.
+
+Developer smoke test (optional local seed data):
+1. Open browser console on `/bird-catalog`.
+2. Seed test data:
+   - `window.__NH_BIRD_DEV_DATA__ = [{ id: 'common-loon', common: 'Common Loon', latin: 'Gavia immer', type: 'Waterbird', habitat: 'Lakes and ponds', season: 'Spring through fall', imgs: ['https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg'] }]; location.reload();`
+3. Confirm card rendering, filters, and detail link behavior.
+4. Open `/bird/common-loon?return=%2Fbird-catalog` and verify detail shell + back-link continuity.
+
+Future hookup checklist (deferred):
+1. Add bird schema adapter (map real JSON into catalog/detail normalized fields).
+2. Add bird media host/domain wiring (planned domain pattern: `nhbirds.nh48.info`).
+3. Add optional secrets namespace (example recommendation only):
+   - `NHBIRDS_R2_ACCESS_KEY_ID`
+   - `NHBIRDS_R2_SECRET_ACCESS_KEY`
+   - `NHBIRDS_R2_BUCKET_NAME`
+   - `NHBIRDS_R2_ACCOUNT_ID`
+   - `NHBIRDS_R2_ENDPOINT`
+4. Activate a dedicated bird media sync workflow only after bucket and ACL scope are verified.
+
 ## CI Workflow Ownership Map
 - `deploy-worker.yml`: Worker deploy + all SEO/peak audit gates + production parity retry.
 - `prerender.yml`: Canonical prerender/sitemap/OG generator and committer for generated files.

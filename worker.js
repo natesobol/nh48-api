@@ -847,10 +847,13 @@ export default {
       '/long-trails.html': '/long-trails',
       '/peak.html': '/catalog',
       '/plant-catalog.html': '/plant-catalog',
+      '/bird-catalog.html': '/bird-catalog',
       '/trails_app.html': '/trails',
       '/long_trails_app.html': '/long-trails',
       '/plant_catalog.html': '/plant-catalog',
       '/plant_catalog': '/plant-catalog',
+      '/bird_catalog.html': '/bird-catalog',
+      '/bird_catalog': '/bird-catalog',
       '/hrt_info.html': '/projects/hrt-info',
       '/pages/hrt_info.html': '/projects/hrt-info',
       '/howker_ridge.html': '/howker-ridge',
@@ -927,13 +930,16 @@ export default {
       pathname === '/wiki' || pathname === '/wiki/' ||
       pathname.startsWith('/wiki/') || pathname.startsWith('/fr/wiki/') ||
       pathname === '/plant-catalog' || pathname === '/plant-catalog/' ||
+      pathname === '/bird-catalog' || pathname === '/bird-catalog/' ||
+      pathname === '/fr/bird-catalog' || pathname === '/fr/bird-catalog/' ||
       pathname === '/projects/plant-map' || pathname === '/projects/plant-map/' ||
       pathname === '/projects/hrt-info' || pathname === '/projects/hrt-info/' ||
       pathname === '/howker-ridge' || pathname === '/howker-ridge/' ||
       pathname.startsWith('/howker-ridge/poi') ||
       pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
+      pathname.startsWith('/bird/') || pathname.startsWith('/fr/bird/') ||
       pathname === '/nh-4000-footers-info.html' || pathname === '/nh-4000-footers-info' ||
-      pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant)/) !== null;
+      pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant|bird)/) !== null;
 
     // Serve static files from GitHub (but not SSR routes even if they have extensions)
     if ((hasStaticPrefix || isStaticFile || hasStaticExtension) && !isSSRRoute) {
@@ -3025,6 +3031,9 @@ export default {
         '/timed-peakid-game.html': '/timed-peakid-game',
         '/peakid-timed': '/timed-peakid-game',
         '/plant-catalog.html': '/plant-catalog',
+        '/bird-catalog.html': '/bird-catalog',
+        '/bird_catalog.html': '/bird-catalog',
+        '/bird_catalog': '/bird-catalog',
         '/nh-4000-footers-info.html': '/nh-4000-footers-info',
         '/nh48-planner': '/nh48-planner.html',
         '/virtual_hike.html': '/virtual-hike'
@@ -3289,6 +3298,20 @@ export default {
           push(isFrench ? 'Catalogue de donnees' : 'Data Catalog', datasetUrl);
           push(isFrench ? 'Catalogue des plantes alpines' : 'Alpine Plant Catalog', plantCatalogUrl);
           push(context.plantName || (isFrench ? 'Plante' : 'Plant'));
+          break;
+        case 'bird-catalog':
+          withApiPrefix();
+          push(isFrench ? 'Projets' : 'Projects');
+          push(isFrench ? 'Catalogue des oiseaux NH (beta)' : 'NH Bird Catalog (Beta)');
+          break;
+        case 'bird-detail':
+          withApiPrefix();
+          push(isFrench ? 'Projets' : 'Projects');
+          push(
+            isFrench ? 'Catalogue des oiseaux NH (beta)' : 'NH Bird Catalog (Beta)',
+            isFrench ? `${SITE}/fr/bird-catalog` : `${SITE}/bird-catalog`
+          );
+          push(context.birdName || (isFrench ? 'Oiseau' : 'Bird'));
           break;
         case 'wiki-home':
           push(homeLabel, homeUrl);
@@ -5612,6 +5635,55 @@ export default {
       });
     }
 
+    if (pathNoLocale === '/bird-catalog' || pathNoLocale === '/bird-catalog/') {
+      const canonical = `${SITE}${pathname}`;
+      const birdCatalogTitle = 'NH Bird Catalog (Beta)';
+      const birdCatalogDesc = 'UI and routing shell for New Hampshire bird species while schema and media source integration are in progress.';
+      const jsonLd = [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: birdCatalogTitle,
+          description: birdCatalogDesc,
+          url: canonical,
+          isPartOf: { '@id': `${SITE}/#website` }
+        },
+        buildDatasetSchema({
+          canonicalUrl: canonical,
+          title: 'NH Bird Catalog Dataset (Pending)',
+          description: 'Bird dataset contract is pending and will be connected in a follow-up phase.',
+          distribution: [
+            {
+              '@type': 'DataDownload',
+              name: 'NH Bird Catalog (Pending)',
+              encodingFormat: 'application/json',
+              contentUrl: canonical
+            }
+          ],
+          keywords: ['birds', 'new hampshire', 'catalog', 'nh48'],
+          spatialCoverage: { '@type': 'Place', name: 'New Hampshire' },
+          license: 'https://creativecommons.org/licenses/by/4.0/',
+          publisher: { '@id': `${SITE}/#organization` }
+        })
+      ];
+      return serveTemplatePage({
+        templatePath: 'pages/bird_catalog.html',
+        pathname,
+        routeId: 'bird-catalog',
+        meta: {
+          title: birdCatalogTitle,
+          description: birdCatalogDesc,
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: 'NH Bird Catalog beta landing page',
+          ogType: 'website'
+        },
+        jsonLd
+      });
+    }
+
     if (pathNoLocale === '/projects/hrt-info' || pathNoLocale === '/projects/hrt-info/') {
       const canonical = `${SITE}${pathname}`;
       const creativeWorks = await loadCreativeWorks();
@@ -5792,6 +5864,44 @@ export default {
           alternateFr: `${SITE}${frPath}`,
           image,
           imageAlt: plant.common || plant.latin || 'Howker Ridge plant photo',
+          ogType: 'article'
+        },
+        jsonLd
+      });
+    }
+
+    if (pathNoLocale.startsWith('/bird/') && slug) {
+      const canonical = `${SITE}${pathname}`;
+      const birdLabel = humanizeSlug(slug) || 'Bird';
+      const title = `${birdLabel} | NH Bird Catalog`;
+      const description = 'Bird detail shell route is live. Connect the NH bird schema and media source to populate species-specific metadata.';
+      const jsonLd = [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: title,
+          description,
+          url: canonical,
+          isPartOf: { '@id': `${SITE}/#website` },
+          about: {
+            '@type': 'Thing',
+            name: birdLabel
+          }
+        }
+      ];
+      return serveTemplatePage({
+        templatePath: 'pages/bird.html',
+        pathname,
+        routeId: 'bird-detail',
+        breadcrumbContext: { birdName: birdLabel },
+        meta: {
+          title,
+          description,
+          canonical,
+          alternateEn: `${SITE}${enPath}`,
+          alternateFr: `${SITE}${frPath}`,
+          image: DEFAULT_IMAGE,
+          imageAlt: `${birdLabel} bird detail placeholder`,
           ogType: 'article'
         },
         jsonLd

@@ -1,0 +1,1541 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<!-- Favicons - ICO format preferred for Google compatibility -->
+<link rel="icon" href="/favicons/favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/x-icon" href="/favicons/favicon.ico" />
+<link rel="shortcut icon" href="/favicons/favicon.ico" />
+<link rel="icon" type="image/x-icon" sizes="16x16" href="/favicons/favicon-16x16.ico" />
+<link rel="icon" type="image/x-icon" sizes="32x32" href="/favicons/favicon-32x32.ico" />
+<link rel="icon" type="image/x-icon" sizes="48x48" href="/favicons/favicon-48x48.ico" />
+<link rel="icon" type="image/x-icon" sizes="96x96" href="/favicons/favicon-96x96.ico" />
+<!-- PNG fallbacks for browsers that prefer PNG -->
+<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48x48.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+<link rel="manifest" href="/manifest.json" />
+<title>NH Bird Catalog</title>
+<meta name="description" content="NH Bird Catalog shell for tracking New Hampshire bird species. UI and route scaffolding are live while the production bird dataset is being connected." />
+<meta name="keywords" content="NH bird catalog, New Hampshire birds, bird species, NH48 birds, bird tracking" />
+<link rel="canonical" id="canonical-link" href="https://nh48.info/bird-catalog" />
+<link rel="alternate" hreflang="en" href="https://nh48.info/bird-catalog" />
+<link rel="alternate" hreflang="fr" href="https://nh48.info/fr/bird-catalog" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="NH48pics" />
+<meta property="og:title" content="NH Bird Catalog" />
+<meta property="og:description" content="Browse and organize New Hampshire bird species in the upcoming NH Bird Catalog." />
+<meta property="og:url" content="https://nh48.info/bird-catalog" />
+<meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg" />
+<meta property="og:image:alt" content="Mount Madison ridge view with alpine terrain and distant peaks" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@nate_dumps_pics" />
+<meta name="twitter:creator" content="@nate_dumps_pics" />
+<meta name="twitter:title" content="NH Bird Catalog" />
+<meta name="twitter:description" content="New Hampshire bird catalog shell with filters, cards, and detail routing ready for live data hookup." />
+<meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-madison/mount-madison__003.jpg" />
+<meta name="twitter:image:alt" content="Mount Madison ridge view with alpine terrain and distant peaks" />
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "NH Bird Catalog",
+    "description": "Bird catalog shell for New Hampshire species with filtering and detail-page scaffolding.",
+    "url": "https://nh48.info/bird-catalog",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "NH48pics",
+      "url": "https://nh48.info/"
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://nh48.info/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Projects",
+          "item": "https://nh48.info/bird-catalog"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "NH Bird Catalog",
+          "item": "https://nh48.info/bird-catalog"
+        }
+      ]
+    },
+    "mainEntity": {
+      "@type": "Dataset",
+      "name": "NH Bird Catalog Dataset (Pending)",
+      "description": "Bird dataset contract is pending and will be connected in a follow-up phase.",
+      "url": "https://nh48.info/bird-catalog",
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://nh48.info/bird-catalog"
+        }
+      ]
+    }
+  }
+</script>
+<script type="application/ld+json" class="bird-list">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "NH Bird Catalog",
+    "itemListElement": []
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Place",
+    "name": "New Hampshire",
+    "description": "Statewide birding coverage area for the NH Bird Catalog shell.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Randolph",
+      "addressRegion": "NH",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 44.334951,
+      "longitude": -71.266614
+    }
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "NH48 - White Mountains Hiking Guide",
+    "url": "https://nh48.info/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "NH48 Project",
+      "url": "https://nh48.info/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://nh48.info/assets/logo.png",
+        "width": 512,
+        "height": 512
+      }
+    }
+  }
+</script>
+<script>
+  (() => {
+    if (window.NH48_BUILD_DATE) return;
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/build-meta.json', false);
+      xhr.send(null);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const meta = JSON.parse(xhr.responseText);
+        if (meta && meta.buildDate) {
+          window.NH48_BUILD_DATE = meta.buildDate;
+        }
+      }
+    } catch (err) {
+      // No-op: build date is optional in static builds.
+    }
+  })();
+</script>
+  <script type="module" src="/js/i18n.js"></script>
+  <script src="/js/unified-footer.js" defer></script>
+
+<style>
+
+/****************************
+ * THEME VARIABLES
+ ****************************/
+:root{
+  /* Dark theme palette
+     - bg: background color of the page
+     - panel/card: surfaces for panels and cards
+     - ink: primary text color
+     - muted: secondary text color
+     - stroke: border color (forced pure white here)
+     - accent: highlight color used for active states
+     - gap: base spacing unit for components */
+  --bg:#0a0a0a;
+  --panel:#12121a;
+  --card:#171a22;
+  --ink:#ffffff;
+  --muted:#a5b4c3;
+  --stroke:#ffffff;
+  --accent:#22c55e;
+  --gap:10px;
+}
+/* Light theme overrides applied when body has class "light" */
+body.light{
+  --bg:#f8fafc;
+  --panel:#ffffff;
+  --card:#f7f9fc;
+  --ink:#1f2937;
+  --muted:#6b7280;
+  --stroke:#00000022;
+  --accent:#22c55e;
+}
+
+/****************************
+ * GLOBAL RESETS & BASICS
+ ****************************/
+*{ box-sizing:border-box; }
+html{
+  min-width:320px;
+  scroll-behavior:smooth;
+}
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow:auto; /* allow the page to scroll, avoid nested page-level scrolls */
+}
+
+/****************************
+ * LAYOUT CONTAINERS
+ ****************************/
+/* Wrapper to constrain content width and provide horizontal padding */
+.wrap{
+  max-width:1100px;
+  margin:0 auto;
+  padding:12px;
+}
+/* Main panel surface with white border and slight shadow */
+.panel{
+  background:var(--panel);
+  border:none;
+  border-radius:10px;
+  margin-top:1.5rem;
+  padding:16px;
+  box-shadow:0 10px 30px #0004;
+  overflow:hidden;
+}
+
+/****************************
+ * TYPOGRAPHY
+ ****************************/
+header h1{
+  margin:0 0 8px;
+  font-size:clamp(20px,3.2vw,28px);
+  letter-spacing:.2px;
+  line-height:1.2;
+}
+header p{
+  margin:0;
+  color:var(--muted);
+}
+header.plant-hero{
+  position:relative;
+  padding:36px 24px;
+  border-radius:14px;
+  background-image:url('https://howker.nh48.info/blueberry-ledge/blueberry-ledge-001.jpg');
+  background-size:cover;
+  background-position:center 68%;
+  color:#f6f7fb;
+  overflow:hidden;
+}
+header.plant-hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg, rgba(6,9,16,0.7), rgba(6,9,16,0.35));
+}
+header.plant-hero blockquote{
+  position:relative;
+  margin:0;
+  z-index:1;
+}
+header.plant-hero h1{
+  color:inherit;
+  text-shadow:0 8px 24px rgba(0,0,0,0.55);
+}
+header.plant-hero.sticky{
+  background-image:none;
+  background-color:var(--panel);
+  color:var(--ink);
+}
+header.plant-hero.sticky::before{
+  content:none;
+}
+header.plant-hero.sticky h1{
+  text-shadow:none;
+}
+
+.page-breadcrumbs{
+  margin:6px 0 16px;
+  font-size:13px;
+  color:var(--muted);
+}
+.page-breadcrumbs ol{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.page-breadcrumbs li::after{
+  content:"/";
+  margin-left:6px;
+  color:var(--muted);
+}
+.page-breadcrumbs li:last-child::after{
+  content:"";
+}
+.page-breadcrumbs a{
+  color:inherit;
+  text-decoration:none;
+}
+.page-breadcrumbs a:hover{
+  color:var(--accent);
+}
+.text-guide{
+  font-size:0.9rem;
+  margin:0 0 1rem;
+}
+.text-green{ color:#388e3c; }
+.text-yellow{ color:#fbc02d; }
+.text-red{ color:#d32f2f; }
+
+/****************************
+ * LATEST UPDATES DROPDOWN
+ ****************************/
+.updates-dropdown{
+  margin:16px 0 20px;
+  border:2px solid var(--stroke);
+  border-radius:12px;
+  overflow:hidden;
+  background:linear-gradient(180deg, #0f121a 0%, #0b0d14 100%);
+}
+.updates-dropdown summary{
+  list-style:none;
+  cursor:pointer;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  font-weight:700;
+  color:var(--accent);
+}
+.updates-dropdown summary::-webkit-details-marker{
+  display:none;
+}
+.updates-dropdown summary::before{
+  content:">";
+  display:inline-block;
+  transform:rotate(0deg);
+  transition:transform 0.2s ease;
+  color:var(--accent);
+  margin-right:8px;
+}
+.updates-dropdown[open] summary::before{
+  transform:rotate(90deg);
+}
+.updates-dropdown summary .summary-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.updates-dropdown .summary-action{
+  font-size:12px;
+  padding:6px 14px;
+  border-radius:999px;
+  border:1px solid transparent;
+  background:var(--accent);
+  color:#0a0a0a;
+  text-decoration:none;
+  font-weight:700;
+  white-space:nowrap;
+}
+.updates-dropdown .summary-action:hover{
+  filter:brightness(0.95);
+}
+.updates-dropdown .updates-body{
+  border-top:1px solid #ffffff33;
+  padding:8px 16px 16px;
+  display:grid;
+  gap:12px;
+}
+.updates-dropdown .update-entry{
+  border:1px solid #ffffff33;
+  border-radius:10px;
+  padding:12px 14px;
+  background:rgba(18, 18, 26, 0.7);
+}
+.updates-dropdown .update-entry.latest{
+  border-color:rgba(143, 233, 255, 0.7);
+  background:linear-gradient(140deg, rgba(27, 53, 68, 0.9), rgba(18, 18, 26, 0.8));
+  box-shadow:0 0 0 1px rgba(143, 233, 255, 0.3);
+}
+.updates-dropdown .update-marker{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-left:10px;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  padding:2px 8px;
+  border-radius:999px;
+  background:rgba(143, 233, 255, 0.18);
+  color:#bfefff;
+}
+.updates-dropdown .updates-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  margin:2px 2px 0;
+}
+.updates-dropdown .updates-divider::before,
+.updates-dropdown .updates-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:rgba(255, 255, 255, 0.18);
+}
+.updates-dropdown .update-entry h3{
+  margin:0 0 6px;
+  font-size:14px;
+}
+.updates-dropdown .update-entry p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.5;
+}
+.updates-dropdown .update-entry strong{
+  color:var(--ink);
+}
+
+.catalog-meta{
+  margin-top:24px;
+  border-top:1px dashed var(--stroke);
+  padding-top:18px;
+  display:grid;
+  gap:16px;
+}
+.catalog-meta h2{
+  margin:0 0 6px;
+  font-size:18px;
+}
+.catalog-meta h3{
+  margin:0 0 6px;
+  font-size:16px;
+}
+.catalog-meta p{
+  margin:0 0 10px;
+  color:var(--muted);
+}
+.catalog-meta ul{
+  margin:0;
+  padding-left:18px;
+  color:var(--muted);
+}
+@media(min-width:860px){
+  .catalog-meta{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+/****************************
+ * FILTER CONTROLS
+ ****************************/
+.controls-wrap{
+  margin:14px 0 12px;
+  display:grid;
+  gap:10px;
+}
+.controls{
+  display:grid;
+  gap:10px;
+  grid-template-columns:1fr;
+}
+.controls .ctrl-row{
+  display:grid;
+  gap:10px;
+  grid-template-columns:1fr;
+}
+.ctrl-search{
+  min-width:0;
+}
+.ctrl{
+  display:flex;
+  align-items:center;
+}
+.ctrl input,
+.ctrl select{
+  width:100%;
+  height:42px;
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  background:var(--card);
+  color:var(--ink);
+  padding:0 14px;
+  outline:none;
+  min-width:0;
+}
+.ctrl input::placeholder{
+  color:var(--muted);
+}
+.filter-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.btn-clear{
+  border:1px solid #22c55e66;
+  background:#07121d;
+  color:#22c55e;
+  border-radius:10px;
+  height:36px;
+  padding:0 12px;
+  font-weight:700;
+  cursor:pointer;
+}
+.btn-clear:hover{
+  border-color:#22c55e99;
+}
+.result-summary{
+  color:var(--muted);
+  font-size:12px;
+}
+.active-filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.active-filter-chip{
+  border:1px solid #22c55e66;
+  border-radius:999px;
+  background:#061827;
+  color:#a7f3d0;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:4px 10px;
+  font-size:11px;
+  letter-spacing:.02em;
+}
+.active-filter-chip button{
+  border:none;
+  background:transparent;
+  color:#22c55e;
+  cursor:pointer;
+  padding:0;
+  font-size:12px;
+  line-height:1;
+}
+.quick-tags-panel{
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  padding:10px;
+  background:color-mix(in srgb, var(--card) 88%, #04180f 12%);
+}
+.quick-tags-title{
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--muted);
+  font-size:10px;
+  margin-bottom:8px;
+}
+.quick-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.quick-tag-chip{
+  border:1px solid #22c55e55;
+  border-radius:999px;
+  background:#07131f;
+  color:#22c55e;
+  font-size:11px;
+  padding:4px 10px;
+  cursor:pointer;
+  line-height:1.1;
+}
+.quick-tag-chip[aria-pressed="true"]{
+  background:#0d2a1a;
+  border-color:#22c55e;
+  color:#d1fae5;
+}
+.quick-tag-chip .count{
+  color:#7dd3a6;
+  margin-left:4px;
+  font-size:10px;
+}
+@media(min-width:860px){
+  .controls{
+    grid-template-columns:minmax(260px, 1.3fr) minmax(200px, .7fr);
+  }
+  .controls .ctrl-row{
+    grid-column:1 / -1;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+  }
+}
+.mobile-filter-bar{
+  position:sticky;
+  bottom:10px;
+  z-index:40;
+  display:none;
+  gap:8px;
+  margin:8px 0 12px;
+}
+.mobile-filter-bar button{
+  flex:1;
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  height:40px;
+  background:#071222;
+  color:var(--ink);
+  font-weight:700;
+}
+.mobile-filter-sheet{
+  position:fixed;
+  inset:0;
+  z-index:1200;
+}
+.mobile-filter-backdrop{
+  position:absolute;
+  inset:0;
+  border:none;
+  padding:0;
+  background:rgba(2, 6, 23, 0.68);
+}
+.mobile-filter-panel{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  border-top-left-radius:16px;
+  border-top-right-radius:16px;
+  border:1px solid var(--stroke);
+  border-bottom:none;
+  background:var(--panel);
+  padding:16px 14px calc(18px + env(safe-area-inset-bottom));
+  max-height:82vh;
+  overflow:auto;
+}
+.mobile-filter-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+.mobile-filter-header h2{
+  margin:0;
+  font-size:17px;
+}
+.mobile-filter-header button{
+  border:1px solid var(--stroke);
+  border-radius:10px;
+  width:34px;
+  height:34px;
+  background:#081425;
+  color:var(--ink);
+  cursor:pointer;
+}
+.mobile-filter-controls{
+  display:grid;
+  gap:10px;
+}
+.mobile-filter-controls .ctrl{
+  width:100%;
+}
+
+/****************************
+ * SETTINGS PANEL
+ ****************************/
+/* Outer settings container with subtle shadow */
+.settings{
+  background:var(--panel);
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  padding:18px;
+  box-shadow:0 4px 12px #0003;
+  margin-bottom:16px;
+  max-width:100%;
+}
+/* Settings logo/title line */
+.settings-logo{
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:12px;
+  color:var(--accent);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  list-style:none;
+}
+.settings-logo::-webkit-details-marker{
+  display:none;
+}
+.settings-logo::marker{
+  content:"";
+}
+.settings-icon{
+  font-size:20px;
+}
+.settings-body{
+  display:grid;
+  gap:10px;
+}
+/* Each row containing a checkbox and label */
+.setting-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:14px;
+  color:var(--muted);
+}
+.setting-row input{
+  width:18px;
+  height:18px;
+  cursor:pointer;
+}
+/* Desktop layout: align settings horizontally with spacing */
+@media (min-width: 760px){
+  .settings{
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    flex-wrap:wrap;
+    gap:22px 26px;
+  }
+  .settings-body{
+    margin-top:0;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 22px;
+  }
+  .settings-logo{
+    margin-bottom:0;
+    margin-right:18px;
+    padding-right:18px;
+    border-right:1px solid var(--stroke);
+  }
+  .setting-row{
+    margin-top:0;
+    flex:0 0 auto;
+  }
+}
+
+/****************************
+ * GRID OF CARDS
+ ****************************/
+/* Base grid for plant cards */
+.grid{
+  display:grid;
+  gap:12px;
+  min-height:160px;
+}
+@media(min-width:760px){
+  .grid{ grid-template-columns:repeat(3,1fr); }
+}
+/* Individual plant card */
+.card{
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  min-height:280px;
+  cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+  position:relative; /* anchor for arrow icon */
+}
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px #0005;
+}
+/* Thumbnail area retains 5:3 aspect ratio and uses dashed separator */
+.thumb{
+  aspect-ratio:5/3;
+  height:auto;
+  overflow:hidden;
+  border-bottom:1px dashed var(--stroke);
+  position:relative;
+}
+.thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition: opacity 0.6s ease;
+}
+/* Card body content */
+.card .body{
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  overflow-wrap:break-word;
+  hyphens:auto;
+}
+.card h3{
+  margin:0;
+  font-size:16px;
+  line-height:1.2;
+}
+.card-title-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+.card-title-row h3{
+  margin:0;
+}
+.card-species-icon{
+  width:18px;
+  height:18px;
+  object-fit:contain;
+  flex:0 0 auto;
+}
+.card .latin{
+  color:var(--muted);
+  font-style:italic;
+  font-size:13px;
+}
+.meta{
+  display:grid;
+  gap:6px;
+  margin-top:4px;
+  padding-top:6px;
+  border-top:1px dashed #ffffff33;
+}
+.meta-row{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  font-size:12px;
+  color:var(--muted);
+  border-bottom:1px dotted #ffffff26;
+  padding-bottom:6px;
+}
+.meta-row:last-child{
+  border-bottom:none;
+  padding-bottom:0;
+}
+.meta-label{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  min-width:72px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:10px;
+  color:var(--accent);
+}
+.meta-label-icon{
+  width:12px;
+  height:12px;
+  object-fit:contain;
+  flex:0 0 auto;
+}
+.meta-value{
+  color:var(--ink);
+  font-weight:600;
+  flex:1;
+}
+.meta-type-value{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.meta-type-icon{
+  width:14px;
+  height:14px;
+  object-fit:contain;
+  flex:0 0 auto;
+}
+.meta-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.tag-pill{
+  border:1px solid #22c55e66;
+  color:#22c55e;
+  padding:2px 6px;
+  border-radius:999px;
+  font-size:10px;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+}
+.teaser-block{
+  margin-top:6px;
+  padding-top:6px;
+  border-top:1px dashed #ffffff26;
+}
+.teaser-label{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:10px;
+  color:var(--accent);
+}
+.teaser-icon{
+  width:12px;
+  height:12px;
+  object-fit:contain;
+  flex:0 0 auto;
+}
+.teaser{
+  margin:4px 0 0;
+  font-size:12.5px;
+  color:var(--ink);
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  -webkit-line-clamp:3;
+  line-clamp:3;
+}
+/* Arrow indicator pinned bottom right of card */
+.card .more{
+  position:absolute;
+  bottom:var(--gap);
+  right:var(--gap);
+  font-size:16px;
+  color:var(--accent);
+  pointer-events:none;
+}
+
+/****************************
+ * VIEW MODE OVERRIDES
+ ****************************/
+/* List view: cards become horizontal rows */
+body.list-view .grid{
+  display:flex;
+  flex-direction:column;
+}
+body.list-view .card{
+  flex-direction:row;
+  min-height:80px;
+}
+body.list-view .thumb{
+  width:120px;
+  height:80px;
+  border-right:1px dashed var(--stroke);
+  border-bottom:none;
+}
+body.list-view .body{
+  flex:1;
+}
+/* Compact mode reduces padding and chip sizes */
+body.compact .card .body{
+  padding:8px;
+}
+body.compact .tag-pill{
+  font-size:9px;
+}
+body.compact .card{
+  min-height:240px;
+}
+/* Apply to the whole page so no horizontal scroll is possible */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Drawer defaults: no margin and 100% translation so it does not add width */
+.drawer {
+  margin: 0;
+  width: 100%;               /* full viewport width */
+  height: 100dvh;            /* full viewport height */
+  transform: translateX(100%); /* completely off-screen when closed */
+}
+
+/* When the drawer opens, translate back to origin */
+.drawer.open {
+  transform: translateX(0);
+}
+
+/* Optional: for small screens, you can collapse the border/margins further */
+@media (max-width: 480px) {
+  .drawer {
+    border-radius: 0;
+    border-left: none;
+  }
+}
+
+/****************************
+ * STICKY HEADER SUPPORT
+ ****************************/
+header.sticky{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:var(--panel);
+  padding-top:10px;
+  padding-bottom:10px;
+}
+
+/****************************
+ * FOOTER & MESSAGES
+ ****************************/
+.footer{
+  margin-top:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color:var(--muted);
+  font-size:12px;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.popular-filters{
+  margin-top:14px;
+  border:1px dashed var(--stroke);
+  border-radius:12px;
+  padding:12px;
+  background:color-mix(in srgb, var(--panel) 92%, #03140d 8%);
+}
+.popular-filters h2{
+  margin:0 0 8px;
+  font-size:14px;
+}
+.popular-filter-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.popular-filter-links a{
+  border:1px solid #22c55e44;
+  border-radius:999px;
+  color:#a7f3d0;
+  font-size:11px;
+  padding:4px 10px;
+  text-decoration:none;
+}
+.popular-filter-links a:hover{
+  border-color:#22c55e88;
+}
+.empty,
+.error,
+.loading{
+  color:var(--muted);
+  text-align:center;
+  padding:24px;
+  border:1px dashed var(--stroke);
+  border-radius:10px;
+}
+
+/****************************
+ * PREVENT HORIZONTAL SCROLL
+ ****************************/
+html,
+body,
+#howker-plants{
+  overflow-x:hidden;
+}
+
+/* Plant catalog overlay (hidden by default, only shown when toggled) */
+.plant-catalog-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(2, 6, 23, 0.6);
+  display:none;
+  z-index:900;
+}
+body.show-plant-catalog-overlay .plant-catalog-overlay{
+  display:block;
+}
+
+/****************************
+ * PAGINATION UI (cleaned)
+ ****************************/
+/* The pager consists of two columns: left for stats, right for page controls.  
+   A CSS grid is used for robust centering of the page controls while keeping
+   stats text aligned left. Adjust gap and margins to maintain rhythm. */
+.pager-wrap{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  align-items:center;
+  gap:10px;
+  margin:16px 0;
+  padding:6px 0;
+}
+.pager-left{
+  justify-self:start;
+}
+.pager-stats{
+  color:var(--muted);
+  font-size:12px;
+  white-space:nowrap;
+}
+.pager-right{
+  justify-self:center;
+}
+.page-list{
+  display:flex;
+  gap:6px;
+  flex-wrap:nowrap;
+  justify-content:center;
+}
+/* Base page button styling */
+.page-btn{
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:10px;
+  min-width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  color:var(--ink);
+}
+.page-btn[aria-current="page"]{
+  border-color:var(--accent);
+  outline:2px solid #22c55e55;
+  color:#ffffff;
+}
+
+/* Pagination is visible because page state is URL-addressable. */
+.pager-wrap{
+  display:grid;
+}
+
+/* Hide the main catalog when details pane is open */
+body.details-open #howker-plants {
+  display: none;
+}
+
+/* Drawer hidden by default */
+.drawer {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  border-left: none;
+  border-radius: 0;
+  z-index: 1000;           /* ensures it overlays everything */
+  transform: translateX(0);/* no slide animation on mobile */
+}
+
+/* Show the drawer when it's both .open and the body has .details-open */
+body.details-open .drawer.open {
+  display: flex;
+}
+
+/****************************
+ * RESPONSIVE BREAKPOINTS
+ ****************************/
+@media (max-width:480px){
+  :root{
+    --edge:max(10px, env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+  .wrap{
+    padding:0;
+  }
+  .panel{
+    width:calc(100% - (2 * var(--edge)));
+    margin-inline:var(--edge);
+    max-width:none;
+    border-radius:10px;
+  }
+  .grid{
+    grid-template-columns:1fr;
+    justify-items:center;
+  }
+  .card{
+    width:min(100%, 360px);
+  }
+  .controls-wrap .controls{
+    display:none;
+  }
+  .controls-wrap .filter-actions{
+    justify-content:space-between;
+  }
+  .mobile-filter-bar{
+    display:flex;
+  }
+  .teaser{
+    -webkit-line-clamp:2;
+    line-clamp:2;
+  }
+  .ctrl input,
+  .ctrl select{
+    height:44px;
+    padding:0 16px;
+    border-radius:14px;
+  }
+  .chip{
+    font-size:11px;
+  }
+  /* Pagination on mobile: reduce button sizes and spacing */
+  .pager-wrap{
+    margin:14px 0;
+    padding:4px 0;
+  }
+  .pager-stats{
+    font-size:11px;
+  }
+  .page-list{
+    gap:4px;
+  }
+  .page-btn{
+    min-width:26px;
+    height:26px;
+    font-size:12px;
+    border-radius:8px;
+  }
+  /* Buttons in controls (not page) shrink on mobile */
+  .pager button,
+  .pager-select{
+    height:30px;
+    min-width:30px;
+    padding:6px 8px;
+    border-radius:8px;
+  }
+  .card-species-icon{
+    width:16px;
+    height:16px;
+  }
+  .meta-label-icon,
+  .teaser-icon{
+    width:11px;
+    height:11px;
+  }
+  .meta-type-icon{
+    width:12px;
+    height:12px;
+  }
+  .popular-filter-links{
+    gap:6px;
+  }
+  .popular-filter-links a{
+    font-size:10.5px;
+    padding:4px 8px;
+  }
+}
+
+@media (max-width:320px){
+  :root{
+    --edge:max(8px, env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+  .panel{
+    width:calc(100% - (2 * var(--edge)));
+    margin-inline:var(--edge);
+    border-radius:10px;
+  }
+  .ctrl input,
+  .ctrl select{
+    height:42px;
+  }
+  header h1{
+    font-size:20px;
+  }
+  .card{
+    width:100%;
+  }
+  .chip{
+    font-size:10.5px;
+  }
+}
+
+/* Spinner overlay for plant catalog thumbnails */
+.thumb-loading{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+}
+.thumb-loading.hidden{ display:none; }
+/* Small green loading wheel (25px) - matches peak spinner style */
+.thumb-loading .loading-spinner{
+  width:25px;
+  height:25px;
+  border-radius:50%;
+  border:3px solid rgba(34, 197, 94, 0.25);
+  border-top-color:var(--accent);
+  animation:spin 0.9s linear infinite;
+}
+/* Spinner keyframes (if not already defined) */
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+</style>
+
+</head>
+<body data-route="bird-catalog" data-page="bird-catalog">
+  <div class="plant-catalog-overlay" aria-hidden="true"></div>
+  <div id="nav-placeholder"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navPlaceholder = document.getElementById('nav-placeholder');
+      const activeRoute = document.body.dataset.route || document.body.dataset.page;
+
+      if (navPlaceholder) {
+        fetch('/pages/nav.html')
+          .then(response => response.text())
+          .then(html => {
+            navPlaceholder.innerHTML = html;
+            const links = navPlaceholder.querySelectorAll('.site-nav-links a');
+            links.forEach(link => {
+              const routes = (link.dataset.routes || link.dataset.route || '')
+                .split(',')
+                .map(value => value.trim())
+                .filter(Boolean);
+
+              if (routes.includes(activeRoute)) {
+                link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
+              }
+            });
+            if (window.NH48_I18N && window.NH48_I18N.refreshLangPicker) {
+              window.NH48_I18N.refreshLangPicker();
+            }
+          })
+          .catch(err => console.error('Failed to load navigation:', err));
+      }
+    });
+  </script>
+<!-- data-site-origin ensures Editor/Preview loads entries -->
+<div class="wrap panel" id="howker-plants">
+  <header class="plant-hero">
+    <blockquote>
+      <h1>NH Bird Catalog (Beta)</h1>
+    </blockquote>
+  </header>
+  <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/bird-catalog">Projects</a></li>
+      <li>NH Bird Catalog</li>
+    </ol>
+  </nav>
+  <details class="updates-dropdown">
+    <summary>
+      <span class="summary-title">Latest Bird Catalog Updates</span>
+      <a class="summary-action" href="https://nh48.info/projects/hrt-info" target="_blank" rel="noopener">Trail Info</a>
+    </summary>
+    <div class="updates-body">
+      <article class="update-entry latest">
+        <h3>Bird catalog shell is live <span class="update-marker">Most recent</span></h3>
+        <p>This phase ships the complete catalog UI and routing shell. Live bird schema ingestion and bird-photo bucket wiring will be connected next.</p>
+      </article>
+      <div class="updates-divider" aria-hidden="true">Earlier updates</div>
+      <article class="update-entry">
+        <h3>Data contract pending</h3>
+        <p>No production bird dataset is loaded in this phase. Cards and details are ready for hookup.</p>
+      </article>
+      <article class="update-entry">
+        <h3>Storage setup pending</h3>
+        <p>Future work will connect NH bird photos and optional bucket sync once NHBIRDS storage and credentials are finalized.</p>
+      </article>
+    </div>
+  </details>
+  <!-- Settings panel -->
+<details class="settings settings-collapsible" id="settings-panel">
+  <summary class="settings-logo">Settings</summary>
+  <div class="settings-body">
+    <div class="setting-row">
+      <input type="checkbox" id="theme-toggle" checked>
+      <label for="theme-toggle">Dark theme</label>
+    </div>
+    <div class="setting-row">
+      <input type="checkbox" id="view-toggle">
+      <label for="view-toggle">List view</label>
+    </div>
+    <div class="setting-row">
+      <input type="checkbox" id="rotate-toggle" checked>
+      <label for="rotate-toggle">Rotate images</label>
+    </div>
+    <div class="setting-row">
+      <input type="checkbox" id="compact-toggle">
+      <label for="compact-toggle">Compact view</label>
+    </div>
+    <div class="setting-row">
+      <input type="checkbox" id="sticky-toggle">
+      <label for="sticky-toggle">Sticky header</label>
+    </div>
+  </div>
+</details>
+
+
+  <div class="controls-wrap" id="controlsWrap">
+    <div class="controls">
+      <label class="ctrl ctrl-search"><input id="q" placeholder="Name, family, tag, habitat..."></label>
+      <label class="ctrl">
+        <select id="sort">
+          <option value="relevance">Sort: Relevance</option>
+          <option value="az">Sort: A-Z</option>
+          <option value="most_photographed">Sort: Most photographed</option>
+        </select>
+      </label>
+      <div class="ctrl-row">
+        <label class="ctrl">
+          <select id="type">
+            <option value="">All types</option>
+          </select>
+        </label>
+        <label class="ctrl">
+          <select id="habitat-group">
+            <option value="">Any habitat group</option>
+            <option value="alpine">Alpine</option>
+            <option value="bog/wetland">Bog / Wetland</option>
+            <option value="forest-floor">Forest Floor</option>
+            <option value="rocky-ledges">Rocky Ledges</option>
+            <option value="mixed">Mixed</option>
+          </select>
+        </label>
+        <label class="ctrl">
+          <select id="season-group">
+            <option value="">Any season group</option>
+            <option value="spring">Spring</option>
+            <option value="early-summer">Early Summer</option>
+            <option value="summer">Summer</option>
+            <option value="late-summer/fall">Late Summer / Fall</option>
+            <option value="year-round">Year-round</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button type="button" id="clear-filters" class="btn-clear">Clear all</button>
+      <div id="result-summary" class="result-summary">Loading catalog...</div>
+    </div>
+    <div id="active-filters" class="active-filters" hidden></div>
+    <section class="quick-tags-panel" aria-label="Popular tag filters">
+      <div class="quick-tags-title">Popular tags</div>
+      <div id="quick-tags" class="quick-tags"></div>
+    </section>
+  </div>
+
+  <div class="mobile-filter-bar" id="mobile-filter-bar">
+    <button type="button" id="mobile-filters-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="mobile-filter-sheet">Filters</button>
+    <button type="button" id="mobile-sort-btn">Sort</button>
+    <button type="button" id="mobile-clear-btn">Clear</button>
+  </div>
+
+  <div class="mobile-filter-sheet" id="mobile-filter-sheet" hidden>
+    <button type="button" class="mobile-filter-backdrop" id="mobile-filter-backdrop" aria-label="Close filters"></button>
+    <section class="mobile-filter-panel" role="dialog" aria-modal="true" aria-labelledby="mobile-filter-title">
+      <header class="mobile-filter-header">
+        <h2 id="mobile-filter-title">Catalog Filters</h2>
+        <button type="button" id="mobile-filter-close" aria-label="Close filter panel">x</button>
+      </header>
+      <div class="mobile-filter-controls">
+        <label class="ctrl"><input id="q-mobile" placeholder="Search birds..."></label>
+        <label class="ctrl">
+          <select id="sort-mobile">
+            <option value="relevance">Sort: Relevance</option>
+            <option value="az">Sort: A-Z</option>
+            <option value="most_photographed">Sort: Most photographed</option>
+          </select>
+        </label>
+        <label class="ctrl">
+          <select id="type-mobile">
+            <option value="">All types</option>
+          </select>
+        </label>
+        <label class="ctrl">
+          <select id="habitat-group-mobile">
+            <option value="">Any habitat group</option>
+            <option value="alpine">Alpine</option>
+            <option value="bog/wetland">Bog / Wetland</option>
+            <option value="forest-floor">Forest Floor</option>
+            <option value="rocky-ledges">Rocky Ledges</option>
+            <option value="mixed">Mixed</option>
+          </select>
+        </label>
+        <label class="ctrl">
+          <select id="season-group-mobile">
+            <option value="">Any season group</option>
+            <option value="spring">Spring</option>
+            <option value="early-summer">Early Summer</option>
+            <option value="summer">Summer</option>
+            <option value="late-summer/fall">Late Summer / Fall</option>
+            <option value="year-round">Year-round</option>
+          </select>
+        </label>
+      </div>
+    </section>
+  </div>
+
+  <!-- Pagination header (Top) -->
+  <div class="pager-wrap">
+    <div class="pager-left">
+      <div class="pager-stats" id="pager-stats-top">Showing --</div>
+    </div>
+    <div class="pager-right">
+      <div class="page-list" id="page-list-top" aria-label="Pagination"></div>
+    </div>
+  </div>
+
+  <div id="grid" class="grid" aria-live="polite">
+    <div class="loading" id="loading">Loading bird catalog...</div>
+  </div>
+
+  <!-- Pagination footer (Bottom) -->
+  <div class="pager-wrap">
+    <div class="pager-left">
+      <div class="pager-stats" id="pager-stats-bot">Showing --</div>
+    </div>
+    <div class="pager-right">
+      <div class="page-list" id="page-list-bot" aria-label="Pagination"></div>
+    </div>
+  </div>
+
+  <section class="popular-filters" aria-label="Popular bird filter links">
+    <h2>Popular filters</h2>
+    <div class="popular-filter-links">
+      <a href="/bird-catalog?habitat_group=alpine">Alpine birds</a>
+      <a href="/bird-catalog?habitat_group=bog%2Fwetland">Wetland birds</a>
+      <a href="/bird-catalog?season_group=spring">Spring arrivals</a>
+      <a href="/bird-catalog?sort=most_photographed">Most photographed birds</a>
+      <a href="/bird-catalog?type=Songbird">Songbirds</a>
+      <a href="/bird-catalog?type=Raptor">Raptors</a>
+    </div>
+  </section>
+
+  <div class="footer">
+    <span>Unofficial &amp; volunteer &bull; NH Bird Catalog shell</span>
+    <span>&copy; <span id="year"></span> Nathan Sobol &bull; NH48pics</span>
+  </div>
+</div>
+
+<script src="/js/nh-bird-catalog.js"></script>
+<div id="footer-placeholder"></div>
+</body>
+</html>
+
+
+
+
+

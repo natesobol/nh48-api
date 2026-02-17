@@ -149,6 +149,7 @@ async function runLiveMetaChecks(baseUrl, routes, issues) {
     '/wiki/plants/labrador-tea',
     '/dataset/long-trails',
     '/photos/',
+    '/bird-catalog',
     '/nh48-planner.html',
   ];
   for (const route of representative) {
