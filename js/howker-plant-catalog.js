@@ -29,6 +29,8 @@
   const PLACEHOLDER = `data:image/svg+xml;utf8,${encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image unavailable</text></svg>'
   )}`;
+  const ROTATE_STEP_MS = 1800;
+  const ROTATE_FADE_MS = 300;
 
   let plants = [];
   let indexData = { plants: {}, facets: {} };
@@ -38,6 +40,7 @@
   let state = { ...DEFAULT_STATE };
   let imgObserver = null;
   let rotateInterval = null;
+  let rotateCursor = 0;
   let searchDebounce = null;
 
   const $ = (selector) => document.querySelector(selector);
@@ -771,6 +774,7 @@
 
     updatePager(total, startIndex + 1, endIndex);
     updatePlantItemList(pageSlice);
+    rotateCursor = 0;
   }
 
   function rotateSingle(card) {
@@ -789,25 +793,37 @@
       image.src = images[idx];
       image.removeAttribute('data-src');
       image.style.opacity = '1';
-    }, 220);
+    }, ROTATE_FADE_MS);
     card.dataset.idx = String(idx);
   }
 
+  function getRotatableCards() {
+    return Array.from(document.querySelectorAll('#grid .card[data-imgs]'));
+  }
+
   function rotateCardImages() {
-    const cards = document.querySelectorAll('#grid .card[data-imgs]');
-    let columnCount = 1;
-    try {
-      const columns = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean);
-      columnCount = Math.max(1, columns.length);
-    } catch (_) {
-      columnCount = 1;
+    const cards = getRotatableCards();
+    if (!cards.length) {
+      rotateCursor = 0;
+      return;
     }
-    cards.forEach((card, idx) => {
-      const row = Math.floor(idx / columnCount);
-      const col = idx % columnCount;
-      const delay = (row * 440) + (col * 160);
-      window.setTimeout(() => rotateSingle(card), delay);
-    });
+    if (rotateCursor >= cards.length) {
+      rotateCursor = 0;
+    }
+    const card = cards[rotateCursor];
+    rotateSingle(card);
+    rotateCursor = (rotateCursor + 1) % cards.length;
+  }
+
+  function startCardRotation() {
+    if (rotateInterval) return;
+    rotateInterval = window.setInterval(rotateCardImages, ROTATE_STEP_MS);
+  }
+
+  function stopCardRotation() {
+    if (!rotateInterval) return;
+    window.clearInterval(rotateInterval);
+    rotateInterval = null;
   }
 
   function applyState(nextState, options = {}) {
@@ -930,14 +946,15 @@
       headerEl?.classList.toggle('sticky', stickyToggle.checked);
     });
 
-    rotateToggle?.addEventListener('change', () => {
-      if (rotateToggle.checked) {
-        if (!rotateInterval) rotateInterval = window.setInterval(rotateCardImages, 5000);
-      } else if (rotateInterval) {
-        window.clearInterval(rotateInterval);
-        rotateInterval = null;
+    if (rotateToggle) {
+      rotateToggle.checked = true;
+      rotateToggle.disabled = true;
+      rotateToggle.title = 'Image rotation is always on.';
+      const rotateLabel = document.querySelector('label[for="rotate-toggle"]');
+      if (rotateLabel && !/always on/i.test(String(rotateLabel.textContent || ''))) {
+        rotateLabel.textContent = `${rotateLabel.textContent} (always on)`;
       }
-    });
+    }
 
     quickTagsEl.addEventListener('click', (event) => {
       const button = event.target.closest('button[data-tag]');
@@ -1033,10 +1050,9 @@
         restoreHashScroll: true,
       });
 
-      if (rotateToggle?.checked) {
-        rotateInterval = window.setInterval(rotateCardImages, 5000);
-      }
+      startCardRotation();
     } catch (error) {
+      stopCardRotation();
       console.error(error);
       grid.innerHTML = `<div class="error">Could not load the catalog (network ${escapeHtml(error.message)}).</div>`;
     }
