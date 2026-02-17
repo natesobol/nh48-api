@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
 <link rel="manifest" href="/manifest.json" />
-<title>Howker Ridge • Plant</title>
+<title>Howker Ridge â€¢ Plant</title>
 <meta id="meta-description" name="description" content="Detailed view for an alpine/subalpine plant observed along Howker Ridge Trail. Explore photos, facts, and notes for the selected species." />
 <link rel="canonical" href="https://nh48.info/pages/plant.html" />
 <meta property="og:type" content="article" />
@@ -31,9 +31,9 @@
 <meta name="twitter:creator" content="@nate_dumps_pics" />
 <meta id="twitter-image" name="twitter:image" content="" />
 <meta id="twitter-image-alt" name="twitter:image:alt" content="" />
-<meta id="og-title" property="og:title" content="Howker Ridge • Plant" />
+<meta id="og-title" property="og:title" content="Howker Ridge â€¢ Plant" />
 <meta id="og-description" property="og:description" content="Detailed species view for alpine and subalpine plants observed along the Howker Ridge Trail." />
-<meta id="twitter-title" name="twitter:title" content="Howker Ridge • Plant" />
+<meta id="twitter-title" name="twitter:title" content="Howker Ridge â€¢ Plant" />
 <meta id="twitter-description" name="twitter:description" content="Explore species facts, field notes, and photo credits for alpine plants along Howker Ridge." />
 <script type="application/ld+json">
   {
@@ -733,15 +733,86 @@ header.plant-hero.sticky .share-card-status.error{
 }
 
 /* Back link styling */
+.detail-nav-row{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:14px;
+}
 .back-link{
   display:inline-block;
-  margin-bottom:16px;
   color:var(--accent);
   font-size:14px;
   text-decoration:none;
 }
 .back-link:hover{
   text-decoration:underline;
+}
+.plant-sequence{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.plant-sequence a{
+  border:1px solid var(--stroke);
+  border-radius:999px;
+  background:#071321;
+  color:var(--ink);
+  font-size:12px;
+  text-decoration:none;
+  padding:6px 10px;
+}
+.plant-sequence a:hover{
+  border-color:#22c55e99;
+  color:#d1fae5;
+}
+.related-strip{
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:10px;
+  padding:12px;
+}
+.related-strip h3{
+  margin:0 0 8px;
+  padding-bottom:6px;
+  border-bottom:1px dotted var(--stroke);
+  color:var(--accent);
+  font-size:12px;
+  letter-spacing:.2px;
+  text-transform:uppercase;
+}
+.related-plants-list{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.related-plant-card{
+  border:1px solid #ffffff22;
+  border-radius:10px;
+  background:#0c1424;
+  padding:8px;
+  text-decoration:none;
+  color:var(--ink);
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.related-plant-card img{
+  width:100%;
+  aspect-ratio:5/3;
+  object-fit:cover;
+  border-radius:8px;
+}
+.related-plant-card .name{
+  font-size:13px;
+  font-weight:700;
+}
+.related-plant-card .meta{
+  font-size:11px;
+  color:var(--muted);
 }
 
 /* Hide unused grid/pagination in details page by default.  These definitions
@@ -796,6 +867,17 @@ header.plant-hero.sticky .share-card-status.error{
     text-align:left;
     max-width:none;
   }
+  .plant-sequence{
+    width:100%;
+    justify-content:space-between;
+  }
+  .plant-sequence a{
+    flex:1;
+    text-align:center;
+  }
+  .related-plants-list{
+    grid-template-columns:1fr;
+  }
 }
 @media (max-width:320px){
   :root{
@@ -849,11 +931,11 @@ header.plant-hero.sticky .share-card-status.error{
 <div class="wrap panel" id="plant-detail">
   <header class="plant-hero">
     <blockquote>
-      <h1 id="detail-title">Howker Ridge • Plant</h1>
+      <h1 id="detail-title">Howker Ridge â€¢ Plant</h1>
     </blockquote>
     <div class="hero-actions">
       <div id="shareCardMenu" class="share-card-menu">
-        <button id="shareCardBtn" class="share-card-btn" type="button" aria-label="Share plant card" aria-haspopup="menu" aria-expanded="false">Share Card ▾</button>
+        <button id="shareCardBtn" class="share-card-btn" type="button" aria-label="Share plant card" aria-haspopup="menu" aria-expanded="false">Share Card â–¾</button>
         <div id="shareCardDropdown" class="share-card-dropdown" role="menu" hidden></div>
       </div>
       <p id="shareCardStatus" class="share-card-status" role="status" aria-live="polite" aria-atomic="true"></p>
@@ -870,7 +952,13 @@ header.plant-hero.sticky .share-card-status.error{
   <p class="text-guide">Detailed information for an alpine or subalpine species recorded along Howker Ridge Trail. Use the back link to return to the catalog.</p>
 
   <!-- Details content -->
-  <a href="/plant-catalog" class="back-link">← Back to Catalog</a>
+  <div class="detail-nav-row">
+    <a href="/plant-catalog" class="back-link" id="backToCatalogLink">â† Back to Catalog</a>
+    <div class="plant-sequence" id="plantSequenceNav" hidden>
+      <a href="#" id="prevPlantLink" rel="prev">â† Previous plant</a>
+      <a href="#" id="nextPlantLink" rel="next">Next plant â†’</a>
+    </div>
+  </div>
   <header>
     <h2 id="d-title"></h2>
     <div class="latin" id="d-latin"></div>
@@ -883,8 +971,8 @@ header.plant-hero.sticky .share-card-status.error{
     <div id="carousel" class="carousel" aria-roledescription="carousel" aria-label="Photos" tabindex="0"></div>
     <div id="dots" class="dots" aria-hidden="true"></div>
     <div class="ctrls">
-      <button type="button" id="prevBtn" aria-label="Previous image">‹</button>
-      <button type="button" id="nextBtn" aria-label="Next image">›</button>
+      <button type="button" id="prevBtn" aria-label="Previous image">â€¹</button>
+      <button type="button" id="nextBtn" aria-label="Next image">â€º</button>
     </div>
     <div class="timer" id="carouselTimer" hidden>
       <div class="timer-visual">
@@ -893,7 +981,7 @@ header.plant-hero.sticky .share-card-status.error{
         </svg>
         <span id="timerText" class="timer-text"></span>
       </div>
-      <button id="carouselPauseBtn" type="button" class="timer-pause" aria-label="Pause carousel" aria-pressed="false" title="Pause carousel">❚❚</button>
+      <button id="carouselPauseBtn" type="button" class="timer-pause" aria-label="Pause carousel" aria-pressed="false" title="Pause carousel">âšâš</button>
     </div>
   </div>
   <div class="content" id="drawerContent">
@@ -902,15 +990,20 @@ header.plant-hero.sticky .share-card-status.error{
       <p id="d-desc"></p>
     </div>
     <div class="facts">
-      <div class="fact"><h4><img class="field-icon" data-field-icon="type" src="" alt="" aria-hidden="true">TYPE</h4><p id="f-type">—</p></div>
-      <div class="fact"><h4><img class="field-icon" data-field-icon="elevation" src="" alt="" aria-hidden="true">ELEVATION</h4><p id="f-elev">—</p></div>
-      <div class="fact"><h4><img class="field-icon" data-field-icon="habitat" src="" alt="" aria-hidden="true">HABITAT</h4><p id="f-habitat">—</p></div>
-      <div class="fact"><h4><img class="field-icon" data-field-icon="bloom-season" src="" alt="" aria-hidden="true">BLOOM / SEASON</h4><p id="f-bloom">—</p></div>
-      <div class="fact"><h4><img class="field-icon" data-field-icon="leaf-stem" src="" alt="" aria-hidden="true">LEAF &amp; STEM</h4><p id="f-morph">—</p></div>
-      <div class="fact"><h4><img class="field-icon" data-field-icon="similar-species" src="" alt="" aria-hidden="true">SIMILAR SPECIES</h4><p id="f-similar">—</p></div>
-      <div class="fact"><h4><img class="field-icon" data-field-icon="ecology" src="" alt="" aria-hidden="true">ECOLOGY</h4><p id="f-ecology">—</p></div>
-      <div class="fact"><h4><img class="field-icon" data-field-icon="status" src="" alt="" aria-hidden="true">STATUS</h4><p id="f-status">—</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="type" src="" alt="" aria-hidden="true">TYPE</h4><p id="f-type">â€”</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="elevation" src="" alt="" aria-hidden="true">ELEVATION</h4><p id="f-elev">â€”</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="habitat" src="" alt="" aria-hidden="true">HABITAT</h4><p id="f-habitat">â€”</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="bloom-season" src="" alt="" aria-hidden="true">BLOOM / SEASON</h4><p id="f-bloom">â€”</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="leaf-stem" src="" alt="" aria-hidden="true">LEAF &amp; STEM</h4><p id="f-morph">â€”</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="similar-species" src="" alt="" aria-hidden="true">SIMILAR SPECIES</h4><p id="f-similar">â€”</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="ecology" src="" alt="" aria-hidden="true">ECOLOGY</h4><p id="f-ecology">â€”</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="status" src="" alt="" aria-hidden="true">STATUS</h4><p id="f-status">â€”</p></div>
     </div>
+
+    <section class="section related-strip" id="relatedPlantsSection" hidden>
+      <h3>Related Plants</h3>
+      <div class="related-plants-list" id="relatedPlantsList"></div>
+    </section>
 
     <div class="section" id="sec-notes" hidden>
       <h3>Field Notes</h3>
@@ -926,12 +1019,15 @@ header.plant-hero.sticky .share-card-status.error{
 
 <script>
   /* =============================================================
-     HOWKER RIDGE — PLANT DETAILS (standalone page)
+     HOWKER RIDGE â€” PLANT DETAILS (standalone page)
      Focused on rendering a single plant identified by the "id" query parameter.
   ============================================================= */
 
   /* ---------- Data & State ---------- */
   let PLANTS = [];
+  let PLANT_INDEX = { plants: {}, facets: {} };
+  let returnContext = null;
+  const DEFAULT_CATALOG_URL = '/plant-catalog';
   // Carousel state
   let carouselTimer = null;
   let timerInterval = null;
@@ -969,6 +1065,12 @@ header.plant-hero.sticky .share-card-status.error{
   const detailTitle = document.getElementById('detail-title');
   const detailBreadcrumb = document.getElementById('detail-breadcrumb');
   const detailHero = document.querySelector('.plant-hero');
+  const backToCatalogLink = document.getElementById('backToCatalogLink');
+  const plantSequenceNav = document.getElementById('plantSequenceNav');
+  const prevPlantLink = document.getElementById('prevPlantLink');
+  const nextPlantLink = document.getElementById('nextPlantLink');
+  const relatedPlantsSection = document.getElementById('relatedPlantsSection');
+  const relatedPlantsList = document.getElementById('relatedPlantsList');
   const shareCardMenu = document.getElementById('shareCardMenu');
   const shareCardBtn = document.getElementById('shareCardBtn');
   const shareCardDropdown = document.getElementById('shareCardDropdown');
@@ -1030,7 +1132,7 @@ header.plant-hero.sticky .share-card-status.error{
 
   // Placeholders for images
   const LQ_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image loading…</text></svg>`
+    `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image loadingâ€¦</text></svg>`
   );
   const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image unavailable</text></svg>`
@@ -1040,12 +1142,12 @@ header.plant-hero.sticky .share-card-status.error{
     if (!input) return '';
     let s = String(input);
     s = s
-      .replace(/â€”/g, '—')
-      .replace(/â€“/g, '–')
-      .replace(/â€˜|â€™/g, "'")
-      .replace(/â€œ|â€�/g, '"')
-      .replace(/Â/g, '');
-    s = s.replace(/[—–]/g, ' - ');
+      .replace(/Ã¢â‚¬â€/g, 'â€”')
+      .replace(/Ã¢â‚¬â€œ/g, 'â€“')
+      .replace(/Ã¢â‚¬Ëœ|Ã¢â‚¬â„¢/g, "'")
+      .replace(/Ã¢â‚¬Å“|Ã¢â‚¬ï¿½/g, '"')
+      .replace(/Ã‚/g, '');
+    s = s.replace(/[â€”â€“]/g, ' - ');
     return s.replace(/\s+/g, ' ').trim();
   };
 
@@ -1115,7 +1217,7 @@ header.plant-hero.sticky .share-card-status.error{
   function setTypeFactValue(plant){
     const typeValueEl = document.getElementById('f-type');
     if (!typeValueEl) return;
-    const value = String((plant && plant.type) || '—').trim() || '—';
+    const value = String((plant && plant.type) || 'â€”').trim() || 'â€”';
     typeValueEl.textContent = '';
     typeValueEl.appendChild(createDecorativeIcon(resolveTypeIconSrc(plant), 'type-value-icon'));
     typeValueEl.appendChild(document.createTextNode(value));
@@ -1127,6 +1229,292 @@ header.plant-hero.sticky .share-card-status.error{
       iconEl.src = resolveFieldIconSrc(key);
       attachIconFallback(iconEl);
     });
+  }
+
+  function normalizeToken(input){
+    return String(input || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[_/]+/g, '-')
+      .replace(/[^a-z0-9-]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  function normalizeSearchText(input){
+    return String(input || '')
+      .toLowerCase()
+      .replace(/[^\w\s/-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function getPlantImages(plant){
+    if (Array.isArray(plant?.imgs) && plant.imgs.length) {
+      return plant.imgs.filter((src) => String(src || '').trim().length > 0);
+    }
+    if (String(plant?.img || '').trim()) {
+      return [plant.img.trim()];
+    }
+    return [];
+  }
+
+  function deriveCanonicalTagsFallback(plant){
+    const tags = new Set();
+    const type = normalizeToken(plant?.type || '');
+    if (type) tags.add(type.replace('-tree', 'tree'));
+    (plant?.tags || []).forEach((tag) => {
+      const token = normalizeToken(tag);
+      if (!token) return;
+      if (token.includes('berry')) tags.add('berries');
+      if (token.includes('flower')) tags.add('flowers');
+      if (token.includes('alpine')) tags.add('alpine');
+      if (token.includes('forest')) tags.add('forest-floor');
+      if (token.includes('bog') || token.includes('wetland')) tags.add('bog/wetland');
+      if (token.includes('rock') || token.includes('talus') || token.includes('ledge')) tags.add('rocky-ledges');
+      if (token.includes('evergreen')) tags.add('evergreen');
+      if (token.includes('deciduous')) tags.add('deciduous');
+    });
+    if (!tags.size) tags.add('mixed');
+    return Array.from(tags);
+  }
+
+  function getPlantIndexEntry(plant){
+    const key = String(plant?.id || '').trim();
+    const fromIndex = key ? PLANT_INDEX?.plants?.[key] : null;
+    if (fromIndex && typeof fromIndex === 'object') {
+      return fromIndex;
+    }
+    const canonicalTags = deriveCanonicalTagsFallback(plant);
+    return {
+      habitat_group: 'mixed',
+      season_group: 'summer',
+      canonical_tags: canonicalTags,
+      search_terms: [plant?.common, plant?.latin, plant?.type, plant?.habitat, plant?.bloom, ...(plant?.tags || []), ...canonicalTags]
+        .map((value) => String(value || '').toLowerCase())
+        .filter(Boolean),
+      has_gallery: getPlantImages(plant).length > 1,
+      image_count: getPlantImages(plant).length
+    };
+  }
+
+  function parseCatalogStateFromSearch(search){
+    const params = new URLSearchParams(search || '');
+    return {
+      q: String(params.get('q') || '').trim(),
+      type: String(params.get('type') || '').trim(),
+      habitat_group: String(params.get('habitat_group') || '').trim(),
+      season_group: String(params.get('season_group') || '').trim(),
+      tag: normalizeToken(params.get('tag') || ''),
+      sort: ['relevance', 'az', 'most_photographed'].includes(params.get('sort')) ? params.get('sort') : 'relevance',
+      page: Math.max(1, Number.parseInt(params.get('page') || '1', 10) || 1),
+      view: params.get('view') === 'list' ? 'list' : 'grid'
+    };
+  }
+
+  function parseReturnContext(){
+    const params = new URLSearchParams(window.location.search);
+    const rawReturn = params.get('return');
+    if (!rawReturn) {
+      return null;
+    }
+    try {
+      const parsed = new URL(rawReturn, window.location.origin);
+      if (parsed.origin !== window.location.origin) {
+        return null;
+      }
+      if (!/^\/plant-catalog\/?$/i.test(parsed.pathname)) {
+        return null;
+      }
+      const hash = String(parsed.hash || '');
+      const scrollMatch = hash.match(/^#y=(\d+)$/);
+      const scrollY = scrollMatch ? Math.max(0, Number.parseInt(scrollMatch[1], 10) || 0) : null;
+      return {
+        url: `${parsed.pathname}${parsed.search}${parsed.hash}`,
+        state: parseCatalogStateFromSearch(parsed.search),
+        scrollY
+      };
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function buildCatalogHaystack(plant, indexEntry){
+    return normalizeSearchText([
+      plant.common,
+      plant.latin,
+      plant.type,
+      plant.habitat,
+      plant.bloom,
+      plant.teaser,
+      ...(plant.tags || []),
+      ...(indexEntry.search_terms || []),
+      ...(indexEntry.canonical_tags || [])
+    ].join(' '));
+  }
+
+  function computeCatalogRelevance(plant, indexEntry, terms){
+    if (!terms.length) return 0;
+    const common = normalizeSearchText(plant.common);
+    const latin = normalizeSearchText(plant.latin);
+    const tagSet = new Set((indexEntry.canonical_tags || []).map((tag) => normalizeToken(tag)));
+    const haystack = buildCatalogHaystack(plant, indexEntry);
+    let score = 0;
+    terms.forEach((term) => {
+      if (common.includes(term)) score += 14;
+      if (latin.includes(term)) score += 9;
+      if (tagSet.has(term)) score += 12;
+      if (haystack.includes(term)) score += 4;
+    });
+    score += Math.min(5, Number(indexEntry.image_count) || 0);
+    return score;
+  }
+
+  function buildCatalogOrder(catalogState){
+    const terms = normalizeSearchText(catalogState.q).split(/\s+/).filter(Boolean);
+    const activeTag = normalizeToken(catalogState.tag || '');
+    const filtered = PLANTS.filter((plant) => {
+      const indexEntry = getPlantIndexEntry(plant);
+      const haystack = buildCatalogHaystack(plant, indexEntry);
+      const okQ = terms.every((term) => haystack.includes(term));
+      const okType = !catalogState.type || String(plant.type || '') === catalogState.type;
+      const okHabitat = !catalogState.habitat_group || indexEntry.habitat_group === catalogState.habitat_group;
+      const okSeason = !catalogState.season_group || indexEntry.season_group === catalogState.season_group;
+      const okTag = !activeTag || (indexEntry.canonical_tags || []).some((tag) => normalizeToken(tag) === activeTag);
+      return okQ && okType && okHabitat && okSeason && okTag;
+    });
+
+    if (catalogState.sort === 'az') {
+      filtered.sort((a, b) => String(a.common || '').localeCompare(String(b.common || '')));
+    } else if (catalogState.sort === 'most_photographed') {
+      filtered.sort((a, b) => {
+        const ai = getPlantIndexEntry(a);
+        const bi = getPlantIndexEntry(b);
+        const diff = (bi.image_count || 0) - (ai.image_count || 0);
+        if (diff !== 0) return diff;
+        return String(a.common || '').localeCompare(String(b.common || ''));
+      });
+    } else if (terms.length) {
+      filtered.sort((a, b) => {
+        const ai = getPlantIndexEntry(a);
+        const bi = getPlantIndexEntry(b);
+        const scoreDiff = computeCatalogRelevance(b, bi, terms) - computeCatalogRelevance(a, ai, terms);
+        if (scoreDiff !== 0) return scoreDiff;
+        return String(a.common || '').localeCompare(String(b.common || ''));
+      });
+    }
+    return filtered;
+  }
+
+  function buildPlantDetailHref(plantId){
+    const base = `/plant/${encodeURIComponent(plantId)}`;
+    if (!returnContext || !returnContext.url) {
+      return base;
+    }
+    return `${base}?return=${encodeURIComponent(returnContext.url)}`;
+  }
+
+  function updateBackLink(){
+    if (!backToCatalogLink) return;
+    if (returnContext && returnContext.url) {
+      backToCatalogLink.href = returnContext.url;
+      backToCatalogLink.textContent = 'â† Back to filtered catalog';
+    } else {
+      backToCatalogLink.href = DEFAULT_CATALOG_URL;
+      backToCatalogLink.textContent = 'â† Back to Catalog';
+    }
+  }
+
+  function updateSequenceNavigation(plant){
+    if (!plantSequenceNav || !prevPlantLink || !nextPlantLink) return;
+    if (!returnContext) {
+      plantSequenceNav.hidden = true;
+      return;
+    }
+    const ordered = buildCatalogOrder(returnContext.state);
+    const idx = ordered.findIndex((item) => String(item.id) === String(plant.id));
+    if (idx === -1) {
+      plantSequenceNav.hidden = true;
+      return;
+    }
+    const prevPlant = idx > 0 ? ordered[idx - 1] : null;
+    const nextPlant = idx >= 0 && idx < ordered.length - 1 ? ordered[idx + 1] : null;
+
+    if (prevPlant) {
+      prevPlantLink.hidden = false;
+      prevPlantLink.href = buildPlantDetailHref(prevPlant.id);
+      prevPlantLink.textContent = `â† ${prevPlant.common}`;
+    } else {
+      prevPlantLink.hidden = true;
+      prevPlantLink.removeAttribute('href');
+    }
+
+    if (nextPlant) {
+      nextPlantLink.hidden = false;
+      nextPlantLink.href = buildPlantDetailHref(nextPlant.id);
+      nextPlantLink.textContent = `${nextPlant.common} â†’`;
+    } else {
+      nextPlantLink.hidden = true;
+      nextPlantLink.removeAttribute('href');
+    }
+
+    plantSequenceNav.hidden = !(prevPlant || nextPlant);
+  }
+
+  function renderRelatedPlants(plant){
+    if (!relatedPlantsSection || !relatedPlantsList) return;
+    const currentIndex = getPlantIndexEntry(plant);
+    const currentTags = new Set((currentIndex.canonical_tags || []).map((tag) => normalizeToken(tag)));
+    const currentType = String(plant.type || '').trim();
+
+    const scored = PLANTS
+      .filter((candidate) => String(candidate.id) !== String(plant.id))
+      .map((candidate) => {
+        const indexEntry = getPlantIndexEntry(candidate);
+        const candidateTags = (indexEntry.canonical_tags || []).map((tag) => normalizeToken(tag));
+        const overlap = candidateTags.filter((tag) => currentTags.has(tag)).length;
+        let score = overlap * 2;
+        if (currentType && String(candidate.type || '').trim() === currentType) score += 3;
+        if (indexEntry.habitat_group && indexEntry.habitat_group === currentIndex.habitat_group) score += 1;
+        return { candidate, indexEntry, score };
+      })
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return String(a.candidate.common || '').localeCompare(String(b.candidate.common || ''));
+      })
+      .slice(0, 3)
+      .filter((entry) => entry.score > 0);
+
+    if (!scored.length) {
+      relatedPlantsSection.hidden = true;
+      relatedPlantsList.innerHTML = '';
+      return;
+    }
+
+    relatedPlantsSection.hidden = false;
+    relatedPlantsList.innerHTML = scored.map(({ candidate, indexEntry }) => {
+      const src = getPlantImages(candidate)[0] || PLACEHOLDER;
+      const tag = (indexEntry.canonical_tags || [])[0] || '';
+      return `
+        <a class="related-plant-card" href="${buildPlantDetailHref(candidate.id)}">
+          <img src="${src}" alt="${candidate.common}">
+          <span class="name">${candidate.common}</span>
+          <span class="meta">${tag ? tag.replace(/-/g, ' ') : (candidate.type || '')}</span>
+        </a>
+      `;
+    }).join('');
+  }
+
+  function synthesizeMetaDescription(plant){
+    const base = String(plant.teaser || plant.desc || `Profile for ${plant.common || 'this plant'}.`).trim();
+    const indexEntry = getPlantIndexEntry(plant);
+    const tagText = (indexEntry.canonical_tags || [])
+      .slice(0, 4)
+      .map((tag) => String(tag || '').replace(/-/g, ' '))
+      .filter(Boolean)
+      .join(', ');
+    const combined = tagText ? `${base} Key traits: ${tagText}.` : base;
+    return combined.slice(0, 280);
   }
 
   function stripCloudflareImageTransform(rawUrl){
@@ -1220,7 +1608,7 @@ header.plant-hero.sticky .share-card-status.error{
     }
     shareCardBtn.disabled = busy || !shareCardAvailable;
     shareCardBtn.setAttribute('aria-busy', isBusy ? 'true' : 'false');
-    shareCardBtn.textContent = busy ? 'Rendering...' : 'Share Card ▾';
+    shareCardBtn.textContent = busy ? 'Rendering...' : 'Share Card â–¾';
     if (shareCardDropdown) {
       shareCardDropdown.querySelectorAll('.share-card-option').forEach((option) => {
         option.disabled = busy || !shareCardAvailable;
@@ -2092,6 +2480,17 @@ header.plant-hero.sticky .share-card-status.error{
     return res.json();
   }
 
+  async function fetchPlantIndex() {
+    const res = await fetch(
+      '/data/howker-plants-index.json',
+      { mode: 'cors' }
+    );
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+    return res.json();
+  }
+
   /* ---------- Carousel and Details Rendering ---------- */
   function buildCarousel(images, p){
     carouselEl.innerHTML = '';
@@ -2112,7 +2511,7 @@ header.plant-hero.sticky .share-card-status.error{
       const img = document.createElement('img');
       const altBase = (p && p.common) ? p.common : 'Plant';
       const descSnippet = (p && (p.morph || p.teaser || p.desc) || '').trim();
-      const altDetail = descSnippet ? ` – ${descSnippet.slice(0, 100)}` : '';
+      const altDetail = descSnippet ? ` â€“ ${descSnippet.slice(0, 100)}` : '';
       img.alt = `${altBase}${altDetail} (image ${i+1} of ${images.length})`;
       img.title = (p && (p.desc || p.teaser || p.morph) || '').trim().slice(0, 160);
       img.dataset.desc = (p && p.desc) || '';
@@ -2276,7 +2675,7 @@ header.plant-hero.sticky .share-card-status.error{
   function updatePauseButton(paused=isCarouselPaused){
     const btn = document.getElementById('carouselPauseBtn');
     if (!btn) return;
-    btn.textContent = paused ? '▶' : '❚❚';
+    btn.textContent = paused ? 'â–¶' : 'âšâš';
     btn.setAttribute('aria-pressed', paused);
     btn.setAttribute('aria-label', paused ? 'Resume carousel' : 'Pause carousel');
     btn.title = paused ? 'Resume carousel' : 'Pause carousel';
@@ -2378,7 +2777,9 @@ header.plant-hero.sticky .share-card-status.error{
     const detailName = p.common || 'Plant';
     const titleText = `${detailName} • Howker Ridge Plant Catalog`;
     const headerText = `Howker Ridge • ${detailName}`;
-    const descText = `Details for ${p.common || 'a plant'}${p.latin ? ` (${p.latin})` : ''} observed along the Howker Ridge Trail in the White Mountains of New Hampshire.`;
+    const descText = synthesizeMetaDescription(p);
+    const indexEntry = getPlantIndexEntry(p);
+    const canonicalTags = Array.isArray(indexEntry.canonical_tags) ? indexEntry.canonical_tags : [];
     document.title = titleText;
     updateMeta('meta-description', descText);
     updateMeta('og-title', titleText);
@@ -2394,59 +2795,75 @@ header.plant-hero.sticky .share-card-status.error{
 
     setTitleWithPlantIcon(document.getElementById('d-title'), p.common || '', p);
     document.getElementById('d-latin').textContent = p.latin || '';
-    document.getElementById('d-tags').innerHTML = `
-      ${p.type ? `<span class="chip">${p.type}</span>` : ''}
-      ${p.habitat ? `<span class="chip">${p.habitat}</span>` : ''}
-      ${(p.tags||[]).map(t=>`<span class="chip">${t}</span>`).join("")}
-    `;
+    const chipLabels = [
+      p.type ? p.type : '',
+      indexEntry.habitat_group ? String(indexEntry.habitat_group).replace(/-/g, ' ') : '',
+      ...canonicalTags.slice(0, 8).map((tag) => String(tag || '').replace(/-/g, ' '))
+    ].filter(Boolean);
+    document.getElementById('d-tags').innerHTML = chipLabels.map((label) => `<span class="chip">${label}</span>`).join('');
     setTypeFactValue(p);
-    document.getElementById('f-elev').textContent    = p.elevation || "—";
-    document.getElementById('f-habitat').textContent = p.habitat   || "—";
-    document.getElementById('f-bloom').textContent   = p.bloom     || "—";
-    document.getElementById('f-morph').textContent   = p.morph     || "—";
-    document.getElementById('f-similar').textContent = p.similar   || "—";
-    document.getElementById('f-ecology').textContent = p.ecology   || "—";
-    document.getElementById('f-status').textContent  = p.status    || "—";
+    document.getElementById('f-elev').textContent    = p.elevation || '—';
+    document.getElementById('f-habitat').textContent = p.habitat   || '—';
+    document.getElementById('f-bloom').textContent   = p.bloom     || '—';
+    document.getElementById('f-morph').textContent   = p.morph     || '—';
+    document.getElementById('f-similar').textContent = p.similar   || '—';
+    document.getElementById('f-ecology').textContent = p.ecology   || '—';
+    document.getElementById('f-status').textContent  = p.status    || '—';
     applyFieldIcons();
 
-    const desc = (p.desc || p.teaser || "").trim();
+    const desc = (p.desc || p.teaser || '').trim();
     document.getElementById('d-desc').textContent = desc;
-    if (desc) document.getElementById('sec-desc').removeAttribute('hidden');
+    if (desc) {
+      document.getElementById('sec-desc').removeAttribute('hidden');
+    } else {
+      document.getElementById('sec-desc').setAttribute('hidden', '');
+    }
 
     const notes = [p.fieldNotes1, p.fieldNotes2, p.fieldNotes3, p.fieldNotes4].filter(Boolean);
-    document.getElementById('d-notes').innerHTML = notes.map(n=>`<li>${n}</li>`).join("");
-    if (notes.length > 0) document.getElementById('sec-notes').removeAttribute('hidden');
+    document.getElementById('d-notes').innerHTML = notes.map((n) => `<li>${n}</li>`).join('');
+    if (notes.length > 0) {
+      document.getElementById('sec-notes').removeAttribute('hidden');
+    } else {
+      document.getElementById('sec-notes').setAttribute('hidden', '');
+    }
 
-    const credits = (p.credits || "").trim();
+    const credits = (p.credits || '').trim();
     document.getElementById('d-credits').textContent = credits;
-    if (credits) document.getElementById('sec-credits').removeAttribute('hidden');
+    if (credits) {
+      document.getElementById('sec-credits').removeAttribute('hidden');
+    } else {
+      document.getElementById('sec-credits').setAttribute('hidden', '');
+    }
 
-    const imgs = Array.isArray(p.imgs) && p.imgs.length ? p.imgs : (p.img ? [p.img] : []);
+    const imgs = getPlantImages(p);
     buildCarousel(imgs, p);
     setShareCardAvailable(true);
     setShareCardStatus('');
     setShareCardBusy(false);
+    updateBackLink();
+    updateSequenceNavigation(p);
+    renderRelatedPlants(p);
 
-    const heroCandidate = [imgs[1], imgs[0]].find(src => typeof src === 'string' && src.trim().length > 0);
+    const heroCandidate = [imgs[1], imgs[0]].find((src) => typeof src === 'string' && src.trim().length > 0);
     if (detailHero && heroCandidate){
       detailHero.style.backgroundImage = `url("${heroCandidate}")`;
     }
 
-    const firstImage = Array.isArray(p.imgs) && p.imgs.length ? p.imgs[0] : (p.img || '');
+    const firstImage = imgs.length ? imgs[0] : '';
     const caption = normalizeTextForWeb(`${p.common || ''} - ${p.teaser || p.desc || p.morph || ''}`.trim());
+    const imageAlt = caption || `${p.common || 'Plant'} photo along the Howker Ridge Trail`;
     if (firstImage){
       updateMeta('og-image', firstImage);
       updateMeta('twitter-image', firstImage);
     }
-    if (caption){
-      updateMeta('og-image-alt', caption);
-      updateMeta('twitter-image-alt', caption);
-    }
+    updateMeta('og-image-alt', imageAlt);
+    updateMeta('twitter-image-alt', imageAlt);
 
-    const imagesList = imgs.map(src => ({
+    const imagesList = imgs.map((src, index) => ({
       '@type': 'ImageObject',
+      'position': index + 1,
       'url': src,
-      'caption': normalizeTextForWeb(p.desc || p.teaser || p.morph || ''),
+      'caption': normalizeTextForWeb(`${p.common || 'Plant'} photo ${index + 1} - ${p.teaser || p.desc || p.morph || ''}`),
       'license': 'https://creativecommons.org/licenses/by/4.0/'
     }));
     const jsonLd = {
@@ -2460,15 +2877,16 @@ header.plant-hero.sticky .share-card-status.error{
       jsonLdEl.textContent = JSON.stringify(jsonLd);
     }
   }
-
-  /* ---------- Init for details page ---------- */
+/* ---------- Init for details page ---------- */
   (async function initDetails(){
     // parse id from query string or path (/plant/{id})
     const params = new URLSearchParams(window.location.search);
     const pathMatch = window.location.pathname.match(/\/plant\/([^/]+)\/?$/);
     const plantId = params.get('id') || (pathMatch ? decodeURIComponent(pathMatch[1]) : null);
+    returnContext = parseReturnContext();
+    updateBackLink();
+
     if (!plantId){
-      // No id provided
       currentPlant = null;
       currentPlantSlug = '';
       document.getElementById('d-title').textContent = 'Plant not specified';
@@ -2479,13 +2897,19 @@ header.plant-hero.sticky .share-card-status.error{
       if (detailBreadcrumb){
         detailBreadcrumb.textContent = 'Plant not specified';
       }
+      if (plantSequenceNav) plantSequenceNav.hidden = true;
+      if (relatedPlantsSection) relatedPlantsSection.hidden = true;
       setShareCardAvailable(false);
       setShareCardStatus('Card sharing is unavailable for this page.', true);
       return;
     }
     try{
-      const items = await fetchPlants();
-      PLANTS = items;
+      const [items, indexPayload] = await Promise.all([
+        fetchPlants(),
+        fetchPlantIndex().catch(() => ({ plants: {}, facets: {} }))
+      ]);
+      PLANTS = Array.isArray(items) ? items : [];
+      PLANT_INDEX = (indexPayload && typeof indexPayload === 'object') ? indexPayload : { plants: {}, facets: {} };
       const p = PLANTS.find(item => String(item.id) === String(plantId));
       if (p){
         populatePlant(p);
@@ -2500,6 +2924,8 @@ header.plant-hero.sticky .share-card-status.error{
         if (detailBreadcrumb){
           detailBreadcrumb.textContent = 'Plant not found';
         }
+        if (plantSequenceNav) plantSequenceNav.hidden = true;
+        if (relatedPlantsSection) relatedPlantsSection.hidden = true;
         setShareCardAvailable(false);
         setShareCardStatus('Card sharing is unavailable for this plant.', true);
       }
@@ -2515,6 +2941,8 @@ header.plant-hero.sticky .share-card-status.error{
       if (detailBreadcrumb){
         detailBreadcrumb.textContent = 'Error loading plant';
       }
+      if (plantSequenceNav) plantSequenceNav.hidden = true;
+      if (relatedPlantsSection) relatedPlantsSection.hidden = true;
       setShareCardAvailable(false);
       setShareCardStatus('Card sharing is unavailable right now.', true);
     }
@@ -2533,3 +2961,4 @@ header.plant-hero.sticky .share-card-status.error{
 <div id="footer-placeholder"></div>
 </body>
 </html>
+

@@ -5728,7 +5728,15 @@ export default {
       }
       const canonical = `${SITE}${pathname}`;
       const title = `${plant.common} (${plant.latin})`;
-      const description = plant.teaser || plant.desc || `Profile for ${plant.common}.`;
+      const baseDescription = String(plant.teaser || plant.desc || `Profile for ${plant.common}.`).trim();
+      const tagSummary = Array.isArray(plant.tags)
+        ? plant.tags
+            .map((tag) => String(tag || '').trim())
+            .filter(Boolean)
+            .slice(0, 4)
+            .join(', ')
+        : '';
+      const description = (tagSummary ? `${baseDescription} Key traits: ${tagSummary}.` : baseDescription).slice(0, 280);
       const image = Array.isArray(plant.imgs) && plant.imgs.length ? plant.imgs[0] : DEFAULT_IMAGE;
       const plantImageObjects = Array.isArray(plant.imgs)
         ? plant.imgs.map((imgUrl, index) => ({
@@ -5783,7 +5791,7 @@ export default {
           alternateEn: `${SITE}${enPath}`,
           alternateFr: `${SITE}${frPath}`,
           image,
-          imageAlt: plant.common,
+          imageAlt: plant.common || plant.latin || 'Howker Ridge plant photo',
           ogType: 'article'
         },
         jsonLd

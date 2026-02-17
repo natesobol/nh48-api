@@ -52,6 +52,7 @@ jobs:
             "image-sitemap.xml"
             "build-meta.json"
             "data/og-cards.json"
+            "data/howker-plants-index.json"
             "photos/og"
           )
           for path in "${required[@]}"; do
@@ -81,6 +82,10 @@ jobs:
       - name: Fallback generate OG cards
         if: steps.generated.outputs.needs_fallback == 'true'
         run: python scripts/generate-og-cards.py
+
+      - name: Fallback generate Howker facets index
+        if: steps.generated.outputs.needs_fallback == 'true'
+        run: node scripts/build-howker-facets.js
 
       - name: Ensure build metadata file
         shell: bash

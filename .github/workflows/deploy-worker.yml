@@ -19,6 +19,8 @@ on:
       - 'data/current-conditions.json'
       - 'data/nh48_enriched_overlay.json'
       - 'data/breadcrumb-taxonomy.json'
+      - 'data/howker-plants'
+      - 'data/howker-plants-index.json'
       - 'data/og-cards.json'
       - 'data/og-card-overrides.json'
       - 'data/wiki/mountain-sets.json'
@@ -36,6 +38,7 @@ on:
       - 'scripts/audit-image-sitemap-quality.js'
       - 'scripts/audit-og-cards.js'
       - 'scripts/audit-tooltip-integration.js'
+      - 'scripts/audit-howker-data.js'
       - 'scripts/audit-homepage-worker-seo.js'
       - 'scripts/audit-worker-breadcrumbs.js'
       - 'scripts/audit-wiki-routes.js'
@@ -56,12 +59,15 @@ on:
       - 'scripts/build-peak-experience-scaffold.js'
       - 'scripts/build-forest-health-flowchart-base64.js'
       - 'scripts/build-dataset-overlay-scaffold.js'
+      - 'scripts/build-howker-facets.js'
       - 'scripts/sync-i18n-missing-keys.js'
       - 'scripts/prerender-peaks.js'
       - 'scripts/generate-sitemaps.js'
       - 'scripts/generate-og-cards.py'
       - 'scripts/sync-wiki-media.js'
       - 'pages/nh48_peak.html'
+      - 'pages/plant.html'
+      - 'pages/plant_catalog.html'
       - 'pages/nav.html'
       - 'pages/wiki/index.html'
       - 'pages/hrt_info.html'
@@ -81,6 +87,8 @@ on:
       - 'js/i18n.js'
       - 'js/photos.js'
       - 'js/ui-tooltips.js'
+      - 'js/howker-plant-catalog.js'
+      - 'js/howker-plant-icons.js'
       - 'js/wiki-mountain.js'
       - 'js/wiki-species.js'
       - 'js/wiki-plant-disease.js'
@@ -168,6 +176,13 @@ jobs:
       - name: Run tooltip integration audit (pre-deploy gate)
         id: tooltip_integration_audit
         run: node scripts/audit-tooltip-integration.js
+
+      - name: Run Howker plant data audit (pre-deploy gate)
+        id: howker_data_audit
+        run: |
+          set -euo pipefail
+          node scripts/build-howker-facets.js
+          node scripts/audit-howker-data.js
 
       - name: Run i18n completeness audit (pre-deploy gate)
         id: i18n_completeness_audit
