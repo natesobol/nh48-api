@@ -691,6 +691,26 @@ header.plant-hero.sticky .share-card-status.error{
   margin:0 0 6px;
   font-size:14px;
 }
+.section-panel{
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:10px;
+  padding:12px;
+  margin-bottom:12px;
+}
+.section-panel h3{
+  margin:0 0 8px;
+  padding-bottom:6px;
+  border-bottom:1px dotted var(--stroke);
+  color:var(--accent);
+  font-size:12px;
+  letter-spacing:.2px;
+  text-transform:uppercase;
+}
+.section-panel p{
+  margin:0;
+  line-height:1.55;
+}
 .section[hidden]{
   display:none;
 }
@@ -877,6 +897,10 @@ header.plant-hero.sticky .share-card-status.error{
     </div>
   </div>
   <div class="content" id="drawerContent">
+    <div class="section section-panel" id="sec-desc" hidden>
+      <h3>Short Description</h3>
+      <p id="d-desc"></p>
+    </div>
     <div class="facts">
       <div class="fact"><h4><img class="field-icon" data-field-icon="type" src="" alt="" aria-hidden="true">TYPE</h4><p id="f-type">—</p></div>
       <div class="fact"><h4><img class="field-icon" data-field-icon="elevation" src="" alt="" aria-hidden="true">ELEVATION</h4><p id="f-elev">—</p></div>
@@ -886,11 +910,6 @@ header.plant-hero.sticky .share-card-status.error{
       <div class="fact"><h4><img class="field-icon" data-field-icon="similar-species" src="" alt="" aria-hidden="true">SIMILAR SPECIES</h4><p id="f-similar">—</p></div>
       <div class="fact"><h4><img class="field-icon" data-field-icon="ecology" src="" alt="" aria-hidden="true">ECOLOGY</h4><p id="f-ecology">—</p></div>
       <div class="fact"><h4><img class="field-icon" data-field-icon="status" src="" alt="" aria-hidden="true">STATUS</h4><p id="f-status">—</p></div>
-    </div>
-
-    <div class="section" id="sec-desc" hidden>
-      <h3>Short Description</h3>
-      <p id="d-desc"></p>
     </div>
 
     <div class="section" id="sec-notes" hidden>
@@ -1542,10 +1561,10 @@ header.plant-hero.sticky .share-card-status.error{
       bannerRadius: 12,
       bannerFont: 24,
       bannerPadX: 16,
-      photoCreditText: '© Nathan Sobol',
-      photoCreditFont: 16,
-      photoCreditInsetX: 16,
-      photoCreditInsetY: 12,
+      photoCreditText: '\u00A9 Nathan Sobol',
+      photoCreditFont: 24,
+      photoCreditInsetX: 18,
+      photoCreditInsetY: 14,
       titleFont: 54,
       titleLineHeight: 58,
       titleMaxLines: 2,
@@ -1823,13 +1842,13 @@ header.plant-hero.sticky .share-card-status.error{
     const bannerDescent = bannerMetrics.actualBoundingBoxDescent || Math.round(style.bannerFont * 0.26);
     const bannerBaselineY = bannerY + ((bannerH + bannerAscent - bannerDescent) / 2);
     ctx.fillText(bannerLine, bannerX + style.bannerPadX, bannerBaselineY);
-    ctx.font = `600 ${style.photoCreditFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    ctx.font = `700 ${style.photoCreditFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
     ctx.textAlign = 'right';
     ctx.textBaseline = 'alphabetic';
     const creditX = layout.thumbX + layout.thumbW - style.photoCreditInsetX;
     const creditY = layout.thumbY + layout.thumbH - style.photoCreditInsetY;
     ctx.fillStyle = 'rgba(2,7,13,0.78)';
-    ctx.fillText(style.photoCreditText, creditX + 1, creditY + 1);
+    ctx.fillText(style.photoCreditText, creditX + 2, creditY + 2);
     ctx.fillStyle = 'rgba(34,197,94,0.96)';
     ctx.fillText(style.photoCreditText, creditX, creditY);
     ctx.restore();
