@@ -35,7 +35,8 @@
     "build:dataset-overlay-scaffold": "node scripts/build-dataset-overlay-scaffold.js --write",
     "audit:dataset-overlay-coverage": "node scripts/audit-dataset-overlay-coverage.js",
     "audit:i18n-markers": "node scripts/audit-unresolved-i18n-markers.js",
-    "audit:tooltip-integration": "node scripts/audit-tooltip-integration.js"
+    "audit:tooltip-integration": "node scripts/audit-tooltip-integration.js",
+    "audit:plant-icons": "node scripts/check-plant-icon-coverage.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.0",

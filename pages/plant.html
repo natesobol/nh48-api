@@ -98,6 +98,7 @@
   })();
 </script>
 <script src="/js/unified-footer.js" defer></script>
+<script src="/js/howker-plant-icons.js"></script>
 
 <style>
 /*
@@ -206,6 +207,17 @@ header.plant-hero h1{
   color:inherit;
   text-shadow:0 8px 24px rgba(0,0,0,0.55);
 }
+.title-with-icon{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+}
+.title-icon{
+  width:22px;
+  height:22px;
+  object-fit:contain;
+  flex:0 0 auto;
+}
 .hero-actions{
   position:absolute;
   top:16px;
@@ -216,11 +228,17 @@ header.plant-hero h1{
   align-items:flex-end;
   gap:8px;
 }
+.share-card-menu{
+  position:relative;
+}
 .share-card-btn{
   border:1px solid rgba(255,255,255,0.45);
   color:#ffffff;
   background:rgba(12,16,24,0.72);
   border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
   font-weight:700;
   font-size:13px;
   line-height:1;
@@ -241,6 +259,64 @@ header.plant-hero h1{
   opacity:0.7;
   cursor:wait;
   transform:none;
+}
+.share-card-dropdown{
+  position:absolute;
+  top:calc(100% + 8px);
+  right:0;
+  min-width:250px;
+  max-width:min(320px, calc(100vw - 24px));
+  max-height:320px;
+  overflow:auto;
+  padding:8px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(8,12,19,0.94);
+  box-shadow:0 20px 44px rgba(0,0,0,0.42);
+  backdrop-filter:blur(6px);
+}
+.share-card-dropdown[hidden]{
+  display:none !important;
+}
+.share-card-option{
+  width:100%;
+  border:1px solid transparent;
+  background:transparent;
+  color:#f4f9ff;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:600;
+  text-align:left;
+  padding:8px 10px;
+  cursor:pointer;
+}
+.share-card-option:hover{
+  background:rgba(34,197,94,0.12);
+  border-color:rgba(34,197,94,0.28);
+}
+.share-card-option:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:1px;
+}
+.share-card-option[disabled]{
+  opacity:0.6;
+  cursor:wait;
+}
+.share-card-option.download{
+  font-weight:700;
+}
+.share-card-divider{
+  height:1px;
+  margin:6px 4px;
+  background:rgba(255,255,255,0.14);
+}
+.share-card-group-title{
+  margin:6px 8px 4px;
+  font-size:11px;
+  font-weight:700;
+  color:#95a8c2;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
 }
 .share-card-status{
   margin:0;
@@ -269,6 +345,16 @@ header.plant-hero.sticky .share-card-btn{
   background:rgba(34,197,94,0.14);
   border-color:rgba(34,197,94,0.5);
   color:var(--ink);
+}
+header.plant-hero.sticky .share-card-dropdown{
+  border-color:rgba(34,197,94,0.28);
+  background:rgba(13,18,28,0.96);
+}
+header.plant-hero.sticky .share-card-option{
+  color:var(--ink);
+}
+header.plant-hero.sticky .share-card-group-title{
+  color:var(--muted);
 }
 header.plant-hero.sticky .share-card-status{
   color:var(--muted);
@@ -328,6 +414,45 @@ header.plant-hero.sticky .share-card-status.error{
   box-shadow:0 18px 46px rgba(0,0,0,0.35);
   width:100%;
 }
+@media (min-width:1024px){
+  .media{
+    aspect-ratio:5/3;
+    width:100%;
+    max-width:100%;
+  }
+}
+.media-loading{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  z-index:4;
+  background:linear-gradient(to bottom, rgba(10,12,18,0.08), rgba(10,12,18,0.2));
+}
+.media-loading[hidden]{
+  display:none;
+}
+.loading-spinner{
+  border-radius:50%;
+  border-style:solid;
+  border-color:rgba(34,197,94,0.24);
+  border-top-color:var(--accent);
+  animation:spin 0.9s linear infinite;
+}
+.loading-spinner.large{
+  width:58px;
+  height:58px;
+  border-width:6px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.35);
+}
+.loading-spinner.small{
+  width:25px;
+  height:25px;
+  border-width:3px;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
 .carousel{
   position:relative;
   width:100%;
@@ -390,6 +515,21 @@ header.plant-hero.sticky .share-card-status.error{
   flex:0 0 auto;
   padding:0;
   appearance:none;
+  position:relative;
+  overflow:hidden;
+}
+.dot-loading{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(to bottom, rgba(6,8,12,0.28), rgba(6,8,12,0.52));
+  pointer-events:none;
+}
+.dot.ready .dot-loading,
+.dot-loading.hidden{
+  display:none;
 }
 .dot:focus-visible{
   outline:2px solid var(--accent);
@@ -512,17 +652,37 @@ header.plant-hero.sticky .share-card-status.error{
   padding:10px;
 }
 .fact h4{
+  display:flex;
+  align-items:center;
+  gap:6px;
   margin:0 0 6px;
   padding-bottom:6px;
   border-bottom:1px dotted var(--stroke);
   font-size:12px;
-  color:var(--muted);
+  color:var(--accent);
   letter-spacing:.2px;
   text-transform:uppercase;
+}
+.field-icon{
+  width:14px;
+  height:14px;
+  object-fit:contain;
+  flex:0 0 auto;
 }
 .fact p{
   margin:0;
   font-size:14px;
+}
+#f-type{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.type-value-icon{
+  width:16px;
+  height:16px;
+  object-fit:contain;
+  flex:0 0 auto;
 }
 .section{
   margin-top:12px;
@@ -607,6 +767,11 @@ header.plant-hero.sticky .share-card-status.error{
     margin-top:14px;
     align-items:flex-start;
   }
+  .share-card-dropdown{
+    left:0;
+    right:auto;
+    max-width:min(320px, calc(100vw - 40px));
+  }
   .share-card-status{
     text-align:left;
     max-width:none;
@@ -667,7 +832,10 @@ header.plant-hero.sticky .share-card-status.error{
       <h1 id="detail-title">Howker Ridge • Plant</h1>
     </blockquote>
     <div class="hero-actions">
-      <button id="shareCardBtn" class="share-card-btn" type="button" aria-label="Download plant card">Download Card</button>
+      <div id="shareCardMenu" class="share-card-menu">
+        <button id="shareCardBtn" class="share-card-btn" type="button" aria-label="Share plant card" aria-haspopup="menu" aria-expanded="false">Share Card ▾</button>
+        <div id="shareCardDropdown" class="share-card-dropdown" role="menu" hidden></div>
+      </div>
       <p id="shareCardStatus" class="share-card-status" role="status" aria-live="polite" aria-atomic="true"></p>
     </div>
   </header>
@@ -689,6 +857,9 @@ header.plant-hero.sticky .share-card-status.error{
     <div class="chiprow" id="d-tags"></div>
   </header>
   <div class="media">
+    <div class="media-loading" id="carouselLoading" aria-hidden="true" hidden>
+      <span class="loading-spinner large" aria-hidden="true"></span>
+    </div>
     <div id="carousel" class="carousel" aria-roledescription="carousel" aria-label="Photos" tabindex="0"></div>
     <div id="dots" class="dots" aria-hidden="true"></div>
     <div class="ctrls">
@@ -707,14 +878,14 @@ header.plant-hero.sticky .share-card-status.error{
   </div>
   <div class="content" id="drawerContent">
     <div class="facts">
-      <div class="fact"><h4>TYPE</h4><p id="f-type">—</p></div>
-      <div class="fact"><h4>ELEVATION</h4><p id="f-elev">—</p></div>
-      <div class="fact"><h4>HABITAT</h4><p id="f-habitat">—</p></div>
-      <div class="fact"><h4>BLOOM / SEASON</h4><p id="f-bloom">—</p></div>
-      <div class="fact"><h4>LEAF &amp; STEM</h4><p id="f-morph">—</p></div>
-      <div class="fact"><h4>SIMILAR SPECIES</h4><p id="f-similar">—</p></div>
-      <div class="fact"><h4>ECOLOGY</h4><p id="f-ecology">—</p></div>
-      <div class="fact"><h4>STATUS</h4><p id="f-status">—</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="type" src="" alt="" aria-hidden="true">TYPE</h4><p id="f-type">—</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="elevation" src="" alt="" aria-hidden="true">ELEVATION</h4><p id="f-elev">—</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="habitat" src="" alt="" aria-hidden="true">HABITAT</h4><p id="f-habitat">—</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="bloom-season" src="" alt="" aria-hidden="true">BLOOM / SEASON</h4><p id="f-bloom">—</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="leaf-stem" src="" alt="" aria-hidden="true">LEAF &amp; STEM</h4><p id="f-morph">—</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="similar-species" src="" alt="" aria-hidden="true">SIMILAR SPECIES</h4><p id="f-similar">—</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="ecology" src="" alt="" aria-hidden="true">ECOLOGY</h4><p id="f-ecology">—</p></div>
+      <div class="fact"><h4><img class="field-icon" data-field-icon="status" src="" alt="" aria-hidden="true">STATUS</h4><p id="f-status">—</p></div>
     </div>
 
     <div class="section" id="sec-desc" hidden>
@@ -748,6 +919,8 @@ header.plant-hero.sticky .share-card-status.error{
   let carouselIdx = 0;
   let carouselImgs = [];
   let carouselSourceUrls = [];
+  let carouselSlideLoaded = [];
+  let carouselDotLoaders = [];
   let currentDelay = 8000;
   const BASE_DELAY = 8000;
   let isCarouselPaused = false;
@@ -755,6 +928,8 @@ header.plant-hero.sticky .share-card-status.error{
   let currentPlantSlug = '';
   const SHARE_CARD_WIDTH = 1080;
   const SHARE_CARD_HEIGHT = 1350;
+  const PLANT_ICON_API = window.HOWKER_PLANT_ICONS || null;
+  const ICON_FALLBACK = '/assets/icons/plant-catalog-icons/plant.png';
 
   // DOM helpers
   const $ = s => document.querySelector(s);
@@ -769,13 +944,70 @@ header.plant-hero.sticky .share-card-status.error{
   };
   const carouselEl = $("#carousel");
   const dotsEl = $("#dots");
+  const carouselLoading = document.getElementById('carouselLoading');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
   const detailTitle = document.getElementById('detail-title');
   const detailBreadcrumb = document.getElementById('detail-breadcrumb');
   const detailHero = document.querySelector('.plant-hero');
+  const shareCardMenu = document.getElementById('shareCardMenu');
   const shareCardBtn = document.getElementById('shareCardBtn');
+  const shareCardDropdown = document.getElementById('shareCardDropdown');
   const shareCardStatus = document.getElementById('shareCardStatus');
+  let shareCardAvailable = false;
+
+  const SHARE_CARD_PLATFORMS = [
+    {
+      name: 'Facebook',
+      category: 'major',
+      buildUrl: (share) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(share.url)}`
+    },
+    {
+      name: 'X',
+      category: 'major',
+      buildUrl: (share) => `https://twitter.com/intent/tweet?url=${encodeURIComponent(share.url)}&text=${encodeURIComponent(share.text)}`
+    },
+    {
+      name: 'Threads',
+      category: 'major',
+      buildUrl: (share) => `https://www.threads.net/intent/post?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+    },
+    {
+      name: 'LinkedIn',
+      category: 'major',
+      buildUrl: (share) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(share.url)}`
+    },
+    {
+      name: 'Bluesky',
+      category: 'major',
+      buildUrl: (share) => `https://bsky.app/intent/compose?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+    },
+    {
+      name: 'Reddit',
+      category: 'major',
+      buildUrl: (share) => `https://www.reddit.com/submit?url=${encodeURIComponent(share.url)}&title=${encodeURIComponent(share.text)}`
+    },
+    {
+      name: 'WhatsApp',
+      category: 'major',
+      buildUrl: (share) => `https://wa.me/?text=${encodeURIComponent(`${share.text} ${share.url}`)}`
+    },
+    {
+      name: 'Email',
+      category: 'major',
+      buildUrl: (share) => `mailto:?subject=${encodeURIComponent(share.text)}&body=${encodeURIComponent(share.url)}`
+    },
+    {
+      name: 'Telegram',
+      category: 'international',
+      buildUrl: (share) => `https://t.me/share/url?url=${encodeURIComponent(share.url)}&text=${encodeURIComponent(share.text)}`
+    },
+    {
+      name: 'Pinterest',
+      category: 'international',
+      buildUrl: (share) => `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(share.url)}&description=${encodeURIComponent(share.text)}`
+    }
+  ];
 
   // Placeholders for images
   const LQ_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
@@ -810,6 +1042,72 @@ header.plant-hero.sticky .share-card-status.error{
     if (el) {
       el.setAttribute('content', content);
     }
+  }
+
+  function resolveSpeciesIconSrc(plant){
+    const resolved = PLANT_ICON_API?.resolveSpeciesIcon?.(plant);
+    return String(resolved || '').trim() || ICON_FALLBACK;
+  }
+
+  function resolveFieldIconSrc(fieldKey){
+    const resolved = PLANT_ICON_API?.resolveFieldIcon?.(fieldKey);
+    return String(resolved || '').trim() || ICON_FALLBACK;
+  }
+
+  function resolveTypeIconSrc(plant){
+    const resolved = PLANT_ICON_API?.resolveTypeIcon?.(plant);
+    return String(resolved || '').trim() || resolveSpeciesIconSrc(plant);
+  }
+
+  function attachIconFallback(iconEl){
+    if (!iconEl || iconEl.dataset.iconFallbackBound === '1') return;
+    iconEl.dataset.iconFallbackBound = '1';
+    iconEl.addEventListener('error', () => {
+      if (iconEl.dataset.iconFallbackApplied === '1') return;
+      iconEl.dataset.iconFallbackApplied = '1';
+      iconEl.src = ICON_FALLBACK;
+    });
+  }
+
+  function createDecorativeIcon(src, className){
+    const icon = document.createElement('img');
+    icon.className = className;
+    icon.alt = '';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.src = String(src || '').trim() || ICON_FALLBACK;
+    attachIconFallback(icon);
+    return icon;
+  }
+
+  function setTitleWithPlantIcon(el, text, plant){
+    if (!el) return;
+    const label = String(text || '').trim();
+    el.textContent = '';
+    if (!label) return;
+    const wrapper = document.createElement('span');
+    wrapper.className = 'title-with-icon';
+    wrapper.appendChild(createDecorativeIcon(resolveSpeciesIconSrc(plant), 'title-icon'));
+    const textNode = document.createElement('span');
+    textNode.textContent = label;
+    wrapper.appendChild(textNode);
+    el.appendChild(wrapper);
+  }
+
+  function setTypeFactValue(plant){
+    const typeValueEl = document.getElementById('f-type');
+    if (!typeValueEl) return;
+    const value = String((plant && plant.type) || '—').trim() || '—';
+    typeValueEl.textContent = '';
+    typeValueEl.appendChild(createDecorativeIcon(resolveTypeIconSrc(plant), 'type-value-icon'));
+    typeValueEl.appendChild(document.createTextNode(value));
+  }
+
+  function applyFieldIcons(){
+    document.querySelectorAll('img[data-field-icon]').forEach((iconEl) => {
+      const key = iconEl.getAttribute('data-field-icon') || '';
+      iconEl.src = resolveFieldIconSrc(key);
+      attachIconFallback(iconEl);
+    });
   }
 
   function stripCloudflareImageTransform(rawUrl){
@@ -862,17 +1160,127 @@ header.plant-hero.sticky .share-card-status.error{
     ].join('') + '-' + [pad(d.getHours()), pad(d.getMinutes())].join('');
   }
 
+  function getPlantDetailUrl(plant = currentPlant){
+    const plantId = String((plant && (plant.id || plant.slug)) || currentPlantSlug || '').trim();
+    return plantId
+      ? `https://nh48.info/plant/${encodeURIComponent(plantId)}`
+      : 'https://nh48.info/plant-catalog';
+  }
+
+  function buildPlantSharePayload(plant = currentPlant){
+    const url = getPlantDetailUrl(plant);
+    const plantName = String((plant && plant.common) || 'Howker Ridge Plant').trim();
+    const latinName = String((plant && plant.latin) || '').trim();
+    const text = latinName
+      ? `${plantName} (${latinName}) from the Howker Ridge Plant Catalog`
+      : `${plantName} from the Howker Ridge Plant Catalog`;
+    return { url, text };
+  }
+
+  function setShareCardMenuOpen(isOpen){
+    if (!shareCardBtn || !shareCardDropdown) return;
+    const open = Boolean(isOpen);
+    shareCardBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    shareCardDropdown.hidden = !open;
+  }
+
+  function setShareCardAvailable(isAvailable){
+    shareCardAvailable = Boolean(isAvailable);
+    if (!shareCardBtn) return;
+    if (!shareCardAvailable) {
+      setShareCardMenuOpen(false);
+    }
+    shareCardBtn.disabled = !shareCardAvailable;
+  }
+
   function setShareCardBusy(isBusy){
     if (!shareCardBtn) return;
-    shareCardBtn.disabled = Boolean(isBusy);
+    const busy = Boolean(isBusy);
+    if (busy) {
+      setShareCardMenuOpen(false);
+    }
+    shareCardBtn.disabled = busy || !shareCardAvailable;
     shareCardBtn.setAttribute('aria-busy', isBusy ? 'true' : 'false');
-    shareCardBtn.textContent = isBusy ? 'Rendering...' : 'Download Card';
+    shareCardBtn.textContent = busy ? 'Rendering...' : 'Share Card ▾';
+    if (shareCardDropdown) {
+      shareCardDropdown.querySelectorAll('.share-card-option').forEach((option) => {
+        option.disabled = busy || !shareCardAvailable;
+      });
+    }
   }
 
   function setShareCardStatus(message, isError = false){
     if (!shareCardStatus) return;
     shareCardStatus.textContent = message || '';
     shareCardStatus.classList.toggle('error', Boolean(isError));
+  }
+
+  function buildShareCardMenu(){
+    if (!shareCardDropdown) return;
+    const sectioned = {
+      major: SHARE_CARD_PLATFORMS.filter((platform) => platform.category === 'major'),
+      international: SHARE_CARD_PLATFORMS.filter((platform) => platform.category !== 'major')
+    };
+    const buildOption = ({ label, action, network = '' }) => {
+      const safeNetwork = String(network || '');
+      return `<button type="button" class="share-card-option${action === 'download' ? ' download' : ''}" role="menuitem" data-action="${action}" data-network="${safeNetwork}">${label}</button>`;
+    };
+    const majorOptions = sectioned.major.map((platform) => buildOption({
+      label: `Share on ${platform.name}`,
+      action: 'share-network',
+      network: platform.name
+    })).join('');
+    const internationalOptions = sectioned.international.map((platform) => buildOption({
+      label: `Share on ${platform.name}`,
+      action: 'share-network',
+      network: platform.name
+    })).join('');
+    shareCardDropdown.innerHTML = [
+      buildOption({ label: 'Download PNG', action: 'download' }),
+      '<div class="share-card-divider" role="separator"></div>',
+      '<p class="share-card-group-title">Major networks</p>',
+      majorOptions,
+      sectioned.international.length
+        ? '<p class="share-card-group-title">More platforms</p>'
+        : '',
+      internationalOptions
+    ].join('');
+    setShareCardMenuOpen(false);
+  }
+
+  function setCarouselMainLoading(isLoading){
+    if (!carouselLoading) return;
+    carouselLoading.hidden = !Boolean(isLoading);
+  }
+
+  function hideDotLoading(index){
+    const loader = carouselDotLoaders[index];
+    if (loader) {
+      loader.classList.add('hidden');
+    }
+    const dot = dotsEl?.children?.[index];
+    if (dot) {
+      dot.classList.add('ready');
+    }
+  }
+
+  function syncActiveSlideLoading(){
+    if (!Array.isArray(carouselImgs) || carouselImgs.length === 0) {
+      setCarouselMainLoading(false);
+      return;
+    }
+    const safeIndex = Number.isInteger(carouselIdx) && carouselIdx >= 0
+      ? carouselIdx % carouselImgs.length
+      : 0;
+    setCarouselMainLoading(!Boolean(carouselSlideLoaded[safeIndex]));
+  }
+
+  function markSlideLoaded(index){
+    carouselSlideLoaded[index] = true;
+    hideDotLoading(index);
+    if (index === carouselIdx) {
+      syncActiveSlideLoading();
+    }
   }
 
   function getSelectedCardImageUrl(){
@@ -1134,6 +1542,10 @@ header.plant-hero.sticky .share-card-status.error{
       bannerRadius: 12,
       bannerFont: 24,
       bannerPadX: 16,
+      photoCreditText: '© Nathan Sobol',
+      photoCreditFont: 16,
+      photoCreditInsetX: 16,
+      photoCreditInsetY: 12,
       titleFont: 54,
       titleLineHeight: 58,
       titleMaxLines: 2,
@@ -1411,6 +1823,15 @@ header.plant-hero.sticky .share-card-status.error{
     const bannerDescent = bannerMetrics.actualBoundingBoxDescent || Math.round(style.bannerFont * 0.26);
     const bannerBaselineY = bannerY + ((bannerH + bannerAscent - bannerDescent) / 2);
     ctx.fillText(bannerLine, bannerX + style.bannerPadX, bannerBaselineY);
+    ctx.font = `600 ${style.photoCreditFont}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'alphabetic';
+    const creditX = layout.thumbX + layout.thumbW - style.photoCreditInsetX;
+    const creditY = layout.thumbY + layout.thumbH - style.photoCreditInsetY;
+    ctx.fillStyle = 'rgba(2,7,13,0.78)';
+    ctx.fillText(style.photoCreditText, creditX + 1, creditY + 1);
+    ctx.fillStyle = 'rgba(34,197,94,0.96)';
+    ctx.fillText(style.photoCreditText, creditX, creditY);
     ctx.restore();
 
     const drawDivider = (yPos) => {
@@ -1508,17 +1929,33 @@ header.plant-hero.sticky .share-card-status.error{
     URL.revokeObjectURL(objectUrl);
   }
 
+  async function renderShareCardForExport(){
+    if (!currentPlant) {
+      throw new Error('Plant data is not ready yet.');
+    }
+    const selectedSource = getSelectedCardImageUrl();
+    if (!selectedSource) {
+      throw new Error('No usable image is available for this plant.');
+    }
+    const imageIndex = Number.isInteger(carouselIdx) ? carouselIdx : 0;
+    const proxyUrl = buildShareImageProxyUrl(selectedSource, { width: 1800, format: 'jpg' });
+    const image = await loadImageForShareCard(proxyUrl);
+    const cardCanvas = renderPlantShareCard(currentPlant, image);
+    const blob = await new Promise((resolve) => cardCanvas.toBlob(resolve, 'image/png'));
+    if (!blob) {
+      throw new Error('Unable to encode PNG output.');
+    }
+    const timestamp = formatShareTimestamp(new Date());
+    const filename = `${sanitizeFilenamePart(currentPlantSlug || currentPlant.id || currentPlant.common)}-threads-card-${timestamp}.png`;
+    const sharePayload = buildPlantSharePayload(currentPlant);
+    return { blob, filename, imageIndex, cardCanvas, sharePayload };
+  }
+
   async function handleDownloadCardClick(){
     if (!currentPlant) {
       setShareCardStatus('Plant data is not ready yet.', true);
       return;
     }
-    const selectedSource = getSelectedCardImageUrl();
-    if (!selectedSource) {
-      setShareCardStatus('No usable image is available for this plant.', true);
-      return;
-    }
-
     const imageIndex = Number.isInteger(carouselIdx) ? carouselIdx : 0;
     trackAnalytics('plant_detail_card_download_attempt', {
       plant_id: currentPlant.id || '',
@@ -1528,15 +1965,7 @@ header.plant-hero.sticky .share-card-status.error{
     setShareCardBusy(true);
     setShareCardStatus('Rendering share card...', false);
     try {
-      const proxyUrl = buildShareImageProxyUrl(selectedSource, { width: 1800, format: 'jpg' });
-      const image = await loadImageForShareCard(proxyUrl);
-      const cardCanvas = renderPlantShareCard(currentPlant, image);
-      const blob = await new Promise((resolve) => cardCanvas.toBlob(resolve, 'image/png'));
-      if (!blob) {
-        throw new Error('Unable to encode PNG output.');
-      }
-      const timestamp = formatShareTimestamp(new Date());
-      const filename = `${sanitizeFilenamePart(currentPlantSlug || currentPlant.id || currentPlant.common)}-threads-card-${timestamp}.png`;
+      const { blob, filename, cardCanvas } = await renderShareCardForExport();
       downloadBlob(blob, filename);
       setShareCardStatus(`Downloaded ${filename}`, false);
       trackAnalytics('plant_detail_card_download_success', {
@@ -1559,6 +1988,79 @@ header.plant-hero.sticky .share-card-status.error{
     }
   }
 
+  async function handleShareNetworkClick(networkName){
+    const platform = SHARE_CARD_PLATFORMS.find((candidate) => candidate.name === networkName);
+    if (!platform) {
+      setShareCardStatus('Unsupported share platform selected.', true);
+      return;
+    }
+    if (!currentPlant) {
+      setShareCardStatus('Plant data is not ready yet.', true);
+      return;
+    }
+    const imageIndex = Number.isInteger(carouselIdx) ? carouselIdx : 0;
+    trackAnalytics('plant_detail_card_share_attempt', {
+      plant_id: currentPlant.id || '',
+      image_index: imageIndex,
+      network: String(platform.name || '').toLowerCase()
+    });
+
+    let popup = null;
+    try {
+      popup = window.open('about:blank', '_blank', 'noopener,noreferrer');
+    } catch (_) {
+      popup = null;
+    }
+
+    setShareCardBusy(true);
+    setShareCardStatus(`Preparing ${platform.name} share...`, false);
+    try {
+      const { blob, filename, sharePayload } = await renderShareCardForExport();
+      downloadBlob(blob, filename);
+      const shareUrl = platform.buildUrl(sharePayload);
+      if (popup) {
+        popup.location.replace(shareUrl);
+      } else {
+        window.open(shareUrl, '_blank', 'noopener,noreferrer');
+      }
+      setShareCardStatus(`Downloaded ${filename}. ${platform.name} composer opened; attach the PNG.`, false);
+      trackAnalytics('plant_detail_card_share_success', {
+        plant_id: currentPlant.id || '',
+        image_index: imageIndex,
+        network: String(platform.name || '').toLowerCase()
+      });
+    } catch (error) {
+      if (popup && !popup.closed) {
+        popup.close();
+      }
+      console.error('Plant share-card social share failed', error);
+      setShareCardStatus(error?.message || 'Social share failed.', true);
+      trackAnalytics('plant_detail_card_share_error', {
+        plant_id: (currentPlant && currentPlant.id) || '',
+        image_index: imageIndex,
+        network: String(platform.name || '').toLowerCase(),
+        reason: error?.message || 'unknown'
+      });
+    } finally {
+      setShareCardBusy(false);
+    }
+  }
+
+  async function handleShareCardMenuAction(action, networkName = ''){
+    const normalizedAction = String(action || '').trim();
+    const normalizedNetwork = String(networkName || '').trim();
+    setShareCardMenuOpen(false);
+    if (normalizedAction === 'download') {
+      await handleDownloadCardClick();
+      return;
+    }
+    if (normalizedAction === 'share-network' && normalizedNetwork) {
+      await handleShareNetworkClick(normalizedNetwork);
+      return;
+    }
+    setShareCardStatus('Unknown share action selected.', true);
+  }
+
   /* ---------- Data source: static JSON from GitHub Pages ---------- */
   async function fetchPlants() {
     const res = await fetch(
@@ -1576,12 +2078,15 @@ header.plant-hero.sticky .share-card-status.error{
     carouselEl.innerHTML = '';
     dotsEl.innerHTML = '';
     carouselImgs = [];
+    carouselDotLoaders = [];
     if (!images || !images.length){ images = [PLACEHOLDER]; }
     carouselSourceUrls = images.map((src) => String(src || '').trim() || PLACEHOLDER);
+    carouselSlideLoaded = new Array(carouselSourceUrls.length).fill(false);
     const startingIndex = images.length > 1 ? 1 : 0;
     carouselIdx = startingIndex;
+    setCarouselMainLoading(true);
     const timerEl = document.getElementById('carouselTimer');
-    images.forEach((src, i)=>{
+    carouselSourceUrls.forEach((src, i)=>{
       const slide = document.createElement('div');
       slide.className = 'slide' + (i===startingIndex ? ' active' : '');
       const figure = document.createElement('figure');
@@ -1593,15 +2098,32 @@ header.plant-hero.sticky .share-card-status.error{
       img.title = (p && (p.desc || p.teaser || p.morph) || '').trim().slice(0, 160);
       img.dataset.desc = (p && p.desc) || '';
       img.dataset.credits = (p && p.credits) || '';
+      img.dataset.realSrc = src;
       img.loading = 'lazy';
       img.decoding = 'async';
+      img.addEventListener('load', () => {
+        if (img.dataset.waitingReal === '1') {
+          img.dataset.waitingReal = '0';
+          markSlideLoaded(i);
+        }
+      });
+      img.addEventListener('error', () => {
+        if (img.dataset.waitingReal === '1') {
+          img.dataset.waitingReal = '0';
+          markSlideLoaded(i);
+          const currentSrc = String(img.currentSrc || img.src || '');
+          if (currentSrc !== PLACEHOLDER) {
+            img.src = PLACEHOLDER;
+          }
+        }
+      });
       if (i===startingIndex){
+        img.dataset.waitingReal = '1';
         img.src = src;
       } else {
         img.setAttribute('data-src', src);
         img.src = LQ_PLACEHOLDER;
       }
-      img.onerror = ()=>{ img.onerror=null; img.src=PLACEHOLDER; };
       figure.appendChild(img);
       slide.appendChild(figure);
       const caption = document.createElement('p');
@@ -1617,7 +2139,20 @@ header.plant-hero.sticky .share-card-status.error{
       dot.setAttribute('aria-label', `View photo ${i + 1}`);
       dot.title = dot.getAttribute('aria-label');
       dot.addEventListener('click', ()=>goTo(i, true));
+      const dotLoading = document.createElement('span');
+      dotLoading.className = 'dot-loading';
+      const dotSpinner = document.createElement('span');
+      dotSpinner.className = 'loading-spinner small';
+      dotSpinner.setAttribute('aria-hidden', 'true');
+      dotLoading.appendChild(dotSpinner);
+      dot.appendChild(dotLoading);
+      carouselDotLoaders.push(dotLoading);
       dotsEl.appendChild(dot);
+      const dotProbe = new Image();
+      dotProbe.decoding = 'async';
+      dotProbe.onload = () => hideDotLoading(i);
+      dotProbe.onerror = () => hideDotLoading(i);
+      dotProbe.src = src;
     });
     const media = document.querySelector('.media');
     prevBtn.onclick = () => prev(true);
@@ -1629,6 +2164,7 @@ header.plant-hero.sticky .share-card-status.error{
     if (timerEl){
       timerEl.hidden = images.length <= 1;
     }
+    syncActiveSlideLoading();
     startCarousel();
   }
   function updateSlides(){
@@ -1636,14 +2172,22 @@ header.plant-hero.sticky .share-card-status.error{
     const dots = Array.from(document.querySelectorAll('.dot'));
     slides.forEach((s, i)=> s.classList.toggle('active', i===carouselIdx));
     dots.forEach((d, i)=> d.classList.toggle('active', i===carouselIdx));
+    syncActiveSlideLoading();
   }
   function ensureImgLoaded(i){
     const img = carouselImgs[i]; if (!img) return;
     const real = img.getAttribute('data-src');
     if (real){
+      img.dataset.waitingReal = '1';
       img.src = real;
       img.removeAttribute('data-src');
+      syncActiveSlideLoading();
+      return;
     }
+    if (!carouselSlideLoaded[i] && img.complete && img.naturalWidth > 0) {
+      markSlideLoaded(i);
+    }
+    syncActiveSlideLoading();
   }
   function next(manual=false){
     carouselIdx = (carouselIdx + 1) % carouselImgs.length;
@@ -1751,10 +2295,30 @@ header.plant-hero.sticky .share-card-status.error{
     pauseBtn.addEventListener('click', toggleCarouselPause);
     updatePauseButton(false);
   }
-  if (shareCardBtn){
-    shareCardBtn.addEventListener('click', handleDownloadCardClick);
+  if (shareCardBtn && shareCardDropdown){
+    buildShareCardMenu();
+    shareCardBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (!shareCardAvailable || shareCardBtn.disabled) return;
+      const isOpen = shareCardBtn.getAttribute('aria-expanded') === 'true';
+      setShareCardMenuOpen(!isOpen);
+    });
+    shareCardDropdown.addEventListener('click', async (event) => {
+      const option = event.target.closest('.share-card-option');
+      if (!option || option.disabled) return;
+      event.preventDefault();
+      await handleShareCardMenuAction(option.dataset.action, option.dataset.network);
+    });
+    document.addEventListener('click', (event) => {
+      if (!shareCardMenu || !shareCardMenu.contains(event.target)) {
+        setShareCardMenuOpen(false);
+      }
+    });
+    setShareCardAvailable(false);
     setShareCardBusy(false);
   }
+  applyFieldIcons();
 
   function startTimer(duration){
     const ring = document.getElementById('timerRing');
@@ -1803,20 +2367,20 @@ header.plant-hero.sticky .share-card-status.error{
     updateMeta('twitter-title', titleText);
     updateMeta('twitter-description', descText);
     if (detailTitle){
-      detailTitle.textContent = headerText;
+      setTitleWithPlantIcon(detailTitle, headerText, p);
     }
     if (detailBreadcrumb){
       detailBreadcrumb.textContent = detailName;
     }
 
-    document.getElementById('d-title').textContent = p.common || '';
+    setTitleWithPlantIcon(document.getElementById('d-title'), p.common || '', p);
     document.getElementById('d-latin').textContent = p.latin || '';
     document.getElementById('d-tags').innerHTML = `
       ${p.type ? `<span class="chip">${p.type}</span>` : ''}
       ${p.habitat ? `<span class="chip">${p.habitat}</span>` : ''}
       ${(p.tags||[]).map(t=>`<span class="chip">${t}</span>`).join("")}
     `;
-    document.getElementById('f-type').textContent    = p.type      || "—";
+    setTypeFactValue(p);
     document.getElementById('f-elev').textContent    = p.elevation || "—";
     document.getElementById('f-habitat').textContent = p.habitat   || "—";
     document.getElementById('f-bloom').textContent   = p.bloom     || "—";
@@ -1824,6 +2388,7 @@ header.plant-hero.sticky .share-card-status.error{
     document.getElementById('f-similar').textContent = p.similar   || "—";
     document.getElementById('f-ecology').textContent = p.ecology   || "—";
     document.getElementById('f-status').textContent  = p.status    || "—";
+    applyFieldIcons();
 
     const desc = (p.desc || p.teaser || "").trim();
     document.getElementById('d-desc').textContent = desc;
@@ -1839,6 +2404,7 @@ header.plant-hero.sticky .share-card-status.error{
 
     const imgs = Array.isArray(p.imgs) && p.imgs.length ? p.imgs : (p.img ? [p.img] : []);
     buildCarousel(imgs, p);
+    setShareCardAvailable(true);
     setShareCardStatus('');
     setShareCardBusy(false);
 
@@ -1894,10 +2460,8 @@ header.plant-hero.sticky .share-card-status.error{
       if (detailBreadcrumb){
         detailBreadcrumb.textContent = 'Plant not specified';
       }
-      if (shareCardBtn) {
-        shareCardBtn.disabled = true;
-      }
-      setShareCardStatus('Card download is unavailable for this page.', true);
+      setShareCardAvailable(false);
+      setShareCardStatus('Card sharing is unavailable for this page.', true);
       return;
     }
     try{
@@ -1917,10 +2481,8 @@ header.plant-hero.sticky .share-card-status.error{
         if (detailBreadcrumb){
           detailBreadcrumb.textContent = 'Plant not found';
         }
-        if (shareCardBtn) {
-          shareCardBtn.disabled = true;
-        }
-        setShareCardStatus('Card download is unavailable for this plant.', true);
+        setShareCardAvailable(false);
+        setShareCardStatus('Card sharing is unavailable for this plant.', true);
       }
     }catch(err){
       console.error(err);
@@ -1934,15 +2496,16 @@ header.plant-hero.sticky .share-card-status.error{
       if (detailBreadcrumb){
         detailBreadcrumb.textContent = 'Error loading plant';
       }
-      if (shareCardBtn) {
-        shareCardBtn.disabled = true;
-      }
-      setShareCardStatus('Card download is unavailable right now.', true);
+      setShareCardAvailable(false);
+      setShareCardStatus('Card sharing is unavailable right now.', true);
     }
   })();
 
   // Keyboard shortcuts for carousel navigation
   window.addEventListener('keydown', (e)=>{
+    if (e.key === 'Escape') {
+      setShareCardMenuOpen(false);
+    }
     if (e.target && (/input|select|textarea/i).test(e.target.tagName)) return;
     if (e.key === 'ArrowRight') { next(true); }
     if (e.key === 'ArrowLeft')  { prev(true); }

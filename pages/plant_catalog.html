@@ -154,6 +154,7 @@
 </script>
   <script type="module" src="/js/i18n.js"></script>
   <script src="/js/unified-footer.js" defer></script>
+  <script src="/js/howker-plant-icons.js"></script>
 
 <style>
 
@@ -657,6 +658,21 @@ header.plant-hero.sticky h1{
   font-size:16px;
   line-height:1.2;
 }
+.card-title-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+.card-title-row h3{
+  margin:0;
+}
+.card-species-icon{
+  width:18px;
+  height:18px;
+  object-fit:contain;
+  flex:0 0 auto;
+}
 .card .latin{
   color:var(--muted);
   font-style:italic;
@@ -683,16 +699,36 @@ header.plant-hero.sticky h1{
   padding-bottom:0;
 }
 .meta-label{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
   min-width:72px;
   text-transform:uppercase;
   letter-spacing:.08em;
   font-size:10px;
   color:var(--accent);
 }
+.meta-label-icon{
+  width:12px;
+  height:12px;
+  object-fit:contain;
+  flex:0 0 auto;
+}
 .meta-value{
   color:var(--ink);
   font-weight:600;
   flex:1;
+}
+.meta-type-value{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.meta-type-icon{
+  width:14px;
+  height:14px;
+  object-fit:contain;
+  flex:0 0 auto;
 }
 .meta-tags{
   display:flex;
@@ -714,10 +750,19 @@ header.plant-hero.sticky h1{
   border-top:1px dashed #ffffff26;
 }
 .teaser-label{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
   text-transform:uppercase;
   letter-spacing:.08em;
   font-size:10px;
   color:var(--accent);
+}
+.teaser-icon{
+  width:12px;
+  height:12px;
+  object-fit:contain;
+  flex:0 0 auto;
 }
 .teaser{
   margin:4px 0 0;
@@ -983,6 +1028,19 @@ body.details-open .drawer.open {
     padding:6px 8px;
     border-radius:8px;
   }
+  .card-species-icon{
+    width:16px;
+    height:16px;
+  }
+  .meta-label-icon,
+  .teaser-icon{
+    width:11px;
+    height:11px;
+  }
+  .meta-type-icon{
+    width:12px;
+    height:12px;
+  }
 }
 
 @media (max-width:320px){
@@ -1227,6 +1285,8 @@ body.details-open .drawer.open {
 
   // Rotation control for cards
   let rotateInterval = null;
+  const PLANT_ICON_API = window.HOWKER_PLANT_ICONS || null;
+  const ICON_FALLBACK = '/assets/icons/plant-catalog-icons/plant.png';
 
   // DOM helpers
   const $ = s => document.querySelector(s);
@@ -1284,6 +1344,26 @@ body.details-open .drawer.open {
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#0f1320"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a5b4c3" font-family="system-ui" font-size="22">image unavailable</text></svg>`
   );
 
+  function resolveSpeciesIconSrc(plant){
+    const resolved = PLANT_ICON_API?.resolveSpeciesIcon?.(plant);
+    return String(resolved || '').trim() || ICON_FALLBACK;
+  }
+
+  function resolveFieldIconSrc(fieldKey){
+    const resolved = PLANT_ICON_API?.resolveFieldIcon?.(fieldKey);
+    return String(resolved || '').trim() || ICON_FALLBACK;
+  }
+
+  function resolveTypeIconSrc(plant){
+    const resolved = PLANT_ICON_API?.resolveTypeIcon?.(plant);
+    return String(resolved || '').trim() || resolveSpeciesIconSrc(plant);
+  }
+
+  function iconImageHTML(src, className){
+    const safeSrc = String(src || '').trim() || ICON_FALLBACK;
+    return `<img class="${className}" src="${safeSrc}" alt="" aria-hidden="true" onerror="this.onerror=null;this.src='${ICON_FALLBACK}'">`;
+  }
+
   async function fetchPlants() {
     const res = await fetch('/data/howker-plants', { headers: { 'Accept': 'application/json' } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -1323,6 +1403,16 @@ body.details-open .drawer.open {
     const titleText = (p.teaser || p.desc || p.morph || '').slice(0, 160).replace(/"/g,'&quot;');
     const descText = (p.desc || '').replace(/"/g,'&quot;');
     const creditText = (p.credits || '').replace(/"/g,'&quot;');
+    const speciesIcon = iconImageHTML(resolveSpeciesIconSrc(p), 'card-species-icon');
+    const typeIcon = iconImageHTML(resolveTypeIconSrc(p), 'meta-type-icon');
+    const fieldIcons = {
+      type: iconImageHTML(resolveFieldIconSrc('type'), 'meta-label-icon'),
+      habitat: iconImageHTML(resolveFieldIconSrc('habitat'), 'meta-label-icon'),
+      elevation: iconImageHTML(resolveFieldIconSrc('elevation'), 'meta-label-icon'),
+      season: iconImageHTML(resolveFieldIconSrc('bloom-season'), 'meta-label-icon'),
+      tags: iconImageHTML(resolveFieldIconSrc('tags'), 'meta-label-icon'),
+      overview: iconImageHTML(resolveFieldIconSrc('overview'), 'teaser-icon')
+    };
     return `
       <div class="thumb">
         <div class="thumb-loading" aria-hidden="true"><span class="loading-spinner"></span></div>
@@ -1337,16 +1427,16 @@ body.details-open .drawer.open {
         <div class="sr-only">${p.desc || p.teaser || ''}</div>
       </div>
       <div class="body">
-        <h3>${p.common}</h3>
+        <div class="card-title-row">${speciesIcon}<h3>${p.common}</h3></div>
         <div class="latin">${p.latin || ''}</div>
         <div class="meta">
-          ${p.type ? `<div class="meta-row"><span class="meta-label">Type</span><span class="meta-value">${p.type}</span></div>` : ''}
-          ${p.habitat ? `<div class="meta-row"><span class="meta-label">Habitat</span><span class="meta-value">${p.habitat}</span></div>` : ''}
-          ${p.elevation ? `<div class="meta-row"><span class="meta-label">Elevation</span><span class="meta-value">${p.elevation}</span></div>` : ''}
-          ${p.bloom ? `<div class="meta-row"><span class="meta-label">Season</span><span class="meta-value">${p.bloom}</span></div>` : ''}
-          ${tags.length ? `<div class="meta-row"><span class="meta-label">Tags</span><span class="meta-value"><span class="meta-tags">${tags.map(t=>`<span class="tag-pill">${t}</span>`).join("")}</span></span></div>` : ''}
+          ${p.type ? `<div class="meta-row"><span class="meta-label">${fieldIcons.type}Type</span><span class="meta-value meta-type-value">${typeIcon}${p.type}</span></div>` : ''}
+          ${p.habitat ? `<div class="meta-row"><span class="meta-label">${fieldIcons.habitat}Habitat</span><span class="meta-value">${p.habitat}</span></div>` : ''}
+          ${p.elevation ? `<div class="meta-row"><span class="meta-label">${fieldIcons.elevation}Elevation</span><span class="meta-value">${p.elevation}</span></div>` : ''}
+          ${p.bloom ? `<div class="meta-row"><span class="meta-label">${fieldIcons.season}Season</span><span class="meta-value">${p.bloom}</span></div>` : ''}
+          ${tags.length ? `<div class="meta-row"><span class="meta-label">${fieldIcons.tags}Tags</span><span class="meta-value"><span class="meta-tags">${tags.map(t=>`<span class="tag-pill">${t}</span>`).join("")}</span></span></div>` : ''}
         </div>
-        ${p.teaser ? `<div class="teaser-block"><span class="teaser-label">Overview</span><p class="teaser">${p.teaser}</p></div>` : ''}
+        ${p.teaser ? `<div class="teaser-block"><span class="teaser-label">${fieldIcons.overview}Overview</span><p class="teaser">${p.teaser}</p></div>` : ''}
         <div class="more">›</div>
       </div>`;
   }
