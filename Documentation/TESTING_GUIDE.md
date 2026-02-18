@@ -43,16 +43,17 @@ node scripts/audit-crawl-entrypoints.js --url https://nh48.info
 node scripts/audit-peak-render-source.js --url https://nh48.info
 ```
 
-## Peak Prerender Source Audit
-Goal: ensure peak routes serve prerendered HTML by default for crawlability and LCP.
+## Peak Render Source Audit
+Goal: keep peak routes stable for UI/schema parity (interactive template default), while preserving explicit prerender validation.
 
 ### Local source contract check
 ```bash
 node scripts/audit-peak-render-source.js
 ```
 Validates `worker.js` contract:
-- prerender attempted before template fetch for `/peak/*`
+- template is default source for `/peak/*`
 - explicit `render=template|interactive` override support
+- explicit `render=prerender` support
 - `X-Peak-Source` headers for prerender/template modes
 - template fallback image URL transform hardening hook
 
@@ -62,17 +63,21 @@ node scripts/audit-peak-render-source.js --url https://nh48.info
 ```
 Validates:
 - `/peak/mount-washington`, `/peak/mount-isolation`, `/fr/peak/mount-washington` return `200`
-- `X-Peak-Source=prerendered` on default requests
-- one meaningful H1 (no loading placeholders)
-- no unresolved template tokens like `\${...}`
-- transformed image URLs present (`/cdn-cgi/image/`)
-- no raw full-size `https://photos.nh48.info/<peak-slug>/...` URLs in rendered peak HTML
+- `X-Peak-Source=template-default` on default requests
+- required interactive panel/grid IDs exist in default HTML (`routesGrid`, `relatedTrailsGrid`, `difficultyMetricsGrid`, etc.)
+- no unresolved template tokens like `\${...}` in default HTML
+- explicit `?render=prerender` checks still pass:
+  - `X-Peak-Source=prerendered`
+  - one meaningful H1
+  - transformed image URLs present (`/cdn-cgi/image/`)
+  - no raw full-size `https://photos.nh48.info/<peak-slug>/...` URLs
 
 Template override check included:
-- `/peak/mount-washington?render=template` returns template source header (`template-forced` or `template-fallback`)
+- `/peak/mount-washington?render=template` returns template source header (`template-forced`)
 
 ## Crawl Entrypoints Audit
 Goal: verify crawler entry files are valid and discoverable.
+Important: `sitemap.xml` is an XML sitemap index, not a plain-text link list.
 
 ### Local file check
 ```bash
@@ -81,6 +86,8 @@ node scripts/audit-crawl-entrypoints.js
 Validates:
 - `robots.txt` includes sitemap declarations
 - `sitemap.xml` is a sitemap index referencing `page-sitemap.xml` + `image-sitemap.xml`
+- `sitemap.xml`, `page-sitemap.xml`, and `image-sitemap.xml` all parse as XML with expected root nodes
+- `image-sitemap.xml` contains the image namespace (`xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"`)
 - `page-sitemap.xml` includes `/peak/` and does not include legacy `/peaks/`
 
 ### Live endpoint check
@@ -91,6 +98,8 @@ Validates HTTP `200` + expected content for:
 - `/robots.txt`
 - `/sitemap.xml`
 - `/page-sitemap.xml`
+- `/image-sitemap.xml`
+- all sitemap endpoints return XML content-types (`application/xml` or `text/xml`)
 
 ## CI Gate Order
 Workflow: `.github/workflows/deploy-worker.yml`

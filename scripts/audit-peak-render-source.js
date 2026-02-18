@@ -48,23 +48,27 @@ function assertLocalSourceChecks(failures) {
   }
 
   const workerText = fs.readFileSync(WORKER_PATH, 'utf8');
-  const prerenderFirstIndex = workerText.indexOf("if (routeKeyword === 'peak' && !forceTemplateMode)");
-  const templateFetchIndex = workerText.indexOf('const tplResp = await fetch(RAW_TEMPLATE_URL');
 
-  if (!workerText.includes("const forceTemplateMode = routeKeyword === 'peak'")) {
-    failures.push('worker.js missing forceTemplateMode route switch.');
+  if (!workerText.includes("const explicitTemplateMode = routeKeyword === 'peak'")) {
+    failures.push('worker.js missing explicitTemplateMode route switch.');
   }
   if (!workerText.includes("['template', 'interactive'].includes(renderParam)")) {
     failures.push('worker.js missing explicit render=template|interactive override handling.');
   }
-  if (prerenderFirstIndex === -1 || templateFetchIndex === -1 || prerenderFirstIndex > templateFetchIndex) {
-    failures.push('worker.js does not attempt prerender before template fetch for /peak routes.');
+  if (!workerText.includes("if (routeKeyword === 'peak' && explicitPrerenderMode && !explicitTemplateMode)")) {
+    failures.push('worker.js missing explicit prerender branch for /peak routes.');
   }
   if (!workerText.includes("'X-Peak-Source': 'prerendered'")) {
     failures.push("worker.js missing prerender source header 'X-Peak-Source: prerendered'.");
   }
-  if (!workerText.includes("const templateSourceHeader = forceTemplateMode ? 'template-forced' : 'template-fallback'")) {
-    failures.push("worker.js missing template source header mapping for fallback/forced modes.");
+  if (!workerText.includes("'template-default'")) {
+    failures.push("worker.js missing template-default source mode.");
+  }
+  if (!workerText.includes("'template-forced'")) {
+    failures.push("worker.js missing template-forced source mode.");
+  }
+  if (!workerText.includes("'template-fallback'")) {
+    failures.push("worker.js missing template-fallback source mode.");
   }
   if (!workerText.includes("'X-Peak-Source': templateSourceHeader")) {
     failures.push("worker.js missing template response source header.");
@@ -91,6 +95,42 @@ function extractMeaningfulH1Texts(html) {
 
 async function assertLiveRoute(route, failures) {
   const url = new URL(route, BASE_URL).toString();
+  const { status, headers, body } = await fetchText(url);
+  if (status !== 200) {
+    failures.push(`${url}: expected HTTP 200, received ${status}.`);
+    return;
+  }
+
+  const sourceHeader = String(headers.get('x-peak-source') || '').toLowerCase();
+  if (sourceHeader !== 'template-default') {
+    failures.push(`${url}: expected X-Peak-Source=template-default, received "${sourceHeader || '[missing]'}".`);
+  }
+
+  if (/\$\{[^}]+\}/.test(body)) {
+    failures.push(`${url}: unresolved template token pattern detected (\\$\\{...\\}).`);
+  }
+
+  const requiredInteractiveIds = [
+    'routesGrid',
+    'relatedTrailsGrid',
+    'parkingAccessGrid',
+    'difficultyMetricsGrid',
+    'riskPrepGrid',
+    'monthlyWeatherPanel',
+    'panelReaderModal'
+  ];
+  requiredInteractiveIds.forEach((id) => {
+    const pattern = new RegExp(`id=["']${escapeRegExp(id)}["']`, 'i');
+    if (!pattern.test(body)) {
+      failures.push(`${url}: missing interactive marker #${id}.`);
+    }
+  });
+}
+
+async function assertLivePrerenderRoute(route, failures) {
+  const prerenderUrl = new URL(route, BASE_URL);
+  prerenderUrl.searchParams.set('render', 'prerender');
+  const url = prerenderUrl.toString();
   const { status, headers, body } = await fetchText(url);
   if (status !== 200) {
     failures.push(`${url}: expected HTTP 200, received ${status}.`);
@@ -149,6 +189,8 @@ async function main() {
       for (const route of ROUTES) {
         // eslint-disable-next-line no-await-in-loop
         await assertLiveRoute(route, failures);
+        // eslint-disable-next-line no-await-in-loop
+        await assertLivePrerenderRoute(route, failures);
       }
       await assertTemplateOverridePath(failures);
     }
@@ -161,7 +203,7 @@ async function main() {
   }
 
   if (BASE_URL) {
-    console.log(`Peak render source audit passed for local source checks + ${ROUTES.length + 1} live route checks: ${BASE_URL}`);
+    console.log(`Peak render source audit passed for local source checks + ${ROUTES.length * 2 + 1} live route checks: ${BASE_URL}`);
   } else {
     console.log('Peak render source audit passed for local source checks.');
   }

@@ -877,6 +877,15 @@ export default {
       return Response.redirect(`${SITE}/${localePrefix}peak/${encodeURIComponent(peakSlug)}${url.search || ''}`, 301);
     }
 
+    const sitemapSlashRedirects = {
+      '/sitemap.xml/': '/sitemap.xml',
+      '/page-sitemap.xml/': '/page-sitemap.xml',
+      '/image-sitemap.xml/': '/image-sitemap.xml'
+    };
+    if (sitemapSlashRedirects[pathname]) {
+      return Response.redirect(`${SITE}${sitemapSlashRedirects[pathname]}${url.search || ''}`, 301);
+    }
+
     if (pathname === '/fr/wiki' || pathname === '/fr/wiki/' || pathname.startsWith('/fr/wiki/')) {
       const enPath = pathname.replace(/^\/fr/, '') || '/wiki';
       return Response.redirect(`${SITE}${enPath}${url.search || ''}`, 301);
@@ -6325,7 +6334,7 @@ export default {
 
     const renderParam = String(url.searchParams.get('render') || '').toLowerCase();
     const debugPrerenderParam = String(url.searchParams.get('debug_prerender') || '').toLowerCase();
-    const forceTemplateMode = routeKeyword === 'peak'
+    const explicitTemplateMode = routeKeyword === 'peak'
       && ['template', 'interactive'].includes(renderParam);
     const explicitPrerenderMode = routeKeyword === 'peak'
       && (
@@ -6333,7 +6342,7 @@ export default {
         || ['1', 'true', 'prerender'].includes(renderParam)
       );
 
-    if (routeKeyword === 'peak' && !forceTemplateMode) {
+    if (routeKeyword === 'peak' && explicitPrerenderMode && !explicitTemplateMode) {
       const prerenderedResponse = await servePrerenderedPeakHtml(slug, isFrench, {
         prependMainHtml: peakAlertHtml,
         jsonLdBlocks: alertSchema ? [alertSchema] : []
@@ -6422,7 +6431,11 @@ export default {
 
     // Return the modified interactive page with no-store caching for
     // immediate updates and consistent SEO metadata.
-    const templateSourceHeader = forceTemplateMode ? 'template-forced' : 'template-fallback';
+    const templateSourceHeader = explicitTemplateMode
+      ? 'template-forced'
+      : explicitPrerenderMode
+        ? 'template-fallback'
+        : 'template-default';
     return new Response(html, {
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
