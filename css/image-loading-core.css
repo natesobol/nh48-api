@@ -1,0 +1,39 @@
+.nh48-image-loader-wrap {
+  position: relative;
+}
+
+.nh48-image-loader-overlay {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 3;
+  border-radius: inherit;
+  background: linear-gradient(to bottom, rgba(10, 12, 18, 0.08), rgba(10, 12, 18, 0.22));
+}
+
+.nh48-image-loader-overlay[hidden] {
+  display: none;
+}
+
+.nh48-image-loader-spinner {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid rgba(34, 197, 94, 0.24);
+  border-top-color: var(--accent, #22c55e);
+  animation: nh48-image-loader-spin 0.9s linear infinite;
+}
+
+.nh48-image-loader-overlay.large .nh48-image-loader-spinner {
+  width: 32px;
+  height: 32px;
+  border-width: 4px;
+}
+
+@keyframes nh48-image-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

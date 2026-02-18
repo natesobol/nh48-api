@@ -10,6 +10,7 @@ node scripts/audit-site-schema.js
 node scripts/audit-i18n-completeness.js
 node scripts/audit-dataset-overlay-coverage.js
 node scripts/audit-unresolved-i18n-markers.js
+node scripts/audit-image-loading-coverage.js
 node scripts/audit-og-cards.js
 node scripts/audit-peak-guide-authority.js
 node scripts/audit-wiki-routes.js
@@ -40,6 +41,7 @@ node scripts/audit-homepage-worker-seo.js --url https://nh48.info
 node scripts/audit-worker-breadcrumbs.js --url https://nh48.info
 node scripts/audit-og-cards.js --url https://nh48.info --sample 30
 node scripts/audit-crawl-entrypoints.js --url https://nh48.info
+node scripts/audit-image-loading-coverage.js --url https://nh48.info
 node scripts/audit-peak-render-source.js --url https://nh48.info
 ```
 
@@ -78,6 +80,7 @@ Template override check included:
 ## Crawl Entrypoints Audit
 Goal: verify crawler entry files are valid and discoverable.
 Important: `sitemap.xml` is an XML sitemap index, not a plain-text link list.
+Canonical host policy: `https://nh48.info` is canonical. `https://www.nh48.info/*` sitemap endpoints are expected to `301` redirect to apex.
 
 ### Local file check
 ```bash
@@ -100,6 +103,48 @@ Validates HTTP `200` + expected content for:
 - `/page-sitemap.xml`
 - `/image-sitemap.xml`
 - all sitemap endpoints return XML content-types (`application/xml` or `text/xml`)
+
+Search Console submission target:
+- Submit `https://nh48.info/sitemap.xml`
+- Do not rely on `?fresh=1` as a separate submission URL.
+
+Optional redirect verification:
+```bash
+curl -I https://www.nh48.info/sitemap.xml
+```
+Expected:
+- `HTTP/1.1 301`
+- `Location: https://nh48.info/sitemap.xml`
+
+## Weekly Sitemap Regression Check
+Run weekly (CI schedule or manual runbook), apex only:
+
+```bash
+node scripts/audit-crawl-entrypoints.js --url https://nh48.info
+node scripts/audit-image-sitemap-quality.js --url https://nh48.info --sample 100
+```
+
+## Sitewide Image Loading UX
+Goal: show a loading pinwheel for large images and keep non-hero large media lazy-loaded without changing image quality.
+
+Runtime contract:
+- large image threshold: `>= 248px` on either side (rendered or explicit size signal)
+- non-hero large images default to `loading="lazy"` when missing
+- hero images keep eager behavior
+- global runtime injected by worker:
+  - `/js/image-loading-core.js`
+  - `/css/image-loading-core.css`
+
+Opt-out attributes:
+- `data-nh48-spinner="off"`: skip runtime pinwheel
+- `data-nh48-lazy="off"`: skip lazy-loading override
+- `data-nh48-hero="true"`: force hero/eager treatment
+
+Audit commands:
+```bash
+node scripts/audit-image-loading-coverage.js
+node scripts/audit-image-loading-coverage.js --url https://nh48.info
+```
 
 ## CI Gate Order
 Workflow: `.github/workflows/deploy-worker.yml`

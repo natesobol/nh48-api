@@ -905,7 +905,7 @@ export default {
         }
 
         let html = await res.text();
-        html = injectAnalyticsCore(html);
+        html = injectClientRuntimeCore(html);
         return new Response(html, {
           status: 200,
           headers: {
@@ -993,7 +993,7 @@ export default {
           : 'no-store';
         if (ext === 'html') {
           let html = await res.text();
-          html = injectAnalyticsCore(html);
+          html = injectClientRuntimeCore(html);
           return new Response(html, {
             status: 200,
             headers: {
@@ -1087,6 +1087,23 @@ export default {
         return html.replace(/<\/head>/i, `${scriptTag}\n</head>`);
       }
       return `${scriptTag}\n${html}`;
+    }
+
+    function injectImageLoadingCore(html) {
+      if (typeof html !== 'string' || !html) return html;
+      if (/data-nh48-image-loading-core=["']1["']/i.test(html)) return html;
+
+      const styleTag = '<link rel="stylesheet" href="/css/image-loading-core.css" data-nh48-image-loading-core="1" />';
+      const scriptTag = '<script src="/js/image-loading-core.js" defer data-nh48-image-loading-core="1"></script>';
+      if (/<\/head>/i.test(html)) {
+        return html.replace(/<\/head>/i, `${styleTag}\n${scriptTag}\n</head>`);
+      }
+      return `${styleTag}\n${scriptTag}\n${html}`;
+    }
+
+    function injectClientRuntimeCore(html) {
+      const withImageLoading = injectImageLoadingCore(html);
+      return injectAnalyticsCore(withImageLoading);
     }
 
     // Fetch translation dictionary if needed
@@ -3944,7 +3961,7 @@ export default {
         )
       ].join('\n');
       html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
-      html = injectAnalyticsCore(html);
+      html = injectClientRuntimeCore(html);
 
       return new Response(html, {
         headers: {
@@ -4018,7 +4035,7 @@ export default {
         jsonLd: mergedJsonLd
       });
       html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
-      html = injectAnalyticsCore(html);
+      html = injectClientRuntimeCore(html);
       return new Response(html, {
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
@@ -6049,7 +6066,7 @@ export default {
         });
         if (sectionResponse.ok) {
           let html = await sectionResponse.text();
-          html = injectAnalyticsCore(html);
+          html = injectClientRuntimeCore(html);
           return new Response(html, {
             status: 200,
             headers: {
@@ -6092,7 +6109,7 @@ export default {
         } else if (options?.prependBodyHtml) {
           html = injectBodyStartHtml(html, options.prependBodyHtml);
         }
-        html = injectAnalyticsCore(html);
+        html = injectClientRuntimeCore(html);
         return new Response(html, {
           status: 200,
           headers: {
@@ -6427,7 +6444,7 @@ export default {
       )
     ].join('\n');
     html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
-    html = injectAnalyticsCore(html);
+    html = injectClientRuntimeCore(html);
 
     // Return the modified interactive page with no-store caching for
     // immediate updates and consistent SEO metadata.

@@ -109,7 +109,13 @@ async function fetchText(url) {
     headers: { 'User-Agent': 'NH48-Crawl-Entry-Audit/1.0' },
   });
   const body = await response.text();
-  return { status: response.status, headers: response.headers, body };
+  return {
+    status: response.status,
+    headers: response.headers,
+    body,
+    url: response.url || url,
+    redirected: Boolean(response.redirected),
+  };
 }
 
 async function assertLiveEndpoints(failures) {
@@ -138,17 +144,18 @@ async function assertLiveEndpoints(failures) {
   if (sitemapIndex.status !== 200) {
     failures.push(`${sitemapUrl}: expected HTTP 200, received ${sitemapIndex.status}.`);
   } else {
+    const canonicalOrigin = new URL(sitemapIndex.url || sitemapUrl).origin;
     const contentType = String(sitemapIndex.headers.get('content-type') || '').toLowerCase();
     if (!contentType.includes('xml')) {
       failures.push(`${sitemapUrl}: expected XML content-type, found "${contentType || '[missing]'}".`);
     }
     assertXmlBasics(sitemapUrl, sitemapIndex.body, 'sitemapindex', failures);
     const locs = extractLocValues(sitemapIndex.body);
-    if (!locs.includes(`${origin}/page-sitemap.xml`)) {
-      failures.push(`${sitemapUrl}: missing canonical ${origin}/page-sitemap.xml reference.`);
+    if (!locs.includes(`${canonicalOrigin}/page-sitemap.xml`)) {
+      failures.push(`${sitemapUrl}: missing canonical ${canonicalOrigin}/page-sitemap.xml reference.`);
     }
-    if (!locs.includes(`${origin}/image-sitemap.xml`)) {
-      failures.push(`${sitemapUrl}: missing canonical ${origin}/image-sitemap.xml reference.`);
+    if (!locs.includes(`${canonicalOrigin}/image-sitemap.xml`)) {
+      failures.push(`${sitemapUrl}: missing canonical ${canonicalOrigin}/image-sitemap.xml reference.`);
     }
   }
 

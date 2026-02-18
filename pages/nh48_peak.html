@@ -4422,7 +4422,7 @@
 
         summary.innerHTML = `
           <div class="print-summary-header">
-            <img src="${escapeHtml(normalizePhotoUrl(imgUrl))}" alt="${escapeHtml(peakName)} summit" class="print-thumb">
+            <img src="${escapeHtml(normalizePhotoUrl(imgUrl))}" alt="${escapeHtml(peakName)} summit" class="print-thumb" loading="lazy" decoding="async">
             <h1>${escapeHtml(peakName)}</h1>
           </div>
           <dl class="print-details">

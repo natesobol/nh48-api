@@ -1,0 +1,24 @@
+name: Weekly Sitemap Audit
+
+on:
+  schedule:
+    - cron: "15 13 * * 1"
+  workflow_dispatch:
+
+jobs:
+  sitemap-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Audit crawl entrypoints (apex canonical host)
+        run: node scripts/audit-crawl-entrypoints.js --url https://nh48.info
+
+      - name: Audit image sitemap quality (apex canonical host)
+        run: node scripts/audit-image-sitemap-quality.js --url https://nh48.info --sample 100

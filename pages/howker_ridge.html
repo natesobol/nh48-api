@@ -1147,7 +1147,7 @@ table a:hover{
         icon: L.divIcon({
           className: 'poi-marker',
           html: `
-            <img src="${thumbUrl}" alt="${safeName}" loading="lazy"
+            <img src="${thumbUrl}" alt="${safeName}" loading="lazy" decoding="async"
               onerror="this.closest('.poi-marker').classList.add('is-fallback');this.remove();" />
             <span class="poi-fallback-label">📍 ${safeName}</span>
           `,
@@ -1192,7 +1192,7 @@ table a:hover{
         row.innerHTML = `
           <td>
             <div class="poi-avatar">
-              <img class="poi-thumb" src="${thumbUrl}" alt="${item.name} thumbnail" loading="lazy"
+              <img class="poi-thumb" src="${thumbUrl}" alt="${item.name} thumbnail" loading="lazy" decoding="async"
                 onerror="this.closest('.poi-avatar').classList.add('is-fallback');this.remove();" />
               <span class="poi-fallback-label">📍 ${item.name}</span>
             </div>
@@ -1300,7 +1300,7 @@ table a:hover{
             if (feature.geometry.type === 'Point') {
               const { name, slug, imageUrls, elevation, mergedProps } = getPoiMergedData(feature);
               const photoUrl = getPrimaryImageUrl(imageUrls) || getFallbackImageUrl(slug, 300);
-              const popupPhoto = `<img src="${photoUrl}" alt="${name}" style="width:100%;border-radius:8px; margin-bottom:6px;">`;
+              const popupPhoto = `<img src="${photoUrl}" alt="${name}" loading="lazy" decoding="async" style="width:100%;border-radius:8px; margin-bottom:6px;">`;
               const detailLink = slug ? `<a class="poi-detail-link" href="/howker-ridge/poi?poi=${slug}">View POI details</a>` : '';
               const details = [
                 popupPhoto,
@@ -1341,7 +1341,7 @@ table a:hover{
           const photoUrl = getPrimaryImageUrl(imageUrls) || getFallbackImageUrl(slug, 300);
           const detailLink = slug ? `<a class="poi-detail-link" href="/howker-ridge/poi?poi=${slug}">View POI details</a>` : '';
           const popupDetails = [
-            `<img src="${photoUrl}" alt="${name}" style="width:100%;border-radius:8px; margin-bottom:6px;">`,
+            `<img src="${photoUrl}" alt="${name}" loading="lazy" decoding="async" style="width:100%;border-radius:8px; margin-bottom:6px;">`,
             `<strong>${name || 'Waypoint'}</strong>`,
             props.category ? `<span>${props.category}</span>` : '',
             elevation ? `<span>${elevation} ft</span>` : '',
@@ -1444,7 +1444,7 @@ table a:hover{
         const typeClass = `badge-${normalizeType(plant.type || 'flora')}`;
         const imgAlt = plant.common ? `Close-up of ${plant.common}` : 'Plant photograph';
         card.innerHTML = `
-          <img src="${imgSrc || ''}" alt="${imgAlt}" loading="lazy" />
+          <img src="${imgSrc || ''}" alt="${imgAlt}" loading="lazy" decoding="async" />
           <h3>${plant.common || 'Unknown plant'}</h3>
           <span class="badge ${typeClass}">${plant.type || 'Unknown type'}</span>
           <p>${teaser}</p>
