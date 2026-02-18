@@ -1151,7 +1151,12 @@
 
           const rangeGrid = document.createElement('div');
           rangeGrid.className = 'range-grid';
-          rangeGrid.setAttribute('data-columns', document.getElementById('columnSelect')?.value || '3');
+          const effectiveColumns =
+            currentAppliedColumns
+            || grid.getAttribute('data-columns')
+            || document.getElementById('columnSelect')?.value
+            || '3';
+          rangeGrid.setAttribute('data-columns', effectiveColumns);
 
           // Determine sorting function based on activeSort
           const comparator = (a, b) => {
@@ -1417,12 +1422,15 @@
         }
       };
       
-      const COLUMN_BREAKPOINT = 1400;
+      const MOBILE_STACK_BREAKPOINT = 900;
+      const DESKTOP_PREFERRED_BREAKPOINT = 1400;
       const validColumns = ['2', '3', '4', '5'];
       let preferredColumns = '4';
+      let currentAppliedColumns = preferredColumns;
 
       const applyColumns = (columns) => {
-        if (columnSelect) {
+        currentAppliedColumns = columns;
+        if (columnSelect && validColumns.includes(columns)) {
           columnSelect.value = columns;
         }
         if (grid) {
@@ -1434,8 +1442,12 @@
       };
 
       const applyResponsiveColumns = () => {
-        const shouldCompact = window.innerWidth < COLUMN_BREAKPOINT;
-        const targetColumns = shouldCompact ? '3' : preferredColumns;
+        let targetColumns = preferredColumns;
+        if (window.innerWidth <= MOBILE_STACK_BREAKPOINT) {
+          targetColumns = '1';
+        } else if (window.innerWidth < DESKTOP_PREFERRED_BREAKPOINT) {
+          targetColumns = '2';
+        }
         applyColumns(targetColumns);
       };
 
