@@ -36,7 +36,9 @@ on:
       - 'i18n/*.json'
       - 'scripts/audit-site-schema.js'
       - 'scripts/audit-image-sitemap-quality.js'
+      - 'scripts/audit-crawl-entrypoints.js'
       - 'scripts/audit-og-cards.js'
+      - 'scripts/audit-peak-render-source.js'
       - 'scripts/audit-tooltip-integration.js'
       - 'scripts/audit-howker-data.js'
       - 'scripts/audit-homepage-worker-seo.js'
@@ -169,9 +171,17 @@ jobs:
         id: image_sitemap_quality_audit
         run: node scripts/audit-image-sitemap-quality.js
 
+      - name: Run crawl entrypoints audit (pre-deploy gate)
+        id: crawl_entrypoints_audit
+        run: node scripts/audit-crawl-entrypoints.js
+
       - name: Run OG cards audit (pre-deploy gate)
         id: og_cards_audit
         run: node scripts/audit-og-cards.js
+
+      - name: Run peak render source audit (pre-deploy gate)
+        id: peak_render_source_audit
+        run: node scripts/audit-peak-render-source.js
 
       - name: Run tooltip integration audit (pre-deploy gate)
         id: tooltip_integration_audit
@@ -283,7 +293,9 @@ jobs:
           echo "- **Deploy requested:** \`${{ steps.deploy_mode.outputs.should_deploy }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Schema audit:** \`${{ steps.schema_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Image sitemap quality audit:** \`${{ steps.image_sitemap_quality_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Crawl entrypoints audit:** \`${{ steps.crawl_entrypoints_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **OG cards audit:** \`${{ steps.og_cards_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Peak render source audit:** \`${{ steps.peak_render_source_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Tooltip integration audit:** \`${{ steps.tooltip_integration_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **i18n completeness audit:** \`${{ steps.i18n_completeness_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Dataset overlay coverage audit:** \`${{ steps.dataset_overlay_coverage_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
@@ -307,7 +319,9 @@ jobs:
           echo "### Scripts executed" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-site-schema.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-image-sitemap-quality.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-crawl-entrypoints.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-og-cards.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-peak-render-source.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-tooltip-integration.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-i18n-completeness.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-dataset-overlay-coverage.js\`" >> "$GITHUB_STEP_SUMMARY"

@@ -16,6 +16,8 @@ node scripts/audit-wiki-routes.js
 node scripts/audit-wiki-media-sync.js
 node scripts/audit-sameas.js
 node scripts/audit-entity-links.js
+node scripts/audit-crawl-entrypoints.js
+node scripts/audit-peak-render-source.js
 ```
 
 ### Local build/regeneration checks
@@ -37,7 +39,58 @@ npm run wiki:sync-media:check
 node scripts/audit-homepage-worker-seo.js --url https://nh48.info
 node scripts/audit-worker-breadcrumbs.js --url https://nh48.info
 node scripts/audit-og-cards.js --url https://nh48.info --sample 30
+node scripts/audit-crawl-entrypoints.js --url https://nh48.info
+node scripts/audit-peak-render-source.js --url https://nh48.info
 ```
+
+## Peak Prerender Source Audit
+Goal: ensure peak routes serve prerendered HTML by default for crawlability and LCP.
+
+### Local source contract check
+```bash
+node scripts/audit-peak-render-source.js
+```
+Validates `worker.js` contract:
+- prerender attempted before template fetch for `/peak/*`
+- explicit `render=template|interactive` override support
+- `X-Peak-Source` headers for prerender/template modes
+- template fallback image URL transform hardening hook
+
+### Live runtime check
+```bash
+node scripts/audit-peak-render-source.js --url https://nh48.info
+```
+Validates:
+- `/peak/mount-washington`, `/peak/mount-isolation`, `/fr/peak/mount-washington` return `200`
+- `X-Peak-Source=prerendered` on default requests
+- one meaningful H1 (no loading placeholders)
+- no unresolved template tokens like `\${...}`
+- transformed image URLs present (`/cdn-cgi/image/`)
+- no raw full-size `https://photos.nh48.info/<peak-slug>/...` URLs in rendered peak HTML
+
+Template override check included:
+- `/peak/mount-washington?render=template` returns template source header (`template-forced` or `template-fallback`)
+
+## Crawl Entrypoints Audit
+Goal: verify crawler entry files are valid and discoverable.
+
+### Local file check
+```bash
+node scripts/audit-crawl-entrypoints.js
+```
+Validates:
+- `robots.txt` includes sitemap declarations
+- `sitemap.xml` is a sitemap index referencing `page-sitemap.xml` + `image-sitemap.xml`
+- `page-sitemap.xml` includes `/peak/` and does not include legacy `/peaks/`
+
+### Live endpoint check
+```bash
+node scripts/audit-crawl-entrypoints.js --url https://nh48.info
+```
+Validates HTTP `200` + expected content for:
+- `/robots.txt`
+- `/sitemap.xml`
+- `/page-sitemap.xml`
 
 ## CI Gate Order
 Workflow: `.github/workflows/deploy-worker.yml`
@@ -46,12 +99,14 @@ Pre-deploy gates:
 1. `audit-site-schema`
 2. `audit-i18n-completeness`
 3. `audit-image-sitemap-quality`
-4. `audit-og-cards`
-5. `audit-dataset-overlay-coverage`
-6. `audit-unresolved-i18n-markers`
-7. `audit-peak-guide-authority`
-8. `audit-sameas`
-9. `audit-entity-links`
+4. `audit-crawl-entrypoints`
+5. `audit-og-cards`
+6. `audit-peak-render-source`
+7. `audit-dataset-overlay-coverage`
+8. `audit-unresolved-i18n-markers`
+9. `audit-peak-guide-authority`
+10. `audit-sameas`
+11. `audit-entity-links`
 
 Post-deploy gates with retry:
 1. `audit-homepage-worker-seo` (production URL)

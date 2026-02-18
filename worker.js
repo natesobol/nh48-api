@@ -6099,6 +6099,14 @@ export default {
       }
     }
 
+    function applyPeakTemplateImageTransforms(htmlText) {
+      const transformPrefix = 'https://photos.nh48.info/cdn-cgi/image/format=webp,quality=85,width=1800/';
+      return String(htmlText || '').replace(
+        /https:\/\/photos\.nh48\.info\/(?!cdn-cgi\/image\/)([A-Za-z0-9._~!$&'()*+,;=:@%/-]+\.(?:jpe?g|png|webp))/gi,
+        (_match, pathPart) => `${transformPrefix}${String(pathPart || '').replace(/^\/+/, '')}`
+      );
+    }
+
     // Only handle peak routes.  If the URL does not match, return 404
     // (static files are already handled by the static file serving block above)
     // Support: /peak/ and /guest/ routes. /peaks/* redirects earlier.
@@ -6315,18 +6323,26 @@ export default {
       globalSchemaNodes
     );
 
-    const prerenderDebugMode = routeKeyword === 'peak'
-      && ['1', 'true', 'prerender'].includes(
-        String(url.searchParams.get('debug_prerender') || url.searchParams.get('render') || '').toLowerCase()
+    const renderParam = String(url.searchParams.get('render') || '').toLowerCase();
+    const debugPrerenderParam = String(url.searchParams.get('debug_prerender') || '').toLowerCase();
+    const forceTemplateMode = routeKeyword === 'peak'
+      && ['template', 'interactive'].includes(renderParam);
+    const explicitPrerenderMode = routeKeyword === 'peak'
+      && (
+        ['1', 'true', 'prerender'].includes(debugPrerenderParam)
+        || ['1', 'true', 'prerender'].includes(renderParam)
       );
 
-    if (prerenderDebugMode) {
+    if (routeKeyword === 'peak' && !forceTemplateMode) {
       const prerenderedResponse = await servePrerenderedPeakHtml(slug, isFrench, {
         prependMainHtml: peakAlertHtml,
         jsonLdBlocks: alertSchema ? [alertSchema] : []
       });
       if (prerenderedResponse) {
         return prerenderedResponse;
+      }
+      if (explicitPrerenderMode) {
+        console.warn(`[PeakPrerender] Explicit prerender requested but unavailable for slug: ${slug}; falling back to template.`);
       }
     }
 
@@ -6361,6 +6377,7 @@ export default {
     html = html.replace(/<script[^>]*>[\s\S]*?window\.location\.replace\([^)]*\)[\s\S]*?<\/script>/gi, '');
     html = stripBreadcrumbJsonLdScripts(html);
     html = stripBreadcrumbMicrodata(html);
+    html = applyPeakTemplateImageTransforms(html);
 
     // Remove existing placeholders and duplicate head tags.
     html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'peak');
@@ -6405,11 +6422,13 @@ export default {
 
     // Return the modified interactive page with no-store caching for
     // immediate updates and consistent SEO metadata.
+    const templateSourceHeader = forceTemplateMode ? 'template-forced' : 'template-fallback';
     return new Response(html, {
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'no-store',
-        'X-Robots-Tag': 'index, follow'
+        'X-Robots-Tag': 'index, follow',
+        'X-Peak-Source': templateSourceHeader
       }
     });
   }
