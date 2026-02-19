@@ -23,12 +23,21 @@ const PEAK_BASE_FR = 'https://nh48.info/fr/peak';
 const RANGE_BASE = 'https://nh48.info/range';
 const PHOTO_BASE_URL = 'https://photos.nh48.info';
 const PHOTO_PATH_PREFIX = '/nh48-photos/';
+const CF_TRANSFORM_HOSTS = new Set([
+  'photos.nh48.info',
+  'plants.nh48.info',
+  'wikiphotos.nh48.info',
+  'howker.nh48.info',
+]);
+const CF_TRANSFORM_OPTIONS = 'format=jpg,quality=88,width=1600';
 const STATIC_PAGE_ENTRIES = [
   { loc: 'https://nh48.info/', file: 'pages/index.html' },
   { loc: 'https://nh48.info/fr/', file: 'i18n/fr.html' },
   { loc: 'https://nh48.info/catalog', file: 'catalog/index.html' },
   { loc: 'https://nh48.info/fr/catalog', file: 'catalog/index.html' },
   { loc: 'https://nh48.info/catalog/ranges', file: 'catalog/ranges/index.html' },
+  { loc: 'https://nh48.info/nh48-map', file: 'pages/nh48_map.html' },
+  { loc: 'https://nh48.info/fr/nh48-map', file: 'pages/nh48_map.html' },
   { loc: 'https://nh48.info/photos/', file: 'photos/index.html' },
   { loc: 'https://nh48.info/trails', file: 'trails/index.html' },
   { loc: 'https://nh48.info/fr/trails', file: 'trails/index.html' },
@@ -245,6 +254,28 @@ const STATIC_IMAGE_ENTRIES = [
         url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-lafayette/mount-lafayette__001.jpg',
         title: 'Mount Lafayette highlights in the NH48 Range Catalog',
         caption: 'Mount Lafayette featured in the NH48 range catalog.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/nh48-map',
+    file: 'pages/nh48_map.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__003.jpg',
+        title: 'Mount Washington summit and alpine terrain used for the NH48 Map preview',
+        caption: 'NH48 Map fullscreen route preview image featuring Mount Washington.',
+      },
+    ],
+  },
+  {
+    loc: 'https://nh48.info/fr/nh48-map',
+    file: 'pages/nh48_map.html',
+    images: [
+      {
+        url: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__003.jpg',
+        title: 'Mont Washington et terrain alpin utilises pour la carte NH48',
+        caption: 'Image de previsualisation de la carte NH48 en plein ecran.',
       },
     ],
   },
@@ -618,6 +649,29 @@ function formatDescriptorBits(photo) {
   return bits.length ? bits.join(', ') : '';
 }
 
+function extractPhotoSequenceLabel(photo) {
+  const source = pickFirstNonEmpty(photo.photoId, photo.filename, photo.url, photo.originalUrl);
+  if (!source) return '';
+  let basename = '';
+  try {
+    const parsed = new URL(source, 'https://nh48.info');
+    basename = path.basename(parsed.pathname || '');
+  } catch (error) {
+    basename = String(source).split(/[?#]/)[0].split('/').pop() || '';
+  }
+  const normalized = normalizeTextForWeb(basename);
+  if (!normalized) return '';
+  const doubleUnderscoreMatch = normalized.match(/__(\d{1,4})/);
+  if (doubleUnderscoreMatch) {
+    return `Photo ${Number(doubleUnderscoreMatch[1])}`;
+  }
+  const trailingNumberMatch = normalized.match(/(?:^|[-_])(\d{3,4})(?:[-_.]|$)/);
+  if (trailingNumberMatch) {
+    return `Photo ${Number(trailingNumberMatch[1])}`;
+  }
+  return '';
+}
+
 function buildPhotoTitleUnique(peakName, photo) {
   const explicit = pickFirstNonEmpty(photo.headline, photo.altText, photo.caption);
   if (explicit && !isSlugLike(explicit)) return explicit;
@@ -625,8 +679,10 @@ function buildPhotoTitleUnique(peakName, photo) {
   if (titleCandidate && !isSlugLike(titleCandidate)) return titleCandidate;
   const descBits = formatDescriptorBits(photo);
   const cameraBits = formatCameraBits(photo);
-  let title = `${peakName} - White Mountain National Forest (New Hampshire)`;
-  if (descBits) title = `${peakName} - ${descBits} - White Mountain National Forest (New Hampshire)`;
+  const sequenceLabel = extractPhotoSequenceLabel(photo);
+  const labeledPeakName = sequenceLabel ? `${peakName} (${sequenceLabel})` : peakName;
+  let title = `${labeledPeakName} - White Mountain National Forest (New Hampshire)`;
+  if (descBits) title = `${labeledPeakName} - ${descBits} - White Mountain National Forest (New Hampshire)`;
   if (cameraBits) title = `${title} - ${cameraBits}`;
   return title;
 }
@@ -636,7 +692,9 @@ function buildPhotoCaptionUnique(peakName, photo) {
   if (explicit) return explicit;
   const descBits = formatDescriptorBits(photo);
   const cameraBits = formatCameraBits(photo);
-  let caption = `Landscape photograph of ${peakName} in the White Mountain National Forest, New Hampshire.`;
+  const sequenceLabel = extractPhotoSequenceLabel(photo);
+  const labeledPeakName = sequenceLabel ? `${peakName} (${sequenceLabel})` : peakName;
+  let caption = `Landscape photograph of ${labeledPeakName} in the White Mountain National Forest, New Hampshire.`;
   if (descBits) caption = `${caption} Details: ${descBits}.`;
   if (cameraBits) caption = `${caption} Camera: ${cameraBits}.`;
   return caption;
@@ -698,6 +756,24 @@ const normalizePhotoUrl = (url) => {
   return url;
 };
 
+const stripCloudflareTransformPath = (pathname) => {
+  if (!pathname) return '/';
+  const marker = '/cdn-cgi/image/';
+  let out = pathname;
+  let guard = 0;
+  while (out.includes(marker) && guard < 10) {
+    guard += 1;
+    const idx = out.indexOf(marker);
+    const suffix = out.slice(idx + marker.length);
+    const slashIdx = suffix.indexOf('/');
+    if (slashIdx === -1) break;
+    const transformedTail = suffix.slice(slashIdx + 1);
+    out = `${out.slice(0, idx)}/${transformedTail}`;
+  }
+  out = out.replace(/\/{2,}/g, '/');
+  return out.startsWith('/') ? out : `/${out}`;
+};
+
 const canonicalizeImageUrl = (rawUrl) => {
   const normalized = normalizePhotoUrl(rawUrl);
   if (!normalized) return '';
@@ -713,41 +789,38 @@ const canonicalizeImageUrl = (rawUrl) => {
   parsed.protocol = 'https:';
   parsed.hash = '';
   parsed.search = '';
-
-  let pathname = parsed.pathname || '/';
-  const marker = '/cdn-cgi/image/';
-  let guard = 0;
-  while (pathname.includes(marker) && guard < 10) {
-    guard += 1;
-    const idx = pathname.indexOf(marker);
-    const suffix = pathname.slice(idx + marker.length);
-    const slashIdx = suffix.indexOf('/');
-    if (slashIdx === -1) break;
-    const transformedTail = suffix.slice(slashIdx + 1);
-    pathname = `${pathname.slice(0, idx)}/${transformedTail}`;
+  const basePath = stripCloudflareTransformPath(parsed.pathname || '/');
+  if (CF_TRANSFORM_HOSTS.has(String(parsed.hostname || '').toLowerCase())) {
+    parsed.pathname = `/cdn-cgi/image/${CF_TRANSFORM_OPTIONS}${basePath}`;
+  } else {
+    parsed.pathname = basePath;
   }
-  pathname = pathname.replace(/\/{2,}/g, '/');
-  parsed.pathname = pathname;
   return parsed.toString();
 };
 
 const buildImageEntries = (photos, peakName) => {
   if (!Array.isArray(photos)) return [];
+  const usedTitles = new Set();
+  const usedCaptions = new Set();
   return photos
     .map((photo) => {
       if (typeof photo === 'string') {
         const entryPhoto = { url: photo };
+        const title = buildPhotoTitleUnique(peakName, entryPhoto);
+        const caption = buildPhotoCaptionUnique(peakName, entryPhoto);
         return {
           url: normalizePhotoUrl(photo),
-          caption: buildPhotoCaptionUnique(peakName, entryPhoto),
-          title: buildPhotoTitleUnique(peakName, entryPhoto),
+          caption: uniqueify(caption, entryPhoto, usedCaptions),
+          title: uniqueify(title, entryPhoto, usedTitles),
         };
       }
       if (!photo || !photo.url) return null;
+      const title = buildPhotoTitleUnique(peakName, photo);
+      const caption = buildPhotoCaptionUnique(peakName, photo);
       return {
         url: normalizePhotoUrl(photo.url),
-        caption: buildPhotoCaptionUnique(peakName, photo),
-        title: buildPhotoTitleUnique(peakName, photo),
+        caption: uniqueify(caption, photo, usedCaptions),
+        title: uniqueify(title, photo, usedTitles),
       };
     })
     .filter(Boolean);
@@ -1006,10 +1079,14 @@ const buildImageSitemap = () => {
       const rawUrl = typeof image === 'string' ? image : image?.url;
       const url = canonicalizeImageUrl(rawUrl);
       if (!url) return;
+      const title = cleanText(typeof image === 'object' ? image?.title : '');
+      const caption = cleanText(typeof image === 'object' ? image?.caption : '');
       candidateMappings.push({
         loc,
         lastmod,
         url,
+        title,
+        caption,
         priority,
         source,
         order: sequence++,
@@ -1102,7 +1179,13 @@ const buildImageSitemap = () => {
       bestByImage.set(candidate.url, candidate);
       return;
     }
-    if (candidate.priority < existing.priority || (candidate.priority === existing.priority && candidate.order < existing.order)) {
+    const candidateScore = scoreImageDetail(candidate);
+    const existingScore = scoreImageDetail(existing);
+    if (
+      candidate.priority < existing.priority
+      || (candidate.priority === existing.priority && candidateScore > existingScore)
+      || (candidate.priority === existing.priority && candidateScore === existingScore && candidate.order < existing.order)
+    ) {
       bestByImage.set(candidate.url, candidate);
     }
   });
@@ -1113,7 +1196,7 @@ const buildImageSitemap = () => {
       entriesByLoc.set(loc, {
         loc,
         lastmod,
-        images: new Set(),
+        images: new Map(),
       });
     } else if (!entriesByLoc.get(loc).lastmod && lastmod) {
       entriesByLoc.get(loc).lastmod = lastmod;
@@ -1123,21 +1206,30 @@ const buildImageSitemap = () => {
 
   for (const mapping of bestByImage.values()) {
     const entry = ensureEntry(mapping.loc, mapping.lastmod);
-    entry.images.add(mapping.url);
+    const existing = entry.images.get(mapping.url);
+    if (!existing || scoreImageDetail(mapping) > scoreImageDetail(existing)) {
+      entry.images.set(mapping.url, {
+        url: mapping.url,
+        title: mapping.title || '',
+        caption: mapping.caption || '',
+      });
+    }
   }
 
   // /photos should include only gallery-only images that were not assigned elsewhere.
   const galleryOnly = Array.from(galleryCandidates).filter((url) => !bestByImage.has(url));
   if (galleryOnly.length) {
     const photosEntry = ensureEntry('https://nh48.info/photos/', getGitLastmod('photos/index.html'));
-    galleryOnly.forEach((url) => photosEntry.images.add(url));
+    galleryOnly.forEach((url) => {
+      photosEntry.images.set(url, { url, title: '', caption: '' });
+    });
   }
 
   const urlEntries = Array.from(entriesByLoc.values())
     .map((entry) => ({
       loc: entry.loc,
       lastmod: entry.lastmod,
-      images: Array.from(entry.images).sort((a, b) => a.localeCompare(b)),
+      images: Array.from(entry.images.values()).sort((a, b) => a.url.localeCompare(b.url)),
     }))
     .filter((entry) => entry.images.length)
     .sort((a, b) => a.loc.localeCompare(b.loc));
@@ -1153,9 +1245,15 @@ const buildImageSitemap = () => {
     if (entry.lastmod) {
       xmlParts.push(`    <lastmod>${escapeXml(entry.lastmod)}</lastmod>`);
     }
-    entry.images.forEach((url) => {
+    entry.images.forEach((image) => {
       xmlParts.push('    <image:image>');
-      xmlParts.push(`      <image:loc>${escapeXml(url)}</image:loc>`);
+      xmlParts.push(`      <image:loc>${escapeXml(image.url)}</image:loc>`);
+      if (image.title) {
+        xmlParts.push(`      <image:title>${escapeXml(image.title)}</image:title>`);
+      }
+      if (image.caption) {
+        xmlParts.push(`      <image:caption>${escapeXml(image.caption)}</image:caption>`);
+      }
       xmlParts.push('    </image:image>');
     });
     xmlParts.push('  </url>');

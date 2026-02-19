@@ -52,6 +52,7 @@ ROUTE_TEMPLATE_HINTS = {
     "/": "pages/index.html",
     "/catalog": "catalog/index.html",
     "/catalog/ranges": "catalog/ranges/index.html",
+    "/nh48-map": "pages/nh48_map.html",
     "/photos": "photos/index.html",
     "/trails": "trails/index.html",
     "/long-trails": "long-trails/index.html",
@@ -890,6 +891,8 @@ def classify_route(route: str) -> tuple[str, str, str]:
     if route in {"/catalog", "/catalog/ranges"}:
         slug = "peak-catalog" if route == "/catalog" else "range-catalog"
         return "catalog", "catalog", slug
+    if route == "/nh48-map":
+        return "nh48-map", "projects", "nh48-map"
     if route == "/trails":
         return "trails-home", "trails", "trails-map"
     if route == "/long-trails":
@@ -967,6 +970,7 @@ def family_to_fallback_key(family: str) -> str:
         "dataset-home": "dataset",
         "dataset-detail": "dataset",
         "catalog": "peak",
+        "nh48-map": "peak",
         "plant-catalog": "howker",
         "bird": "howker",
         "bird-catalog": "howker",
@@ -981,6 +985,8 @@ def build_default_headline(family: str, title: str) -> str:
     title = normalize_text(title) or "NH48"
     if family == "peak":
         return f"View more hiking details about {title} in the White Mountains"
+    if family == "nh48-map":
+        return "Explore all NH48 peaks on the interactive map"
     if family == "range":
         if re.search(r"\brange\b", title, flags=re.IGNORECASE):
             return f"Explore hiking peaks in the {title}"

@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<!-- Favicons - ICO format preferred for Google compatibility -->
+<link rel="icon" href="/favicons/favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/x-icon" href="/favicons/favicon.ico" />
+<link rel="shortcut icon" href="/favicons/favicon.ico" />
+<link rel="icon" type="image/x-icon" sizes="16x16" href="/favicons/favicon-16x16.ico" />
+<link rel="icon" type="image/x-icon" sizes="32x32" href="/favicons/favicon-32x32.ico" />
+<link rel="icon" type="image/x-icon" sizes="48x48" href="/favicons/favicon-48x48.ico" />
+<link rel="icon" type="image/x-icon" sizes="96x96" href="/favicons/favicon-96x96.ico" />
+<!-- PNG fallbacks for browsers that prefer PNG -->
+<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48x48.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+<link rel="manifest" href="/manifest.json" />
+<title>NH48 Map</title>
+<meta name="description" content="Interactive fullscreen map for all 48 New Hampshire four-thousand-foot peaks with searchable peak markers and detail panels." />
+<link rel="canonical" href="https://nh48.info/nh48-map" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="NH48pics" />
+<meta property="og:title" content="NH48 Map" />
+<meta property="og:description" content="Explore all NH48 peaks on an interactive fullscreen map with peak popups and details." />
+<meta property="og:url" content="https://nh48.info/nh48-map" />
+<meta property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__003.jpg" />
+<meta property="og:image:alt" content="Mount Washington summit and surrounding alpine terrain in the White Mountains." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@nate_dumps_pics" />
+<meta name="twitter:creator" content="@nate_dumps_pics" />
+<meta name="twitter:title" content="NH48 Map" />
+<meta name="twitter:description" content="Explore all NH48 peaks on an interactive fullscreen map with peak popups and details." />
+<meta name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__003.jpg" />
+<meta name="twitter:image:alt" content="Mount Washington summit and surrounding alpine terrain in the White Mountains." />
+<script>
+  (() => {
+    if (window.NH48_BUILD_DATE) return;
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/build-meta.json', false);
+      xhr.send(null);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const meta = JSON.parse(xhr.responseText);
+        if (meta && meta.buildDate) {
+          window.NH48_BUILD_DATE = meta.buildDate;
+        }
+      }
+    } catch (err) {
+      // No-op: build date is optional in static builds.
+    }
+  })();
+</script>
+<script type="module" src="/js/i18n.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="" />
+<style>
+:root{
+  --nh48-map-vh:100dvh;
+  --nh48-nav-h:0px;
+  --bg:#060812;
+  --panel:#0e1322;
+  --panel-2:#12192d;
+  --ink:#eef2ff;
+  --muted:#9aa5be;
+  --stroke:rgba(255,255,255,0.2);
+  --accent:#22c55e;
+  --accent-2:#38bdf8;
+}
+
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  height:100%;
+  min-width:320px;
+  background:var(--bg);
+  color:var(--ink);
+  overflow-x:hidden;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+}
+
+body[data-route="nh48-map"]{
+  overflow:hidden;
+}
+
+#nav-placeholder{
+  position:relative;
+  z-index:1200;
+}
+
+.nh48-map-shell{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(310px, 390px) 1fr;
+  width:100%;
+  height:calc(var(--nh48-map-vh, 100dvh) - var(--nh48-nav-h, 0px));
+  max-height:calc(var(--nh48-map-vh, 100dvh) - var(--nh48-nav-h, 0px));
+  background:#04070f;
+  overflow:hidden;
+}
+
+.nh48-map-panel{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  height:100%;
+  border-right:1px solid var(--stroke);
+  background:linear-gradient(180deg, rgba(7,12,23,0.98) 0%, rgba(9,14,26,0.98) 100%);
+  overflow:hidden;
+  transition:transform 0.25s ease;
+  z-index:1000;
+}
+
+.nh48-map-panel-content{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  height:100%;
+  padding:14px;
+  gap:12px;
+}
+
+.nh48-map-panel-head{
+  display:grid;
+  gap:6px;
+}
+
+.nh48-map-panel-head h1{
+  margin:0;
+  font-size:clamp(20px, 2.1vw, 30px);
+  letter-spacing:0.2px;
+}
+
+.nh48-map-panel-head p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.4;
+}
+
+.nh48-map-controls{
+  display:grid;
+  gap:10px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(8, 13, 24, 0.72);
+  border-radius:12px;
+  padding:10px;
+}
+
+.nh48-map-control-row{
+  display:grid;
+  gap:6px;
+}
+
+.nh48-map-control-row label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:#a8f0c0;
+  font-weight:700;
+}
+
+.nh48-map-controls input,
+.nh48-map-controls select{
+  width:100%;
+  border:1px solid var(--stroke);
+  border-radius:10px;
+  background:#0c1323;
+  color:var(--ink);
+  padding:9px 10px;
+  min-height:40px;
+}
+
+.nh48-map-range-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.nh48-map-range-chip{
+  border:1px solid rgba(34,197,94,0.45);
+  border-radius:999px;
+  background:#0a1624;
+  color:#7ff3ac;
+  font-size:11px;
+  line-height:1;
+  padding:7px 10px;
+  cursor:pointer;
+}
+
+.nh48-map-range-chip[aria-pressed="true"]{
+  border-color:#22c55e;
+  background:#103223;
+  color:#d7ffe7;
+}
+
+.nh48-map-list-wrap{
+  min-height:0;
+  flex:1;
+  overflow:auto;
+  border:1px solid rgba(255,255,255,0.11);
+  border-radius:12px;
+  background:rgba(11, 17, 30, 0.72);
+}
+
+.nh48-map-list{
+  list-style:none;
+  margin:0;
+  padding:8px;
+  display:grid;
+  gap:8px;
+}
+
+.nh48-map-list button{
+  width:100%;
+  text-align:left;
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:10px;
+  background:rgba(14, 22, 37, 0.92);
+  color:var(--ink);
+  cursor:pointer;
+  padding:9px 10px;
+}
+
+.nh48-map-list button:hover{
+  border-color:rgba(34,197,94,0.7);
+}
+
+.nh48-map-list button.is-active{
+  border-color:var(--accent-2);
+  background:rgba(15, 30, 48, 0.96);
+  box-shadow:0 0 0 1px rgba(56,189,248,0.28) inset;
+}
+
+.nh48-map-list-name{
+  font-weight:700;
+  font-size:14px;
+}
+
+.nh48-map-list-meta{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.nh48-map-detail{
+  border:1px solid rgba(255,255,255,0.11);
+  border-radius:12px;
+  background:rgba(10, 16, 28, 0.82);
+  overflow:hidden;
+}
+
+.nh48-map-detail-media{
+  width:100%;
+  aspect-ratio:16 / 9;
+  object-fit:cover;
+  border-bottom:1px solid rgba(255,255,255,0.12);
+  background:#0b1020;
+}
+
+.nh48-map-detail-body{
+  padding:10px;
+  display:grid;
+  gap:8px;
+}
+
+.nh48-map-detail h2{
+  margin:0;
+  font-size:18px;
+}
+
+.nh48-map-detail-sub{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.nh48-map-detail-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:7px;
+}
+
+.nh48-map-detail-item{
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:9px;
+  padding:7px 8px;
+  background:rgba(15, 21, 35, 0.75);
+}
+
+.nh48-map-detail-item dt{
+  margin:0;
+  color:#7ff3ac;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+}
+
+.nh48-map-detail-item dd{
+  margin:4px 0 0;
+  font-size:13px;
+}
+
+.nh48-map-detail-link{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  text-decoration:none;
+  border:1px solid rgba(34,197,94,0.6);
+  color:#b9ffd1;
+  border-radius:999px;
+  padding:8px 12px;
+  font-weight:700;
+  font-size:13px;
+}
+
+.nh48-map-detail-link:hover{
+  border-color:var(--accent);
+}
+
+.nh48-map-panel-toggle{
+  align-self:flex-start;
+  border:1px solid rgba(255,255,255,0.18);
+  color:var(--ink);
+  background:rgba(20, 30, 46, 0.85);
+  border-radius:999px;
+  min-height:34px;
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.nh48-map-canvas-wrap{
+  position:relative;
+  height:100%;
+  width:100%;
+  min-width:0;
+}
+
+#nh48Map{
+  height:100%;
+  width:100%;
+  background:#0b1020;
+}
+
+.nh48-map-loading,
+.nh48-map-error{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
+  z-index:900;
+  min-width:220px;
+  max-width:min(86vw, 480px);
+  text-align:center;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.25);
+  padding:12px 14px;
+  background:rgba(7, 12, 24, 0.9);
+  box-shadow:0 12px 24px rgba(0,0,0,0.35);
+}
+
+.nh48-map-error{
+  color:#fecaca;
+  border-color:rgba(248,113,113,0.45);
+}
+
+.nh48-map-panel-expand{
+  position:absolute;
+  left:14px;
+  top:14px;
+  z-index:1100;
+  border:1px solid rgba(255,255,255,0.22);
+  border-radius:999px;
+  background:rgba(5, 10, 20, 0.88);
+  color:#dbeafe;
+  min-height:34px;
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.nh48-map-panel-expand[hidden]{
+  display:none;
+}
+
+.nh48-weather-toggle{
+  position:absolute;
+  right:14px;
+  top:14px;
+  z-index:1100;
+  border:1px solid rgba(255,255,255,0.22);
+  border-radius:999px;
+  background:rgba(5, 10, 20, 0.9);
+  color:#dbeafe;
+  min-height:34px;
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.nh48-weather-panel{
+  position:absolute;
+  right:14px;
+  top:56px;
+  z-index:1090;
+  width:min(340px, calc(100% - 28px));
+  max-height:min(72vh, 620px);
+  border:1px solid rgba(148,163,184,0.36);
+  border-radius:12px;
+  background:rgba(8, 14, 24, 0.95);
+  box-shadow:0 16px 32px rgba(0,0,0,0.35);
+  overflow:hidden;
+}
+
+.nh48-weather-panel[hidden]{
+  display:none;
+}
+
+.nh48-weather-panel-inner{
+  display:grid;
+  gap:10px;
+  padding:10px;
+  max-height:min(72vh, 620px);
+  overflow:auto;
+}
+
+.nh48-weather-head{
+  display:grid;
+  gap:4px;
+}
+
+.nh48-weather-head-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.nh48-weather-head h2{
+  margin:0;
+  font-size:14px;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+}
+
+.nh48-weather-head p{
+  margin:0;
+  color:#9fb0c7;
+  font-size:12px;
+}
+
+.nh48-weather-close{
+  border:1px solid rgba(148,163,184,0.5);
+  border-radius:999px;
+  background:rgba(12, 20, 34, 0.95);
+  color:#cfe3ff;
+  min-height:26px;
+  min-width:26px;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.nh48-weather-field{
+  display:grid;
+  gap:6px;
+}
+
+.nh48-weather-field label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:#b3f6cf;
+  font-weight:700;
+}
+
+.nh48-weather-field input,
+.nh48-weather-field select{
+  width:100%;
+  border:1px solid rgba(148,163,184,0.4);
+  border-radius:10px;
+  background:#0b1527;
+  color:#e6efff;
+  padding:8px 10px;
+  min-height:36px;
+}
+
+.nh48-weather-field-help{
+  margin:0;
+  color:#96a8c0;
+  font-size:11px;
+}
+
+.nh48-weather-actions{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:8px;
+}
+
+.nh48-weather-actions button{
+  border:1px solid rgba(148,163,184,0.44);
+  border-radius:10px;
+  background:#0c182a;
+  color:#dbeafe;
+  min-height:32px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.nh48-weather-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:8px;
+}
+
+.nh48-weather-group{
+  display:grid;
+  gap:6px;
+}
+
+.nh48-weather-group h3{
+  margin:0;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:#b9c7db;
+}
+
+.nh48-weather-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  gap:6px;
+}
+
+.nh48-weather-item{
+  border:1px solid rgba(148,163,184,0.32);
+  border-radius:10px;
+  background:#0b1424;
+  padding:6px 8px;
+}
+
+.nh48-weather-item-label{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:8px;
+  align-items:center;
+}
+
+.nh48-weather-item-label input[type="checkbox"]{
+  width:16px;
+  height:16px;
+}
+
+.nh48-weather-item-main{
+  display:grid;
+  gap:2px;
+  min-width:0;
+}
+
+.nh48-weather-item-name{
+  font-size:12px;
+  font-weight:700;
+  color:#e2ebff;
+}
+
+.nh48-weather-item-meta{
+  font-size:11px;
+  color:#8ea4c0;
+}
+
+.nh48-weather-item-status{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  border:1px solid rgba(148,163,184,0.5);
+  border-radius:999px;
+  padding:2px 6px;
+  color:#d7e4f9;
+}
+
+.nh48-weather-item-status.is-live{ border-color:rgba(34,197,94,0.6); color:#9df6bb; }
+.nh48-weather-item-status.is-loading{ border-color:rgba(56,189,248,0.6); color:#a6e8ff; }
+.nh48-weather-item-status.is-stale{ border-color:rgba(245,158,11,0.6); color:#f8d48e; }
+.nh48-weather-item-status.is-error{ border-color:rgba(248,113,113,0.6); color:#fecaca; }
+
+.nh48-weather-item-error{
+  margin:5px 0 0;
+  color:#fecaca;
+  font-size:11px;
+}
+
+.nh48-weather-empty{
+  margin:0;
+  color:#9fb2ca;
+  font-size:12px;
+}
+
+.nh48-weather-apply{
+  border:1px solid rgba(34,197,94,0.7);
+  border-radius:10px;
+  background:#0f2a1e;
+  color:#d4ffe4;
+  min-height:36px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.nh48-weather-panel-status{
+  margin:0;
+  font-size:11px;
+  color:#9cb2ce;
+}
+
+.nh48-weather-legend{
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  z-index:1080;
+  width:min(340px, calc(100% - 28px));
+  max-height:min(45vh, 340px);
+  overflow:auto;
+  border:1px solid rgba(148,163,184,0.32);
+  border-radius:12px;
+  background:rgba(8, 14, 24, 0.92);
+  padding:10px;
+  display:grid;
+  gap:8px;
+}
+
+.nh48-weather-legend[hidden]{
+  display:none;
+}
+
+.nh48-weather-legend h2{
+  margin:0;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:#d8e7ff;
+}
+
+.nh48-weather-legend-card{
+  border:1px solid rgba(148,163,184,0.3);
+  border-radius:10px;
+  background:#0b1526;
+  padding:8px;
+  display:grid;
+  gap:6px;
+}
+
+.nh48-weather-legend-card h3{
+  margin:0;
+  font-size:12px;
+  color:#ebf4ff;
+}
+
+.nh48-weather-legend-bar{
+  height:8px;
+  border-radius:999px;
+}
+
+.nh48-weather-legend-ticks{
+  display:flex;
+  justify-content:space-between;
+  gap:6px;
+  font-size:10px;
+  color:#b8cbe2;
+}
+
+.nh48-weather-legend-row{
+  margin:0;
+  font-size:11px;
+  color:#d3e3f8;
+}
+
+.nh48-weather-alert-key{
+  display:grid;
+  grid-template-columns:auto 1fr auto 1fr;
+  gap:6px 8px;
+  align-items:center;
+  font-size:11px;
+  color:#c9daef;
+}
+
+.nh48-weather-alert-key .swatch{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  display:inline-block;
+}
+
+.nh48-weather-alert-key .swatch.extreme{ background:#991b1b; }
+.nh48-weather-alert-key .swatch.severe{ background:#b45309; }
+.nh48-weather-alert-key .swatch.moderate{ background:#1d4ed8; }
+.nh48-weather-alert-key .swatch.minor{ background:#0f766e; }
+
+body.nh48-map-panel-collapsed .nh48-map-shell{
+  grid-template-columns:1fr;
+}
+
+body.nh48-map-panel-collapsed .nh48-map-panel{
+  transform:translateX(-100%);
+}
+
+.nh48-map-popup{
+  min-width:210px;
+  max-width:260px;
+}
+
+.nh48-map-popup img{
+  width:100%;
+  height:132px;
+  object-fit:cover;
+  border-radius:8px;
+  margin-bottom:8px;
+}
+
+.nh48-map-popup strong{
+  display:block;
+  margin-bottom:4px;
+}
+
+.nh48-map-popup .meta{
+  color:#475569;
+  font-size:12px;
+  line-height:1.35;
+}
+
+.nh48-map-popup a{
+  display:inline-block;
+  margin-top:8px;
+  color:#166534;
+  font-weight:700;
+  text-decoration:none;
+}
+
+@media (max-width: 1023px){
+  .nh48-map-shell{
+    grid-template-columns:1fr;
+  }
+
+  .nh48-map-panel{
+    position:absolute;
+    inset:0 auto 0 0;
+    width:min(86vw, 390px);
+    border-right:1px solid var(--stroke);
+    box-shadow:18px 0 30px rgba(0,0,0,0.42);
+  }
+
+  body.nh48-map-panel-collapsed .nh48-map-panel{
+    transform:translateX(-102%);
+  }
+}
+
+@media (max-width: 640px){
+  .nh48-map-panel{
+    width:100%;
+  }
+
+  .nh48-map-panel-content{
+    padding:10px;
+  }
+
+  .nh48-weather-panel,
+  .nh48-weather-legend{
+    width:min(95vw, 360px);
+    right:8px;
+  }
+
+  .nh48-weather-toggle{
+    right:8px;
+  }
+}
+</style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <main class="nh48-map-shell" id="nh48MapShell">
+    <aside class="nh48-map-panel" id="nh48MapPanel">
+      <div class="nh48-map-panel-content">
+        <header class="nh48-map-panel-head">
+          <h1 data-i18n="nh48Map.title">NH48 Map</h1>
+          <p data-i18n="nh48Map.subtitle">Explore all 48 New Hampshire four-thousand-foot peaks on a fullscreen interactive map.</p>
+        </header>
+
+        <button id="nh48MapPanelToggle" class="nh48-map-panel-toggle" type="button" data-i18n="nh48Map.hidePanel">Hide panel</button>
+
+        <div class="nh48-map-controls">
+          <div class="nh48-map-control-row">
+            <label for="nh48MapSearch" data-i18n="nh48Map.searchLabel">Search peaks</label>
+            <input
+              id="nh48MapSearch"
+              type="search"
+              data-i18n="nh48Map.search"
+              data-i18n-attr="placeholder,aria-label"
+              placeholder="Search by peak, range, or trail type"
+              aria-label="Search peaks"
+              autocomplete="off"
+            />
+          </div>
+          <div class="nh48-map-control-row">
+            <label for="nh48MapRangeFilter" data-i18n="nh48Map.rangeLabel">Range</label>
+            <select id="nh48MapRangeFilter" aria-label="Filter by range">
+              <option value="" data-i18n="nh48Map.rangeAll">All ranges</option>
+            </select>
+          </div>
+          <div class="nh48-map-range-chips" id="nh48MapRangeChips" aria-label="Quick range filters"></div>
+          <div class="nh48-map-control-row">
+            <label for="nh48MapSort" data-i18n="nh48Map.sortLabel">Sort</label>
+            <select id="nh48MapSort" aria-label="Sort peaks">
+              <option value="name_asc" data-i18n="nh48Map.sortName">Name (A-Z)</option>
+              <option value="elevation_desc" data-i18n="nh48Map.sortElevation">Elevation (high to low)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="nh48-map-list-wrap" id="nh48MapListWrap">
+          <ul class="nh48-map-list" id="nh48MapList"></ul>
+        </div>
+
+        <article id="nh48MapDetail" class="nh48-map-detail" aria-live="polite">
+          <img class="nh48-map-detail-media" src="/nh48-preview.png" alt="NH48 map preview" loading="lazy" decoding="async" />
+          <div class="nh48-map-detail-body">
+            <h2 data-i18n="nh48Map.detailFallbackTitle">Select a peak</h2>
+            <p class="nh48-map-detail-sub" data-i18n="nh48Map.detailFallbackBody">Choose a marker or list item to view elevation, range, and route context.</p>
+          </div>
+        </article>
+      </div>
+    </aside>
+
+    <section class="nh48-map-canvas-wrap">
+      <button id="nh48MapPanelExpand" class="nh48-map-panel-expand" type="button" data-i18n="nh48Map.showPanel" hidden>Show panel</button>
+      <button id="nh48WeatherToggle" class="nh48-weather-toggle" type="button" aria-expanded="false" aria-controls="nh48WeatherPanel" data-i18n="nh48Map.weather.toggle">Weather</button>
+
+      <aside id="nh48WeatherPanel" class="nh48-weather-panel" role="dialog" aria-modal="false" aria-labelledby="nh48WeatherTitle" hidden>
+        <div class="nh48-weather-panel-inner">
+          <header class="nh48-weather-head">
+            <div class="nh48-weather-head-row">
+              <h2 id="nh48WeatherTitle" data-i18n="nh48Map.weather.title">Weather overlays</h2>
+              <button id="nh48WeatherClose" class="nh48-weather-close" type="button" data-i18n="nh48Map.weather.closePanel" data-i18n-attr="aria-label,title" aria-label="Close weather panel" title="Close weather panel">x</button>
+            </div>
+            <p data-i18n="nh48Map.weather.subtitle">Choose one or more layers and apply them to the map.</p>
+          </header>
+
+          <div class="nh48-weather-field">
+            <label for="nh48WeatherSearch" data-i18n="nh48Map.weather.searchLabel">Find overlays</label>
+            <input id="nh48WeatherSearch" type="search" data-i18n="nh48Map.weather.searchPlaceholder" data-i18n-attr="placeholder,aria-label" placeholder="Search overlays" aria-label="Search overlays" autocomplete="off" />
+          </div>
+
+          <div class="nh48-weather-actions" aria-label="Quick actions">
+            <button id="nh48WeatherSelectCore" type="button" data-i18n="nh48Map.weather.selectCore">Select core</button>
+            <button id="nh48WeatherSelectAll" type="button" data-i18n="nh48Map.weather.selectAll">Select all</button>
+            <button id="nh48WeatherClear" type="button" data-i18n="nh48Map.weather.clear">Clear</button>
+          </div>
+
+          <div id="nh48WeatherOverlayList" class="nh48-weather-groups" aria-label="Weather overlay list"></div>
+
+          <div class="nh48-weather-grid">
+            <div class="nh48-weather-field">
+              <label for="nh48WeatherUnits" data-i18n="nh48Map.weather.unitsLabel">Units</label>
+              <select id="nh48WeatherUnits" aria-label="Units">
+                <option value="imperial" data-i18n="nh48Map.weather.unitsImperial">Imperial</option>
+                <option value="metric" data-i18n="nh48Map.weather.unitsMetric">Metric</option>
+              </select>
+            </div>
+
+            <div class="nh48-weather-field">
+              <label for="nh48WeatherHourOffset" data-i18n="nh48Map.weather.hourOffsetLabel">Forecast hour</label>
+              <select id="nh48WeatherHourOffset" aria-label="Forecast hour offset">
+                <option value="0">+0h</option>
+                <option value="1">+1h</option>
+                <option value="2">+2h</option>
+                <option value="3">+3h</option>
+                <option value="6">+6h</option>
+                <option value="9">+9h</option>
+                <option value="12">+12h</option>
+                <option value="18">+18h</option>
+                <option value="24">+24h</option>
+                <option value="30">+30h</option>
+                <option value="36">+36h</option>
+                <option value="42">+42h</option>
+                <option value="48">+48h</option>
+              </select>
+            </div>
+          </div>
+
+          <p class="nh48-weather-field-help" data-i18n="nh48Map.weather.hourOffsetHelp">0 means current hour.</p>
+          <button id="nh48WeatherApply" class="nh48-weather-apply" type="button" data-i18n="nh48Map.weather.apply">Apply overlays</button>
+          <p id="nh48WeatherPanelStatus" class="nh48-weather-panel-status">0 selected</p>
+        </div>
+      </aside>
+
+      <aside id="nh48WeatherLegend" class="nh48-weather-legend" aria-live="polite" hidden></aside>
+      <div id="nh48Map" aria-label="NH48 peak map"></div>
+      <div id="nh48MapLoading" class="nh48-map-loading" data-i18n="nh48Map.loading">Loading NH48 peaks from nh48.json ...</div>
+      <div id="nh48MapError" class="nh48-map-error" hidden></div>
+    </section>
+  </main>
+
+  <noscript>
+    <p style="margin:16px; color:#fca5a5;">JavaScript is required to load the interactive NH48 map.</p>
+  </noscript>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin=""></script>
+  <script src="/js/nh48-map.js" defer></script>
+</body>
+</html>

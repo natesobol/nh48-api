@@ -36,6 +36,7 @@ on:
       - 'i18n/*.json'
       - 'scripts/audit-site-schema.js'
       - 'scripts/audit-image-sitemap-quality.js'
+      - 'scripts/audit-image-crawl-visibility.js'
       - 'scripts/audit-crawl-entrypoints.js'
       - 'scripts/audit-og-cards.js'
       - 'scripts/audit-peak-render-source.js'
@@ -171,6 +172,10 @@ jobs:
         id: image_sitemap_quality_audit
         run: node scripts/audit-image-sitemap-quality.js
 
+      - name: Run image crawl visibility audit (pre-deploy gate)
+        id: image_crawl_visibility_audit
+        run: node scripts/audit-image-crawl-visibility.js
+
       - name: Run crawl entrypoints audit (pre-deploy gate)
         id: crawl_entrypoints_audit
         run: node scripts/audit-crawl-entrypoints.js
@@ -293,6 +298,7 @@ jobs:
           echo "- **Deploy requested:** \`${{ steps.deploy_mode.outputs.should_deploy }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Schema audit:** \`${{ steps.schema_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Image sitemap quality audit:** \`${{ steps.image_sitemap_quality_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Image crawl visibility audit:** \`${{ steps.image_crawl_visibility_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Crawl entrypoints audit:** \`${{ steps.crawl_entrypoints_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **OG cards audit:** \`${{ steps.og_cards_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak render source audit:** \`${{ steps.peak_render_source_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
@@ -319,6 +325,7 @@ jobs:
           echo "### Scripts executed" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-site-schema.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-image-sitemap-quality.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-image-crawl-visibility.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-crawl-entrypoints.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-og-cards.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-render-source.js\`" >> "$GITHUB_STEP_SUMMARY"

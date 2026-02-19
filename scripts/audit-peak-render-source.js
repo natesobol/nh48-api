@@ -55,14 +55,20 @@ function assertLocalSourceChecks(failures) {
   if (!workerText.includes("['template', 'interactive'].includes(renderParam)")) {
     failures.push('worker.js missing explicit render=template|interactive override handling.');
   }
-  if (!workerText.includes("if (routeKeyword === 'peak' && explicitPrerenderMode && !explicitTemplateMode)")) {
-    failures.push('worker.js missing explicit prerender branch for /peak routes.');
+  if (!workerText.includes("const shouldAttemptPrerender = routeKeyword === 'peak' && !explicitTemplateMode")) {
+    failures.push('worker.js missing default prerender decision branch for /peak routes.');
+  }
+  if (!workerText.includes('if (shouldAttemptPrerender)')) {
+    failures.push('worker.js missing prerender attempt branch for default peak requests.');
+  }
+  if (!workerText.includes('[PeakPrerender] Default prerender unavailable')) {
+    failures.push('worker.js missing default prerender fallback warning.');
+  }
+  if (!workerText.includes('[PeakPrerender] Explicit prerender requested but unavailable')) {
+    failures.push('worker.js missing explicit prerender fallback warning.');
   }
   if (!workerText.includes("'X-Peak-Source': 'prerendered'")) {
     failures.push("worker.js missing prerender source header 'X-Peak-Source: prerendered'.");
-  }
-  if (!workerText.includes("'template-default'")) {
-    failures.push("worker.js missing template-default source mode.");
   }
   if (!workerText.includes("'template-forced'")) {
     failures.push("worker.js missing template-forced source mode.");
@@ -90,7 +96,7 @@ function extractMeaningfulH1Texts(html) {
   const matches = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
   return matches
     .map((match) => stripHtml(match[1]))
-    .filter((text) => text && !/^loading(?:\s*(?:\.{3}|…))?$/i.test(text));
+    .filter((text) => text && !/^loading(?:\s*(?:\.{3}))?$/i.test(text));
 }
 
 async function assertLiveRoute(route, failures) {
@@ -102,29 +108,31 @@ async function assertLiveRoute(route, failures) {
   }
 
   const sourceHeader = String(headers.get('x-peak-source') || '').toLowerCase();
-  if (sourceHeader !== 'template-default') {
-    failures.push(`${url}: expected X-Peak-Source=template-default, received "${sourceHeader || '[missing]'}".`);
+  if (sourceHeader !== 'prerendered') {
+    failures.push(`${url}: expected X-Peak-Source=prerendered, received "${sourceHeader || '[missing]'}".`);
   }
 
   if (/\$\{[^}]+\}/.test(body)) {
     failures.push(`${url}: unresolved template token pattern detected (\\$\\{...\\}).`);
   }
 
-  const requiredInteractiveIds = [
-    'routesGrid',
-    'relatedTrailsGrid',
-    'parkingAccessGrid',
-    'difficultyMetricsGrid',
-    'riskPrepGrid',
-    'monthlyWeatherPanel',
-    'panelReaderModal'
-  ];
-  requiredInteractiveIds.forEach((id) => {
-    const pattern = new RegExp(`id=["']${escapeRegExp(id)}["']`, 'i');
-    if (!pattern.test(body)) {
-      failures.push(`${url}: missing interactive marker #${id}.`);
+  const h1Texts = extractMeaningfulH1Texts(body);
+  if (h1Texts.length !== 1) {
+    failures.push(`${url}: expected exactly 1 meaningful <h1>, found ${h1Texts.length} (${h1Texts.join(' | ') || 'none'}).`);
+  }
+
+  if (!/https:\/\/photos\.nh48\.info\/cdn-cgi\/image\//i.test(body)) {
+    failures.push(`${url}: expected transformed image URL (/cdn-cgi/image/) not found.`);
+  }
+
+  const slugMatch = route.match(/\/(?:fr\/)?peak\/([^/?#]+)/i);
+  const peakSlug = slugMatch ? slugMatch[1] : '';
+  if (peakSlug) {
+    const rawPeakPhotoPattern = new RegExp(`https://photos\\.nh48\\.info/${escapeRegExp(peakSlug)}/`, 'i');
+    if (rawPeakPhotoPattern.test(body)) {
+      failures.push(`${url}: raw full-size peak photo URL detected for slug "${peakSlug}".`);
     }
-  });
+  }
 }
 
 async function assertLivePrerenderRoute(route, failures) {
@@ -167,7 +175,7 @@ async function assertLivePrerenderRoute(route, failures) {
 
 async function assertTemplateOverridePath(failures) {
   const url = new URL('/peak/mount-washington?render=template', BASE_URL).toString();
-  const { status, headers } = await fetchText(url);
+  const { status, headers, body } = await fetchText(url);
   if (status !== 200) {
     failures.push(`${url}: expected HTTP 200, received ${status}.`);
     return;
@@ -176,6 +184,22 @@ async function assertTemplateOverridePath(failures) {
   if (!/^template-(?:forced|fallback)$/.test(sourceHeader)) {
     failures.push(`${url}: expected template source header, received "${sourceHeader || '[missing]'}".`);
   }
+
+  const requiredInteractiveIds = [
+    'routesGrid',
+    'relatedTrailsGrid',
+    'parkingAccessGrid',
+    'difficultyMetricsGrid',
+    'riskPrepGrid',
+    'monthlyWeatherPanel',
+    'panelReaderModal'
+  ];
+  requiredInteractiveIds.forEach((id) => {
+    const pattern = new RegExp(`id=["']${escapeRegExp(id)}["']`, 'i');
+    if (!pattern.test(body)) {
+      failures.push(`${url}: missing interactive marker #${id}.`);
+    }
+  });
 }
 
 async function main() {

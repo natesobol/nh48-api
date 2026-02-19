@@ -157,6 +157,9 @@
     if (routeToken.indexOf("planner") !== -1 || path.indexOf("planner") !== -1) {
       return "planner";
     }
+    if (routeToken.indexOf("nh48_map") !== -1 || path === "/nh48-map") {
+      return "tools";
+    }
     if (routeToken.indexOf("game") !== -1 || path.indexOf("game") !== -1 || path.indexOf("puzzle") !== -1) {
       return "games";
     }

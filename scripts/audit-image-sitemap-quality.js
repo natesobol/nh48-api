@@ -95,15 +95,18 @@ async function checkImageReachability(urls, sampleSize) {
 
 function runStaticChecks(xmlText, sourceLabel) {
   const issues = [];
+  const transformedHosts = new Set([
+    'photos.nh48.info',
+    'plants.nh48.info',
+    'wikiphotos.nh48.info',
+    'howker.nh48.info',
+  ]);
 
   if (!/<urlset\b/i.test(xmlText)) {
     issues.push(`${sourceLabel}: missing <urlset> root.`);
   }
   if (!/xmlns:image="http:\/\/www\.google\.com\/schemas\/sitemap-image\/1\.1"/i.test(xmlText)) {
     issues.push(`${sourceLabel}: missing image namespace declaration on <urlset>.`);
-  }
-  if (/<image:(caption|title|license|geo_location)\b/i.test(xmlText)) {
-    issues.push(`${sourceLabel}: contains deprecated image sitemap tags (caption/title/license/geo_location).`);
   }
 
   const urlEntries = parseUrlEntries(xmlText);
@@ -113,6 +116,7 @@ function runStaticChecks(xmlText, sourceLabel) {
 
   const imageToPages = new Map();
   let imageNodeCount = 0;
+  const titleOrCaptionCount = (xmlText.match(/<image:(title|caption)>([\s\S]*?)<\/image:(title|caption)>/gi) || []).length;
 
   urlEntries.forEach((entry) => {
     if (!/^https:\/\//i.test(entry.pageLoc)) {
@@ -123,8 +127,20 @@ function runStaticChecks(xmlText, sourceLabel) {
       if (!/^https:\/\//i.test(imageLoc)) {
         issues.push(`${sourceLabel}: image URL is not absolute HTTPS: ${imageLoc}`);
       }
-      if (/\/cdn-cgi\/image\//i.test(imageLoc)) {
-        issues.push(`${sourceLabel}: image URL is a transformed variant (must be canonical): ${imageLoc}`);
+      let parsed = null;
+      try {
+        parsed = new URL(imageLoc);
+      } catch (error) {
+        parsed = null;
+      }
+      const host = parsed ? String(parsed.hostname || '').toLowerCase() : '';
+      const isTransformed = /\/cdn-cgi\/image\//i.test(imageLoc);
+      if (transformedHosts.has(host)) {
+        if (!isTransformed) {
+          issues.push(`${sourceLabel}: transformed host image URL must use /cdn-cgi/image/: ${imageLoc}`);
+        } else if (!/\/cdn-cgi\/image\/[^/]*format=jpg[^/]*quality=88[^/]*width=1600/i.test(imageLoc)) {
+          issues.push(`${sourceLabel}: transformed host URL missing expected options (format=jpg,quality=88,width=1600): ${imageLoc}`);
+        }
       }
       if (!imageToPages.has(imageLoc)) {
         imageToPages.set(imageLoc, new Set());
@@ -156,6 +172,9 @@ function runStaticChecks(xmlText, sourceLabel) {
       issues.push(`${sourceLabel}: ${multiPageMapped.length - 25} additional multi-page image mappings omitted.`);
     }
   }
+  if (!titleOrCaptionCount) {
+    issues.push(`${sourceLabel}: expected <image:title> and/or <image:caption> metadata, but none were found.`);
+  }
 
   return {
     issues,
@@ -163,6 +182,7 @@ function runStaticChecks(xmlText, sourceLabel) {
       urls: urlEntries.length,
       imageNodes: imageNodeCount,
       uniqueImages: imageToPages.size,
+      titleOrCaptionCount,
     },
     uniqueImages: Array.from(imageToPages.keys()).sort((a, b) => a.localeCompare(b)),
   };
@@ -201,7 +221,7 @@ async function main() {
     process.exit(1);
   }
 
-  let summary = `Image sitemap quality audit passed (${sourceLabel}) - URL entries: ${stats.urls}, image nodes: ${stats.imageNodes}, unique images: ${stats.uniqueImages}.`;
+  let summary = `Image sitemap quality audit passed (${sourceLabel}) - URL entries: ${stats.urls}, image nodes: ${stats.imageNodes}, unique images: ${stats.uniqueImages}, image metadata nodes (title/caption): ${stats.titleOrCaptionCount}.`;
   if (reachability) {
     summary += ` Reachability sampled: ${reachability.checked}.`;
   }

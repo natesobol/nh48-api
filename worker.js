@@ -116,6 +116,87 @@ export default {
     const buildMeta = await fetchBuildMeta(RAW_BUILD_META_URL);
     const buildDate = buildMeta?.buildDate || '';
 
+    const weatherCorsHeaders = (maxAgeSeconds = 300) => ({
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,HEAD,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Cache-Control': `public, max-age=${maxAgeSeconds}`,
+      'Content-Type': 'application/json; charset=utf-8'
+    });
+
+    const weatherJsonResponse = (status, payload, maxAgeSeconds = 300) => {
+      const headers = weatherCorsHeaders(maxAgeSeconds);
+      if (request.method === 'HEAD') {
+        return new Response(null, { status, headers });
+      }
+      return new Response(JSON.stringify(payload), { status, headers });
+    };
+
+    const parseCsv = (input) => String(input || '')
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+
+    const parseCsvNumbers = (input) => parseCsv(input).map((value) => Number.parseFloat(value));
+
+    const openMeteoVariables = [
+      'temperature_2m',
+      'apparent_temperature',
+      'wind_speed_10m',
+      'wind_gusts_10m',
+      'relative_humidity_2m',
+      'precipitation',
+      'snow_depth',
+      'snowfall'
+    ];
+    const weatherMaxPoints = 60;
+    const cleanText = (value) => String(value || '').trim();
+
+    const toGeometryBounds = (geometry) => {
+      if (!geometry || typeof geometry !== 'object') return null;
+      const coords = [];
+      const collect = (node) => {
+        if (!Array.isArray(node)) return;
+        if (node.length >= 2 && Number.isFinite(Number(node[0])) && Number.isFinite(Number(node[1]))) {
+          coords.push([Number(node[0]), Number(node[1])]);
+          return;
+        }
+        node.forEach((child) => collect(child));
+      };
+      collect(geometry.coordinates);
+      if (!coords.length) return null;
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
+      coords.forEach(([x, y]) => {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      });
+      if (!Number.isFinite(minX) || !Number.isFinite(minY) || !Number.isFinite(maxX) || !Number.isFinite(maxY)) {
+        return null;
+      }
+      return { minX, minY, maxX, maxY };
+    };
+
+    const boundsIntersect = (a, b) => {
+      if (!a || !b) return false;
+      if (a.maxX < b.minX || a.minX > b.maxX) return false;
+      if (a.maxY < b.minY || a.minY > b.maxY) return false;
+      return true;
+    };
+
+    if (pathname.startsWith('/api/weather/')) {
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: weatherCorsHeaders(60) });
+      }
+      if (!['GET', 'HEAD'].includes(request.method)) {
+        return new Response('Method Not Allowed', { status: 405, headers: weatherCorsHeaders(60) });
+      }
+    }
+
     if (pathname.startsWith('/api/tiles/opentopo/')) {
       const match = pathname.match(/^\/api\/tiles\/opentopo\/(\d+)\/(\d+)\/(\d+)\.(png|jpg)$/);
       if (!match) {
@@ -142,6 +223,282 @@ export default {
           'Access-Control-Allow-Origin': '*'
         }
       });
+    }
+
+    // Open-Meteo proxy: normalized scalar weather values, 5-minute CDN/browser cache.
+    if (pathname === '/api/weather/open-meteo' || pathname === '/api/weather/open-meteo/') {
+      const slugs = parseCsv(url.searchParams.get('slugs'));
+      const latitudes = parseCsvNumbers(url.searchParams.get('lat'));
+      const longitudes = parseCsvNumbers(url.searchParams.get('lon'));
+      const hourOffsetRaw = Number.parseInt(url.searchParams.get('hour_offset') || '0', 10);
+      const hourOffset = Number.isFinite(hourOffsetRaw)
+        ? Math.max(0, Math.min(48, hourOffsetRaw))
+        : 0;
+
+      if (!slugs.length || !latitudes.length || !longitudes.length) {
+        return weatherJsonResponse(400, { error: 'slugs, lat, and lon are required CSV query parameters.' }, 60);
+      }
+      if (slugs.length !== latitudes.length || slugs.length !== longitudes.length) {
+        return weatherJsonResponse(400, { error: 'slugs, lat, and lon must have equal lengths.' }, 60);
+      }
+      if (slugs.length > weatherMaxPoints) {
+        return weatherJsonResponse(400, { error: `Maximum ${weatherMaxPoints} points are allowed.` }, 60);
+      }
+      if (latitudes.some((value) => !Number.isFinite(value) || value < -90 || value > 90)) {
+        return weatherJsonResponse(400, { error: 'All latitude values must be valid.' }, 60);
+      }
+      if (longitudes.some((value) => !Number.isFinite(value) || value < -180 || value > 180)) {
+        return weatherJsonResponse(400, { error: 'All longitude values must be valid.' }, 60);
+      }
+
+      const params = new URLSearchParams({
+        latitude: latitudes.join(','),
+        longitude: longitudes.join(','),
+        current: openMeteoVariables.join(','),
+        hourly: openMeteoVariables.join(','),
+        timezone: 'UTC',
+        forecast_days: '3',
+        temperature_unit: 'celsius',
+        wind_speed_unit: 'kmh',
+        precipitation_unit: 'mm'
+      });
+      params.set('snowfall_unit', 'cm');
+
+      let upstreamPayload = null;
+      try {
+        const upstream = await fetch(`https://api.open-meteo.com/v1/forecast?${params.toString()}`, {
+          cf: { cacheTtl: 300, cacheEverything: true }
+        });
+        if (!upstream.ok) {
+          return weatherJsonResponse(502, { error: `Open-Meteo request failed (${upstream.status}).` }, 60);
+        }
+        upstreamPayload = await upstream.json();
+      } catch (_) {
+        return weatherJsonResponse(502, { error: 'Unable to reach Open-Meteo right now.' }, 60);
+      }
+
+      const entries = Array.isArray(upstreamPayload)
+        ? upstreamPayload
+        : Array.isArray(upstreamPayload?.results)
+          ? upstreamPayload.results
+          : [upstreamPayload];
+      const first = entries[0] || {};
+      const units = {
+        ...((first && typeof first.current_units === 'object') ? first.current_units : {}),
+        ...((first && typeof first.hourly_units === 'object') ? first.hourly_units : {})
+      };
+
+      const points = slugs.map((slug, index) => {
+        const entry = entries[index] || entries[0] || {};
+        const current = entry && typeof entry.current === 'object' ? entry.current : {};
+        const hourly = entry && typeof entry.hourly === 'object' ? entry.hourly : {};
+        const hourlyTimes = Array.isArray(hourly.time) ? hourly.time : [];
+        const hourlyIndex = hourlyTimes.length
+          ? Math.max(0, Math.min(hourlyTimes.length - 1, hourOffset))
+          : 0;
+
+        const values = {};
+        openMeteoVariables.forEach((variable) => {
+          let value = null;
+          if (hourOffset === 0 && Number.isFinite(Number(current?.[variable]))) {
+            value = Number(current[variable]);
+          } else if (Array.isArray(hourly?.[variable]) && Number.isFinite(Number(hourly[variable][hourlyIndex]))) {
+            value = Number(hourly[variable][hourlyIndex]);
+          } else if (Number.isFinite(Number(current?.[variable]))) {
+            value = Number(current[variable]);
+          }
+          values[variable] = value;
+        });
+
+        const pointTime = hourOffset === 0
+          ? (current?.time || hourlyTimes[hourlyIndex] || '')
+          : (hourlyTimes[hourlyIndex] || current?.time || '');
+
+        return {
+          slug,
+          lat: latitudes[index],
+          lon: longitudes[index],
+          time: pointTime,
+          values
+        };
+      });
+
+      return weatherJsonResponse(200, {
+        source: 'open-meteo',
+        generatedAt: new Date().toISOString(),
+        hourOffset,
+        units,
+        points
+      }, 300);
+    }
+
+    // Radar metadata proxy: RainViewer primary, NOAA OpenGeo WMS fallback, 2-minute cache.
+    if (pathname === '/api/weather/radar/meta' || pathname === '/api/weather/radar/meta/') {
+      const noaaWms = {
+        url: 'https://opengeo.ncep.noaa.gov/geoserver/conus/conus_bref_qcd/ows',
+        layers: 'conus_bref_qcd',
+        format: 'image/png',
+        transparent: true
+      };
+
+      try {
+        const upstream = await fetch('https://api.rainviewer.com/public/weather-maps.json', {
+          cf: { cacheTtl: 120, cacheEverything: true }
+        });
+        if (!upstream.ok) {
+          return weatherJsonResponse(200, {
+            provider: 'noaa_opengeo_wms',
+            mode: 'wms',
+            fallback: { wms: noaaWms }
+          }, 120);
+        }
+        const payload = await upstream.json();
+        const pastFrames = Array.isArray(payload?.radar?.past) ? payload.radar.past : [];
+        const latestFrame = pastFrames.length ? pastFrames[pastFrames.length - 1] : null;
+        let timestamp = Number(latestFrame?.time);
+        if (!Number.isFinite(timestamp) && typeof latestFrame?.path === 'string') {
+          const match = latestFrame.path.match(/(\d{8,})/);
+          if (match) timestamp = Number(match[1]);
+        }
+
+        if (Number.isFinite(timestamp)) {
+          return weatherJsonResponse(200, {
+            provider: 'rainviewer',
+            mode: 'tile',
+            timestamp,
+            tileTemplate: `/api/weather/radar/tile/${timestamp}/{z}/{x}/{y}.png`,
+            fallback: {
+              provider: 'noaa_opengeo_wms',
+              wms: noaaWms
+            }
+          }, 120);
+        }
+      } catch (_) {
+        // Fall through to NOAA fallback.
+      }
+
+      return weatherJsonResponse(200, {
+        provider: 'noaa_opengeo_wms',
+        mode: 'wms',
+        fallback: { wms: noaaWms }
+      }, 120);
+    }
+
+    // Radar tile proxy: RainViewer frame tile passthrough, 5-minute cache.
+    if (pathname.startsWith('/api/weather/radar/tile/')) {
+      const match = pathname.match(/^\/api\/weather\/radar\/tile\/(\d+)\/(\d+)\/(\d+)\/(\d+)\.png$/);
+      if (!match) {
+        return new Response('Invalid radar tile path.', { status: 400, headers: weatherCorsHeaders(60) });
+      }
+      const [, timestamp, z, x, y] = match;
+      const upstreamUrl = `https://tilecache.rainviewer.com/v2/radar/${timestamp}/512/${z}/${x}/${y}/2/1_1.png`;
+      const upstream = await fetch(upstreamUrl, {
+        cf: { cacheTtl: 300, cacheEverything: true }
+      });
+      if (!upstream.ok) {
+        return new Response('Radar tile not found.', {
+          status: upstream.status,
+          headers: {
+            ...weatherCorsHeaders(300),
+            'Content-Type': 'text/plain; charset=utf-8'
+          }
+        });
+      }
+      return new Response(request.method === 'HEAD' ? null : upstream.body, {
+        status: upstream.status,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Cache-Control': 'public, max-age=300',
+          'Content-Type': 'image/png'
+        }
+      });
+    }
+
+    // NWS alerts proxy: simplified FeatureCollection, filtered by point or bbox, 5-minute cache.
+    if (pathname === '/api/weather/alerts' || pathname === '/api/weather/alerts/') {
+      const pointParam = cleanText(url.searchParams.get('point'));
+      const bboxParam = cleanText(url.searchParams.get('bbox'));
+      if (!pointParam && !bboxParam) {
+        return weatherJsonResponse(400, { error: 'point or bbox query parameter is required.' }, 60);
+      }
+
+      let pointLat = null;
+      let pointLon = null;
+      if (pointParam) {
+        const parts = pointParam.split(',').map((value) => Number.parseFloat(value.trim()));
+        if (parts.length !== 2 || parts.some((value) => !Number.isFinite(value))) {
+          return weatherJsonResponse(400, { error: 'point must be lat,lon.' }, 60);
+        }
+        [pointLat, pointLon] = parts;
+      }
+
+      let bboxBounds = null;
+      if (bboxParam) {
+        const parts = bboxParam.split(',').map((value) => Number.parseFloat(value.trim()));
+        if (parts.length !== 4 || parts.some((value) => !Number.isFinite(value))) {
+          return weatherJsonResponse(400, { error: 'bbox must be minLon,minLat,maxLon,maxLat.' }, 60);
+        }
+        bboxBounds = {
+          minX: Math.min(parts[0], parts[2]),
+          minY: Math.min(parts[1], parts[3]),
+          maxX: Math.max(parts[0], parts[2]),
+          maxY: Math.max(parts[1], parts[3])
+        };
+      }
+
+      const upstreamUrl = pointParam
+        ? `https://api.weather.gov/alerts/active?point=${pointLat},${pointLon}`
+        : 'https://api.weather.gov/alerts/active';
+
+      let upstreamPayload = null;
+      try {
+        const upstream = await fetch(upstreamUrl, {
+          headers: {
+            'User-Agent': 'NH48-Worker/1.0 (https://nh48.info/contact)',
+            Accept: 'application/geo+json'
+          },
+          cf: { cacheTtl: 300, cacheEverything: true }
+        });
+        if (!upstream.ok) {
+          return weatherJsonResponse(502, { error: `NWS request failed (${upstream.status}).` }, 60);
+        }
+        upstreamPayload = await upstream.json();
+      } catch (_) {
+        return weatherJsonResponse(502, { error: 'Unable to reach NWS alerts right now.' }, 60);
+      }
+
+      const features = Array.isArray(upstreamPayload?.features) ? upstreamPayload.features : [];
+      const filtered = bboxBounds
+        ? features.filter((feature) => boundsIntersect(bboxBounds, toGeometryBounds(feature?.geometry)))
+        : features;
+
+      const simplified = filtered
+        .map((feature) => {
+          const props = feature?.properties && typeof feature.properties === 'object' ? feature.properties : {};
+          const severity = cleanText(props.severity).toLowerCase() || 'unknown';
+          return {
+            type: 'Feature',
+            id: feature?.id || props.id || '',
+            geometry: feature?.geometry || null,
+            properties: {
+              event: cleanText(props.event) || 'Alert',
+              severity,
+              headline: cleanText(props.headline),
+              effective: props.effective || '',
+              expires: props.expires || '',
+              senderName: cleanText(props.senderName),
+              areaDesc: cleanText(props.areaDesc)
+            }
+          };
+        })
+        .filter((feature) => feature.geometry);
+
+      return weatherJsonResponse(200, {
+        type: 'FeatureCollection',
+        source: 'nws',
+        generatedAt: new Date().toISOString(),
+        features: simplified
+      }, 300);
     }
 
     if (pathname === '/api/howker/share-image' || pathname === '/api/howker/share-image/') {
@@ -854,6 +1211,9 @@ export default {
       '/plant_catalog': '/plant-catalog',
       '/bird_catalog.html': '/bird-catalog',
       '/bird_catalog': '/bird-catalog',
+      '/nh48-map.html': '/nh48-map',
+      '/nh48_map.html': '/nh48-map',
+      '/nh48_map': '/nh48-map',
       '/hrt_info.html': '/projects/hrt-info',
       '/pages/hrt_info.html': '/projects/hrt-info',
       '/howker_ridge.html': '/howker-ridge',
@@ -905,6 +1265,12 @@ export default {
         }
 
         let html = await res.text();
+        const photoFallbackHtml = buildCrawlerImageFallbackHtml({
+          peaks: await loadPeaks(),
+          variant: 'photos',
+          limit: 48
+        });
+        html = injectCrawlerFallbackAfterContainer(html, 'photos-container', photoFallbackHtml);
         html = injectClientRuntimeCore(html);
         return new Response(html, {
           status: 200,
@@ -930,6 +1296,8 @@ export default {
       pathname.startsWith('/guest/') || pathname.startsWith('/fr/guest/') ||
       pathname === '/catalog' || pathname === '/catalog/' ||
       pathname === '/fr/catalog' || pathname === '/fr/catalog/' ||
+      pathname === '/nh48-map' || pathname === '/nh48-map/' ||
+      pathname === '/fr/nh48-map' || pathname === '/fr/nh48-map/' ||
       pathname === '/trails' || pathname === '/trails/' ||
       pathname === '/fr/trails' || pathname === '/fr/trails/' ||
       pathname === '/long-trails' || pathname === '/long-trails/' ||
@@ -948,7 +1316,7 @@ export default {
       pathname.startsWith('/plant/') || pathname.startsWith('/fr/plant/') ||
       pathname.startsWith('/bird/') || pathname.startsWith('/fr/bird/') ||
       pathname === '/nh-4000-footers-info.html' || pathname === '/nh-4000-footers-info' ||
-      pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant|bird)/) !== null;
+      pathname.match(/^\/fr\/(catalog|trails|long-trails|dataset|plant|bird|nh48-map)/) !== null;
 
     // Serve static files from GitHub (but not SSR routes even if they have extensions)
     if ((hasStaticPrefix || isStaticFile || hasStaticExtension) && !isSSRRoute) {
@@ -2292,8 +2660,9 @@ export default {
       });
     }
 
-    function injectNavFooter(html, navHtml, footerHtml, pathname, routeId = '', bodyDataAttrs = null) {
+    function injectNavFooter(html, navHtml, footerHtml, pathname, routeId = '', bodyDataAttrs = null, injectOptions = null) {
       let output = stripClientNavScripts(html);
+      const includeFooter = !(injectOptions && injectOptions.includeFooter === false);
       if (navHtml) {
         const markedNav = markNavActive(navHtml, pathname);
         const navPlaceholderPattern = /<div\b[^>]*id=["']nav-placeholder["'][^>]*>[\s\S]*?<\/div>/i;
@@ -2303,7 +2672,7 @@ export default {
           output = output.replace(/<body([^>]*)>/i, (match, attrs) => `<body${attrs}>\n${markedNav}`);
         }
       }
-      if (footerHtml) {
+      if (includeFooter && footerHtml) {
         const footerPlaceholderPattern = /<div\b[^>]*id=["']footer-placeholder["'][^>]*>[\s\S]*?<\/div>/i;
         if (footerPlaceholderPattern.test(output)) {
           output = output.replace(footerPlaceholderPattern, footerHtml);
@@ -2513,13 +2882,39 @@ export default {
       return bits.length ? bits.join(', ') : '';
     }
 
+    function extractPhotoSequenceLabel(photo) {
+      const source = pickFirstNonEmpty(photo.photoId, photo.filename, photo.url, photo.originalUrl);
+      if (!source) return '';
+      let basename = '';
+      try {
+        const parsed = new URL(source, SITE);
+        const parts = String(parsed.pathname || '').split('/').filter(Boolean);
+        basename = parts.length ? parts[parts.length - 1] : '';
+      } catch (_) {
+        basename = String(source).split(/[?#]/)[0].split('/').pop() || '';
+      }
+      const normalized = normalizeTextForWeb(basename);
+      if (!normalized) return '';
+      const doubleUnderscoreMatch = normalized.match(/__(\d{1,4})/);
+      if (doubleUnderscoreMatch) {
+        return `Photo ${Number(doubleUnderscoreMatch[1])}`;
+      }
+      const trailingNumberMatch = normalized.match(/(?:^|[-_])(\d{3,4})(?:[-_.]|$)/);
+      if (trailingNumberMatch) {
+        return `Photo ${Number(trailingNumberMatch[1])}`;
+      }
+      return '';
+    }
+
     function buildPhotoTitleUnique(peakName, photo) {
       const explicit = pickFirstNonEmpty(photo.headline, photo.title, photo.altText, photo.caption);
       if (explicit) return explicit;
       const descBits = formatDescriptorBits(photo);
       const cameraBits = formatCameraBits(photo);
-      let title = `${peakName} - White Mountain National Forest (New Hampshire)`;
-      if (descBits) title = `${peakName} - ${descBits} - White Mountain National Forest (New Hampshire)`;
+      const sequenceLabel = extractPhotoSequenceLabel(photo);
+      const labeledPeakName = sequenceLabel ? `${peakName} (${sequenceLabel})` : peakName;
+      let title = `${labeledPeakName} - White Mountain National Forest (New Hampshire)`;
+      if (descBits) title = `${labeledPeakName} - ${descBits} - White Mountain National Forest (New Hampshire)`;
       if (cameraBits) title = `${title} - ${cameraBits}`;
       return title;
     }
@@ -2529,7 +2924,9 @@ export default {
       if (explicit) return explicit;
       const descBits = formatDescriptorBits(photo);
       const cameraBits = formatCameraBits(photo);
-      let caption = `Landscape photograph of ${peakName} in the White Mountain National Forest, New Hampshire.`;
+      const sequenceLabel = extractPhotoSequenceLabel(photo);
+      const labeledPeakName = sequenceLabel ? `${peakName} (${sequenceLabel})` : peakName;
+      let caption = `Landscape photograph of ${labeledPeakName} in the White Mountain National Forest, New Hampshire.`;
       if (descBits) caption = `${caption} Details: ${descBits}.`;
       if (cameraBits) caption = `${caption} Camera: ${cameraBits}.`;
       return caption;
@@ -2951,6 +3348,99 @@ export default {
       return explicitPrimary || normalized[0];
     }
 
+    function injectCrawlerFallbackAfterContainer(html, containerId, fallbackHtml) {
+      if (!fallbackHtml || !html) return html;
+      const marker = new RegExp(`(<div[^>]*id=["']${containerId}["'][^>]*>\\s*</div>)`, 'i');
+      if (marker.test(html)) {
+        return html.replace(marker, `$1\n${fallbackHtml}`);
+      }
+      if (/<\/main>/i.test(html)) {
+        return html.replace(/<\/main>/i, `${fallbackHtml}\n</main>`);
+      }
+      return html.replace(/<\/body>/i, `${fallbackHtml}\n</body>`);
+    }
+
+    function buildCrawlerImageFallbackHtml({ peaks, variant = 'catalog', limit = 32 }) {
+      const peakList = toPeakArray(peaks);
+      if (!peakList.length) return '';
+
+      const items = peakList
+        .map((peak, index) => {
+          if (!peak || typeof peak !== 'object') return null;
+          const slug = getPeakSlugValue(peak, index);
+          if (!slug) return null;
+          const peakName = normalizeTextForWeb(peak.peakName || peak['Peak Name'] || slug);
+          const primaryPhoto = getPrimaryPhoto(peak.photos);
+          if (!primaryPhoto || !primaryPhoto.url) return null;
+          const imageUrl = normalizeCatalogPhotoUrl(primaryPhoto.url, { width: 1600, format: 'jpg' });
+          if (!imageUrl) return null;
+          const imageAlt = normalizeTextForWeb(
+            primaryPhoto.altText ||
+            primaryPhoto.alt ||
+            primaryPhoto.description ||
+            primaryPhoto.caption ||
+            `${peakName} summit photo`
+          );
+          const caption = normalizeTextForWeb(
+            primaryPhoto.caption ||
+            buildPhotoCaptionUnique(peakName, primaryPhoto)
+          );
+          return {
+            slug,
+            peakName,
+            imageUrl,
+            imageAlt: imageAlt || `${peakName} summit photo`,
+            caption
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.peakName.localeCompare(b.peakName))
+        .slice(0, Math.max(1, Number(limit) || 32));
+
+      if (!items.length) return '';
+
+      const title = variant === 'photos'
+        ? 'NH48 Photo Archive Crawl Fallback'
+        : 'NH48 Peak Catalog Crawl Fallback';
+      const intro = variant === 'photos'
+        ? 'Image links for crawlers when JavaScript is unavailable.'
+        : 'Peak image links for crawlers when JavaScript is unavailable.';
+
+      const listItems = items
+        .map((item) => [
+          '<li>',
+          `  <a href="/peak/${encodeURIComponent(item.slug)}">`,
+          `    <img src="${esc(item.imageUrl)}" alt="${esc(item.imageAlt)}" loading="lazy" decoding="async">`,
+          `    <span>${esc(item.peakName)}</span>`,
+          '  </a>',
+          item.caption ? `  <small>${esc(item.caption)}</small>` : '',
+          '</li>'
+        ].join('\n'))
+        .join('\n');
+
+      return [
+        '<noscript>',
+        '<section class="nh48-crawl-fallback" aria-label="Crawler image fallback">',
+        '  <style>',
+        '    .nh48-crawl-fallback{margin:1.5rem 0;padding:1rem;border:1px solid rgba(148,163,184,.28);border-radius:12px;background:#0b1221;color:#e2e8f0;}',
+        '    .nh48-crawl-fallback h2{margin:0 0 .35rem;font-size:1.1rem;}',
+        '    .nh48-crawl-fallback p{margin:0 0 .8rem;color:#94a3b8;font-size:.92rem;}',
+        '    .nh48-crawl-fallback ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem;}',
+        '    .nh48-crawl-fallback li{display:flex;flex-direction:column;gap:.4rem;}',
+        '    .nh48-crawl-fallback a{display:flex;flex-direction:column;gap:.45rem;text-decoration:none;color:#e2e8f0;}',
+        '    .nh48-crawl-fallback img{width:100%;height:auto;border-radius:10px;border:1px solid rgba(148,163,184,.2);background:#020617;}',
+        '    .nh48-crawl-fallback small{color:#94a3b8;line-height:1.35;}',
+        '  </style>',
+        `  <h2>${esc(title)}</h2>`,
+        `  <p>${esc(intro)}</p>`,
+        '  <ul>',
+        listItems,
+        '  </ul>',
+        '</section>',
+        '</noscript>'
+      ].join('\n');
+    }
+
     function buildDataCatalogSchema({ canonicalUrl, title, description, datasets }) {
       return {
         '@context': 'https://schema.org',
@@ -3060,6 +3550,9 @@ export default {
         '/bird-catalog.html': '/bird-catalog',
         '/bird_catalog.html': '/bird-catalog',
         '/bird_catalog': '/bird-catalog',
+        '/nh48-map.html': '/nh48-map',
+        '/nh48_map.html': '/nh48-map',
+        '/nh48_map': '/nh48-map',
         '/nh-4000-footers-info.html': '/nh-4000-footers-info',
         '/nh48-planner': '/nh48-planner.html',
         '/virtual_hike.html': '/virtual-hike'
@@ -3379,6 +3872,11 @@ export default {
           withApiPrefix();
           push(isFrench ? 'Projets' : 'Projects');
           push(isFrench ? 'Carte des plantes' : 'Plant Map');
+          break;
+        case 'nh48-map':
+          push(homeLabel, homeUrl);
+          push(isFrench ? 'Projets' : 'Projects');
+          push('NH48 Map');
           break;
         case 'howker-map-editor':
           withApiPrefix();
@@ -3930,6 +4428,12 @@ export default {
       ]);
       html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'catalog');
       html = injectBuildDate(html, buildDate);
+      const catalogFallbackHtml = buildCrawlerImageFallbackHtml({
+        peaks,
+        variant: 'catalog',
+        limit: 48
+      });
+      html = injectCrawlerFallbackAfterContainer(html, 'grid', catalogFallbackHtml);
 
       const metaBlock = [
         `<title>${esc(title)}</title>`,
@@ -3983,6 +4487,7 @@ export default {
       stripTemplateJsonLd = false,
       stripTemplateBreadcrumbJsonLd = true,
       bodyDataAttrs = null,
+      hideFooter = false,
       prependBodyHtml = '',
       templateReplacements = null
     }) {
@@ -4009,7 +4514,9 @@ export default {
       }
       html = stripBreadcrumbMicrodata(html);
       html = stripHeadMeta(html);
-      html = injectNavFooter(html, navHtml, footerHtml, pathname, routeId, bodyDataAttrs);
+      html = injectNavFooter(html, navHtml, footerHtml, pathname, routeId, bodyDataAttrs, {
+        includeFooter: !hideFooter
+      });
       if (prependBodyHtml) {
         html = injectBodyStartHtml(html, prependBodyHtml);
       }
@@ -4478,6 +4985,44 @@ export default {
     }
 
     const { enPath, frPath } = buildAlternatePaths(pathname);
+
+    if (pathNoLocale === '/nh48-map' || pathNoLocale === '/nh48-map/') {
+      const canonical = `${SITE}${pathname.endsWith('/') ? pathname.slice(0, -1) : pathname}`;
+      const creativeWorks = await loadCreativeWorks();
+      const nh48MapCreativeWork = buildCreativeWorkNode({
+        entry: creativeWorks['nh48-map'],
+        fallbackType: 'Map',
+        id: `${canonical}#map`,
+        url: canonical,
+        name: isFrench ? 'Carte NH48 interactive' : 'NH48 Interactive Map',
+        description: isFrench
+          ? 'Carte plein ecran des 48 sommets NH48 avec recherche, filtres et details par sommet.'
+          : 'Fullscreen map of all 48 NH48 peaks with search, filters, and peak detail drill-down.',
+        thumbnailUrl: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__003.jpg'
+      });
+      return serveTemplatePage({
+        templatePath: 'pages/nh48_map.html',
+        pathname,
+        routeId: 'nh48-map',
+        bodyDataAttrs: { 'hide-footer': 'true' },
+        hideFooter: true,
+        meta: {
+          title: isFrench ? 'NH48 Map - Carte interactive des 48 sommets NH' : 'NH48 Map - Interactive Map of all 48 NH Peaks',
+          description: isFrench
+            ? 'Explorez les 48 sommets NH48 sur une carte plein ecran avec filtres, recherche et liens vers chaque fiche sommet.'
+            : 'Explore all 48 NH48 peaks on a fullscreen interactive map with filters, search, and direct links to each peak guide.',
+          canonical,
+          alternateEn: `${SITE}/nh48-map`,
+          alternateFr: `${SITE}/fr/nh48-map`,
+          image: 'https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-washington/mount-washington__003.jpg',
+          imageAlt: isFrench
+            ? 'Sommet du mont Washington et terrain alpin des White Mountains.'
+            : 'Mount Washington summit and alpine terrain in the White Mountains.',
+          ogType: 'website'
+        },
+        jsonLd: [nh48MapCreativeWork].filter(Boolean)
+      });
+    }
 
     if (pathNoLocale === '/submit-edit' || pathNoLocale === '/submit-edit/') {
       const canonical = `${SITE}${pathname.endsWith('/') ? pathname.slice(0, -1) : pathname}`;
@@ -6358,8 +6903,9 @@ export default {
         ['1', 'true', 'prerender'].includes(debugPrerenderParam)
         || ['1', 'true', 'prerender'].includes(renderParam)
       );
+    const shouldAttemptPrerender = routeKeyword === 'peak' && !explicitTemplateMode;
 
-    if (routeKeyword === 'peak' && explicitPrerenderMode && !explicitTemplateMode) {
+    if (shouldAttemptPrerender) {
       const prerenderedResponse = await servePrerenderedPeakHtml(slug, isFrench, {
         prependMainHtml: peakAlertHtml,
         jsonLdBlocks: alertSchema ? [alertSchema] : []
@@ -6369,6 +6915,8 @@ export default {
       }
       if (explicitPrerenderMode) {
         console.warn(`[PeakPrerender] Explicit prerender requested but unavailable for slug: ${slug}; falling back to template.`);
+      } else {
+        console.warn(`[PeakPrerender] Default prerender unavailable for slug: ${slug}; falling back to template.`);
       }
     }
 
@@ -6450,7 +6998,7 @@ export default {
     // immediate updates and consistent SEO metadata.
     const templateSourceHeader = explicitTemplateMode
       ? 'template-forced'
-      : explicitPrerenderMode
+      : shouldAttemptPrerender
         ? 'template-fallback'
         : 'template-default';
     return new Response(html, {

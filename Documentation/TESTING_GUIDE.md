@@ -17,6 +17,7 @@ node scripts/audit-wiki-routes.js
 node scripts/audit-wiki-media-sync.js
 node scripts/audit-sameas.js
 node scripts/audit-entity-links.js
+node scripts/audit-image-crawl-visibility.js
 node scripts/audit-crawl-entrypoints.js
 node scripts/audit-peak-render-source.js
 ```
@@ -41,19 +42,20 @@ node scripts/audit-homepage-worker-seo.js --url https://nh48.info
 node scripts/audit-worker-breadcrumbs.js --url https://nh48.info
 node scripts/audit-og-cards.js --url https://nh48.info --sample 30
 node scripts/audit-crawl-entrypoints.js --url https://nh48.info
+node scripts/audit-image-crawl-visibility.js --url https://nh48.info
 node scripts/audit-image-loading-coverage.js --url https://nh48.info
 node scripts/audit-peak-render-source.js --url https://nh48.info
 ```
 
 ## Peak Render Source Audit
-Goal: keep peak routes stable for UI/schema parity (interactive template default), while preserving explicit prerender validation.
+Goal: ensure peak routes are SEO-first by default (prerendered HTML), while preserving explicit template override behavior for debugging.
 
 ### Local source contract check
 ```bash
 node scripts/audit-peak-render-source.js
 ```
 Validates `worker.js` contract:
-- template is default source for `/peak/*`
+- prerender is default source for `/peak/*`
 - explicit `render=template|interactive` override support
 - explicit `render=prerender` support
 - `X-Peak-Source` headers for prerender/template modes
@@ -65,9 +67,11 @@ node scripts/audit-peak-render-source.js --url https://nh48.info
 ```
 Validates:
 - `/peak/mount-washington`, `/peak/mount-isolation`, `/fr/peak/mount-washington` return `200`
-- `X-Peak-Source=template-default` on default requests
-- required interactive panel/grid IDs exist in default HTML (`routesGrid`, `relatedTrailsGrid`, `difficultyMetricsGrid`, etc.)
+- `X-Peak-Source=prerendered` on default requests
+- exactly one meaningful H1 in default HTML
 - no unresolved template tokens like `\${...}` in default HTML
+- transformed image URLs present (`/cdn-cgi/image/`) on default HTML
+- no raw full-size `https://photos.nh48.info/<peak-slug>/...` URLs in default HTML
 - explicit `?render=prerender` checks still pass:
   - `X-Peak-Source=prerendered`
   - one meaningful H1
@@ -75,7 +79,30 @@ Validates:
   - no raw full-size `https://photos.nh48.info/<peak-slug>/...` URLs
 
 Template override check included:
-- `/peak/mount-washington?render=template` returns template source header (`template-forced`)
+- `/peak/mount-washington?render=template` returns template source header and interactive panel/grid markers
+
+## Image Crawl Visibility Audit
+Goal: verify crawl-visible image URLs exist in raw HTML (without JS execution) for key image-heavy routes.
+
+### Local source contract check
+```bash
+node scripts/audit-image-crawl-visibility.js
+```
+Validates `worker.js` wiring:
+- crawler fallback HTML helper exists
+- `/catalog` fallback injection exists
+- `/photos` fallback injection exists
+- peak route default remains prerender-first
+
+### Live runtime check
+```bash
+node scripts/audit-image-crawl-visibility.js --url https://nh48.info
+```
+Validates:
+- `/peak/mount-washington` returns prerendered source with crawl-visible transformed image URLs
+- `/catalog` and `/photos` expose concrete `<img src>` URLs without requiring JS
+- crawler fallback block (`.nh48-crawl-fallback`) is present on `/catalog` and `/photos`
+- `/plant-catalog` still has at least one crawl-visible image reference
 
 ## Crawl Entrypoints Audit
 Goal: verify crawler entry files are valid and discoverable.
@@ -107,6 +134,7 @@ Validates HTTP `200` + expected content for:
 Search Console submission target:
 - Submit `https://nh48.info/sitemap.xml`
 - Do not rely on `?fresh=1` as a separate submission URL.
+- Prefer a **Domain property** for `nh48.info` so subdomain-hosted images (`photos.nh48.info`, `plants.nh48.info`, `wikiphotos.nh48.info`, `howker.nh48.info`) are tracked in one property.
 
 Optional redirect verification:
 ```bash
@@ -153,14 +181,15 @@ Pre-deploy gates:
 1. `audit-site-schema`
 2. `audit-i18n-completeness`
 3. `audit-image-sitemap-quality`
-4. `audit-crawl-entrypoints`
-5. `audit-og-cards`
-6. `audit-peak-render-source`
-7. `audit-dataset-overlay-coverage`
-8. `audit-unresolved-i18n-markers`
-9. `audit-peak-guide-authority`
-10. `audit-sameas`
-11. `audit-entity-links`
+4. `audit-image-crawl-visibility`
+5. `audit-crawl-entrypoints`
+6. `audit-og-cards`
+7. `audit-peak-render-source`
+8. `audit-dataset-overlay-coverage`
+9. `audit-unresolved-i18n-markers`
+10. `audit-peak-guide-authority`
+11. `audit-sameas`
+12. `audit-entity-links`
 
 Post-deploy gates with retry:
 1. `audit-homepage-worker-seo` (production URL)
@@ -262,6 +291,50 @@ Future hookup checklist (deferred):
    - `NHBIRDS_R2_ACCOUNT_ID`
    - `NHBIRDS_R2_ENDPOINT`
 4. Activate a dedicated bird media sync workflow only after bucket and ACL scope are verified.
+
+## NH48 Map Fullscreen Route
+Scope: fullscreen map shell under sticky nav, backed by `data/nh48.json`, with EN + FR routes.
+
+Live routes:
+- `/nh48-map`
+- `/fr/nh48-map`
+
+Manual validation checklist:
+1. Route and layout
+   - `/nh48-map` returns `200`
+   - nav is visible
+   - footer is not rendered on this route
+   - map fills viewport below nav with no dead space
+2. Data load
+   - map loads 48 peak markers from `/data/nh48.json`
+   - marker popup includes peak name, elevation, range, and link to `/peak/:slug` (or `/fr/peak/:slug` on FR route)
+3. Panel interactions
+   - search filters list by peak/range/route text
+   - range filter updates list and marker emphasis
+   - sort supports `Name (A-Z)` and `Elevation (high to low)`
+   - list click and marker click stay synchronized with detail card selection
+4. Fullscreen stability
+   - desktop (`1366x768`, `1920x1080`): no clipping, no bottom gap
+   - mobile (`390x844`, `430x932`): no horizontal overflow, panel collapse/expand works
+   - orientation change and resize keep map tiles aligned (`invalidateSize` behavior)
+5. Weather overlay controls
+   - weather toggle button is visible on initial load
+   - weather panel is hidden by default
+   - all weather overlays are off by default
+   - weather drawer can be opened/closed via button and `Escape`
+6. Weather overlay rendering
+   - single scalar overlay renders colored glyph markers + legend values with units
+   - multiple scalar overlays can be enabled simultaneously and remain visually distinct
+   - selecting another peak updates anchored legend values
+   - radar overlay renders with topo still visible underneath
+   - alerts overlay renders polygons and opens popup details
+7. Weather failure handling
+   - overlay request failure only marks that overlay as errored
+   - stale status is shown when cached weather data is reused
+   - base map, peak markers, and existing controls remain functional after overlay failures
+8. Discovery
+   - `scripts/generate-sitemaps.js` includes `/nh48-map` and `/fr/nh48-map`
+   - `scripts/generate-og-cards.py` recognizes `/nh48-map` route family and outputs OG card manifest coverage
 
 ## CI Workflow Ownership Map
 - `deploy-worker.yml`: Worker deploy + all SEO/peak audit gates + production parity retry.
