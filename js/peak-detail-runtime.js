@@ -55,6 +55,91 @@
         return translated === key ? fallback : translated;
       };
 
+      const PEAK_DEBUG_ENABLED = (() => {
+        try {
+          const params = new URLSearchParams(window.location.search || '');
+          if (params.get('debug_peak_runtime') === '1') return true;
+          if (params.get('debug_peak_runtime') === 'true') return true;
+          if (window.localStorage && window.localStorage.getItem('nh48_debug_peak_runtime') === '1') return true;
+        } catch (_) {}
+        return false;
+      })();
+
+      function debugLog(step, payload){
+        if(!PEAK_DEBUG_ENABLED) return;
+        if(payload === undefined){
+          console.log(`[Peak Runtime Debug] ${step}`);
+        }else{
+          console.log(`[Peak Runtime Debug] ${step}`, payload);
+        }
+      }
+
+      function debugWarn(step, payload){
+        if(!PEAK_DEBUG_ENABLED) return;
+        if(payload === undefined){
+          console.warn(`[Peak Runtime Debug] ${step}`);
+        }else{
+          console.warn(`[Peak Runtime Debug] ${step}`, payload);
+        }
+      }
+
+      function debugError(step, payload){
+        if(!PEAK_DEBUG_ENABLED) return;
+        if(payload === undefined){
+          console.error(`[Peak Runtime Debug] ${step}`);
+        }else{
+          console.error(`[Peak Runtime Debug] ${step}`, payload);
+        }
+      }
+
+      function collectRuntimeAssetState(){
+        const hasHead = !!document.head;
+        const hasBody = !!document.body;
+        const hasPeakBootstrapData = !!document.getElementById('peakBootstrapData');
+        const hasPeakDetailCssTag = !!document.querySelector('link[href*="/css/peak-detail.css"]');
+        const hasTooltipsCssTag = !!document.querySelector('link[href*="/css/ui-tooltips.css"]');
+        const hasLeafletCssTag = !!document.querySelector('link[href*="leaflet@1.9.4/dist/leaflet.css"]');
+        const hasPeakRuntimeScriptTag = !!document.querySelector('script[src*="/js/peak-detail-runtime.js"]');
+        const hasI18nScriptTag = !!document.querySelector('script[src*="/js/i18n.js"]');
+        const hasTooltipsScriptTag = !!document.querySelector('script[src*="/js/ui-tooltips.js"]');
+        const hasLeafletScriptTag = !!document.querySelector('script[src*="leaflet@1.9.4/dist/leaflet.js"]');
+        return {
+          hasHead,
+          hasBody,
+          hasPeakBootstrapData,
+          hasPeakDetailCssTag,
+          hasTooltipsCssTag,
+          hasLeafletCssTag,
+          hasPeakRuntimeScriptTag,
+          hasI18nScriptTag,
+          hasTooltipsScriptTag,
+          hasLeafletScriptTag
+        };
+      }
+
+      if(PEAK_DEBUG_ENABLED){
+        debugLog('module-loaded', {
+          href: window.location.href,
+          readyState: document.readyState
+        });
+        debugLog('asset-state:module-load', collectRuntimeAssetState());
+        window.addEventListener('error', (event) => {
+          debugError('window-error', {
+            message: event && event.message,
+            filename: event && event.filename,
+            line: event && event.lineno,
+            column: event && event.colno
+          });
+        });
+        window.addEventListener('unhandledrejection', (event) => {
+          const reason = event && event.reason;
+          debugError('unhandled-rejection', {
+            message: reason && reason.message ? reason.message : String(reason),
+            stack: reason && reason.stack ? reason.stack : ''
+          });
+        });
+      }
+
       const trackEvent = (name, params = {}) => {
         const analytics = window.NH48_INFO_ANALYTICS;
         if (analytics && analytics.logEvent && analytics.analytics) {
@@ -1378,7 +1463,7 @@
               lastError = `Parse error: ${err.message}`;
               continue;
             }
-            console.log(`Ã¢Å“â€œ [Peak Data] Successfully loaded peak data from ${url}`);
+            console.log(`[Peak Data] Successfully loaded peak data from ${url}`);
             trackEvent('peak_data_loaded', { source: url, peakCount: Object.keys(data).length });
             return data;
           }catch(err){
@@ -1387,7 +1472,7 @@
             trackEvent('peak_data_fetch_error', { source: url, error: lastError });
           }
         }
-        console.error('Ã¢Å“â€” [Peak Data] All API endpoints failed. Last error:', lastError);
+        console.error('[Peak Data] All API endpoints failed. Last error:', lastError);
         console.error('[Peak Data] Attempted URLs:', API_URLS);
         throw new Error(`All API endpoints failed. Last error: ${lastError || 'Unknown error'}`);
       }
@@ -2133,24 +2218,6 @@
         'creditLine'
       ];
       const SKIP_META_KEYS = new Set(['photoId','filename','url','isPrimary']);
-
-      function applyMetadataState(open, extraWrap, toggleBtn, { track=false } = {}){
-        metadataExpanded = open;
-        if(extraWrap){
-          extraWrap.classList.toggle('open', open);
-        }
-        if(toggleBtn){
-          toggleBtn.textContent = open ? t('peak.metadata.lessDetails') : t('peak.metadata.moreDetails');
-        }
-        if(open){
-          pauseCarousel('metadata_panel');
-        }else{
-          resumeCarousel('metadata_panel');
-        }
-        if(track){
-          trackEvent('peak_metadata_toggle', { open });
-        }
-      }
 
       function applyMetadataState(open, extraWrap, toggleBtn, { track=false } = {}){
         metadataExpanded = open;
@@ -4202,8 +4269,16 @@
 
       /* INIT ----------------------------------------------------------------- */
       async function init(){
+        let initStep = 'init:start';
+        debugLog('init:start', {
+          path: window.location.pathname,
+          search: window.location.search
+        });
+        debugLog('asset-state:init-start', collectRuntimeAssetState());
         initPanelReader();
+        initStep = 'init:monthly-weather-controls';
         initMonthlyWeatherControls();
+        initStep = 'init:tooltips-bootstrap';
         if (window.NH48Tooltips && typeof window.NH48Tooltips.init === 'function') {
           window.NH48Tooltips.init({
             pageName: 'Peak details',
@@ -4214,9 +4289,13 @@
         }
         const slug = getResolvedSlug();
         console.log('[Peak Init] Starting initialization for slug:', slug);
+        debugLog('init:resolved-slug', { slug });
         
         if(!slug){
           console.error('[Peak Init] No slug found in URL');
+          debugWarn('init:missing-slug', {
+            routeInfo: window.NH48_ROUTE_INFO || getRouteInfo(window.location.pathname)
+          });
           trackEvent('peak_missing_slug');
           updatePeakTitle(t('peak.notFound') || 'Peak not found');
           const mediaEl = document.getElementById('media');
@@ -4238,7 +4317,16 @@
         }
 
         try{
+          initStep = 'data:load-all';
           console.log('[Peak Init] Loading translation data and peak data...');
+          debugLog('init:bootstrap-summary', (() => {
+            const bootstrap = getPeakBootstrapData();
+            return {
+              hasBootstrap: !!bootstrap,
+              bootstrapSlug: bootstrap ? (bootstrap.slug || bootstrap.slug_en || bootstrap.Slug || '') : '',
+              hasBootstrapPeak: !!(bootstrap && bootstrap.peak)
+            };
+          })());
           const [ , data, descMap, experienceMap ] = await Promise.all([
             waitForI18NReady(),
             fetchPeaks(),
@@ -4247,7 +4335,13 @@
             fetchPeakEnrichmentData()
           ]);
           peakExperienceMap = experienceMap || {};
+          debugLog('data:load-all:complete', {
+            peakCount: Object.keys(data || {}).length,
+            descCount: Object.keys(descMap || {}).length,
+            experienceCount: Object.keys(peakExperienceMap || {}).length
+          });
           
+          initStep = 'data:lookup-peak';
           console.log('[Peak Init] Data loaded, looking up peak:', slug);
           let p = data && data[slug];
 
@@ -4290,8 +4384,9 @@
           }
 
           const name = p.peakName || p['Peak Name'] || p.name || p['Name'] || p.peak || p['Peak'] || p['PeakName'] || slug;
-          console.log('[Peak Init] Ã¢Å“â€œ Found peak:', name);
+          console.log('[Peak Init] Found peak:', name);
           updatePeakTitle(name);
+          debugLog('data:peak-found', { name, slug });
           if (window.NH48Tooltips && typeof window.NH48Tooltips.init === 'function') {
             window.NH48Tooltips.init({
               pageName: name,
@@ -4307,8 +4402,13 @@
           currentPeak = p;
           currentSlug = slug;
           peakViewModel = buildPeakViewModel(p, slug);
+          debugLog('view-model:built', {
+            hasViewModel: !!peakViewModel,
+            riskLevel: peakViewModel && peakViewModel.risk ? peakViewModel.risk.level : 'n/a'
+          });
 
           // Photos + per-photo metadata
+          initStep = 'media:normalize-photos';
           let imgs = [];
           let meta = [];
           let primaryIndex = 0;
@@ -4354,6 +4454,11 @@
             primaryMarked = false;
           }
           console.log('[Peak Init] Photos loaded:', imgs.length);
+          debugLog('media:photos-ready', {
+            count: imgs.length,
+            primaryIndex,
+            heroUrl: heroUrl || ''
+          });
           currentImages = imgs.slice();
           currentMeta = meta.slice();
           const heroEl = document.getElementById('peakHero');
@@ -4387,6 +4492,7 @@
             twitterImageEl.setAttribute('content', primaryImage);
           }
 
+          initStep = 'render:panels-and-map';
           buildPeakDescription(p);
           updateHeroBannerDetails(p);
           updateDirectionsButton(peakViewModel);
@@ -4409,15 +4515,27 @@
           renderPeakMap(p, name, canonicalUrl);
           initPeakSocialCardHandlers(p, name, canonicalUrl, slug);
 
+          initStep = 'schema-and-carousel';
           buildMountainSchema(p, name, canonicalUrl, currentPrimaryPhoto, descriptionText, currentMeta);
           buildPeakFaqSchema(p, name, canonicalUrl);
           buildCarousel(imgs, meta, name);
-          console.log('[Peak Init] Ã¢Å“â€œ Initialization complete');
+          console.log('[Peak Init] Initialization complete');
+          debugLog('init:complete', {
+            slug,
+            name,
+            photoCount: imgs.length
+          });
+          debugLog('asset-state:init-complete', collectRuntimeAssetState());
           trackEvent('peak_loaded', { slug, name, photoCount: imgs.length });
 
         }catch(err){
-          console.error('[Peak Init] Ã¢Å“â€” Error loading peak data:', err);
+          console.error('[Peak Init] Error loading peak data:', err);
           console.error('[Peak Init] Stack trace:', err.stack);
+          debugError('init:failed', {
+            step: initStep,
+            message: err && err.message ? err.message : String(err),
+            stack: err && err.stack ? err.stack : ''
+          });
           trackEvent('peak_load_failed', { slug, message: err.message });
           
           // Show user-friendly error
@@ -4450,6 +4568,13 @@
 
       window.NH48PeakRuntime = window.NH48PeakRuntime || {};
       window.NH48PeakRuntime.init = init;
+      window.NH48PeakRuntime.debug = {
+        enabled: PEAK_DEBUG_ENABLED,
+        assetState: collectRuntimeAssetState,
+        logAssetState(label = 'manual'){
+          debugLog(`asset-state:${label}`, collectRuntimeAssetState());
+        }
+      };
 
       if(!window.__NH48_PEAK_RUNTIME_AUTO_INIT_DONE){
         window.__NH48_PEAK_RUNTIME_AUTO_INIT_DONE = true;
