@@ -2782,16 +2782,38 @@ export default {
     function markNavActive(navHtml, pathname) {
       if (!navHtml) return navHtml;
       const normalized = pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
+      const stripCurrentClass = (classValue = '') =>
+        String(classValue)
+          .split(/\s+/)
+          .filter((token) => token && token !== 'current')
+          .join(' ');
+
+      const updateClassAttr = (attrs, isActive) => {
+        const classPattern = /(^|\s)class=(["'])([^"']*)\2/i;
+        if (classPattern.test(attrs)) {
+          return attrs.replace(classPattern, (match, prefix, quote, classValue) => {
+            const cleaned = stripCurrentClass(classValue);
+            const finalClasses = isActive ? [cleaned, 'current'].filter(Boolean).join(' ') : cleaned;
+            return finalClasses ? `${prefix}class=${quote}${finalClasses}${quote}` : '';
+          });
+        }
+        return isActive ? `${attrs} class="current"` : attrs;
+      };
+
       return navHtml.replace(/<a\s+([^>]*?)href="([^"]+)"([^>]*)>/gi, (match, pre, href, post) => {
         const urlPath = href.replace(SITE, '');
         const normalizedHref = urlPath.endsWith('/') && urlPath.length > 1 ? urlPath.slice(0, -1) : urlPath;
-        if (normalizedHref && (normalizedHref === normalized || normalizedHref === `${normalized}/index.html`)) {
-          if (/class="/i.test(match)) {
-            return `<a ${pre}href="${href}"${post.replace(/class="([^"]*)"/i, 'class="$1 current"')}>`;
-          }
-          return `<a ${pre}href="${href}" class="current"${post}>`;
+        const isActive = Boolean(
+          normalizedHref &&
+          (normalizedHref === normalized || normalizedHref === `${normalized}/index.html`)
+        );
+        let attrs = `${pre || ''}href="${href}"${post || ''}`;
+        attrs = attrs.replace(/(^|\s)aria-current=(["'])[^"']*\2/gi, '');
+        attrs = updateClassAttr(attrs, isActive);
+        if (isActive) {
+          attrs += ' aria-current="page"';
         }
-        return match;
+        return `<a ${attrs}>`;
       });
     }
 

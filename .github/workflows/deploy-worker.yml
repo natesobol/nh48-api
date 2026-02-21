@@ -56,6 +56,7 @@ on:
       - 'scripts/audit-peak-image-metadata.js'
       - 'scripts/audit-peak-schema-parity.js'
       - 'scripts/audit-favicon-contract.js'
+      - 'scripts/audit-nav-header-contract.js'
       - 'scripts/audit-sameas.js'
       - 'scripts/audit-entity-links.js'
       - 'scripts/generate-favicons.py'
@@ -243,6 +244,10 @@ jobs:
         id: favicon_contract_audit
         run: node scripts/audit-favicon-contract.js
 
+      - name: Run nav header contract audit (pre-deploy gate)
+        id: nav_header_contract_audit
+        run: node scripts/audit-nav-header-contract.js
+
       - name: Run wiki routes audit (pre-deploy gate)
         id: wiki_routes_audit
         run: node scripts/audit-wiki-routes.js
@@ -327,6 +332,7 @@ jobs:
           echo "- **Peak data coverage audit:** \`${{ steps.peak_data_coverage_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak image metadata audit:** \`${{ steps.peak_image_metadata_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Favicon contract audit:** \`${{ steps.favicon_contract_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Nav header contract audit:** \`${{ steps.nav_header_contract_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Wiki routes audit:** \`${{ steps.wiki_routes_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Wiki media sync audit:** \`${{ steps.wiki_media_sync_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **sameAs audit:** \`${{ steps.sameas_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
@@ -355,6 +361,7 @@ jobs:
           echo "- \`node scripts/audit-peak-data-coverage.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-image-metadata.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-favicon-contract.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-nav-header-contract.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-wiki-routes.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-wiki-media-sync.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-sameas.js\`" >> "$GITHUB_STEP_SUMMARY"

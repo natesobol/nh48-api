@@ -13,6 +13,10 @@
     overflow-x: hidden;
   }
 
+  html[data-text-scale="large"] {
+    font-size: 112.5%;
+  }
+
   .site-nav {
     display: flex;
     align-items: center;
@@ -402,12 +406,170 @@
     justify-content: flex-start;
   }
 
+  .site-nav {
+    padding: 0;
+    gap: 0;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    background: #16162a;
+  }
+
+  .site-nav-utility {
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 24px;
+    background: linear-gradient(180deg, #101525 0%, #0d1120 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .site-nav-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 12px 24px;
+    overflow: visible;
+  }
+
+  .site-nav-a11y {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .site-nav-a11y-label {
+    font-size: 0.72rem;
+    color: #d6f5df;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    white-space: nowrap;
+  }
+
+  .site-nav-a11y-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .site-nav-a11y-btn {
+    min-height: 32px;
+    min-width: 40px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    background: rgba(15, 23, 42, 0.6);
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .site-nav-a11y-btn:hover,
+  .site-nav-a11y-btn[aria-pressed="true"] {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: #22c55e;
+  }
+
+  .site-nav-a11y-btn:focus-visible {
+    outline: 2px solid #22c55e;
+    outline-offset: 2px;
+  }
+
+  .site-nav-quick-search {
+    display: none;
+    width: 100%;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .site-nav-quick-search-input {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    background: rgba(15, 23, 42, 0.65);
+    color: #ffffff;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+
+  .site-nav-quick-search-input::placeholder {
+    color: #c4d5df;
+    opacity: 0.9;
+  }
+
+  .site-nav-quick-search-submit {
+    min-height: 44px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.55);
+    background: rgba(15, 23, 42, 0.65);
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .site-nav-quick-search-submit:hover {
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.18);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   @media (max-width: 900px) {
     .site-nav {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+      gap: 0;
+    }
+
+    .site-nav-main {
       flex-direction: column;
       align-items: center;
       text-align: center;
       gap: 14px;
+      padding: 12px 14px;
+    }
+
+    .site-nav-utility {
+      padding: 8px 14px;
+      flex-wrap: wrap;
+      row-gap: 8px;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .site-nav-a11y {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .site-nav-a11y-controls {
+      width: auto;
+    }
+
+    .site-nav-a11y-btn {
+      min-height: 44px;
+      min-width: 48px;
     }
 
     .site-nav-logo {
@@ -446,6 +608,7 @@
       width: 100%;
       text-align: left;
       justify-content: flex-start;
+      min-height: 44px;
     }
 
     .site-nav-dropdown {
@@ -503,6 +666,12 @@
       justify-content: flex-start;
       max-width: none;
       width: 100%;
+      order: 2;
+    }
+
+    .site-nav-quick-search {
+      display: flex;
+      order: 3;
     }
 
     .site-nav-title {
@@ -516,10 +685,6 @@
   }
 
   @media (max-width: 680px) {
-    .site-nav {
-      padding: 12px 14px;
-    }
-
     .site-nav-links {
       --nav-link-font-size: 15px;
       --nav-link-pad-y: 8px;
@@ -579,115 +744,160 @@
   }
 </style>
 <nav class="site-nav" aria-label="Site navigation">
-  <a href="/" class="site-nav-logo">
-    <div class="logo-wrap">
-      <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async" />
-    </div>
-    <div class="site-nav-title-wrap">
-      <span class="site-nav-title">NH48 API</span>
-      <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
-    </div>
-  </a>
-  <div class="site-nav-links">
-    <!-- Link to dataset home / API -->
-    <a href="/" data-route="dataset-home" data-routes="home,dataset-home">Data &amp; API</a>
-
-    <!-- Explore dropdown -->
-    <div class="site-nav-dropdown">
-      <button type="button">Explore</button>
-      <div class="site-nav-submenu" aria-label="Explore NH48">
-        <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
-        <a href="/catalog/ranges" data-route="range-catalog" data-routes="range-catalog,range-detail">Range Catalog</a>
+  <div class="site-nav-utility" role="group" data-i18n="nav.utilityLinks" data-i18n-attr="aria-label" aria-label="Utility links">
+    <div class="site-nav-a11y">
+      <span class="site-nav-a11y-label" data-i18n="nav.textSize">Text size</span>
+      <div class="site-nav-a11y-controls" role="group" aria-label="Text size controls">
+        <button
+          type="button"
+          id="a11yTextDecrease"
+          class="site-nav-a11y-btn"
+          data-scale-target="default"
+          data-i18n="nav.textDecrease"
+          data-i18n-attr="aria-label"
+          aria-label="Decrease text size"
+          aria-pressed="true"
+        >A-</button>
+        <button
+          type="button"
+          id="a11yTextIncrease"
+          class="site-nav-a11y-btn"
+          data-scale-target="large"
+          data-i18n="nav.textIncrease"
+          data-i18n-attr="aria-label"
+          aria-label="Increase text size"
+          aria-pressed="false"
+        >A+</button>
       </div>
     </div>
-
-    <!-- Media & Maps dropdown -->
-    <div class="site-nav-dropdown">
-      <button type="button">Media &amp; Maps</button>
-      <div class="site-nav-submenu" aria-label="Media and maps">
-        <a href="/nh48-map" data-route="nh48-map" data-routes="nh48-map">NH48 Map</a>
-        <a href="/photos/" data-route="photos">NH48 Photos</a>
-      </div>
-    </div>
-
-    <!-- Guides & Resources dropdown -->
-    <div class="site-nav-dropdown">
-      <button type="button">Guides &amp; Resources</button>
-      <div class="site-nav-submenu" aria-label="Guides and resources">
-        <a href="/wiki" data-route="wiki-home" data-routes="wiki-home,wiki-forest-health,wiki-mountain-detail,wiki-plant-detail,wiki-animal-detail,wiki-plant-disease">White Mountain Wiki</a>
-        <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Guide</a>
-      </div>
-    </div>
-
-    <!-- Planning Tools dropdown -->
-    <div class="site-nav-dropdown">
-      <button type="button">Planning Tools</button>
-      <div class="site-nav-submenu" aria-label="Planning tools">
-        <a href="/nh48-planner.html" data-route="nh48-planner">Peak Planning Tool</a>
-        <a href="/" data-route="dataset-home" data-routes="home,dataset-home">Data &amp; API</a>
-      </div>
-    </div>
-
-    <!-- Games dropdown -->
-    <div class="site-nav-dropdown">
-      <button type="button">Games</button>
-      <div class="site-nav-submenu" aria-label="NH48 games">
-        <a href="/peakid-game.html" data-route="peakid-game" data-i18n="nav.peakidGame">PeakID Game</a>
-        <a href="/timed-peakid-game.html" data-route="timed-peakid-game" data-i18n="nav.timedPeakId">Timed PeakID Game</a>
-        <a href="/pages/puzzle-game.html" data-route="puzzle-game" data-i18n="nav.puzzleGame">Jigsaw Puzzle</a>
-      </div>
-    </div>
-    <div class="site-nav-dropdown">
-      <a href="/trails" data-route="trails">Trail Maps &amp; Datasets</a>
-      <div class="site-nav-submenu site-nav-submenu--wide site-nav-submenu--divided" aria-label="Other hiking datasets short links">
-        <section class="site-nav-submenu-section" aria-label="White Mountain Trails short links">
-          <p class="site-nav-submenu-heading" data-i18n="nav.trails">White Mountain Trails</p>
-          <a href="/trails" data-route="trails">Trails Map</a>
-          <a href="/dataset/wmnf-trails">WMNF Dataset</a>
-        </section>
-        <section class="site-nav-submenu-section" aria-label="Long Trails short links">
-          <p class="site-nav-submenu-heading" data-i18n="nav.longTrails">Long Trails</p>
-          <a href="/long-trails" data-route="long-trails">Long Trail Map</a>
-          <a href="/dataset/long-trails">Long Trails Dataset</a>
-        </section>
-      </div>
-    </div>
-    <div class="site-nav-dropdown">
-      <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Howker Ridge</a>
-      <div class="site-nav-submenu projects-submenu site-nav-submenu--divided" aria-label="Howker Ridge Info short links">
-        <section class="site-nav-submenu-section" aria-label="Howker trail info links">
-          <p class="site-nav-submenu-heading">Howker Trail Info</p>
-          <a href="/projects/hrt-info" data-route="howker-ridge" data-routes="howker-ridge">Trail Info</a>
-          <a href="/howker-ridge" data-route="howker-ridge" data-routes="howker-ridge">Trail Map &amp; Data</a>
-          <a href="/howker-ridge/poi" data-route="howker-ridge" data-routes="howker-ridge">Trail POI</a>
-        </section>
-        <section class="site-nav-submenu-section" aria-label="Howker plant catalog links">
-          <p class="site-nav-submenu-heading">Howker Plant Catalog</p>
-          <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Plant Catalog</a>
-          <a href="/bird-catalog" data-route="bird-catalog" data-routes="bird-catalog,bird-detail">Bird Catalog (Beta)</a>
-          <a href="/projects/plant-map" data-route="plant-map" data-routes="plant-map">Plant Log Map</a>
-          <a href="/dataset/howker-plants">Plant Data &amp; API</a>
-        </section>
-        <a href="/projects/howker-map-editor" data-route="howker-map-editor" data-routes="howker-map-editor">Edit Trail Map</a>
-      </div>
-    </div>
-    <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
-    <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
-    <a
-      class="site-nav-cta"
-      href="https://www.instagram.com/nate_dumps_pics/"
-      target="_blank"
-      rel="noopener"
-      aria-label="Latest WMNF Photos"
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
-        <circle cx="12" cy="12" r="3.5"></circle>
-        <circle cx="17" cy="7" r="1.2" fill="#ffffff" stroke="none"></circle>
-      </svg>
-      <span data-i18n="nav.latestPhotos">Latest WMNF Photos</span>
-    </a>
     <div class="nh48-lang" id="langPicker" data-i18n="common.languagePicker" data-i18n-attr="aria-label" aria-label="Language picker"></div>
+    <form class="site-nav-quick-search" id="siteNavPeakSearchForm" role="search" action="/catalog" method="get">
+      <label for="siteNavPeakSearch" class="sr-only" data-i18n="nav.quickSearchLabel">Find a peak</label>
+      <input
+        id="siteNavPeakSearch"
+        name="q"
+        type="search"
+        class="site-nav-quick-search-input"
+        autocomplete="off"
+        data-i18n="nav.quickSearchPlaceholder"
+        data-i18n-attr="placeholder,aria-label"
+        placeholder="Find a peak..."
+        aria-label="Find a peak..."
+      />
+      <button type="submit" class="site-nav-quick-search-submit" data-i18n="nav.quickSearchSubmit">Go</button>
+    </form>
+  </div>
+
+  <div class="site-nav-main">
+    <a href="/" class="site-nav-logo">
+      <div class="logo-wrap">
+        <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async" />
+      </div>
+      <div class="site-nav-title-wrap">
+        <span class="site-nav-title">NH48 API</span>
+        <span class="site-nav-tagline" data-i18n="nav.tagline">Open data &amp; structured metadata for New Hampshire’s 4,000-foot peaks.</span>
+      </div>
+    </a>
+    <div class="site-nav-links">
+      <!-- Link to dataset home / API -->
+      <a href="/" data-route="dataset-home" data-routes="home,dataset-home">Data &amp; API</a>
+
+      <!-- Explore dropdown -->
+      <div class="site-nav-dropdown">
+        <button type="button">Explore</button>
+        <div class="site-nav-submenu" aria-label="Explore NH48">
+          <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
+          <a href="/catalog/ranges" data-route="range-catalog" data-routes="range-catalog,range-detail">Range Catalog</a>
+        </div>
+      </div>
+
+      <!-- Media & Maps dropdown -->
+      <div class="site-nav-dropdown">
+        <button type="button">Media &amp; Maps</button>
+        <div class="site-nav-submenu" aria-label="Media and maps">
+          <a href="/nh48-map" data-route="nh48-map" data-routes="nh48-map">NH48 Map</a>
+          <a href="/photos/" data-route="photos">NH48 Photos</a>
+        </div>
+      </div>
+
+      <!-- Guides & Resources dropdown -->
+      <div class="site-nav-dropdown">
+        <button type="button">Guides &amp; Resources</button>
+        <div class="site-nav-submenu" aria-label="Guides and resources">
+          <a href="/wiki" data-route="wiki-home" data-routes="wiki-home,wiki-forest-health,wiki-mountain-detail,wiki-plant-detail,wiki-animal-detail,wiki-plant-disease">White Mountain Wiki</a>
+          <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Guide</a>
+        </div>
+      </div>
+
+      <!-- Planning Tools dropdown -->
+      <div class="site-nav-dropdown">
+        <button type="button">Planning Tools</button>
+        <div class="site-nav-submenu" aria-label="Planning tools">
+          <a href="/nh48-planner.html" data-route="nh48-planner">Peak Planning Tool</a>
+          <a href="/" data-route="dataset-home" data-routes="home,dataset-home">Data &amp; API</a>
+        </div>
+      </div>
+
+      <!-- Games dropdown -->
+      <div class="site-nav-dropdown">
+        <button type="button">Games</button>
+        <div class="site-nav-submenu" aria-label="NH48 games">
+          <a href="/peakid-game.html" data-route="peakid-game" data-i18n="nav.peakidGame">PeakID Game</a>
+          <a href="/timed-peakid-game.html" data-route="timed-peakid-game" data-i18n="nav.timedPeakId">Timed PeakID Game</a>
+          <a href="/pages/puzzle-game.html" data-route="puzzle-game" data-i18n="nav.puzzleGame">Jigsaw Puzzle</a>
+        </div>
+      </div>
+      <div class="site-nav-dropdown">
+        <a href="/trails" data-route="trails">Trail Maps &amp; Datasets</a>
+        <div class="site-nav-submenu site-nav-submenu--wide site-nav-submenu--divided" aria-label="Other hiking datasets short links">
+          <section class="site-nav-submenu-section" aria-label="White Mountain Trails short links">
+            <p class="site-nav-submenu-heading" data-i18n="nav.trails">White Mountain Trails</p>
+            <a href="/trails" data-route="trails">Trails Map</a>
+            <a href="/dataset/wmnf-trails">WMNF Dataset</a>
+          </section>
+          <section class="site-nav-submenu-section" aria-label="Long Trails short links">
+            <p class="site-nav-submenu-heading" data-i18n="nav.longTrails">Long Trails</p>
+            <a href="/long-trails" data-route="long-trails">Long Trail Map</a>
+            <a href="/dataset/long-trails">Long Trails Dataset</a>
+          </section>
+        </div>
+      </div>
+      <div class="site-nav-dropdown">
+        <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Howker Ridge</a>
+        <div class="site-nav-submenu projects-submenu site-nav-submenu--divided" aria-label="Howker Ridge Info short links">
+          <section class="site-nav-submenu-section" aria-label="Howker trail info links">
+            <p class="site-nav-submenu-heading">Howker Trail Info</p>
+            <a href="/projects/hrt-info" data-route="howker-ridge" data-routes="howker-ridge">Trail Info</a>
+            <a href="/howker-ridge" data-route="howker-ridge" data-routes="howker-ridge">Trail Map &amp; Data</a>
+            <a href="/howker-ridge/poi" data-route="howker-ridge" data-routes="howker-ridge">Trail POI</a>
+          </section>
+          <section class="site-nav-submenu-section" aria-label="Howker plant catalog links">
+            <p class="site-nav-submenu-heading">Howker Plant Catalog</p>
+            <a href="/plant-catalog" data-route="plant-catalog" data-routes="plant-catalog,plant-detail">Plant Catalog</a>
+            <a href="/bird-catalog" data-route="bird-catalog" data-routes="bird-catalog,bird-detail">Bird Catalog (Beta)</a>
+            <a href="/projects/plant-map" data-route="plant-map" data-routes="plant-map">Plant Log Map</a>
+            <a href="/dataset/howker-plants">Plant Data &amp; API</a>
+          </section>
+          <a href="/projects/howker-map-editor" data-route="howker-map-editor" data-routes="howker-map-editor">Edit Trail Map</a>
+        </div>
+      </div>
+      <a href="https://nh48pics.com" target="_blank" rel="noopener" data-i18n="nav.pics">NH48 Pics</a>
+      <a href="https://nh48.app" target="_blank" rel="noopener" data-i18n="nav.peakBagger">Peak Bagger</a>
+      <a
+        class="site-nav-cta"
+        href="https://www.instagram.com/nate_dumps_pics/"
+        target="_blank"
+        rel="noopener"
+        aria-label="Latest WMNF Photos"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+          <circle cx="12" cy="12" r="3.5"></circle>
+          <circle cx="17" cy="7" r="1.2" fill="#ffffff" stroke="none"></circle>
+        </svg>
+        <span data-i18n="nav.latestPhotos">Latest WMNF Photos</span>
+      </a>
+    </div>
   </div>
 </nav>
 <script>
@@ -877,6 +1087,72 @@
       });
     });
 
+    const textScaleKey = 'nh48_text_scale';
+    const textScaleValues = new Set(['default', 'large']);
+    const textScaleDecreaseBtn = nav.querySelector('#a11yTextDecrease');
+    const textScaleIncreaseBtn = nav.querySelector('#a11yTextIncrease');
+
+    const normalizeTextScale = (value) => (textScaleValues.has(value) ? value : 'default');
+
+    const readPersistedTextScale = () => {
+      try {
+        return normalizeTextScale(localStorage.getItem(textScaleKey) || 'default');
+      } catch (error) {
+        return 'default';
+      }
+    };
+
+    const persistTextScale = (value) => {
+      try {
+        localStorage.setItem(textScaleKey, value);
+      } catch (error) {
+        // Ignore storage failures (private mode / blocked storage).
+      }
+    };
+
+    const syncTextScaleButtons = (value) => {
+      const current = normalizeTextScale(value);
+      if (textScaleDecreaseBtn) textScaleDecreaseBtn.setAttribute('aria-pressed', current === 'default' ? 'true' : 'false');
+      if (textScaleIncreaseBtn) textScaleIncreaseBtn.setAttribute('aria-pressed', current === 'large' ? 'true' : 'false');
+    };
+
+    const applyTextScale = (value) => {
+      const current = normalizeTextScale(value);
+      document.documentElement.dataset.textScale = current;
+      syncTextScaleButtons(current);
+      return current;
+    };
+
+    const setTextScale = (value) => {
+      const current = applyTextScale(value);
+      persistTextScale(current);
+    };
+
+    applyTextScale(readPersistedTextScale());
+
+    if (textScaleDecreaseBtn) {
+      textScaleDecreaseBtn.addEventListener('click', () => setTextScale('default'));
+    }
+    if (textScaleIncreaseBtn) {
+      textScaleIncreaseBtn.addEventListener('click', () => setTextScale('large'));
+    }
+
+    const quickSearchForm = nav.querySelector('#siteNavPeakSearchForm');
+    const quickSearchInput = nav.querySelector('#siteNavPeakSearch');
+    if (quickSearchForm && quickSearchInput) {
+      quickSearchForm.addEventListener('submit', (event) => {
+        const query = String(quickSearchInput.value || '').trim();
+        if (!query) {
+          event.preventDefault();
+          quickSearchInput.focus();
+          return;
+        }
+        event.preventDefault();
+        const target = `/catalog?q=${encodeURIComponent(query)}`;
+        window.location.assign(target);
+      });
+    }
+
     document.addEventListener('pointerdown', (event) => {
       const target = event.target;
       if (!(target instanceof Node)) return;
@@ -911,3 +1187,4 @@
     }
   })();
 </script>
+
