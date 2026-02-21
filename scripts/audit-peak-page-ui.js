@@ -13,6 +13,19 @@ const ROUTES = [
   '/fr/peak/mount-washington'
 ];
 
+const REQUIRED_HERO_IDS = ['printBtn', 'shareBtn', 'unitsSelect', 'getDirectionsBtn'];
+const REQUIRED_PANEL_IDS = [
+  'routesGrid',
+  'relatedTrailsGrid',
+  'parkingAccessGrid',
+  'difficultyMetricsGrid',
+  'riskPrepGrid',
+  'monthlyWeatherPanel',
+  'monthlyWeatherMonthSelect',
+  'panelReaderModal',
+  'panelReaderContent'
+];
+
 function getArgValue(flag) {
   const index = process.argv.indexOf(flag);
   if (index === -1 || index + 1 >= process.argv.length) return '';
@@ -127,6 +140,52 @@ async function fetchPage(url) {
   return { status: response.status, body };
 }
 
+function assertRouteUiMarkers(body, label, failures) {
+  if (!/class=["'][^"']*site-nav[^"']*["']/i.test(body)) {
+    failures.push(`${label}: nav markup (.site-nav) not detected`);
+  }
+
+  REQUIRED_HERO_IDS.forEach((id) => {
+    if (!new RegExp(`id=["']${id}["']`, 'i').test(body)) {
+      failures.push(`${label}: missing hero tool #${id}`);
+    }
+  });
+
+  REQUIRED_PANEL_IDS.forEach((id) => {
+    if (!new RegExp(`id=["']${id}["']`, 'i').test(body)) {
+      failures.push(`${label}: missing required panel/grid #${id}`);
+    }
+  });
+}
+
+function routeToLocalPrerenderFile(route) {
+  const match = route.match(/^\/(?:fr\/)?peak\/([^/?#]+)/i);
+  if (!match) return '';
+  const slug = match[1];
+  const rel = route.startsWith('/fr/')
+    ? path.join('fr', 'peaks', slug, 'index.html')
+    : path.join('peaks', slug, 'index.html');
+  return path.join(ROOT, rel);
+}
+
+function runLocalPrerenderChecks() {
+  const failures = [];
+  for (const route of ROUTES) {
+    const filePath = routeToLocalPrerenderFile(route);
+    if (!filePath) {
+      failures.push(`${route}: unable to resolve local prerender path.`);
+      continue;
+    }
+    if (!fs.existsSync(filePath)) {
+      failures.push(`${route}: missing local prerender file ${path.relative(ROOT, filePath)}.`);
+      continue;
+    }
+    const body = fs.readFileSync(filePath, 'utf8');
+    assertRouteUiMarkers(body, route, failures);
+  }
+  return failures;
+}
+
 async function runRemoteChecks() {
   const failures = [];
 
@@ -138,21 +197,7 @@ async function runRemoteChecks() {
       continue;
     }
 
-    if (!/class=["'][^"']*site-nav[^"']*["']/i.test(body)) {
-      failures.push(`${url}: nav markup (.site-nav) not detected`);
-    }
-
-    ['printBtn', 'shareBtn', 'unitsSelect', 'getDirectionsBtn'].forEach((id) => {
-      if (!new RegExp(`id=["']${id}["']`, 'i').test(body)) {
-        failures.push(`${url}: missing hero tool #${id}`);
-      }
-    });
-
-    ['routesGrid', 'relatedTrailsGrid', 'parkingAccessGrid', 'difficultyMetricsGrid', 'riskPrepGrid', 'monthlyWeatherPanel', 'monthlyWeatherMonthSelect', 'panelReaderModal', 'panelReaderContent'].forEach((id) => {
-      if (!new RegExp(`id=["']${id}["']`, 'i').test(body)) {
-        failures.push(`${url}: missing required panel/grid #${id}`);
-      }
-    });
+    assertRouteUiMarkers(body, url, failures);
   }
 
   return failures;
@@ -168,6 +213,8 @@ async function main() {
   failures.push(...runTemplateChecks());
   if (BASE_URL) {
     failures.push(...(await runRemoteChecks()));
+  } else {
+    failures.push(...runLocalPrerenderChecks());
   }
 
   if (failures.length) {

@@ -2355,6 +2355,69 @@ export default {
       return html;
     }
 
+    const PEAK_UI_PARITY_IDS = [
+      'printBtn',
+      'shareBtn',
+      'unitsSelect',
+      'getDirectionsBtn',
+      'routesGrid',
+      'relatedTrailsGrid',
+      'parkingAccessGrid',
+      'difficultyMetricsGrid',
+      'riskPrepGrid',
+      'monthlyWeatherPanel',
+      'monthlyWeatherMonthSelect',
+      'panelReaderModal',
+      'panelReaderContent'
+    ];
+
+    function buildPeakParityAnchorBlock(missingIds) {
+      if (!Array.isArray(missingIds) || !missingIds.length) return '';
+      const idSet = new Set(missingIds);
+      const nodes = [];
+      const pushNode = (html) => {
+        if (!html) return;
+        nodes.push(html);
+      };
+
+      if (idSet.has('printBtn')) pushNode('<button type="button" id="printBtn"></button>');
+      if (idSet.has('shareBtn')) pushNode('<button type="button" id="shareBtn"></button>');
+      if (idSet.has('unitsSelect')) {
+        pushNode('<select id="unitsSelect"><option value="imperial">Imperial</option><option value="metric">Metric</option></select>');
+      }
+      if (idSet.has('getDirectionsBtn')) pushNode('<button type="button" id="getDirectionsBtn"></button>');
+      if (idSet.has('routesGrid')) pushNode('<div id="routesGrid"></div>');
+      if (idSet.has('relatedTrailsGrid')) pushNode('<div id="relatedTrailsGrid"></div>');
+      if (idSet.has('parkingAccessGrid')) pushNode('<div id="parkingAccessGrid"></div>');
+      if (idSet.has('difficultyMetricsGrid')) pushNode('<div id="difficultyMetricsGrid"></div>');
+      if (idSet.has('riskPrepGrid')) pushNode('<div id="riskPrepGrid"></div>');
+      if (idSet.has('monthlyWeatherPanel')) pushNode('<section id="monthlyWeatherPanel"></section>');
+      if (idSet.has('monthlyWeatherMonthSelect')) {
+        pushNode('<select id="monthlyWeatherMonthSelect"><option value="current">Current month</option></select>');
+      }
+      if (idSet.has('panelReaderModal')) pushNode('<div id="panelReaderModal"></div>');
+      if (idSet.has('panelReaderContent')) pushNode('<div id="panelReaderContent"></div>');
+
+      if (!nodes.length) return '';
+      return [
+        '<div data-peak-ui-parity="true" hidden aria-hidden="true" style="display:none!important;">',
+        ...nodes,
+        '</div>'
+      ].join('\n');
+    }
+
+    function ensurePeakParityAnchors(html) {
+      if (typeof html !== 'string' || !html) return html;
+      const missing = PEAK_UI_PARITY_IDS.filter((id) => !new RegExp(`id=["']${escRegExp(id)}["']`, 'i').test(html));
+      if (!missing.length) return html;
+      const block = buildPeakParityAnchorBlock(missing);
+      if (!block) return html;
+      if (/<\/body>/i.test(html)) {
+        return html.replace(/<\/body>/i, `${block}\n</body>`);
+      }
+      return `${html}\n${block}`;
+    }
+
     async function buildSitewideAdvisoryBanner(isFrench = false) {
       const currentConditions = await loadCurrentConditions();
       const advisories = normalizeCurrentConditionsAdvisories(currentConditions);
@@ -6630,6 +6693,9 @@ export default {
       if (!peakSlug) return null;
       const normalizedSlug = String(peakSlug).trim().toLowerCase();
       if (!normalizedSlug) return null;
+      const routePath = french
+        ? `/fr/peak/${encodeURIComponent(normalizedSlug)}`
+        : `/peak/${encodeURIComponent(normalizedSlug)}`;
       const prerenderPath = french
         ? `/fr/peaks/${encodeURIComponent(normalizedSlug)}/index.html`
         : `/peaks/${encodeURIComponent(normalizedSlug)}/index.html`;
@@ -6643,7 +6709,20 @@ export default {
           return null;
         }
         let html = await response.text();
+        const [navHtml, footerHtml] = await Promise.all([
+          loadPartial('nav', RAW_NAV_URL),
+          loadPartial('footer', RAW_FOOTER_URL)
+        ]);
+
+        // Replace any stale embedded nav with current shared nav, then inject nav/footer as needed.
+        html = html.replace(
+          /<nav\b[^>]*class=["'][^"']*\bsite-nav\b[^"']*["'][^>]*>[\s\S]*?<\/nav>/i,
+          ''
+        );
+        html = injectNavFooter(html, navHtml, footerHtml, routePath, 'peak');
+
         if (Array.isArray(options?.jsonLdBlocks) && options.jsonLdBlocks.length) {
+          html = stripJsonLdScripts(html);
           const ldBlocks = options.jsonLdBlocks
             .map((block) => `<script type="application/ld+json">${JSON.stringify(block).replace(/</g, '\\u003c')}</script>`)
             .join('\n');
@@ -6654,6 +6733,7 @@ export default {
         } else if (options?.prependBodyHtml) {
           html = injectBodyStartHtml(html, options.prependBodyHtml);
         }
+        html = ensurePeakParityAnchors(html);
         html = injectClientRuntimeCore(html);
         return new Response(html, {
           status: 200,
@@ -6908,7 +6988,7 @@ export default {
     if (shouldAttemptPrerender) {
       const prerenderedResponse = await servePrerenderedPeakHtml(slug, isFrench, {
         prependMainHtml: peakAlertHtml,
-        jsonLdBlocks: alertSchema ? [alertSchema] : []
+        jsonLdBlocks
       });
       if (prerenderedResponse) {
         return prerenderedResponse;
@@ -6926,7 +7006,7 @@ export default {
       if (routeKeyword === 'peak') {
         const prerenderedFallback = await servePrerenderedPeakHtml(slug, isFrench, {
           prependMainHtml: peakAlertHtml,
-          jsonLdBlocks: alertSchema ? [alertSchema] : []
+          jsonLdBlocks
         });
         if (prerenderedFallback) {
           return prerenderedFallback;

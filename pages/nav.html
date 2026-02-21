@@ -589,29 +589,52 @@
     </div>
   </a>
   <div class="site-nav-links">
+    <!-- Link to dataset home / API -->
+    <a href="/" data-route="dataset-home" data-routes="home,dataset-home">Data &amp; API</a>
+
+    <!-- Explore dropdown -->
     <div class="site-nav-dropdown">
-      <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48</a>
-      <div class="site-nav-submenu site-nav-submenu--divided" aria-label="NH48 dataset short links">
-        <section class="site-nav-submenu-section" aria-label="NH48 peak views menu">
-          <p class="site-nav-submenu-heading">View Peaks</p>
-          <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
-          <a href="/catalog/ranges" data-route="range-catalog" data-routes="range-catalog,range-detail">Range Catalog</a>
-          <a href="/nh48-map" data-route="nh48-map" data-routes="nh48-map">NH48 Map</a>
-          <a href="/photos/" data-route="photos">NH48 Photos</a>
-          <a href="/wiki" data-route="wiki-home" data-routes="wiki-home,wiki-forest-health,wiki-mountain-detail,wiki-plant-detail,wiki-animal-detail,wiki-plant-disease">White Mountain Wiki</a>
-        </section>
-        <section class="site-nav-submenu-section" aria-label="NH48 info and tools menu">
-          <p class="site-nav-submenu-heading">Info &amp; Tools</p>
-          <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Guide</a>
-          <a href="/nh48-planner.html" data-route="nh48-planner">Peak Planning Tool</a>
-          <a href="/" data-route="dataset-home" data-routes="home,dataset-home">NH48 Data &amp; API</a>
-        </section>
-        <section class="site-nav-submenu-section" aria-label="NH48 games menu">
-          <p class="site-nav-submenu-heading" data-i18n="nav.games">Games</p>
-          <a href="/peakid-game.html" data-route="peakid-game" data-i18n="nav.peakidGame">PeakID Game</a>
-          <a href="/timed-peakid-game.html" data-route="timed-peakid-game" data-i18n="nav.timedPeakId">Timed PeakID Game</a>
-          <a href="/pages/puzzle-game.html" data-route="puzzle-game" data-i18n="nav.puzzleGame">Jigsaw Puzzle</a>
-        </section>
+      <button type="button">Explore</button>
+      <div class="site-nav-submenu" aria-label="Explore NH48">
+        <a href="/catalog" data-route="catalog" data-routes="catalog,peak">Peak Catalog</a>
+        <a href="/catalog/ranges" data-route="range-catalog" data-routes="range-catalog,range-detail">Range Catalog</a>
+      </div>
+    </div>
+
+    <!-- Media & Maps dropdown -->
+    <div class="site-nav-dropdown">
+      <button type="button">Media &amp; Maps</button>
+      <div class="site-nav-submenu" aria-label="Media and maps">
+        <a href="/nh48-map" data-route="nh48-map" data-routes="nh48-map">NH48 Map</a>
+        <a href="/photos/" data-route="photos">NH48 Photos</a>
+      </div>
+    </div>
+
+    <!-- Guides & Resources dropdown -->
+    <div class="site-nav-dropdown">
+      <button type="button">Guides &amp; Resources</button>
+      <div class="site-nav-submenu" aria-label="Guides and resources">
+        <a href="/wiki" data-route="wiki-home" data-routes="wiki-home,wiki-forest-health,wiki-mountain-detail,wiki-plant-detail,wiki-animal-detail,wiki-plant-disease">White Mountain Wiki</a>
+        <a href="/nh-4000-footers-info" data-route="info" data-routes="info,guide">NH48 Guide</a>
+      </div>
+    </div>
+
+    <!-- Planning Tools dropdown -->
+    <div class="site-nav-dropdown">
+      <button type="button">Planning Tools</button>
+      <div class="site-nav-submenu" aria-label="Planning tools">
+        <a href="/nh48-planner.html" data-route="nh48-planner">Peak Planning Tool</a>
+        <a href="/" data-route="dataset-home" data-routes="home,dataset-home">Data &amp; API</a>
+      </div>
+    </div>
+
+    <!-- Games dropdown -->
+    <div class="site-nav-dropdown">
+      <button type="button">Games</button>
+      <div class="site-nav-submenu" aria-label="NH48 games">
+        <a href="/peakid-game.html" data-route="peakid-game" data-i18n="nav.peakidGame">PeakID Game</a>
+        <a href="/timed-peakid-game.html" data-route="timed-peakid-game" data-i18n="nav.timedPeakId">Timed PeakID Game</a>
+        <a href="/pages/puzzle-game.html" data-route="puzzle-game" data-i18n="nav.puzzleGame">Jigsaw Puzzle</a>
       </div>
     </div>
     <div class="site-nav-dropdown">

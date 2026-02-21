@@ -1303,6 +1303,48 @@ const buildJsonLd = (
   const experience = seoContext?.experience && typeof seoContext.experience === "object"
     ? seoContext.experience
     : null;
+  const technicalDifficultyValue = Number.isFinite(Number(difficultyEntry?.technicalDifficulty))
+    ? Number(difficultyEntry.technicalDifficulty)
+    : "Unknown";
+  const physicalEffortValue = Number.isFinite(Number(difficultyEntry?.physicalEffort))
+    ? Number(difficultyEntry.physicalEffort)
+    : "Unknown";
+  const currentWindSpeedValue = Number.isFinite(Number(monthlyWeather?.avgWindMph))
+    ? Number(monthlyWeather.avgWindMph)
+    : "Unknown";
+  const currentTemperatureValue = Number.isFinite(Number(monthlyWeather?.avgTempF))
+    ? Number(monthlyWeather.avgTempF)
+    : "Unknown";
+  const overviewText =
+    cleanText(descriptionText) ||
+    cleanText(peak["Terrain Character"]) ||
+    cleanText(peak["View Type"]) ||
+    `${peakName} is one of New Hampshire's 4,000-foot peaks.`;
+  const narrativeParts = [
+    {
+      "@type": "WebPageElement",
+      "@id": `${canonicalUrl}#overview`,
+      name: "Mountain Overview",
+      text: overviewText
+    }
+  ];
+
+  if (experience) {
+    const pushNarrativePart = (name, text, suffix) => {
+      const normalized = cleanText(text);
+      if (!normalized) return;
+      narrativeParts.push({
+        "@type": "WebPageElement",
+        "@id": `${canonicalUrl}#${suffix}`,
+        name,
+        text: normalized
+      });
+    };
+    pushNarrativePart(`${peakName} Summary`, experience.experienceSummary, "trail-tested-summary");
+    pushNarrativePart(`Conditions on ${peakName}`, experience.conditionsFromExperience, "trail-tested-conditions");
+    pushNarrativePart("Planning Trip", experience.planningTip, "trail-tested-planning");
+  }
+
   const additionalProperty = [
     prominenceFt != null
       ? {
@@ -1333,38 +1375,26 @@ const buildJsonLd = (
         value: trailType,
       }
       : null,
-    Number.isFinite(Number(difficultyEntry?.technicalDifficulty))
-      ? {
-        "@type": "PropertyValue",
-        name: "Technical Difficulty",
-        value: Number(difficultyEntry.technicalDifficulty),
-        unitText: "1-10",
-      }
-      : null,
-    Number.isFinite(Number(difficultyEntry?.physicalEffort))
-      ? {
-        "@type": "PropertyValue",
-        name: "Physical Effort",
-        value: Number(difficultyEntry.physicalEffort),
-        unitText: "1-10",
-      }
-      : null,
-    monthlyWeather && Number.isFinite(Number(monthlyWeather?.avgWindMph))
-      ? {
-        "@type": "PropertyValue",
-        name: `${monthName} Average Wind (mph)`,
-        value: Number(monthlyWeather.avgWindMph),
-        unitText: "MPH",
-      }
-      : null,
-    monthlyWeather && Number.isFinite(Number(monthlyWeather?.avgTempF))
-      ? {
-        "@type": "PropertyValue",
-        name: `${monthName} Average Temperature (F)`,
-        value: Number(monthlyWeather.avgTempF),
-        unitText: "F",
-      }
-      : null,
+    {
+      "@type": "PropertyValue",
+      name: "Technical Difficulty (1-10)",
+      value: technicalDifficultyValue
+    },
+    {
+      "@type": "PropertyValue",
+      name: "Physical Effort (1-10)",
+      value: physicalEffortValue
+    },
+    {
+      "@type": "PropertyValue",
+      name: "Current Wind Speed (mph)",
+      value: currentWindSpeedValue
+    },
+    {
+      "@type": "PropertyValue",
+      name: "Current Temperature (F)",
+      value: currentTemperatureValue
+    },
     Array.isArray(riskEntry?.risk_factors) && riskEntry.risk_factors.length
       ? {
         "@type": "PropertyValue",
@@ -1649,7 +1679,6 @@ const buildJsonLd = (
     ].map((ref) => ({ "@id": ref["@id"] })),
     landManager: { "@id": geographyRefs.usfs["@id"] },
     additionalProperty: additionalProperty.length ? additionalProperty : undefined,
-    hasPart: routeRefs.length ? routeRefs : undefined,
     containsPlace: parkingPlaceNode,
     isPartOf: { "@id": dataCatalogNode["@id"] },
     publisher: { "@id": publisherNode["@id"] },
@@ -1657,6 +1686,7 @@ const buildJsonLd = (
     subjectOf: [imageGallery ? { '@id': imageGallery['@id'] } : null, historyCreativeWorkNode ? { "@id": historyCreativeWorkNode["@id"] } : null].filter(Boolean),
     weather: weatherObservationNode,
     mainEntityOfPage: { "@id": webPageNode["@id"] },
+    hasPart: narrativeParts,
   };
 
   if (!mountainNode.subjectOf || !mountainNode.subjectOf.length) {
@@ -2053,7 +2083,7 @@ const main = () => {
             )
           ),
           BREADCRUMB_LD: escapeScriptJson(
-            buildBreadcrumbJson(localizedName, canonicalUrl, lang.homeUrl, lang.labels, {
+            buildBreadcrumbJson(lang.code === "fr" ? name : localizedName, canonicalUrl, lang.homeUrl, lang.labels, {
               rangeName: breadcrumbRangeName,
               rangeUrl: breadcrumbRangeUrl,
               whiteMountainsUrl,

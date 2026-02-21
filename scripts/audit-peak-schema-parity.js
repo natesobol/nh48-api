@@ -101,6 +101,16 @@ function additionalPropertyNames(node) {
   );
 }
 
+function routeToLocalPrerenderFile(route) {
+  const match = String(route || '').match(/^\/(?:fr\/)?peak\/([^/?#]+)/i);
+  if (!match) return '';
+  const slug = match[1];
+  const rel = route.startsWith('/fr/')
+    ? path.join('fr', 'peaks', slug, 'index.html')
+    : path.join('peaks', slug, 'index.html');
+  return path.join(ROOT, rel);
+}
+
 function assertSourceParity(templateContent, workerContent, failures) {
   const templateBody = extractFunctionChunk(templateContent, 'buildMountainSchema');
   const workerBody = extractFunctionChunk(workerContent, 'buildJsonLd');
@@ -236,6 +246,71 @@ async function assertRuntimeParity(baseUrl, failures) {
   return routes.length;
 }
 
+function assertLocalPrerenderSamples(failures) {
+  SAMPLE_ROUTES.forEach((route) => {
+    const filePath = routeToLocalPrerenderFile(route);
+    if (!filePath) {
+      failures.push(`${route}: unable to resolve local prerender file path.`);
+      return;
+    }
+    if (!fs.existsSync(filePath)) {
+      failures.push(`${route}: missing local prerender file (${path.relative(ROOT, filePath)}).`);
+      return;
+    }
+
+    const body = fs.readFileSync(filePath, 'utf8');
+    const { docs, errors } = extractJsonLdDocs(body);
+    if (errors.length) {
+      failures.push(`${route}: invalid JSON-LD (${errors.join('; ')})`);
+      return;
+    }
+
+    const nodes = [];
+    docs.forEach((doc) => collectNodes(doc, nodes));
+    const breadcrumbNodes = nodes.filter((node) => getTypes(node).includes('BreadcrumbList'));
+    if (breadcrumbNodes.length !== 1) {
+      failures.push(`${route}: expected exactly 1 BreadcrumbList, found ${breadcrumbNodes.length}.`);
+    }
+
+    const typeSet = new Set();
+    nodes.forEach((node) => getTypes(node).forEach((type) => typeSet.add(type)));
+    REQUIRED_TYPES.forEach((requiredType) => {
+      if (!typeSet.has(requiredType)) {
+        failures.push(`${route}: missing required schema type "${requiredType}".`);
+      }
+    });
+
+    const mountainNodes = nodes.filter((node) => getTypes(node).includes('Mountain'));
+    if (!mountainNodes.length) {
+      failures.push(`${route}: missing Mountain node.`);
+      return;
+    }
+    const mountain = mountainNodes[0];
+    const propertyNames = additionalPropertyNames(mountain);
+    REQUIRED_ENRICHMENT_PROPERTIES.forEach((propertyName) => {
+      if (!propertyNames.has(propertyName)) {
+        failures.push(`${route}: Mountain.additionalProperty is missing "${propertyName}".`);
+      }
+    });
+
+    if (!mountain.containsPlace) {
+      failures.push(`${route}: Mountain node missing containsPlace parking/access enrichment.`);
+    }
+
+    const narrative = Array.isArray(mountain.hasPart) ? mountain.hasPart : [];
+    REQUIRED_NARRATIVE_SEGMENTS.forEach((segment) => {
+      const hasSegment = narrative.some((entry) => {
+        const entryName = entry && typeof entry.name === 'string' ? entry.name : '';
+        const entryText = entry && typeof entry.text === 'string' ? entry.text.trim() : '';
+        return entryName.includes(segment) && entryText.length > 0;
+      });
+      if (!hasSegment) {
+        failures.push(`${route}: Mountain.hasPart is missing narrative segment "${segment}".`);
+      }
+    });
+  });
+}
+
 async function main() {
   const failures = [];
   const templateContent = fs.readFileSync(PEAK_TEMPLATE_PATH, 'utf8');
@@ -245,6 +320,8 @@ async function main() {
   assertSourceParity(templateContent, workerContent, failures);
   if (BASE_URL) {
     runtimeRouteCount = await assertRuntimeParity(BASE_URL, failures);
+  } else {
+    assertLocalPrerenderSamples(failures);
   }
 
   if (failures.length) {

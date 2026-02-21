@@ -208,6 +208,21 @@
         margin-bottom:12px;
       }
       .hero-meta span{ display:inline-flex; gap:4px; align-items:center; }
+      .hero-tools{
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+        margin:0 0 12px 0;
+      }
+      .hero-tools button,
+      .hero-tools select{
+        border:1px solid var(--stroke);
+        border-radius:8px;
+        background:rgba(255,255,255,0.04);
+        color:var(--ink);
+        padding:8px 10px;
+        font-size:0.9rem;
+      }
       .cta{
         display:inline-block;
         padding:10px 14px;
@@ -365,6 +380,21 @@
   </head>
   <body>
     <a href="#peakTitle" class="skip-link">Skip to main content</a>
+    <nav class="site-nav" aria-label="Site navigation">
+      <a href="/" class="site-nav-logo">
+        <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async" />
+        <span class="site-nav-title-wrap">
+          <span class="site-nav-title">NH48 API</span>
+          <span class="site-nav-tagline">Open data and mountain metadata</span>
+        </span>
+      </a>
+      <div class="site-nav-links">
+        <a href="/">Data &amp; API</a>
+        <a href="/catalog">Catalog</a>
+        <a href="/trails">Trails</a>
+        <a href="/plant-catalog">Howker Ridge</a>
+      </div>
+    </nav>
     <div class="wrap">
       <nav class="breadcrumb-nav" aria-label="Breadcrumb">
         <ol>
@@ -384,6 +414,15 @@
             <span>{{LABEL_ELEVATION}}: {{ELEVATION}}</span>
             <span>{{LABEL_PROMINENCE}}: {{PROMINENCE}}</span>
             <span>{{LABEL_RANGE}}: {{RANGE}}</span>
+          </div>
+          <div class="hero-tools" aria-label="Peak hero tools">
+            <button type="button" id="printBtn">Print</button>
+            <button type="button" id="shareBtn">Share</button>
+            <select id="unitsSelect" aria-label="Units">
+              <option value="imperial">Imperial</option>
+              <option value="metric">Metric</option>
+            </select>
+            <button type="button" id="getDirectionsBtn">Get Directions</button>
           </div>
           <a class="cta" href="{{APP_URL}}">{{LABEL_CTA}}</a>
           <a class="back-link" href="https://nh48.info/nh-4000-footers-info">← Back to NH48 Info</a>
@@ -432,7 +471,7 @@
 
       <section aria-labelledby="routesHeading">
         <h2 class="section-title" id="routesHeading">{{LABEL_STANDARD_ROUTES}}</h2>
-        <div class="info-card">
+        <div class="info-card" id="routesGrid">
           <ul class="routes-list">
             {{ROUTES_LIST}}
           </ul>
@@ -441,10 +480,41 @@
 
       <section aria-labelledby="relatedHeading">
         <h2 class="section-title" id="relatedHeading">{{LABEL_RELATED_TRAILS}}</h2>
-        <div class="info-card">
+        <div class="info-card" id="relatedTrailsGrid">
           <ul class="routes-list">
             {{RELATED_TRAILS_LI}}
           </ul>
+        </div>
+      </section>
+
+      <section aria-labelledby="parkingAccessHeading">
+        <h2 class="section-title" id="parkingAccessHeading">Parking &amp; Access</h2>
+        <div class="info-card" id="parkingAccessGrid">
+          <p>Parking and trailhead details are available on the interactive peak page.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="difficultyMetricsHeading">
+        <h2 class="section-title" id="difficultyMetricsHeading">Difficulty Metrics</h2>
+        <div class="info-card" id="difficultyMetricsGrid">
+          <p>Difficulty summary is available on the interactive peak page.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="riskPrepHeading">
+        <h2 class="section-title" id="riskPrepHeading">Risk &amp; Preparation</h2>
+        <div class="info-card" id="riskPrepGrid">
+          <p>Risk factors and preparation notes are available on the interactive peak page.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="monthlyWeatherHeading" id="monthlyWeatherPanel">
+        <h2 class="section-title" id="monthlyWeatherHeading">Monthly Weather Snapshot</h2>
+        <div class="info-card">
+          <label for="monthlyWeatherMonthSelect" class="sr-only">Select month</label>
+          <select id="monthlyWeatherMonthSelect">
+            <option value="current">Current month</option>
+          </select>
         </div>
       </section>
 
@@ -462,6 +532,9 @@
         <p><a href="{{APP_URL}}">Open the interactive page</a>.</p>
         <p>{{LABEL_FOOTER}}</p>
       </div>
+    </div>
+    <div id="panelReaderModal" hidden aria-hidden="true">
+      <div id="panelReaderContent"></div>
     </div>
   </body>
 </html>

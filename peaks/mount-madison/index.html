@@ -160,27 +160,23 @@
         },
         {
           "@type": "PropertyValue",
-          "name": "Technical Difficulty",
-          "value": 9,
-          "unitText": "1-10"
+          "name": "Technical Difficulty (1-10)",
+          "value": 9
         },
         {
           "@type": "PropertyValue",
-          "name": "Physical Effort",
-          "value": 9,
-          "unitText": "1-10"
+          "name": "Physical Effort (1-10)",
+          "value": 9
         },
         {
           "@type": "PropertyValue",
-          "name": "February Average Wind (mph)",
-          "value": 43.8,
-          "unitText": "MPH"
+          "name": "Current Wind Speed (mph)",
+          "value": 43.8
         },
         {
           "@type": "PropertyValue",
-          "name": "February Average Temperature (F)",
-          "value": 8,
-          "unitText": "F"
+          "name": "Current Temperature (F)",
+          "value": 8
         },
         {
           "@type": "PropertyValue",
@@ -288,14 +284,6 @@
           "value": "Roadside parking, can be crowded on weekends"
         }
       ],
-      "hasPart": [
-        {
-          "@id": "https://nh48.info/peak/mount-madison/#route-01"
-        },
-        {
-          "@id": "https://nh48.info/peak/mount-madison/#route-02"
-        }
-      ],
       "containsPlace": {
         "@type": "ParkingFacility",
         "name": "Appalachia trailhead - US 2, Randolph.",
@@ -341,7 +329,33 @@
       },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/mount-madison/#webpage"
-      }
+      },
+      "hasPart": [
+        {
+          "@type": "WebPageElement",
+          "@id": "https://nh48.info/peak/mount-madison/#overview",
+          "name": "Mountain Overview",
+          "text": "This photograph features Mount Madison in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails."
+        },
+        {
+          "@type": "WebPageElement",
+          "@id": "https://nh48.info/peak/mount-madison/#trail-tested-summary",
+          "name": "Mount Madison Summary",
+          "text": "I built this guide around field photography sessions on Mount Madison in Presidential Range - Northern.. Mount Madison is a 5,367-foot mountain at the northern end of the Presidential Range in New Hampshire."
+        },
+        {
+          "@type": "WebPageElement",
+          "@id": "https://nh48.info/peak/mount-madison/#trail-tested-conditions",
+          "name": "Conditions on Mount Madison",
+          "text": "Summer and fall - winter for experienced only. High - very exposed to wind/cold above treeline."
+        },
+        {
+          "@type": "WebPageElement",
+          "@id": "https://nh48.info/peak/mount-madison/#trail-tested-planning",
+          "name": "Planning Trip",
+          "text": "Valley Way & Osgood Trail - via Madison Hut. - 8.3 - 4,100 - Very difficult - Out & back - same route. Yes - Madison Spring Hut near treeline offers water when open. Roadside parking, can be crowded on weekends"
+        }
+      ]
     },
     {
       "@type": "HikingTrail",
@@ -3392,6 +3406,21 @@
         margin-bottom:12px;
       }
       .hero-meta span{ display:inline-flex; gap:4px; align-items:center; }
+      .hero-tools{
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+        margin:0 0 12px 0;
+      }
+      .hero-tools button,
+      .hero-tools select{
+        border:1px solid var(--stroke);
+        border-radius:8px;
+        background:rgba(255,255,255,0.04);
+        color:var(--ink);
+        padding:8px 10px;
+        font-size:0.9rem;
+      }
       .cta{
         display:inline-block;
         padding:10px 14px;
@@ -3549,6 +3578,21 @@
   </head>
   <body>
     <a href="#peakTitle" class="skip-link">Skip to main content</a>
+    <nav class="site-nav" aria-label="Site navigation">
+      <a href="/" class="site-nav-logo">
+        <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async" />
+        <span class="site-nav-title-wrap">
+          <span class="site-nav-title">NH48 API</span>
+          <span class="site-nav-tagline">Open data and mountain metadata</span>
+        </span>
+      </a>
+      <div class="site-nav-links">
+        <a href="/">Data &amp; API</a>
+        <a href="/catalog">Catalog</a>
+        <a href="/trails">Trails</a>
+        <a href="/plant-catalog">Howker Ridge</a>
+      </div>
+    </nav>
     <div class="wrap">
       <nav class="breadcrumb-nav" aria-label="Breadcrumb">
         <ol>
@@ -3568,6 +3612,15 @@
             <span>Elevation: 5,367 ft</span>
             <span>Prominence: 466 ft</span>
             <span>Range: Presidential Range - Northern.</span>
+          </div>
+          <div class="hero-tools" aria-label="Peak hero tools">
+            <button type="button" id="printBtn">Print</button>
+            <button type="button" id="shareBtn">Share</button>
+            <select id="unitsSelect" aria-label="Units">
+              <option value="imperial">Imperial</option>
+              <option value="metric">Metric</option>
+            </select>
+            <button type="button" id="getDirectionsBtn">Get Directions</button>
           </div>
           <a class="cta" href="https://nh48.info/peak/mount-madison">View interactive page</a>
           <a class="back-link" href="https://nh48.info/nh-4000-footers-info">← Back to NH48 Info</a>
@@ -3616,7 +3669,7 @@
 
       <section aria-labelledby="routesHeading">
         <h2 class="section-title" id="routesHeading">Standard Routes</h2>
-        <div class="info-card">
+        <div class="info-card" id="routesGrid">
           <ul class="routes-list">
             <li><strong>Valley Way &amp; Osgood Trail - via Madison Hut.</strong> — 8.3 mi • 4,100 ft gain • Out &amp; back - same route. • Very difficult</li>
 <li><strong>Airline Trail - direct ridge ascent.</strong> — 8.4 mi • 4,100 ft gain • Out &amp; back • Very difficult</li>
@@ -3626,10 +3679,41 @@
 
       <section aria-labelledby="relatedHeading">
         <h2 class="section-title" id="relatedHeading">Related Trails &amp; Routes</h2>
-        <div class="info-card">
+        <div class="info-card" id="relatedTrailsGrid">
           <ul class="routes-list">
             <li>No related trails listed yet.</li>
           </ul>
+        </div>
+      </section>
+
+      <section aria-labelledby="parkingAccessHeading">
+        <h2 class="section-title" id="parkingAccessHeading">Parking &amp; Access</h2>
+        <div class="info-card" id="parkingAccessGrid">
+          <p>Parking and trailhead details are available on the interactive peak page.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="difficultyMetricsHeading">
+        <h2 class="section-title" id="difficultyMetricsHeading">Difficulty Metrics</h2>
+        <div class="info-card" id="difficultyMetricsGrid">
+          <p>Difficulty summary is available on the interactive peak page.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="riskPrepHeading">
+        <h2 class="section-title" id="riskPrepHeading">Risk &amp; Preparation</h2>
+        <div class="info-card" id="riskPrepGrid">
+          <p>Risk factors and preparation notes are available on the interactive peak page.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="monthlyWeatherHeading" id="monthlyWeatherPanel">
+        <h2 class="section-title" id="monthlyWeatherHeading">Monthly Weather Snapshot</h2>
+        <div class="info-card">
+          <label for="monthlyWeatherMonthSelect" class="sr-only">Select month</label>
+          <select id="monthlyWeatherMonthSelect">
+            <option value="current">Current month</option>
+          </select>
         </div>
       </section>
 
@@ -3674,6 +3758,9 @@
         <p><a href="https://nh48.info/peak/mount-madison">Open the interactive page</a>.</p>
         <p>NH48 pre-rendered info page.</p>
       </div>
+    </div>
+    <div id="panelReaderModal" hidden aria-hidden="true">
+      <div id="panelReaderContent"></div>
     </div>
   </body>
 </html>

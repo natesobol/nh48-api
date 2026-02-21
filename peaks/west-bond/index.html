@@ -148,27 +148,23 @@
         },
         {
           "@type": "PropertyValue",
-          "name": "Technical Difficulty",
-          "value": 10,
-          "unitText": "1-10"
+          "name": "Technical Difficulty (1-10)",
+          "value": 10
         },
         {
           "@type": "PropertyValue",
-          "name": "Physical Effort",
-          "value": 10,
-          "unitText": "1-10"
+          "name": "Physical Effort (1-10)",
+          "value": 10
         },
         {
           "@type": "PropertyValue",
-          "name": "February Average Wind (mph)",
-          "value": 43.8,
-          "unitText": "MPH"
+          "name": "Current Wind Speed (mph)",
+          "value": 43.8
         },
         {
           "@type": "PropertyValue",
-          "name": "February Average Temperature (F)",
-          "value": 8,
-          "unitText": "F"
+          "name": "Current Temperature (F)",
+          "value": 8
         },
         {
           "@type": "PropertyValue",
@@ -276,14 +272,6 @@
           "value": "Lincoln Woods has large parking - fee.; Zealand Road trailhead medium - road closed in winter."
         }
       ],
-      "hasPart": [
-        {
-          "@id": "https://nh48.info/peak/west-bond/#route-01"
-        },
-        {
-          "@id": "https://nh48.info/peak/west-bond/#route-02"
-        }
-      ],
       "containsPlace": {
         "@type": "ParkingFacility",
         "name": "Lincoln Woods - Kancamagus Hwy. or Zealand Trail - depending on traverse direction.",
@@ -328,7 +316,33 @@
       },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/peak/west-bond/#webpage"
-      }
+      },
+      "hasPart": [
+        {
+          "@type": "WebPageElement",
+          "@id": "https://nh48.info/peak/west-bond/#overview",
+          "name": "Mountain Overview",
+          "text": "mount west bond  005"
+        },
+        {
+          "@type": "WebPageElement",
+          "@id": "https://nh48.info/peak/west-bond/#trail-tested-summary",
+          "name": "West Bond Summary",
+          "text": "I built this guide around field photography sessions on West Bond in Twin Range - Bonds.. West Bond is a subsidiary peak of Mount Bond, with an elevation of approximately 4,540 feet."
+        },
+        {
+          "@type": "WebPageElement",
+          "@id": "https://nh48.info/peak/west-bond/#trail-tested-conditions",
+          "name": "Conditions on West Bond",
+          "text": "Summer and early fall - long day hike or overnight; avoid spring mud. High - very remote, summit and ridge exposed to weather with no nearby shelters."
+        },
+        {
+          "@type": "WebPageElement",
+          "@id": "https://nh48.info/peak/west-bond/#trail-tested-planning",
+          "name": "Planning Trip",
+          "text": "Zealand Road > Zealand Trail > Twinway > West Bond Spur - Bonds Traverse. - 19.8 - 3,950 - Extremely difficult - Traverse - point-to-point. Limited - water at Zealand Hut and streams on lower Bondcliff Trail; none on ridge itself. Lincoln Woods has large parking - fee.; Zealand Road trailhead medium - road closed in winter."
+        }
+      ]
     },
     {
       "@type": "HikingTrail",
@@ -2108,6 +2122,21 @@
         margin-bottom:12px;
       }
       .hero-meta span{ display:inline-flex; gap:4px; align-items:center; }
+      .hero-tools{
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+        margin:0 0 12px 0;
+      }
+      .hero-tools button,
+      .hero-tools select{
+        border:1px solid var(--stroke);
+        border-radius:8px;
+        background:rgba(255,255,255,0.04);
+        color:var(--ink);
+        padding:8px 10px;
+        font-size:0.9rem;
+      }
       .cta{
         display:inline-block;
         padding:10px 14px;
@@ -2265,6 +2294,21 @@
   </head>
   <body>
     <a href="#peakTitle" class="skip-link">Skip to main content</a>
+    <nav class="site-nav" aria-label="Site navigation">
+      <a href="/" class="site-nav-logo">
+        <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async" />
+        <span class="site-nav-title-wrap">
+          <span class="site-nav-title">NH48 API</span>
+          <span class="site-nav-tagline">Open data and mountain metadata</span>
+        </span>
+      </a>
+      <div class="site-nav-links">
+        <a href="/">Data &amp; API</a>
+        <a href="/catalog">Catalog</a>
+        <a href="/trails">Trails</a>
+        <a href="/plant-catalog">Howker Ridge</a>
+      </div>
+    </nav>
     <div class="wrap">
       <nav class="breadcrumb-nav" aria-label="Breadcrumb">
         <ol>
@@ -2284,6 +2328,15 @@
             <span>Elevation: 4,540 ft</span>
             <span>Prominence: 299 ft</span>
             <span>Range: Twin Range - Bonds.</span>
+          </div>
+          <div class="hero-tools" aria-label="Peak hero tools">
+            <button type="button" id="printBtn">Print</button>
+            <button type="button" id="shareBtn">Share</button>
+            <select id="unitsSelect" aria-label="Units">
+              <option value="imperial">Imperial</option>
+              <option value="metric">Metric</option>
+            </select>
+            <button type="button" id="getDirectionsBtn">Get Directions</button>
           </div>
           <a class="cta" href="https://nh48.info/peak/west-bond">View interactive page</a>
           <a class="back-link" href="https://nh48.info/nh-4000-footers-info">← Back to NH48 Info</a>
@@ -2332,7 +2385,7 @@
 
       <section aria-labelledby="routesHeading">
         <h2 class="section-title" id="routesHeading">Standard Routes</h2>
-        <div class="info-card">
+        <div class="info-card" id="routesGrid">
           <ul class="routes-list">
             <li><strong>Zealand Road &gt; Zealand Trail &gt; Twinway &gt; West Bond Spur - Bonds Traverse.</strong> — 19.8 mi • 3,950 ft gain • Traverse - point-to-point. • Extremely difficult</li>
 <li><strong>Lincoln Woods &gt; Bondcliff Trail &gt; West Bond Spur - out &amp; back.</strong> — 22.6 mi • ~3,900 ft gain • Out &amp; back • Extremely difficult</li>
@@ -2342,12 +2395,43 @@
 
       <section aria-labelledby="relatedHeading">
         <h2 class="section-title" id="relatedHeading">Related Trails &amp; Routes</h2>
-        <div class="info-card">
+        <div class="info-card" id="relatedTrailsGrid">
           <ul class="routes-list">
             <li><a href="https://nh48.info/trails?trail=Zealand%20Road">Zealand Road route</a></li>
 <li><a href="https://nh48.info/trails?trail=Zealand%20Trail">Zealand Trail route</a></li>
 <li><a href="https://nh48.info/trails?trail=Bondcliff%20Trail">Bondcliff Trail route</a></li>
           </ul>
+        </div>
+      </section>
+
+      <section aria-labelledby="parkingAccessHeading">
+        <h2 class="section-title" id="parkingAccessHeading">Parking &amp; Access</h2>
+        <div class="info-card" id="parkingAccessGrid">
+          <p>Parking and trailhead details are available on the interactive peak page.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="difficultyMetricsHeading">
+        <h2 class="section-title" id="difficultyMetricsHeading">Difficulty Metrics</h2>
+        <div class="info-card" id="difficultyMetricsGrid">
+          <p>Difficulty summary is available on the interactive peak page.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="riskPrepHeading">
+        <h2 class="section-title" id="riskPrepHeading">Risk &amp; Preparation</h2>
+        <div class="info-card" id="riskPrepGrid">
+          <p>Risk factors and preparation notes are available on the interactive peak page.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="monthlyWeatherHeading" id="monthlyWeatherPanel">
+        <h2 class="section-title" id="monthlyWeatherHeading">Monthly Weather Snapshot</h2>
+        <div class="info-card">
+          <label for="monthlyWeatherMonthSelect" class="sr-only">Select month</label>
+          <select id="monthlyWeatherMonthSelect">
+            <option value="current">Current month</option>
+          </select>
         </div>
       </section>
 
@@ -2392,6 +2476,9 @@
         <p><a href="https://nh48.info/peak/west-bond">Open the interactive page</a>.</p>
         <p>NH48 pre-rendered info page.</p>
       </div>
+    </div>
+    <div id="panelReaderModal" hidden aria-hidden="true">
+      <div id="panelReaderContent"></div>
     </div>
   </body>
 </html>

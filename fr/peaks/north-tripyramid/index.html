@@ -149,27 +149,23 @@
         },
         {
           "@type": "PropertyValue",
-          "name": "Technical Difficulty",
-          "value": 8,
-          "unitText": "1-10"
+          "name": "Technical Difficulty (1-10)",
+          "value": 8
         },
         {
           "@type": "PropertyValue",
-          "name": "Physical Effort",
-          "value": 9,
-          "unitText": "1-10"
+          "name": "Physical Effort (1-10)",
+          "value": 9
         },
         {
           "@type": "PropertyValue",
-          "name": "February Average Wind (mph)",
-          "value": 43.8,
-          "unitText": "MPH"
+          "name": "Current Wind Speed (mph)",
+          "value": 43.8
         },
         {
           "@type": "PropertyValue",
-          "name": "February Average Temperature (F)",
-          "value": 8,
-          "unitText": "F"
+          "name": "Current Temperature (F)",
+          "value": 8
         },
         {
           "@type": "PropertyValue",
@@ -277,14 +273,6 @@
           "value": "Roadside pull-off on Kanc - no formal lot; park off pavement."
         }
       ],
-      "hasPart": [
-        {
-          "@id": "https://nh48.info/fr/peak/north-tripyramid/#route-01"
-        },
-        {
-          "@id": "https://nh48.info/fr/peak/north-tripyramid/#route-02"
-        }
-      ],
       "containsPlace": {
         "@type": "ParkingFacility",
         "name": "Pine Bend Brook trailhead - Kancamagus Hwy, Route 112, roadside.",
@@ -314,7 +302,7 @@
       ],
       "weather": {
         "@type": "WeatherObservation",
-        "dateObserved": "2026-02-17",
+        "dateObserved": "2026-02-21",
         "description": "February summit averages for White Mountains conditions",
         "windSpeed": "43.8 mph",
         "temperature": "8 F",
@@ -329,7 +317,15 @@
       },
       "mainEntityOfPage": {
         "@id": "https://nh48.info/fr/peak/north-tripyramid/#webpage"
-      }
+      },
+      "hasPart": [
+        {
+          "@type": "WebPageElement",
+          "@id": "https://nh48.info/fr/peak/north-tripyramid/#overview",
+          "name": "Mountain Overview",
+          "text": "This photograph features North Tripyramid in New Hampshire’s White Mountain National Forest. The scene shows forested slopes, rocky ridgelines, and distant mountain ranges fading into the horizon. It reflects the scale and terrain hikers experience in the White Mountains, home to many of New Hampshire’s 4,000-foot peaks and backcountry trails."
+        }
+      ]
     },
     {
       "@type": "HikingTrail",
@@ -1887,8 +1883,8 @@
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "@id": "https://nh48.info/fr/peak/north-tripyramid/#breadcrumb",
-  "name": "Mont North Tripyramid breadcrumb trail",
-  "description": "Navigation path to Mont North Tripyramid within the White Mountains peak guides",
+  "name": "North Tripyramid breadcrumb trail",
+  "description": "Navigation path to North Tripyramid within the White Mountains peak guides",
   "itemListElement": [
     {
       "@type": "ListItem",
@@ -1927,7 +1923,7 @@
         "@type": "WebPage",
         "@id": "https://nh48.info/fr/peak/north-tripyramid/",
         "url": "https://nh48.info/fr/peak/north-tripyramid/",
-        "name": "Mont North Tripyramid"
+        "name": "North Tripyramid"
       }
     }
   ]
@@ -2154,6 +2150,21 @@
         margin-bottom:12px;
       }
       .hero-meta span{ display:inline-flex; gap:4px; align-items:center; }
+      .hero-tools{
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+        margin:0 0 12px 0;
+      }
+      .hero-tools button,
+      .hero-tools select{
+        border:1px solid var(--stroke);
+        border-radius:8px;
+        background:rgba(255,255,255,0.04);
+        color:var(--ink);
+        padding:8px 10px;
+        font-size:0.9rem;
+      }
       .cta{
         display:inline-block;
         padding:10px 14px;
@@ -2311,6 +2322,21 @@
   </head>
   <body>
     <a href="#peakTitle" class="skip-link">Skip to main content</a>
+    <nav class="site-nav" aria-label="Site navigation">
+      <a href="/" class="site-nav-logo">
+        <img src="/nh48API_logo.png" alt="NH48 API logo" loading="lazy" decoding="async" />
+        <span class="site-nav-title-wrap">
+          <span class="site-nav-title">NH48 API</span>
+          <span class="site-nav-tagline">Open data and mountain metadata</span>
+        </span>
+      </a>
+      <div class="site-nav-links">
+        <a href="/">Data &amp; API</a>
+        <a href="/catalog">Catalog</a>
+        <a href="/trails">Trails</a>
+        <a href="/plant-catalog">Howker Ridge</a>
+      </div>
+    </nav>
     <div class="wrap">
       <nav class="breadcrumb-nav" aria-label="Breadcrumb">
         <ol>
@@ -2330,6 +2356,15 @@
             <span>Altitude: 4,180 ft</span>
             <span>Proeminence: 1345 ft</span>
             <span>Chaine: Sandwich Range</span>
+          </div>
+          <div class="hero-tools" aria-label="Peak hero tools">
+            <button type="button" id="printBtn">Print</button>
+            <button type="button" id="shareBtn">Share</button>
+            <select id="unitsSelect" aria-label="Units">
+              <option value="imperial">Imperial</option>
+              <option value="metric">Metric</option>
+            </select>
+            <button type="button" id="getDirectionsBtn">Get Directions</button>
           </div>
           <a class="cta" href="https://nh48.info/fr/peak/north-tripyramid">Voir la page interactive</a>
           <a class="back-link" href="https://nh48.info/nh-4000-footers-info">← Back to NH48 Info</a>
@@ -2378,7 +2413,7 @@
 
       <section aria-labelledby="routesHeading">
         <h2 class="section-title" id="routesHeading">Itineraires standards</h2>
-        <div class="info-card">
+        <div class="info-card" id="routesGrid">
           <ul class="routes-list">
             <li><strong>Pine Bend Brook Trail &gt; Mt. Tripyramid Trail - North Slide up, South Slide down loop.</strong> — 11.0 mi • 3,100 ft gain • Loop - over Middle Peak. • Difficult</li>
 <li><strong>Pine Bend Brook Trail - out &amp; back avoiding slides.</strong> — 9.6 mi • 3,000 ft gain • Out &amp; back • Difficult</li>
@@ -2388,11 +2423,42 @@
 
       <section aria-labelledby="relatedHeading">
         <h2 class="section-title" id="relatedHeading">Sentiers et itineraires associes</h2>
-        <div class="info-card">
+        <div class="info-card" id="relatedTrailsGrid">
           <ul class="routes-list">
             <li><a href="https://nh48.info/trails?trail=Pine%20Bend%20Brook%20Trail">Pine Bend Brook Trail itineraire</a></li>
 <li><a href="https://nh48.info/trails?trail=South%20Slide%20Down%20Loop">South Slide Down Loop itineraire</a></li>
           </ul>
+        </div>
+      </section>
+
+      <section aria-labelledby="parkingAccessHeading">
+        <h2 class="section-title" id="parkingAccessHeading">Parking &amp; Access</h2>
+        <div class="info-card" id="parkingAccessGrid">
+          <p>Parking and trailhead details are available on the interactive peak page.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="difficultyMetricsHeading">
+        <h2 class="section-title" id="difficultyMetricsHeading">Difficulty Metrics</h2>
+        <div class="info-card" id="difficultyMetricsGrid">
+          <p>Difficulty summary is available on the interactive peak page.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="riskPrepHeading">
+        <h2 class="section-title" id="riskPrepHeading">Risk &amp; Preparation</h2>
+        <div class="info-card" id="riskPrepGrid">
+          <p>Risk factors and preparation notes are available on the interactive peak page.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="monthlyWeatherHeading" id="monthlyWeatherPanel">
+        <h2 class="section-title" id="monthlyWeatherHeading">Monthly Weather Snapshot</h2>
+        <div class="info-card">
+          <label for="monthlyWeatherMonthSelect" class="sr-only">Select month</label>
+          <select id="monthlyWeatherMonthSelect">
+            <option value="current">Current month</option>
+          </select>
         </div>
       </section>
 
@@ -2429,6 +2495,9 @@
         <p><a href="https://nh48.info/fr/peak/north-tripyramid">Open the interactive page</a>.</p>
         <p>Page NH48 pre-rendue.</p>
       </div>
+    </div>
+    <div id="panelReaderModal" hidden aria-hidden="true">
+      <div id="panelReaderContent"></div>
     </div>
   </body>
 </html>
