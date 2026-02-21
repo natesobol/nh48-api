@@ -3233,6 +3233,23 @@ export default {
       return isFrench ? 'Vue du sommet des White Mountains' : 'Summit view in the White Mountains';
     }
 
+    function localizeFrenchPeakName(peakName) {
+      const cleaned = normalizeTextForWeb(peakName);
+      if (!cleaned) return cleaned;
+      const prefixPattern = /^(?:Mt\.?|Mount)\s+/i;
+      if (prefixPattern.test(cleaned)) {
+        return cleaned.replace(prefixPattern, 'Mont ');
+      }
+      if (/\s+Mountain$/i.test(cleaned)) {
+        const trimmed = cleaned.replace(/\s+Mountain$/i, '').trim();
+        return `Mont ${trimmed}`;
+      }
+      if (/^Mont\s+/i.test(cleaned)) {
+        return cleaned;
+      }
+      return `Mont ${cleaned}`;
+    }
+
     function buildHeroImageAltText(peakName, photo, isFrench = false) {
       const candidate = stripHeroAltPattern(
         pickFirstNonEmpty(
@@ -3332,7 +3349,8 @@ export default {
       if (!obj || typeof obj !== 'object') return;
       for (const [key, val] of Object.entries(obj)) {
         if (val === undefined || val === null) continue;
-        if (['url', 'photoId', 'filename', 'isPrimary'].includes(key)) continue;
+        if (['photoId', 'filename', 'isPrimary'].includes(key)) continue;
+        if (/(?:^|_|-)(?:url|uri|src|source|path)$/i.test(String(key || ''))) continue;
         const name = prefix ? `${prefix}.${key}` : key;
         if (Array.isArray(val)) {
           const text = val.map((item) => String(item).trim()).filter(Boolean).join(', ');
@@ -4327,6 +4345,8 @@ export default {
       const difficultyEntry = seoContext?.difficultyEntry || null;
       const riskEntry = seoContext?.riskEntry || null;
       const weatherSnapshot = seoContext?.weatherSnapshot || null;
+      const isFrenchRoute = /\/fr\/peak\//i.test(canonicalUrl);
+      const localizedPeakName = isFrenchRoute ? localizeFrenchPeakName(peakName) : peakName;
       const normalizeNarrative = (value) => String(value || '').replace(/\s+/g, ' ').trim();
       const narrativeParts = [];
       const pushNarrativePart = (name, text, suffix) => {
@@ -4357,7 +4377,7 @@ export default {
       }
       const photoList = Array.isArray(photos) ? photos : [];
       const primaryPhotoIndex = Math.max(0, photoList.findIndex((photo) => photo && photo.isPrimary));
-      const isFrenchRoute = /\/fr\/peak\//i.test(canonicalUrl);
+      const normalizedHeroImageUrl = normalizeCatalogPhotoUrl(imageUrl, { width: 1800, format: 'jpg' }) || imageUrl;
       const imageObjects = photoList
         .map((photo, index) => {
           if (!photo || !photo.url) return null;
@@ -4367,13 +4387,16 @@ export default {
           const contentLocation = buildContentLocation(photo);
           const dateCreated = pickFirstNonEmpty(photo.captureDate, photo.dateCreated);
           const exifData = buildExifData(photo);
-          const forcePatternCaption = buildHeroImageAltText(peakName, photo, isFrenchRoute);
+          const forcePatternCaption = buildHeroImageAltText(localizedPeakName, photo, isFrenchRoute);
           const copyrightNotice = pickFirstNonEmpty(photo?.iptc?.copyrightNotice, photo.copyrightNotice, RIGHTS_DEFAULTS.copyrightNotice);
           const acquireLicensePage = pickFirstNonEmpty(photo.acquireLicensePage, RIGHTS_DEFAULTS.licenseUrl, RIGHTS_DEFAULTS.acquireLicensePageUrl);
+          const normalizedContentUrl = normalizeCatalogPhotoUrl(photo.contentUrl || photo.url, { width: 1800, format: 'jpg' }) || (photo.contentUrl || photo.url);
+          const imageId = `${canonicalUrl}#img-${String(index + 1).padStart(3, '0')}`;
           const imageObject = {
             '@type': isFineArt ? ['ImageObject', 'Photograph', 'VisualArtwork'] : ['ImageObject', 'Photograph'],
-            contentUrl: photo.url,
-            url: photo.url,
+            '@id': imageId,
+            contentUrl: normalizedContentUrl,
+            url: normalizedContentUrl,
             name: buildPhotoTitleUnique(peakName, photo),
             caption: forcePatternCaption,
             creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
@@ -4397,6 +4420,7 @@ export default {
           return imageObject;
         })
         .filter(Boolean);
+      const imageRefs = imageObjects.map((image) => ({ '@id': image['@id'] }));
       const creativeWork = {
         '@context': 'https://schema.org',
         '@type': ['CreativeWork', 'Photograph'],
@@ -4404,8 +4428,8 @@ export default {
         url: canonicalUrl,
         name: `${peakName} fine-art photograph`,
         description: summaryText || `Fine-art photograph of ${peakName} in the White Mountains.`,
-        image: imageUrl,
-        associatedMedia: imageObjects.length ? imageObjects : undefined,
+        image: imageRefs.length ? imageRefs[0] : normalizedHeroImageUrl,
+        associatedMedia: imageRefs.length ? imageRefs : undefined,
         publisher: { '@id': `${SITE}/#organization` },
         creator: { '@id': `${SITE}/#person-nathan-sobol` },
         sameAs: buildCreativeSameAs(),
@@ -4438,7 +4462,7 @@ export default {
         '@id': mountainId,
         name: peakName,
         description: summaryText,
-        image: imageObjects.length ? imageObjects : imageUrl,
+        image: imageRefs.length ? imageRefs : normalizedHeroImageUrl,
         url: canonicalUrl,
         hasPart: narrativeParts.length ? narrativeParts : undefined,
         additionalProperty: []
@@ -7013,6 +7037,7 @@ export default {
         } else if (options?.prependBodyHtml) {
           html = injectBodyStartHtml(html, options.prependBodyHtml);
         }
+        html = applyPeakTemplateImageTransforms(html);
         html = injectPeakSeasonHintSignals(html, seasonHint);
         html = ensurePeakParityAnchors(html);
         html = injectClientRuntimeCore(html);
@@ -7118,6 +7143,7 @@ export default {
 
     // Extract attributes for meta and structured data
     const peakName = peak.peakName || peak.name || peak['Peak Name'] || slug;
+    const localizedPeakName = isFrench ? localizeFrenchPeakName(peakName) : peakName;
     const elevation = formatFeet(peak['Elevation (ft)'] || peak.elevation_ft || '');
     const prominence = formatFeet(peak['Prominence (ft)'] || peak.prominence_ft || '');
     const rangeVal = peak['Range / Subrange'] || peak.range || '';
@@ -7131,7 +7157,9 @@ export default {
         .filter((photo) => photo && photo.url);
     }
     const primaryPhoto = photos.length ? photos[0] : null;
-    const heroUrl = primaryPhoto ? primaryPhoto.url : DEFAULT_IMAGE;
+    const heroUrl = primaryPhoto
+      ? (normalizeCatalogPhotoUrl(primaryPhoto.url, { width: 1800, format: 'jpg' }) || primaryPhoto.url)
+      : DEFAULT_IMAGE;
     const normalizedSlug = normalizeDescriptionKey(slug);
     const normalizedName = normalizeDescriptionKey(peakName);
     const summaryFromFile =
@@ -7199,9 +7227,10 @@ export default {
     const primaryCaption = primaryPhoto
       ? buildPhotoCaptionUnique(peakName, primaryPhoto)
       : peakName;
-    const heroImageAlt = buildHeroImageAltText(peakName, primaryPhoto || {}, isFrench);
+    const heroImageAlt = buildHeroImageAltText(localizedPeakName, primaryPhoto || {}, isFrench);
     const ogCard = await resolveOgCard(pathname);
-    const socialImage = ogCard?.image || heroUrl;
+    const socialImage = normalizeCatalogPhotoUrl(ogCard?.image || heroUrl, { width: 1800, format: 'jpg' })
+      || (ogCard?.image || heroUrl);
     const socialImageAlt = heroImageAlt || ogCard?.imageAlt || primaryCaption;
     const rangeContext = await resolveRangeContext(rangeVal);
     const {

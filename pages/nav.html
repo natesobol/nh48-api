@@ -931,7 +931,7 @@
     const ensureSubmenuId = (submenu) => {
       if (!submenu.id) {
         submenuIdSeed += 1;
-        submenu.id = `site-nav-submenu-${submenuIdSeed}`;
+        submenu.id = 'site-nav-submenu-' + String(submenuIdSeed);
       }
       return submenu.id;
     };
@@ -959,9 +959,9 @@
 
     const applyShift = (submenu, shiftX, shiftY) => {
       if (!submenu) return;
-      if (Math.abs(shiftX) > 0.5) submenu.style.setProperty('--submenu-shift-x', `${Math.round(shiftX)}px`);
+      if (Math.abs(shiftX) > 0.5) submenu.style.setProperty('--submenu-shift-x', String(Math.round(shiftX)) + 'px');
       else submenu.style.removeProperty('--submenu-shift-x');
-      if (Math.abs(shiftY) > 0.5) submenu.style.setProperty('--submenu-shift-y', `${Math.round(shiftY)}px`);
+      if (Math.abs(shiftY) > 0.5) submenu.style.setProperty('--submenu-shift-y', String(Math.round(shiftY)) + 'px');
       else submenu.style.removeProperty('--submenu-shift-y');
     };
 
@@ -1148,7 +1148,7 @@
           return;
         }
         event.preventDefault();
-        const target = `/catalog?q=${encodeURIComponent(query)}`;
+        const target = '/catalog?q=' + encodeURIComponent(query);
         window.location.assign(target);
       });
     }

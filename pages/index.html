@@ -25,19 +25,16 @@
   <script>
   (() => {
     if (window.NH48_BUILD_DATE) return;
-    try {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', '/build-meta.json', false);
-      xhr.send(null);
-      if (xhr.status >= 200 && xhr.status < 300) {
-        const meta = JSON.parse(xhr.responseText);
+    fetch('/build-meta.json', { cache: 'no-store' })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((meta) => {
         if (meta && meta.buildDate) {
           window.NH48_BUILD_DATE = meta.buildDate;
         }
-      }
-    } catch (err) {
-      // No-op: build date is optional in static builds.
-    }
+      })
+      .catch(() => {
+        // No-op: build date is optional in static builds.
+      });
   })();
 </script>
 <script src="/js/unified-footer.js" defer></script>
@@ -854,18 +851,19 @@
 
     .dataset-card .ribbon-count {
       position: absolute;
-      top: 0;
       left: 0;
+      bottom: 0;
       min-width: 108px;
+      max-width: calc(100% - 16px);
       padding: 5px 8px 6px;
       display: flex;
       flex-direction: column;
       gap: 2px;
       border: 1px solid rgba(214, 245, 223, 0.9);
-      border-radius: 0 8px 8px 8px;
+      border-radius: 8px 8px 8px 0;
       background: rgba(9, 23, 19, 0.9);
       box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
-      transform: translate(8px, 42px);
+      transform: translate(8px, -8px);
       pointer-events: none;
       z-index: 2;
       line-height: 1.15;
@@ -873,7 +871,7 @@
     }
 
     .dataset-card .ribbon-count--compact {
-      transform: translate(8px, 8px);
+      transform: translate(8px, -8px);
     }
 
     .dataset-card .ribbon-count-top {
@@ -2056,12 +2054,13 @@
 
       .dataset-card .ribbon-count {
         min-width: 94px;
+        max-width: calc(100% - 12px);
         padding: 4px 6px 5px;
-        transform: translate(6px, 38px);
+        transform: translate(6px, -6px);
       }
 
       .dataset-card .ribbon-count--compact {
-        transform: translate(6px, 6px);
+        transform: translate(6px, -6px);
       }
 
       .dataset-card .ribbon-count-top {
@@ -2394,6 +2393,12 @@
 
       const container = document.getElementById('floating-peaks');
       if (!container) return;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isMobileViewport = window.matchMedia('(max-width: 768px)').matches;
+      if (prefersReducedMotion || isMobileViewport) {
+        container.style.display = 'none';
+        return;
+      }
       const floatingLabels = [];
       const viewport = { width: window.innerWidth, height: window.innerHeight };
       const MAX_VISIBLE_LABELS_DESKTOP = 3;
@@ -2819,19 +2824,82 @@
       };
     };
 
+    const applyCountBanner = (card, countBannerTop, countBannerBottom) => {
+      if (!card) return;
+      const imageContainer = card.querySelector('.card-image');
+      if (!imageContainer) return;
+
+      const existingBanner = imageContainer.querySelector('.ribbon-count');
+      if (existingBanner) {
+        existingBanner.remove();
+      }
+      if (!countBannerTop || !countBannerBottom) {
+        return;
+      }
+
+      const banner = document.createElement('div');
+      banner.className = 'ribbon-count';
+      if (!imageContainer.querySelector('.ribbon')) {
+        banner.classList.add('ribbon-count--compact');
+      }
+
+      const top = document.createElement('span');
+      top.className = 'ribbon-count-top';
+      top.textContent = countBannerTop;
+
+      const bottom = document.createElement('span');
+      bottom.className = 'ribbon-count-bottom';
+      bottom.textContent = countBannerBottom;
+
+      banner.append(top, bottom);
+      imageContainer.appendChild(banner);
+    };
+
+    const scheduleIdleTask = (task) => {
+      if (typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(() => {
+          Promise.resolve(task()).catch((error) => {
+            console.error('Idle dataset update failed', error);
+          });
+        }, { timeout: 1800 });
+        return;
+      }
+      window.setTimeout(() => {
+        Promise.resolve(task()).catch((error) => {
+          console.error('Deferred dataset update failed', error);
+        });
+      }, 320);
+    };
+
+    const refreshDynamicCountBanners = async () => {
+      const [plantCatalogCounts, wikiCatalogCounts] = await Promise.all([
+        fetchPlantCatalogCounts().catch((error) => {
+          console.error('Failed to load plant catalog count banner', error);
+          return null;
+        }),
+        fetchWikiCatalogCounts().catch((error) => {
+          console.error('Failed to load wiki count banner', error);
+          return null;
+        })
+      ]);
+
+      const countSources = [
+        ['plant-catalog', plantCatalogCounts],
+        ['white-mountains-visual-wiki', wikiCatalogCounts]
+      ];
+      countSources.forEach(([cardId, counts]) => {
+        if (!counts) return;
+        const card = document.querySelector(`.dataset-card[data-card-id="${cardId}"]`);
+        if (!card) return;
+        applyCountBanner(card, counts.countBannerTop, counts.countBannerBottom);
+      });
+    };
+
     const populateDatasetCards = async () => {
       try {
-        const [metaResponse, sitemapMap, plantCatalogCounts, wikiCatalogCounts] = await Promise.all([
+        const [metaResponse, sitemapMap] = await Promise.all([
           fetch('/data/dataset-cards-meta.json'),
-          fetchSitemapLastModified(),
-          fetchPlantCatalogCounts().catch((error) => {
-            console.error('Failed to load plant catalog count banner', error);
-            return null;
-          }),
-          fetchWikiCatalogCounts().catch((error) => {
-            console.error('Failed to load wiki count banner', error);
-            return null;
-          })
+          fetchSitemapLastModified()
         ]);
         if (!metaResponse.ok) {
           throw new Error(`Metadata fetch failed: ${metaResponse.status}`);
@@ -2859,38 +2927,7 @@
             }
           }
 
-          const countBannerTop = id === 'plant-catalog' && plantCatalogCounts
-            ? plantCatalogCounts.countBannerTop
-            : id === 'white-mountains-visual-wiki' && wikiCatalogCounts
-              ? wikiCatalogCounts.countBannerTop
-            : meta.countBannerTop;
-          const countBannerBottom = id === 'plant-catalog' && plantCatalogCounts
-            ? plantCatalogCounts.countBannerBottom
-            : id === 'white-mountains-visual-wiki' && wikiCatalogCounts
-              ? wikiCatalogCounts.countBannerBottom
-            : meta.countBannerBottom;
-
-          if (countBannerTop && countBannerBottom) {
-            const imageContainer = card.querySelector('.card-image');
-            if (imageContainer && !imageContainer.querySelector('.ribbon-count')) {
-              const banner = document.createElement('div');
-              banner.className = 'ribbon-count';
-              if (!imageContainer.querySelector('.ribbon')) {
-                banner.classList.add('ribbon-count--compact');
-              }
-
-              const top = document.createElement('span');
-              top.className = 'ribbon-count-top';
-              top.textContent = countBannerTop;
-
-              const bottom = document.createElement('span');
-              bottom.className = 'ribbon-count-bottom';
-              bottom.textContent = countBannerBottom;
-
-              banner.append(top, bottom);
-              imageContainer.appendChild(banner);
-            }
-          }
+          applyCountBanner(card, meta.countBannerTop, meta.countBannerBottom);
 
           const dateElem = card.querySelector('.last-modified');
           if (dateElem) {
@@ -2899,6 +2936,7 @@
             dateElem.textContent = formattedDate ? `Last Modified: ${formattedDate}` : '';
           }
         });
+        scheduleIdleTask(refreshDynamicCountBanners);
       } catch (error) {
         console.error('Failed to load dataset card metadata', error);
       }
