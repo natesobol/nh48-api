@@ -230,16 +230,33 @@ export default {
       if (!['GET', 'HEAD'].includes(request.method)) {
         return tileJsonError(405, { error: 'Method not allowed.' }, STYLE_METADATA_CACHE_CONTROL);
       }
+      const fallbackMetadata = {
+        version: 'wmnf_v1',
+        available: false,
+        hillshadeTemplate: '/api/tiles/wmnf-hillshade/{z}/{x}/{y}.png',
+        contourTemplate: '/api/tiles/wmnf-contours/{z}/{x}/{y}.pbf'
+      };
       if (!env.WMNF_TILE_DATA) {
-        return tileJsonError(503, { error: 'Stylized tile bucket binding unavailable.' }, STYLE_METADATA_CACHE_CONTROL);
+        const payload = {
+          ...fallbackMetadata,
+          error: 'Stylized tile bucket binding unavailable.'
+        };
+        return new Response(request.method === 'HEAD' ? null : JSON.stringify(payload), {
+          status: 200,
+          headers: tileResponseHeaders('application/json; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+        });
       }
       const metadataObject = await env.WMNF_TILE_DATA.get(WMNF_METADATA_KEY);
       if (!metadataObject) {
-        return tileJsonError(
-          404,
-          { error: 'Stylized style metadata not found.', key: WMNF_METADATA_KEY },
-          STYLE_METADATA_CACHE_CONTROL
-        );
+        const payload = {
+          ...fallbackMetadata,
+          error: 'Stylized style metadata not found.',
+          key: WMNF_METADATA_KEY
+        };
+        return new Response(request.method === 'HEAD' ? null : JSON.stringify(payload), {
+          status: 200,
+          headers: tileResponseHeaders('application/json; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+        });
       }
       return new Response(request.method === 'HEAD' ? null : metadataObject.body, {
         status: 200,

@@ -2700,10 +2700,18 @@
         if (wmnfStyleMetadata) return wmnfStyleMetadata;
         const response = await fetch(WMNF_STYLE_ENDPOINTS.metadata, { headers: { 'Accept': 'application/json' } });
         if (!response.ok) {
+          if (response.status === 404) {
+            wmnfStyleMetadata = {
+              version: WMNF_STYLE_PARAM,
+              available: false,
+              message: 'Stylized terrain assets are not published yet.'
+            };
+            return wmnfStyleMetadata;
+          }
           throw new Error(`WMNF metadata unavailable (${response.status})`);
         }
-        const payload = await response.json();
-        wmnfStyleMetadata = payload;
+        const payload = await response.json().catch(() => ({}));
+        wmnfStyleMetadata = payload && typeof payload === 'object' ? payload : {};
         return wmnfStyleMetadata;
       }
 
@@ -2792,12 +2800,18 @@
         if (!L.vectorGrid || typeof L.vectorGrid.protobuf !== 'function') {
           throw new Error('Leaflet VectorGrid plugin is unavailable.');
         }
-        await loadWmnfStyleMetadata();
+        const metadata = await loadWmnfStyleMetadata();
+        if (metadata && metadata.available === false) {
+          return {
+            ready: false,
+            fallbackMessage: metadata.message || metadata.error || 'Stylized mode is not ready yet. Showing OSM Topo.'
+          };
+        }
         const initialized = ensureStylizedLayersInitialized();
         if (!initialized || !leafletStylizedHillshadeLayer || !leafletStylizedContourLayer) {
           throw new Error('Stylized WMNF layers failed to initialize.');
         }
-        return true;
+        return { ready: true };
       }
 
       function renderLeafletMap(points) {
@@ -2853,7 +2867,25 @@
         if (!leafletMap || !leafletLayer) return;
         if (style === 'stylized') {
           try {
-            await ensureStylizedModeReady();
+            const stylizedState = await ensureStylizedModeReady();
+            if (!stylizedState || stylizedState.ready === false) {
+              if (!stylizedFallbackNotified) {
+                setLeafletMapHint(stylizedState?.fallbackMessage || fallbackMessage || 'Stylized mode is not ready yet. Showing OSM Topo.');
+                stylizedFallbackNotified = true;
+              }
+              removeStylizedLayers();
+              if (!leafletMap.hasLayer(leafletLayer)) {
+                leafletLayer.addTo(leafletMap);
+              }
+              activeMapStyle = 'osm';
+              if (stylizedBtn && osmBtn) {
+                stylizedBtn.classList.remove('active');
+                osmBtn.classList.add('active');
+                stylizedBtn.setAttribute('aria-selected', 'false');
+                osmBtn.setAttribute('aria-selected', 'true');
+              }
+              return;
+            }
             stylizedFallbackNotified = false;
             if (leafletMap.hasLayer(leafletLayer)) {
               leafletMap.removeLayer(leafletLayer);
@@ -2871,7 +2903,7 @@
               setLeafletMapHint('');
             }
           } catch (error) {
-            console.warn('Stylized map fallback to OSM', error);
+            console.warn('Stylized map fallback to OSM', error?.message || error);
             if (!stylizedFallbackNotified) {
               setLeafletMapHint(fallbackMessage || 'Stylized mode is not ready yet. Showing OSM Topo.');
               stylizedFallbackNotified = true;
