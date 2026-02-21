@@ -16,7 +16,7 @@ The Cloudflare Worker has been completely rewritten to eliminate rendering incon
 ### 2. Wrangler.toml Updates
 - **Simplified routes**: Single catch-all route `nh48.info/*` handles all traffic
 - **Removed duplicate routes**: No longer need separate `/` and `/*` patterns
-- **Kept R2 binding**: NH48_DATA bucket binding preserved for optional fallback
+- **Updated R2 binding**: WMNF stylized tile binding now points to photos bucket prefix storage
 
 ## Cloudflare Dashboard Actions Required
 
@@ -52,8 +52,8 @@ This will:
 In the Cloudflare dashboard:
 1. Go to **Workers & Pages** > **nh48-ssr** > **Settings** > **Variables**
 2. Confirm the R2 bucket binding exists:
-   - **Variable name**: `NH48_DATA`
-   - **Bucket name**: `nh48-data`
+   - **Variable name**: `WMNF_TILE_DATA`
+   - **Bucket name**: `nh48-photos`
 
 ### E. Test the Deployment
 After deploying, test these URLs:

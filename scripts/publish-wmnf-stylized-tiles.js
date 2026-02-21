@@ -55,7 +55,7 @@ function cacheControlForRelativePath(relativePath) {
 
 function main() {
   const sourceDirArg = getArgValue('--source-dir', path.join('tmp', 'wmnf-stylized', 'v1'));
-  const bucket = getArgValue('--bucket', 'nh48-data');
+  const bucket = getArgValue('--bucket', process.env.R2_BUCKET_NAME || process.env.R2_BUCKET || 'nh48-photos');
   const prefix = normalizePosix(getArgValue('--prefix', 'tiles/wmnf-stylized/v1'));
   const dryRun = hasFlag('--dry-run');
 
@@ -126,4 +126,3 @@ try {
   console.error(`[publish-wmnf-stylized] ERROR: ${error.message}`);
   process.exit(1);
 }
-

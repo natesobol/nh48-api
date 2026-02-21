@@ -8,7 +8,7 @@
 // `window.location.search` so that the existing client-side code can
 // read the slug from the query string, and inserts server-rendered
 // meta tags and structured data for SEO.  The Worker fetches the
-// mountain data from an R2 bucket (`NH48_DATA`) while sourcing mountain
+// mountain data from canonical GitHub raw data while sourcing mountain
 // descriptions from the canonical GitHub file, and
 // loads translation dictionaries from GitHub to build localized
 // titles and descriptions.  By doing this work on the server, the
@@ -230,10 +230,10 @@ export default {
       if (!['GET', 'HEAD'].includes(request.method)) {
         return tileJsonError(405, { error: 'Method not allowed.' }, STYLE_METADATA_CACHE_CONTROL);
       }
-      if (!env.NH48_DATA) {
+      if (!env.WMNF_TILE_DATA) {
         return tileJsonError(503, { error: 'Stylized tile bucket binding unavailable.' }, STYLE_METADATA_CACHE_CONTROL);
       }
-      const metadataObject = await env.NH48_DATA.get(WMNF_METADATA_KEY);
+      const metadataObject = await env.WMNF_TILE_DATA.get(WMNF_METADATA_KEY);
       if (!metadataObject) {
         return tileJsonError(
           404,
@@ -264,7 +264,7 @@ export default {
           headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
         });
       }
-      if (!env.NH48_DATA) {
+      if (!env.WMNF_TILE_DATA) {
         return new Response('Stylized tile bucket binding unavailable.', {
           status: 503,
           headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
@@ -272,7 +272,7 @@ export default {
       }
       const [, z, x, y] = match;
       const key = `${WMNF_HILLSHADE_PREFIX}/${z}/${x}/${y}.png`;
-      const tileObject = await env.NH48_DATA.get(key);
+      const tileObject = await env.WMNF_TILE_DATA.get(key);
       if (!tileObject) {
         return new Response('WMNF hillshade tile not found.', {
           status: 404,
@@ -305,7 +305,7 @@ export default {
           headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
         });
       }
-      if (!env.NH48_DATA) {
+      if (!env.WMNF_TILE_DATA) {
         return new Response('Stylized tile bucket binding unavailable.', {
           status: 503,
           headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
@@ -313,7 +313,7 @@ export default {
       }
       const [, z, x, y] = match;
       const key = `${WMNF_CONTOURS_PREFIX}/${z}/${x}/${y}.pbf`;
-      const tileObject = await env.NH48_DATA.get(key);
+      const tileObject = await env.WMNF_TILE_DATA.get(key);
       if (!tileObject) {
         return new Response('WMNF contour tile not found.', {
           status: 404,
@@ -1770,52 +1770,15 @@ export default {
       };
     }
 
-    // Load nh48.json from R2 and verify parity against GitHub raw.
+    // Load nh48.json from canonical GitHub raw source.
     async function loadPeaks() {
-      const fetchRawPeaks = async () => {
-        try {
-          const res = await fetch(`${RAW_BASE}/data/nh48.json`, NO_CACHE_FETCH);
-          if (!res.ok) return null;
-          return await res.json();
-        } catch (_) {
-          return null;
-        }
-      };
-
-      let r2Peaks = null;
       try {
-        if (env.NH48_DATA) {
-          const obj = await env.NH48_DATA.get('nh48.json');
-          if (obj) {
-            r2Peaks = JSON.parse(await obj.text());
-          }
-        }
-      } catch (_) { }
-
-      const rawPeaks = await fetchRawPeaks();
-
-      if (r2Peaks && rawPeaks) {
-        const parity = comparePeakPhotoParity(r2Peaks, rawPeaks);
-        if (!parity.isMatch) {
-          console.warn('[loadPeaks] R2 nh48.json photo parity mismatch; falling back to GitHub raw source.', {
-            mismatchCount: parity.mismatchCount,
-            sample: parity.mismatches.slice(0, 8)
-          });
-          return rawPeaks;
-        }
-        return r2Peaks;
+        const res = await fetch(`${RAW_BASE}/data/nh48.json`, NO_CACHE_FETCH);
+        if (!res.ok) return null;
+        return await res.json();
+      } catch (_) {
+        return null;
       }
-
-      if (r2Peaks && !rawPeaks) {
-        console.warn('[loadPeaks] GitHub raw nh48.json unavailable; using R2 source without parity verification.');
-        return r2Peaks;
-      }
-
-      if (rawPeaks) {
-        return rawPeaks;
-      }
-
-      return null;
     }
 
     async function loadPartial(name, url) {

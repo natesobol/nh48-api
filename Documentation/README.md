@@ -48,6 +48,6 @@ Primary references:
 - `sync-r2-photos-wrangler.yml`: canonical photo sync + manifest + prerender refresh.
 - `sync-r2-photos.yml`: manual-only deprecated fallback.
 - `sync-r2-wiki-media.yml`: canonical wiki media sync from `whitemountains-wiki/**` to the wiki R2 bucket.
-- `sync-r2-data.yml`: R2 sync for `data/nh48.json`.
+- `sync-r2-wmnf-tiles.yml`: manual WMNF stylized tile sync into photos bucket prefix `tiles/wmnf-stylized/v1`.
 - `sync-r2-map-data.yml`: R2 sync for map datasets.
 - `autogen-longtrail-geometries.yml`: long-trail geometry generation and commit automation.

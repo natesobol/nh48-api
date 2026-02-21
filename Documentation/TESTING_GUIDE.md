@@ -340,7 +340,7 @@ Manual validation checklist:
 - `deploy-worker.yml`: Worker deploy + all SEO/peak audit gates + production parity retry.
 - `prerender.yml`: Canonical prerender/sitemap/OG generator and committer for generated files.
 - `pages.yml`: Packages/deploys Pages artifact; only fallback-renders when generated outputs are missing.
-- `sync-r2-data.yml`: Syncs canonical `data/nh48.json` to R2 data bucket.
+- `sync-r2-wmnf-tiles.yml`: Manual WMNF stylized tile upload into photos bucket prefix `tiles/wmnf-stylized/v1`.
 - `sync-r2-map-data.yml`: Syncs Howker map data files to R2 map bucket.
 - `sync-r2-photos-wrangler.yml`: Canonical photo sync + metadata manifest + prerender refresh.
 - `sync-r2-photos.yml`: Manual emergency fallback only (deprecated).
@@ -388,9 +388,9 @@ This section defines the current production contract for R2 secrets and the exac
 - `sync-r2-map-data.yml`:
   - Auth: prefers `R2_ACCESS_KEY_ID`/`R2_SECRET_ACCESS_KEY`, fallback to `WIKI_R2_*`
   - Routing: `R2_ENDPOINT`, `R2_BUCKET`
-- `sync-r2-data.yml`:
-  - Auth: `R2_DATA_*` fallback to `R2_*`
-  - Routing: `R2_ENDPOINT`, `R2_DATA_BUCKET`
+- `sync-r2-wmnf-tiles.yml`:
+  - Auth: `WIKI_R2_ACCESS_KEY_ID`, `WIKI_R2_SECRET_ACCESS_KEY`
+  - Routing: `R2_BUCKET_NAME`/`R2_BUCKET`, `R2_ACCOUNT_ID` (fallback `WIKI_R2_ACCOUNT_ID`), `R2_ENDPOINT`
 
 ### Required GitHub Secret Values (Photos)
 For `.photos` uploads (`sync-r2-photos-wrangler.yml`):
@@ -478,7 +478,7 @@ Required for `.github/workflows/sync-r2-map-data.yml`:
 Notes:
 - Map workflow keeps endpoint and bucket routing on `R2_*` secrets only.
 - Workflow fails fast when any required value is empty.
-- `sync-r2-data.yml` remains unchanged and continues to use `R2_DATA_*` with fallback to `R2_*`.
+- `sync-r2-data.yml` is deprecated and removed. `nh48.json` is sourced directly from repo/raw via worker static proxy.
 
 ## Expected Run Matrix
 1. `worker.js` or worker SEO script changes on `main`:
@@ -488,7 +488,7 @@ Notes:
    - Runs: `sync-r2-photos-wrangler.yml`
    - Expected: photo upload, manifest rebuild, prerender commit.
 3. `data/nh48.json` changes on `main`:
-   - Runs: `sync-r2-data.yml`, `prerender.yml`, `pages.yml` (push).
+   - Runs: `prerender.yml`, `pages.yml`, and `deploy-worker.yml` checks (push).
 4. Generated-only file commits (`peaks/**`, `fr/peaks/**`, `long-trails/**`, sitemap files):
    - Runs: `pages.yml` deploy path.
    - Does not rerun: `prerender.yml` push path (protected via path exclusions in `push.paths`).

@@ -58,6 +58,7 @@ on:
       - 'scripts/audit-favicon-contract.js'
       - 'scripts/audit-nav-header-contract.js'
       - 'scripts/audit-range-map-stylized.js'
+      - 'scripts/audit-nh48-data-deprecation.js'
       - 'scripts/audit-sameas.js'
       - 'scripts/audit-entity-links.js'
       - 'scripts/generate-favicons.py'
@@ -119,6 +120,7 @@ on:
       - 'package-lock.json'
       - '.github/workflows/deploy-worker.yml'
       - '.github/workflows/sync-r2-wiki-media.yml'
+      - '.github/workflows/sync-r2-wmnf-tiles.yml'
       - 'Documentation/README.md'
       - 'Documentation/TESTING_GUIDE.md'
       - 'Documentation/CHANGES_SUMMARY.md'
@@ -257,6 +259,10 @@ jobs:
         id: range_map_stylized_audit
         run: node scripts/audit-range-map-stylized.js
 
+      - name: Run NH48 data deprecation audit (pre-deploy gate)
+        id: nh48_data_deprecation_audit
+        run: node scripts/audit-nh48-data-deprecation.js
+
       - name: Run wiki routes audit (pre-deploy gate)
         id: wiki_routes_audit
         run: node scripts/audit-wiki-routes.js
@@ -343,6 +349,7 @@ jobs:
           echo "- **Favicon contract audit:** \`${{ steps.favicon_contract_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Nav header contract audit:** \`${{ steps.nav_header_contract_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Range map stylized audit:** \`${{ steps.range_map_stylized_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **NH48 data deprecation audit:** \`${{ steps.nh48_data_deprecation_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Wiki routes audit:** \`${{ steps.wiki_routes_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Wiki media sync audit:** \`${{ steps.wiki_media_sync_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **sameAs audit:** \`${{ steps.sameas_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
@@ -373,6 +380,7 @@ jobs:
           echo "- \`node scripts/audit-favicon-contract.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-nav-header-contract.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-range-map-stylized.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-nh48-data-deprecation.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-wiki-routes.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-wiki-media-sync.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-sameas.js\`" >> "$GITHUB_STEP_SUMMARY"

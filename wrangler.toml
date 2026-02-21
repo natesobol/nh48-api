@@ -7,10 +7,10 @@ compatibility_date = "2026-01-05"
 pattern = "nh48.info/*"
 zone_name = "nh48.info"
 
-# R2 bucket binding for cached data (optional fallback)
+# R2 bucket binding for WMNF stylized terrain tiles (stored in photos bucket prefix)
 [[r2_buckets]]
-binding = "NH48_DATA"
-bucket_name = "nh48-data"
+binding = "WMNF_TILE_DATA"
+bucket_name = "nh48-photos"
 
 [[r2_buckets]]
 binding = "HOWKER_DATA"

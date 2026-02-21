@@ -1,0 +1,142 @@
+name: Sync R2 WMNF stylized tiles
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_dir:
+        description: Local build output directory containing hillshade/contours/metadata.json
+        required: false
+        default: tmp/wmnf-stylized/v1
+        type: string
+      prefix:
+        description: Destination prefix within the photos bucket
+        required: false
+        default: tiles/wmnf-stylized/v1
+        type: string
+      dry_run:
+        description: Validate config and print intended targets without uploading
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y python3-pip unzip
+          python3 -m pip install --upgrade pip
+          pip install awscli==1.* --upgrade
+
+      - name: Upload WMNF stylized tiles to photos bucket
+        env:
+          WIKI_R2_ACCESS_KEY_ID: ${{ secrets.WIKI_R2_ACCESS_KEY_ID }}
+          WIKI_R2_SECRET_ACCESS_KEY: ${{ secrets.WIKI_R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_REGION: auto
+          AWS_EC2_METADATA_DISABLED: true
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          WIKI_R2_ACCOUNT_ID: ${{ secrets.WIKI_R2_ACCOUNT_ID }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          WIKI_R2_BUCKET_NAME: ${{ secrets.WIKI_R2_BUCKET_NAME }}
+          SOURCE_DIR: ${{ inputs.source_dir }}
+          DEST_PREFIX: ${{ inputs.prefix }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+
+          ACCOUNT_ID="${R2_ACCOUNT_ID:-${WIKI_R2_ACCOUNT_ID:-}}"
+          BUCKET="${R2_BUCKET_NAME:-${R2_BUCKET:-}}"
+          SOURCE_DIR="${SOURCE_DIR%/}"
+          DEST_PREFIX="${DEST_PREFIX#/}"
+          DEST_PREFIX="${DEST_PREFIX%/}"
+
+          if [ -z "${WIKI_R2_ACCESS_KEY_ID:-}" ] || [ -z "${WIKI_R2_SECRET_ACCESS_KEY:-}" ]; then
+            echo "Missing required wiki auth secrets: WIKI_R2_ACCESS_KEY_ID and WIKI_R2_SECRET_ACCESS_KEY."
+            exit 1
+          fi
+          AWS_ACCESS_KEY_ID="${WIKI_R2_ACCESS_KEY_ID}"
+          AWS_SECRET_ACCESS_KEY="${WIKI_R2_SECRET_ACCESS_KEY}"
+          export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+
+          if [ -z "${ACCOUNT_ID}" ]; then
+            echo "Missing account id. Set R2_ACCOUNT_ID (or WIKI_R2_ACCOUNT_ID fallback)."
+            exit 1
+          fi
+          if [ -z "${BUCKET}" ]; then
+            echo "Missing bucket name. Set R2_BUCKET_NAME or R2_BUCKET."
+            exit 1
+          fi
+
+          if [ -n "${WIKI_R2_BUCKET_NAME:-}" ] && [ "${BUCKET}" = "${WIKI_R2_BUCKET_NAME}" ]; then
+            echo "WMNF tile sync resolved to WIKI_R2_BUCKET_NAME. Set R2_BUCKET_NAME/R2_BUCKET to the photos bucket."
+            exit 1
+          fi
+
+          if [ -n "${R2_ENDPOINT:-}" ] && [[ "${R2_ENDPOINT}" =~ ^https://([a-z0-9-]+)\.r2\.cloudflarestorage\.com/?$ ]]; then
+            ENDPOINT_ACCOUNT_ID="${BASH_REMATCH[1]}"
+            if [ "${ENDPOINT_ACCOUNT_ID}" = "${ACCOUNT_ID}" ]; then
+              ENDPOINT="${R2_ENDPOINT}"
+            else
+              echo "Ignoring R2_ENDPOINT account mismatch (${ENDPOINT_ACCOUNT_ID} != ${ACCOUNT_ID}); using account endpoint fallback."
+              ENDPOINT="https://${ACCOUNT_ID}.r2.cloudflarestorage.com"
+            fi
+          else
+            if [ -n "${R2_ENDPOINT:-}" ]; then
+              echo "Ignoring invalid R2_ENDPOINT for S3 signing; using account endpoint fallback."
+            fi
+            ENDPOINT="https://${ACCOUNT_ID}.r2.cloudflarestorage.com"
+          fi
+          ENDPOINT="${ENDPOINT%/}"
+
+          if [ ! -d "${SOURCE_DIR}" ]; then
+            echo "Missing source dir: ${SOURCE_DIR}"
+            exit 1
+          fi
+          if [ ! -d "${SOURCE_DIR}/hillshade" ]; then
+            echo "Missing source dir: ${SOURCE_DIR}/hillshade"
+            exit 1
+          fi
+          if [ ! -d "${SOURCE_DIR}/contours" ]; then
+            echo "Missing source dir: ${SOURCE_DIR}/contours"
+            exit 1
+          fi
+          if [ ! -f "${SOURCE_DIR}/metadata.json" ]; then
+            echo "Missing source file: ${SOURCE_DIR}/metadata.json"
+            exit 1
+          fi
+
+          echo "Target bucket: ${BUCKET}"
+          echo "Target prefix: ${DEST_PREFIX}"
+          echo "Endpoint: ${ENDPOINT}"
+          if [ "${DRY_RUN}" = "true" ]; then
+            echo "Dry run only; no uploads performed."
+            aws s3 ls "s3://${BUCKET}/${DEST_PREFIX}/" --endpoint-url "${ENDPOINT}" || true
+            exit 0
+          fi
+
+          aws s3 sync "${SOURCE_DIR}/hillshade" "s3://${BUCKET}/${DEST_PREFIX}/hillshade" \
+            --endpoint-url "${ENDPOINT}" \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude ".*" \
+            --exclude "*/.*"
+
+          aws s3 sync "${SOURCE_DIR}/contours" "s3://${BUCKET}/${DEST_PREFIX}/contours" \
+            --endpoint-url "${ENDPOINT}" \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude ".*" \
+            --exclude "*/.*"
+
+          aws s3 cp "${SOURCE_DIR}/metadata.json" "s3://${BUCKET}/${DEST_PREFIX}/metadata.json" \
+            --endpoint-url "${ENDPOINT}" \
+            --cache-control "public, max-age=300" \
+            --content-type "application/json"
+
+          echo "WMNF stylized tiles uploaded successfully."
