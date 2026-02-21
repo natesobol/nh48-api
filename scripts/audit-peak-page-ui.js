@@ -44,6 +44,14 @@ const REQUIRED_RICH_IDS = [
   'panelReaderScale',
   'panelReaderClose'
 ];
+const REQUIRED_PEAK_RUNTIME_ASSETS = [
+  { label: 'Leaflet stylesheet', regex: /href=["']https:\/\/unpkg\.com\/leaflet@1\.9\.4\/dist\/leaflet\.css["']/i },
+  { label: 'Peak detail stylesheet', regex: /href=["']\/css\/peak-detail\.css(?:\?[^"']*)?["']/i },
+  { label: 'Tooltip stylesheet', regex: /href=["']\/css\/ui-tooltips\.css(?:\?[^"']*)?["']/i },
+  { label: 'Leaflet script', regex: /src=["']https:\/\/unpkg\.com\/leaflet@1\.9\.4\/dist\/leaflet\.js["']/i },
+  { label: 'Tooltip script', regex: /src=["']\/js\/ui-tooltips\.js(?:\?[^"']*)?["']/i },
+  { label: 'Peak runtime module', regex: /src=["']\/js\/peak-detail-runtime\.js(?:\?[^"']*)?["']/i }
+];
 const REQUIRED_FAVICON_LINKS = [
   {
     label: 'favicon 48',
@@ -302,6 +310,12 @@ function assertRouteUiMarkers(body, label, failures) {
   if (!hasInjectedNav && !hasNavPlaceholder) {
     failures.push(`${label}: nav markup (.site-nav) or #nav-placeholder not detected`);
   }
+
+  REQUIRED_PEAK_RUNTIME_ASSETS.forEach((asset) => {
+    if (!asset.regex.test(body)) {
+      failures.push(`${label}: missing peak runtime asset (${asset.label}).`);
+    }
+  });
 
   REQUIRED_HERO_IDS.forEach((id) => {
     if (!new RegExp(`id=["']${id}["']`, 'i').test(body)) {

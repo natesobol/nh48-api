@@ -1680,9 +1680,61 @@ export default {
       return `${styleTag}\n${scriptTag}\n${html}`;
     }
 
-    function injectClientRuntimeCore(html) {
+    function injectPeakRuntimeAssets(html) {
+      if (typeof html !== 'string' || !html) return html;
+
+      const requiredAssets = [
+        {
+          test: /href=["']https:\/\/unpkg\.com\/leaflet@1\.9\.4\/dist\/leaflet\.css["']/i,
+          tag: '<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" data-nh48-peak-runtime="1" />'
+        },
+        {
+          test: /href=["']\/css\/peak-detail\.css(?:\?[^"']*)?["']/i,
+          tag: '<link rel="stylesheet" href="/css/peak-detail.css" data-nh48-peak-runtime="1" />'
+        },
+        {
+          test: /href=["']\/css\/ui-tooltips\.css(?:\?[^"']*)?["']/i,
+          tag: '<link rel="stylesheet" href="/css/ui-tooltips.css" data-nh48-peak-runtime="1" />'
+        },
+        {
+          test: /src=["']https:\/\/unpkg\.com\/leaflet@1\.9\.4\/dist\/leaflet\.js["']/i,
+          tag: '<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" data-nh48-peak-runtime="1"></script>'
+        },
+        {
+          test: /src=["']\/js\/i18n\.js(?:\?[^"']*)?["']/i,
+          tag: '<script type="module" src="/js/i18n.js" data-nh48-peak-runtime="1"></script>'
+        },
+        {
+          test: /src=["']\/js\/ui-tooltips\.js(?:\?[^"']*)?["']/i,
+          tag: '<script src="/js/ui-tooltips.js" defer data-nh48-peak-runtime="1"></script>'
+        },
+        {
+          test: /src=["']\/js\/peak-detail-runtime\.js(?:\?[^"']*)?["']/i,
+          tag: '<script type="module" src="/js/peak-detail-runtime.js" data-nh48-peak-runtime="1"></script>'
+        }
+      ];
+
+      const missingTags = requiredAssets
+        .filter((asset) => !asset.test.test(html))
+        .map((asset) => asset.tag);
+
+      if (!missingTags.length) return html;
+
+      const injectionBlock = `${missingTags.join('\n')}\n`;
+      if (/<\/head>/i.test(html)) {
+        return html.replace(/<\/head>/i, `${injectionBlock}</head>`);
+      }
+
+      return `${injectionBlock}${html}`;
+    }
+
+    function injectClientRuntimeCore(html, options = {}) {
       const withImageLoading = injectImageLoadingCore(html);
-      return injectAnalyticsCore(withImageLoading);
+      const withAnalytics = injectAnalyticsCore(withImageLoading);
+      if (options && options.includePeakRuntime === true) {
+        return injectPeakRuntimeAssets(withAnalytics);
+      }
+      return withAnalytics;
     }
 
     // Fetch translation dictionary if needed
@@ -7122,7 +7174,7 @@ export default {
         html = applyPeakTemplateImageTransforms(html);
         html = injectPeakSeasonHintSignals(html, seasonHint);
         html = ensurePeakParityAnchors(html);
-        html = injectClientRuntimeCore(html);
+        html = injectClientRuntimeCore(html, { includePeakRuntime: true });
         return new Response(html, {
           status: 200,
           headers: {
@@ -7472,7 +7524,9 @@ export default {
     ].join('\n');
     html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
     html = injectPeakSeasonHintSignals(html, seasonHint);
-    html = injectClientRuntimeCore(html);
+    html = injectClientRuntimeCore(html, {
+      includePeakRuntime: routeKeyword === 'peak' || routeKeyword === 'guest'
+    });
 
     // Return the modified interactive page with no-store caching for
     // immediate updates and consistent SEO metadata.
