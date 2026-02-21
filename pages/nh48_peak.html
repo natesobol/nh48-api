@@ -1982,6 +1982,36 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script>
+      (function () {
+        if (window.__NH48_PEAK_TOOLTIP_BRIDGE__) return;
+        window.__NH48_PEAK_TOOLTIP_BRIDGE__ = true;
+
+        var initTooltips = function () {
+          if (!window.NH48Tooltips || typeof window.NH48Tooltips.init !== 'function') return;
+          var pageName = '';
+          var titleEl = document.getElementById('peakHeroTitle') || document.getElementById('peakTitle');
+          if (titleEl && titleEl.textContent) {
+            pageName = titleEl.textContent.trim();
+          }
+          window.NH48Tooltips.init({
+            pageName: pageName || 'NH48 Peak',
+            idTextOverrides: {
+              monthlyWeatherMonthSelect: 'common.tooltips.monthDropdown'
+            }
+          });
+          if (typeof window.NH48Tooltips.refresh === 'function') {
+            window.NH48Tooltips.refresh(document.body);
+          }
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initTooltips, { once: true });
+        } else {
+          initTooltips();
+        }
+      })();
+    </script>
     <script type="module" src="/js/peak-detail-runtime.js"></script>
     <div id="footer-placeholder"></div>
 <script type="module">
