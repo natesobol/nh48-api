@@ -5,6 +5,7 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const PEAK_TEMPLATE_PATH = path.join(ROOT, 'pages', 'nh48_peak.html');
+const PEAK_RUNTIME_PATH = path.join(ROOT, 'js', 'peak-detail-runtime.js');
 const WORKER_PATH = path.join(ROOT, 'worker.js');
 const PEAK_DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
 const BASE_URL = process.env.PEAK_SCHEMA_PARITY_AUDIT_URL || getArgValue('--url') || '';
@@ -229,12 +230,12 @@ function routeToLocalPrerenderFile(route) {
   return path.join(ROOT, rel);
 }
 
-function assertSourceParity(templateContent, workerContent, failures) {
-  const templateBody = extractFunctionChunk(templateContent, 'buildMountainSchema');
+function assertSourceParity(templateContent, runtimeContent, workerContent, failures) {
+  const templateBody = extractFunctionChunk(runtimeContent, 'buildMountainSchema');
   const workerBody = extractFunctionChunk(workerContent, 'buildJsonLd');
 
   if (!templateBody) {
-    failures.push('Unable to locate buildMountainSchema() in pages/nh48_peak.html.');
+    failures.push('Unable to locate buildMountainSchema() in js/peak-detail-runtime.js.');
     return;
   }
   if (!workerBody) {
@@ -243,8 +244,8 @@ function assertSourceParity(templateContent, workerContent, failures) {
   }
 
   REQUIRED_TYPES.forEach((type) => {
-    if (!new RegExp(escRegExp(type), 'i').test(templateContent)) {
-      failures.push(`Template is missing schema type reference: ${type}`);
+    if (!new RegExp(escRegExp(type), 'i').test(runtimeContent)) {
+      failures.push(`Runtime module is missing schema type reference: ${type}`);
     }
     if (!new RegExp(escRegExp(type), 'i').test(workerContent)) {
       failures.push(`Worker is missing schema type reference: ${type}`);
@@ -263,8 +264,8 @@ function assertSourceParity(templateContent, workerContent, failures) {
 
   REQUIRED_IMAGE_EXIF_KEYS.forEach((key) => {
     const token = new RegExp(`['"]${escRegExp(key)}['"]`);
-    if (!token.test(templateContent)) {
-      failures.push(`Template schema builder is missing required ImageObject exif key "${key}".`);
+    if (!token.test(runtimeContent)) {
+      failures.push(`Runtime schema builder is missing required ImageObject exif key "${key}".`);
     }
     if (!token.test(workerContent)) {
       failures.push(`Worker schema builder is missing required ImageObject exif key "${key}".`);
@@ -272,13 +273,13 @@ function assertSourceParity(templateContent, workerContent, failures) {
   });
 
   if (!/ParkingFacility|containsPlace/.test(templateBody)) {
-    failures.push('Template schema builder is missing parking/access place enrichment logic.');
+    failures.push('Runtime schema builder is missing parking/access place enrichment logic.');
   }
   if (!/ParkingFacility|containsPlace/.test(workerBody)) {
     failures.push('Worker schema builder is missing parking/access place enrichment logic.');
   }
   if (!/hasPart/.test(templateBody)) {
-    failures.push('Template schema builder is missing narrative hasPart structured data.');
+    failures.push('Runtime schema builder is missing narrative hasPart structured data.');
   }
   if (!/hasPart/.test(workerBody)) {
     failures.push('Worker schema builder is missing narrative hasPart structured data.');
@@ -459,11 +460,27 @@ function assertLocalPrerenderSamples(failures) {
 
 async function main() {
   const failures = [];
+  if (!fs.existsSync(PEAK_TEMPLATE_PATH)) {
+    failures.push(`Missing template source file ${path.relative(ROOT, PEAK_TEMPLATE_PATH)}.`);
+  }
+  if (!fs.existsSync(PEAK_RUNTIME_PATH)) {
+    failures.push(`Missing runtime source file ${path.relative(ROOT, PEAK_RUNTIME_PATH)}.`);
+  }
+  if (!fs.existsSync(WORKER_PATH)) {
+    failures.push(`Missing worker source file ${path.relative(ROOT, WORKER_PATH)}.`);
+  }
+  if (failures.length) {
+    console.error(`Peak schema parity audit failed with ${failures.length} issue(s).`);
+    failures.forEach((failure) => console.error(`- ${failure}`));
+    process.exit(1);
+  }
+
   const templateContent = fs.readFileSync(PEAK_TEMPLATE_PATH, 'utf8');
+  const runtimeContent = fs.readFileSync(PEAK_RUNTIME_PATH, 'utf8');
   const workerContent = fs.readFileSync(WORKER_PATH, 'utf8');
   let runtimeRouteCount = SAMPLE_ROUTES.length;
 
-  assertSourceParity(templateContent, workerContent, failures);
+  assertSourceParity(templateContent, runtimeContent, workerContent, failures);
   if (BASE_URL) {
     runtimeRouteCount = await assertRuntimeParity(BASE_URL, failures);
   } else {

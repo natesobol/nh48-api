@@ -6,6 +6,7 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const NH48_PATH = path.join(ROOT, 'data', 'nh48.json');
 const PEAK_TEMPLATE_PATH = path.join(ROOT, 'pages', 'nh48_peak.html');
+const PEAK_RUNTIME_PATH = path.join(ROOT, 'js', 'peak-detail-runtime.js');
 const BASE_URL = process.env.PEAK_IMAGE_METADATA_AUDIT_URL || getArgValue('--url') || '';
 
 const LOCALES = ['en', 'fr'];
@@ -375,8 +376,12 @@ async function loadRenderedPage(slug, locale = 'en') {
 async function main() {
   const failures = [];
   const nh48 = await loadSourceNh48();
-  const template = fs.readFileSync(PEAK_TEMPLATE_PATH, 'utf8');
-  assertTemplateTitleFallbacks(template, failures);
+  if (!fs.existsSync(PEAK_RUNTIME_PATH)) {
+    failures.push(`Missing runtime module: ${path.relative(ROOT, PEAK_RUNTIME_PATH)}`);
+  } else {
+    const runtime = fs.readFileSync(PEAK_RUNTIME_PATH, 'utf8');
+    assertTemplateTitleFallbacks(runtime, failures);
+  }
   const targetSlugs = Object.keys(nh48 || {}).sort();
   let routeChecks = 0;
 

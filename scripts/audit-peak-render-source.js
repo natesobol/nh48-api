@@ -38,6 +38,10 @@ function stripHtml(value) {
     .trim();
 }
 
+function stripScriptBlocks(html) {
+  return String(html || '').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+}
+
 function escapeRegExp(value) {
   return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -186,7 +190,8 @@ async function assertLiveRoute(route, failures) {
   }
   assertSeasonHintRuntime(url, headers, body, failures);
 
-  if (/\$\{[^}]+\}/.test(body)) {
+  const bodyWithoutScripts = stripScriptBlocks(body);
+  if (/\$\{[^}]+\}/.test(bodyWithoutScripts)) {
     failures.push(`${url}: unresolved template token pattern detected (\\$\\{...\\}).`);
   }
 
@@ -203,7 +208,7 @@ async function assertLiveRoute(route, failures) {
   const peakSlug = slugMatch ? slugMatch[1] : '';
   if (peakSlug) {
     const rawPeakPhotoPattern = new RegExp(`https://photos\\.nh48\\.info/${escapeRegExp(peakSlug)}/`, 'i');
-    if (rawPeakPhotoPattern.test(body)) {
+    if (rawPeakPhotoPattern.test(bodyWithoutScripts)) {
       failures.push(`${url}: raw full-size peak photo URL detected for slug "${peakSlug}".`);
     }
   }
@@ -230,7 +235,8 @@ async function assertLivePrerenderRoute(route, failures) {
     failures.push(`${url}: expected exactly 1 meaningful <h1>, found ${h1Texts.length} (${h1Texts.join(' | ') || 'none'}).`);
   }
 
-  if (/\$\{[^}]+\}/.test(body)) {
+  const bodyWithoutScripts = stripScriptBlocks(body);
+  if (/\$\{[^}]+\}/.test(bodyWithoutScripts)) {
     failures.push(`${url}: unresolved template token pattern detected (\\$\\{...\\}).`);
   }
 
@@ -242,7 +248,7 @@ async function assertLivePrerenderRoute(route, failures) {
   const peakSlug = slugMatch ? slugMatch[1] : '';
   if (peakSlug) {
     const rawPeakPhotoPattern = new RegExp(`https://photos\\.nh48\\.info/${escapeRegExp(peakSlug)}/`, 'i');
-    if (rawPeakPhotoPattern.test(body)) {
+    if (rawPeakPhotoPattern.test(bodyWithoutScripts)) {
       failures.push(`${url}: raw full-size peak photo URL detected for slug "${peakSlug}".`);
     }
   }
@@ -292,15 +298,18 @@ function assertLocalPrerenderRoutes(failures) {
       continue;
     }
     const body = fs.readFileSync(filePath, 'utf8');
-    if (/\$\{[^}]+\}/.test(body)) {
+    const bodyWithoutScripts = stripScriptBlocks(body);
+    if (/\$\{[^}]+\}/.test(bodyWithoutScripts)) {
       failures.push(`${route}: unresolved template token pattern detected (\\$\\{...\\}).`);
     }
     const h1Texts = extractMeaningfulH1Texts(body);
     if (h1Texts.length !== 1) {
       failures.push(`${route}: expected exactly 1 meaningful <h1>, found ${h1Texts.length} (${h1Texts.join(' | ') || 'none'}).`);
     }
-    if (!/class=["'][^"']*site-nav[^"']*["']/i.test(body)) {
-      failures.push(`${route}: nav markup (.site-nav) not detected.`);
+    const hasInjectedNav = /class=["'][^"']*site-nav[^"']*["']/i.test(body);
+    const hasNavPlaceholder = /id=["']nav-placeholder["']/i.test(body);
+    if (!hasInjectedNav && !hasNavPlaceholder) {
+      failures.push(`${route}: nav markup (.site-nav) or #nav-placeholder not detected.`);
     }
     if (!/https:\/\/photos\.nh48\.info\/cdn-cgi\/image\//i.test(body)) {
       failures.push(`${route}: expected transformed image URL (/cdn-cgi/image/) not found.`);
@@ -309,7 +318,7 @@ function assertLocalPrerenderRoutes(failures) {
     const peakSlug = slugMatch ? slugMatch[1] : '';
     if (peakSlug) {
       const rawPeakPhotoPattern = new RegExp(`https://photos\\.nh48\\.info/${escapeRegExp(peakSlug)}/`, 'i');
-      if (rawPeakPhotoPattern.test(body)) {
+      if (rawPeakPhotoPattern.test(bodyWithoutScripts)) {
         failures.push(`${route}: raw full-size peak photo URL detected for slug "${peakSlug}".`);
       }
     }

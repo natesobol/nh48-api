@@ -5,6 +5,7 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const TEMPLATE_PATH = path.join(ROOT, 'pages', 'nh48_peak.html');
+const RUNTIME_MODULE_PATH = path.join(ROOT, 'js', 'peak-detail-runtime.js');
 const PEAK_DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
 const BASE_URL = process.env.PEAK_UI_AUDIT_URL || getArgValue('--url') || '';
 
@@ -26,6 +27,22 @@ const REQUIRED_PANEL_IDS = [
   'monthlyWeatherMonthSelect',
   'panelReaderModal',
   'panelReaderContent'
+];
+const REQUIRED_RICH_IDS = [
+  'peakDescriptionPanel',
+  'generalInfoPanel',
+  'photoMetadataPanel',
+  'peakMapPanel',
+  'peakMap',
+  'peakMapStatus',
+  'terrainGrid',
+  'conditionsGrid',
+  'trailTestedNotesPanel',
+  'trailTestedNotesGrid',
+  'socialCardModal',
+  'socialCardContainer',
+  'panelReaderScale',
+  'panelReaderClose'
 ];
 const REQUIRED_FAVICON_LINKS = [
   {
@@ -153,13 +170,6 @@ function runTemplateChecks() {
   }
   assertIncludes(html, 'id="nav-placeholder"', 'Template missing #nav-placeholder for worker nav injection', failures);
   assertIncludes(html, 'id="getDirectionsBtn"', 'Template missing hero Get Directions button', failures);
-  const hasOverviewExpandHook =
-    html.includes('id="overviewExpandBtn"') ||
-    html.includes("expandBtn.id = 'overviewExpandBtn'") ||
-    html.includes('expandBtn.id = "overviewExpandBtn"');
-  if (!hasOverviewExpandHook) {
-    failures.push('Template missing overview expand control hook');
-  }
   assertIncludes(html, 'id="trailsHubSection"', 'Template missing unified trails section container', failures);
   assertIncludes(html, 'id="relatedTrailsGrid"', 'Template missing Related Trails grid', failures);
   assertIncludes(html, 'id="parkingAccessGrid"', 'Template missing Parking & Access panel/grid', failures);
@@ -172,18 +182,38 @@ function runTemplateChecks() {
   assertIncludes(html, 'id="panelReaderScale"', 'Template missing panel reader scale control', failures);
   assertIncludes(html, 'id="panelReaderClose"', 'Template missing panel reader close control', failures);
 
-  if (!/function\s+renderRelatedTrails\s*\(/i.test(html)) {
-    failures.push('Template missing renderRelatedTrails() implementation');
+  REQUIRED_RICH_IDS.forEach((id) => {
+    assertIncludes(html, `id="${id}"`, `Template missing rich-runtime container #${id}`, failures);
+  });
+
+  if (!/src=["']\/js\/peak-detail-runtime\.js["']/i.test(html)) {
+    failures.push('Template missing shared peak runtime module include (/js/peak-detail-runtime.js).');
   }
-  const renderRoutesBody = extractFunctionBody(html, 'renderRoutes');
-  if (!renderRoutesBody || !/routes\.forEach\s*\(/i.test(renderRoutesBody)) {
-    failures.push('renderRoutes() does not iterate all routes with routes.forEach');
-  }
-  if (/\.\s*slice\s*\(/i.test(renderRoutesBody)) {
-    failures.push('renderRoutes() appears to slice/truncate routes');
-  }
-  if (!/function\s+renderMonthlyWeatherPanel\s*\(/i.test(html)) {
-    failures.push('Template missing renderMonthlyWeatherPanel() implementation');
+
+  let runtimeSource = '';
+  if (!fs.existsSync(RUNTIME_MODULE_PATH)) {
+    failures.push(`Missing runtime module: ${path.relative(ROOT, RUNTIME_MODULE_PATH)}`);
+  } else {
+    runtimeSource = fs.readFileSync(RUNTIME_MODULE_PATH, 'utf8');
+    if (!/function\s+renderRelatedTrails\s*\(/i.test(runtimeSource)) {
+      failures.push('Runtime module missing renderRelatedTrails() implementation.');
+    }
+    const renderRoutesBody = extractFunctionBody(runtimeSource, 'renderRoutes');
+    if (!renderRoutesBody || !/routes\.forEach\s*\(/i.test(renderRoutesBody)) {
+      failures.push('Runtime renderRoutes() does not iterate all routes with routes.forEach.');
+    }
+    if (/\.\s*slice\s*\(/i.test(renderRoutesBody)) {
+      failures.push('Runtime renderRoutes() appears to slice/truncate routes.');
+    }
+    if (!/function\s+renderMonthlyWeatherPanel\s*\(/i.test(runtimeSource)) {
+      failures.push('Runtime module missing renderMonthlyWeatherPanel() implementation.');
+    }
+    if (!/window\.NH48PeakRuntime\s*=/.test(runtimeSource) || !/NH48PeakRuntime\.init\s*=/.test(runtimeSource)) {
+      failures.push('Runtime module missing NH48PeakRuntime.init() exposure.');
+    }
+    if (!/overviewExpandBtn/.test(runtimeSource)) {
+      failures.push('Runtime module missing overview expand control hook.');
+    }
   }
   if (!/js\/ui-tooltips\.js/i.test(html)) {
     failures.push('Template missing shared tooltip module include (/js/ui-tooltips.js).');
@@ -191,26 +221,26 @@ function runTemplateChecks() {
   if (!/css\/ui-tooltips\.css/i.test(html)) {
     failures.push('Template missing shared tooltip stylesheet include (/css/ui-tooltips.css).');
   }
-  if (!/NH48Tooltips\s*\.\s*init\s*\(/i.test(html)) {
-    failures.push('Template missing NH48Tooltips.init() integration.');
+  if (!/NH48Tooltips\s*\.\s*init\s*\(/i.test(runtimeSource)) {
+    failures.push('Runtime module missing NH48Tooltips.init() integration.');
   }
-  if (!/monthlyWeatherMonthSelect\s*:\s*['"]common\.tooltips\.monthDropdown['"]/i.test(html)) {
-    failures.push('Template missing monthly weather tooltip override mapping.');
+  if (!/monthlyWeatherMonthSelect\s*:\s*['"]common\.tooltips\.monthDropdown['"]/i.test(runtimeSource)) {
+    failures.push('Runtime module missing monthly weather tooltip override mapping.');
   }
-  if (!/is-desc-accessibility/i.test(html)) {
-    failures.push('Template missing desc/accessibility row exception classes.');
+  if (!/is-desc-accessibility/i.test(runtimeSource)) {
+    failures.push('Runtime module missing desc/accessibility row exception classes.');
   }
   ['peak.generalInfo.typicalTime', 'peak.generalInfo.bestSeasons', 'peak.generalInfo.waterAvailability', 'peak.generalInfo.cellReception'].forEach((key) => {
-    if (!html.includes(key)) {
-      failures.push(`Template missing General Info quick fact key reference: ${key}`);
+    if (!runtimeSource.includes(key)) {
+      failures.push(`Runtime module missing General Info quick fact key reference: ${key}`);
     }
   });
-  const directionsBody = extractFunctionBody(html, 'updateDirectionsButton');
+  const directionsBody = extractFunctionBody(runtimeSource, 'updateDirectionsButton');
   if (!/aria-disabled/i.test(directionsBody)) {
-    failures.push('updateDirectionsButton() does not expose disabled state logic.');
+    failures.push('Runtime updateDirectionsButton() does not expose disabled state logic.');
   }
-  if (!/Parking location unavailable|stationnement indisponible/i.test(html)) {
-    failures.push('Template missing disabled-directions messaging.');
+  if (!/Parking location unavailable|stationnement indisponible/i.test(runtimeSource)) {
+    failures.push('Runtime module missing disabled-directions messaging.');
   }
 
   return failures;
@@ -267,8 +297,10 @@ function assertRouteUiMarkers(body, label, failures) {
     });
   }
 
-  if (!/class=["'][^"']*site-nav[^"']*["']/i.test(body)) {
-    failures.push(`${label}: nav markup (.site-nav) not detected`);
+  const hasInjectedNav = /class=["'][^"']*site-nav[^"']*["']/i.test(body);
+  const hasNavPlaceholder = /id=["']nav-placeholder["']/i.test(body);
+  if (!hasInjectedNav && !hasNavPlaceholder) {
+    failures.push(`${label}: nav markup (.site-nav) or #nav-placeholder not detected`);
   }
 
   REQUIRED_HERO_IDS.forEach((id) => {
@@ -280,6 +312,12 @@ function assertRouteUiMarkers(body, label, failures) {
   REQUIRED_PANEL_IDS.forEach((id) => {
     if (!new RegExp(`id=["']${id}["']`, 'i').test(body)) {
       failures.push(`${label}: missing required panel/grid #${id}`);
+    }
+  });
+
+  REQUIRED_RICH_IDS.forEach((id) => {
+    if (!new RegExp(`id=["']${id}["']`, 'i').test(body)) {
+      failures.push(`${label}: missing rich runtime container #${id}`);
     }
   });
 

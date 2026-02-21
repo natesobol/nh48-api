@@ -1974,6 +1974,27 @@ const renderTemplate = (templateHtml, values) => {
   }, templateHtml);
 };
 
+const buildPeakBootstrapPayload = ({
+  slug,
+  langCode,
+  peak,
+  localizedName,
+  summaryText,
+  heroImage,
+  heroAlt
+}) => {
+  const payload = {
+    slug,
+    locale: langCode,
+    localizedName,
+    summary: summaryText,
+    heroImage,
+    heroAlt,
+    peak
+  };
+  return JSON.stringify(payload);
+};
+
 const readFile = (filePath, label) => {
   try {
     return fs.readFileSync(filePath, "utf8");
@@ -2230,6 +2251,17 @@ const main = () => {
           LABEL_GALLERY: escapeHtml(lang.labels.gallery),
           LABEL_FOOTER: escapeHtml(lang.labels.footer),
           EXPERIENCE_SECTION: experienceSection,
+          PEAK_BOOTSTRAP_JSON: escapeScriptJson(
+            buildPeakBootstrapPayload({
+              slug,
+              langCode: lang.code,
+              peak,
+              localizedName,
+              summaryText: summary || lang.summaryFallback(localizedName),
+              heroImage: primaryPhoto.url,
+              heroAlt
+            })
+          ),
           JSON_LD: escapeScriptJson(
             buildJsonLd(
               peak,
