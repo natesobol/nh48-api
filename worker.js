@@ -124,6 +124,29 @@ export default {
       'Content-Type': 'application/json; charset=utf-8'
     });
 
+    const WMNF_STYLIZED_PREFIX = 'tiles/wmnf-stylized/v1';
+    const WMNF_HILLSHADE_PREFIX = `${WMNF_STYLIZED_PREFIX}/hillshade`;
+    const WMNF_CONTOURS_PREFIX = `${WMNF_STYLIZED_PREFIX}/contours`;
+    const WMNF_METADATA_KEY = `${WMNF_STYLIZED_PREFIX}/metadata.json`;
+    const LONG_TILE_CACHE_CONTROL = 'public, max-age=31536000, immutable';
+    const STYLE_METADATA_CACHE_CONTROL = 'public, max-age=300';
+
+    const tileResponseHeaders = (contentType, cacheControl = LONG_TILE_CACHE_CONTROL) => ({
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,HEAD,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Cache-Control': cacheControl,
+      'Content-Type': contentType
+    });
+
+    const tileJsonError = (status, payload, cacheControl = STYLE_METADATA_CACHE_CONTROL) => {
+      const headers = tileResponseHeaders('application/json; charset=utf-8', cacheControl);
+      if (request.method === 'HEAD') {
+        return new Response(null, { status, headers });
+      }
+      return new Response(JSON.stringify(payload), { status, headers });
+    };
+
     const weatherJsonResponse = (status, payload, maxAgeSeconds = 300) => {
       const headers = weatherCorsHeaders(maxAgeSeconds);
       if (request.method === 'HEAD') {
@@ -195,6 +218,112 @@ export default {
       if (!['GET', 'HEAD'].includes(request.method)) {
         return new Response('Method Not Allowed', { status: 405, headers: weatherCorsHeaders(60) });
       }
+    }
+
+    if (pathname === '/api/tiles/wmnf-style-metadata.json') {
+      if (request.method === 'OPTIONS') {
+        return new Response(null, {
+          status: 204,
+          headers: tileResponseHeaders('application/json; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+        });
+      }
+      if (!['GET', 'HEAD'].includes(request.method)) {
+        return tileJsonError(405, { error: 'Method not allowed.' }, STYLE_METADATA_CACHE_CONTROL);
+      }
+      if (!env.NH48_DATA) {
+        return tileJsonError(503, { error: 'Stylized tile bucket binding unavailable.' }, STYLE_METADATA_CACHE_CONTROL);
+      }
+      const metadataObject = await env.NH48_DATA.get(WMNF_METADATA_KEY);
+      if (!metadataObject) {
+        return tileJsonError(
+          404,
+          { error: 'Stylized style metadata not found.', key: WMNF_METADATA_KEY },
+          STYLE_METADATA_CACHE_CONTROL
+        );
+      }
+      return new Response(request.method === 'HEAD' ? null : metadataObject.body, {
+        status: 200,
+        headers: tileResponseHeaders('application/json; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+      });
+    }
+
+    if (pathname.startsWith('/api/tiles/wmnf-hillshade/')) {
+      const match = pathname.match(/^\/api\/tiles\/wmnf-hillshade\/(\d+)\/(\d+)\/(\d+)\.png$/);
+      if (!match) {
+        return new Response('Invalid WMNF hillshade tile path.', {
+          status: 400,
+          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+        });
+      }
+      if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: tileResponseHeaders('image/png', LONG_TILE_CACHE_CONTROL) });
+      }
+      if (!['GET', 'HEAD'].includes(request.method)) {
+        return new Response('Method Not Allowed', {
+          status: 405,
+          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+        });
+      }
+      if (!env.NH48_DATA) {
+        return new Response('Stylized tile bucket binding unavailable.', {
+          status: 503,
+          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+        });
+      }
+      const [, z, x, y] = match;
+      const key = `${WMNF_HILLSHADE_PREFIX}/${z}/${x}/${y}.png`;
+      const tileObject = await env.NH48_DATA.get(key);
+      if (!tileObject) {
+        return new Response('WMNF hillshade tile not found.', {
+          status: 404,
+          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+        });
+      }
+      return new Response(request.method === 'HEAD' ? null : tileObject.body, {
+        status: 200,
+        headers: tileResponseHeaders('image/png', LONG_TILE_CACHE_CONTROL)
+      });
+    }
+
+    if (pathname.startsWith('/api/tiles/wmnf-contours/')) {
+      const match = pathname.match(/^\/api\/tiles\/wmnf-contours\/(\d+)\/(\d+)\/(\d+)\.pbf$/);
+      if (!match) {
+        return new Response('Invalid WMNF contour tile path.', {
+          status: 400,
+          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+        });
+      }
+      if (request.method === 'OPTIONS') {
+        return new Response(null, {
+          status: 204,
+          headers: tileResponseHeaders('application/x-protobuf', LONG_TILE_CACHE_CONTROL)
+        });
+      }
+      if (!['GET', 'HEAD'].includes(request.method)) {
+        return new Response('Method Not Allowed', {
+          status: 405,
+          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+        });
+      }
+      if (!env.NH48_DATA) {
+        return new Response('Stylized tile bucket binding unavailable.', {
+          status: 503,
+          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+        });
+      }
+      const [, z, x, y] = match;
+      const key = `${WMNF_CONTOURS_PREFIX}/${z}/${x}/${y}.pbf`;
+      const tileObject = await env.NH48_DATA.get(key);
+      if (!tileObject) {
+        return new Response('WMNF contour tile not found.', {
+          status: 404,
+          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+        });
+      }
+      return new Response(request.method === 'HEAD' ? null : tileObject.body, {
+        status: 200,
+        headers: tileResponseHeaders('application/x-protobuf', LONG_TILE_CACHE_CONTROL)
+      });
     }
 
     if (pathname.startsWith('/api/tiles/opentopo/')) {

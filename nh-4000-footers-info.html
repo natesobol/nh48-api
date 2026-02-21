@@ -831,6 +831,17 @@
       .leaflet-container {
         background: #0b1220;
       }
+      #peakMapLeaflet.map-style-stylized .leaflet-container,
+      #peakMapLeaflet.map-style-stylized {
+        background: #e7e5f1;
+      }
+      #peakMapLeaflet .leaflet-pane.wmnf-hillshade-pane .leaflet-tile {
+        opacity: 0.42;
+        mix-blend-mode: multiply;
+      }
+      #peakMapLeaflet .leaflet-pane.wmnf-contours-pane path {
+        vector-effect: non-scaling-stroke;
+      }
       .map-legend {
         display: flex;
         gap: 12px;
@@ -1950,6 +1961,7 @@
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.vectorgrid@1.3.0/dist/Leaflet.VectorGrid.bundled.js"></script>
     <script>
       let canonicalRanges = [];
 
@@ -2463,11 +2475,19 @@
       let mapResizeObserver = null;
       let leafletMap = null;
       let leafletLayer = null;
-      let leafletStylizedLayer = null;
+      let leafletStylizedHillshadeLayer = null;
+      let leafletStylizedContourLayer = null;
       let leafletMarkers = null;
       let leafletBounds = null;
       let activeMapStyle = 'osm';
-      const STYLIZED_TILE_FILTER = 'brightness(0.4) invert(1) contrast(2)';
+      let wmnfStyleMetadata = null;
+      let stylizedFallbackNotified = false;
+      const WMNF_STYLE_PARAM = 'wmnf_v1';
+      const WMNF_STYLE_ENDPOINTS = {
+        metadata: '/api/tiles/wmnf-style-metadata.json',
+        hillshade: '/api/tiles/wmnf-hillshade/{z}/{x}/{y}.png',
+        contours: '/api/tiles/wmnf-contours/{z}/{x}/{y}.pbf'
+      };
 
       function scheduleMapRender() {
         if (mapRenderQueued) return;
@@ -2633,18 +2653,16 @@
           keyboard: false,
           tap: false
         });
+        if (leafletMap.createPane) {
+          const hillshadePane = leafletMap.createPane('wmnf-hillshade-pane');
+          hillshadePane.style.zIndex = '220';
+          const contourPane = leafletMap.createPane('wmnf-contours-pane');
+          contourPane.style.zIndex = '260';
+        }
         leafletLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
           maxZoom: 17,
           attribution: 'Map data (c) OpenStreetMap contributors, SRTM | Tiles (c) OpenTopoMap'
         }).addTo(leafletMap);
-        leafletStylizedLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-          maxZoom: 17,
-          attribution: 'Map data (c) OpenStreetMap contributors, SRTM | Tiles (c) OpenTopoMap'
-        });
-        leafletStylizedLayer.on('tileload', (event) => {
-          if (!event?.tile) return;
-          event.tile.style.filter = STYLIZED_TILE_FILTER;
-        });
         leafletMarkers = L.layerGroup().addTo(leafletMap);
       }
 
@@ -2676,6 +2694,110 @@
           container.appendChild(hint);
         }
         hint.textContent = message;
+      }
+
+      async function loadWmnfStyleMetadata() {
+        if (wmnfStyleMetadata) return wmnfStyleMetadata;
+        const response = await fetch(WMNF_STYLE_ENDPOINTS.metadata, { headers: { 'Accept': 'application/json' } });
+        if (!response.ok) {
+          throw new Error(`WMNF metadata unavailable (${response.status})`);
+        }
+        const payload = await response.json();
+        wmnfStyleMetadata = payload;
+        return wmnfStyleMetadata;
+      }
+
+      function removeStylizedLayers() {
+        if (!leafletMap) return;
+        if (leafletStylizedHillshadeLayer && leafletMap.hasLayer(leafletStylizedHillshadeLayer)) {
+          leafletMap.removeLayer(leafletStylizedHillshadeLayer);
+        }
+        if (leafletStylizedContourLayer && leafletMap.hasLayer(leafletStylizedContourLayer)) {
+          leafletMap.removeLayer(leafletStylizedContourLayer);
+        }
+        const container = document.getElementById('peakMapLeaflet');
+        if (container) container.classList.remove('map-style-stylized');
+      }
+
+      function buildContourStyle(properties = {}) {
+        const asNumber = (value) => {
+          const numeric = Number(value);
+          return Number.isFinite(numeric) ? numeric : null;
+        };
+        const majorFlag = asNumber(properties.is_major);
+        const intervalFt = asNumber(properties.interval_ft);
+        const elevationFt = asNumber(properties.elevation_ft);
+        const contourType = String(properties.contour_type || '').toLowerCase();
+        const level = asNumber(properties.level);
+        const isMajor = majorFlag === 1
+          || contourType === 'major'
+          || intervalFt === 200
+          || (level !== null && level % 4 === 0)
+          || (elevationFt !== null && elevationFt % 200 === 0);
+        return {
+          color: isMajor ? '#4b5564' : '#7a8392',
+          weight: isMajor ? 1.55 : 0.85,
+          opacity: isMajor ? 0.65 : 0.35,
+          fill: false,
+          lineJoin: 'round',
+          lineCap: 'round'
+        };
+      }
+
+      function ensureStylizedLayersInitialized() {
+        if (!leafletMap || typeof L === 'undefined') return false;
+        if (!leafletStylizedHillshadeLayer) {
+          leafletStylizedHillshadeLayer = L.tileLayer(WMNF_STYLE_ENDPOINTS.hillshade, {
+            maxZoom: 17,
+            pane: 'wmnf-hillshade-pane',
+            attribution: 'WMNF stylized terrain'
+          });
+          leafletStylizedHillshadeLayer.on('tileerror', () => {
+            if (activeMapStyle === 'stylized') {
+              void setMapStyle('osm', {
+                keepHint: true,
+                fallbackMessage: 'Stylized terrain tiles are unavailable right now. Showing OSM Topo.'
+              });
+            }
+          });
+        }
+        if (!leafletStylizedContourLayer) {
+          if (!L.vectorGrid || typeof L.vectorGrid.protobuf !== 'function') return false;
+          leafletStylizedContourLayer = L.vectorGrid.protobuf(WMNF_STYLE_ENDPOINTS.contours, {
+            pane: 'wmnf-contours-pane',
+            interactive: false,
+            maxZoom: 17,
+            maxNativeZoom: 14,
+            rendererFactory: L.canvas.tile,
+            vectorTileLayerStyles: {
+              contours: buildContourStyle,
+              contour: buildContourStyle
+            }
+          });
+          leafletStylizedContourLayer.on('tileerror', () => {
+            if (activeMapStyle === 'stylized') {
+              void setMapStyle('osm', {
+                keepHint: true,
+                fallbackMessage: 'Stylized contour tiles are unavailable right now. Showing OSM Topo.'
+              });
+            }
+          });
+        }
+        return true;
+      }
+
+      async function ensureStylizedModeReady() {
+        initLeafletMap();
+        if (!leafletMap || !leafletLayer) return false;
+        if (!L.vectorGrid || typeof L.vectorGrid.protobuf !== 'function') {
+          throw new Error('Leaflet VectorGrid plugin is unavailable.');
+        }
+        await loadWmnfStyleMetadata();
+        const initialized = ensureStylizedLayersInitialized();
+        if (!initialized || !leafletStylizedHillshadeLayer || !leafletStylizedContourLayer) {
+          throw new Error('Stylized WMNF layers failed to initialize.');
+        }
+        return true;
       }
 
       function renderLeafletMap(points) {
@@ -2710,7 +2832,8 @@
         leafletMap.fitBounds(leafletBounds.pad(0.2), { animate: false });
       }
 
-      function setMapStyle(style) {
+      async function setMapStyle(style, options = {}) {
+        const { keepHint = false, fallbackMessage = '' } = options;
         activeMapStyle = style;
         const stylizedBtn = document.getElementById('mapStyleStylized');
         const osmBtn = document.getElementById('mapStyleOsm');
@@ -2727,31 +2850,61 @@
           leafletEl.style.display = 'block';
         }
         initLeafletMap();
-        if (leafletMap && leafletLayer && leafletStylizedLayer) {
-          if (style === 'stylized') {
+        if (!leafletMap || !leafletLayer) return;
+        if (style === 'stylized') {
+          try {
+            await ensureStylizedModeReady();
+            stylizedFallbackNotified = false;
             if (leafletMap.hasLayer(leafletLayer)) {
               leafletMap.removeLayer(leafletLayer);
             }
-            if (!leafletMap.hasLayer(leafletStylizedLayer)) {
-              leafletStylizedLayer.addTo(leafletMap);
+            if (leafletStylizedHillshadeLayer && !leafletMap.hasLayer(leafletStylizedHillshadeLayer)) {
+              leafletStylizedHillshadeLayer.addTo(leafletMap);
             }
-          } else {
-            if (leafletMap.hasLayer(leafletStylizedLayer)) {
-              leafletMap.removeLayer(leafletStylizedLayer);
+            if (leafletStylizedContourLayer && !leafletMap.hasLayer(leafletStylizedContourLayer)) {
+              leafletStylizedContourLayer.addTo(leafletMap);
             }
+            if (leafletEl) {
+              leafletEl.classList.add('map-style-stylized');
+            }
+            if (!keepHint) {
+              setLeafletMapHint('');
+            }
+          } catch (error) {
+            console.warn('Stylized map fallback to OSM', error);
+            if (!stylizedFallbackNotified) {
+              setLeafletMapHint(fallbackMessage || 'Stylized mode is not ready yet. Showing OSM Topo.');
+              stylizedFallbackNotified = true;
+            }
+            removeStylizedLayers();
             if (!leafletMap.hasLayer(leafletLayer)) {
               leafletLayer.addTo(leafletMap);
             }
-          }
-          setTimeout(() => {
-            if (leafletMap) {
-              leafletMap.invalidateSize();
-              if (leafletBounds) {
-                leafletMap.fitBounds(leafletBounds.pad(0.2), { animate: false });
-              }
+            activeMapStyle = 'osm';
+            if (stylizedBtn && osmBtn) {
+              stylizedBtn.classList.remove('active');
+              osmBtn.classList.add('active');
+              stylizedBtn.setAttribute('aria-selected', 'false');
+              osmBtn.setAttribute('aria-selected', 'true');
             }
-          }, 60);
+          }
+        } else {
+          removeStylizedLayers();
+          if (!leafletMap.hasLayer(leafletLayer)) {
+            leafletLayer.addTo(leafletMap);
+          }
+          if (!keepHint) {
+            setLeafletMapHint('');
+          }
         }
+        setTimeout(() => {
+          if (leafletMap) {
+            leafletMap.invalidateSize();
+            if (leafletBounds) {
+              leafletMap.fitBounds(leafletBounds.pad(0.2), { animate: false });
+            }
+          }
+        }, 60);
         const { filtered } = getFilteredMapPeaks();
         renderLeafletMap(filtered);
       }
@@ -3018,8 +3171,12 @@
         const stylizedBtn = document.getElementById('mapStyleStylized');
         const osmBtn = document.getElementById('mapStyleOsm');
         if (stylizedBtn && osmBtn) {
-          stylizedBtn.addEventListener('click', () => setMapStyle('stylized'));
-          osmBtn.addEventListener('click', () => setMapStyle('osm'));
+          stylizedBtn.addEventListener('click', () => {
+            void setMapStyle('stylized');
+          });
+          osmBtn.addEventListener('click', () => {
+            void setMapStyle('osm');
+          });
         }
         const zoomInBtn = document.getElementById('mapZoomIn');
         const zoomOutBtn = document.getElementById('mapZoomOut');
@@ -3072,7 +3229,9 @@
         }
         loadRanges().finally(() => {
           init();
-          setMapStyle('osm');
+          const queryStyle = new URLSearchParams(window.location.search).get('map_style');
+          const initialStyle = queryStyle === WMNF_STYLE_PARAM ? 'stylized' : 'osm';
+          void setMapStyle(initialStyle);
         });
       });
   </script>
