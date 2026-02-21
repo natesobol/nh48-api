@@ -139,6 +139,15 @@ export default {
       'Content-Type': contentType
     });
 
+    const tileResponseHeadersWithDebug = (contentType, cacheControl, debugValues = {}) => {
+      const headers = tileResponseHeaders(contentType, cacheControl);
+      Object.entries(debugValues).forEach(([key, value]) => {
+        if (value === undefined || value === null || value === '') return;
+        headers[key] = String(value);
+      });
+      return headers;
+    };
+
     const tileJsonError = (status, payload, cacheControl = STYLE_METADATA_CACHE_CONTROL) => {
       const headers = tileResponseHeaders('application/json; charset=utf-8', cacheControl);
       if (request.method === 'HEAD') {
@@ -220,13 +229,16 @@ export default {
       }
     }
 
-    if (pathname === '/api/tiles/wmnf-style-metadata.json') {
-      if (request.method === 'OPTIONS') {
-        return new Response(null, {
-          status: 204,
-          headers: tileResponseHeaders('application/json; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
-        });
-      }
+      if (pathname === '/api/tiles/wmnf-style-metadata.json') {
+        if (request.method === 'OPTIONS') {
+          return new Response(null, {
+            status: 204,
+            headers: tileResponseHeadersWithDebug('application/json; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+              'X-WMNF-Route': 'metadata',
+              'X-WMNF-Metadata-Key': WMNF_METADATA_KEY
+            })
+          });
+        }
       if (!['GET', 'HEAD'].includes(request.method)) {
         return tileJsonError(405, { error: 'Method not allowed.' }, STYLE_METADATA_CACHE_CONTROL);
       }
@@ -236,55 +248,81 @@ export default {
         hillshadeTemplate: '/api/tiles/wmnf-hillshade/{z}/{x}/{y}.png',
         contourTemplate: '/api/tiles/wmnf-contours/{z}/{x}/{y}.pbf'
       };
-      if (!env.WMNF_TILE_DATA) {
-        const payload = {
-          ...fallbackMetadata,
-          error: 'Stylized tile bucket binding unavailable.'
-        };
-        return new Response(request.method === 'HEAD' ? null : JSON.stringify(payload), {
-          status: 200,
-          headers: tileResponseHeaders('application/json; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
-        });
-      }
+        if (!env.WMNF_TILE_DATA) {
+          const payload = {
+            ...fallbackMetadata,
+            error: 'Stylized tile bucket binding unavailable.'
+          };
+          return new Response(request.method === 'HEAD' ? null : JSON.stringify(payload), {
+            status: 200,
+            headers: tileResponseHeadersWithDebug('application/json; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+              'X-WMNF-Route': 'metadata',
+              'X-WMNF-Source': 'binding-missing',
+              'X-WMNF-Metadata-Key': WMNF_METADATA_KEY
+            })
+          });
+        }
       const metadataObject = await env.WMNF_TILE_DATA.get(WMNF_METADATA_KEY);
-      if (!metadataObject) {
-        const payload = {
-          ...fallbackMetadata,
-          error: 'Stylized style metadata not found.',
-          key: WMNF_METADATA_KEY
-        };
-        return new Response(request.method === 'HEAD' ? null : JSON.stringify(payload), {
-          status: 200,
-          headers: tileResponseHeaders('application/json; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
-        });
-      }
+        if (!metadataObject) {
+          const payload = {
+            ...fallbackMetadata,
+            error: 'Stylized style metadata not found.',
+            key: WMNF_METADATA_KEY
+          };
+          return new Response(request.method === 'HEAD' ? null : JSON.stringify(payload), {
+            status: 200,
+            headers: tileResponseHeadersWithDebug('application/json; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+              'X-WMNF-Route': 'metadata',
+              'X-WMNF-Source': 'r2-miss',
+              'X-WMNF-Metadata-Key': WMNF_METADATA_KEY
+            })
+          });
+        }
       return new Response(request.method === 'HEAD' ? null : metadataObject.body, {
         status: 200,
-        headers: tileResponseHeaders('application/json; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+        headers: tileResponseHeadersWithDebug('application/json; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+          'X-WMNF-Route': 'metadata',
+          'X-WMNF-Source': 'r2-hit',
+          'X-WMNF-Metadata-Key': WMNF_METADATA_KEY
+        })
       });
     }
 
-    if (pathname.startsWith('/api/tiles/wmnf-hillshade/')) {
-      const match = pathname.match(/^\/api\/tiles\/wmnf-hillshade\/(\d+)\/(\d+)\/(\d+)\.png$/);
-      if (!match) {
-        return new Response('Invalid WMNF hillshade tile path.', {
-          status: 400,
-          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
-        });
-      }
+      if (pathname.startsWith('/api/tiles/wmnf-hillshade/')) {
+        const match = pathname.match(/^\/api\/tiles\/wmnf-hillshade\/(\d+)\/(\d+)\/(\d+)\.png$/);
+        if (!match) {
+          return new Response('Invalid WMNF hillshade tile path.', {
+            status: 400,
+            headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+              'X-WMNF-Route': 'hillshade',
+              'X-WMNF-Error': 'invalid-path'
+            })
+          });
+        }
       if (request.method === 'OPTIONS') {
-        return new Response(null, { status: 204, headers: tileResponseHeaders('image/png', LONG_TILE_CACHE_CONTROL) });
+        return new Response(null, {
+          status: 204,
+          headers: tileResponseHeadersWithDebug('image/png', LONG_TILE_CACHE_CONTROL, {
+            'X-WMNF-Route': 'hillshade'
+          })
+        });
       }
       if (!['GET', 'HEAD'].includes(request.method)) {
         return new Response('Method Not Allowed', {
           status: 405,
-          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-WMNF-Route': 'hillshade',
+            'X-WMNF-Error': 'method-not-allowed'
+          })
         });
       }
       if (!env.WMNF_TILE_DATA) {
         return new Response('Stylized tile bucket binding unavailable.', {
           status: 503,
-          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-WMNF-Route': 'hillshade',
+            'X-WMNF-Source': 'binding-missing'
+          })
         });
       }
       const [, z, x, y] = match;
@@ -293,12 +331,20 @@ export default {
       if (!tileObject) {
         return new Response('WMNF hillshade tile not found.', {
           status: 404,
-          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-WMNF-Route': 'hillshade',
+            'X-WMNF-Source': 'r2-miss',
+            'X-WMNF-Tile-Key': key
+          })
         });
       }
       return new Response(request.method === 'HEAD' ? null : tileObject.body, {
         status: 200,
-        headers: tileResponseHeaders('image/png', LONG_TILE_CACHE_CONTROL)
+        headers: tileResponseHeadersWithDebug('image/png', LONG_TILE_CACHE_CONTROL, {
+          'X-WMNF-Route': 'hillshade',
+          'X-WMNF-Source': 'r2-hit',
+          'X-WMNF-Tile-Key': key
+        })
       });
     }
 
@@ -307,25 +353,36 @@ export default {
       if (!match) {
         return new Response('Invalid WMNF contour tile path.', {
           status: 400,
-          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-WMNF-Route': 'contours',
+            'X-WMNF-Error': 'invalid-path'
+          })
         });
       }
       if (request.method === 'OPTIONS') {
         return new Response(null, {
           status: 204,
-          headers: tileResponseHeaders('application/x-protobuf', LONG_TILE_CACHE_CONTROL)
+          headers: tileResponseHeadersWithDebug('application/x-protobuf', LONG_TILE_CACHE_CONTROL, {
+            'X-WMNF-Route': 'contours'
+          })
         });
       }
       if (!['GET', 'HEAD'].includes(request.method)) {
         return new Response('Method Not Allowed', {
           status: 405,
-          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-WMNF-Route': 'contours',
+            'X-WMNF-Error': 'method-not-allowed'
+          })
         });
       }
       if (!env.WMNF_TILE_DATA) {
         return new Response('Stylized tile bucket binding unavailable.', {
           status: 503,
-          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-WMNF-Route': 'contours',
+            'X-WMNF-Source': 'binding-missing'
+          })
         });
       }
       const [, z, x, y] = match;
@@ -334,12 +391,20 @@ export default {
       if (!tileObject) {
         return new Response('WMNF contour tile not found.', {
           status: 404,
-          headers: tileResponseHeaders('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL)
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-WMNF-Route': 'contours',
+            'X-WMNF-Source': 'r2-miss',
+            'X-WMNF-Tile-Key': key
+          })
         });
       }
       return new Response(request.method === 'HEAD' ? null : tileObject.body, {
         status: 200,
-        headers: tileResponseHeaders('application/x-protobuf', LONG_TILE_CACHE_CONTROL)
+        headers: tileResponseHeadersWithDebug('application/x-protobuf', LONG_TILE_CACHE_CONTROL, {
+          'X-WMNF-Route': 'contours',
+          'X-WMNF-Source': 'r2-hit',
+          'X-WMNF-Tile-Key': key
+        })
       });
     }
 

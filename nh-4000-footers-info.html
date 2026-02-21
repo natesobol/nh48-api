@@ -2488,6 +2488,145 @@
         hillshade: '/api/tiles/wmnf-hillshade/{z}/{x}/{y}.png',
         contours: '/api/tiles/wmnf-contours/{z}/{x}/{y}.pbf'
       };
+      const MAP_DEBUG_PARAM = 'map_debug';
+      const WMNF_DEBUG_PREFIX = '[WMNF Stylized]';
+      let mapDebugEnabled = false;
+      const wmnfDebugState = {
+        metadata: { attempts: 0, lastUrl: '', lastStatus: null, lastDurationMs: null, lastPayload: null, lastError: null },
+        hillshade: { loading: 0, loaded: 0, loadStart: 0, tileLoad: 0, tileError: 0, lastTileUrl: '', lastError: null },
+        contours: { loading: 0, loaded: 0, loadStart: 0, tileLoad: 0, tileError: 0, lastTileUrl: '', lastError: null },
+        mode: { switches: 0, lastRequested: null, lastApplied: null, lastFallbackReason: null }
+      };
+
+      function readMapDebugPreference() {
+        const search = new URLSearchParams(window.location.search);
+        const param = String(search.get(MAP_DEBUG_PARAM) || '').trim().toLowerCase();
+        if (['1', 'true', 'on', 'debug'].includes(param)) return true;
+        if (['0', 'false', 'off'].includes(param)) return false;
+        try {
+          return localStorage.getItem('nh48_map_debug') === '1';
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function persistMapDebugPreference(enabled) {
+        try {
+          localStorage.setItem('nh48_map_debug', enabled ? '1' : '0');
+        } catch (error) {
+          // Ignore storage errors.
+        }
+      }
+
+      function debugLog(level, message, details) {
+        if (!mapDebugEnabled) return;
+        const stamp = new Date().toISOString();
+        const prefix = `${WMNF_DEBUG_PREFIX} ${stamp} ${message}`;
+        if (details === undefined) {
+          console[level](prefix);
+          return;
+        }
+        console[level](prefix, details);
+      }
+
+      function debugErrorValue(error) {
+        if (!error) return '';
+        if (typeof error === 'string') return error;
+        return error.message || String(error);
+      }
+
+      function setMapDebugEnabled(enabled) {
+        mapDebugEnabled = !!enabled;
+        persistMapDebugPreference(mapDebugEnabled);
+        if (window.NH48_WMNF_DEBUG) {
+          window.NH48_WMNF_DEBUG.enabled = mapDebugEnabled;
+        }
+        debugLog('info', mapDebugEnabled ? 'Debug logging enabled.' : 'Debug logging disabled.');
+      }
+
+      function normalizeTileCoords(coords) {
+        if (!coords || typeof coords !== 'object') return '';
+        const z = Number(coords.z);
+        const x = Number(coords.x);
+        const y = Number(coords.y);
+        if (!Number.isFinite(z) || !Number.isFinite(x) || !Number.isFinite(y)) return '';
+        return `${z}/${x}/${y}`;
+      }
+
+      function tileTemplateToUrl(template, z, x, y) {
+        return String(template)
+          .replace('{z}', String(z))
+          .replace('{x}', String(x))
+          .replace('{y}', String(y));
+      }
+
+      function lngLatToTile(lng, lat, zoom) {
+        const n = Math.pow(2, zoom);
+        const x = Math.floor(((lng + 180) / 360) * n);
+        const latRad = (lat * Math.PI) / 180;
+        const y = Math.floor(((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n);
+        return { x, y };
+      }
+
+      function attachStylizedDebugBridge() {
+        window.NH48_WMNF_DEBUG = {
+          enabled: mapDebugEnabled,
+          state: wmnfDebugState,
+          enable: () => setMapDebugEnabled(true),
+          disable: () => setMapDebugEnabled(false),
+          dump: () => {
+            console.log(`${WMNF_DEBUG_PREFIX} state snapshot`, JSON.parse(JSON.stringify(wmnfDebugState)));
+          },
+          probe: () => runStylizedDebugProbe()
+        };
+      }
+
+      async function runStylizedDebugProbe() {
+        const center = leafletMap ? leafletMap.getCenter() : { lat: 44.2, lng: -71.4 };
+        const zoom = leafletMap ? Math.max(7, Math.min(14, Math.round(leafletMap.getZoom()))) : 10;
+        const tile = lngLatToTile(center.lng, center.lat, zoom);
+        const probes = [
+          { label: 'metadata', url: WMNF_STYLE_ENDPOINTS.metadata },
+          { label: 'hillshade', url: tileTemplateToUrl(WMNF_STYLE_ENDPOINTS.hillshade, zoom, tile.x, tile.y) },
+          { label: 'contours', url: tileTemplateToUrl(WMNF_STYLE_ENDPOINTS.contours, zoom, tile.x, tile.y) }
+        ];
+        debugLog('info', 'Running stylized probe.', { center, zoom, tile, probes });
+        const results = [];
+        for (const probe of probes) {
+          const startedAt = performance.now();
+          try {
+            const response = await fetch(probe.url, { method: 'GET', headers: { 'Accept': '*/*' } });
+            let preview = '';
+            if (!response.ok) {
+              preview = (await response.text().catch(() => '')).slice(0, 240);
+            }
+            const durationMs = Math.round(performance.now() - startedAt);
+            const item = {
+              ...probe,
+              status: response.status,
+              ok: response.ok,
+              contentType: response.headers.get('content-type') || '',
+              cacheControl: response.headers.get('cache-control') || '',
+              durationMs,
+              preview
+            };
+            results.push(item);
+            debugLog(response.ok ? 'info' : 'warn', `Probe ${probe.label} completed.`, item);
+          } catch (error) {
+            const item = { ...probe, ok: false, status: 0, error: debugErrorValue(error) };
+            results.push(item);
+            debugLog('error', `Probe ${probe.label} failed.`, item);
+          }
+        }
+        return results;
+      }
+
+      mapDebugEnabled = readMapDebugPreference();
+      attachStylizedDebugBridge();
+      debugLog('info', 'Stylized debug bootstrap.', {
+        enabled: mapDebugEnabled,
+        endpoints: WMNF_STYLE_ENDPOINTS
+      });
 
       function scheduleMapRender() {
         if (mapRenderQueued) return;
@@ -2644,6 +2783,9 @@
         if (leafletMap || typeof L === 'undefined') return;
         const container = document.getElementById('peakMapLeaflet');
         if (!container) return;
+        debugLog('info', 'Initializing Leaflet map.', {
+          hasVectorGrid: !!(L.vectorGrid && typeof L.vectorGrid.protobuf === 'function')
+        });
         leafletMap = L.map(container, {
           zoomControl: false,
           scrollWheelZoom: false,
@@ -2663,6 +2805,12 @@
           maxZoom: 17,
           attribution: 'Map data (c) OpenStreetMap contributors, SRTM | Tiles (c) OpenTopoMap'
         }).addTo(leafletMap);
+        leafletLayer.on('tileerror', (event) => {
+          debugLog('warn', 'OSM tile error.', {
+            coords: normalizeTileCoords(event?.coords),
+            src: event?.tile?.currentSrc || event?.tile?.src || ''
+          });
+        });
         leafletMarkers = L.layerGroup().addTo(leafletMap);
       }
 
@@ -2697,21 +2845,48 @@
       }
 
       async function loadWmnfStyleMetadata() {
-        if (wmnfStyleMetadata) return wmnfStyleMetadata;
+        if (wmnfStyleMetadata) {
+          debugLog('info', 'Using cached stylized metadata.', wmnfStyleMetadata);
+          return wmnfStyleMetadata;
+        }
+        wmnfDebugState.metadata.attempts += 1;
+        wmnfDebugState.metadata.lastUrl = WMNF_STYLE_ENDPOINTS.metadata;
+        const startedAt = performance.now();
+        debugLog('info', 'Fetching stylized metadata.', { url: WMNF_STYLE_ENDPOINTS.metadata });
         const response = await fetch(WMNF_STYLE_ENDPOINTS.metadata, { headers: { 'Accept': 'application/json' } });
+        wmnfDebugState.metadata.lastStatus = response.status;
+        wmnfDebugState.metadata.lastDurationMs = Math.round(performance.now() - startedAt);
+        const contentType = response.headers.get('content-type') || '';
+        debugLog(response.ok ? 'info' : 'warn', 'Stylized metadata response received.', {
+          status: response.status,
+          ok: response.ok,
+          contentType,
+          durationMs: wmnfDebugState.metadata.lastDurationMs,
+          cacheControl: response.headers.get('cache-control') || ''
+        });
         if (!response.ok) {
+          const responsePreview = (await response.text().catch(() => '')).slice(0, 240);
+          wmnfDebugState.metadata.lastError = `HTTP ${response.status}`;
+          debugLog('warn', 'Stylized metadata fetch failed.', {
+            status: response.status,
+            preview: responsePreview
+          });
           if (response.status === 404) {
             wmnfStyleMetadata = {
               version: WMNF_STYLE_PARAM,
               available: false,
               message: 'Stylized terrain assets are not published yet.'
             };
+            wmnfDebugState.metadata.lastPayload = wmnfStyleMetadata;
             return wmnfStyleMetadata;
           }
           throw new Error(`WMNF metadata unavailable (${response.status})`);
         }
         const payload = await response.json().catch(() => ({}));
         wmnfStyleMetadata = payload && typeof payload === 'object' ? payload : {};
+        wmnfDebugState.metadata.lastPayload = wmnfStyleMetadata;
+        wmnfDebugState.metadata.lastError = null;
+        debugLog('info', 'Stylized metadata payload parsed.', wmnfStyleMetadata);
         return wmnfStyleMetadata;
       }
 
@@ -2755,12 +2930,48 @@
       function ensureStylizedLayersInitialized() {
         if (!leafletMap || typeof L === 'undefined') return false;
         if (!leafletStylizedHillshadeLayer) {
+          debugLog('info', 'Creating WMNF hillshade tile layer.', { template: WMNF_STYLE_ENDPOINTS.hillshade });
           leafletStylizedHillshadeLayer = L.tileLayer(WMNF_STYLE_ENDPOINTS.hillshade, {
             maxZoom: 17,
             pane: 'wmnf-hillshade-pane',
             attribution: 'WMNF stylized terrain'
           });
-          leafletStylizedHillshadeLayer.on('tileerror', () => {
+          leafletStylizedHillshadeLayer.on('loading', () => {
+            wmnfDebugState.hillshade.loading += 1;
+            debugLog('info', 'Hillshade loading event.', { loadingCount: wmnfDebugState.hillshade.loading });
+          });
+          leafletStylizedHillshadeLayer.on('load', () => {
+            wmnfDebugState.hillshade.loaded += 1;
+            debugLog('info', 'Hillshade load event.', { loadedCount: wmnfDebugState.hillshade.loaded });
+          });
+          leafletStylizedHillshadeLayer.on('tileloadstart', (event) => {
+            wmnfDebugState.hillshade.loadStart += 1;
+            wmnfDebugState.hillshade.lastTileUrl = event?.tile?.currentSrc || event?.tile?.src || '';
+            debugLog('info', 'Hillshade tile load start.', {
+              count: wmnfDebugState.hillshade.loadStart,
+              coords: normalizeTileCoords(event?.coords),
+              src: wmnfDebugState.hillshade.lastTileUrl
+            });
+          });
+          leafletStylizedHillshadeLayer.on('tileload', (event) => {
+            wmnfDebugState.hillshade.tileLoad += 1;
+            wmnfDebugState.hillshade.lastTileUrl = event?.tile?.currentSrc || event?.tile?.src || '';
+            debugLog('info', 'Hillshade tile loaded.', {
+              count: wmnfDebugState.hillshade.tileLoad,
+              coords: normalizeTileCoords(event?.coords),
+              src: wmnfDebugState.hillshade.lastTileUrl
+            });
+          });
+          leafletStylizedHillshadeLayer.on('tileerror', (event) => {
+            wmnfDebugState.hillshade.tileError += 1;
+            wmnfDebugState.hillshade.lastTileUrl = event?.tile?.currentSrc || event?.tile?.src || '';
+            wmnfDebugState.hillshade.lastError = debugErrorValue(event?.error) || 'Tile error (missing or unavailable hillshade tile).';
+            debugLog('warn', 'Hillshade tile error; falling back to OSM.', {
+              count: wmnfDebugState.hillshade.tileError,
+              coords: normalizeTileCoords(event?.coords),
+              src: wmnfDebugState.hillshade.lastTileUrl,
+              error: wmnfDebugState.hillshade.lastError
+            });
             if (activeMapStyle === 'stylized') {
               void setMapStyle('osm', {
                 keepHint: true,
@@ -2771,6 +2982,7 @@
         }
         if (!leafletStylizedContourLayer) {
           if (!L.vectorGrid || typeof L.vectorGrid.protobuf !== 'function') return false;
+          debugLog('info', 'Creating WMNF contour vector layer.', { template: WMNF_STYLE_ENDPOINTS.contours });
           leafletStylizedContourLayer = L.vectorGrid.protobuf(WMNF_STYLE_ENDPOINTS.contours, {
             pane: 'wmnf-contours-pane',
             interactive: false,
@@ -2782,7 +2994,42 @@
               contour: buildContourStyle
             }
           });
-          leafletStylizedContourLayer.on('tileerror', () => {
+          leafletStylizedContourLayer.on('loading', () => {
+            wmnfDebugState.contours.loading += 1;
+            debugLog('info', 'Contour loading event.', { loadingCount: wmnfDebugState.contours.loading });
+          });
+          leafletStylizedContourLayer.on('load', () => {
+            wmnfDebugState.contours.loaded += 1;
+            debugLog('info', 'Contour load event.', { loadedCount: wmnfDebugState.contours.loaded });
+          });
+          leafletStylizedContourLayer.on('tileloadstart', (event) => {
+            wmnfDebugState.contours.loadStart += 1;
+            const coords = normalizeTileCoords(event?.coords);
+            wmnfDebugState.contours.lastTileUrl = coords || wmnfDebugState.contours.lastTileUrl;
+            debugLog('info', 'Contour tile load start.', {
+              count: wmnfDebugState.contours.loadStart,
+              coords
+            });
+          });
+          leafletStylizedContourLayer.on('tileload', (event) => {
+            wmnfDebugState.contours.tileLoad += 1;
+            const coords = normalizeTileCoords(event?.coords);
+            wmnfDebugState.contours.lastTileUrl = coords || wmnfDebugState.contours.lastTileUrl;
+            debugLog('info', 'Contour tile loaded.', {
+              count: wmnfDebugState.contours.tileLoad,
+              coords
+            });
+          });
+          leafletStylizedContourLayer.on('tileerror', (event) => {
+            wmnfDebugState.contours.tileError += 1;
+            const coords = normalizeTileCoords(event?.coords);
+            wmnfDebugState.contours.lastTileUrl = coords || wmnfDebugState.contours.lastTileUrl;
+            wmnfDebugState.contours.lastError = debugErrorValue(event?.error) || 'Vector tile error.';
+            debugLog('warn', 'Contour tile error; falling back to OSM.', {
+              count: wmnfDebugState.contours.tileError,
+              coords,
+              error: wmnfDebugState.contours.lastError
+            });
             if (activeMapStyle === 'stylized') {
               void setMapStyle('osm', {
                 keepHint: true,
@@ -2798,10 +3045,12 @@
         initLeafletMap();
         if (!leafletMap || !leafletLayer) return false;
         if (!L.vectorGrid || typeof L.vectorGrid.protobuf !== 'function') {
+          debugLog('error', 'VectorGrid plugin unavailable.');
           throw new Error('Leaflet VectorGrid plugin is unavailable.');
         }
         const metadata = await loadWmnfStyleMetadata();
         if (metadata && metadata.available === false) {
+          debugLog('warn', 'Stylized metadata reports unavailable assets.', metadata);
           return {
             ready: false,
             fallbackMessage: metadata.message || metadata.error || 'Stylized mode is not ready yet. Showing OSM Topo.'
@@ -2809,8 +3058,17 @@
         }
         const initialized = ensureStylizedLayersInitialized();
         if (!initialized || !leafletStylizedHillshadeLayer || !leafletStylizedContourLayer) {
+          debugLog('error', 'Stylized layers failed to initialize.', {
+            initialized,
+            hasHillshade: !!leafletStylizedHillshadeLayer,
+            hasContours: !!leafletStylizedContourLayer
+          });
           throw new Error('Stylized WMNF layers failed to initialize.');
         }
+        debugLog('info', 'Stylized mode ready.', {
+          metadataVersion: metadata?.version || '',
+          metadataAvailable: metadata?.available
+        });
         return { ready: true };
       }
 
@@ -2848,6 +3106,14 @@
 
       async function setMapStyle(style, options = {}) {
         const { keepHint = false, fallbackMessage = '' } = options;
+        wmnfDebugState.mode.switches += 1;
+        wmnfDebugState.mode.lastRequested = style;
+        debugLog('info', 'Map style switch requested.', {
+          style,
+          keepHint,
+          fallbackMessage,
+          switchCount: wmnfDebugState.mode.switches
+        });
         activeMapStyle = style;
         const stylizedBtn = document.getElementById('mapStyleStylized');
         const osmBtn = document.getElementById('mapStyleOsm');
@@ -2869,6 +3135,10 @@
           try {
             const stylizedState = await ensureStylizedModeReady();
             if (!stylizedState || stylizedState.ready === false) {
+              wmnfDebugState.mode.lastFallbackReason = stylizedState?.fallbackMessage || fallbackMessage || 'Stylized mode returned not ready.';
+              debugLog('warn', 'Stylized mode not ready, falling back.', {
+                reason: wmnfDebugState.mode.lastFallbackReason
+              });
               if (!stylizedFallbackNotified) {
                 setLeafletMapHint(stylizedState?.fallbackMessage || fallbackMessage || 'Stylized mode is not ready yet. Showing OSM Topo.');
                 stylizedFallbackNotified = true;
@@ -2878,6 +3148,7 @@
                 leafletLayer.addTo(leafletMap);
               }
               activeMapStyle = 'osm';
+              wmnfDebugState.mode.lastApplied = 'osm';
               if (stylizedBtn && osmBtn) {
                 stylizedBtn.classList.remove('active');
                 osmBtn.classList.add('active');
@@ -2887,6 +3158,8 @@
               return;
             }
             stylizedFallbackNotified = false;
+            wmnfDebugState.mode.lastApplied = 'stylized';
+            wmnfDebugState.mode.lastFallbackReason = null;
             if (leafletMap.hasLayer(leafletLayer)) {
               leafletMap.removeLayer(leafletLayer);
             }
@@ -2902,8 +3175,15 @@
             if (!keepHint) {
               setLeafletMapHint('');
             }
+            if (mapDebugEnabled) {
+              void runStylizedDebugProbe();
+            }
           } catch (error) {
             console.warn('Stylized map fallback to OSM', error?.message || error);
+            wmnfDebugState.mode.lastFallbackReason = debugErrorValue(error);
+            debugLog('error', 'Stylized mode failed; falling back to OSM.', {
+              reason: wmnfDebugState.mode.lastFallbackReason
+            });
             if (!stylizedFallbackNotified) {
               setLeafletMapHint(fallbackMessage || 'Stylized mode is not ready yet. Showing OSM Topo.');
               stylizedFallbackNotified = true;
@@ -2913,11 +3193,15 @@
               leafletLayer.addTo(leafletMap);
             }
             activeMapStyle = 'osm';
+            wmnfDebugState.mode.lastApplied = 'osm';
             if (stylizedBtn && osmBtn) {
               stylizedBtn.classList.remove('active');
               osmBtn.classList.add('active');
               stylizedBtn.setAttribute('aria-selected', 'false');
               osmBtn.setAttribute('aria-selected', 'true');
+            }
+            if (mapDebugEnabled) {
+              void runStylizedDebugProbe();
             }
           }
         } else {
@@ -2925,6 +3209,7 @@
           if (!leafletMap.hasLayer(leafletLayer)) {
             leafletLayer.addTo(leafletMap);
           }
+          wmnfDebugState.mode.lastApplied = 'osm';
           if (!keepHint) {
             setLeafletMapHint('');
           }
@@ -3197,14 +3482,24 @@
       }
 
       document.addEventListener('DOMContentLoaded', () => {
+        debugLog('info', 'DOM ready for NH48 guide map.', {
+          url: window.location.href,
+          mapDebugEnabled
+        });
+        if (mapDebugEnabled) {
+          console.info(`${WMNF_DEBUG_PREFIX} debug console ready. Use window.NH48_WMNF_DEBUG.dump() and window.NH48_WMNF_DEBUG.probe().`);
+        }
         setupTocObserver();
         const mapSection = document.getElementById('range-map');
         observeMapResize();
         const stylizedBtn = document.getElementById('mapStyleStylized');
         const osmBtn = document.getElementById('mapStyleOsm');
         if (stylizedBtn && osmBtn) {
-          stylizedBtn.addEventListener('click', () => {
+          stylizedBtn.addEventListener('click', (event) => {
             void setMapStyle('stylized');
+            if (mapDebugEnabled || event.shiftKey) {
+              void runStylizedDebugProbe();
+            }
           });
           osmBtn.addEventListener('click', () => {
             void setMapStyle('osm');
@@ -3263,6 +3558,7 @@
           init();
           const queryStyle = new URLSearchParams(window.location.search).get('map_style');
           const initialStyle = queryStyle === WMNF_STYLE_PARAM ? 'stylized' : 'osm';
+          debugLog('info', 'Applying initial map style.', { queryStyle, initialStyle });
           void setMapStyle(initialStyle);
         });
       });

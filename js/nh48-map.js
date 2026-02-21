@@ -34,8 +34,8 @@
     'nh48Map.sortElevation': 'Elevation (high to low)',
     'nh48Map.showPanel': 'Show panel',
     'nh48Map.hidePanel': 'Hide panel',
-    'nh48Map.detailFallbackTitle': 'Select a peak',
-    'nh48Map.detailFallbackBody': 'Choose a marker or list item to view elevation, range, and route context.',
+    'nh48Map.detailFallbackTitle': 'Map instructions',
+    'nh48Map.detailFallbackBody': 'Select a mountain to view details. Use search, range, and sort to narrow the list, then click a marker or list row to load elevation, prominence, difficulty, trail type, and exposure for that summit.',
     'nh48Map.detailElevation': 'Elevation',
     'nh48Map.detailProminence': 'Prominence',
     'nh48Map.detailRange': 'Range',
@@ -816,7 +816,7 @@
 
     state.filtered = sortPeaks(filtered, state.sort);
     if (!state.filtered.some((peak) => peak.slug === state.selectedSlug)) {
-      state.selectedSlug = state.filtered[0]?.slug || '';
+      state.selectedSlug = '';
     }
 
     renderPeakList();
@@ -932,18 +932,24 @@
   function initMap() {
     const topoLabel = t('nh48Map.layerTopo');
     const standardLabel = t('nh48Map.layerStandard');
-    const topoLayer = L.tileLayer('/api/tiles/opentopo/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenTopoMap contributors'
-    });
-    const standardLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    });
 
     state.map = L.map('nh48Map', {
-      layers: [topoLayer],
       zoomControl: true,
       scrollWheelZoom: true
     }).setView([44.1, -71.35], 8);
+
+    const basePane = state.map.createPane('nh48BasePane');
+    basePane.style.zIndex = '210';
+
+    const topoLayer = L.tileLayer('/api/tiles/opentopo/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenTopoMap contributors',
+      pane: 'nh48BasePane'
+    });
+    const standardLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      pane: 'nh48BasePane'
+    });
+    topoLayer.addTo(state.map);
 
     const weatherTilePane = state.map.createPane('weatherTilePane');
     weatherTilePane.style.zIndex = '330';
@@ -2098,7 +2104,7 @@
       state.bySlug = new Map(peaks.map((peak) => [peak.slug, peak]));
       state.ranges = buildRangeEntries(peaks);
       state.filtered = [...peaks].sort((a, b) => a.name.localeCompare(b.name));
-      state.selectedSlug = state.filtered[0]?.slug || '';
+      state.selectedSlug = '';
 
       renderMarkers();
       renderRangeControls();

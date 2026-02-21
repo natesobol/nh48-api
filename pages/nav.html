@@ -284,7 +284,9 @@
     flex-wrap: wrap;
     justify-content: flex-end;
     max-width: 260px;
-    margin-left: auto;
+    margin-left: 0;
+    justify-self: end;
+    grid-column: 3;
   }
 
   .nh48-lang-label {
@@ -297,6 +299,8 @@
 
   .nh48-lang-menu {
     position: relative;
+    display: inline-flex;
+    align-items: center;
   }
 
   .nh48-lang-toggle {
@@ -304,13 +308,13 @@
     align-items: center;
     gap: 9px;
     min-height: 34px;
-    padding: var(--lang-toggle-pad-y) calc(var(--lang-toggle-pad-x) + 5px);
+    padding: var(--lang-toggle-pad-y, 5px) calc(var(--lang-toggle-pad-x, 13px) + 8px);
     border-radius: 10px;
     border: 1px solid rgba(148, 163, 184, 0.5);
     background: rgba(15, 23, 42, 0.6);
     color: #ffffff;
     cursor: pointer;
-    font-size: var(--lang-toggle-font-size);
+    font-size: var(--lang-toggle-font-size, 16px);
     text-transform: uppercase;
     letter-spacing: 0.6px;
   }
@@ -335,6 +339,11 @@
 
   .nh48-lang-toggle .flag {
     font-size: 16px;
+    width: 1.2em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1px;
   }
 
   .nh48-lang-toggle-text {
@@ -344,7 +353,7 @@
 
   .nh48-lang-caret {
     font-size: 0.65rem;
-    margin-left: 3px;
+    margin-left: 4px;
     opacity: 0.8;
   }
 
@@ -409,6 +418,9 @@
   }
 
   .site-nav {
+    --lang-toggle-font-size: 16px;
+    --lang-toggle-pad-y: 5px;
+    --lang-toggle-pad-x: 13px;
     padding: 0;
     gap: 0;
     flex-direction: column;
@@ -419,9 +431,10 @@
 
   .site-nav-utility {
     min-height: 86px;
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    justify-content: space-between;
+    justify-items: stretch;
     gap: 14px;
     padding: 8px 24px;
     background: linear-gradient(180deg, #101525 0%, #0d1120 100%);
@@ -429,7 +442,9 @@
   }
 
   .site-nav-utility .site-nav-logo {
-    margin-inline: 6px 10px;
+    grid-column: 2;
+    justify-self: center;
+    margin-inline: 0;
   }
 
   .site-nav-main {
@@ -445,6 +460,7 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
+    justify-self: start;
   }
 
   .site-nav-a11y-label {
@@ -557,6 +573,7 @@
     }
 
     .site-nav-utility {
+      display: flex;
       min-height: 0;
       padding: 10px 14px 8px;
       flex-wrap: wrap;
@@ -577,6 +594,7 @@
       width: auto;
       order: 2;
       justify-content: flex-start;
+      justify-self: auto;
     }
 
     .site-nav-a11y-controls {
@@ -666,6 +684,8 @@
       width: auto;
       order: 3;
       margin-left: auto;
+      grid-column: auto;
+      justify-self: auto;
     }
 
     .site-nav-quick-search {
