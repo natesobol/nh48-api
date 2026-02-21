@@ -5,9 +5,10 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const WORKER_PATH = path.join(ROOT, 'worker.js');
+const PEAK_DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
 const BASE_URL = process.env.PEAK_RENDER_SOURCE_AUDIT_URL || getArgValue('--url') || '';
 
-const ROUTES = [
+const SAMPLE_ROUTES = [
   '/peak/mount-washington',
   '/peak/mount-isolation',
   '/fr/peak/mount-washington',
@@ -39,6 +40,52 @@ function stripHtml(value) {
 
 function escapeRegExp(value) {
   return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function normalizeSlug(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function loadPeakRoutes() {
+  if (!fs.existsSync(PEAK_DATA_PATH)) {
+    return SAMPLE_ROUTES;
+  }
+
+  try {
+    const raw = fs.readFileSync(PEAK_DATA_PATH, 'utf8').replace(/^\uFEFF/, '');
+    const payload = JSON.parse(raw);
+    const peaks = Array.isArray(payload) ? payload : Object.values(payload || {});
+    const slugs = Array.from(
+      new Set(
+        peaks
+          .map((peak) => normalizeSlug(peak?.slug || peak?.slug_en || peak?.Slug || peak?.peakName || peak?.['Peak Name']))
+          .filter(Boolean)
+      )
+    );
+
+    if (!slugs.length) {
+      return SAMPLE_ROUTES;
+    }
+
+    return slugs.flatMap((slug) => [`/peak/${slug}`, `/fr/peak/${slug}`]);
+  } catch (error) {
+    return SAMPLE_ROUTES;
+  }
+}
+
+function routeToLocalPrerenderFile(route) {
+  const match = String(route || '').match(/^\/(?:fr\/)?peak\/([^/?#]+)/i);
+  if (!match) return '';
+  const slug = match[1];
+  const rel = route.startsWith('/fr/')
+    ? path.join('fr', 'peaks', slug, 'index.html')
+    : path.join('peaks', slug, 'index.html');
+  return path.join(ROOT, rel);
 }
 
 function assertLocalSourceChecks(failures) {
@@ -79,6 +126,15 @@ function assertLocalSourceChecks(failures) {
   if (!workerText.includes("'X-Peak-Source': templateSourceHeader")) {
     failures.push("worker.js missing template response source header.");
   }
+  if (!workerText.includes('nh48:season-hint')) {
+    failures.push("worker.js missing nh48:season-hint meta injection.");
+  }
+  if (!workerText.includes("'X-Peak-Season-Hint'")) {
+    failures.push("worker.js missing X-Peak-Season-Hint response header.");
+  }
+  if (!workerText.includes('data-season-hint')) {
+    failures.push("worker.js missing body data-season-hint injection.");
+  }
   if (!workerText.includes('function applyPeakTemplateImageTransforms')) {
     failures.push('worker.js missing template image transform hardening helper.');
   }
@@ -99,6 +155,23 @@ function extractMeaningfulH1Texts(html) {
     .filter((text) => text && !/^loading(?:\s*(?:\.{3}))?$/i.test(text));
 }
 
+function assertSeasonHintRuntime(url, headers, body, failures) {
+  const seasonHeader = String(headers.get('x-peak-season-hint') || '').toLowerCase();
+  if (!/^(spring|summer|fall|winter)$/.test(seasonHeader)) {
+    failures.push(`${url}: missing or invalid X-Peak-Season-Hint header ("${seasonHeader || '[missing]'}").`);
+  }
+  const metaMatch = String(body || '').match(/<meta\b[^>]*name=["']nh48:season-hint["'][^>]*content=["']([^"']+)["'][^>]*>/i);
+  const metaSeason = metaMatch ? String(metaMatch[1] || '').toLowerCase().trim() : '';
+  if (!/^(spring|summer|fall|winter)$/.test(metaSeason)) {
+    failures.push(`${url}: missing or invalid <meta name=\"nh48:season-hint\"> value ("${metaSeason || '[missing]'}").`);
+  }
+  const bodyMatch = String(body || '').match(/<body\b[^>]*\bdata-season-hint=["']([^"']+)["'][^>]*>/i);
+  const bodySeason = bodyMatch ? String(bodyMatch[1] || '').toLowerCase().trim() : '';
+  if (!/^(spring|summer|fall|winter)$/.test(bodySeason)) {
+    failures.push(`${url}: missing or invalid body data-season-hint value ("${bodySeason || '[missing]'}").`);
+  }
+}
+
 async function assertLiveRoute(route, failures) {
   const url = new URL(route, BASE_URL).toString();
   const { status, headers, body } = await fetchText(url);
@@ -111,6 +184,7 @@ async function assertLiveRoute(route, failures) {
   if (sourceHeader !== 'prerendered') {
     failures.push(`${url}: expected X-Peak-Source=prerendered, received "${sourceHeader || '[missing]'}".`);
   }
+  assertSeasonHintRuntime(url, headers, body, failures);
 
   if (/\$\{[^}]+\}/.test(body)) {
     failures.push(`${url}: unresolved template token pattern detected (\\$\\{...\\}).`);
@@ -149,6 +223,7 @@ async function assertLivePrerenderRoute(route, failures) {
   if (sourceHeader !== 'prerendered') {
     failures.push(`${url}: expected X-Peak-Source=prerendered, received "${sourceHeader || '[missing]'}".`);
   }
+  assertSeasonHintRuntime(url, headers, body, failures);
 
   const h1Texts = extractMeaningfulH1Texts(body);
   if (h1Texts.length !== 1) {
@@ -184,6 +259,7 @@ async function assertTemplateOverridePath(failures) {
   if (!/^template-(?:forced|fallback)$/.test(sourceHeader)) {
     failures.push(`${url}: expected template source header, received "${sourceHeader || '[missing]'}".`);
   }
+  assertSeasonHintRuntime(url, headers, body, failures);
 
   const requiredInteractiveIds = [
     'routesGrid',
@@ -191,6 +267,7 @@ async function assertTemplateOverridePath(failures) {
     'parkingAccessGrid',
     'difficultyMetricsGrid',
     'riskPrepGrid',
+    'wildernessSafetyGrid',
     'monthlyWeatherPanel',
     'panelReaderModal'
   ];
@@ -202,22 +279,66 @@ async function assertTemplateOverridePath(failures) {
   });
 }
 
+function assertLocalPrerenderRoutes(failures) {
+  const routes = loadPeakRoutes();
+  for (const route of routes) {
+    const filePath = routeToLocalPrerenderFile(route);
+    if (!filePath) {
+      failures.push(`${route}: unable to resolve local prerender file path.`);
+      continue;
+    }
+    if (!fs.existsSync(filePath)) {
+      failures.push(`${route}: missing local prerender file ${path.relative(ROOT, filePath)}.`);
+      continue;
+    }
+    const body = fs.readFileSync(filePath, 'utf8');
+    if (/\$\{[^}]+\}/.test(body)) {
+      failures.push(`${route}: unresolved template token pattern detected (\\$\\{...\\}).`);
+    }
+    const h1Texts = extractMeaningfulH1Texts(body);
+    if (h1Texts.length !== 1) {
+      failures.push(`${route}: expected exactly 1 meaningful <h1>, found ${h1Texts.length} (${h1Texts.join(' | ') || 'none'}).`);
+    }
+    if (!/class=["'][^"']*site-nav[^"']*["']/i.test(body)) {
+      failures.push(`${route}: nav markup (.site-nav) not detected.`);
+    }
+    if (!/https:\/\/photos\.nh48\.info\/cdn-cgi\/image\//i.test(body)) {
+      failures.push(`${route}: expected transformed image URL (/cdn-cgi/image/) not found.`);
+    }
+    const slugMatch = route.match(/\/(?:fr\/)?peak\/([^/?#]+)/i);
+    const peakSlug = slugMatch ? slugMatch[1] : '';
+    if (peakSlug) {
+      const rawPeakPhotoPattern = new RegExp(`https://photos\\.nh48\\.info/${escapeRegExp(peakSlug)}/`, 'i');
+      if (rawPeakPhotoPattern.test(body)) {
+        failures.push(`${route}: raw full-size peak photo URL detected for slug "${peakSlug}".`);
+      }
+    }
+  }
+  return routes.length;
+}
+
 async function main() {
   const failures = [];
   assertLocalSourceChecks(failures);
+  let liveRouteChecks = 0;
 
   if (BASE_URL) {
     if (typeof fetch !== 'function') {
       failures.push('Global fetch is unavailable in this Node runtime.');
     } else {
-      for (const route of ROUTES) {
+      const routes = loadPeakRoutes();
+      for (const route of routes) {
         // eslint-disable-next-line no-await-in-loop
         await assertLiveRoute(route, failures);
         // eslint-disable-next-line no-await-in-loop
         await assertLivePrerenderRoute(route, failures);
       }
+      liveRouteChecks = routes.length * 2;
       await assertTemplateOverridePath(failures);
+      liveRouteChecks += 1;
     }
+  } else {
+    liveRouteChecks = assertLocalPrerenderRoutes(failures);
   }
 
   if (failures.length) {
@@ -227,9 +348,9 @@ async function main() {
   }
 
   if (BASE_URL) {
-    console.log(`Peak render source audit passed for local source checks + ${ROUTES.length * 2 + 1} live route checks: ${BASE_URL}`);
+    console.log(`Peak render source audit passed for local source checks + ${liveRouteChecks} live route checks: ${BASE_URL}`);
   } else {
-    console.log('Peak render source audit passed for local source checks.');
+    console.log(`Peak render source audit passed for local source checks + ${liveRouteChecks} local prerender route checks.`);
   }
 }
 

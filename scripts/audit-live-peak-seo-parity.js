@@ -73,6 +73,7 @@ async function main() {
     ['node', ['scripts/audit-wiki-routes.js', '--url', baseUrl]],
     ['node', ['scripts/audit-peak-page-ui.js', '--url', baseUrl]],
     ['node', ['scripts/audit-peak-schema-parity.js', '--url', baseUrl]],
+    ['node', ['scripts/audit-peak-render-source.js', '--url', baseUrl]],
     ['node', ['scripts/audit-peak-image-metadata.js', '--url', baseUrl]]
   ];
 

@@ -6,6 +6,7 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const PEAK_TEMPLATE_PATH = path.join(ROOT, 'pages', 'nh48_peak.html');
 const WORKER_PATH = path.join(ROOT, 'worker.js');
+const PEAK_DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
 const BASE_URL = process.env.PEAK_SCHEMA_PARITY_AUDIT_URL || getArgValue('--url') || '';
 
 const SAMPLE_ROUTES = [
@@ -26,6 +27,7 @@ const REQUIRED_ENRICHMENT_PROPERTIES = [
   'Current Temperature (F)'
 ];
 const REQUIRED_NARRATIVE_SEGMENTS = ['Mountain Overview'];
+const REQUIRED_IMAGE_EXIF_KEYS = ['cameraModel', 'lens', 'fStop', 'shutterSpeed', 'iso', 'focalLength'];
 
 function getArgValue(flag) {
   const idx = process.argv.indexOf(flag);
@@ -101,6 +103,122 @@ function additionalPropertyNames(node) {
   );
 }
 
+function assertImageObjectParity(nodes, label, failures) {
+  const imageObjects = nodes.filter((node) => getTypes(node).includes('ImageObject'));
+  if (!imageObjects.length) {
+    failures.push(`${label}: missing ImageObject node.`);
+    return;
+  }
+
+  const scoped = imageObjects.filter((image) => {
+    const id = String(image?.['@id'] || '').toLowerCase();
+    const hasRepresentativeFlag = image?.representativeOfPage === true || image?.representativeOfPage === false;
+    return id.includes('#img-') || hasRepresentativeFlag;
+  });
+  const relevantImages = scoped.length ? scoped : imageObjects;
+
+  const representativeCount = relevantImages.filter((image) => image && image.representativeOfPage === true).length;
+  if (representativeCount !== 1) {
+    failures.push(`${label}: expected exactly 1 ImageObject with representativeOfPage=true, found ${representativeCount}.`);
+  }
+
+  relevantImages.forEach((image, index) => {
+    const imageLabel = `${label}: ImageObject #${index + 1}`;
+    const exifData = Array.isArray(image?.exifData) ? image.exifData : [];
+    if (!exifData.length) {
+      failures.push(`${imageLabel} missing exifData PropertyValue[] entries.`);
+      return;
+    }
+    const exifNames = new Set(
+      exifData
+        .map((entry) => (entry && typeof entry === 'object' ? String(entry.name || '').trim() : ''))
+        .filter(Boolean)
+    );
+    REQUIRED_IMAGE_EXIF_KEYS.forEach((key) => {
+      if (!exifNames.has(key)) {
+        failures.push(`${imageLabel} exifData missing "${key}".`);
+      }
+    });
+  });
+}
+
+function normalizeSlug(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function readLocalPeakDataset() {
+  if (!fs.existsSync(PEAK_DATA_PATH)) {
+    return {};
+  }
+  try {
+    const raw = fs.readFileSync(PEAK_DATA_PATH, 'utf8').replace(/^\uFEFF/, '');
+    const payload = JSON.parse(raw);
+    return payload && typeof payload === 'object' ? payload : {};
+  } catch {
+    return {};
+  }
+}
+
+function buildRouteSetFromDataset(dataset, includeFrench = true) {
+  const entries = Array.isArray(dataset)
+    ? dataset
+    : dataset && typeof dataset === 'object'
+      ? Object.entries(dataset).map(([slug, peak]) => ({ slug, peak }))
+      : [];
+
+  const slugNamePairs = entries
+    .map((entry) => {
+      if (entry && typeof entry === 'object' && Object.prototype.hasOwnProperty.call(entry, 'peak')) {
+        const slug = normalizeSlug(entry.slug || entry.peak?.slug || entry.peak?.['Peak Name']);
+        const name = String(entry.peak?.['Peak Name'] || entry.peak?.peakName || '').trim();
+        return { slug, name };
+      }
+      const slug = normalizeSlug(entry?.slug || entry?.Slug || entry?.['Peak Name'] || entry?.peakName);
+      const name = String(entry?.['Peak Name'] || entry?.peakName || '').trim();
+      return { slug, name };
+    })
+    .filter((entry) => entry.slug)
+    .sort((a, b) => a.slug.localeCompare(b.slug));
+
+  const routes = [];
+  const englishNameBySlug = new Map();
+  slugNamePairs.forEach(({ slug, name }) => {
+    routes.push(`/peak/${slug}`);
+    if (includeFrench) {
+      routes.push(`/fr/peak/${slug}`);
+    }
+    if (name) {
+      englishNameBySlug.set(slug, name);
+    }
+  });
+
+  if (!routes.length) {
+    return {
+      routes: SAMPLE_ROUTES,
+      englishNameBySlug: new Map([['mount-washington', 'Mount Washington']])
+    };
+  }
+
+  return { routes, englishNameBySlug };
+}
+
+function extractBreadcrumbLabelAtPosition(breadcrumbNode, position) {
+  const items = Array.isArray(breadcrumbNode?.itemListElement) ? breadcrumbNode.itemListElement : [];
+  const sorted = items
+    .slice()
+    .sort((a, b) => Number(a?.position || 0) - Number(b?.position || 0));
+  const entry = sorted.find((item) => Number(item?.position || 0) === Number(position));
+  if (!entry || typeof entry !== 'object') return '';
+  const directName = typeof entry.name === 'string' ? entry.name.trim() : '';
+  const nestedName = entry.item && typeof entry.item.name === 'string' ? entry.item.name.trim() : '';
+  return directName || nestedName || '';
+}
+
 function routeToLocalPrerenderFile(route) {
   const match = String(route || '').match(/^\/(?:fr\/)?peak\/([^/?#]+)/i);
   if (!match) return '';
@@ -143,6 +261,16 @@ function assertSourceParity(templateContent, workerContent, failures) {
     }
   });
 
+  REQUIRED_IMAGE_EXIF_KEYS.forEach((key) => {
+    const token = new RegExp(`['"]${escRegExp(key)}['"]`);
+    if (!token.test(templateContent)) {
+      failures.push(`Template schema builder is missing required ImageObject exif key "${key}".`);
+    }
+    if (!token.test(workerContent)) {
+      failures.push(`Worker schema builder is missing required ImageObject exif key "${key}".`);
+    }
+  });
+
   if (!/ParkingFacility|containsPlace/.test(templateBody)) {
     failures.push('Template schema builder is missing parking/access place enrichment logic.');
   }
@@ -165,7 +293,7 @@ async function fetchHtml(url) {
   return { status: response.status, body };
 }
 
-async function loadRuntimeRoutes(baseUrl) {
+async function loadRuntimeRouteSet(baseUrl) {
   const dataUrl = new URL('/data/nh48.json', baseUrl).toString();
   const response = await fetch(dataUrl, {
     headers: { 'User-Agent': 'NH48-Peak-Schema-Parity-Audit/1.0' }
@@ -174,16 +302,11 @@ async function loadRuntimeRoutes(baseUrl) {
     throw new Error(`Unable to load canonical source dataset ${dataUrl} (${response.status})`);
   }
   const nh48 = await response.json();
-  const slugs = Object.keys(nh48 || {}).sort();
-  const routes = slugs.map((slug) => `/peak/${encodeURIComponent(slug)}`);
-  if (slugs.includes('mount-washington')) {
-    routes.push('/fr/peak/mount-washington');
-  }
-  return routes;
+  return buildRouteSetFromDataset(nh48, true);
 }
 
 async function assertRuntimeParity(baseUrl, failures) {
-  const routes = await loadRuntimeRoutes(baseUrl);
+  const { routes, englishNameBySlug } = await loadRuntimeRouteSet(baseUrl);
 
   for (const route of routes) {
     const url = new URL(route, baseUrl).toString();
@@ -204,6 +327,15 @@ async function assertRuntimeParity(baseUrl, failures) {
     const breadcrumbNodes = nodes.filter((node) => getTypes(node).includes('BreadcrumbList'));
     if (breadcrumbNodes.length !== 1) {
       failures.push(`${url}: expected exactly 1 BreadcrumbList, found ${breadcrumbNodes.length}.`);
+    } else if (/\/fr\/peak\//i.test(route)) {
+      const slug = String(route).replace(/^\/fr\/peak\//i, '').replace(/\/.*$/, '');
+      const expectedName = englishNameBySlug.get(slug);
+      if (expectedName) {
+        const breadcrumbName = extractBreadcrumbLabelAtPosition(breadcrumbNodes[0], 4);
+        if (breadcrumbName !== expectedName) {
+          failures.push(`${url}: expected breadcrumb label "${expectedName}" at position 4, found "${breadcrumbName || '[missing]'}".`);
+        }
+      }
     }
 
     const typeSet = new Set();
@@ -213,6 +345,7 @@ async function assertRuntimeParity(baseUrl, failures) {
         failures.push(`${url}: missing required schema type "${requiredType}".`);
       }
     });
+    assertImageObjectParity(nodes, url, failures);
 
     const mountainNodes = nodes.filter((node) => getTypes(node).includes('Mountain'));
     if (!mountainNodes.length) {
@@ -247,7 +380,8 @@ async function assertRuntimeParity(baseUrl, failures) {
 }
 
 function assertLocalPrerenderSamples(failures) {
-  SAMPLE_ROUTES.forEach((route) => {
+  const routeSet = buildRouteSetFromDataset(readLocalPeakDataset(), true);
+  routeSet.routes.forEach((route) => {
     const filePath = routeToLocalPrerenderFile(route);
     if (!filePath) {
       failures.push(`${route}: unable to resolve local prerender file path.`);
@@ -270,6 +404,15 @@ function assertLocalPrerenderSamples(failures) {
     const breadcrumbNodes = nodes.filter((node) => getTypes(node).includes('BreadcrumbList'));
     if (breadcrumbNodes.length !== 1) {
       failures.push(`${route}: expected exactly 1 BreadcrumbList, found ${breadcrumbNodes.length}.`);
+    } else if (/^\/fr\/peak\//i.test(route)) {
+      const slug = String(route).replace(/^\/fr\/peak\//i, '').replace(/\/.*$/, '');
+      const expectedName = routeSet.englishNameBySlug.get(slug);
+      if (expectedName) {
+        const breadcrumbName = extractBreadcrumbLabelAtPosition(breadcrumbNodes[0], 4);
+        if (breadcrumbName !== expectedName) {
+          failures.push(`${route}: expected breadcrumb label "${expectedName}" at position 4, found "${breadcrumbName || '[missing]'}".`);
+        }
+      }
     }
 
     const typeSet = new Set();
@@ -279,6 +422,7 @@ function assertLocalPrerenderSamples(failures) {
         failures.push(`${route}: missing required schema type "${requiredType}".`);
       }
     });
+    assertImageObjectParity(nodes, route, failures);
 
     const mountainNodes = nodes.filter((node) => getTypes(node).includes('Mountain'));
     if (!mountainNodes.length) {
@@ -309,6 +453,8 @@ function assertLocalPrerenderSamples(failures) {
       }
     });
   });
+
+  return routeSet.routes.length;
 }
 
 async function main() {
@@ -321,7 +467,7 @@ async function main() {
   if (BASE_URL) {
     runtimeRouteCount = await assertRuntimeParity(BASE_URL, failures);
   } else {
-    assertLocalPrerenderSamples(failures);
+    runtimeRouteCount = assertLocalPrerenderSamples(failures);
   }
 
   if (failures.length) {
@@ -333,7 +479,7 @@ async function main() {
   if (BASE_URL) {
     console.log(`Peak schema parity audit passed for ${runtimeRouteCount} route(s): ${BASE_URL}`);
   } else {
-    console.log('Peak schema parity audit passed for worker/template source checks.');
+    console.log(`Peak schema parity audit passed for worker/template source checks + ${runtimeRouteCount} local route(s).`);
   }
 }
 

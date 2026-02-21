@@ -26,6 +26,8 @@ const WHITE_MOUNTAINS_HUB_EN = "https://nh48.info/nh-4000-footers-info";
 const WHITE_MOUNTAINS_HUB_FR = "https://nh48.info/fr/nh-4000-footers-info";
 const DEFAULT_CATALOG_URL = "https://nh48.info/catalog";
 const FALLBACK_IMAGE = "https://nh48.info/nh48-preview.png";
+const FALLBACK_IMAGE_WIDTH = 1800;
+const FALLBACK_IMAGE_HEIGHT = 1200;
 const PHOTO_BASE_URL = "https://photos.nh48.info";
 const PHOTO_BASE = new URL(PHOTO_BASE_URL);
 const PHOTO_PATH_PREFIX = "/nh48-photos/";
@@ -37,6 +39,7 @@ const PEAK_SAMEAS_PATH = path.join(ROOT, "data", "peak-sameas.json");
 const AUTHOR_NAME = "Nathan Sobol";
 const TWITTER_HANDLE = "@nate_dumps_pics";
 const INSTAGRAM_URL = "https://www.instagram.com/nate_dumps_pics/";
+const EXIF_UNKNOWN_VALUE = "unknown";
 
 const I18N = {
   en: JSON.parse(fs.readFileSync(path.join(ROOT, "i18n", "en.json"), "utf8")),
@@ -311,7 +314,7 @@ const parseEstimatedDuration = (value) => {
   const cleaned = cleanText(value);
   if (!cleaned) return null;
   const lower = cleaned.toLowerCase();
-  const rangeSplit = lower.split(/(?:-|–|to)/).map((entry) => entry.trim());
+  const rangeSplit = lower.split(/(?:-|â€“|to)/).map((entry) => entry.trim());
   const target = rangeSplit[0] || lower;
   const numberMatch = target.match(/(\d+(?:\.\d+)?)/);
   if (!numberMatch) return null;
@@ -374,11 +377,21 @@ const parseCoordinates = (value) => {
 const parseDimensions = (value) => {
   if (!value) return { width: null, height: null };
   const match = String(value)
-    .replace(/×/g, 'x')
+    .replace(/Ã—/g, 'x')
     .match(/(\d+)\s*x\s*(\d+)/i);
   if (!match) return { width: null, height: null };
   const [, w, h] = match;
   return { width: Number(w), height: Number(h) };
+};
+
+const resolvePhotoDimensions = (photo) => {
+  if (!photo || typeof photo !== "object") return { width: null, height: null };
+  const width = Number(photo.width);
+  const height = Number(photo.height);
+  if (Number.isFinite(width) && Number.isFinite(height) && width > 0 && height > 0) {
+    return { width: Math.round(width), height: Math.round(height) };
+  }
+  return parseDimensions(photo.dimensions || photo.dimension || "");
 };
 
 const buildKeywords = (photo) => {
@@ -397,26 +410,55 @@ const buildKeywords = (photo) => {
   return Array.from(keywords);
 };
 
+const normalizeFStopValue = (value) => {
+  const cleaned = cleanText(value);
+  if (!cleaned) return "";
+  return /^f\//i.test(cleaned) ? cleaned : `f/${cleaned}`;
+};
+
+const normalizeIsoValue = (value) => {
+  const cleaned = cleanText(value);
+  if (!cleaned) return "";
+  return cleaned.replace(/^iso\s*/i, "");
+};
+
+const CANONICAL_EXIF_FIELDS = [
+  { name: "cameraModel", resolve: (photo) => cleanText(photo.cameraModel || photo.camera || photo.cameraMaker) },
+  { name: "lens", resolve: (photo) => cleanText(photo.lens) },
+  { name: "fStop", resolve: (photo) => normalizeFStopValue(photo.fStop) },
+  { name: "shutterSpeed", resolve: (photo) => cleanText(photo.shutterSpeed) },
+  { name: "iso", resolve: (photo) => normalizeIsoValue(photo.iso) },
+  { name: "focalLength", resolve: (photo) => cleanText(photo.focalLength) },
+];
+
+const buildCanonicalExifData = (photo) =>
+  CANONICAL_EXIF_FIELDS.map((entry) => ({
+    "@type": "PropertyValue",
+    name: entry.name,
+    value: entry.resolve(photo || {}) || EXIF_UNKNOWN_VALUE,
+  }));
+
+const buildExifCodeText = (photo, langCode) => {
+  const cameraModel = cleanText(photo?.cameraModel || photo?.camera || photo?.cameraMaker);
+  const lens = cleanText(photo?.lens);
+  const focalLength = cleanText(photo?.focalLength);
+  const fStop = normalizeFStopValue(photo?.fStop);
+  const shutterSpeed = cleanText(photo?.shutterSpeed);
+  const iso = normalizeIsoValue(photo?.iso);
+  const parts = [
+    cameraModel,
+    lens || focalLength,
+    fStop,
+    shutterSpeed,
+    iso ? `ISO ${iso}` : "",
+  ].filter(Boolean);
+  if (parts.length) return parts.join(" | ");
+  return langCode === "fr" ? "Metadonnees indisponibles" : "Metadata unavailable";
+};
+
 const buildExifSummary = (photo) => {
-  const parts = [];
-  const add = (label, value) => {
-    const cleaned = cleanText(value);
-    if (cleaned) parts.push(`${label}: ${cleaned}`);
-  };
-
-  add('Camera Make', photo.cameraMaker || photo.camera);
-  add('Camera Model', photo.cameraModel);
-  add('Lens', photo.lens);
-  add('F-Stop', photo.fStop);
-  add('Shutter Speed', photo.shutterSpeed);
-  add('ISO', photo.iso);
-  add('Exposure Bias', photo.exposureBias);
-  add('Focal Length', photo.focalLength);
-  add('Flash Mode', photo.flashMode);
-  add('Metering Mode', photo.meteringMode);
-  add('Max Aperture', photo.maxAperture);
-
-  return parts.join('; ');
+  const exifData = buildCanonicalExifData(photo);
+  return exifData.map((entry) => `${entry.name}: ${entry.value}`).join("; ");
 };
 
 const flattenMetaToPropertyValues = (prefix, obj, out) => {
@@ -472,7 +514,7 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
     /cdn-cgi\/image\/[^/]+/,
     'cdn-cgi/image/width=400,format=webp,metadata=keep'
   );
-  const { width: parsedWidth, height: parsedHeight } = parseDimensions(photo.dimensions || photo.dimension || '');
+  const { width: parsedWidth, height: parsedHeight } = resolvePhotoDimensions(photo);
   const width = parsedWidth || undefined;
   const height = parsedHeight || undefined;
   const { alt, altLang, extendedDescription, extendedDescriptionLang } = buildPhotoTexts(
@@ -481,17 +523,18 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
     langCode
   );
   const headline =
-    cleanText(photo[`headline_${langCode}`]) || cleanText(photo.headline) || `${peakName} — White Mountain National Forest`;
-  const description = cleanText(extendedDescription || photo.caption || '');
+    cleanText(photo[`headline_${langCode}`]) || cleanText(photo.headline) || `${peakName} â€” White Mountain National Forest`;
+  const description = cleanText(extendedDescription || photo.caption || '') || alt;
   const creatorName = AUTHOR_NAME;
   const creditText = AUTHOR_NAME;
   const publisherName = cleanText(photo.iptc?.featuredOrgName) || TWITTER_HANDLE;
-  const copyrightNotice = `© ${AUTHOR_NAME}`;
+  const copyrightNotice = `Â© ${AUTHOR_NAME}`;
   const copyrightHolderName = AUTHOR_NAME;
   const rightsUsageTerms = cleanText(photo.iptc?.rightsUsageTerms || photo.rightsUsageTerms);
   const licenseUrl = IMAGE_LICENSE_URL;
   const keywords = buildKeywords(photo);
-  const exifData = buildExifSummary(photo);
+  const exifData = buildCanonicalExifData(photo);
+  const exifSummary = buildExifSummary(photo);
   const propertyValues = buildPhotoPropertyValues(photo);
   const isFineArt = !!photo.isFineArt;
   const imageTypes = isFineArt
@@ -503,7 +546,7 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
     url: normalizedUrl,
     contentUrl: normalizedUrl,
     name: headline || alt,
-    caption: description || alt,
+    caption: alt,
     alternateName: alt,
     description: description || alt,
     creditText,
@@ -519,7 +562,7 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
     uploadDate: cleanText(photo.fileCreateDate || photo.captureDate),
     dateCreated: cleanText(photo.captureDate || photo.fileCreateDate),
     datePublished: cleanText(photo.captureDate),
-    exifData: exifData || undefined,
+    exifData,
     keywords: keywords.length ? keywords : undefined,
     additionalProperty: propertyValues.length ? propertyValues : undefined,
     representativeOfPage: !!isPrimary,
@@ -557,13 +600,16 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
     creditText,
     publisherName,
     keywords,
-    exifData,
+    exifData: exifSummary,
+    exifPropertyValues: exifData,
     dateCreated: imageObject.dateCreated,
   };
 };
 
 const pickPrimaryPhoto = (photos, peakName, langCode, canonicalUrl) => {
   if (!Array.isArray(photos) || photos.length === 0) {
+    const fallbackViewDescription = defaultHeroViewDescription(langCode);
+    const fallbackAlt = buildForcePatternAlt(peakName, fallbackViewDescription, langCode);
     const fallbackKeywords = [
       peakName,
       "White Mountain National Forest",
@@ -576,14 +622,14 @@ const pickPrimaryPhoto = (photos, peakName, langCode, canonicalUrl) => {
       '@id': `${canonicalUrl}#img-001`,
       url: FALLBACK_IMAGE,
       contentUrl: FALLBACK_IMAGE,
-      name: `${peakName} — White Mountain National Forest`,
-      caption: `${peakName} in the White Mountains`,
-      alternateName: `${peakName} in the White Mountains`,
-      description: `${peakName} in the White Mountains`,
+      name: `${peakName} â€” White Mountain National Forest`,
+      caption: fallbackAlt,
+      alternateName: fallbackAlt,
+      description: fallbackAlt,
       creditText: AUTHOR_NAME,
       creator: { '@type': 'Person', name: AUTHOR_NAME },
       author: { '@type': 'Person', name: AUTHOR_NAME },
-      copyrightNotice: `© ${AUTHOR_NAME}`,
+      copyrightNotice: `Â© ${AUTHOR_NAME}`,
       license: IMAGE_LICENSE_URL,
       acquireLicensePage: IMAGE_LICENSE_URL,
       usageInfo: IMAGE_LICENSE_URL,
@@ -595,23 +641,27 @@ const pickPrimaryPhoto = (photos, peakName, langCode, canonicalUrl) => {
         name: 'White Mountain National Forest',
       },
       representativeOfPage: true,
+      width: FALLBACK_IMAGE_WIDTH,
+      height: FALLBACK_IMAGE_HEIGHT,
+      exifData: buildCanonicalExifData({}),
     };
     return {
       primary: {
         url: FALLBACK_IMAGE,
-        alt: `${peakName} in the White Mountains`,
+        alt: fallbackAlt,
         altLang: langCode === 'en' ? undefined : 'en',
-        headline: `${peakName} — White Mountain National Forest`,
+        headline: `${peakName} â€” White Mountain National Forest`,
         description: '',
         extendedDescription: '',
         extendedDescriptionLang: langCode === 'en' ? undefined : 'en',
-        width: null,
-        height: null,
+        width: FALLBACK_IMAGE_WIDTH,
+        height: FALLBACK_IMAGE_HEIGHT,
         creator: AUTHOR_NAME,
         creditText: AUTHOR_NAME,
         publisherName: TWITTER_HANDLE,
         keywords: [],
-        exifData: '',
+        exifData: buildExifSummary({}),
+        exifPropertyValues: buildCanonicalExifData({}),
       },
       imageObjects: [fallbackImageObject],
     };
@@ -649,6 +699,7 @@ const pickPrimaryPhoto = (photos, peakName, langCode, canonicalUrl) => {
       publisherName: primary.publisherName,
       keywords: primary.keywords,
       exifData: primary.exifData,
+      exifPropertyValues: primary.exifPropertyValues,
     },
     imageObjects: imageEntries.map((entry) => entry.imageObject),
   };
@@ -719,34 +770,129 @@ const resolveLangAttr = (isLocalized, langCode) => {
   return 'en';
 };
 
-const buildPhotoTexts = (photo, peakName, langCode) => {
+const escapeRegExp = (value) => String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const pickFirstNonEmpty = (...values) => {
+  for (const value of values) {
+    const cleaned = cleanText(value);
+    if (cleaned) return cleaned;
+  }
+  return "";
+};
+
+const normalizeLooseText = (value) =>
+  cleanText(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+const stripHeroAltPattern = (value, peakName) => {
+  const text = cleanText(value);
+  const safePeakName = cleanText(peakName);
+  const suffix = " - NH48";
+  const prefix = safePeakName ? `${safePeakName} - ` : "";
+  if (!text) return "";
+  if (prefix && text.startsWith(prefix) && text.endsWith(suffix) && text.length > prefix.length + suffix.length) {
+    return text.slice(prefix.length, -suffix.length).trim();
+  }
+  return text;
+};
+
+const isFilenameLikeDescription = (value) => {
+  const text = cleanText(value);
+  if (!text) return true;
+  const normalized = text.toLowerCase();
+  if (/\.(?:jpe?g|png|webp|gif|heic|avif)\b/.test(normalized)) return true;
+  if (/__\d{1,4}\b/.test(normalized)) return true;
+  if (/(?:^|[\s_-])(?:img|dsc|pxl|photo|mount)[\s_-]*\d{2,6}\b/.test(normalized)) return true;
+  if (/^[a-z0-9_-]{4,}$/.test(normalized) && /\d/.test(normalized)) return true;
+  return false;
+};
+
+const isWeakViewDescription = (value, peakName) => {
+  const text = cleanText(value);
+  if (!text) return true;
+  if (isFilenameLikeDescription(text)) return true;
+  const normalized = normalizeLooseText(text);
+  if (!normalized || normalized.length < 8) return true;
+
+  const peakNormalized = normalizeLooseText(peakName);
+  if (!peakNormalized) return false;
+  const peakPattern = new RegExp(`\\b${escapeRegExp(peakNormalized).replace(/\s+/g, "\\s+")}\\b`, "gi");
+  const remainder = normalized
+    .replace(peakPattern, " ")
+    .replace(/\b(?:mount|mont|mt|photo|image|summit|sommet|view|vue)\b/gi, " ")
+    .replace(/\b\d+\b/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return remainder.length < 4;
+};
+
+const defaultHeroViewDescription = (langCode) =>
+  langCode === "fr" ? "Vue du sommet des White Mountains" : "Summit view in the White Mountains";
+
+const buildContextualViewDescription = (photo, langCode) => {
+  const bits = [
+    cleanText(photo?.season),
+    cleanText(photo?.timeOfDay),
+    cleanText(photo?.orientation),
+  ].filter(Boolean);
+  if (!bits.length) return defaultHeroViewDescription(langCode);
+  const contextual = bits.join(" ");
+  return langCode === "fr"
+    ? `Vue ${contextual} dans les White Mountains`
+    : `${contextual} view in the White Mountains`;
+};
+
+const buildViewDescription = (peakName, photo, langCode) => {
   const { text: altText, isLocalized: isAltLocalized } = pickLocalizedField(photo, langCode, [
-    'altText',
-    'alt',
+    "altText",
+    "alt",
+    "title",
+    "headline",
   ]);
   const {
     text: descriptionText,
     isLocalized: isDescriptionLocalized,
-  } = pickLocalizedField(photo, langCode, ['extendedDescription', 'description', 'caption', 'headline']);
+  } = pickLocalizedField(photo, langCode, ["extendedDescription", "description", "caption", "headline", "title"]);
+  const candidate = stripHeroAltPattern(
+    pickFirstNonEmpty(descriptionText, altText),
+    peakName
+  );
+  const viewDescription = isWeakViewDescription(candidate, peakName)
+    ? buildContextualViewDescription(photo, langCode)
+    : candidate;
+  return {
+    viewDescription: cleanText(viewDescription) || defaultHeroViewDescription(langCode),
+    isLocalized: !!(isAltLocalized || isDescriptionLocalized),
+    descriptionText: cleanText(descriptionText),
+    isDescriptionLocalized: !!isDescriptionLocalized,
+  };
+};
 
-  let alt = altText || descriptionText;
-  let altLang = resolveLangAttr(isAltLocalized || isDescriptionLocalized, langCode);
+const buildForcePatternAlt = (peakName, viewDescription, langCode) => {
+  const safePeakName = cleanText(peakName) || (langCode === "fr" ? "Sommet NH48" : "NH48 Peak");
+  const safeViewDescription = cleanText(viewDescription) || defaultHeroViewDescription(langCode);
+  return `${safePeakName} - ${safeViewDescription} - NH48`;
+};
 
-  if (!alt) {
-    const tags = Array.isArray(photo?.tags) ? photo.tags.filter(Boolean) : [];
-    if (tags.length) {
-      alt = `${peakName} – ${tags.join(', ')}`;
-    } else {
-      alt = `${peakName} in the White Mountains`;
-    }
-    altLang = resolveLangAttr(false, langCode);
-  }
+const buildHeroImageAlt = (peakName, photo, langCode) => {
+  const { viewDescription } = buildViewDescription(peakName, photo, langCode);
+  return buildForcePatternAlt(peakName, viewDescription, langCode);
+};
 
-  const extendedDescription = descriptionText;
+const buildPhotoTexts = (photo, peakName, langCode) => {
+  const { viewDescription, isLocalized, descriptionText, isDescriptionLocalized } = buildViewDescription(
+    peakName,
+    photo,
+    langCode
+  );
+  const alt = buildForcePatternAlt(peakName, viewDescription, langCode);
+  const altLang = resolveLangAttr(isLocalized, langCode);
+  const extendedDescription = descriptionText || viewDescription;
   const extendedDescriptionLang = extendedDescription
-    ? resolveLangAttr(isDescriptionLocalized, langCode)
+    ? resolveLangAttr(isDescriptionLocalized || isLocalized, langCode)
     : undefined;
-
   return { alt, altLang, extendedDescription, extendedDescriptionLang };
 };
 
@@ -763,8 +909,8 @@ const buildRoutesList = (routes, labels) => {
       const trailType = cleanText(route["Trail Type"] || "");
       const details = [distance && `${distance} mi`, gain && `${gain} ft gain`, trailType, difficulty]
         .filter(Boolean)
-        .join(" • ");
-      return `<li><strong>${escapeHtml(name)}</strong>${details ? ` — ${escapeHtml(details)}` : ""}</li>`;
+        .join(" â€¢ ");
+      return `<li><strong>${escapeHtml(name)}</strong>${details ? ` â€” ${escapeHtml(details)}` : ""}</li>`;
     })
     .join("\n");
 };
@@ -833,38 +979,69 @@ const buildRouteEntities = (routes, peak, canonicalUrl) => {
     .filter(Boolean);
 };
 
-const buildGallery = (photos, peakName, fallbackAlt, langCode) => {
+const buildPhotoTitleLine = (photo, peakName, langCode, viewDescription) => {
+  const explicitTitle = pickFirstNonEmpty(
+    photo?.[`headline_${langCode}`],
+    photo?.headline,
+    photo?.[`title_${langCode}`],
+    photo?.title,
+    photo?.caption
+  );
+  if (explicitTitle && !isFilenameLikeDescription(explicitTitle)) {
+    return explicitTitle;
+  }
+  return `${peakName} - ${viewDescription}`;
+};
+
+const buildGallery = (photos, peakName, peakSlug, langCode) => {
+  const safeSlug = cleanText(peakSlug || "peak")
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "") || "peak";
   if (!Array.isArray(photos) || photos.length === 0) {
-    const descriptionText = `${peakName} in the White Mountains`;
-    return `<figure class="gallery-figure">
-      <img src="${FALLBACK_IMAGE}" alt="${escapeHtml(descriptionText)}" loading="lazy" />
-      <figcaption>${escapeHtml(descriptionText)}</figcaption>
+    const viewDescription = defaultHeroViewDescription(langCode);
+    const alt = buildForcePatternAlt(peakName, viewDescription, langCode);
+    return `<figure class="peak-photo" id="photo-${safeSlug}-001">
+      <img src="${FALLBACK_IMAGE}" alt="${escapeHtml(alt)}" loading="lazy" width="${FALLBACK_IMAGE_WIDTH}" height="${FALLBACK_IMAGE_HEIGHT}" />
+      <figcaption>
+        <span class="photo-title">${escapeHtml(buildPhotoTitleLine({}, peakName, langCode, viewDescription))}</span>
+        <div class="exif-data"><code>${escapeHtml(buildExifCodeText({}, langCode))}</code></div>
+      </figcaption>
     </figure>`;
   }
 
   return photos
-    .slice(0, 4)
     .map((photo, index) => {
+      const photoMeta = photo && typeof photo === "object" ? photo : { url: photo };
       const { alt, altLang, extendedDescription, extendedDescriptionLang } = buildPhotoTexts(
-        photo,
+        photoMeta,
         peakName,
         langCode
       );
-      const descriptionText =
-        cleanText(extendedDescription) || cleanText(fallbackAlt) || alt || `${peakName} in the White Mountains`;
-      const url = normalizePhotoUrl(photo.url) || FALLBACK_IMAGE;
-      const { width, height } = parseDimensions(photo.dimensions || photo.dimension || '');
-      const dimensionsAttr = width && height ? ` width="${width}" height="${height}"` : "";
+      const viewDescription = stripHeroAltPattern(alt, peakName) || cleanText(extendedDescription) || defaultHeroViewDescription(langCode);
+      const titleText = buildPhotoTitleLine(photoMeta, peakName, langCode, viewDescription);
+      const url = normalizePhotoUrl(photoMeta.url) || "";
+      if (!url) {
+        throw new Error(`Photo URL missing for ${peakName} (${safeSlug}) at index ${index + 1}.`);
+      }
+      const { width, height } = resolvePhotoDimensions(photoMeta);
+      if (!width || !height) {
+        throw new Error(
+          `Missing image dimensions for ${peakName} (${safeSlug}) photo ${index + 1}. Expected width and height in data/nh48.json.`
+        );
+      }
+      const figureId = `photo-${safeSlug}-${String(index + 1).padStart(3, "0")}`;
       const langAttr = altLang ? ` lang="${altLang}"` : "";
-      const descriptionLangAttr = extendedDescriptionLang || altLang ? ` lang="${extendedDescriptionLang || altLang}"` : "";
-      const describedBy = descriptionText ? ` aria-describedby="photo-desc-${index}"` : "";
+      const titleLangAttr = extendedDescriptionLang || altLang ? ` lang="${extendedDescriptionLang || altLang}"` : "";
+      const exifCode = buildExifCodeText(photoMeta, langCode);
 
-      return `<figure class="gallery-figure">
-        <img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" loading="lazy"${dimensionsAttr}${langAttr}${describedBy} />
-        ${descriptionText
-          ? `<span id="photo-desc-${index}" class="sr-only"${descriptionLangAttr}>${escapeHtml(descriptionText)}</span>
-        <figcaption${descriptionLangAttr}>${escapeHtml(descriptionText)}</figcaption>`
-          : ''}
+      return `<figure class="peak-photo" id="${figureId}">
+        <img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" loading="lazy" width="${width}" height="${height}"${langAttr} />
+        <figcaption>
+          <span class="photo-title"${titleLangAttr}>${escapeHtml(titleText)}</span>
+          <div class="exif-data"><code>${escapeHtml(exifCode)}</code></div>
+        </figcaption>
       </figure>`;
     })
     .join("\n");
@@ -992,7 +1169,7 @@ const buildWebPageSchema = (
       "@context": "https://schema.org",
       "@type": "WebPage",
       "@id": `${canonicalUrl}#webpage`,
-      name: `${pageName} — White Mountain National Forest`,
+      name: `${pageName} â€” White Mountain National Forest`,
       description: descriptionText,
       url: canonicalUrl,
       inLanguage: langCode === 'fr' ? 'fr-FR' : 'en-US',
@@ -1055,12 +1232,12 @@ const buildFAQSchema = (peakName, routes, difficulty, time, langCode) => {
     if (routeNames.length > 0) {
       faqs.push({
         "@type": "Question",
-        name: isEnglish ? `What are the main hiking routes to ${peakName}?` : `Quels sont les principaux itinéraires de randonnée vers ${peakName} ?`,
+        name: isEnglish ? `What are the main hiking routes to ${peakName}?` : `Quels sont les principaux itinÃ©raires de randonnÃ©e vers ${peakName} ?`,
         acceptedAnswer: {
           "@type": "Answer",
           text: isEnglish
             ? `The main routes to ${peakName} include: ${routeNames.join(', ')}.`
-            : `Les principaux itinéraires vers ${peakName} incluent : ${routeNames.join(', ')}.`
+            : `Les principaux itinÃ©raires vers ${peakName} incluent : ${routeNames.join(', ')}.`
         }
       });
     }
@@ -1070,12 +1247,12 @@ const buildFAQSchema = (peakName, routes, difficulty, time, langCode) => {
   if (difficulty && difficulty !== 'Unknown' && difficulty !== 'Inconnu') {
     faqs.push({
       "@type": "Question",
-      name: isEnglish ? `How difficult is hiking ${peakName}?` : `Quelle est la difficulté de la randonnée vers ${peakName} ?`,
+      name: isEnglish ? `How difficult is hiking ${peakName}?` : `Quelle est la difficultÃ© de la randonnÃ©e vers ${peakName} ?`,
       acceptedAnswer: {
         "@type": "Answer",
         text: isEnglish
           ? `${peakName} is rated as ${difficulty} difficulty.`
-          : `${peakName} est classé comme ${difficulty} en difficulté.`
+          : `${peakName} est classÃ© comme ${difficulty} en difficultÃ©.`
       }
     });
   }
@@ -1084,12 +1261,12 @@ const buildFAQSchema = (peakName, routes, difficulty, time, langCode) => {
   if (time && time !== 'Varies' && time !== 'Variable') {
     faqs.push({
       "@type": "Question",
-      name: isEnglish ? `How long does it take to hike ${peakName}?` : `Combien de temps faut-il pour faire la randonnée vers ${peakName} ?`,
+      name: isEnglish ? `How long does it take to hike ${peakName}?` : `Combien de temps faut-il pour faire la randonnÃ©e vers ${peakName} ?`,
       acceptedAnswer: {
         "@type": "Answer",
         text: isEnglish
           ? `Typically, hiking ${peakName} takes ${time}.`
-          : `Typiquement, la randonnée vers ${peakName} prend ${time}.`
+          : `Typiquement, la randonnÃ©e vers ${peakName} prend ${time}.`
       }
     });
   }
@@ -1116,7 +1293,7 @@ const formatRouteSummary = (route) => {
   const trailType = cleanText(route["Trail Type"] || route.trailType || "");
   const details = [distance && `${distance} mi`, gain && `${gain} ft gain`, trailType, difficulty]
     .filter(Boolean)
-    .join(" • ");
+    .join(" â€¢ ");
   if (!name && !details) return "";
   return details ? `${name || "Route"} (${details})` : name;
 };
@@ -1422,12 +1599,12 @@ const buildJsonLd = (
           url: photoSet.primary.url,
           contentUrl: photoSet.primary.url,
           name: photoSet.primary.headline || peakName,
-          caption: photoSet.primary.description || descriptionText,
+          caption: photoSet.primary.alt || photoSet.primary.description || descriptionText,
           description: photoSet.primary.extendedDescription || photoSet.primary.description || descriptionText,
           creditText: AUTHOR_NAME,
           creator: { '@type': 'Person', name: AUTHOR_NAME },
           author: { '@type': 'Person', name: AUTHOR_NAME },
-          copyrightNotice: `© ${AUTHOR_NAME}`,
+          copyrightNotice: `Â© ${AUTHOR_NAME}`,
           license: IMAGE_LICENSE_URL,
           acquireLicensePage: IMAGE_LICENSE_URL,
           usageInfo: IMAGE_LICENSE_URL,
@@ -1442,6 +1619,9 @@ const buildJsonLd = (
           representativeOfPage: true,
           width: photoSet.primary.width || undefined,
           height: photoSet.primary.height || undefined,
+          exifData: Array.isArray(photoSet.primary.exifPropertyValues)
+            ? photoSet.primary.exifPropertyValues
+            : buildCanonicalExifData({}),
         },
       ]
       : undefined;
@@ -1552,7 +1732,7 @@ const buildJsonLd = (
     "@type": "WebPage",
     "@id": `${canonicalUrl}#webpage`,
     url: canonicalUrl,
-    name: `${peakName} — White Mountain National Forest`,
+    name: `${peakName} â€” White Mountain National Forest`,
     isPartOf: { "@id": webSiteNode["@id"] },
   };
 
@@ -1933,7 +2113,7 @@ const main = () => {
             suffix: lang.titleSuffix || lang.siteName || DEFAULT_SITE_NAME,
             site: lang.siteName || DEFAULT_SITE_NAME,
           },
-          (values) => `${values.name} (${values.elevationFormatted || values.elevation}) – ${values.suffix}`
+          (values) => `${values.name} (${values.elevationFormatted || values.elevation}) â€“ ${values.suffix}`
         );
         const { primary: primaryPhoto, imageObjects } = pickPrimaryPhoto(
           peak.photos,
@@ -1961,10 +2141,7 @@ const main = () => {
         const difficulty = difficultyValue || lang.defaults.difficulty;
         const trailType = trailTypeValue || lang.defaults.trailType;
         const time = timeValue || lang.defaults.time;
-        const heroAlt =
-          cleanText(primaryPhoto.extendedDescription || primaryPhoto.description) ||
-          descriptionText ||
-          primaryPhoto.alt;
+        const heroAlt = buildHeroImageAlt(localizedName, primaryPhoto, lang.code);
         const heroLangAttr = primaryPhoto.altLang ? ` lang="${primaryPhoto.altLang}"` : '';
         const heroCaptionText =
           cleanText(primaryPhoto.extendedDescription) || descriptionText || cleanText(primaryPhoto.description || '');
@@ -1998,7 +2175,7 @@ const main = () => {
           OG_IMAGE: primaryPhoto.url,
           OG_IMAGE_WIDTH: primaryPhoto.width || "",
           OG_IMAGE_HEIGHT: primaryPhoto.height || "",
-          OG_IMAGE_ALT: escapeHtml(primaryPhoto.alt),
+          OG_IMAGE_ALT: escapeHtml(heroAlt),
           AUTHOR_NAME: AUTHOR_NAME,
           PAGE_CREATOR: escapeHtml(primaryPhoto.creator || AUTHOR_NAME),
           PHOTO_CREDIT: escapeHtml(primaryPhoto.creditText || primaryPhoto.creator || AUTHOR_NAME),
@@ -2006,9 +2183,6 @@ const main = () => {
           PHOTO_KEYWORDS: escapeHtml((primaryPhoto.keywords || []).join(", ")),
           PHOTO_EXIF: escapeHtml(primaryPhoto.exifData || ""),
           THEME_COLOR: "#0a0a0a",
-          FAVICON_32: "/favicon-32.png",
-          FAVICON_16: "/favicon-16.png",
-          APPLE_TOUCH_ICON: "/apple-touch-icon.png",
           TWITTER_SITE: TWITTER_HANDLE,
           TWITTER_CREATOR: TWITTER_HANDLE,
           PEAK_NAME: escapeHtml(localizedName),
@@ -2028,7 +2202,7 @@ const main = () => {
           COORDINATES: escapeHtml(coordinates.text || lang.defaults.coordinates),
           ROUTES_LIST: buildRoutesList(peak["Standard Routes"], lang.labels),
           RELATED_TRAILS_LI: buildRelatedTrailsList(peak["Standard Routes"], lang.labels),
-          GALLERY_IMAGES: buildGallery(peak.photos, localizedName, descriptionText, lang.code),
+          GALLERY_IMAGES: buildGallery(peak.photos, localizedName, slug, lang.code),
           APP_URL: lang.appUrl(slug),
           CATALOG_URL: lang.catalogUrl,
           HERO_IMAGE: primaryPhoto.url,
@@ -2128,3 +2302,5 @@ const main = () => {
 };
 
 main();
+
+

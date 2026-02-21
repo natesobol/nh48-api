@@ -5,9 +5,10 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const TEMPLATE_PATH = path.join(ROOT, 'pages', 'nh48_peak.html');
+const PEAK_DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
 const BASE_URL = process.env.PEAK_UI_AUDIT_URL || getArgValue('--url') || '';
 
-const ROUTES = [
+const SAMPLE_ROUTES = [
   '/peak/mount-washington',
   '/peak/mount-isolation',
   '/fr/peak/mount-washington'
@@ -20,11 +21,40 @@ const REQUIRED_PANEL_IDS = [
   'parkingAccessGrid',
   'difficultyMetricsGrid',
   'riskPrepGrid',
+  'wildernessSafetyGrid',
   'monthlyWeatherPanel',
   'monthlyWeatherMonthSelect',
   'panelReaderModal',
   'panelReaderContent'
 ];
+const REQUIRED_FAVICON_LINKS = [
+  {
+    label: 'favicon 48',
+    regex: /<link\b[^>]*rel=["']icon["'][^>]*href=["']https:\/\/nh48\.info\/favicon\.png["'][^>]*sizes=["']48x48["'][^>]*type=["']image\/png["'][^>]*>/i
+  },
+  {
+    label: 'icon 192',
+    regex: /<link\b[^>]*rel=["']icon["'][^>]*href=["']https:\/\/nh48\.info\/icon-192\.png["'][^>]*sizes=["']192x192["'][^>]*type=["']image\/png["'][^>]*>/i
+  },
+  {
+    label: 'apple touch icon',
+    regex: /<link\b[^>]*rel=["']apple-touch-icon["'][^>]*href=["']https:\/\/nh48\.info\/apple-touch-icon\.png["'][^>]*>/i
+  },
+  {
+    label: 'favicon ico fallback',
+    regex: /<link\b[^>]*rel=["']icon["'][^>]*href=["']https:\/\/nh48\.info\/favicon\.ico["'][^>]*sizes=["']any["'][^>]*type=["']image\/x-icon["'][^>]*>/i
+  },
+  {
+    label: 'manifest',
+    regex: /<link\b[^>]*rel=["']manifest["'][^>]*href=["']\/manifest\.json["'][^>]*>/i
+  }
+];
+
+function countRuleMatches(content, ruleRegex) {
+  const regex = new RegExp(ruleRegex.source, 'gi');
+  const matches = String(content || '').match(regex);
+  return matches ? matches.length : 0;
+}
 
 function getArgValue(flag) {
   const index = process.argv.indexOf(flag);
@@ -32,10 +62,51 @@ function getArgValue(flag) {
   return process.argv[index + 1];
 }
 
+function normalizeSlug(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function loadPeakRoutes() {
+  if (!fs.existsSync(PEAK_DATA_PATH)) {
+    return SAMPLE_ROUTES;
+  }
+
+  try {
+    const raw = fs.readFileSync(PEAK_DATA_PATH, 'utf8').replace(/^\uFEFF/, '');
+    const payload = JSON.parse(raw);
+    const peaks = Array.isArray(payload) ? payload : Object.values(payload || {});
+    const slugs = Array.from(
+      new Set(
+        peaks
+          .map((peak) => normalizeSlug(peak?.slug || peak?.slug_en || peak?.Slug || peak?.peakName || peak?.['Peak Name']))
+          .filter(Boolean)
+      )
+    ).sort();
+
+    if (!slugs.length) {
+      return SAMPLE_ROUTES;
+    }
+
+    return slugs.flatMap((slug) => [`/peak/${slug}`, `/fr/peak/${slug}`]);
+  } catch {
+    return SAMPLE_ROUTES;
+  }
+}
+
 function assertIncludes(content, needle, message, failures) {
   if (!content.includes(needle)) {
     failures.push(message);
   }
+}
+
+function extractHead(content) {
+  const match = String(content || '').match(/<head\b[^>]*>([\s\S]*?)<\/head>/i);
+  return match ? match[1] : '';
 }
 
 function extractFunctionBody(content, functionName) {
@@ -66,6 +137,20 @@ function runTemplateChecks() {
   }
 
   const html = fs.readFileSync(TEMPLATE_PATH, 'utf8');
+  const head = extractHead(html);
+  if (!head) {
+    failures.push('Template missing <head> section.');
+  } else {
+    if (/\/favicons\//i.test(head)) {
+      failures.push('Template uses legacy /favicons/ links instead of canonical favicon contract.');
+    }
+    REQUIRED_FAVICON_LINKS.forEach((rule) => {
+      const count = countRuleMatches(head, rule.regex);
+      if (count !== 1) {
+        failures.push(`Template expected exactly one favicon contract link (${rule.label}), found ${count}.`);
+      }
+    });
+  }
   assertIncludes(html, 'id="nav-placeholder"', 'Template missing #nav-placeholder for worker nav injection', failures);
   assertIncludes(html, 'id="getDirectionsBtn"', 'Template missing hero Get Directions button', failures);
   const hasOverviewExpandHook =
@@ -80,6 +165,7 @@ function runTemplateChecks() {
   assertIncludes(html, 'id="parkingAccessGrid"', 'Template missing Parking & Access panel/grid', failures);
   assertIncludes(html, 'id="difficultyMetricsGrid"', 'Template missing Difficulty Metrics panel/grid', failures);
   assertIncludes(html, 'id="riskPrepGrid"', 'Template missing Risk & Preparation panel/grid', failures);
+  assertIncludes(html, 'id="wildernessSafetyGrid"', 'Template missing Wilderness Safety panel/grid', failures);
   assertIncludes(html, 'id="monthlyWeatherPanel"', 'Template missing Monthly Weather panel section', failures);
   assertIncludes(html, 'id="monthlyWeatherMonthSelect"', 'Template missing monthly weather month selector', failures);
   assertIncludes(html, 'id="panelReaderModal"', 'Template missing panel reader modal', failures);
@@ -140,7 +226,47 @@ async function fetchPage(url) {
   return { status: response.status, body };
 }
 
+function decodeHtmlEntities(value) {
+  return String(value || '')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&#x2026;/gi, '...')
+    .replace(/&#8230;/gi, '...');
+}
+
+function stripHtml(value) {
+  return decodeHtmlEntities(String(value || '').replace(/<[^>]+>/g, ' '))
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function extractMeaningfulH1Texts(html) {
+  const matches = [...String(html || '').matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
+  return matches
+    .map((match) => stripHtml(match[1]))
+    .filter((text) => text && !/^loading(?:\s*(?:\.{3}))?$/i.test(text));
+}
+
 function assertRouteUiMarkers(body, label, failures) {
+  const head = extractHead(body);
+  if (!head) {
+    failures.push(`${label}: missing <head> section.`);
+  } else {
+    if (/\/favicons\//i.test(head)) {
+      failures.push(`${label}: head contains legacy /favicons/ link(s).`);
+    }
+    REQUIRED_FAVICON_LINKS.forEach((rule) => {
+      const count = countRuleMatches(head, rule.regex);
+      if (count !== 1) {
+        failures.push(`${label}: expected exactly one favicon contract link (${rule.label}), found ${count}.`);
+      }
+    });
+  }
+
   if (!/class=["'][^"']*site-nav[^"']*["']/i.test(body)) {
     failures.push(`${label}: nav markup (.site-nav) not detected`);
   }
@@ -156,6 +282,11 @@ function assertRouteUiMarkers(body, label, failures) {
       failures.push(`${label}: missing required panel/grid #${id}`);
     }
   });
+
+  const h1Texts = extractMeaningfulH1Texts(body);
+  if (h1Texts.length !== 1) {
+    failures.push(`${label}: expected exactly 1 meaningful <h1>, found ${h1Texts.length} (${h1Texts.join(' | ') || 'none'}).`);
+  }
 }
 
 function routeToLocalPrerenderFile(route) {
@@ -170,7 +301,8 @@ function routeToLocalPrerenderFile(route) {
 
 function runLocalPrerenderChecks() {
   const failures = [];
-  for (const route of ROUTES) {
+  const routes = loadPeakRoutes();
+  for (const route of routes) {
     const filePath = routeToLocalPrerenderFile(route);
     if (!filePath) {
       failures.push(`${route}: unable to resolve local prerender path.`);
@@ -183,13 +315,14 @@ function runLocalPrerenderChecks() {
     const body = fs.readFileSync(filePath, 'utf8');
     assertRouteUiMarkers(body, route, failures);
   }
-  return failures;
+  return { failures, routeCount: routes.length };
 }
 
 async function runRemoteChecks() {
   const failures = [];
+  const routes = loadPeakRoutes();
 
-  for (const route of ROUTES) {
+  for (const route of routes) {
     const url = new URL(route, BASE_URL).toString();
     const { status, body } = await fetchPage(url);
     if (status !== 200) {
@@ -200,7 +333,7 @@ async function runRemoteChecks() {
     assertRouteUiMarkers(body, url, failures);
   }
 
-  return failures;
+  return { failures, routeCount: routes.length };
 }
 
 async function main() {
@@ -211,10 +344,15 @@ async function main() {
 
   const failures = [];
   failures.push(...runTemplateChecks());
+  let routeCount = 0;
   if (BASE_URL) {
-    failures.push(...(await runRemoteChecks()));
+    const remote = await runRemoteChecks();
+    failures.push(...remote.failures);
+    routeCount = remote.routeCount;
   } else {
-    failures.push(...runLocalPrerenderChecks());
+    const local = runLocalPrerenderChecks();
+    failures.push(...local.failures);
+    routeCount = local.routeCount;
   }
 
   if (failures.length) {
@@ -224,9 +362,9 @@ async function main() {
   }
 
   if (BASE_URL) {
-    console.log(`Peak page UI audit passed for template + ${ROUTES.length} route(s): ${BASE_URL}`);
+    console.log(`Peak page UI audit passed for template + ${routeCount} route(s): ${BASE_URL}`);
   } else {
-    console.log('Peak page UI audit passed for local template checks.');
+    console.log(`Peak page UI audit passed for template + ${routeCount} local prerender route(s).`);
   }
 }
 

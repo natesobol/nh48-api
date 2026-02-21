@@ -10,8 +10,19 @@ on:
       - 'scripts/prerender-peaks.js'
       - 'scripts/prerender-long-trails.js'
       - 'scripts/generate-sitemaps.js'
+      - 'scripts/generate-favicons.py'
+      - 'scripts/sync-favicon-contract.js'
       - 'scripts/generate-og-cards.py'
       - 'scripts/build-howker-facets.js'
+      - 'manifest.json'
+      - 'favicon.png'
+      - 'icon-192.png'
+      - 'icon-512.png'
+      - 'apple-touch-icon.png'
+      - 'favicon.ico'
+      - 'favicons/**'
+      - 'nh48API_logo.png'
+      - 'nh48api_logo.png'
       - 'data/og-card-overrides.json'
       - 'data/howker-plants'
       - 'nh48-planner.html'
@@ -66,6 +77,8 @@ jobs:
       - name: Generate static pages and sitemaps
         run: |
           set -euo pipefail
+          echo "=== Running scripts/generate-favicons.py ==="
+          python scripts/generate-favicons.py
           scripts=(
             scripts/prerender-peaks.js
             scripts/prerender-long-trails.js
@@ -118,6 +131,13 @@ jobs:
             page-sitemap.xml
             image-sitemap.xml
             data/og-cards.json
+            manifest.json
+            favicon.png
+            icon-192.png
+            icon-512.png
+            apple-touch-icon.png
+            favicon.ico
+            favicons/**
             data/howker-plants-index.json
             nh48-planner.html
             peakid-game.html
@@ -149,6 +169,13 @@ jobs:
             page-sitemap.xml
             image-sitemap.xml
             data/og-cards.json
+            manifest.json
+            favicon.png
+            icon-192.png
+            icon-512.png
+            apple-touch-icon.png
+            favicon.ico
+            favicons/**
             data/howker-plants-index.json
             nh48-planner.html
             peakid-game.html

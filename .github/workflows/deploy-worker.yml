@@ -55,8 +55,11 @@ on:
       - 'scripts/audit-peak-data-coverage.js'
       - 'scripts/audit-peak-image-metadata.js'
       - 'scripts/audit-peak-schema-parity.js'
+      - 'scripts/audit-favicon-contract.js'
       - 'scripts/audit-sameas.js'
       - 'scripts/audit-entity-links.js'
+      - 'scripts/generate-favicons.py'
+      - 'scripts/sync-favicon-contract.js'
       - 'scripts/build-peak-sameas.py'
       - 'scripts/build-peak-difficulty.js'
       - 'scripts/build-peak-experience-scaffold.js'
@@ -68,6 +71,15 @@ on:
       - 'scripts/generate-sitemaps.js'
       - 'scripts/generate-og-cards.py'
       - 'scripts/sync-wiki-media.js'
+      - 'manifest.json'
+      - 'favicon.png'
+      - 'icon-192.png'
+      - 'icon-512.png'
+      - 'apple-touch-icon.png'
+      - 'favicon.ico'
+      - 'favicons/**'
+      - 'nh48API_logo.png'
+      - 'nh48api_logo.png'
       - 'pages/nh48_peak.html'
       - 'pages/plant.html'
       - 'pages/plant_catalog.html'
@@ -227,6 +239,10 @@ jobs:
         id: peak_image_metadata_audit
         run: node scripts/audit-peak-image-metadata.js
 
+      - name: Run favicon contract audit (pre-deploy gate)
+        id: favicon_contract_audit
+        run: node scripts/audit-favicon-contract.js
+
       - name: Run wiki routes audit (pre-deploy gate)
         id: wiki_routes_audit
         run: node scripts/audit-wiki-routes.js
@@ -310,6 +326,7 @@ jobs:
           echo "- **Peak UI audit:** \`${{ steps.peak_ui_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak data coverage audit:** \`${{ steps.peak_data_coverage_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Peak image metadata audit:** \`${{ steps.peak_image_metadata_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Favicon contract audit:** \`${{ steps.favicon_contract_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Wiki routes audit:** \`${{ steps.wiki_routes_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Wiki media sync audit:** \`${{ steps.wiki_media_sync_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- **sameAs audit:** \`${{ steps.sameas_audit.outcome }}\`" >> "$GITHUB_STEP_SUMMARY"
@@ -337,6 +354,7 @@ jobs:
           echo "- \`node scripts/audit-peak-page-ui.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-data-coverage.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-peak-image-metadata.js\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`node scripts/audit-favicon-contract.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-wiki-routes.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-wiki-media-sync.js\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`node scripts/audit-sameas.js\`" >> "$GITHUB_STEP_SUMMARY"

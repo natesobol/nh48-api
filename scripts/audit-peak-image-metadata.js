@@ -8,7 +8,7 @@ const NH48_PATH = path.join(ROOT, 'data', 'nh48.json');
 const PEAK_TEMPLATE_PATH = path.join(ROOT, 'pages', 'nh48_peak.html');
 const BASE_URL = process.env.PEAK_IMAGE_METADATA_AUDIT_URL || getArgValue('--url') || '';
 
-const SAMPLE_SLUGS = ['mount-washington', 'mount-isolation', 'mount-lafayette'];
+const LOCALES = ['en', 'fr'];
 
 function getArgValue(flag) {
   const idx = process.argv.indexOf(flag);
@@ -93,6 +93,146 @@ function getTypes(node) {
   if (Array.isArray(type)) return type.map((entry) => String(entry));
   if (typeof type === 'string') return [type];
   return [];
+}
+
+function decodeHtmlEntities(value) {
+  return String(value || '')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&#x2026;/gi, '...')
+    .replace(/&#8230;/gi, '...');
+}
+
+function stripHtml(value) {
+  return decodeHtmlEntities(String(value || '').replace(/<[^>]+>/g, ' '))
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function extractMeaningfulH1(html) {
+  const matches = [...String(html || '').matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
+  const values = matches
+    .map((match) => stripHtml(match[1]))
+    .filter((text) => text && !/^loading(?:\s*(?:\.{3}))?$/i.test(text));
+  return values[0] || '';
+}
+
+function extractMetaContent(html, selector) {
+  const match = String(html || '').match(selector);
+  return match ? decodeHtmlEntities(match[1] || '').trim() : '';
+}
+
+function extractHeroImageAlt(html) {
+  const scoped = String(html || '').match(/<figure\b[^>]*class=["'][^"']*\bhero-image\b[^"']*["'][^>]*>[\s\S]*?<img\b[^>]*\balt=["']([^"']+)["'][^>]*>/i);
+  if (scoped && scoped[1]) return decodeHtmlEntities(scoped[1]).trim();
+  const fallback = String(html || '').match(/<img\b[^>]*\balt=["']([^"']+)["'][^>]*>/i);
+  return fallback ? decodeHtmlEntities(fallback[1]).trim() : '';
+}
+
+function extractTagAttribute(tag, attrName) {
+  const match = String(tag || '').match(new RegExp(`\\b${attrName}\\s*=\\s*["']([^"']*)["']`, 'i'));
+  return match ? decodeHtmlEntities(match[1] || '').trim() : '';
+}
+
+function extractGalleryImageTags(html) {
+  const matches = [...String(html || '').matchAll(/<figure\b[^>]*class=["'][^"']*\bpeak-photo\b[^"']*["'][^>]*>[\s\S]*?<img\b[^>]*>/gi)];
+  return matches.map((match) => match[0]);
+}
+
+function assertGalleryImageContract(html, slug, locale, failures) {
+  const label = `${slug} [${locale}]`;
+  const h1 = extractMeaningfulH1(html);
+  const galleryImages = extractGalleryImageTags(html);
+  if (!galleryImages.length) {
+    failures.push(`${label}: no gallery images found under figure.peak-photo.`);
+    return;
+  }
+
+  galleryImages.forEach((figureMarkup, index) => {
+    const imgMatch = figureMarkup.match(/<img\b[^>]*>/i);
+    const imgTag = imgMatch ? imgMatch[0] : '';
+    const alt = extractTagAttribute(imgTag, 'alt');
+    const width = extractTagAttribute(imgTag, 'width');
+    const height = extractTagAttribute(imgTag, 'height');
+    const loading = extractTagAttribute(imgTag, 'loading');
+    const itemLabel = `${label}: gallery image #${index + 1}`;
+
+    if (!alt) {
+      failures.push(`${itemLabel} missing alt text.`);
+    } else {
+      if (!/^.+\s-\s.+\s-\sNH48$/.test(alt)) {
+        failures.push(`${itemLabel} alt does not match required force-pattern.`);
+      }
+      if (h1 && !alt.startsWith(`${h1} - `)) {
+        failures.push(`${itemLabel} alt should start with page H1 "${h1}".`);
+      }
+      const viewDescription = alt.replace(/^.+?\s-\s/, '').replace(/\s-\sNH48$/, '').trim();
+      if (!viewDescription) {
+        failures.push(`${itemLabel} alt is missing the view-description segment.`);
+      } else if (isFilenameLikeDescription(viewDescription)) {
+        failures.push(`${itemLabel} alt view description appears filename-like ("${viewDescription}").`);
+      }
+    }
+
+    if (!/^\d+$/.test(width) || Number(width) <= 0) {
+      failures.push(`${itemLabel} missing valid numeric width attribute.`);
+    }
+    if (!/^\d+$/.test(height) || Number(height) <= 0) {
+      failures.push(`${itemLabel} missing valid numeric height attribute.`);
+    }
+    if (loading.toLowerCase() !== 'lazy') {
+      failures.push(`${itemLabel} must use loading=\"lazy\".`);
+    }
+  });
+}
+
+function isFilenameLikeDescription(value) {
+  const text = String(value || '').trim().toLowerCase();
+  if (!text) return true;
+  if (/\.(?:jpe?g|png|webp|gif|heic|avif)\b/.test(text)) return true;
+  if (/__\d{1,4}\b/.test(text)) return true;
+  if (/(?:^|[\s_-])(?:img|dsc|pxl|photo|mount)[\s_-]*\d{2,6}\b/.test(text)) return true;
+  if (/^[a-z0-9_-]{4,}$/.test(text) && /\d/.test(text)) return true;
+  return false;
+}
+
+function assertHeroAltContract(html, slug, locale, failures) {
+  const label = `${slug} [${locale}]`;
+  const heroAlt = extractHeroImageAlt(html);
+  if (!heroAlt) {
+    failures.push(`${label}: missing hero image alt text.`);
+    return;
+  }
+  if (!/^.+\s-\s.+\s-\sNH48$/.test(heroAlt)) {
+    failures.push(`${label}: hero alt does not match required pattern "[Peak Name] - [View Description] - NH48".`);
+  }
+  const pageH1 = extractMeaningfulH1(html);
+  if (pageH1 && !heroAlt.startsWith(`${pageH1} - `)) {
+    failures.push(`${label}: hero alt should start with page H1 "${pageH1}".`);
+  }
+  const viewDescription = heroAlt.replace(/^.+?\s-\s/, '').replace(/\s-\sNH48$/, '').trim();
+  if (!viewDescription) {
+    failures.push(`${label}: hero alt is missing the view description segment.`);
+  } else if (isFilenameLikeDescription(viewDescription)) {
+    failures.push(`${label}: hero alt view description appears filename-like ("${viewDescription}").`);
+  }
+
+  const ogAlt = extractMetaContent(html, /<meta\b[^>]*property=["']og:image:alt["'][^>]*content=["']([^"']*)["'][^>]*>/i);
+  const twitterAlt = extractMetaContent(html, /<meta\b[^>]*name=["']twitter:image:alt["'][^>]*content=["']([^"']*)["'][^>]*>/i);
+  if (!ogAlt) {
+    failures.push(`${label}: missing og:image:alt meta content.`);
+  } else if (ogAlt !== heroAlt) {
+    failures.push(`${label}: og:image:alt must match hero alt text.`);
+  }
+  if (!twitterAlt) {
+    failures.push(`${label}: missing twitter:image:alt meta content.`);
+  } else if (twitterAlt !== heroAlt) {
+    failures.push(`${label}: twitter:image:alt must match hero alt text.`);
+  }
 }
 
 function normalizeUrlToBasename(input) {
@@ -210,9 +350,10 @@ function assertImageObjectRequirements(nodes, slug, failures) {
   });
 }
 
-async function loadRenderedPage(slug) {
+async function loadRenderedPage(slug, locale = 'en') {
+  const route = locale === 'fr' ? `/fr/peak/${slug}` : `/peak/${slug}`;
   if (BASE_URL) {
-    const url = new URL(`/peak/${slug}`, BASE_URL).toString();
+    const url = new URL(route, BASE_URL).toString();
     const response = await fetch(url, {
       headers: { 'User-Agent': 'NH48-Peak-Image-Metadata-Audit/1.0' }
     });
@@ -222,9 +363,11 @@ async function loadRenderedPage(slug) {
     return response.text();
   }
 
-  const filePath = path.join(ROOT, 'peaks', slug, 'index.html');
+  const filePath = locale === 'fr'
+    ? path.join(ROOT, 'fr', 'peaks', slug, 'index.html')
+    : path.join(ROOT, 'peaks', slug, 'index.html');
   if (!fs.existsSync(filePath)) {
-    throw new Error(`Missing prerendered file: peaks/${slug}/index.html`);
+    throw new Error(`Missing prerendered file: ${path.relative(ROOT, filePath)}`);
   }
   return fs.readFileSync(filePath, 'utf8');
 }
@@ -234,9 +377,8 @@ async function main() {
   const nh48 = await loadSourceNh48();
   const template = fs.readFileSync(PEAK_TEMPLATE_PATH, 'utf8');
   assertTemplateTitleFallbacks(template, failures);
-  const targetSlugs = BASE_URL
-    ? Object.keys(nh48 || {}).sort()
-    : SAMPLE_SLUGS;
+  const targetSlugs = Object.keys(nh48 || {}).sort();
+  let routeChecks = 0;
 
   for (const slug of targetSlugs) {
     const peak = nh48?.[slug];
@@ -245,31 +387,37 @@ async function main() {
       continue;
     }
 
-    let html = '';
-    try {
-      html = await loadRenderedPage(slug);
-    } catch (error) {
-      failures.push(`${slug}: ${error.message}`);
-      continue;
-    }
-
-    assertImgMarkupHasAlt(html, slug, failures);
-    const { docs, errors } = extractJsonLdDocs(html);
-    if (errors.length) {
-      failures.push(`${slug}: invalid JSON-LD detected (${errors.join('; ')})`);
-      continue;
-    }
-    const nodes = [];
-    docs.forEach((doc) => collectNodes(doc, nodes));
-    assertImageObjectRequirements(nodes, slug, failures);
-
-    const sourceNames = extractSourcePhotoBasenames(peak);
-    const imageNames = extractImageObjectBasenames(nodes, slug, sourceNames);
-    sourceNames.forEach((name) => {
-      if (!imageNames.has(name)) {
-        failures.push(`${slug}: missing ImageObject entry for source photo "${name}".`);
+    for (const locale of LOCALES) {
+      let html = '';
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        html = await loadRenderedPage(slug, locale);
+      } catch (error) {
+        failures.push(`${slug} [${locale}]: ${error.message}`);
+        continue;
       }
-    });
+      routeChecks += 1;
+
+      assertHeroAltContract(html, slug, locale, failures);
+      assertGalleryImageContract(html, slug, locale, failures);
+      assertImgMarkupHasAlt(html, `${slug} [${locale}]`, failures);
+      const { docs, errors } = extractJsonLdDocs(html);
+      if (errors.length) {
+        failures.push(`${slug} [${locale}]: invalid JSON-LD detected (${errors.join('; ')})`);
+        continue;
+      }
+      const nodes = [];
+      docs.forEach((doc) => collectNodes(doc, nodes));
+      assertImageObjectRequirements(nodes, `${slug} [${locale}]`, failures);
+
+      const sourceNames = extractSourcePhotoBasenames(peak);
+      const imageNames = extractImageObjectBasenames(nodes, slug, sourceNames);
+      sourceNames.forEach((name) => {
+        if (!imageNames.has(name)) {
+          failures.push(`${slug} [${locale}]: missing ImageObject entry for source photo "${name}".`);
+        }
+      });
+    }
   }
 
   if (failures.length) {
@@ -279,9 +427,9 @@ async function main() {
   }
 
   if (BASE_URL) {
-    console.log(`Peak image metadata audit passed for ${targetSlugs.length} route(s): ${BASE_URL}`);
+    console.log(`Peak image metadata audit passed for ${routeChecks} route(s): ${BASE_URL}`);
   } else {
-    console.log(`Peak image metadata audit passed for ${targetSlugs.length} sampled prerendered peaks.`);
+    console.log(`Peak image metadata audit passed for ${routeChecks} local prerendered route(s).`);
   }
 }
 

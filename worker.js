@@ -2365,6 +2365,7 @@ export default {
       'parkingAccessGrid',
       'difficultyMetricsGrid',
       'riskPrepGrid',
+      'wildernessSafetyGrid',
       'monthlyWeatherPanel',
       'monthlyWeatherMonthSelect',
       'panelReaderModal',
@@ -2391,6 +2392,7 @@ export default {
       if (idSet.has('parkingAccessGrid')) pushNode('<div id="parkingAccessGrid"></div>');
       if (idSet.has('difficultyMetricsGrid')) pushNode('<div id="difficultyMetricsGrid"></div>');
       if (idSet.has('riskPrepGrid')) pushNode('<div id="riskPrepGrid"></div>');
+      if (idSet.has('wildernessSafetyGrid')) pushNode('<div id="wildernessSafetyGrid">Data TBD for this route.</div>');
       if (idSet.has('monthlyWeatherPanel')) pushNode('<section id="monthlyWeatherPanel"></section>');
       if (idSet.has('monthlyWeatherMonthSelect')) {
         pushNode('<select id="monthlyWeatherMonthSelect"><option value="current">Current month</option></select>');
@@ -2416,6 +2418,29 @@ export default {
         return html.replace(/<\/body>/i, `${block}\n</body>`);
       }
       return `${html}\n${block}`;
+    }
+
+    function normalizePrerenderHeroAlt(html, heroImageAlt) {
+      if (typeof html !== 'string' || !html) return html;
+      const normalizedAlt = normalizeTextForWeb(heroImageAlt);
+      if (!normalizedAlt) return html;
+      const escapedAlt = esc(normalizedAlt);
+      let output = html;
+
+      output = output.replace(
+        /(<meta\b[^>]*property=["']og:image:alt["'][^>]*content=["'])[^"']*(["'][^>]*>)/i,
+        `$1${escapedAlt}$2`
+      );
+      output = output.replace(
+        /(<meta\b[^>]*name=["']twitter:image:alt["'][^>]*content=["'])[^"']*(["'][^>]*>)/i,
+        `$1${escapedAlt}$2`
+      );
+      output = output.replace(
+        /(<figure\b[^>]*class=["'][^"']*\bhero-image\b[^"']*["'][^>]*>[\s\S]*?<img\b[^>]*\balt=["'])[^"']*(["'][^>]*>)/i,
+        `$1${escapedAlt}$2`
+      );
+
+      return output;
     }
 
     async function buildSitewideAdvisoryBanner(isFrench = false) {
@@ -2698,6 +2723,53 @@ export default {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+    }
+
+    function escRegExp(value) {
+      return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function getEasternMonthNumber(now = new Date()) {
+      const monthText = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        month: 'numeric'
+      }).format(now);
+      const month = Number(monthText);
+      return Number.isFinite(month) ? month : (now.getUTCMonth() + 1);
+    }
+
+    function getSeasonHint(now = new Date()) {
+      const month = getEasternMonthNumber(now);
+      if (month === 12 || month <= 2) return 'winter';
+      if (month >= 3 && month <= 5) return 'spring';
+      if (month >= 6 && month <= 8) return 'summer';
+      return 'fall';
+    }
+
+    function injectPeakSeasonHintSignals(html, seasonHint) {
+      if (typeof html !== 'string' || !html) return html;
+      const safeHint = String(seasonHint || '').trim().toLowerCase();
+      if (!safeHint) return html;
+      let output = html;
+      const metaTag = `<meta name="nh48:season-hint" content="${esc(safeHint)}" />`;
+      if (/<meta\b[^>]*name=["']nh48:season-hint["']/i.test(output)) {
+        output = output.replace(
+          /(<meta\b[^>]*name=["']nh48:season-hint["'][^>]*content=["'])[^"']*(["'][^>]*>)/i,
+          `$1${esc(safeHint)}$2`
+        );
+      } else {
+        output = output.replace(/<\/head>/i, `${metaTag}\n</head>`);
+      }
+
+      if (/<body[^>]*\bdata-season-hint=/i.test(output)) {
+        output = output.replace(
+          /(<body[^>]*\bdata-season-hint=["'])[^"']*(["'][^>]*>)/i,
+          `$1${esc(safeHint)}$2`
+        );
+      } else {
+        output = output.replace(/<body([^>]*)>/i, `<body$1 data-season-hint="${esc(safeHint)}">`);
+      }
+      return output;
     }
 
     function stripClientNavScripts(html) {
@@ -2995,6 +3067,77 @@ export default {
       return caption;
     }
 
+    function normalizeLooseMediaText(value) {
+      return normalizeTextForWeb(value)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+    }
+
+    function stripHeroAltPattern(value, peakName) {
+      const text = normalizeTextForWeb(value);
+      const safePeakName = normalizeTextForWeb(peakName);
+      const suffix = ' - NH48';
+      const prefix = safePeakName ? `${safePeakName} - ` : '';
+      if (!text) return '';
+      if (prefix && text.startsWith(prefix) && text.endsWith(suffix) && text.length > prefix.length + suffix.length) {
+        return text.slice(prefix.length, -suffix.length).trim();
+      }
+      return text;
+    }
+
+    function isFilenameLikeDescription(value) {
+      const text = normalizeTextForWeb(value);
+      if (!text) return true;
+      const normalized = text.toLowerCase();
+      if (/\.(?:jpe?g|png|webp|gif|heic|avif)\b/.test(normalized)) return true;
+      if (/__\d{1,4}\b/.test(normalized)) return true;
+      if (/(?:^|[\s_-])(?:img|dsc|pxl|photo|mount)[\s_-]*\d{2,6}\b/.test(normalized)) return true;
+      if (/^[a-z0-9_-]{4,}$/.test(normalized) && /\d/.test(normalized)) return true;
+      return false;
+    }
+
+    function isWeakViewDescription(value, peakName) {
+      const text = normalizeTextForWeb(value);
+      if (!text) return true;
+      if (isFilenameLikeDescription(text)) return true;
+      const normalized = normalizeLooseMediaText(text);
+      if (!normalized || normalized.length < 8) return true;
+      const peakNormalized = normalizeLooseMediaText(peakName);
+      if (!peakNormalized) return false;
+      const peakPattern = new RegExp(`\\b${escRegExp(peakNormalized).replace(/\s+/g, '\\s+')}\\b`, 'gi');
+      const remainder = normalized
+        .replace(peakPattern, ' ')
+        .replace(/\b(?:mount|mont|mt|photo|image|summit|sommet|view|vue)\b/gi, ' ')
+        .replace(/\b\d+\b/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      return remainder.length < 4;
+    }
+
+    function defaultHeroViewDescription(isFrench = false) {
+      return isFrench ? 'Vue du sommet des White Mountains' : 'Summit view in the White Mountains';
+    }
+
+    function buildHeroImageAltText(peakName, photo, isFrench = false) {
+      const candidate = stripHeroAltPattern(
+        pickFirstNonEmpty(
+          photo?.extendedDescription,
+          photo?.description,
+          photo?.caption,
+          photo?.altText,
+          photo?.alt,
+          photo?.title,
+          photo?.headline
+        ),
+        peakName
+      );
+      const viewDescription = isWeakViewDescription(candidate, peakName)
+        ? defaultHeroViewDescription(isFrench)
+        : candidate;
+      return `${normalizeTextForWeb(peakName)} - ${normalizeTextForWeb(viewDescription)} - NH48`;
+    }
+
     function parseImageDimensions(photo) {
       const width = Number(photo?.width);
       const height = Number(photo?.height);
@@ -3090,9 +3233,22 @@ export default {
     }
 
     function buildExifData(photoMeta) {
-      const out = [];
-      flattenMetaToPropertyValues('', photoMeta || {}, out);
-      return out;
+      const cameraModel = pickFirstNonEmpty(photoMeta?.cameraModel, photoMeta?.camera, photoMeta?.cameraMaker) || 'unknown';
+      const lens = pickFirstNonEmpty(photoMeta?.lens) || 'unknown';
+      const rawFStop = pickFirstNonEmpty(photoMeta?.fStop);
+      const fStop = rawFStop ? (/^f\//i.test(rawFStop) ? rawFStop : `f/${rawFStop}`) : 'unknown';
+      const shutterSpeed = pickFirstNonEmpty(photoMeta?.shutterSpeed) || 'unknown';
+      const isoRaw = pickFirstNonEmpty(photoMeta?.iso);
+      const iso = isoRaw ? isoRaw.replace(/^iso\s*/i, '') : 'unknown';
+      const focalLength = pickFirstNonEmpty(photoMeta?.focalLength) || 'unknown';
+      return [
+        { '@type': 'PropertyValue', name: 'cameraModel', value: cameraModel },
+        { '@type': 'PropertyValue', name: 'lens', value: lens },
+        { '@type': 'PropertyValue', name: 'fStop', value: fStop },
+        { '@type': 'PropertyValue', name: 'shutterSpeed', value: shutterSpeed },
+        { '@type': 'PropertyValue', name: 'iso', value: iso },
+        { '@type': 'PropertyValue', name: 'focalLength', value: focalLength }
+      ];
     }
 
     function buildCatalogDataset({ canonicalUrl, title, description, imageObjects }) {
@@ -4085,8 +4241,11 @@ export default {
           pushNarrativePart(`${peakName} History`, historyBits.join(' '), 'trail-tested-history');
         }
       }
-      const imageObjects = (Array.isArray(photos) ? photos : [])
-        .map((photo) => {
+      const photoList = Array.isArray(photos) ? photos : [];
+      const primaryPhotoIndex = Math.max(0, photoList.findIndex((photo) => photo && photo.isPrimary));
+      const isFrenchRoute = /\/fr\/peak\//i.test(canonicalUrl);
+      const imageObjects = photoList
+        .map((photo, index) => {
           if (!photo || !photo.url) return null;
           const isFineArt = !!photo.isFineArt;
           const { width, height } = parseImageDimensions(photo);
@@ -4094,6 +4253,7 @@ export default {
           const contentLocation = buildContentLocation(photo);
           const dateCreated = pickFirstNonEmpty(photo.captureDate, photo.dateCreated);
           const exifData = buildExifData(photo);
+          const forcePatternCaption = buildHeroImageAltText(peakName, photo, isFrenchRoute);
           const copyrightNotice = pickFirstNonEmpty(photo?.iptc?.copyrightNotice, photo.copyrightNotice, RIGHTS_DEFAULTS.copyrightNotice);
           const acquireLicensePage = pickFirstNonEmpty(photo.acquireLicensePage, RIGHTS_DEFAULTS.licenseUrl, RIGHTS_DEFAULTS.acquireLicensePageUrl);
           const imageObject = {
@@ -4101,7 +4261,7 @@ export default {
             contentUrl: photo.url,
             url: photo.url,
             name: buildPhotoTitleUnique(peakName, photo),
-            caption: buildPhotoCaptionUnique(peakName, photo),
+            caption: forcePatternCaption,
             creator: { '@type': 'Person', name: RIGHTS_DEFAULTS.creatorName },
             creditText: RIGHTS_DEFAULTS.creditText,
             copyrightNotice,
@@ -4112,7 +4272,8 @@ export default {
             height,
             keywords,
             contentLocation,
-            exifData
+            exifData,
+            representativeOfPage: index === primaryPhotoIndex
           };
           if (isFineArt) {
             imageObject.artform = 'Photography';
@@ -6693,6 +6854,7 @@ export default {
       if (!peakSlug) return null;
       const normalizedSlug = String(peakSlug).trim().toLowerCase();
       if (!normalizedSlug) return null;
+      const seasonHint = String(options?.seasonHint || getSeasonHint()).trim().toLowerCase() || 'summer';
       const routePath = french
         ? `/fr/peak/${encodeURIComponent(normalizedSlug)}`
         : `/peak/${encodeURIComponent(normalizedSlug)}`;
@@ -6719,7 +6881,11 @@ export default {
           /<nav\b[^>]*class=["'][^"']*\bsite-nav\b[^"']*["'][^>]*>[\s\S]*?<\/nav>/i,
           ''
         );
-        html = injectNavFooter(html, navHtml, footerHtml, routePath, 'peak');
+        html = injectNavFooter(html, navHtml, footerHtml, routePath, 'peak', { 'season-hint': seasonHint });
+
+        if (typeof options?.heroImageAlt === 'string' && options.heroImageAlt.trim()) {
+          html = normalizePrerenderHeroAlt(html, options.heroImageAlt);
+        }
 
         if (Array.isArray(options?.jsonLdBlocks) && options.jsonLdBlocks.length) {
           html = stripJsonLdScripts(html);
@@ -6733,6 +6899,7 @@ export default {
         } else if (options?.prependBodyHtml) {
           html = injectBodyStartHtml(html, options.prependBodyHtml);
         }
+        html = injectPeakSeasonHintSignals(html, seasonHint);
         html = ensurePeakParityAnchors(html);
         html = injectClientRuntimeCore(html);
         return new Response(html, {
@@ -6741,7 +6908,8 @@ export default {
             'Content-Type': 'text/html; charset=utf-8',
             'Cache-Control': 'no-store',
             'X-Robots-Tag': 'index, follow',
-            'X-Peak-Source': 'prerendered'
+            'X-Peak-Source': 'prerendered',
+            'X-Peak-Season-Hint': seasonHint
           }
         });
       } catch (err) {
@@ -6917,9 +7085,10 @@ export default {
     const primaryCaption = primaryPhoto
       ? buildPhotoCaptionUnique(peakName, primaryPhoto)
       : peakName;
+    const heroImageAlt = buildHeroImageAltText(peakName, primaryPhoto || {}, isFrench);
     const ogCard = await resolveOgCard(pathname);
     const socialImage = ogCard?.image || heroUrl;
-    const socialImageAlt = ogCard?.imageAlt || primaryCaption;
+    const socialImageAlt = heroImageAlt || ogCard?.imageAlt || primaryCaption;
     const rangeContext = await resolveRangeContext(rangeVal);
     const {
       mountain = {},
@@ -6973,6 +7142,7 @@ export default {
       peakPageNodes,
       globalSchemaNodes
     );
+    const seasonHint = getSeasonHint();
 
     const renderParam = String(url.searchParams.get('render') || '').toLowerCase();
     const debugPrerenderParam = String(url.searchParams.get('debug_prerender') || '').toLowerCase();
@@ -6988,7 +7158,9 @@ export default {
     if (shouldAttemptPrerender) {
       const prerenderedResponse = await servePrerenderedPeakHtml(slug, isFrench, {
         prependMainHtml: peakAlertHtml,
-        jsonLdBlocks
+        jsonLdBlocks,
+        heroImageAlt,
+        seasonHint
       });
       if (prerenderedResponse) {
         return prerenderedResponse;
@@ -7006,7 +7178,9 @@ export default {
       if (routeKeyword === 'peak') {
         const prerenderedFallback = await servePrerenderedPeakHtml(slug, isFrench, {
           prependMainHtml: peakAlertHtml,
-          jsonLdBlocks
+          jsonLdBlocks,
+          heroImageAlt,
+          seasonHint
         });
         if (prerenderedFallback) {
           return prerenderedFallback;
@@ -7034,7 +7208,7 @@ export default {
     html = applyPeakTemplateImageTransforms(html);
 
     // Remove existing placeholders and duplicate head tags.
-    html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'peak');
+    html = injectNavFooter(stripHeadMeta(html), navHtml, footerHtml, pathname, 'peak', { 'season-hint': seasonHint });
     if (peakAlertHtml) {
       html = injectPeakAdvisoryHtml(html, peakAlertHtml);
     }
@@ -7072,6 +7246,7 @@ export default {
       )
     ].join('\n');
     html = html.replace(/<\/head>/i, `${metaBlock}\n</head>`);
+    html = injectPeakSeasonHintSignals(html, seasonHint);
     html = injectClientRuntimeCore(html);
 
     // Return the modified interactive page with no-store caching for
@@ -7086,7 +7261,8 @@ export default {
         'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'no-store',
         'X-Robots-Tag': 'index, follow',
-        'X-Peak-Source': templateSourceHeader
+        'X-Peak-Source': templateSourceHeader,
+        'X-Peak-Season-Hint': seasonHint
       }
     });
   }
