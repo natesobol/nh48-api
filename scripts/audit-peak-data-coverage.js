@@ -6,6 +6,7 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const NH48_PATH = path.join(ROOT, 'data', 'nh48.json');
 const PEAK_TEMPLATE_PATH = path.join(ROOT, 'pages', 'nh48_peak.html');
+const PEAK_RUNTIME_PATH = path.join(ROOT, 'js', 'peak-detail-runtime.js');
 const WORKER_PATH = path.join(ROOT, 'worker.js');
 
 const EXPECTED_FIELDS = [
@@ -128,13 +129,13 @@ function matchAny(content, patterns) {
   return patterns.some((pattern) => pattern.test(content));
 }
 
-function verifyFieldExposure(templateContent, workerContent, failures) {
+function verifyFieldExposure(runtimeContent, workerContent, failures) {
   EXPECTED_FIELDS.forEach((field) => {
     const patterns = buildFieldPatterns(field);
-    const uiHit = matchAny(templateContent, patterns);
+    const uiHit = matchAny(runtimeContent, patterns);
     const schemaHit = matchAny(workerContent, patterns);
     if (!uiHit && !schemaHit) {
-      failures.push(`Field "${field}" is not referenced in peak UI template or worker schema logic.`);
+      failures.push(`Field "${field}" is not referenced in peak runtime module or worker schema logic.`);
     }
   });
 }
@@ -147,7 +148,7 @@ function verifySectionMarkers(templateContent, failures) {
   });
 }
 
-function verifyLocaleParity(templateContent, failures) {
+function verifyLocaleParity(runtimeContent, failures) {
   const localeFunctions = [
     'renderParkingAndAccess',
     'renderDifficultyMetrics',
@@ -157,9 +158,9 @@ function verifyLocaleParity(templateContent, failures) {
   ];
 
   localeFunctions.forEach((functionName) => {
-    const body = extractFunctionBody(templateContent, functionName);
+    const body = extractFunctionBody(runtimeContent, functionName);
     if (!body) {
-      failures.push(`Missing function ${functionName} in peak template.`);
+      failures.push(`Missing function ${functionName} in peak runtime module.`);
       return;
     }
     if (!/langCode\s*===\s*'fr'|getSeoLang\(\)\s*===\s*'fr'/i.test(body)) {
@@ -170,15 +171,26 @@ function verifyLocaleParity(templateContent, failures) {
 
 function main() {
   const failures = [];
+  if (!fs.existsSync(NH48_PATH)) failures.push(`Missing data file: ${path.relative(ROOT, NH48_PATH)}`);
+  if (!fs.existsSync(PEAK_TEMPLATE_PATH)) failures.push(`Missing peak template: ${path.relative(ROOT, PEAK_TEMPLATE_PATH)}`);
+  if (!fs.existsSync(PEAK_RUNTIME_PATH)) failures.push(`Missing peak runtime module: ${path.relative(ROOT, PEAK_RUNTIME_PATH)}`);
+  if (!fs.existsSync(WORKER_PATH)) failures.push(`Missing worker source: ${path.relative(ROOT, WORKER_PATH)}`);
+  if (failures.length) {
+    console.error(`Peak data coverage audit failed with ${failures.length} issue(s).`);
+    failures.forEach((failure) => console.error(`- ${failure}`));
+    process.exit(1);
+  }
+
   const nh48 = readJson(NH48_PATH);
   const templateContent = fs.readFileSync(PEAK_TEMPLATE_PATH, 'utf8');
+  const runtimeContent = fs.readFileSync(PEAK_RUNTIME_PATH, 'utf8');
   const workerContent = fs.readFileSync(WORKER_PATH, 'utf8');
 
   const actualFields = collectActualTopLevelFields(nh48);
   compareFieldSet(actualFields, failures);
-  verifyFieldExposure(templateContent, workerContent, failures);
+  verifyFieldExposure(runtimeContent, workerContent, failures);
   verifySectionMarkers(templateContent, failures);
-  verifyLocaleParity(templateContent, failures);
+  verifyLocaleParity(runtimeContent, failures);
 
   if (failures.length) {
     console.error(`Peak data coverage audit failed with ${failures.length} issue(s).`);
