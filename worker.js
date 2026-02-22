@@ -411,28 +411,136 @@ export default {
     if (pathname.startsWith('/api/tiles/opentopo/')) {
       const match = pathname.match(/^\/api\/tiles\/opentopo\/(\d+)\/(\d+)\/(\d+)\.(png|jpg)$/);
       if (!match) {
-        return new Response('Invalid tile path.', { status: 400 });
+        return new Response('Invalid tile path.', {
+          status: 400,
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-NH48-Tile-Route': 'opentopo',
+            'X-NH48-Tile-Error': 'invalid-path'
+          })
+        });
+      }
+      if (request.method === 'OPTIONS') {
+        return new Response(null, {
+          status: 204,
+          headers: tileResponseHeadersWithDebug('image/png', LONG_TILE_CACHE_CONTROL, {
+            'X-NH48-Tile-Route': 'opentopo'
+          })
+        });
       }
       if (!['GET', 'HEAD'].includes(request.method)) {
-        return new Response('Method Not Allowed', { status: 405 });
+        return new Response('Method Not Allowed', {
+          status: 405,
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-NH48-Tile-Route': 'opentopo',
+            'X-NH48-Tile-Error': 'method-not-allowed'
+          })
+        });
       }
       const [, z, x, y, ext] = match;
       const subdomains = ['a', 'b', 'c'];
       const sub = subdomains[Math.floor(Math.random() * subdomains.length)];
       const tileUrl = `https://${sub}.tile.opentopomap.org/${z}/${x}/${y}.png`;
-      const upstream = await fetch(tileUrl, {
-        cf: { cacheTtl: 86400, cacheEverything: true }
-      });
-      if (!upstream.ok) {
-        return new Response('Tile not found.', { status: upstream.status });
+      let upstream = null;
+      try {
+        upstream = await fetch(tileUrl, {
+          cf: { cacheTtl: 86400, cacheEverything: true }
+        });
+      } catch (error) {
+        return new Response('Tile upstream unavailable.', {
+          status: 502,
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-NH48-Tile-Route': 'opentopo',
+            'X-NH48-Tile-Source': tileUrl,
+            'X-NH48-Tile-Error': 'upstream-fetch-failed',
+            'X-NH48-Tile-Detail': error?.message || 'fetch-error'
+          })
+        });
       }
-      return new Response(upstream.body, {
+      if (!upstream.ok) {
+        return new Response(request.method === 'HEAD' ? null : 'Tile not found.', {
+          status: upstream.status,
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-NH48-Tile-Route': 'opentopo',
+            'X-NH48-Tile-Source': tileUrl,
+            'X-NH48-Tile-Upstream-Status': upstream.status
+          })
+        });
+      }
+      return new Response(request.method === 'HEAD' ? null : upstream.body, {
         status: upstream.status,
-        headers: {
-          'Content-Type': `image/${ext === 'jpg' ? 'jpeg' : ext}`,
-          'Cache-Control': 'public, max-age=86400',
-          'Access-Control-Allow-Origin': '*'
-        }
+        headers: tileResponseHeadersWithDebug(`image/${ext === 'jpg' ? 'jpeg' : ext}`, 'public, max-age=86400', {
+          'X-NH48-Tile-Route': 'opentopo',
+          'X-NH48-Tile-Source': tileUrl,
+          'X-NH48-Tile-Upstream-Status': upstream.status
+        })
+      });
+    }
+
+    if (pathname.startsWith('/api/tiles/osm/')) {
+      const match = pathname.match(/^\/api\/tiles\/osm\/(\d+)\/(\d+)\/(\d+)\.(png|jpg)$/);
+      if (!match) {
+        return new Response('Invalid tile path.', {
+          status: 400,
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-NH48-Tile-Route': 'osm',
+            'X-NH48-Tile-Error': 'invalid-path'
+          })
+        });
+      }
+      if (request.method === 'OPTIONS') {
+        return new Response(null, {
+          status: 204,
+          headers: tileResponseHeadersWithDebug('image/png', LONG_TILE_CACHE_CONTROL, {
+            'X-NH48-Tile-Route': 'osm'
+          })
+        });
+      }
+      if (!['GET', 'HEAD'].includes(request.method)) {
+        return new Response('Method Not Allowed', {
+          status: 405,
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-NH48-Tile-Route': 'osm',
+            'X-NH48-Tile-Error': 'method-not-allowed'
+          })
+        });
+      }
+      const [, z, x, y, ext] = match;
+      const subdomains = ['a', 'b', 'c'];
+      const sub = subdomains[Math.floor(Math.random() * subdomains.length)];
+      const tileUrl = `https://${sub}.tile.openstreetmap.org/${z}/${x}/${y}.png`;
+      let upstream = null;
+      try {
+        upstream = await fetch(tileUrl, {
+          cf: { cacheTtl: 86400, cacheEverything: true }
+        });
+      } catch (error) {
+        return new Response('Tile upstream unavailable.', {
+          status: 502,
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-NH48-Tile-Route': 'osm',
+            'X-NH48-Tile-Source': tileUrl,
+            'X-NH48-Tile-Error': 'upstream-fetch-failed',
+            'X-NH48-Tile-Detail': error?.message || 'fetch-error'
+          })
+        });
+      }
+      if (!upstream.ok) {
+        return new Response(request.method === 'HEAD' ? null : 'Tile not found.', {
+          status: upstream.status,
+          headers: tileResponseHeadersWithDebug('text/plain; charset=utf-8', STYLE_METADATA_CACHE_CONTROL, {
+            'X-NH48-Tile-Route': 'osm',
+            'X-NH48-Tile-Source': tileUrl,
+            'X-NH48-Tile-Upstream-Status': upstream.status
+          })
+        });
+      }
+      return new Response(request.method === 'HEAD' ? null : upstream.body, {
+        status: upstream.status,
+        headers: tileResponseHeadersWithDebug(`image/${ext === 'jpg' ? 'jpeg' : ext}`, 'public, max-age=86400', {
+          'X-NH48-Tile-Route': 'osm',
+          'X-NH48-Tile-Source': tileUrl,
+          'X-NH48-Tile-Upstream-Status': upstream.status
+        })
       });
     }
 

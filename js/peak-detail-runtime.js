@@ -93,6 +93,14 @@
       }
 
       function collectRuntimeAssetState(){
+        const styleSheets = Array.from(document.styleSheets || []);
+        const findSheet = (needle) => styleSheets.find((sheet) => {
+          const href = sheet && sheet.href ? String(sheet.href) : '';
+          return href.includes(needle);
+        }) || null;
+        const peakDetailSheet = findSheet('/css/peak-detail.css');
+        const tooltipsSheet = findSheet('/css/ui-tooltips.css');
+        const leafletSheet = findSheet('leaflet@1.9.4/dist/leaflet.css');
         const hasHead = !!document.head;
         const hasBody = !!document.body;
         const hasPeakBootstrapData = !!document.getElementById('peakBootstrapData');
@@ -113,20 +121,36 @@
           hasPeakRuntimeScriptTag,
           hasI18nScriptTag,
           hasTooltipsScriptTag,
-          hasLeafletScriptTag
+          hasLeafletScriptTag,
+          peakDetailStylesheetActive: !!peakDetailSheet,
+          peakDetailStylesheetDisabled: !!(peakDetailSheet && peakDetailSheet.disabled),
+          tooltipsStylesheetActive: !!tooltipsSheet,
+          tooltipsStylesheetDisabled: !!(tooltipsSheet && tooltipsSheet.disabled),
+          leafletStylesheetActive: !!leafletSheet,
+          leafletStylesheetDisabled: !!(leafletSheet && leafletSheet.disabled)
         };
       }
 
-      if(PEAK_DEBUG_ENABLED){
-        debugLog('module-loaded', {
-          href: window.location.href,
-          readyState: document.readyState
-        });
-        debugLog('asset-state:module-load', collectRuntimeAssetState());
-        window.addEventListener('error', (event) => {
-          debugError('window-error', {
-            message: event && event.message,
-            filename: event && event.filename,
+        if(PEAK_DEBUG_ENABLED){
+          debugLog('module-loaded', {
+            href: window.location.href,
+            readyState: document.readyState
+          });
+          debugLog('asset-state:module-load', collectRuntimeAssetState());
+          const heroEl = document.getElementById('peakHero');
+          if(heroEl && window.getComputedStyle){
+            const heroStyle = window.getComputedStyle(heroEl);
+            debugLog('style-check:peakHero:module-load', {
+              display: heroStyle.display,
+              position: heroStyle.position,
+              minHeight: heroStyle.minHeight,
+              backgroundImage: heroStyle.backgroundImage ? 'set' : 'empty'
+            });
+          }
+          window.addEventListener('error', (event) => {
+            debugError('window-error', {
+              message: event && event.message,
+              filename: event && event.filename,
             line: event && event.lineno,
             column: event && event.colno
           });
@@ -2003,6 +2027,95 @@
       let peakMapLabel = null;
       let peakMapBounds = null;
       let peakMapTrailDataPromise = null;
+      let peakMapTopoLayer = null;
+      let peakMapFallbackLayer = null;
+      let peakMapFallbackActive = false;
+      let peakMapTileStats = null;
+
+      function resetPeakMapTileStats(slug = ''){
+        peakMapTileStats = {
+          slug,
+          topo: { loadStart: 0, load: 0, error: 0, abort: 0 },
+          fallback: { loadStart: 0, load: 0, error: 0, abort: 0 },
+          fallbackActivations: 0,
+          lastTopoError: '',
+          lastFallbackError: ''
+        };
+      }
+
+      function maybeLogMapTileEvent(layerName, eventName, payload = {}){
+        if(!PEAK_DEBUG_ENABLED) return;
+        if(!peakMapTileStats){
+          resetPeakMapTileStats(currentSlug || '');
+        }
+        const layerKey = layerName === 'topo' ? 'topo' : 'fallback';
+        const bucket = peakMapTileStats[layerKey];
+        if(!bucket) return;
+
+        if(eventName === 'tileloadstart') bucket.loadStart += 1;
+        if(eventName === 'tileload') bucket.load += 1;
+        if(eventName === 'tileerror') bucket.error += 1;
+        if(eventName === 'tileabort') bucket.abort += 1;
+
+        const shouldLog =
+          eventName === 'tileerror'
+          || eventName === 'tileabort'
+          || bucket.loadStart <= 2
+          || bucket.load <= 2
+          || bucket.error <= 3
+          || bucket.abort <= 3
+          || ((bucket.load + bucket.error + bucket.abort) % 20 === 0);
+
+        if(!shouldLog) return;
+
+        const statsSnapshot = {
+          layer: layerName,
+          event: eventName,
+          slug: peakMapTileStats.slug,
+          counts: {
+            loadStart: bucket.loadStart,
+            load: bucket.load,
+            error: bucket.error,
+            abort: bucket.abort
+          },
+          ...payload
+        };
+        if(eventName === 'tileerror' || eventName === 'tileabort'){
+          debugWarn(`map:tile:${eventName}`, statsSnapshot);
+        }else{
+          debugLog(`map:tile:${eventName}`, statsSnapshot);
+        }
+      }
+
+      function activatePeakMapFallback(reason = 'unknown', details = {}){
+        if(!peakMap || !peakMapFallbackLayer) return;
+        if(!peakMap.hasLayer(peakMapFallbackLayer)){
+          peakMapFallbackLayer.addTo(peakMap);
+        }
+        if(peakMapTopoLayer && peakMap.hasLayer(peakMapTopoLayer)){
+          peakMap.removeLayer(peakMapTopoLayer);
+        }
+        if(!peakMapFallbackActive){
+          peakMapFallbackActive = true;
+          if(!peakMapTileStats){
+            resetPeakMapTileStats(currentSlug || '');
+          }
+          peakMapTileStats.fallbackActivations += 1;
+          updatePeakMapStatus('Topographic tiles are unavailable; using fallback map tiles.', true);
+          setTimeout(() => {
+            updatePeakMapStatus('', false);
+          }, 3500);
+        }
+        debugWarn('map:fallback-activated', {
+          slug: currentSlug || '',
+          reason,
+          details
+        });
+        trackEvent('peak_map_tile_fallback', {
+          slug: currentSlug || '',
+          reason
+        });
+      }
 
       async function waitForI18NReady(timeoutMs = LANGUAGE_READY_TIMEOUT){
         return new Promise((resolve) => {
@@ -3360,21 +3473,84 @@
         const bounds = getPeakMapBounds(coords);
         peakMapBounds = bounds;
         const latLngBounds = L.latLngBounds([bounds.south, bounds.west], [bounds.north, bounds.east]);
+        resetPeakMapTileStats(currentSlug || '');
 
         if(!peakMap){
           peakMap = L.map(map, { zoomControl: true, scrollWheelZoom: false });
-          const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+          peakMapTopoLayer = L.tileLayer('/api/tiles/opentopo/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors &amp; OpenTopoMap (CC-BY-SA)'
+            ,
+            maxNativeZoom: 17,
+            maxZoom: 18
           });
-          const fallbackLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          peakMapFallbackLayer = L.tileLayer('/api/tiles/osm/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
+            ,
+            maxNativeZoom: 19,
+            maxZoom: 19
           });
-          topoLayer.on('tileerror', () => {
-            if(!peakMap.hasLayer(fallbackLayer)){
-              fallbackLayer.addTo(peakMap);
+          peakMapTopoLayer.on('tileloadstart', (event) => {
+            maybeLogMapTileEvent('topo', 'tileloadstart', {
+              coords: event && event.coords ? event.coords : null
+            });
+          });
+          peakMapTopoLayer.on('tileload', (event) => {
+            maybeLogMapTileEvent('topo', 'tileload', {
+              src: event && event.tile ? (event.tile.currentSrc || event.tile.src || '') : ''
+            });
+          });
+          peakMapTopoLayer.on('tileabort', (event) => {
+            const src = event && event.tile ? (event.tile.currentSrc || event.tile.src || '') : '';
+            maybeLogMapTileEvent('topo', 'tileabort', { src });
+            if(peakMapTileStats && peakMapTileStats.topo.abort >= 10 && !peakMapFallbackActive){
+              activatePeakMapFallback('topo-tileabort-threshold', { abortCount: peakMapTileStats.topo.abort, src });
             }
           });
-          topoLayer.addTo(peakMap);
+          peakMapTopoLayer.on('tileerror', (event) => {
+            const src = event && event.tile ? (event.tile.currentSrc || event.tile.src || '') : '';
+            const errorMessage = event && event.error && event.error.message ? event.error.message : '';
+            if(peakMapTileStats){
+              peakMapTileStats.lastTopoError = src || errorMessage || 'unknown-topo-tile-error';
+            }
+            maybeLogMapTileEvent('topo', 'tileerror', { src, error: errorMessage });
+            if(peakMapTileStats && peakMapTileStats.topo.error >= 3){
+              activatePeakMapFallback('topo-tileerror-threshold', {
+                errorCount: peakMapTileStats.topo.error,
+                src,
+                error: errorMessage
+              });
+            }else if(!peakMapFallbackActive){
+              if(!peakMap.hasLayer(peakMapFallbackLayer)){
+                peakMapFallbackLayer.addTo(peakMap);
+              }
+              updatePeakMapStatus('Topographic tiles look unstable. Attempting fallback tiles...', true);
+            }
+          });
+          peakMapFallbackLayer.on('tileloadstart', (event) => {
+            maybeLogMapTileEvent('fallback', 'tileloadstart', {
+              coords: event && event.coords ? event.coords : null
+            });
+          });
+          peakMapFallbackLayer.on('tileload', (event) => {
+            maybeLogMapTileEvent('fallback', 'tileload', {
+              src: event && event.tile ? (event.tile.currentSrc || event.tile.src || '') : ''
+            });
+          });
+          peakMapFallbackLayer.on('tileabort', (event) => {
+            const src = event && event.tile ? (event.tile.currentSrc || event.tile.src || '') : '';
+            maybeLogMapTileEvent('fallback', 'tileabort', { src });
+          });
+          peakMapFallbackLayer.on('tileerror', (event) => {
+            const src = event && event.tile ? (event.tile.currentSrc || event.tile.src || '') : '';
+            const errorMessage = event && event.error && event.error.message ? event.error.message : '';
+            if(peakMapTileStats){
+              peakMapTileStats.lastFallbackError = src || errorMessage || 'unknown-fallback-tile-error';
+            }
+            maybeLogMapTileEvent('fallback', 'tileerror', { src, error: errorMessage });
+            updatePeakMapStatus('Map tile providers are currently unavailable.', true);
+          });
+          peakMapTopoLayer.addTo(peakMap);
+          peakMapFallbackActive = false;
           peakMapTrailsLayer = L.layerGroup().addTo(peakMap);
         }else if(peakMapTrailsLayer){
           peakMapTrailsLayer.clearLayers();
@@ -3382,9 +3558,14 @@
           peakMapTrailsLayer = L.layerGroup().addTo(peakMap);
         }
 
+        if(peakMapFallbackActive && peakMapFallbackLayer && !peakMap.hasLayer(peakMapFallbackLayer)){
+          peakMapFallbackLayer.addTo(peakMap);
+        }
+
         peakMap.fitBounds(latLngBounds, { padding: [12, 12] });
         peakMap.setMaxBounds(latLngBounds.pad(0.05));
         peakMap.setMinZoom(peakMap.getBoundsZoom(latLngBounds));
+        peakMap.setMaxZoom(19);
         requestAnimationFrame(() => peakMap.invalidateSize());
 
         if(peakMapMarker){
@@ -4526,6 +4707,16 @@
             photoCount: imgs.length
           });
           debugLog('asset-state:init-complete', collectRuntimeAssetState());
+          const heroElForDebug = document.getElementById('peakHero');
+          if(heroElForDebug && window.getComputedStyle){
+            const heroStyle = window.getComputedStyle(heroElForDebug);
+            debugLog('style-check:peakHero:init-complete', {
+              display: heroStyle.display,
+              position: heroStyle.position,
+              minHeight: heroStyle.minHeight,
+              backgroundImage: heroStyle.backgroundImage ? 'set' : 'empty'
+            });
+          }
           trackEvent('peak_loaded', { slug, name, photoCount: imgs.length });
 
         }catch(err){
