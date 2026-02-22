@@ -571,6 +571,12 @@
       .ml-3{
         margin-left:0.75rem;
       }
+      /* Prerender-only hero figure is kept for metadata/audit compatibility but
+         should never render as a giant standalone image in the UI. */
+      .hero-image,
+      #heroImageFigure{
+        display:none !important;
+      }
       .related-trails{
         margin:16px 0 20px;
         padding:12px 16px;
