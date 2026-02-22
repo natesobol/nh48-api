@@ -6,6 +6,7 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const TEMPLATE_PATH = path.join(ROOT, 'pages', 'nh48_peak.html');
 const RUNTIME_MODULE_PATH = path.join(ROOT, 'js', 'peak-detail-runtime.js');
+const PEAK_STYLESHEET_PATH = path.join(ROOT, 'css', 'peak-detail.css');
 const PEAK_DATA_PATH = path.join(ROOT, 'data', 'nh48.json');
 const BASE_URL = process.env.PEAK_UI_AUDIT_URL || getArgValue('--url') || '';
 
@@ -199,6 +200,19 @@ function runTemplateChecks() {
   }
 
   let runtimeSource = '';
+  if (!fs.existsSync(PEAK_STYLESHEET_PATH)) {
+    failures.push(`Missing stylesheet: ${path.relative(ROOT, PEAK_STYLESHEET_PATH)}`);
+  } else {
+    const css = fs.readFileSync(PEAK_STYLESHEET_PATH, 'utf8');
+    if (css.length < 5000) {
+      failures.push(`Peak stylesheet appears truncated (${path.relative(ROOT, PEAK_STYLESHEET_PATH)} is only ${css.length} bytes).`);
+    }
+    ['.wrap', '.peak-hero', '.info-grid', '.media', '.peak-map-panel'].forEach((selector) => {
+      if (!css.includes(selector)) {
+        failures.push(`Peak stylesheet missing core selector ${selector}.`);
+      }
+    });
+  }
   if (!fs.existsSync(RUNTIME_MODULE_PATH)) {
     failures.push(`Missing runtime module: ${path.relative(ROOT, RUNTIME_MODULE_PATH)}`);
   } else {
