@@ -8,7 +8,7 @@
     <link rel="icon" href="https://nh48.info/favicon.ico" sizes="any" type="image/x-icon">
     <link rel="manifest" href="/manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta id="dynamicDescription" name="description" content="NH48 API Ã¢â‚¬â€œ peak-level details, routes, terrain notes and photography for New HampshireÃ¢â‚¬â„¢s 4000-footers. Open API and datasets for New HampshireÃ¢â‚¬â„¢s 4,000-foot mountains.">
+    <meta id="dynamicDescription" name="description" content="NH48 API - peak-level details, routes, terrain notes and photography for New Hampshire's 4000-footers. Open API and datasets for New Hampshire's 4,000-foot mountains.">
     <meta name="keywords" content="NH48 API, New Hampshire 4000 footers, peak details, mountain routes, White Mountains data, hiking API, peak metadata, mountain photos">
     <meta name="robots" content="index,follow,max-image-preview:large">
     <link id="dynamicCanonical" rel="canonical" href="https://nh48.info/peak">
@@ -17,21 +17,21 @@
     <link id="hreflangDefault" rel="alternate" hreflang="x-default" href="https://nh48.info/peak">
     <meta property="og:type" content="website">
     <meta id="dynamicOgUrl" property="og:url" content="https://nh48.info/peak">
-    <meta id="dynamicOgTitle" property="og:title" content="NH48 API Ã¢â‚¬â€œ Peak details, routes &amp; photos">
-    <meta id="dynamicOgDescription" property="og:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata. Open API and datasets for New HampshireÃ¢â‚¬â„¢s 4,000-foot mountains.">
+    <meta id="dynamicOgTitle" property="og:title" content="NH48 API - Peak details, routes &amp; photos">
+    <meta id="dynamicOgDescription" property="og:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata. Open API and datasets for New Hampshire's 4,000-foot mountains.">
     <meta id="dynamicOgImage" property="og:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-jefferson/mount-jefferson__001.jpg">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://nh48.info/peak">
-    <meta id="dynamicTwitterTitle" name="twitter:title" content="NH48 API Ã¢â‚¬â€œ Peak details, routes &amp; photos">
-    <meta id="dynamicTwitterDescription" name="twitter:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata. Open API and datasets for New HampshireÃ¢â‚¬â„¢s 4,000-foot mountains.">
+    <meta id="dynamicTwitterTitle" name="twitter:title" content="NH48 API - Peak details, routes &amp; photos">
+    <meta id="dynamicTwitterDescription" name="twitter:description" content="Detailed information for each NH48 peak including elevation, prominence, difficulty, exposure, trail types, routes, terrain description and photo metadata. Open API and datasets for New Hampshire's 4,000-foot mountains.">
     <meta id="dynamicTwitterImage" name="twitter:image" content="https://photos.nh48.info/cdn-cgi/image/format=jpg,quality=85,width=1200/mount-jefferson/mount-jefferson__001.jpg">
     <script id="peakJsonLd" type="application/ld+json"></script>
     <script id="breadcrumbJsonLd" type="application/ld+json"></script>
     <script id="mapJsonLd" type="application/ld+json"></script>
 
-    <title id="dynamicTitle">NH48 API Ã¢â‚¬â€œ Peak details, routes &amp; photos</title>
+    <title id="dynamicTitle">NH48 API - Peak details, routes &amp; photos</title>
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -123,10 +123,10 @@
     <!--
       Standalone details view for a single NH48 peak with robust error handling.
       This version adds:
-        Ã¢â‚¬Â¢ A photo carousel with a circular countdown timer.
-        Ã¢â‚¬Â¢ A Ã¢â‚¬Å“Current Photo MetadataÃ¢â‚¬Â panel that updates per slide.
-        Ã¢â‚¬Â¢ A Ã¢â‚¬Å“General Peak InfoÃ¢â‚¬Â panel with dotted-line rows.
-        Ã¢â‚¬Â¢ Side-by-side layout of metadata + general info on larger screens.
+        - A photo carousel with a circular countdown timer.
+        - A "Current Photo Metadata" panel that updates per slide.
+        - A "General Peak Info" panel with dotted-line rows.
+        - Side-by-side layout of metadata + general info on larger screens.
     -->
     <style>
       :root{
@@ -1754,7 +1754,7 @@
             <a href="/range" id="breadcrumbRangeLink"><span id="breadcrumbRangeLabel">Range</span></a>
           </li>
           <li>
-            <span id="breadcrumbCurrent" data-i18n="peak.loading">LoadingÃ¢â‚¬Â¦</span>
+            <span id="breadcrumbCurrent" data-i18n="peak.loading">Loading...</span>
           </li>
         </ol>
       </nav>
@@ -1763,11 +1763,11 @@
       </div>
       <header id="peakHero" class="peak-hero no-print" aria-label="Peak banner">
         <div class="peak-hero-content">
-          <h1 id="peakHeroTitle" class="peak-hero-title" data-i18n="peak.loading">LoadingÃ¢â‚¬Â¦</h1>
+          <h1 id="peakHeroTitle" class="peak-hero-title" data-i18n="peak.loading">Loading...</h1>
           <p id="peakHeroSubtitle" class="peak-hero-subtitle">White Mountains peak guide</p>
           <div class="peak-hero-meta" aria-label="Peak key details">
-            <span id="peakHeroProminence">Ã¢â‚¬â€</span>
-            <span id="peakHeroRange">Ã¢â‚¬â€</span>
+            <span id="peakHeroProminence">&mdash;</span>
+            <span id="peakHeroRange">&mdash;</span>
           </div>
         </div>
         <div class="peak-tools" aria-label="Peak tools">
@@ -1792,22 +1792,22 @@
               </select>
             </div>
           </div>
-          <div id="peakToolsElevation" class="peak-tools-elevation">Ã¢â‚¬â€</div>
+          <div id="peakToolsElevation" class="peak-tools-elevation">&mdash;</div>
         </div>
       </header>
-      <p id="peakTitle" class="sr-only" data-i18n="peak.loading">LoadingÃ¢â‚¬Â¦</p>
+      <p id="peakTitle" class="sr-only" data-i18n="peak.loading">Loading...</p>
 
       <!-- MEDIA / CAROUSEL ---------------------------------------------------->
       <div class="media no-print" id="media" hidden>
         <div class="media-loading" id="mediaLoading">
           <span class="loading-spinner" aria-hidden="true"></span>
-          <span class="loading-text" data-i18n="common.loading">LoadingÃ¢â‚¬Â¦</span>
+          <span class="loading-text" data-i18n="common.loading">Loading...</span>
         </div>
         <div class="carousel" id="carousel"></div>
         <div class="dots" id="dots"></div>
         <div class="ctrls">
-          <button id="prevBtn" data-i18n="peak.carousel.prev" data-i18n-attr="aria-label" aria-label="Previous image">Ã¢â‚¬Â¹</button>
-          <button id="nextBtn" data-i18n="peak.carousel.next" data-i18n-attr="aria-label" aria-label="Next image">Ã¢â‚¬Âº</button>
+          <button id="prevBtn" data-i18n="peak.carousel.prev" data-i18n-attr="aria-label" aria-label="Previous image">&lsaquo;</button>
+          <button id="nextBtn" data-i18n="peak.carousel.next" data-i18n-attr="aria-label" aria-label="Next image">&rsaquo;</button>
         </div>
         <!-- Countdown timer overlay -->
         <div class="timer" id="carouselTimer" hidden>
@@ -1817,7 +1817,7 @@
             </svg>
             <span id="timerText" class="timer-text"></span>
           </div>
-          <button id="carouselPauseBtn" type="button" class="timer-pause" aria-label="Pause carousel" aria-pressed="false" title="Pause carousel">Ã¢ÂÅ¡Ã¢ÂÅ¡</button>
+          <button id="carouselPauseBtn" type="button" class="timer-pause" aria-label="Pause carousel" aria-pressed="false" title="Pause carousel">&#9208;</button>
         </div>
       </div>
 
@@ -1841,11 +1841,11 @@
               <div class="peak-map-title" id="peakMapTitle">Peak Trail Map</div>
               <div class="peak-map-subtitle" id="peakMapSubtitle">OpenStreetMap topographic view with WMNF trail overlays.</div>
             </div>
-            <a class="peak-map-cta" id="peakMapCta" href="/trails">White Mountain Trails Ã¢â€ â€™</a>
+            <a class="peak-map-cta" id="peakMapCta" href="/trails">White Mountain Trails &rarr;</a>
           </div>
           <div class="peak-map-frame">
             <div class="peak-map-canvas" id="peakMap" role="img" aria-label="Topographic map of the peak area"></div>
-            <div class="peak-map-status" id="peakMapStatus">Loading trail mapÃ¢â‚¬Â¦</div>
+            <div class="peak-map-status" id="peakMapStatus">Loading trail map...</div>
           </div>
         </div>
         <!-- Hidden by default; shown only in print -->
@@ -1942,12 +1942,12 @@
                 <div class="social-card-bottom-row">
                   <div>
                     <div class="social-card-meta">
-                      <span id="socialCardProminence">Prominence: Ã¢â‚¬â€</span>
-                      <span id="socialCardRange">Range: Ã¢â‚¬â€</span>
+                      <span id="socialCardProminence">Prominence: &mdash;</span>
+                      <span id="socialCardRange">Range: &mdash;</span>
                     </div>
                     <div id="socialCardPromo" class="social-card-promo">See detailed info &amp; pictures on this NH48 peak at nh48.info/peak/peakslug</div>
                   </div>
-                  <div id="socialCardElevation" class="social-card-elevation">Elevation: Ã¢â‚¬â€</div>
+                  <div id="socialCardElevation" class="social-card-elevation">Elevation: &mdash;</div>
                 </div>
               </div>
             </div>

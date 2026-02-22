@@ -41,6 +41,19 @@ const TWITTER_HANDLE = "@nate_dumps_pics";
 const INSTAGRAM_URL = "https://www.instagram.com/nate_dumps_pics/";
 const EXIF_UNKNOWN_VALUE = "unknown";
 
+const MOJIBAKE_REPLACEMENTS = [
+  [/Ã¢â‚¬â€œ/g, "\u2013"],
+  [/Ã¢â‚¬â€/g, "\u2014"],
+  [/Ã¢â‚¬Â¢/g, "\u2022"],
+  [/Ã¢â‚¬Â¦/g, "\u2026"],
+  [/Ã¢â‚¬â„¢/g, "\u2019"],
+  [/Ã¢â€ž¢/g, "\u2122"],
+  [/Ã‚Â©/g, "\u00a9"],
+  [/ÃƒÂ©/g, "\u00e9"],
+  [/ÃƒÂ¨/g, "\u00e8"],
+  [/Ãƒâ€”/g, "\u00d7"]
+];
+
 const I18N = {
   en: JSON.parse(fs.readFileSync(path.join(ROOT, "i18n", "en.json"), "utf8")),
   fr: JSON.parse(fs.readFileSync(path.join(ROOT, "i18n", "fr.json"), "utf8")),
@@ -178,9 +191,15 @@ process.on("unhandledRejection", (err) => {
 
 const cleanText = (value) => {
   if (value === null || value === undefined) return "";
-  const text = String(value);
+  let text = String(value);
+  MOJIBAKE_REPLACEMENTS.forEach(([pattern, replacement]) => {
+    text = text.replace(pattern, replacement);
+  });
   return text.replace(/:contentReference\[[^\]]*\]\{[^}]*\}/g, "").trim();
 };
+
+const normalizeDisplayText = (value) =>
+  cleanText(value).replace(/\s*,\s*(?=\p{L})/gu, ", ");
 
 const normalizeRangeName = (value) =>
   cleanText(value)
@@ -314,7 +333,7 @@ const parseEstimatedDuration = (value) => {
   const cleaned = cleanText(value);
   if (!cleaned) return null;
   const lower = cleaned.toLowerCase();
-  const rangeSplit = lower.split(/(?:-|â€“|to)/).map((entry) => entry.trim());
+  const rangeSplit = lower.split(/(?:-|\u2013|to)/).map((entry) => entry.trim());
   const target = rangeSplit[0] || lower;
   const numberMatch = target.match(/(\d+(?:\.\d+)?)/);
   if (!numberMatch) return null;
@@ -377,7 +396,7 @@ const parseCoordinates = (value) => {
 const parseDimensions = (value) => {
   if (!value) return { width: null, height: null };
   const match = String(value)
-    .replace(/Ã—/g, 'x')
+    .replace(/\u00d7/g, "x")
     .match(/(\d+)\s*x\s*(\d+)/i);
   if (!match) return { width: null, height: null };
   const [, w, h] = match;
@@ -523,12 +542,12 @@ const buildImageObject = (photo, peakName, isPrimary, langCode, imageId) => {
     langCode
   );
   const headline =
-    cleanText(photo[`headline_${langCode}`]) || cleanText(photo.headline) || `${peakName} â€” White Mountain National Forest`;
+    cleanText(photo[`headline_${langCode}`]) || cleanText(photo.headline) || `${peakName} \u2014 White Mountain National Forest`;
   const description = cleanText(extendedDescription || photo.caption || '') || alt;
   const creatorName = AUTHOR_NAME;
   const creditText = AUTHOR_NAME;
   const publisherName = cleanText(photo.iptc?.featuredOrgName) || TWITTER_HANDLE;
-  const copyrightNotice = `Â© ${AUTHOR_NAME}`;
+  const copyrightNotice = `\u00a9 ${AUTHOR_NAME}`;
   const copyrightHolderName = AUTHOR_NAME;
   const rightsUsageTerms = cleanText(photo.iptc?.rightsUsageTerms || photo.rightsUsageTerms);
   const licenseUrl = IMAGE_LICENSE_URL;
@@ -622,14 +641,14 @@ const pickPrimaryPhoto = (photos, peakName, langCode, canonicalUrl) => {
       '@id': `${canonicalUrl}#img-001`,
       url: FALLBACK_IMAGE,
       contentUrl: FALLBACK_IMAGE,
-      name: `${peakName} â€” White Mountain National Forest`,
+      name: `${peakName} \u2014 White Mountain National Forest`,
       caption: fallbackAlt,
       alternateName: fallbackAlt,
       description: fallbackAlt,
       creditText: AUTHOR_NAME,
       creator: { '@type': 'Person', name: AUTHOR_NAME },
       author: { '@type': 'Person', name: AUTHOR_NAME },
-      copyrightNotice: `Â© ${AUTHOR_NAME}`,
+      copyrightNotice: `\u00a9 ${AUTHOR_NAME}`,
       license: IMAGE_LICENSE_URL,
       acquireLicensePage: IMAGE_LICENSE_URL,
       usageInfo: IMAGE_LICENSE_URL,
@@ -650,7 +669,7 @@ const pickPrimaryPhoto = (photos, peakName, langCode, canonicalUrl) => {
         url: FALLBACK_IMAGE,
         alt: fallbackAlt,
         altLang: langCode === 'en' ? undefined : 'en',
-        headline: `${peakName} â€” White Mountain National Forest`,
+        headline: `${peakName} \u2014 White Mountain National Forest`,
         description: '',
         extendedDescription: '',
         extendedDescriptionLang: langCode === 'en' ? undefined : 'en',
@@ -909,8 +928,8 @@ const buildRoutesList = (routes, labels) => {
       const trailType = cleanText(route["Trail Type"] || "");
       const details = [distance && `${distance} mi`, gain && `${gain} ft gain`, trailType, difficulty]
         .filter(Boolean)
-        .join(" â€¢ ");
-      return `<li><strong>${escapeHtml(name)}</strong>${details ? ` â€” ${escapeHtml(details)}` : ""}</li>`;
+        .join(" \u2022 ");
+      return `<li><strong>${escapeHtml(name)}</strong>${details ? ` \u2014 ${escapeHtml(details)}` : ""}</li>`;
     })
     .join("\n");
 };
@@ -1169,7 +1188,7 @@ const buildWebPageSchema = (
       "@context": "https://schema.org",
       "@type": "WebPage",
       "@id": `${canonicalUrl}#webpage`,
-      name: `${pageName} â€” White Mountain National Forest`,
+      name: `${pageName} \u2014 White Mountain National Forest`,
       description: descriptionText,
       url: canonicalUrl,
       inLanguage: langCode === 'fr' ? 'fr-FR' : 'en-US',
@@ -1232,12 +1251,12 @@ const buildFAQSchema = (peakName, routes, difficulty, time, langCode) => {
     if (routeNames.length > 0) {
       faqs.push({
         "@type": "Question",
-        name: isEnglish ? `What are the main hiking routes to ${peakName}?` : `Quels sont les principaux itinÃ©raires de randonnÃ©e vers ${peakName} ?`,
+        name: isEnglish ? `What are the main hiking routes to ${peakName}?` : `Quels sont les principaux itin\u00e9raires de randonn\u00e9e vers ${peakName} ?`,
         acceptedAnswer: {
           "@type": "Answer",
           text: isEnglish
             ? `The main routes to ${peakName} include: ${routeNames.join(', ')}.`
-            : `Les principaux itinÃ©raires vers ${peakName} incluent : ${routeNames.join(', ')}.`
+            : `Les principaux itin\u00e9raires vers ${peakName} incluent : ${routeNames.join(", ")}.`
         }
       });
     }
@@ -1247,12 +1266,12 @@ const buildFAQSchema = (peakName, routes, difficulty, time, langCode) => {
   if (difficulty && difficulty !== 'Unknown' && difficulty !== 'Inconnu') {
     faqs.push({
       "@type": "Question",
-      name: isEnglish ? `How difficult is hiking ${peakName}?` : `Quelle est la difficultÃ© de la randonnÃ©e vers ${peakName} ?`,
+      name: isEnglish ? `How difficult is hiking ${peakName}?` : `Quelle est la difficult\u00e9 de la randonn\u00e9e vers ${peakName} ?`,
       acceptedAnswer: {
         "@type": "Answer",
         text: isEnglish
           ? `${peakName} is rated as ${difficulty} difficulty.`
-          : `${peakName} est classÃ© comme ${difficulty} en difficultÃ©.`
+          : `${peakName} est class\u00e9 comme ${difficulty} en difficult\u00e9.`
       }
     });
   }
@@ -1261,12 +1280,12 @@ const buildFAQSchema = (peakName, routes, difficulty, time, langCode) => {
   if (time && time !== 'Varies' && time !== 'Variable') {
     faqs.push({
       "@type": "Question",
-      name: isEnglish ? `How long does it take to hike ${peakName}?` : `Combien de temps faut-il pour faire la randonnÃ©e vers ${peakName} ?`,
+      name: isEnglish ? `How long does it take to hike ${peakName}?` : `Combien de temps faut-il pour faire la randonn\u00e9e vers ${peakName} ?`,
       acceptedAnswer: {
         "@type": "Answer",
         text: isEnglish
           ? `Typically, hiking ${peakName} takes ${time}.`
-          : `Typiquement, la randonnÃ©e vers ${peakName} prend ${time}.`
+          : `Typiquement, la randonn\u00e9e vers ${peakName} prend ${time}.`
       }
     });
   }
@@ -1286,14 +1305,14 @@ const buildFAQSchema = (peakName, routes, difficulty, time, langCode) => {
 
 const formatRouteSummary = (route) => {
   if (!route || typeof route !== "object") return "";
-  const name = cleanText(route["Route Name"] || route.name || "");
+  const name = normalizeDisplayText(route["Route Name"] || route.name || "");
   const distance = cleanText(route["Distance (mi)"] || route.distance || "");
   const gain = cleanText(route["Elevation Gain (ft)"] || route.elevationGain || "");
-  const difficulty = cleanText(route["Difficulty"] || route.difficulty || "");
-  const trailType = cleanText(route["Trail Type"] || route.trailType || "");
+  const difficulty = normalizeDisplayText(route["Difficulty"] || route.difficulty || "");
+  const trailType = normalizeDisplayText(route["Trail Type"] || route.trailType || "");
   const details = [distance && `${distance} mi`, gain && `${gain} ft gain`, trailType, difficulty]
     .filter(Boolean)
-    .join(" â€¢ ");
+    .join(" \u2022 ");
   if (!name && !details) return "";
   return details ? `${name || "Route"} (${details})` : name;
 };
@@ -1323,7 +1342,7 @@ const normalizePeakValue = (value) => {
       .filter(Boolean)
       .join(", ");
   }
-  return cleanText(value);
+  return normalizeDisplayText(value);
 };
 
 const buildPeakAdditionalProperties = (peak) => {
@@ -1604,7 +1623,7 @@ const buildJsonLd = (
           creditText: AUTHOR_NAME,
           creator: { '@type': 'Person', name: AUTHOR_NAME },
           author: { '@type': 'Person', name: AUTHOR_NAME },
-          copyrightNotice: `Â© ${AUTHOR_NAME}`,
+          copyrightNotice: `\u00a9 ${AUTHOR_NAME}`,
           license: IMAGE_LICENSE_URL,
           acquireLicensePage: IMAGE_LICENSE_URL,
           usageInfo: IMAGE_LICENSE_URL,
@@ -1732,7 +1751,7 @@ const buildJsonLd = (
     "@type": "WebPage",
     "@id": `${canonicalUrl}#webpage`,
     url: canonicalUrl,
-    name: `${peakName} â€” White Mountain National Forest`,
+    name: `${peakName} \u2014 White Mountain National Forest`,
     isPartOf: { "@id": webSiteNode["@id"] },
   };
 
@@ -2134,7 +2153,7 @@ const main = () => {
             suffix: lang.titleSuffix || lang.siteName || DEFAULT_SITE_NAME,
             site: lang.siteName || DEFAULT_SITE_NAME,
           },
-          (values) => `${values.name} (${values.elevationFormatted || values.elevation}) â€“ ${values.suffix}`
+          (values) => `${values.name} (${values.elevationFormatted || values.elevation}) \u2013 ${values.suffix}`
         );
         const { primary: primaryPhoto, imageObjects } = pickPrimaryPhoto(
           peak.photos,

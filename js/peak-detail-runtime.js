@@ -194,6 +194,58 @@
         'Connector'
       ];
       let currentUnits = UNITS.FEET;
+      const UNKNOWN_VALUE = '\u2014';
+      const BULLET_SEPARATOR = ' \u2022 ';
+
+      const MOJIBAKE_REPLACEMENTS = [
+        [/Ã¢â‚¬â€œ/g, '\u2013'],
+        [/Ã¢â‚¬â€/g, '\u2014'],
+        [/Ã¢â‚¬Â¢/g, '\u2022'],
+        [/Ã¢â‚¬Â¦/g, '\u2026'],
+        [/Ã¢â‚¬Å“/g, '\u201c'],
+        [/Ã¢â‚¬Â/g, '\u201d'],
+        [/Ã¢â‚¬â„¢/g, '\u2019'],
+        [/Ã¢â€ž¢/g, '\u2122'],
+        [/Ã¢â€ â€™/g, '\u2192'],
+        [/Ã¢â€ Â/g, '\u2190'],
+        [/Ã¢â€ Â»/g, '\u21bb'],
+        [/Ã¢Å¡Â Ã¯Â¸Â/g, '\u26a0\ufe0f'],
+        [/Ã¢â€“Â¶/g, '\u25b6'],
+        [/Ã¢ÂÅ¡Ã¢ÂÅ¡/g, '\u23f8'],
+        [/Ã‚Â©/g, '\u00a9'],
+        [/ÃƒÂ©/g, '\u00e9'],
+        [/ÃƒÂ¨/g, '\u00e8'],
+        [/Ãƒâ€”/g, '\u00d7']
+      ];
+
+      function scoreMojibake(text){
+        return (String(text || '').match(/[ÃÂâ]/g) || []).length;
+      }
+
+      function repairMojibakeText(value){
+        let text = String(value || '');
+        if(!text || !/[ÃÂâ]/.test(text)) return text;
+        MOJIBAKE_REPLACEMENTS.forEach(([pattern, replacement]) => {
+          text = text.replace(pattern, replacement);
+        });
+        try{
+          const bytes = Uint8Array.from(Array.from(text).map(ch => ch.charCodeAt(0) & 0xff));
+          const decoded = new TextDecoder('utf-8').decode(bytes);
+          if(decoded && scoreMojibake(decoded) < scoreMojibake(text)){
+            text = decoded;
+          }
+        }catch(_){}
+        MOJIBAKE_REPLACEMENTS.forEach(([pattern, replacement]) => {
+          text = text.replace(pattern, replacement);
+        });
+        return text;
+      }
+
+      function normalizeDisplayText(value){
+        const text = safeText(value);
+        if(!text) return '';
+        return text.replace(/\s*,\s*(?=\p{L})/gu, ', ');
+      }
 
       /* Fallback image */
       function getPlaceholder() {
@@ -347,7 +399,7 @@
         const subtitleEl = document.getElementById('peakHeroSubtitle');
         if(!promEl || !rangeEl || !elevEl || !peak) return;
         const prominence = formatFeetValue(peak['Prominence (ft)']);
-        const range = safeText(peak['Range / Subrange']) || 'Ã¢â‚¬â€';
+        const range = normalizeDisplayText(peak['Range / Subrange']) || UNKNOWN_VALUE;
         const elevationLabel = t('peak.generalInfo.elevation');
         const prominenceLabel = t('peak.generalInfo.prominence');
         const rangeLabel = t('peak.generalInfo.range');
@@ -383,11 +435,13 @@
 
       function safeText(value){
         if(value === undefined || value === null) return '';
-        if(typeof value === 'string' || typeof value === 'number') return String(value);
+        if(typeof value === 'string' || typeof value === 'number'){
+          return repairMojibakeText(String(value));
+        }
         if(typeof value === 'object'){
           const localized = value.en || value.fr || value.default || value.text;
           if(typeof localized === 'string' || typeof localized === 'number'){
-            return String(localized);
+            return repairMojibakeText(String(localized));
           }
         }
         return '';
@@ -395,7 +449,7 @@
 
       function parseDimensions(value){
         if(!value) return { width: null, height: null };
-        const match = String(value).replace(/Ãƒâ€”/g, 'x').match(/(\d+)\s*x\s*(\d+)/i);
+        const match = String(value).replace(/\u00d7/g, 'x').match(/(\d+)\s*x\s*(\d+)/i);
         if(!match) return { width: null, height: null };
         return { width: Number(match[1]), height: Number(match[2]) };
       }
@@ -683,7 +737,7 @@
 
       function formatFeetValue(value){
         const num = numberFrom(value);
-        if(num === null) return 'Ã¢â‚¬â€';
+        if(num === null) return UNKNOWN_VALUE;
         if(currentUnits === UNITS.METERS){
           return `${Math.round(num * 0.3048)} m`;
         }
@@ -692,7 +746,7 @@
 
       function formatDistanceMiles(value){
         const num = numberFrom(value);
-        if(num === null) return 'Ã¢â‚¬â€';
+        if(num === null) return UNKNOWN_VALUE;
         if(currentUnits === UNITS.METERS){
           return `${(num * 1.60934).toFixed(1)} km`;
         }
@@ -945,14 +999,14 @@
 
       function formatRouteSummary(route){
         if(!route || typeof route !== 'object') return '';
-        const name = safeText(route['Route Name'] || route.name);
+        const name = normalizeDisplayText(route['Route Name'] || route.name);
         const distance = safeText(route['Distance (mi)'] || route.distance);
         const gain = safeText(route['Elevation Gain (ft)'] || route.elevationGain);
-        const difficulty = safeText(route['Difficulty'] || route.difficulty);
-        const trailType = safeText(route['Trail Type'] || route.trailType);
+        const difficulty = normalizeDisplayText(route['Difficulty'] || route.difficulty);
+        const trailType = normalizeDisplayText(route['Trail Type'] || route.trailType);
         const details = [distance && `${distance} mi`, gain && `${gain} ft gain`, trailType, difficulty]
           .filter(Boolean)
-          .join(' Ã¢â‚¬Â¢ ');
+          .join(BULLET_SEPARATOR);
         if(!name && !details) return '';
         return details ? `${name || 'Route'} (${details})` : name;
       }
@@ -1166,14 +1220,14 @@
             '@id': `${canonicalUrl}#img-001`,
             url: photoUrl,
             contentUrl: photoContentUrl,
-            name: (enriched && enriched.headline) || `${name} Ã¢â‚¬â€ White Mountain National Forest`,
+            name: (enriched && enriched.headline) || `${name} \u2014 White Mountain National Forest`,
             caption: photoAlt ? photoAlt.text : buildForcePatternAltText(name, defaultPhotoViewDescription()),
             description: (photoDescription && photoDescription.text) || descriptionText,
-            creditText: (enriched && enriched.creditLine) || 'Ã‚Â© Nathan Sobol / NH48pics.com',
+            creditText: (enriched && enriched.creditLine) || '\u00a9 Nathan Sobol / NH48pics.com',
             creator: enriched && enriched.creator ? { '@type': 'Person', name: enriched.creator } : { '@type': 'Person', name: 'Nathan Sobol' },
             license: (enriched && enriched.rightsUsageTerms) || 'https://nh48.info/license',
             acquireLicensePage: 'https://nh48.info/contact',
-            copyrightNotice: enriched && enriched.copyrightNotice ? enriched.copyrightNotice : 'Ã‚Â© Nathan Sobol',
+            copyrightNotice: enriched && enriched.copyrightNotice ? enriched.copyrightNotice : '\u00a9 Nathan Sobol',
             alternateName: photoAlt ? photoAlt.text : undefined,
             keywords: photoKeywords.length ? photoKeywords.join(', ') : undefined,
             contentLocation: photoLocation || undefined,
@@ -1277,14 +1331,14 @@
             '@id': id,
             url: photo.originalUrl || photo.url,
             contentUrl: photo.url,
-            name: (enrichedPhoto && enrichedPhoto.headline) || `${name} Ã¢â‚¬â€ White Mountain National Forest`,
+            name: (enrichedPhoto && enrichedPhoto.headline) || `${name} \u2014 White Mountain National Forest`,
             caption: alt ? alt.text : buildForcePatternAltText(name, defaultPhotoViewDescription()),
             description: (description && description.text) || descriptionText,
-            creditText: (enrichedPhoto && enrichedPhoto.creditLine) || 'Ã‚Â© Nathan Sobol / NH48pics.com',
+            creditText: (enrichedPhoto && enrichedPhoto.creditLine) || '\u00a9 Nathan Sobol / NH48pics.com',
             creator: enrichedPhoto && enrichedPhoto.creator ? { '@type': 'Person', name: enrichedPhoto.creator } : { '@type': 'Person', name: 'Nathan Sobol' },
             license: (enrichedPhoto && enrichedPhoto.rightsUsageTerms) || 'https://nh48.info/license',
             acquireLicensePage: 'https://nh48.info/contact',
-            copyrightNotice: enrichedPhoto && enrichedPhoto.copyrightNotice ? enrichedPhoto.copyrightNotice : 'Ã‚Â© Nathan Sobol',
+            copyrightNotice: enrichedPhoto && enrichedPhoto.copyrightNotice ? enrichedPhoto.copyrightNotice : '\u00a9 Nathan Sobol',
             alternateName: alt ? alt.text : undefined,
             keywords: keywords.length ? keywords.join(', ') : undefined,
             contentLocation: location || undefined,
@@ -1517,7 +1571,7 @@
               if(!line || line.startsWith('#')){
                 continue;
               }
-              const separatorMatch = line.match(/[:Ã¢â‚¬â€œ]/);
+              const separatorMatch = line.match(/[:\u2013\u2014-]/);
               if(!separatorMatch || separatorMatch.index == null){
                 continue;
               }
@@ -2191,13 +2245,13 @@
         };
 
         if(!merged.creator) merged.creator = 'Nathan Sobol';
-        if(!merged.creditLine) merged.creditLine = 'Ã‚Â© Nathan Sobol / NH48pics.com';
+        if(!merged.creditLine) merged.creditLine = '\u00a9 Nathan Sobol / NH48pics.com';
         if(!merged.source) merged.source = 'nh48.info';
-        if(!merged.copyrightNotice) merged.copyrightNotice = 'Ã‚Â© Nathan Sobol';
+        if(!merged.copyrightNotice) merged.copyrightNotice = '\u00a9 Nathan Sobol';
         if(!merged.copyrightStatus) merged.copyrightStatus = 'Copyrighted';
         if(!merged.rightsUsageTerms){
           merged.rightsUsageTerms =
-            'No Unauthorized Reprint or Resale Ã¢â‚¬â€œ Free to Reference Online';
+            'No Unauthorized Reprint or Resale \u2013 Free to Reference Online';
         }
         if(meta.license) merged.license = meta.license;
         if(meta.credentials) merged.credentials = meta.credentials;
@@ -2239,7 +2293,7 @@
         val.className = 'metadata-value';
         val.classList.add(disableClamp ? 'is-unclamped' : 'is-clamped');
         val.classList.add(isLeftAligned ? 'is-left-aligned' : 'is-right-aligned');
-        val.textContent = safeText(value);
+        val.textContent = normalizeDisplayText(value);
 
         row.appendChild(lab);
         row.appendChild(val);
@@ -2311,11 +2365,11 @@
         Object.entries(obj).forEach(([key, val]) => {
           if(val === undefined || val === null) return;
           if(typeof val === 'object' && !Array.isArray(val)){
-            entries.push(...entriesFromObject(`${prefixLabel} Ã¢â‚¬â€ ${humanLabelFromKey(key)}`, val));
+            entries.push(...entriesFromObject(`${prefixLabel} \u2014 ${humanLabelFromKey(key)}`, val));
           }else{
             const valueText = Array.isArray(val) ? val.join(', ') : String(val).trim();
             if(valueText){
-              entries.push([`${prefixLabel} Ã¢â‚¬â€ ${humanLabelFromKey(key)}`, valueText]);
+              entries.push([`${prefixLabel} \u2014 ${humanLabelFromKey(key)}`, valueText]);
             }
           }
         });
@@ -2720,14 +2774,14 @@
 
         body.appendChild(makeRow(t('peak.generalInfo.elevation'), formatFeetValue(elev)));
         body.appendChild(makeRow(t('peak.generalInfo.prominence'), formatFeetValue(prom)));
-        body.appendChild(makeRow(t('peak.generalInfo.range'), p['Range / Subrange'] || 'Ã¢â‚¬â€'));
-        body.appendChild(makeRow(t('peak.generalInfo.trailType'), translateTrailType(p['Trail Type']) || 'Ã¢â‚¬â€'));
-        body.appendChild(makeRow(t('peak.generalInfo.difficulty'), translateDifficulty(p['Difficulty']) || 'Ã¢â‚¬â€'));
-        body.appendChild(makeRow(t('peak.generalInfo.exposure'), translateExposure(p['Exposure Level'] || p['Weather Exposure Rating']) || 'Ã¢â‚¬â€'));
-        body.appendChild(makeRow(t('peak.generalInfo.typicalTime'), typicalTime || 'Ã¢â‚¬â€'));
-        body.appendChild(makeRow(t('peak.generalInfo.bestSeasons'), normalizedSeasons || 'Ã¢â‚¬â€'));
-        body.appendChild(makeRow(t('peak.generalInfo.waterAvailability'), waterAvailability || 'Ã¢â‚¬â€'));
-        body.appendChild(makeRow(t('peak.generalInfo.cellReception'), cellReception || 'Ã¢â‚¬â€'));
+        body.appendChild(makeRow(t('peak.generalInfo.range'), p['Range / Subrange'] || UNKNOWN_VALUE));
+        body.appendChild(makeRow(t('peak.generalInfo.trailType'), translateTrailType(p['Trail Type']) || UNKNOWN_VALUE));
+        body.appendChild(makeRow(t('peak.generalInfo.difficulty'), translateDifficulty(p['Difficulty']) || UNKNOWN_VALUE));
+        body.appendChild(makeRow(t('peak.generalInfo.exposure'), translateExposure(p['Exposure Level'] || p['Weather Exposure Rating']) || UNKNOWN_VALUE));
+        body.appendChild(makeRow(t('peak.generalInfo.typicalTime'), typicalTime || UNKNOWN_VALUE));
+        body.appendChild(makeRow(t('peak.generalInfo.bestSeasons'), normalizedSeasons || UNKNOWN_VALUE));
+        body.appendChild(makeRow(t('peak.generalInfo.waterAvailability'), waterAvailability || UNKNOWN_VALUE));
+        body.appendChild(makeRow(t('peak.generalInfo.cellReception'), cellReception || UNKNOWN_VALUE));
 
         panel.hidden = false;
         trackEvent('peak_general_info_rendered', { slug: currentSlug });
@@ -2745,9 +2799,9 @@
         const elevation = formatFeetValue(peak['Elevation (ft)']);
         const prominence = formatFeetValue(peak['Prominence (ft)']);
         const routes = Array.isArray(peak['Standard Routes']) ? peak['Standard Routes'] : [];
-        const distance = routes.length ? formatDistanceMiles(routes[0]['Distance (mi)']) : 'Ã¢â‚¬â€';
-        const difficulty = translateDifficulty(peak['Difficulty']) || 'Ã¢â‚¬â€';
-        const trailType = translateTrailType(peak['Trail Type']) || 'Ã¢â‚¬â€';
+        const distance = routes.length ? formatDistanceMiles(routes[0]['Distance (mi)']) : UNKNOWN_VALUE;
+        const difficulty = translateDifficulty(peak['Difficulty']) || UNKNOWN_VALUE;
+        const trailType = translateTrailType(peak['Trail Type']) || UNKNOWN_VALUE;
         const season = safeText(peak['Best Seasons to Hike'] || peak.season || peak['Season']) || translateWithFallback('peak.generalInfo.season', 'All year');
 
         summary.innerHTML = `
@@ -2787,15 +2841,16 @@
         routes.forEach(r => {
           const div = document.createElement('div');
           div.className = 'info-panel';
+          const routeName = normalizeDisplayText(r['Route Name']) || 'Route';
           const dist  = formatDistanceMiles(r['Distance (mi)']);
           const gain  = formatFeetValue(r['Elevation Gain (ft)']);
-          const diff  = translateDifficulty(r['Difficulty']) || 'Ã¢â‚¬â€';
+          const diff  = translateDifficulty(r['Difficulty']) || UNKNOWN_VALUE;
           div.innerHTML = `
-            <div class="info-label">${r['Route Name']}</div>
+            <div class="info-label">${escapeHtml(routeName)}</div>
             <div class="info-value">
-              <strong>${t('peak.routes.distance')}:</strong> ${dist} Ã¢â‚¬Â¢ 
-              <strong>${t('peak.routes.gain')}:</strong> ${gain} Ã¢â‚¬Â¢ 
-              <strong>${t('peak.routes.difficulty')}:</strong> ${diff}
+              <strong>${escapeHtml(t('peak.routes.distance'))}:</strong> ${escapeHtml(dist)} \u2022 
+              <strong>${escapeHtml(t('peak.routes.gain'))}:</strong> ${escapeHtml(gain)} \u2022 
+              <strong>${escapeHtml(t('peak.routes.difficulty'))}:</strong> ${escapeHtml(diff)}
             </div>`;
           routesGrid.appendChild(div);
         });
@@ -3097,7 +3152,7 @@
         const heading = document.getElementById('parkingAccessHeading');
         if(!section || !grid || !heading) return;
         const langCode = getSeoLang();
-        heading.textContent = langCode === 'fr' ? 'Stationnement et accÃƒÂ¨s' : 'Parking & Access';
+        heading.textContent = langCode === 'fr' ? 'Stationnement et acc\u00e8s' : 'Parking & Access';
         grid.innerHTML = '';
 
         const parking = viewModel && viewModel.parking;
@@ -3124,7 +3179,7 @@
             value: (parking && parking.notes) || (peak && peak['Parking Notes'])
           },
           {
-            label: langCode === 'fr' ? 'CapacitÃƒÂ©' : 'Capacity',
+            label: langCode === 'fr' ? 'Capacit\u00e9' : 'Capacity',
             value: Number.isFinite(Number(parking && parking.capacity))
               ? `${Number(parking.capacity)} ${safeText(parking.capacityUnits) || 'vehicles'}${parking.capacityIsEstimate ? ' (est.)' : ''}`
               : ''
@@ -3134,7 +3189,7 @@
             value: safeText(parking && parking.fullBy)
           },
           {
-            label: langCode === 'fr' ? 'VÃƒÂ©rifiÃƒÂ© le' : 'Last verified',
+            label: langCode === 'fr' ? 'V\u00e9rifi\u00e9 le' : 'Last verified',
             value: safeText(parking && parking.lastVerified)
           }
         ]).forEach((row) => rowsWrap.appendChild(row));
@@ -3160,14 +3215,14 @@
         const heading = document.getElementById('difficultyMetricsHeading');
         if(!section || !grid || !heading) return;
         const langCode = getSeoLang();
-        heading.textContent = langCode === 'fr' ? 'Mesures de difficultÃƒÂ©' : 'Difficulty Metrics';
+        heading.textContent = langCode === 'fr' ? 'Mesures de difficult\u00e9' : 'Difficulty Metrics';
         grid.innerHTML = '';
 
         const difficulty = viewModel && viewModel.difficulty;
         const peak = viewModel && viewModel.peak;
         const rows = buildDetailRows([
           {
-            label: langCode === 'fr' ? 'DifficultÃƒÂ© technique (1-10)' : 'Technical difficulty (1-10)',
+            label: langCode === 'fr' ? 'Difficult\u00e9 technique (1-10)' : 'Technical difficulty (1-10)',
             value: Number.isFinite(Number(difficulty && difficulty.technicalDifficulty))
               ? String(difficulty.technicalDifficulty)
               : ''
@@ -3179,7 +3234,7 @@
               : ''
           },
           {
-            label: langCode === 'fr' ? 'Niveau de difficultÃƒÂ©' : 'Difficulty class',
+            label: langCode === 'fr' ? 'Niveau de difficult\u00e9' : 'Difficulty class',
             value: translateDifficulty(peak && peak['Difficulty'])
           },
           {
@@ -3205,7 +3260,7 @@
         const heading = document.getElementById('riskPrepHeading');
         if(!section || !grid || !heading) return;
         const langCode = getSeoLang();
-        heading.textContent = langCode === 'fr' ? 'Risque et prÃƒÂ©paration' : 'Risk & Preparation';
+        heading.textContent = langCode === 'fr' ? 'Risque et pr\u00e9paration' : 'Risk & Preparation';
         grid.innerHTML = '';
 
         const risk = viewModel && viewModel.risk;
@@ -3218,7 +3273,7 @@
             value: factorList.length ? factorList.join(', ') : ''
           },
           {
-            label: langCode === 'fr' ? 'Notes de prÃƒÂ©paration' : 'Preparation notes',
+            label: langCode === 'fr' ? 'Notes de pr\u00e9paration' : 'Preparation notes',
             value: safeText(risk && risk.prep_notes)
           },
           {
@@ -3228,7 +3283,7 @@
               : safeText(peak && peak['Emergency Bailout Options'])
           },
           {
-            label: langCode === 'fr' ? 'Exposition mÃƒÂ©tÃƒÂ©o' : 'Weather exposure',
+            label: langCode === 'fr' ? 'Exposition m\u00e9t\u00e9o' : 'Weather exposure',
             value: translateExposure((peak && peak['Weather Exposure Rating']) || '')
           },
           {
@@ -3457,12 +3512,12 @@
         const trailNames = peak['Trail Names'] || [];
         const trailLinkName = Array.isArray(trailNames) && trailNames.length ? trailNames[0] : null;
         if(cta){
-          cta.textContent = 'White Mountain Trails Ã¢â€ â€™';
+          cta.textContent = 'White Mountain Trails \u2192';
           cta.href = trailLinkName ? `https://nh48.info/trails?trail=${encodeURIComponent(trailLinkName)}` : 'https://nh48.info/trails';
           cta.setAttribute('aria-label', 'Explore White Mountain Trails');
         }
 
-        updatePeakMapStatus('Loading trail mapÃ¢â‚¬Â¦', true);
+        updatePeakMapStatus('Loading trail map...', true);
 
         const leafletReady = await ensureLeafletReady();
         if(!leafletReady){
@@ -3793,7 +3848,7 @@
         if(!elements.container || !peak) return;
         const prominence = formatFeetValue(peak['Prominence (ft)']);
         const elevation = formatFeetValue(peak['Elevation (ft)']);
-        const range = safeText(peak['Range / Subrange']) || 'Ã¢â‚¬â€';
+        const range = normalizeDisplayText(peak['Range / Subrange']) || UNKNOWN_VALUE;
         const imageUrl = getSocialCardHeroImage(peak) || getPlaceholder();
         elements.container.style.backgroundImage = `url("${imageUrl}")`;
         elements.name.textContent = name;
@@ -3815,7 +3870,7 @@
 
         buildShareButtons({
           url: canonicalUrl,
-          text: `${name} Ã¢â‚¬â€ NH48 peak details`
+          text: `${name} \u2014 NH48 peak details`
         });
       }
 
@@ -4098,7 +4153,7 @@
             || safeText(enrichedMeta.caption)).trim()
           : '';
         const descriptionText = peakDescription || metaDescription || generatedDescription;
-        const titleText = `${name} Ã¢â‚¬â€ White Mountain National Forest`;
+        const titleText = `${name} \u2014 White Mountain National Forest`;
 
         const titleEl = document.getElementById('dynamicTitle');
         if(titleEl){
@@ -4142,7 +4197,7 @@
         setMetaProperty('og:site_name', 'NH48pics');
         setMetaProperty(
           'og:copyright',
-          (enrichedMeta && enrichedMeta.copyrightNotice) || 'Ã‚Â© Nathan Sobol'
+          (enrichedMeta && enrichedMeta.copyrightNotice) || '\u00a9 Nathan Sobol'
         );
 
         updateHreflangLinks(slug);
@@ -4351,7 +4406,7 @@
       function updatePauseButton(paused=isCarouselPaused){
         const btn = document.getElementById('carouselPauseBtn');
         if(!btn) return;
-        btn.textContent = paused ? 'Ã¢â€“Â¶' : 'Ã¢ÂÅ¡Ã¢ÂÅ¡';
+        btn.textContent = paused ? '\u25b6' : '\u23f8';
         btn.setAttribute('aria-pressed', paused);
         btn.setAttribute('aria-label', paused ? 'Resume carousel' : 'Pause carousel');
         btn.title = paused ? 'Resume carousel' : 'Pause carousel';
@@ -4483,13 +4538,13 @@
           if(mediaEl){
             mediaEl.innerHTML = `
               <div style="padding: 2rem; background: var(--card); border-radius: 8px; color: var(--ink);">
-                <h2 style="color: #ef4444; margin-bottom: 1rem;">Ã¢Å¡Â Ã¯Â¸Â Missing Peak Identifier</h2>
+                <h2 style="color: #ef4444; margin-bottom: 1rem;">\u26a0\ufe0f Missing Peak Identifier</h2>
                 <p>No peak slug was found in the URL. Peak pages should be accessed via:</p>
                 <ul>
                   <li><code>/peak/{slug}</code> (e.g., /peak/mount-washington)</li>
                   <li><code>/fr/peak/{slug}</code> (e.g., /fr/peak/mount-washington)</li>
                 </ul>
-                <p style="margin-top: 1rem;"><a href="/catalog" style="color: var(--accent);">Ã¢â€ Â Browse all peaks</a></p>
+                <p style="margin-top: 1rem;"><a href="/catalog" style="color: var(--accent);">\u2190 Browse all peaks</a></p>
               </div>
             `;
             mediaEl.hidden = false;
@@ -4535,10 +4590,10 @@
             if(mediaEl){
               mediaEl.innerHTML = `
                 <div style="padding: 2rem; background: var(--card); border-radius: 8px; color: var(--ink);">
-                  <h2 style="color: #ef4444; margin-bottom: 1rem;">Ã¢Å¡Â Ã¯Â¸Â Peak Not Found</h2>
+                  <h2 style="color: #ef4444; margin-bottom: 1rem;">\u26a0\ufe0f Peak Not Found</h2>
                   <p><strong>Requested:</strong> <code>${slug}</code></p>
                   <p>This peak identifier was not found in our database.</p>
-                  <p style="margin-top: 1rem;"><a href="/catalog" style="color: var(--accent);">Ã¢â€ Â Browse all peaks</a></p>
+                  <p style="margin-top: 1rem;"><a href="/catalog" style="color: var(--accent);">\u2190 Browse all peaks</a></p>
                 </div>
               `;
               mediaEl.hidden = false;
@@ -4737,7 +4792,7 @@
           if(mediaEl){
             mediaEl.innerHTML = `
               <div style="padding: 2rem; background: var(--card); border-radius: 8px; color: var(--ink);">
-                <h2 style="color: #ef4444; margin-bottom: 1rem;">Ã¢Å¡Â Ã¯Â¸Â Unable to Load Peak Data</h2>
+                <h2 style="color: #ef4444; margin-bottom: 1rem;">\u26a0\ufe0f Unable to Load Peak Data</h2>
                 <p><strong>Peak:</strong> <code>${slug}</code></p>
                 <p><strong>Error:</strong> ${err.message}</p>
                 <details style="margin-top: 1rem; padding: 1rem; background: var(--panel); border-radius: 4px;">
@@ -4747,8 +4802,8 @@
                   ${err.stack ? `<pre style="margin-top: 1rem; padding: 0.5rem; background: var(--bg); overflow-x: auto; font-size: 0.85em;">${err.stack}</pre>` : ''}
                 </details>
                 <p style="margin-top: 1rem;">
-                  <a href="/catalog" style="color: var(--accent); text-decoration: none;">Ã¢â€ Â Browse all peaks</a> | 
-                  <a href="javascript:location.reload()" style="color: var(--accent); text-decoration: none; margin-left: 1rem;">Ã¢â€ Â» Retry</a>
+                  <a href="/catalog" style="color: var(--accent); text-decoration: none;">\u2190 Browse all peaks</a> | 
+                  <a href="javascript:location.reload()" style="color: var(--accent); text-decoration: none; margin-left: 1rem;">\u21bb Retry</a>
                 </p>
               </div>
             `;
